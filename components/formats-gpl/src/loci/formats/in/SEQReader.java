@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -97,9 +97,11 @@ public class SEQReader extends BaseTiffReader {
         short[] tag1 = (short[]) ifd.getIFDValue(IMAGE_PRO_TAG_1);
 
         if (tag1 != null) {
-          String seqId = "";
-          for (int i=0; i<tag1.length; i++) seqId = seqId + tag1[i];
-          addGlobalMeta("Image-Pro SEQ ID", seqId);
+          StringBuilder seqId = new StringBuilder();
+          for (int i=0; i<tag1.length; i++) {
+            seqId.append(tag1[i]);
+          }
+          addGlobalMeta("Image-Pro SEQ ID", seqId.toString());
         }
       }
 
@@ -133,8 +135,8 @@ public class SEQReader extends BaseTiffReader {
       String[] lines = descr.split("\n");
       for (String token : lines) {
         token = token.trim();
-        int eq = token.indexOf("=");
-        if (eq == -1) eq = token.indexOf(":");
+        int eq = token.indexOf('=');
+        if (eq == -1) eq = token.indexOf(':');
         if (eq != -1) {
           String label = token.substring(0, eq);
           String data = token.substring(eq + 1);
@@ -169,7 +171,7 @@ public class SEQReader extends BaseTiffReader {
 
     if (maxNdx != 1) {
       if (getSizeC() > 1) {
-        m.dimensionOrder += "C";
+        m.dimensionOrder += 'C';
         m.dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]);
       }
       else m.dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]) + "C";

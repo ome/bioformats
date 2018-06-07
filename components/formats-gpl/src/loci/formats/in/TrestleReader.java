@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,8 +128,10 @@ public class TrestleReader extends BaseTiffReader {
       return files.toArray(new String[files.size()]);
     }
     String[] allFiles = new String[files.size() + 1];
-    files.toArray(allFiles);
-    allFiles[allFiles.length - 1] = currentId;
+    allFiles[0] = new Location(currentId).getAbsolutePath();
+    for (int i=0; i<files.size(); i++) {
+      allFiles[i + 1] = files.get(i);
+    }
     return allFiles;
   }
 
@@ -219,7 +222,7 @@ public class TrestleReader extends BaseTiffReader {
     String comment = ifds.get(0).getComment();
     String[] values = comment.split(";");
     for (String v : values) {
-      int eq = v.indexOf("=");
+      int eq = v.indexOf('=');
       if (eq < 0) continue;
       String key = v.substring(0, eq).trim();
       String value = v.substring(eq + 1).trim();
@@ -284,14 +287,15 @@ public class TrestleReader extends BaseTiffReader {
     Location baseFile = new Location(currentId).getAbsoluteFile();
     Location parent = baseFile.getParentFile();
     String name = baseFile.getName();
-    if (name.indexOf(".") >= 0) {
-      name = name.substring(0, name.indexOf(".") + 1);
+    if (name.indexOf('.') >= 0) {
+      name = name.substring(0, name.indexOf('.') + 1);
     }
 
     roiFile = new Location(parent, name + "ROI").getAbsolutePath();
     roiDrawFile = new Location(parent, name + "ROI-draw").getAbsolutePath();
 
     String[] list = parent.list(true);
+    Arrays.sort(list);
     for (String f : list) {
       if (!f.equals(baseFile.getName())) {
         files.add(new Location(parent, f).getAbsolutePath());

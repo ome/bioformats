@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -113,7 +113,7 @@ public class MinMaxCalculator extends ReaderWrapper {
       throw new FormatException("Invalid channel index: " + theC);
     }
 
-    int series = getSeries();
+    int series = getCoreIndex();
 
     // check that all planes have been read
     if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
@@ -135,7 +135,7 @@ public class MinMaxCalculator extends ReaderWrapper {
       throw new FormatException("Invalid channel index: " + theC);
     }
 
-    int series = getSeries();
+    int series = getCoreIndex();
 
     // check that all planes have been read
     if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
@@ -155,7 +155,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return chanMin == null ? null : new Double(chanMin[getSeries()][theC]);
+    return chanMin == null ? null : new Double(chanMin[getCoreIndex()][theC]);
   }
 
   /**
@@ -169,7 +169,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return chanMax == null ? null : new Double(chanMax[getSeries()][theC]);
+    return chanMax == null ? null : new Double(chanMax[getCoreIndex()][theC]);
   }
 
   /**
@@ -187,7 +187,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int numRGB = getRGBChannelCount();
     int pBase = no * numRGB;
-    int series = getSeries();
+    int series = getCoreIndex();
     if (Double.isNaN(planeMin[series][pBase])) return null;
 
     Double[] min = new Double[numRGB];
@@ -212,7 +212,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int numRGB = getRGBChannelCount();
     int pBase = no * numRGB;
-    int series = getSeries();
+    int series = getCoreIndex();
     if (Double.isNaN(planeMax[series][pBase])) return null;
 
     Double[] max = new Double[numRGB];
@@ -231,7 +231,7 @@ public class MinMaxCalculator extends ReaderWrapper {
    */
   public boolean isMinMaxPopulated() throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return minMaxDone != null && minMaxDone[getSeries()] == getImageCount();
+    return minMaxDone != null && minMaxDone[getCoreIndex()] == getImageCount();
   }
 
   // -- IFormatReader API methods --
@@ -309,7 +309,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     initMinMax();
 
     int numRGB = getRGBChannelCount();
-    int series = getSeries();
+    int series = getCoreIndex();
     int pixelType = getPixelType();
     int bpp = FormatTools.getBytesPerPixel(pixelType);
     int planeSize = getSizeX() * getSizeY() * bpp;
@@ -368,10 +368,10 @@ public class MinMaxCalculator extends ReaderWrapper {
     }
     minMaxDone[series] = Math.max(minMaxDone[series], no + 1);
 
-    if (minMaxDone[getSeries()] == getImageCount() && minMaxStore != null) {
+    if (minMaxDone[getCoreIndex()] == getImageCount() && minMaxStore != null) {
       for (int c=0; c<getSizeC(); c++) {
-        minMaxStore.setChannelGlobalMinMax(c, chanMin[getSeries()][c],
-          chanMax[getSeries()][c], getSeries());
+        minMaxStore.setChannelGlobalMinMax(c, chanMin[getCoreIndex()][c],
+          chanMax[getCoreIndex()][c], getSeries());
       }
     }
   }
@@ -383,46 +383,47 @@ public class MinMaxCalculator extends ReaderWrapper {
    * @throws IOException Not actually thrown.
    */
   protected void initMinMax() throws FormatException, IOException {
-    int seriesCount = getSeriesCount();
-    int oldSeries = getSeries();
+    // call getCoreMetadataList() on base reader to prevent CoreMetadata from being cloned
+    int seriesCount = unwrap().getCoreMetadataList().size();
+    int oldSeries = getCoreIndex();
 
     if (chanMin == null) {
       chanMin = new double[seriesCount][];
       for (int i=0; i<seriesCount; i++) {
-        setSeries(i);
+        setCoreIndex(i);
         chanMin[i] = new double[getSizeC()];
         Arrays.fill(chanMin[i], Double.POSITIVE_INFINITY);
       }
-      setSeries(oldSeries);
+      setCoreIndex(oldSeries);
     }
     if (chanMax == null) {
       chanMax = new double[seriesCount][];
       for (int i=0; i<seriesCount; i++) {
-        setSeries(i);
+        setCoreIndex(i);
         chanMax[i] = new double[getSizeC()];
         Arrays.fill(chanMax[i], Double.NEGATIVE_INFINITY);
       }
-      setSeries(oldSeries);
+      setCoreIndex(oldSeries);
     }
     if (planeMin == null) {
       planeMin = new double[seriesCount][];
       for (int i=0; i<seriesCount; i++) {
-        setSeries(i);
+        setCoreIndex(i);
         int numRGB = getRGBChannelCount();
         planeMin[i] = new double[getImageCount() * numRGB];
         Arrays.fill(planeMin[i], Double.NaN);
       }
-      setSeries(oldSeries);
+      setCoreIndex(oldSeries);
     }
     if (planeMax == null) {
       planeMax = new double[seriesCount][];
       for (int i=0; i<seriesCount; i++) {
-        setSeries(i);
+        setCoreIndex(i);
         int numRGB = getRGBChannelCount();
         planeMax[i] = new double[getImageCount() * numRGB];
         Arrays.fill(planeMax[i], Double.NaN);
       }
-      setSeries(oldSeries);
+      setCoreIndex(oldSeries);
     }
     if (minMaxDone == null) minMaxDone = new int[seriesCount];
   }

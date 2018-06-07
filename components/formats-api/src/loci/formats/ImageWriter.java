@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -187,6 +187,26 @@ public class ImageWriter implements IFormatWriter {
     return w;
   }
   
+  @Override
+  public int getTileSizeX() throws FormatException {
+    return getWriter().getTileSizeX();
+  }
+
+  @Override
+  public int setTileSizeX(int tileSize) throws FormatException {
+    return getWriter().setTileSizeX(tileSize);
+  }
+
+  @Override
+  public int getTileSizeY() throws FormatException {
+    return getWriter().getTileSizeY();
+  }
+
+  @Override
+  public int setTileSizeY(int tileSize) throws FormatException {
+    return getWriter().setTileSizeY(tileSize);
+  }
+
   // -- IMetadataConfigurable API methods --
 
   /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */

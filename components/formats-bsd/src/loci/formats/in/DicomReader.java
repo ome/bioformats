@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,6 +32,7 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +61,6 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
@@ -142,6 +142,9 @@ public class DicomReader extends FormatReader {
   private String date, time, imageType;
   private String pixelSizeX, pixelSizeY;
   private Double pixelSizeZ;
+  private List<Double> positionX = new ArrayList<Double>();
+  private List<Double> positionY = new ArrayList<Double>();
+  private List<Double> positionZ = new ArrayList<Double>();
 
   private Map<Integer, List<String>> fileList;
   private int imagesPerFile;
@@ -180,7 +183,7 @@ public class DicomReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 2048;
+    final int blockLen = 1024;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
 
     stream.seek(128);
@@ -188,12 +191,23 @@ public class DicomReader extends FormatReader {
     stream.seek(0);
 
     try {
-      int tag = getNextTag(stream);
+      int tag = getNextTag(stream, false);
       return TYPES.containsKey(tag);
     }
     catch (NullPointerException e) { }
     catch (FormatException e) { }
     return false;
+  }
+
+  /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
+  @Override
+  public int getRequiredDirectories(String[] files) throws FormatException, IOException {
+    for (String file : files) {
+      if (file.endsWith("DICOMDIR")) {
+        return 1;
+      }
+    }
+    return super.getRequiredDirectories(files);
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -261,9 +275,12 @@ public class DicomReader extends FormatReader {
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
-    if (fileList.get(keys[getSeries()]).size() > 1) {
-      int fileNumber = no / imagesPerFile;
-      no = no % imagesPerFile;
+    if (fileList.size() > 1) {
+      int fileNumber = 0;
+      if (fileList.get(keys[getSeries()]).size() > 1) {
+        fileNumber = no / imagesPerFile;
+        no = no % imagesPerFile;
+      }
       String file = fileList.get(keys[getSeries()]).get(fileNumber);
       helper.setId(file);
       return helper.openBytes(no, buf, x, y, w, h);
@@ -328,8 +345,6 @@ public class DicomReader extends FormatReader {
 
         int rowLen = w * bpp;
         int srcRowLen = getSizeX() * bpp;
-
-        int srcPlane = getSizeY() * srcRowLen;
 
         for (int row=0; row<h; row++) {
           int src = (row + y) * srcRowLen + x * bpp;
@@ -450,6 +465,9 @@ public class DicomReader extends FormatReader {
       originalSeries = 0;
       helper = null;
       companionFiles.clear();
+      positionX.clear();
+      positionY.clear();
+      positionZ.clear();
     }
   }
 
@@ -506,6 +524,7 @@ public class DicomReader extends FormatReader {
 
     boolean decodingTags = true;
     boolean signed = false;
+    String currentType = "";
 
     while (decodingTags) {
       if (in.getFilePointer() + 4 >= in.length()) {
@@ -634,6 +653,33 @@ public class DicomReader extends FormatReader {
         case 0:
           in.seek(in.getFilePointer() - 4);
           break;
+        case 0x41430:
+          currentType = getHeaderInfo(tag, s).trim();
+          break;
+        case 0x41500:
+          if (currentType.equals("IMAGE")) {
+            if (fileList == null) {
+              fileList = new HashMap<Integer, List<String>>();
+            }
+            int seriesIndex = 0;
+            if (originalInstance != null) {
+              try {
+                seriesIndex = Integer.parseInt(originalInstance);
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse instance number: {}", originalInstance);
+              }
+            }
+            if (fileList.get(seriesIndex) == null) {
+              fileList.put(seriesIndex, new ArrayList<String>());
+            }
+            fileList.get(seriesIndex).add(getHeaderInfo(tag, s).trim());
+          }
+          else {
+            companionFiles.add(getHeaderInfo(tag, s).trim());
+          }
+          currentType = "";
+          break;
         default:
           long oldfp = in.getFilePointer();
           addInfo(tag, s);
@@ -644,6 +690,28 @@ public class DicomReader extends FormatReader {
       }
     }
     if (imagesPerFile == 0) imagesPerFile = 1;
+
+    if (id.endsWith("DICOMDIR")) {
+      String parent = new Location(currentId).getAbsoluteFile().getParent();
+      for (int q=0; q<fileList.size(); q++) {
+        Integer[] fileKeys = fileList.keySet().toArray(new Integer[0]);
+        for (int i=0; i<fileList.get(fileKeys[q]).size(); i++) {
+          String file = fileList.get(fileKeys[q]).get(i);
+          file = file.replace('\\', File.separatorChar);
+          file = file.replaceAll("/", File.separator);
+          fileList.get(fileKeys[q]).set(i, parent + File.separator + file);
+        }
+      }
+      for (int i=0; i<companionFiles.size(); i++) {
+        String file = companionFiles.get(i);
+        file = file.replace('\\', File.separatorChar);
+        file = file.replaceAll("/", File.separator);
+        companionFiles.set(i, parent + File.separator + file);
+      }
+      companionFiles.add(new Location(currentId).getAbsolutePath());
+      initFile(fileList.get(0).get(0));
+      return;
+    }
 
     m.bitsPerPixel = bitsPerPixel;
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
@@ -762,7 +830,7 @@ public class DicomReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     String stamp = null;
 
@@ -799,6 +867,33 @@ public class DicomReader extends FormatReader {
           Length z = FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ), UNITS.MILLIMETER);
           if (z != null) {
             store.setPixelsPhysicalSizeZ(z, i);
+          }
+        }
+
+        for (int p=0; p<getImageCount(); p++) {
+          if (p < positionX.size()) {
+            if (positionX.get(p) != null) {
+              Length x = new Length(positionX.get(p), UNITS.MM);
+              if (x != null) {
+                store.setPlanePositionX(x, 0, p);
+              }
+            }
+          }
+          if (p < positionY.size()) {
+            if (positionY.get(p) != null) {
+              Length y = new Length(positionY.get(p), UNITS.MM);
+              if (y != null) {
+                store.setPlanePositionY(y, 0, p);
+              }
+            }
+          }
+          if (p < positionZ.size()) {
+            if (positionZ.get(p) != null) {
+              Length z = new Length(positionZ.get(p), UNITS.MM);
+              if (z != null) {
+                store.setPlanePositionZ(z, 0, p);
+              }
+            }
           }
         }
       }
@@ -850,7 +945,7 @@ public class DicomReader extends FormatReader {
         catch (NumberFormatException e) { }
       }
       else if (key.indexOf("Palette Color LUT Data") != -1) {
-        String color = key.substring(0, key.indexOf(" ")).trim();
+        String color = key.substring(0, key.indexOf(' ')).trim();
         int ndx = color.equals("Red") ? 0 : color.equals("Green") ? 1 : 2;
         long fp = in.getFilePointer();
         in.seek(in.getFilePointer() - elementLength + 1);
@@ -872,11 +967,50 @@ public class DicomReader extends FormatReader {
         rescaleSlope = Double.parseDouble(info);
       }
       else if (key.equals("Pixel Spacing")) {
-        pixelSizeX = info.substring(0, info.indexOf("\\"));
-        pixelSizeY = info.substring(info.lastIndexOf("\\") + 1);
+        pixelSizeY = info.substring(0, info.indexOf("\\"));
+        pixelSizeX = info.substring(info.lastIndexOf("\\") + 1);
       }
       else if (key.equals("Spacing Between Slices")) {
         pixelSizeZ = new Double(info);
+      }
+      else if (tag == 0x200032) {
+        String[] positions = info.replace('\\', '_').split("_");
+        if (positions.length > 0) {
+          try {
+            positionX.add(Double.valueOf(positions[0]));
+          }
+          catch (NumberFormatException e) {
+            positionX.add(null);
+          }
+        }
+        else {
+          positionX.add(null);
+          positionY.add(null);
+          positionZ.add(null);
+        }
+        if (positions.length > 1) {
+          try {
+            positionY.add(Double.valueOf(positions[1]));
+          }
+          catch (NumberFormatException e) {
+            positionY.add(null);
+          }
+        }
+        else {
+          positionY.add(null);
+          positionZ.add(null);
+        }
+        if (positions.length > 2) {
+          try {
+            positionZ.add(Double.valueOf(positions[2]));
+          }
+          catch (NumberFormatException e) {
+            positionZ.add(null);
+          }
+        }
+        else {
+          positionZ.add(null);
+        }
       }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
@@ -938,11 +1072,13 @@ public class DicomReader extends FormatReader {
       case US:
         if (elementLength == 2) value = Integer.toString(in.readShort());
         else {
-          value = "";
+          StringBuilder sb = new StringBuilder();
           int n = elementLength / 2;
           for (int i=0; i<n; i++) {
-            value += Integer.toString(in.readShort()) + " ";
+            sb.append(in.readShort());
+            sb.append(" ");
           }
+          value = sb.toString();
         }
         break;
       case IMPLICIT_VR:
@@ -1048,16 +1184,27 @@ public class DicomReader extends FormatReader {
   private int getNextTag(RandomAccessInputStream stream)
     throws FormatException, IOException
   {
+    return getNextTag(stream, true);
+  }
+
+  private int getNextTag(RandomAccessInputStream stream, boolean setMetadata)
+    throws FormatException, IOException
+  {
     long fp = stream.getFilePointer();
+    if (fp >= stream.length() - 2) {
+      return 0;
+    }
     int groupWord = stream.readShort() & 0xffff;
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
-      core.get(0).littleEndian = false;
+      if (setMetadata) {
+        core.get(0).littleEndian = false;
+      }
       groupWord = 0x0008;
       stream.order(false);
     }
     else if (groupWord == 0xfeff || groupWord == 0xfffe) {
       stream.skipBytes(6);
-      return getNextTag(stream);
+      return getNextTag(stream, setMetadata);
     }
 
     int elementWord = stream.readShort();
@@ -1066,8 +1213,11 @@ public class DicomReader extends FormatReader {
     elementLength = getLength(stream, tag);
     if (elementLength > stream.length()) {
       stream.seek(fp);
-      core.get(0).littleEndian = !core.get(0).littleEndian;
-      stream.order(core.get(0).littleEndian);
+
+      stream.order(!core.get(0).littleEndian);
+      if (setMetadata) {
+        core.get(0).littleEndian = !core.get(0).littleEndian;
+      }
 
       groupWord = stream.readShort() & 0xffff;
       elementWord = stream.readShort();

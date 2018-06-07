@@ -11,6 +11,11 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
+  <condition property="testng.threadCount" value="1">
+    <not>
+      <isset property="testng.threadCount"/>
+    </not>
+  </condition>
 
   <!-- overrides 'clean' target in common.xml -->
   <target name="clean" >
@@ -21,17 +26,40 @@ Type "ant -p" for a list of targets.
   <target name="test-file-handles" depends="compile"
     description="run tests for leaking file handles">
     <exec executable="${basedir}/target-test-runner">
+      <!-- FileHandleTest is single-threaded -->
+      <arg value="-t1"/>
+      <arg value="-f${testng.filename}"/>
       <arg value="loci.tests.testng.FileHandleTest"/>
-      <arg value="${filename}"/>
     </exec>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <classpath refid="test.classpath"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
+      <xmlfileset file="testng.xml"/>
+      <jvmarg value="-Dlogback.configurationFile=logback-target-test-runner.xml"/>
+    </testng>
+    <fail if="failedTest"/>
   </target>
 
   <target name="test-open-bytes-performance" depends="compile"
     description="run tests for open bytes performance">
     <exec executable="${basedir}/target-test-runner">
-      <arg value="loci.tests.testng.OpenBytesPerformanceTest"/>
-      <arg value="${filename}"/>
+        <arg value="-t${testng.threadCount}"/>
+        <arg value="-f${testng.filename}"/>
+        <arg value="loci.tests.testng.OpenBytesPerformanceTest"/>
     </exec>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <classpath refid="test.classpath"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
+      <xmlfileset file="testng.xml"/>
+      <jvmarg value="-Dlogback.configurationFile=logback-target-test-runner.xml"/>
+    </testng>
+    <fail if="failedTest"/>
   </target>
 
   <target name="test-tiff-writer" depends="compile"
@@ -40,33 +68,6 @@ Type "ant -p" for a list of targets.
       <arg value="loci.tests.testng.TiffWriterTest"/>
       <arg value="${filename}"/>
     </exec>
-  </target>
-
-  <target name="test-tiff-compress" depends="compile"
-    description="run tests for TIFF compression/decompression">
-    <testng testname="TIFF compression tests"
-      failureProperty="failedTest">
-      <classpath>
-        <pathelement location="${basedir}"/><!-- logback.xml -->
-        <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
-      </classpath>
-      <classfileset file="${classes.dir}/loci/tests/testng/CompressDecompressTest.class"/>
-    </testng>
-    <fail if="failedTest"/>
-  </target>
-
-  <target name="test-minimal-convert" depends="compile"
-    description="run conversion tests with fixed input data">
-    <testng testname="Minimal conversion tests" failureProperty="failedTest">
-      <classpath>
-        <pathelement location="${basedir}"/><!-- logback.xml -->
-        <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
-      </classpath>
-      <classfileset file="${classes.dir}/loci/tests/testng/ConversionTest.class"/>
-    </testng>
-    <fail if="failedTest"/>
   </target>
 
   <target name="test-convert" depends="compile"
@@ -78,12 +79,13 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${writer-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -100,8 +102,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -111,9 +113,11 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -159,8 +163,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -170,9 +174,11 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -215,12 +221,6 @@ Type "ant -p" for a list of targets.
   <target name="test-automated" depends="compile"
     description="run automated tests in group 'automated'">
 
-    <condition property="testng.threadCount" value="1">
-      <not>
-        <isset property="testng.threadCount"/>
-      </not>
-    </condition>
-
     <testng groups="automated" testname="Automated tests"
       listeners="loci.tests.testng.OrderingListener"
       suitename="Bio-Formats software test suite"
@@ -229,8 +229,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.file-list" value="${testng.file-list}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
@@ -282,9 +282,11 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -302,8 +304,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -313,9 +315,11 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -332,8 +336,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -343,9 +347,11 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -362,8 +368,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -373,9 +379,11 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -392,8 +400,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -403,9 +411,11 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -422,8 +432,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -434,6 +444,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -441,5 +452,21 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
   <target name="test-config-xml" depends="gen-config-xml"/>
+
+  <target name="test-metadata" depends="compile"
+    description="test metadata level support for a single file">
+    <testng testname="Metadata tests" failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${basedir}"/><!-- logback.xml -->
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <classpath refid="test.classpath"/>
+      <classfileset file="${classes.dir}/loci/tests/testng/MetadataConfigurableTest.class"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
 
 </project>

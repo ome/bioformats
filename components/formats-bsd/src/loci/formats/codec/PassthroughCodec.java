@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,33 +41,8 @@ import loci.formats.FormatException;
  * A codec which just returns the exact data it was given, performing no
  * compression or decompression.
  */
-public class PassthroughCodec extends BaseCodec {
-
-  /* (non-Javadoc)
-   * @see loci.formats.codec.BaseCodec#decompress(byte[], loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] decompress(byte[] data, CodecOptions options)
-      throws FormatException {
-    return data;
+public class PassthroughCodec extends WrappedCodec {
+  public PassthroughCodec() {
+    super(new ome.codecs.PassthroughCodec());
   }
-
-  /* (non-Javadoc)
-   * @see loci.formats.codec.BaseCodec#decompress(loci.common.RandomAccessInputStream, loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-      throws FormatException, IOException {
-    throw new RuntimeException("Not implemented.");
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.codec.Codec#compress(byte[], loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] compress(byte[] data, CodecOptions options)
-      throws FormatException {
-    return data;
-  }
-
 }

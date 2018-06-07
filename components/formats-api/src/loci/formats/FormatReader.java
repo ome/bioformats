@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,7 +34,6 @@ package loci.formats;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -48,10 +47,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.common.xml.XMLTools;
-import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
-import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMetadata;
@@ -884,8 +880,8 @@ public abstract class FormatReader extends FormatHandler
       throw new FormatException("Image plane too large. Only 2GB of data can " +
         "be extracted at one time. You can workaround the problem by opening " +
         "the plane in tiles; for further details, see: " +
-        "http://www.openmicroscopy.org/site/support/bio-formats/about/" +
-        "bug-reporting.html#common-issues-to-check", e);
+        "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+        "/about/bug-reporting.html#common-issues-to-check", e);
     }
     return openBytes(no, newBuffer, x, y, w, h);
   }

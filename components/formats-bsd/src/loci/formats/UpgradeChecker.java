@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -64,7 +64,7 @@ public class UpgradeChecker {
   // -- Constants --
 
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "5.2.0";
+  public static final String STABLE_VERSION = "5.8.2";
 
   /** Location of the OME continuous integration server. */
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
@@ -188,7 +188,7 @@ public class UpgradeChecker {
     // build the registry query
 
     System.setProperty("bioformats.caller", caller);
-    StringBuffer query = new StringBuffer(REGISTRY);
+    final StringBuilder query = new StringBuilder(REGISTRY);
     for (int i=0; i<REGISTRY_PROPERTIES.length; i++) {
       if (i == 0) {
         query.append("?");
@@ -228,7 +228,7 @@ public class UpgradeChecker {
 
       // retrieve the string from the registry
       InputStream in = conn.getInputStream();
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       while (true) {
         int data = in.read();
         if (data == -1) {
@@ -274,7 +274,7 @@ public class UpgradeChecker {
       boolean success = install(urlDir + File.separator + jar,
         downloadDir + File.separator + jar);
       if (overallSuccess) {
-        success = overallSuccess;
+        overallSuccess = success;
       }
     }
     return overallSuccess;

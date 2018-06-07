@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,7 +49,6 @@ public class UnsignedIntColorModel extends ColorModel {
 
   // -- Fields --
 
-  private int pixelBits;
   private int nChannels;
   private ComponentColorModel helper;
 
@@ -65,7 +64,6 @@ public class UnsignedIntColorModel extends ColorModel {
     helper = new ComponentColorModel(AWTImageTools.makeColorSpace(nChannels),
       nChannels == 4, false, ColorModel.TRANSLUCENT, dataType);
 
-    this.pixelBits = pixelBits;
     this.nChannels = nChannels;
   }
 

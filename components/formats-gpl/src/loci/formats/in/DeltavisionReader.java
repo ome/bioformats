@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,6 +42,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
@@ -161,6 +162,11 @@ public class DeltavisionReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    // Extra sanity check; if it's a TIFF, return false immediately, to avoid
+    // false negatives.
+    if(new TiffParser(stream).isValidHeader()) {
+      return false;
+    }
     final int blockLen = 98;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     stream.seek(96);
@@ -174,7 +180,8 @@ public class DeltavisionReader extends FormatReader {
     int x = stream.readInt();
     int y = stream.readInt();
     int count = stream.readInt();
-    return x > 0 && y > 0 && count > 0;
+    return x > 0 && y > 0 && count > 0 &&
+      ((long) x * (long) y * (long) count < stream.length());
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -307,7 +314,7 @@ public class DeltavisionReader extends FormatReader {
     int filePixelType = in.readInt();
 
     in.seek(180);
-    int rawSizeT = in.readShort();
+    int rawSizeT = in.readUnsignedShort();
     int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
 
     int sequence = in.readShort();
@@ -358,8 +365,8 @@ public class DeltavisionReader extends FormatReader {
           m.imageCount = sizeZ * sizeC;
         }
       }
-      else if (getDimensionOrder().indexOf("Z") <
-        getDimensionOrder().indexOf("T"))
+      else if (getDimensionOrder().indexOf('Z') <
+        getDimensionOrder().indexOf('T'))
       {
         sizeZ = realPlaneCount / (sizeC * sizeT);
         if (sizeZ == 0) {
@@ -982,8 +989,8 @@ public class DeltavisionReader extends FormatReader {
     List<Double> filters = new ArrayList<Double>();
 
     for (String line : lines) {
-      int colon = line.indexOf(":");
-      if (colon != -1 && !line.startsWith("Created")) {
+      int colon = line.indexOf(':');
+      if (colon >= 0 && colon < line.length() - 1 && !line.startsWith("Created")) {
         key = line.substring(0, colon).trim();
 
         value = line.substring(colon + 1).trim();
@@ -993,7 +1000,7 @@ public class DeltavisionReader extends FormatReader {
         // Objective properties
         if (key.equals("Objective")) {
           // assume first word is the manufacturer's name
-          int space = value.indexOf(" ");
+          int space = value.indexOf(' ');
           if (space != -1) {
             String manufacturer = value.substring(0, space);
             String extra = value.substring(space + 1);
@@ -1005,9 +1012,9 @@ public class DeltavisionReader extends FormatReader {
             String magnification = "", na = "";
 
             if (tokens.length >= 1) {
-              int end = tokens[0].indexOf("X");
+              int end = tokens[0].indexOf('X');
               if (end > 0) magnification = tokens[0].substring(0, end);
-              int start = tokens[0].indexOf("/");
+              int start = tokens[0].indexOf('/');
               if (start >= 0) na = tokens[0].substring(start + 1);
             }
 
@@ -1032,11 +1039,11 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         else if (key.equalsIgnoreCase("Lens ID")) {
-          if (value.indexOf(",") != -1) {
-            value = value.substring(0, value.indexOf(","));
+          if (value.indexOf(',') != -1) {
+            value = value.substring(0, value.indexOf(','));
           }
-          if (value.indexOf(" ") != -1) {
-            value = value.substring(value.indexOf(" ") + 1);
+          if (value.indexOf(' ') != -1) {
+            value = value.substring(value.indexOf(' ') + 1);
           }
           if (!value.equals("null")) {
             String objectiveID = "Objective:" + value;
@@ -1220,6 +1227,24 @@ public class DeltavisionReader extends FormatReader {
           LOGGER.warn("Could not parse date '{}'", line);
         }
       }
+      else if (line.startsWith("#KEY")) {
+        line = line.substring(line.indexOf(" ")).trim();
+        int split = line.indexOf(":");
+        if (split < 0) {
+          split = line.indexOf(" ");
+        }
+        key = line.substring(0, split).trim();
+        value = line.substring(split + 1).trim();
+        addGlobalMeta(key, value);
+      }
+      else if (line.endsWith(":")) {
+        prefix = line.substring(0, line.length() - 1);
+      }
+      else if (!line.startsWith("#") && !line.replace("-", "").isEmpty() &&
+        !prefix.isEmpty())
+      {
+        addGlobalMetaList(prefix, line);
+      }
     }
 
     for (int series=0; series<getSeriesCount(); series++) {
@@ -1340,7 +1365,7 @@ public class DeltavisionReader extends FormatReader {
         }
       }
 
-      if (line.length() > 0 && line.indexOf(".") == -1) previousLine = line;
+      if (line.length() > 0 && line.indexOf('.') == -1) previousLine = line;
 
       doStatistics = line.endsWith("- reading image data...");
     }
@@ -2352,7 +2377,7 @@ public class DeltavisionReader extends FormatReader {
      */
     @Override
     public String toString() {
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       sb.append("photosensorReading: ");
       sb.append(photosensorReading);
       sb.append("\ntimeStampSeconds: ");

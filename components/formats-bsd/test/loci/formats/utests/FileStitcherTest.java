@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,18 +43,41 @@ import loci.common.Location;
 import loci.formats.FormatTools;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
+import loci.formats.IFormatReader;
 import loci.formats.in.FakeReader;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertEqualsNoOrder;
+import static org.testng.Assert.assertNotNull;
 import static loci.formats.FilePatternBlock.BLOCK_START;
 import static loci.formats.FilePatternBlock.BLOCK_END;
 
 
 public class FileStitcherTest {
+
+  public static final String KEY = "test.option";
+  public static final String VALUE = "foo";
+
+  public static void checkKV(IFormatReader r, String k, String expv) {
+    MetadataOptions rOpt = r.getMetadataOptions();
+    assertTrue(rOpt instanceof DynamicMetadataOptions);
+    String v = ((DynamicMetadataOptions) rOpt).get(k);
+    assertNotNull(v);
+    assertEquals(v, expv);
+  }
+
+  public static void checkKV(IFormatReader[] readers, String k, String expv) {  
+    for (IFormatReader r: readers) {
+      checkKV(r, k, expv);
+    }
+  }
 
   // expected core metadata for the final stitched image
   private static final int PIXEL_TYPE = FormatTools.UINT8;
@@ -122,6 +145,7 @@ public class FileStitcherTest {
     assertEquals(fs.getPixelType(), PIXEL_TYPE);
     assertEqualsNoOrder(mkBasenames(fs.getUsedFiles()), filenames);
     checkPlanes(fs, dims);
+    fs.close();
   }
 
   // FakeReader encodes 5 integers at the start of each image plane: s idx,
@@ -168,6 +192,15 @@ public class FileStitcherTest {
     };
   }
 
+  @DataProvider(name = "levels")
+  public Object[][] createLevels() {
+    return new Object[][] {
+      {MetadataLevel.MINIMUM},
+      {MetadataLevel.NO_OVERLAYS},
+      {MetadataLevel.ALL}
+    };
+  }
+
   @Test(dataProvider = "dimZTC")
   public void testStitch(Integer[] dims) throws IOException, FormatException {
     // dims: ZCT dimensions for each individual file in the pattern
@@ -191,6 +224,44 @@ public class FileStitcherTest {
     String pattern = String.format(TEMPLATE, blocks.toString(), ptString,
                                    SIZE_X, SIZE_Y, dims[0], dims[1], dims[2]);
     check(pattern, filenames.toArray(new String[filenames.size()]), dims);
+  }
+
+  @Test
+  public void testUnderlyingReaders() throws IOException, FormatException {
+    FakeReader reader = new FakeReader();
+    FileStitcher fs = new FileStitcher(reader);
+    assertNotNull(fs.getUnderlyingReaders());
+    fs.setId("test_z<0-2>.fake");
+    assertNotNull(fs.getUnderlyingReaders());
+    fs.close();
+  }
+
+  @Test
+  public void testOptionsExplicit() throws IOException, FormatException {
+    DynamicMetadataOptions opt = new DynamicMetadataOptions();
+    opt.set(KEY, VALUE);
+    FileStitcher fs = new FileStitcher();
+    fs.setMetadataOptions(opt);
+    fs.setId("test_z<0-2>.fake");
+    checkKV(fs.getUnderlyingReaders(), KEY, VALUE);
+    DynamicMetadataOptions newOpt = new DynamicMetadataOptions();
+    String newValue = VALUE + "_";
+    newOpt.set(KEY, newValue);
+    fs.setMetadataOptions(newOpt);
+    checkKV(fs.getUnderlyingReaders(), KEY, newValue);
+    fs.close();
+  }
+
+  @Test(dataProvider = "levels")
+  public void testOptionsImplicit(MetadataLevel level)
+      throws IOException, FormatException {
+    FileStitcher fs = new FileStitcher();
+    fs.getMetadataOptions().setMetadataLevel(level);
+    fs.setId("test_z<0-2>.fake");
+    for (IFormatReader r: fs.getUnderlyingReaders()) {
+      assertEquals(r.getMetadataOptions().getMetadataLevel(), level);
+    }
+    fs.close();
   }
 
 }

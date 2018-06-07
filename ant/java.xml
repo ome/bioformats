@@ -7,11 +7,9 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project>
+<project xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <property file="${root.dir}/ant/java.properties"/>
   <import file="${root.dir}/ant/common.xml"/>
-  <import file="${root.dir}/ant/version.xml"/>
-  <import file="${root.dir}/ant/xsd-fu.xml"/>
 
   <taskdef name="testng" classpath="${lib.dir}/testng-${testng.version}.jar"
     classname="org.testng.TestNGAntTask"/>
@@ -25,36 +23,80 @@ Type "ant -p" for a list of targets.
     <available file="${tests.dir}"/>
   </condition>
 
+  <path id="maven-ant-tasks.classpath"
+    path="${lib.dir}/maven-ant-tasks-2.1.3.jar"/>
+  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+    uri="antlib:org.apache.maven.artifact.ant"
+    classpathref="maven-ant-tasks.classpath"/>
+
+   <artifact:pom file="pom.xml" id="maven.pom"/>
+
+   <target name="mvn-init" unless="compile.classpath">
+     <mkdir dir="${build.dir}"/>
+     <condition property="maven.repo.local" value="${maven.repo.local}"
+         else="${user.home}/.m2/repository">
+       <isset property="maven.repo.local"/>
+     </condition>
+     <artifact:localRepository id="local.repository"
+       path="${maven.repo.local}"/>
+     <artifact:dependencies pathId="compile.classpath" useScope="compile"
+         cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/compile-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
+     <artifact:dependencies pathId="test.classpath" useScope="test"
+         cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/test-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
+     <artifact:dependencies pathId="runtime.classpath"
+         filesetId="runtime.fileset"
+         useScope="runtime" cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/runtime-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
+   </target>
+
+
   <!-- Main build targets -->
 
-  <target name="compile" depends="copy-source,copy-generated-source" description="compile classes">
+  <target name="compile" depends="mvn-init, copy-resources" description="compile classes">
+    <mkdir dir="${classes.dir}"/>
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
       encoding="UTF-8"
-      srcdir="${dest.dir}" destdir="${classes.dir}"
-      classpath="${component.classpath}"
+      srcdir="${src.dir}" destdir="${classes.dir}"
       includes="${component.source}">
+      <classpath refid="compile.classpath" />
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>
 
-  <target name="compile-tests" depends="compile, copy-test-source"
+  <target name="compile-tests" depends="compile, mvn-init, copy-test-resources"
     description="compile test classes" if="doTests">
+    <mkdir dir="${test-classes.dir}"/>
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
       encoding="UTF-8"
       srcdir="${test.dir}" destdir="${test-classes.dir}"
-      classpath="${classes.dir}:${component.classpath}"
-      includes="${component.source}"/>
+      includes="${component.source}">
+      <classpath refid="test.classpath"/>
+      <classpath path="${classes.dir}"/>
+      </javac>
   </target>
 
   <target name="exec" depends="compile" description="execute package">
     <java fork="true" classname="${component.main-class}"
-      classpath="${classes.dir}:${component.runtime-cp}"/>
+      classpath="${classes.dir}">
+     <classpath refid="runtime.classpath"/>
+     </java>
   </target>
 
   <target name="test" depends="jar, compile-tests"
@@ -64,12 +106,13 @@ Type "ant -p" for a list of targets.
       <isset property="testng.xml"/>
       <then>
         <testng haltonfailure="true" groups="all" testname="${component.name}">
+          <classpath refid="test.classpath"/>
           <classpath>
             <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
-            <pathelement path="${component.runtime-cp}"/>
             <pathelement location="${test-classes.dir}"/>
-            <pathelement location="${classes.dir}"/>
+            <pathelement location="${test.dir}"/>
           </classpath>
+          <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
           <xmlfileset file="${testng.xml}"/>
           <jvmarg value="-mx${testng.memory}"/>
         </testng>
@@ -79,16 +122,17 @@ Type "ant -p" for a list of targets.
 
   <target name="findbugs" depends="jar"
     description="check source code for bugs">
+    <mkdir dir="${build.dir}"/>
     <if>
       <isset property="findbugs.home"/>
       <then>
         <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
           output="xml:withMessages" outputFile="${build.dir}/findbugs.xml"
-          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high"
+          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="medium"
           errorProperty="findbugsErrors"
           warningsProperty="findbugsWarnings">
-          <auxClasspath path="${component.runtime-cp}"/>
-          <sourcePath path="${dest.dir}"/>
+          <auxClasspath refid="runtime.classpath"/>
+          <sourcePath path="${src.dir}"/>
           <class location="${classes.dir}"/>
         </findbugs>
 
@@ -119,37 +163,64 @@ your FindBugs installation's lib directory. E.g.:
   <target name="style" depends="compile"
     description="check source code style">
     <checkstyle config="${root.dir}/checkstyle.xml" failOnViolation="false"
-      classpath="${classes.dir}:${component.classpath}">
-      <fileset dir="${dest.dir}" includes="${component.source}"/>
+      classpath="${classes.dir}">
+      <classpath refid="compile.classpath"/>
+      <fileset dir="${src.dir}" includes="${component.source}"/>
     </checkstyle>
   </target>
 
-  <target name="jar" depends="compile"
-    description="generate JAR file">
+  <target name="jar" depends="compile,init-timestamp" description="generate JAR file">
     <mkdir dir="${artifact.dir}"/>
+    <pathconvert property="manifest.classpath" pathsep=" ">
+      <path refid="runtime.classpath"/>
+      <mapper>
+        <chainedmapper>
+          <flattenmapper/>
+          <globmapper from="*.jar" to="*.jar"/>
+        </chainedmapper>
+      </mapper>
+    </pathconvert>
     <jar jarfile="${artifact.dir}/${component.jar}" basedir="${classes.dir}">
+      <metainf dir="${basedir}" includes="lib/**/*"/>
       <manifest>
         <attribute name="Main-Class" value="${component.main-class}"/>
-        <attribute name="Class-Path" value="${component.manifest-cp}"/>
+        <attribute name="Class-Path" value="${manifest.classpath}"/>
+        <attribute name="Implementation-Title" value="${component.name}"/>
+        <attribute name="Implementation-Version" value="${release.version}"/>
+        <attribute name="Implementation-Vendor-Id" value="ome"/>
+        <attribute name="Implementation-Date" value="${DATE}"/>
+        <attribute name="Implementation-Vendor" value="Open Microscopy Environment"/>
+        <attribute name="Implementation-Build" value="${build.version}"/>
+        <attribute name="Implementation-URL" value="https://www.openmicroscopy.org/bio-formats/"/>
       </manifest>
     </jar>
+    <artifact:install file="${artifact.dir}/${component.jar}">
+      <artifact:localRepository id="local.repository"
+        path="${maven.repo.local}"/>
+      <pom refid="maven.pom"/>
+    </artifact:install>
   </target>
 
-  <target name="osgi" depends="jar"
-    description="inject OSGi bundle information">
-    <!-- NB: Add OSGi bundle metadata. -->
-    <bundle outputDir="${artifact.dir}"
-      bundleName="${component.name}"
-      bundleSymbolicName="${domain.prefix}.${component.name}"
-      bundleVersion="${component.version}.${vcs.revision}"
-      classpath="${classes.dir}"
-      exportPackage="*;version=&quot;${component.version}&quot;"
-      filename="${component.name}">
+  <target name="bundle" depends="init-timestamp,mvn-init" description="create bundle JAR">
+    <mkdir dir="${artifact.dir}"/>
+    <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
+      <zipgroupfileset refid="runtime.fileset"/>
       <manifest>
-        <attribute name="Main-Class" value="${component.main-class}"/>
-        <attribute name="Class-Path" value="${component.manifest-cp}"/>
+        <attribute name="Main-Class" value="${bundle.main-class}"/>
+        <attribute name="Implementation-Title" value="${bundle.name}"/>
+        <attribute name="Implementation-Version" value="${bundle.version}"/>
+        <attribute name="Implementation-Vendor-Id" value="ome"/>
+        <attribute name="Implementation-Date" value="${DATE}"/>
+        <attribute name="Implementation-Vendor" value="Open Microscopy Environment"/>
+        <attribute name="Implementation-Build" value="${build.version}"/>
+        <attribute name="Implementation-URL" value="https://www.openmicroscopy.org/bio-formats/"/>
       </manifest>
-    </bundle>
+    </jar>
+    <artifact:install file="${artifact.dir}/${bundle.jar}">
+      <pom refid="maven.pom"/>
+      <artifact:localRepository id="local.repository"
+        path="${maven.repo.local}"/>
+    </artifact:install>
   </target>
 
   <target name="utils" depends="jar"
@@ -161,21 +232,22 @@ your FindBugs installation's lib directory. E.g.:
       deprecation="true" source="1.7" target="1.7"
       encoding="UTF-8"
       srcdir="${utils.dir}" includes="**/*.java"
-      classpath="${component.classpath}:${artifact.dir}/${component.jar}">
+      classpath="${artifact.dir}/${component.jar}">
+      <classpath refid="compile.classpath" />
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>
 
   <target name="docs" depends="compile, javadoc-properties"
     description="generate javadocs">
-    <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
-      classpath="${component.classpath}:${classes.dir}"
+    <javadoc sourcepath="${src.dir}" destdir="${docs.dir}/api"
       encoding="UTF-8"
       author="true" version="true" use="true"
       access="private"
       nodeprecated="false" windowtitle="Bio-Formats API"
       additionalparam="${javadoc.doclint}">
-      <packageset dir="${dest.dir}"/>
+      <packageset dir="${src.dir}"/>
+      <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>
@@ -199,10 +271,6 @@ your FindBugs installation's lib directory. E.g.:
     <delete dir="${docs.dir}"/>
   </target>
 
-  <target name="clean-src" description="remove source files from build folder">
-    <delete dir="${dest.dir}"/>
-  </target>
-
   <target name="clean-jar" description="remove JAR file from artifacts folder">
     <delete>
       <fileset dir="${artifact.dir}" includes="${component.jar}"/>
@@ -212,101 +280,32 @@ your FindBugs installation's lib directory. E.g.:
   <!-- Internal build targets -->
 
   <target name="init"
-    depends="init-title, init-timestamp, release-version, init-manifest-cp"/>
+    depends="init-title, init-timestamp"/>
 
-  <target name="init-manifest-cp">
-    <!-- construct manifest classpath -->
-    <propertyregex property="component.manifest-cp-temp"
-      input="${component.runtime-cp}" replace=""
-      defaultValue="${component.runtime-cp}">
-      <regexp pattern="[^\:]*\/"/>
-    </propertyregex>
-    <propertyregex property="component.manifest-cp"
-      input="${component.manifest-cp-temp}" replace=" "
-      defaultValue="${component.manifest-cp-temp}">
-      <regexp pattern=":"/>
-    </propertyregex>
-    <!--<echo>Manifest-Classpath: ${component.manifest-cp}</echo>-->
-  </target>
-
-  <target name="copy-source" depends="init">
+  <target name="copy-resources" depends="init">
     <!-- copy binary resources -->
-    <copy todir="${dest.dir}" preservelastmodified="true">
+    <mkdir dir="${classes.dir}"/>
+    <copy todir="${classes.dir}" preservelastmodified="true">
       <!--
         include (none) to prevent problems if component.resources-bin is empty
       -->
       <fileset dir="${src.dir}" includes="(none) ${component.resources-bin}"/>
-    </copy>
-    <copy todir="${dest.dir}/META-INF" preservelastmodified="true">
-      <fileset dir="${src.dir}/.." includes="(non) ${component.resources-bin}"/>
+      <fileset dir="${src.dir}" includes="(none) ${component.resources-text}"/>
     </copy>
     <!-- copy source files and text resources with filtering -->
-    <copy todir="${dest.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}"
-        includes="${component.source} ${component.resources-text}"/>
-    </copy>
-
-    <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
-    <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
-    <replace dir="${dest.dir}" token="$${vcs.shortrevision}" value="${vcs.shortrevision}"/>
-    <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
-    <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
-    <replace dir="${dest.dir}" token="$${vcs.date}_unix" value="${vcs.date_unix}"/>
-    <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
-    <replace dir="${dest.dir}" token="$${xsdfu.schemaver}" value="${xsdfu.schemaver}"/>
-
-    <!-- copy resources to classes folder -->
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${dest.dir}" excludes="${component.source}"/>
-    </copy>
   </target>
 
-  <target name="generate-source" depends="init-title"/>
-
-  <target name="copy-generated-source" depends="init,generate-source">
-    <if>
-      <available file="${gensrc.dir}" type="dir"/>
-      <then>
-	<!-- copy binary resources -->
-	<copy todir="${dest.dir}" preservelastmodified="true">
-	  <!--
-	      include (none) to prevent problems if component.resources-bin is empty
-	  -->
-	  <fileset dir="${gensrc.dir}" includes="(none) ${component.resources-bin}"/>
-	</copy>
-	<!-- copy source files and text resources with filtering -->
-	<copy todir="${dest.dir}" preservelastmodified="true">
-	  <fileset dir="${gensrc.dir}"
-		   includes="${component.source} ${component.resources-text}"/>
-  </copy>
-
-  <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
-  <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
-  <replace dir="${dest.dir}" token="$${vcs.shortrevision}" value="${vcs.shortrevision}"/>
-  <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
-  <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
-  <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
-	<!-- copy resources to classes folder -->
-	<copy todir="${classes.dir}" preservelastmodified="true">
-	  <fileset dir="${dest.dir}" excludes="${component.source}"/>
-	</copy>
-      </then>
-    </if>
-  </target>
-
-  <target name="copy-test-source" depends="init" if="doTests">
+  <target name="copy-test-resources" depends="init" if="doTests">
+    <!-- copy binary resources -->
+    <mkdir dir="${test.dir}"/>
     <copy todir="${test.dir}" preservelastmodified="true">
-      <fileset dir="${tests.dir}" includes="(none) ${component.resources-bin}"/>
+      <!--
+        include (none) to prevent problems if component.resources-bin is empty
+      -->
+      <fileset dir="${src.dir}" includes="(none) ${component.resources-bin}"/>
+      <fileset dir="${src.dir}" includes="(none) ${component.resources-text}"/>
     </copy>
-
-    <copy todir="${test.dir}" preservelastmodified="true">
-      <fileset dir="${tests.dir}" includes="${component.source} ${component.resources-text}"/>
-    </copy>
-
-    <mkdir dir="${test-classes.dir}"/>
-    <copy todir="${test-classes.dir}" preservelastmodified="true">
-      <fileset dir="${tests.dir}" excludes="${component.source}"/>
-    </copy>
+    <!-- copy source files and text resources with filtering -->
   </target>
 
 </project>

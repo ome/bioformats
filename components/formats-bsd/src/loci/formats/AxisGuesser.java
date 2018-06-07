@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,16 +32,9 @@
 
 package loci.formats;
 
-import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
-
-import loci.common.Location;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.unmodifiableSet;
 
@@ -56,10 +49,6 @@ import static java.util.Collections.unmodifiableSet;
 public class AxisGuesser {
 
   // -- Constants --
-
-  /** Logger for this class. */
-  private static final Logger LOGGER =
-    LoggerFactory.getLogger(AxisGuesser.class);
 
   /** Axis type for unclassified axes. */
   public static final int UNKNOWN_AXIS = 0;
@@ -226,10 +215,22 @@ public class AxisGuesser {
         char third = elements[i].length == 2 ? 'b' :
           elements[i][2].toLowerCase().charAt(0);
 
-        if ((first == 'r' || second == 'r' || third == 'r') &&
-          (first == 'g' || second == 'g' || third == 'g') &&
-          (first == 'b' || second == 'b' || third == 'b'))
-        {
+        boolean hasRed = first == 'r' || second == 'r' || third == 'r';
+        boolean hasGreen = first == 'g' || second == 'g' || third == 'g';
+        boolean hasBlue = first == 'b' || second == 'b' || third == 'b';
+
+        int rgbChannels = 0;
+        if (hasRed) {
+          rgbChannels++;
+        }
+        if (hasGreen) {
+          rgbChannels++;
+        }
+        if (hasBlue) {
+          rgbChannels++;
+        }
+
+        if (rgbChannels >= 2) {
           axisTypes[i] = C_AXIS;
           continue;
         }

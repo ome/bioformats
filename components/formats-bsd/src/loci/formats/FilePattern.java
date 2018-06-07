@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,15 +37,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import loci.common.DataTools;
 import loci.common.Location;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a collection of files meant to be part of the same
@@ -96,10 +92,6 @@ import org.slf4j.LoggerFactory;
 public class FilePattern {
 
   // -- Constants --
-
-  /** Logger for this class. */
-  private static final Logger LOGGER =
-    LoggerFactory.getLogger(FilePattern.class);
 
   // -- Fields --
 
@@ -488,7 +480,7 @@ public class FilePattern {
       q++;
     }
 
-    StringBuffer sb = new StringBuffer(dir);
+    final StringBuilder sb = new StringBuilder(dir);
 
     for (int i=0; i<q; i++) {
       // Get the list of matching files. For instance, if name is
@@ -594,7 +586,7 @@ public class FilePattern {
     String dir =
       names[0].substring(0, names[0].lastIndexOf(File.separator) + 1);
 
-    StringBuffer pattern = new StringBuffer();
+    final StringBuilder pattern = new StringBuilder();
     pattern.append(Pattern.quote(dir));
 
     for (int i=0; i<names.length; i++) {
@@ -646,7 +638,7 @@ public class FilePattern {
     String[] nameList)
   {
     String baseSuffix = base.substring(base.lastIndexOf(File.separator) + 1);
-    int dot = baseSuffix.indexOf(".");
+    int dot = baseSuffix.indexOf('.');
     if (dot < 0) baseSuffix = "";
     else baseSuffix = baseSuffix.substring(dot + 1);
 
@@ -660,7 +652,7 @@ public class FilePattern {
       int start = pattern.lastIndexOf(File.separator) + 1;
       if (start < 0) start = 0;
       String patternSuffix = pattern.substring(start);
-      dot = patternSuffix.indexOf(".");
+      dot = patternSuffix.indexOf('.');
       if (dot < 0) patternSuffix = "";
       else patternSuffix = patternSuffix.substring(dot + 1);
 
@@ -735,7 +727,7 @@ public class FilePattern {
     }
     String sb = b.toString();
     String se = e.toString();
-    StringBuffer bounds = new StringBuffer("<");
+    final StringBuilder bounds = new StringBuilder("<");
     if (fixed) {
       int zeroes = se.length() - sb.length();
       for (int i=0; i<zeroes; i++) bounds.append("0");

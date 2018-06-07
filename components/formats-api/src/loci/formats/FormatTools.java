@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,8 +34,12 @@ package loci.formats;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import loci.common.Constants;
 import loci.common.DateTools;
@@ -52,6 +56,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
@@ -200,45 +205,99 @@ public final class FormatTools {
 
   // -- Constants - versioning --
 
-  public static final Properties VERSION_PROPERTIES = loadProperties();
+  public static final Properties VERSION_PROPERTIES = null;
 
-  /** Current VCS revision. */
-  public static final String VCS_REVISION =
-    VERSION_PROPERTIES.getProperty("vcs.revision");
+  /** Current VCS revision.
+   */
+  public static final String VCS_REVISION;
 
-  /** Current VCS revision (short form). */
-  public static final String VCS_SHORT_REVISION =
-    VERSION_PROPERTIES.getProperty("vcs.shortrevision");
+  /** Current VCS revision (short form).
+   * @deprecated Use the general {@link #VCS_REVISION} field.
+   */
+  @Deprecated
+  public static final String VCS_SHORT_REVISION;
 
   /** Date on which this release was built. */
-  public static final String DATE = VERSION_PROPERTIES.getProperty("date");
+  public static final String DATE;
 
   /** Year in which this release was built. */
-  public static final String YEAR = VERSION_PROPERTIES.getProperty("year");
+  public static final String YEAR;
 
   /** Version number of this release. */
-  public static final String VERSION =
-    VERSION_PROPERTIES.getProperty("release.version");
+  public static final String VERSION;
 
   /** Value to use when setting creator/software fields in exported files. */
-  public static final String CREATOR = "OME Bio-Formats " + VERSION;
+  public static final String CREATOR;
 
-  public static final String PROPERTY_FILE = "version.properties";
+  /**
+   * @deprecated The property file is no longer used.
+   */
+  @Deprecated
+  public static final String PROPERTY_FILE = null;
 
+  /**
+   * @deprecated This method should no longer be used.  The properties
+   * are now obtained from the jar manifest.
+   */
+  @Deprecated
   static Properties loadProperties() {
     Properties properties = new Properties();
-    try {
-      InputStream propertyFile = Class.forName(
-        "loci.formats.FormatTools").getResourceAsStream(PROPERTY_FILE);
-      properties.load(propertyFile);
-    }
-    catch (ClassNotFoundException e) {
-      LOGGER.debug("Failed to load version properties", e);
-    }
-    catch (IOException e) {
-      LOGGER.debug("Failed to load version properties", e);
-    }
+    LOGGER.debug("loadProperties() is deprecated");
     return properties;
+  }
+
+  private static Manifest loadManifest() {
+    String className = FormatTools.class.getSimpleName() + ".class";
+    String classPath = FormatTools.class.getResource(className).toString();
+    if (!classPath.startsWith("jar")) {
+      return null;
+    }
+
+    String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) +
+      "/META-INF/MANIFEST.MF";
+
+    try{
+      Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+      return manifest;
+    }
+    catch (MalformedURLException exc) {
+    }
+    catch (IOException exc) {
+    }
+
+    return null;
+  }
+
+  static
+  {
+    Manifest manifest = loadManifest();
+    Attributes attr;
+
+    if(manifest != null) {
+      attr = manifest.getMainAttributes();
+    } else {
+      attr = new Attributes();
+    }
+
+    if (attr.getValue("Implementation-Version") != null) {
+      VERSION = attr.getValue("Implementation-Version");
+    } else {
+      VERSION = "(unknown version)";
+    }
+    CREATOR = "OME Bio-Formats " + VERSION;
+    if (attr.getValue("Implementation-Build") != null) {
+      VCS_REVISION = attr.getValue("Implementation-Build");
+    } else {
+      VCS_REVISION = "(unknown revision)";
+    }
+    VCS_SHORT_REVISION = VCS_REVISION;
+    if (attr.getValue("Implementation-Date") != null) {
+      DATE = attr.getValue("Implementation-Date");
+      YEAR = DATE.substring(DATE.lastIndexOf(' ') + 1);
+    } else {
+      DATE = "(unknown date)";
+      YEAR = "(unknown year)";
+    }
   }
 
   // -- Constants - domains --
@@ -315,15 +374,15 @@ public final class FormatTools {
 
   /** URL of Bio-Formats web page. */
   public static final String URL_BIO_FORMATS =
-    "http://www.openmicroscopy.org/site/products/bio-formats";
+    "https://www.openmicroscopy.org/bio-formats";
 
   /** URL of 'Bio-Formats as a Java Library' web page. */
   public static final String URL_BIO_FORMATS_LIBRARIES =
-    "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html";
+    "https://docs.openmicroscopy.org/bio-formats/" + VERSION + "/developers/java-library.html";
 
   /** URL of OME-TIFF web page. */
   public static final String URL_OME_TIFF =
-    "http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/";
+    "https://docs.openmicroscopy.org/latest/ome-model/ome-tiff/";
 
   // -- Constructor --
 
@@ -394,9 +453,9 @@ public final class FormatTools {
     if (!order.startsWith("XY") && !order.startsWith("YX")) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
-    int iz = order.indexOf("Z") - 2;
-    int ic = order.indexOf("C") - 2;
-    int it = order.indexOf("T") - 2;
+    int iz = order.indexOf('Z') - 2;
+    int ic = order.indexOf('C') - 2;
+    int it = order.indexOf('T') - 2;
     if (iz < 0 || iz > 2 || ic < 0 || ic > 2 || it < 0 || it > 2) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
@@ -544,9 +603,9 @@ public final class FormatTools {
     if (!order.startsWith("XY") && !order.startsWith("YX")) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
-    int iz = order.indexOf("Z") - 2;
-    int ic = order.indexOf("C") - 2;
-    int it = order.indexOf("T") - 2;
+    int iz = order.indexOf('Z') - 2;
+    int ic = order.indexOf('C') - 2;
+    int it = order.indexOf('T') - 2;
     if (iz < 0 || iz > 2 || ic < 0 || ic > 2 || it < 0 || it > 2) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
@@ -1026,11 +1085,30 @@ public final class FormatTools {
   public static String getFilename(int series, int image, IFormatReader r,
     String pattern) throws FormatException, IOException
   {
-    MetadataStore store = r.getMetadataStore();
-    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
-      (MetadataRetrieve) store : new DummyMetadata();
+    return getFilename(series, image, r, pattern, false);
+  }
 
-    String filename = pattern.replaceAll(SERIES_NUM, String.valueOf(series));
+  /**
+   * @throws FormatException Never actually thrown.
+   * @throws IOException Never actually thrown.
+   */
+  public static String getFilename(int series, int image, IFormatReader r,
+      String pattern, boolean padded) throws FormatException, IOException
+  {
+     MetadataStore store = r.getMetadataStore();
+     MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
+       (MetadataRetrieve) store : new DummyMetadata();
+     return getFilename(series, image, retrieve, pattern, padded);
+  }
+
+  public static String getFilename(int series, int image, MetadataRetrieve retrieve,
+      String pattern, boolean padded) throws FormatException, IOException
+  {
+    String sPlaces = "%d";
+    if (padded) {
+      sPlaces = "%0" + String.valueOf(retrieve.getImageCount()).length() + "d";
+    }
+    String filename = pattern.replaceAll(SERIES_NUM, String.format(sPlaces, series));
 
     String imageName = retrieve.getImageName(series);
     if (imageName == null) imageName = "Series" + series;
@@ -1039,12 +1117,23 @@ public final class FormatTools {
 
     filename = filename.replaceAll(SERIES_NAME, imageName);
 
-    r.setSeries(series);
-    int[] coordinates = r.getZCTCoords(image);
+    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
+    int sizeC = retrieve.getChannelCount(series);
+    int sizeT = retrieve.getPixelsSizeT(series).getValue();
+    int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
+    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, image);
 
-    filename = filename.replaceAll(Z_NUM, String.valueOf(coordinates[0]));
-    filename = filename.replaceAll(T_NUM, String.valueOf(coordinates[2]));
-    filename = filename.replaceAll(CHANNEL_NUM, String.valueOf(coordinates[1]));
+    String zPlaces = "%d";
+    String tPlaces = "%d";
+    String cPlaces = "%d";
+    if (padded) {
+      zPlaces = "%0" + String.valueOf(sizeZ).length() + "d";
+      tPlaces = "%0" + String.valueOf(sizeT).length() + "d";
+      cPlaces = "%0" + String.valueOf(sizeC).length() + "d";
+    }
+    filename = filename.replaceAll(Z_NUM, String.format(zPlaces, coordinates[0]));
+    filename = filename.replaceAll(T_NUM, String.format(tPlaces, coordinates[2]));
+    filename = filename.replaceAll(CHANNEL_NUM, String.format(cPlaces, coordinates[1]));
 
     String channelName = retrieve.getChannelName(series, coordinates[1]);
     if (channelName == null) channelName = String.valueOf(coordinates[1]);
@@ -1221,7 +1310,10 @@ public final class FormatTools {
       r.setVar("thumbSizeX", reader.getThumbSizeX());
       r.setVar("thumbSizeY", reader.getThumbSizeY());
       r.setVar("little", reader.isLittleEndian());
-      r.exec("img = AWTImageTools.openImage(plane, reader, sizeX, sizeY)");
+
+      // always normalize floating point images, otherwise scaling will fail
+      r.setVar("normal", true);
+      r.exec("img = AWTImageTools.openImage(plane, reader, sizeX, sizeY, normal)");
       r.exec("img = AWTImageTools.makeUnsigned(img)");
       r.exec("thumb = AWTImageTools.scale(img, thumbSizeX, thumbSizeY, false)");
       bytes = (byte[][]) r.exec("AWTImageTools.getPixelBytes(thumb, little)");
@@ -1233,7 +1325,7 @@ public final class FormatTools {
     if (bytes.length == 1) return bytes[0];
     int rgbChannelCount = reader.getRGBChannelCount();
     byte[] rtn = new byte[rgbChannelCount * bytes[0].length];
-    
+
     if (!reader.isInterleaved()) {
       for (int i=0; i<rgbChannelCount; i++) {
         System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
@@ -1242,7 +1334,7 @@ public final class FormatTools {
     else {
       int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
 
-      for (int i=0; i<bytes[0].length/bpp; i+=bpp) {
+      for (int i=0; i<bytes[0].length; i+=bpp) {
         for (int j=0; j<rgbChannelCount; j++) {
           System.arraycopy(bytes[j], i, rtn, (i * rgbChannelCount) + j * bpp, bpp);
         }

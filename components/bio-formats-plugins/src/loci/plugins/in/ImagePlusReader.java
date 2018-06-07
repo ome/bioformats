@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,26 +40,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.Region;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.common.StatusReporter;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.Modulo;
+import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.IMetadata;
-import loci.formats.services.OMEXMLService;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.plugins.Slicer;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImageProcessorReader;
+import loci.plugins.util.LociPrefs;
 import loci.plugins.util.LuraWave;
 import loci.plugins.util.VirtualImagePlus;
+import ome.units.UNITS;
+import ome.units.quantity.Time;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * A high-level reader for {@link ij.ImagePlus} objects.
@@ -298,8 +303,11 @@ public class ImagePlusReader implements StatusReporter {
     // configure image
 
     // place metadata key/value pairs in ImageJ's info field
-    final String metadata = process.getOriginalMetadata().toString();
-    imp.setProperty("Info", metadata);
+    // if concatenating images only store metadata on first series
+    if (!options.isConcatenate() || s == 0) {
+      final String metadata = process.getOriginalMetadata().toString();
+      imp.setProperty("Info", metadata);
+    }
     imp.setProperty(PROP_SERIES, s);
 
     // retrieve the spatial calibration information, if available
@@ -331,8 +339,7 @@ public class ImagePlusReader implements StatusReporter {
     final BFVirtualStack virtualStack = new BFVirtualStack(options.getId(),
       reader, false, false, false);
     for (int i=0; i<imageCount; i++) {
-      final String label = constructSliceLabel(i,
-        reader, meta, s, zCount, cCount, tCount);
+      String label = constructSliceLabel(i, reader, meta, s, zCount, cCount, tCount);
       virtualStack.addSlice(label);
     }
 
@@ -382,8 +389,7 @@ public class ImagePlusReader implements StatusReporter {
         throw new FormatException("Cannot read plane #" + i);
       }
       // generate a label for ith plane
-      final String label = constructSliceLabel(i,
-        reader, meta, s, zCount, cCount, tCount);
+      String label = constructSliceLabel(i, reader, meta, s, zCount, cCount, tCount);
 
       for (ImageProcessor ip : p) {
         procs.add(ip);
@@ -550,7 +556,7 @@ public class ImagePlusReader implements StatusReporter {
       title = fp.getPattern();
       if (title == null) {
         title = file;
-        if (title.indexOf(".") != -1) {
+        if (title.indexOf('.') != -1) {
           title = title.substring(0, title.lastIndexOf("."));
         }
       }
@@ -573,61 +579,128 @@ public class ImagePlusReader implements StatusReporter {
     IMetadata meta, int series, int zCount, int cCount, int tCount)
   {
     r.setSeries(series);
+    String sliceLabelPattern = LociPrefs.getSliceLabelPattern();
 
-    final int[] zct = r.getZCTCoords(ndx);
-    final int sizeC = r.getSizeC();
-    final StringBuffer sb = new StringBuffer();
+    String order = r.getDimensionOrder();
+    int sizeC = r.getEffectiveSizeC();
+    int sizeT = r.getSizeT();
+    int sizeZ = r.getSizeZ();
+    int seriesCount = r.getImageCount();
+    int indexBase = LociPrefs.getSliceLabelBaseIndex();
+    int[] coordinates = FormatTools.getZCTCoords(order, sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, ndx);
 
-    int[] subC;
-    String[] subCTypes;
-    Modulo moduloC = r.getModuloC();
-    if (moduloC.length() > 1) {
-      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
-      subCTypes = new String[] {moduloC.parentType, moduloC.type};
-    } else {
-      subC = new int[] {r.getSizeC()};
-      subCTypes = new String[] {FormatTools.CHANNEL};
-    }
+    MetadataStore store = r.getMetadataStore();
+    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ? (MetadataRetrieve) store : new DummyMetadata();
+    String filename = sliceLabelPattern.replaceAll(FormatTools.SERIES_NUM, String.format("%d", series));
 
-    boolean first = true;
-    if (cCount > 1) {
-      if (first) first = false;
-      else sb.append("; ");
-      int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
+    String imageName = retrieve.getImageName(series);
+    if (imageName == null) imageName = "Series" + series;
+    filename = sliceLabelPattern;
+    
+    filename = filename.replaceAll(FormatTools.SERIES_NUM, String.format("%d", series));
+    filename = filename.replaceAll(FormatTools.SERIES_NAME, imageName);
+    if (sizeC > 1) {
+      int[] subC;
+      String[] subCTypes;
+      Modulo moduloC = r.getModuloC();
+      if (moduloC.length() > 1) {
+        subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
+        subCTypes = new String[] {moduloC.parentType, moduloC.type};
+      } else {
+        subC = new int[] {r.getSizeC()};
+        subCTypes = new String[] {FormatTools.CHANNEL};
+      }
+      int[] subCPos = FormatTools.rasterToPosition(subC, coordinates[1]);
+      StringBuffer channelString = new StringBuffer();
       for (int i=0; i<subC.length; i++) {
-        boolean ch =
-          subCTypes[i] == null || FormatTools.CHANNEL.equals(subCTypes[i]);
-        sb.append(ch ? "c" : subCTypes[i]);
-        sb.append(":");
-        sb.append(subCPos[i] + 1);
-        sb.append("/");
-        sb.append(subC[i]);
-        if (i < subC.length - 1) sb.append(", ");
+        boolean ch = subCTypes[i] == null || FormatTools.CHANNEL.equals(subCTypes[i]);
+        channelString.append(ch ? "c" : subCTypes[i]);
+        channelString.append(":");
+        channelString.append(subCPos[i] + 1);
+        channelString.append("/");
+        channelString.append(subC[i]);
+        if (i < subC.length - 1) channelString.append(", ");
+      }
+      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, channelString.toString() + " ");
+
+      int channelCount = retrieve.getChannelCount(series);
+      if (coordinates[1] < channelCount) {
+        String channelName = retrieve.getChannelName(series, coordinates[1]);
+        if (channelName == null) channelName = String.valueOf(coordinates[1]);
+        filename = filename.replaceAll(FormatTools.CHANNEL_NAME, channelName);
+      }
+      else {
+        filename = filename.replaceAll(FormatTools.CHANNEL_NAME, String.valueOf(coordinates[1]));
       }
     }
-    if (zCount > 1) {
-      if (first) first = false;
-      else sb.append("; ");
-      sb.append("z:");
-      sb.append(zct[0] + 1);
-      sb.append("/");
-      sb.append(r.getSizeZ());
+    else {
+      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "");
+      filename = filename.replaceAll(FormatTools.CHANNEL_NAME, "");
     }
-    if (tCount > 1) {
-      if (first) first = false;
-      else sb.append("; ");
-      sb.append("t:");
-      sb.append(zct[2] + 1);
-      sb.append("/");
-      sb.append(r.getSizeT());
+    if (sizeZ > 1) {
+      filename = filename.replaceAll(FormatTools.Z_NUM, "z:" + String.format("%d", coordinates[0] + 1) + "/" + String.format("%d", sizeZ) + " ");
     }
-    // put image name at the end, in case it is long
-    String imageName = meta.getImageName(series);
-    if (imageName != null && !imageName.trim().equals("")) {
-      sb.append(" - ");
-      sb.append(imageName);
+    else {
+      filename = filename.replaceAll(FormatTools.Z_NUM, "");
     }
-    return sb.toString();
+    if (sizeT > 1) {
+      filename = filename.replaceAll(FormatTools.T_NUM, "t:" + String.format("%d", coordinates[2] + 1) + "/" + String.format("%d", sizeT) + " ");
+    }
+    else {
+      filename = filename.replaceAll(FormatTools.T_NUM, "");
+    }
+
+    Timestamp timestamp = retrieve.getImageAcquisitionDate(series);
+    long stamp = 0;
+    String date = null;
+    if (timestamp != null) {
+      date = timestamp.getValue();
+      if (retrieve.getPlaneCount(series) > ndx) {
+        Time deltaT = retrieve.getPlaneDeltaT(series, ndx);
+        if (deltaT != null) {
+          stamp = (long) (deltaT.value(UNITS.SECOND).doubleValue() * 1000);
+        }
+      }
+      stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
+    }
+    else {
+      stamp = System.currentTimeMillis();
+    }
+    date = DateTools.convertDate(stamp, (int) DateTools.UNIX_EPOCH);
+
+    filename = filename.replaceAll(FormatTools.TIMESTAMP, date);
+    return filename;
+  }
+
+  private static String[] substringsBetween(String str, String open, String close) {
+    if (str == null || open == null || close == null || open.length() == 0 || close.length() == 0) {
+      return null;
+    }
+    int strLen = str.length();
+    if (strLen == 0) {
+      return new String [0];
+    }
+    int closeLen = close.length();
+    int openLen = open.length();
+    List<String> list = new ArrayList<String>();
+    int pos = 0;
+    while (pos < (strLen - closeLen)) {
+      int start = str.indexOf(open, pos);
+      if (start < 0) {
+        break;
+      }
+      start += openLen;
+      int end = str.indexOf(close, start);
+      if (end < 0) {
+        break;
+      }
+      list.add(str.substring(start, end));
+      pos = end + closeLen;
+    }
+    if (list.isEmpty()) {
+      return null;
+    } 
+    return (String[]) list.toArray(new String [list.size()]);
   }
 
   private static void saveLUTs(ImagePlus imp, List<LUT> luts) {

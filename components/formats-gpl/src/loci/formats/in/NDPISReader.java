@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.FormatReader;
 import loci.formats.ChannelSeparator;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -38,11 +39,19 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
+
+
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+
 
 /**
  * NDPISReader is the file format reader for Hamamatsu .ndpis files.
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
+ * @author Manuel Stritt (manuel.stritt at actelion.com)
  */
 public class NDPISReader extends FormatReader {
 
@@ -50,6 +59,9 @@ public class NDPISReader extends FormatReader {
 
   private String[] ndpiFiles;
   private ChannelSeparator[] readers;
+  private int[] bandUsed;
+  private static final int TAG_CHANNEL = 65434;
+  private static final int TAG_EMISSION_WAVELENGTH = 65451;
 
   // -- Constructor --
 
@@ -100,11 +112,9 @@ public class NDPISReader extends FormatReader {
     int[] zct = getZCTCoords(no);
     int channel = zct[1];
     readers[channel].setId(ndpiFiles[channel]);
-    readers[channel].setSeries(getSeries());
-    readers[channel].setResolution(getResolution());
-    int cIndex = channel < readers[channel].getSizeC() ? channel : 0;
+    readers[channel].setCoreIndex(getCoreIndex());
+    int cIndex = (bandUsed[channel] < readers[channel].getSizeC()) ? bandUsed[channel] : 0;
     int plane = readers[channel].getIndex(zct[0], cIndex, zct[2]);
-
     readers[channel].openBytes(plane, buf, x, y, w, h);
 
     return buf;
@@ -156,7 +166,7 @@ public class NDPISReader extends FormatReader {
     String[] lines = DataTools.readFile(currentId).split("\r\n");
 
     for (String line : lines) {
-      int eq = line.indexOf("=");
+      int eq = line.indexOf('=');
       if (eq < 0) {
         continue;
       }
@@ -166,6 +176,7 @@ public class NDPISReader extends FormatReader {
       if (key.equals("NoImages")) {
         ndpiFiles = new String[Integer.parseInt(value)];
         readers = new ChannelSeparator[ndpiFiles.length];
+
       }
       else if (key.startsWith("Image")) {
         int index = Integer.parseInt(key.replaceAll("Image", ""));
@@ -175,7 +186,8 @@ public class NDPISReader extends FormatReader {
       }
     }
 
-    readers[0].setMetadataStore(getMetadataStore());
+    MetadataStore store = makeFilterMetadata();
+    readers[0].getReader().setMetadataStore(store);
     readers[0].setId(ndpiFiles[0]);
 
     core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadataList());
@@ -186,8 +198,35 @@ public class NDPISReader extends FormatReader {
       ms.imageCount = ms.sizeC * ms.sizeZ * ms.sizeT;
     }
 
-    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+
+    bandUsed = new int[ndpiFiles.length];
+    IFD ifd;
+    for (int c=0; c<readers.length; c++) {
+      // populate channel names based on IFD entry
+      try (RandomAccessInputStream in = new RandomAccessInputStream(ndpiFiles[c])) {
+        TiffParser tp = new TiffParser(in);
+        ifd = tp.getIFDs().get(0);
+      }
+
+      String channelName = ifd.getIFDStringValue(TAG_CHANNEL);
+      Float wavelength = (Float) ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
+
+      store.setChannelName(channelName, 0, c);
+      store.setChannelEmissionWavelength(new Length(wavelength, UNITS.NANOMETER), 0, c);
+
+      bandUsed[c] = 0;
+      if (ifd.getSamplesPerPixel() >= 3) {
+        // define band used based on emission wavelength
+        // wavelength = 0  Colour Image
+        // 380 =< wavelength <= 490 Blue
+        // 490 < wavelength <= 580 Green
+        // 580 < wavelength <= 780 Red
+        if (380 < wavelength && wavelength <= 490) bandUsed[c] = 2;
+        else if (490 < wavelength && wavelength <= 580) bandUsed[c] = 1;
+        else if (580 < wavelength && wavelength <= 780) bandUsed[c] = 0;
+      }
+    }
   }
 
 }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,7 +43,6 @@ import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**
@@ -131,7 +130,7 @@ public class MINCReader extends FormatReader {
 
         for (String key : keys) {
           if (attributes.get(key) instanceof Object[]) {
-            StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             Object[] o = (Object[]) attributes.get(key);
             for (Object q : o) {
               sb.append(q.toString());
@@ -154,14 +153,30 @@ public class MINCReader extends FormatReader {
         isMINC2 = true;
       }
       m.littleEndian = isMINC2;
-      
+
+      boolean signed = false;
+      if (isMINC2) {
+        Hashtable<String, Object> attrs = netcdf.getVariableAttributes("/minc-2.0/image/0/image");
+        String unsigned = attrs.get("_Unsigned").toString();
+        if (!unsigned.startsWith("true")) {
+          signed = true;
+        }
+      }
+      else {
+        Hashtable<String, Object> attrs = netcdf.getVariableAttributes("/image");
+        String signtype = attrs.get("signtype").toString();
+        if (signtype.startsWith("signed")) {
+          signed = true;
+        }
+      }
+
       if (pixels instanceof byte[][][]) {
-        m.pixelType = FormatTools.UINT8;
+        m.pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
         pixelData = (byte[][][]) pixels;
       }
       else if (pixels instanceof byte[][][][]) {
         byte[][][][] actualPixels = (byte[][][][]) pixels;
-        m.pixelType = FormatTools.UINT8;
+        m.pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
 
         pixelData = new byte[actualPixels.length * actualPixels[0].length][][];
         int nextPlane = 0;
@@ -172,7 +187,7 @@ public class MINCReader extends FormatReader {
         }
       }
       else if (pixels instanceof short[][][]) {
-        m.pixelType = FormatTools.UINT16;
+        m.pixelType = signed ? FormatTools.INT16 : FormatTools.UINT16;
 
         short[][][] s = (short[][][]) pixels;
         pixelData = new byte[s.length][][];
@@ -185,7 +200,7 @@ public class MINCReader extends FormatReader {
         }
       }
       else if (pixels instanceof int[][][]) {
-        m.pixelType = FormatTools.UINT32;
+        m.pixelType = signed ? FormatTools.INT32 : FormatTools.UINT32;
 
         int[][][] s = (int[][][]) pixels;
         pixelData = new byte[s.length][][];
@@ -227,32 +242,46 @@ public class MINCReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    Double physicalX = null;
-    Double physicalY = null;
-    Double physicalZ = null;
+    Length physicalX = null;
+    Length physicalY = null;
+    Length physicalZ = null;
+    Length xPosition = null;
+    Length yPosition = null;
+    Length zPosition = null;
 
     if (isMINC2) {
       Hashtable<String, Object> attrs =
         netcdf.getVariableAttributes("/minc-2.0/dimensions/xspace");
       m.sizeX = Integer.parseInt(attrs.get("length").toString());
       physicalX = getStepSize(attrs);
+      xPosition = getStart(attrs);
 
       attrs = netcdf.getVariableAttributes("/minc-2.0/dimensions/yspace");
       m.sizeY = Integer.parseInt(attrs.get("length").toString());
       physicalY = getStepSize(attrs);
+      yPosition = getStart(attrs);
 
       attrs = netcdf.getVariableAttributes("/minc-2.0/dimensions/zspace");
       m.sizeZ = Integer.parseInt(attrs.get("length").toString());
       physicalZ = getStepSize(attrs);
+      zPosition = getStart(attrs);
     }
     else {
       m.sizeX = netcdf.getDimension("/xspace");
       m.sizeY = netcdf.getDimension("/yspace");
       m.sizeZ = netcdf.getDimension("/zspace");
 
-      physicalX = getStepSize(netcdf.getVariableAttributes("/xspace"));
-      physicalY = getStepSize(netcdf.getVariableAttributes("/yspace"));
-      physicalZ = getStepSize(netcdf.getVariableAttributes("/zspace"));
+      Hashtable<String, Object> attrs = netcdf.getVariableAttributes("/xspace");
+      physicalX = getStepSize(attrs);
+      xPosition = getStart(attrs);
+
+      attrs = netcdf.getVariableAttributes("/yspace");
+      physicalY = getStepSize(attrs);
+      yPosition = getStart(attrs);
+
+      attrs = netcdf.getVariableAttributes("/zspace");
+      physicalZ = getStepSize(attrs);
+      zPosition = getStart(attrs);
     }
 
     try {
@@ -278,33 +307,51 @@ public class MINCReader extends FormatReader {
     addGlobalMeta("Comment", history);
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this,
+      xPosition != null || yPosition != null || zPosition != null);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(history, 0);
 
-      Length sizeX = FormatTools.getPhysicalSizeX(physicalX);
-      Length sizeY = FormatTools.getPhysicalSizeY(physicalY);
-      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalZ);
-      if (sizeX != null) {
-        store.setPixelsPhysicalSizeX(sizeX, 0);
+      if (physicalX != null) {
+        store.setPixelsPhysicalSizeX(physicalX, 0);
       }
-      if (sizeY != null) {
-        store.setPixelsPhysicalSizeY(sizeY, 0);
+      if (physicalY != null) {
+        store.setPixelsPhysicalSizeY(physicalY, 0);
       }
-      if (sizeZ != null) {
-        store.setPixelsPhysicalSizeZ(sizeZ, 0);
+      if (physicalZ != null) {
+        store.setPixelsPhysicalSizeZ(physicalZ, 0);
+      }
+
+      for (int i=0; i<getImageCount(); i++) {
+        if (xPosition != null) {
+          store.setPlanePositionX(xPosition, 0, i);
+        }
+        if (yPosition != null) {
+          store.setPlanePositionY(yPosition, 0, i);
+        }
+        if (zPosition != null) {
+          int z = getZCTCoords(i)[0];
+          Double pos = zPosition.value().doubleValue();
+          if (physicalZ != null && z > 0) {
+            pos += z * physicalZ.value().doubleValue();
+          }
+          store.setPlanePositionZ(FormatTools.createLength(pos, zPosition.unit()), 0, i);
+        }
       }
     }
   }
 
-  private Double getStepSize(Hashtable<String, Object> attrs) {
+  private Length getStepSize(Hashtable<String, Object> attrs) {
     Double stepSize = Double.parseDouble(attrs.get("step").toString());
     String units = attrs.get("units").toString();
-    if (units.equals("mm")) {
-      stepSize *= 1000.0;
-    }
-    return stepSize;
+    return FormatTools.getPhysicalSize(stepSize, units);
+  }
+
+  private Length getStart(Hashtable<String, Object> attrs) {
+    Double start = Double.parseDouble(attrs.get("start").toString());
+    String units = attrs.get("units").toString();
+    return FormatTools.getStagePosition(start, units);
   }
 
 }

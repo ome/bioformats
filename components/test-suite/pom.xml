@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.2.1-SNAPSHOT</version>
+    <version>5.9.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -16,7 +16,7 @@
 
   <name>Bio-Formats testing framework</name>
   <description>A framework for manual and automated testing, in particular data-driven Bio-Formats testing.</description>
-  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
+  <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>
@@ -29,28 +29,28 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-common</artifactId>
+      <version>${ome-common.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-xml</artifactId>
+      <version>${ome-model.version}</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>formats-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>formats-gpl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>formats-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>ome-xml</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>formats-bsd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-gpl</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -138,7 +138,7 @@
       <id>melissa</id>
       <name>Melissa Linkert</name>
       <email>melissa@glencoesoftware.com</email>
-      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <url>https://www.glencoesoftware.com/melissa-linkert.html</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
@@ -146,22 +146,6 @@
         <role>developer</role>
       </roles>
       <timezone>-6</timezone>
-      <properties>
-        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
-      </properties>
     </developer>
   </developers>
-
-  <!-- NB: for project parent, in case of partial checkout -->
-  <repositories>
-    <repository>
-      <id>ome.releases</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
-    </repository>
-    <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
-  </repositories>
-
 </project>

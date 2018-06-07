@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,7 +34,6 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.io.IOException;
-import java.util.HashMap;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -293,6 +292,40 @@ public abstract class FormatWriter extends FormatHandler
     this.sequential = sequential;
   }
 
+  /* @see IFormatWriter#getTileSizeX() */
+  @Override
+  public int getTileSizeX() throws FormatException {
+    PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
+    if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to get tile size.");
+    return width.getValue();
+  }
+
+  /* @see IFormatWriter#setTileSizeX(int) */
+  @Override
+  public int setTileSizeX(int tileSize) throws FormatException {
+    PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
+    if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to set tile size.");
+    if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
+    return width.getValue();
+  }
+
+  /* @see IFormatWriter#getTileSizeY() */
+  @Override
+  public int getTileSizeY() throws FormatException {
+    PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
+    if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to get tile size.");
+    return height.getValue();
+  }
+
+  /* @see IFormatWriter#setTileSizeY(int) */
+  @Override
+  public int setTileSizeY(int tileSize) throws FormatException {
+    PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
+    if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to set tile size.");
+    if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
+    return height.getValue();
+  }
+
   // -- IFormatHandler API methods --
 
   /**
@@ -311,7 +344,7 @@ public abstract class FormatWriter extends FormatHandler
     if (out != null) {
       out.close();
     }
-    out = new RandomAccessOutputStream(currentId);
+    out = createOutputStream();
 
     MetadataRetrieve r = getMetadataRetrieve();
     initialized = new boolean[r.getImageCount()][];
@@ -453,6 +486,10 @@ public abstract class FormatWriter extends FormatHandler
     int c = r.getPixelsSizeC(series).getValue().intValue();
     c /= r.getChannelSamplesPerPixel(series, 0).getValue().intValue();
     return z * c * t;
+  }
+
+  protected RandomAccessOutputStream createOutputStream() throws IOException {
+    return new RandomAccessOutputStream(currentId);
   }
 
 }

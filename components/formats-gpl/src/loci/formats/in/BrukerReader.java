@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -25,7 +25,6 @@
 
 package loci.formats.in;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -272,7 +271,7 @@ public class BrukerReader extends FormatReader {
 
       for (int i=0; i<lines.length; i++) {
         String line = lines[i];
-        int index = line.indexOf("=");
+        int index = line.indexOf('=');
         if (index >= 0) {
           String key = line.substring(0, index);
           String value = line.substring(index + 1);
@@ -330,7 +329,7 @@ public class BrukerReader extends FormatReader {
 
       for (int i=0; i<lines.length; i++) {
         String line = lines[i];
-        int index = line.indexOf("=");
+        int index = line.indexOf('=');
         if (index >= 0) {
           String key = line.substring(0, index);
           String value = line.substring(index + 1);

@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -56,7 +56,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.Modulo;
 import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.meta.ModuloAnnotation;
@@ -65,6 +64,8 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 
 import ome.units.quantity.Length;
+
+import ome.xml.meta.MetadataConverter;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
@@ -196,6 +197,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   @Override
   public String transformToLatestVersion(String xml) throws ServiceException {
     String version = getOMEXMLVersion(xml);
+    if (null == version) {
+      throw new ServiceException("Could not get OME-XML version");
+    }
     if (version.equals(getLatestVersion())) return xml;
     LOGGER.debug("Attempting to update XML with version: {}", version);
     LOGGER.trace("Initial dump: {}", xml);
@@ -553,6 +557,48 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         return false;
       }
     }
+
+    // remove any Modulo annotations for validation
+    // the "Label" attribute on Modulo conflicts with the "Label" shape
+    // and will cause validation errors
+
+    try {
+      OMEXMLMetadata omexml = createOMEXMLMetadata(xml);
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexml.getRoot();
+      for (int image=0; image<root.sizeOfImageList(); image++) {
+        Image img = root.getImage(image);
+
+        for (int i=0; i<img.sizeOfLinkedAnnotationList(); i++) {
+          Annotation annotation = img.getLinkedAnnotation(i);
+          if (!(annotation instanceof XMLAnnotation)) {
+            continue;
+          }
+
+          String annotationXML = ((XMLAnnotation) annotation).getValue();
+
+          Document annotationRoot = XMLTools.parseDOM(annotationXML);
+          NodeList nodes = annotationRoot.getElementsByTagName("ModuloAlongZ");
+
+          if (nodes.getLength() > 0) {
+            ((XMLAnnotation) annotation).setValue("");
+          }
+          nodes = annotationRoot.getElementsByTagName("ModuloAlongC");
+          if (nodes.getLength() > 0) {
+            ((XMLAnnotation) annotation).setValue("");
+          }
+          nodes = annotationRoot.getElementsByTagName("ModuloAlongT");
+          if (nodes.getLength() > 0) {
+            ((XMLAnnotation) annotation).setValue("");
+          }
+        }
+      }
+      omexml.setRoot(root);
+      xml = getOMEXML(omexml);
+    }
+    catch (ServiceException|ParserConfigurationException|SAXException|IOException e) {
+      LOGGER.warn("Could not remove Modulo annotations", e);
+    }
+
     return XMLTools.validateXML(xml, "OME-XML", SCHEMA_CLASSPATH_READER);
   }
 

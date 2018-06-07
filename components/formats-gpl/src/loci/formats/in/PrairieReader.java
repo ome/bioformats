@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -150,7 +150,7 @@ public class PrairieReader extends FormatReader {
     Location parent = file.getParentFile();
 
     String prefix = file.getName();
-    if (prefix.indexOf(".") != -1) {
+    if (prefix.indexOf('.') != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
     }
 
@@ -162,7 +162,7 @@ public class PrairieReader extends FormatReader {
     // check for appropriately named XML file
 
     Location xml = new Location(parent, prefix + ".xml");
-    while (!xml.exists() && prefix.indexOf("_") != -1) {
+    while (!xml.exists() && prefix.indexOf('_') != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("_"));
       xml = new Location(parent, prefix + ".xml");
     }

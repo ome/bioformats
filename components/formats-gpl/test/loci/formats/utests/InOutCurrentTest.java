@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,10 +51,7 @@ import static org.testng.AssertJUnit.*;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.Arc;
-import ome.xml.model.BinaryFile;
 import ome.xml.model.BooleanAnnotation;
-import ome.xml.model.DoubleAnnotation;
-import ome.xml.model.External;
 import ome.xml.model.Filament;
 import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.ListAnnotation;
@@ -63,7 +60,6 @@ import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
 import ome.xml.model.Objective;
-import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Reference;
 import ome.xml.model.CommentAnnotation;
 import ome.xml.model.TiffData;
@@ -94,10 +90,8 @@ import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
 
-import ome.units.quantity.Power;
 import ome.units.UNITS;
 
 import org.testng.annotations.BeforeClass;

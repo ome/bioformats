@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,7 +30,6 @@ import java.io.IOException;
 import ome.xml.model.primitives.Timestamp;
 
 import loci.common.DateTools;
-import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -39,9 +38,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-
-import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -168,7 +164,7 @@ public class GatanDM2Reader extends FormatReader {
       }
       if (strlen < 0 || strlen + in.getFilePointer() >= in.length()) break;
       String label = in.readString(strlen);
-      StringBuffer value = new StringBuffer();
+      final StringBuilder value = new StringBuilder();
 
       int block = in.readInt();
       if (block == 5) {
@@ -284,7 +280,7 @@ public class GatanDM2Reader extends FormatReader {
 
       if (label.equals("Acquisition Date")) {
         date = value.toString();
-        if (date != null && date.indexOf("/") != -1) {
+        if (date != null && date.indexOf('/') != -1) {
           // if the year is stored as a single digit, then it will be parsed
           // literally, e.g. '7' -> '0007', when we want '7' -> '2007'
           String year = date.substring(date.lastIndexOf("/") + 1);

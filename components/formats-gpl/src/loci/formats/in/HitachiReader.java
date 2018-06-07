@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,9 +50,7 @@ import loci.formats.meta.MetadataStore;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
-import ome.units.quantity.Length;
 
 /**
  * HitachiReader is the file format reader for S-4800 files.
@@ -98,7 +96,7 @@ public class HitachiReader extends FormatReader {
     }
 
     String base = name;
-    if (base.indexOf(".") >= 0) {
+    if (base.indexOf('.') >= 0) {
       base = base.substring(0, base.lastIndexOf("."));
     }
 
@@ -183,7 +181,7 @@ public class HitachiReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "txt")) {
       String base = id;
-      if (base.indexOf(".") >= 0) {
+      if (base.indexOf('.') >= 0) {
         base = base.substring(0, base.lastIndexOf("."));
       }
 
@@ -293,7 +291,7 @@ public class HitachiReader extends FormatReader {
     }
 
     if (workingDistance != null) {
-      int end = workingDistance.indexOf(" ");
+      int end = workingDistance.indexOf(' ');
       if (end < 0) end = workingDistance.length();
 
       workingDistance = workingDistance.substring(0, end);

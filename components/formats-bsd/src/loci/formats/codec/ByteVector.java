@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,64 +38,53 @@ package loci.formats.codec;
  * @author Wayne Rasband wsr at nih.gov
  */
 public class ByteVector {
-  private byte[] data;
-  private int size;
+  private ome.codecs.ByteVector vector;
 
   public ByteVector() {
-    data = new byte[10];
-    size = 0;
+    vector = new ome.codecs.ByteVector();
   }
 
   public ByteVector(int initialSize) {
-    data = new byte[initialSize];
-    size = 0;
+    vector = new ome.codecs.ByteVector(initialSize);
   }
 
   public ByteVector(byte[] byteBuffer) {
-    data = byteBuffer;
-    size = 0;
+    vector = new ome.codecs.ByteVector(byteBuffer);
   }
 
   public void add(byte x) {
-    while (size >= data.length) doubleCapacity();
-    data[size++] = x;
+    this.vector.add(x);
   }
 
   public int size() {
-    return size;
+    return this.vector.size();
   }
 
   public byte get(int index) {
-    return data[index];
+    return this.vector.get(index);
   }
 
-  public void add(byte[] array) { add(array, 0, array.length); }
+  public void add(byte[] array) {
+    this.vector.add(array);
+  }
 
   public void add(byte[] array, int off, int len) {
-    while (data.length < size + len) doubleCapacity();
-    if (len == 1) data[size] = array[off];
-    else if (len < 35) {
-      // for loop is faster for small number of elements
-      for (int i=0; i<len; i++) data[size + i] = array[off + i];
-    }
-    else System.arraycopy(array, off, data, size, len);
-    size += len;
+    this.vector.add(array, off, len);
   }
 
   void doubleCapacity() {
-    byte[] tmp = new byte[data.length*2 + 1];
-    System.arraycopy(data, 0, tmp, 0, data.length);
-    data = tmp;
   }
 
   public void clear() {
-    size = 0;
+    this.vector.clear();
   }
 
   public byte[] toByteArray() {
-    byte[] bytes = new byte[size];
-    System.arraycopy(data, 0, bytes, 0, size);
-    return bytes;
+    return this.vector.toByteArray();
+  }
+
+  ome.codecs.ByteVector getWrapped() {
+    return this.vector;
   }
 
 }

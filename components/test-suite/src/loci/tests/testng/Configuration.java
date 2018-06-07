@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,6 +46,8 @@ import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
 
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
@@ -260,20 +262,23 @@ public class Configuration {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
     String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNIT);
     try {
-      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeXUnits);
+      UnitsLength xUnits = sizeXUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeXUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), xUnits); 
     }
-    catch (NumberFormatException e) {
-      return null;
-    }
+    catch (NumberFormatException e) { }
+    catch (EnumerationException e) { }
+    return null;
   }
 
   public Length getPhysicalSizeY() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
     String sizeYUnits = currentTable.get(PHYSICAL_SIZE_Y_UNIT);
     try {
-      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeYUnits);
+      UnitsLength yUnits = sizeYUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeYUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), yUnits);
     }
     catch (NumberFormatException e) { }
+    catch (EnumerationException e) { }
     return null;
   }
 
@@ -281,11 +286,12 @@ public class Configuration {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
     String sizeZUnits = currentTable.get(PHYSICAL_SIZE_Z_UNIT);
     try {
-      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeZUnits);
+      UnitsLength zUnits = sizeZUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeZUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), zUnits);
     }
-    catch (NumberFormatException e) { 
-      return null;
-    } 
+    catch (NumberFormatException e) { }
+    catch (EnumerationException e) { }
+    return null;
   }
 
   public Time getTimeIncrement() {
@@ -617,17 +623,17 @@ public class Configuration {
           }
           Length xPos = retrieve.getPlanePositionX(series, p);
           if (xPos != null) {
-            seriesTable.put(X_POSITION + p, xPos.value().toString());
+            seriesTable.put(X_POSITION + p, String.valueOf(xPos.value().doubleValue()));
             seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
           }
           Length yPos = retrieve.getPlanePositionY(series, p);
           if (yPos != null) {
-            seriesTable.put(Y_POSITION + p, yPos.value().toString());
+            seriesTable.put(Y_POSITION + p, String.valueOf(yPos.value().doubleValue()));
             seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
           }
           Length zPos = retrieve.getPlanePositionZ(series, p);
           if (zPos != null) {
-            seriesTable.put(Z_POSITION + p, zPos.value().toString());
+            seriesTable.put(Z_POSITION + p, String.valueOf(zPos.value().doubleValue()));
             seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
           }
         }

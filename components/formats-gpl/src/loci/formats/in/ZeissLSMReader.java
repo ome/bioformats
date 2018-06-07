@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -59,7 +59,6 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -291,7 +290,7 @@ public class ZeissLSMReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     TiffParser parser = new TiffParser(stream);
     if (parser.isValidHeader()) {
-      return true;
+      return parser.getIFDOffsets().length > 1;
     }
     stream.seek(4);
     if (stream.readShort() == 0x5374) {
@@ -726,7 +725,7 @@ public class ZeissLSMReader extends FormatReader {
     int instrument = getEffectiveSeries(series);
 
     String imageName = getLSMFileFromSeries(series);
-    if (imageName.indexOf(".") != -1) {
+    if (imageName.indexOf('.') != -1) {
       imageName = imageName.substring(0, imageName.lastIndexOf("."));
     }
     if (imageName.indexOf(File.separator) != -1) {
@@ -1104,6 +1103,23 @@ public class ZeissLSMReader extends FormatReader {
             int green = (color & 0xff00) >> 8;
             int blue = (color & 0xff0000) >> 16;
 
+            // specially handle the case when the stored color is black
+            // if this is not the first channel, copy the color from the
+            // previous channel (necessary for SIM data)
+            // otherwise set the color to white, as this will display better
+            if (red == 0 && green == 0 & blue == 0) {
+              if (i > 0) {
+                red = channelColor[i - 1].getRed();
+                green = channelColor[i - 1].getGreen();
+                blue = channelColor[i - 1].getBlue();
+              }
+              else {
+                red = 255;
+                green = 255;
+                blue = 255;
+              }
+            }
+
             channelColor[i] = new Color(red, green, blue, 255);
 
             for (int j=0; j<256; j++) {
@@ -1437,7 +1453,7 @@ public class ZeissLSMReader extends FormatReader {
         store.setFilterID(id, instrument, nextFilter);
         store.setFilterModel(channel.filter, instrument, nextFilter);
 
-        int space = channel.filter.indexOf(" ");
+        int space = channel.filter.indexOf(' ');
         if (space != -1) {
           String type = channel.filter.substring(0, space).trim();
           if (type.equals("BP")) type = "BandPass";
@@ -1782,7 +1798,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          StringBuffer p = new StringBuffer();
+          StringBuilder p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -1811,7 +1827,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          p = new StringBuffer();
+          p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -1851,7 +1867,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          p = new StringBuffer();
+          p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -2189,7 +2205,7 @@ public class ZeissLSMReader extends FormatReader {
         return in.readDouble();
       case TYPE_ASCII:
         String s = in.readByteToString(dataSize).trim();
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (int i=0; i<s.length(); i++) {
           if (s.charAt(i) >= 10) sb.append(s.charAt(i));
           else break;
@@ -2302,7 +2318,8 @@ public class ZeissLSMReader extends FormatReader {
 
     public void addToHashtable() {
       String prefix = this.getClass().getSimpleName();
-      Integer[] keys = blockData.keySet().toArray(new Integer[0]);
+      Integer[] keys = blockData.keySet().toArray(
+          new Integer[blockData.size()]);
       for (Integer key : keys) {
         if (METADATA_KEYS.get(key) != null) {
           addSeriesMetaList(prefix + " " + METADATA_KEYS.get(key),
@@ -2338,7 +2355,7 @@ public class ZeissLSMReader extends FormatReader {
       description = getStringValue(RECORDING_DESCRIPTION);
       name = getStringValue(RECORDING_NAME);
       binning = getStringValue(RECORDING_CAMERA_BINNING);
-      if (binning != null && binning.indexOf("x") == -1) {
+      if (binning != null && binning.indexOf('x') == -1) {
         if (binning.equals("0")) binning = null;
         else binning += "x" + binning;
       }
@@ -2359,12 +2376,12 @@ public class ZeissLSMReader extends FormatReader {
       String[] tokens = objective.split(" ");
       int next = 0;
       for (; next<tokens.length; next++) {
-        if (tokens[next].indexOf("/") != -1) break;
+        if (tokens[next].indexOf('/') != -1) break;
         correction += tokens[next];
       }
       if (next < tokens.length) {
         String p = tokens[next++];
-        int slash = p.indexOf("/");
+        int slash = p.indexOf('/');
         if (slash > 0) {
           try {
             magnification = new Double(p.substring(0, slash - 1));

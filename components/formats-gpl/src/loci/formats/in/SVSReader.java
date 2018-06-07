@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -47,12 +47,9 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
-import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**
@@ -281,13 +278,13 @@ public class SVSReader extends BaseTiffReader {
         for (String line : lines) {
           tokens = line.split("[|]");
           for (String t : tokens) {
-            if (t.indexOf("=") == -1) {
+            if (t.indexOf('=') == -1) {
               addGlobalMeta("Comment", t);
               comments[i] = t;
             }
             else {
-              key = t.substring(0, t.indexOf("=")).trim();
-              value = t.substring(t.indexOf("=") + 1).trim();
+              key = t.substring(0, t.indexOf('=')).trim();
+              value = t.substring(t.indexOf('=') + 1).trim();
               addSeriesMeta(key, value);
               if (key.equals("MPP")) {
                 pixelSize[i] = FormatTools.getPhysicalSizeX(DataTools.parseDouble(value));

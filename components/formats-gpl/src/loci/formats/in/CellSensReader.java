@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
-import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -47,6 +46,7 @@ import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.LosslessJPEGCodec;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -55,8 +55,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.units.UNITS;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -66,10 +64,14 @@ public class CellSensReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String FAIL_ON_MISSING_KEY = "cellsens.fail_on_missing_ets";
+  public static final boolean FAIL_ON_MISSING_DEFAULT = false;
+
   // Compression types
   private static final int RAW = 0;
   private static final int JPEG = 2;
   private static final int JPEG_2000 = 3;
+  private static final int JPEG_LOSSLESS = 5;
   private static final int PNG = 8;
   private static final int BMP = 9;
 
@@ -402,6 +404,8 @@ public class CellSensReader extends FormatReader {
 
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
 
+  private transient boolean expectETS = false;
+
   // -- Constructor --
 
   /** Constructs a new cellSens reader. */
@@ -411,6 +415,18 @@ public class CellSensReader extends FormatReader {
     suffixSufficient = true;
     datasetDescription = "One .vsi file and an optional directory with a " +
       "similar name that contains at least one subdirectory with .ets files";
+  }
+
+  // -- CellSensReader API methods --
+
+
+  public boolean failOnMissingETS() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       FAIL_ON_MISSING_KEY, FAIL_ON_MISSING_DEFAULT);
+    }
+    return FAIL_ON_MISSING_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -592,6 +608,8 @@ public class CellSensReader extends FormatReader {
       backgroundColor.clear();
       metadataIndex = -1;
       previousTag = 0;
+      expectETS = false;
+      pyramids.clear();
     }
   }
 
@@ -655,6 +673,19 @@ public class CellSensReader extends FormatReader {
     }
     files.add(file.getAbsolutePath());
     usedFiles = files.toArray(new String[files.size()]);
+
+    if (expectETS && files.size() == 1) {
+      String message = "Missing expected .ets files in " + pixelsDir.getAbsolutePath();
+      if (failOnMissingETS()) {
+        throw new FormatException(message);
+      }
+      else {
+        LOGGER.warn(message);
+      }
+    }
+    else if (!expectETS && files.size() > 1) {
+      LOGGER.warn(".ets files present but not expected");
+    }
 
     int seriesCount = files.size();
     core.clear();
@@ -979,6 +1010,10 @@ public class CellSensReader extends FormatReader {
         break;
       case JPEG_2000:
         codec = new JPEG2000Codec();
+        buf = codec.decompress(ets, options);
+        break;
+      case JPEG_LOSSLESS:
+        codec = new LosslessJPEGCodec();
         buf = codec.decompress(ets, options);
         break;
       case PNG:
@@ -1526,17 +1561,21 @@ public class CellSensReader extends FormatReader {
               case PIXEL_INFO_TYPE:
                 int nIntValues = dataSize / 4;
                 int[] intValues = new int[nIntValues];
-                value = nIntValues > 1 ? "(" : "";
+                StringBuilder sb = new StringBuilder();
+                if (nIntValues > 1) {
+                  sb.append("(");
+                }
                 for (int v=0; v<nIntValues; v++) {
                   intValues[v] = vsi.readInt();
-                  value += intValues[v];
+                  sb.append(intValues[v]);
                   if (v < nIntValues - 1) {
-                    value += ", ";
+                    sb.append(", ");
                   }
                 }
                 if (nIntValues > 1) {
-                  value += ")";
+                  sb.append(")");
                 }
+                value = sb.toString();
 
                 if (tag == IMAGE_BOUNDARY) {
                   if (pyramid != null && pyramid.width == null) {
@@ -1558,17 +1597,21 @@ public class CellSensReader extends FormatReader {
               case DOUBLE_4_4:
                 int nDoubleValues = dataSize / 8;
                 double[] doubleValues = new double[nDoubleValues];
-                value = nDoubleValues > 1 ? "(" : "";
+                sb = new StringBuilder();
+                if (nDoubleValues > 1) {
+                  sb.append("(");
+                }
                 for (int v=0; v<nDoubleValues; v++) {
                   doubleValues[v] = vsi.readDouble();
-                  value += doubleValues[v];
+                  sb.append(doubleValues[v]);
                   if (v < nDoubleValues - 1) {
-                    value += ", ";
+                    sb.append(", ");
                   }
                 }
                 if (nDoubleValues > 1) {
-                  value += ")";
+                  sb.append(')');
                 }
+                value = sb.toString();
 
                 if (tag == RWC_FRAME_SCALE) {
                   if (pyramid != null && pyramid.physicalSizeX == null) {
@@ -1693,6 +1736,10 @@ public class CellSensReader extends FormatReader {
           if (tag == DOCUMENT_TIME || tag == CREATION_TIME) {
             value = DateTools.convertDate(
               Long.parseLong(value) * 1000, DateTools.UNIX);
+          }
+
+          if (tag == HAS_EXTERNAL_FILE) {
+            expectETS = Integer.parseInt(value) == 1;
           }
 
           if (tagName != null && populateMetadata) {
@@ -2306,7 +2353,7 @@ public class CellSensReader extends FormatReader {
 
     @Override
     public String toString() {
-      StringBuffer b = new StringBuffer("{");
+      final StringBuilder b = new StringBuilder("{");
       for (int p : coordinate) {
         b.append(p);
         b.append(", ");

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,7 +45,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**
@@ -487,7 +486,7 @@ public class ImarisHDFReader extends FormatReader {
       if (value == null) continue;
       value = value.trim();
 
-      if (name.equals("X") || name.equals("ImageSizeX")) {
+      if (name.equals("X") || (attr.startsWith("DataSet/ResolutionLevel_0") && name.equals("ImageSizeX"))) {
         try {
           ms0.sizeX = Integer.parseInt(value);
         }
@@ -495,7 +494,7 @@ public class ImarisHDFReader extends FormatReader {
           LOGGER.trace("Failed to parse '" + name + "'", e);
         }
       }
-      else if (name.equals("Y") || name.equals("ImageSizeY")) {
+      else if (name.equals("Y") || (attr.startsWith("DataSet/ResolutionLevel_0") && name.equals("ImageSizeY"))) {
         try {
           ms0.sizeY = Integer.parseInt(value);
         }
@@ -503,7 +502,7 @@ public class ImarisHDFReader extends FormatReader {
           LOGGER.trace("Failed to parse '" + name + "'", e);
         }
       }
-      else if (name.equals("Z") || name.equals("ImageSizeZ")) {
+      else if (name.equals("Z") || (attr.startsWith("DataSet/ResolutionLevel_0") && name.equals("ImageSizeZ"))) {
         try {
           ms0.sizeZ = Integer.parseInt(value);
         }
@@ -537,7 +536,7 @@ public class ImarisHDFReader extends FormatReader {
         int slash = attr.indexOf("/", 24);
         int n = Integer.parseInt(attr.substring(24, slash == -1 ?
           attr.length() : slash));
-        if (n == seriesCount) seriesCount++;
+        if (n >= seriesCount) seriesCount = n + 1;
       }
 
       if (attr.startsWith("DataSetInfo/Channel_")) {
@@ -548,7 +547,7 @@ public class ImarisHDFReader extends FormatReader {
           }
         }
 
-        int underscore = attr.indexOf("_") + 1;
+        int underscore = attr.indexOf('_') + 1;
         int cIndex = Integer.parseInt(attr.substring(underscore,
           attr.indexOf("/", underscore)));
 

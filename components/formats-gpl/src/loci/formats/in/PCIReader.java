@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -11,12 +11,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import loci.common.Constants;
-import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -48,7 +47,6 @@ import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.enums.Binning;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -323,15 +321,15 @@ public class PCIReader extends FormatReader {
           String comments = stream.readString((int) stream.length());
           String[] lines = comments.split("\n");
           for (String line : lines) {
-            int eq = line.indexOf("=");
+            int eq = line.indexOf('=');
             if (eq != -1) {
               String key = line.substring(0, eq).trim();
               String value = line.substring(eq + 1).trim();
               addGlobalMeta(key, value);
 
               if (key.equals("factor")) {
-                if (value.indexOf(";") != -1) {
-                  value = value.substring(0, value.indexOf(";"));
+                if (value.indexOf(';') != -1) {
+                  value = value.substring(0, value.indexOf(';'));
                 }
                 scaleFactor = Double.parseDouble(value.trim());
               }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -24,19 +24,11 @@
  */
 package loci.formats.services;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
-import loci.common.Constants;
-import loci.common.Location;
 import loci.common.services.AbstractService;
-import loci.common.services.ServiceException;
+import loci.formats.FormatTools;
 
 import ch.systemsx.cisd.base.mdarray.MDByteArray;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;
@@ -58,7 +50,8 @@ public class JHDFServiceImpl extends AbstractService
     public static final String NO_JHDF_MSG
             = "JHDF is required to read HDF5 files. "
             + "Please obtain the necessary JAR files from "
-            + "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html.\n"
+            + "https://docs.openmicroscopy.org/bio-formats/"
+            + FormatTools.VERSION + "/developers/java-library.html.\n"
             + "Required JAR files is cisd-jhdf5-batteries_included_lin_win_mac.jar.";
 
     // -- Fields --

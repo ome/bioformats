@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -54,20 +54,20 @@ public class CellH5Reader extends FormatReader {
   public static final String HDF_MAGIC_STRING = "HDF";
 
   public class CellH5Constants {
-      public final static String PREFIX_PATH = "/sample/0/";
-      public final static String IMAGE_PATH = "image/channel/";
-      public final static String SEGMENTATION_PATH = "image/region/";
+      public static final String PREFIX_PATH = "/sample/0/";
+      public static final String IMAGE_PATH = "image/channel/";
+      public static final String SEGMENTATION_PATH = "image/region/";
 
-      public final static String PLATE = "plate/";
-      public final static String WELL = "/experiment/";
-      public final static String SITE = "/position/";
-      public final static String DEFINITION = "/definition/";
-      public final static String OBJECT = "object/";
-      public final static String FEATURE = "feature/";
-      public final static String IMAGE = "image/";
-      public final static String BBOX = "bounding_box/";
-      public final static String CLASS_LABELS = "object_classification/class_labels/";
-      public final static String PREDICTED_CLASS_LABELS = "object_classification/prediction";
+      public static final String PLATE = "plate/";
+      public static final String WELL = "/experiment/";
+      public static final String SITE = "/position/";
+      public static final String DEFINITION = "/definition/";
+      public static final String OBJECT = "object/";
+      public static final String FEATURE = "feature/";
+      public static final String IMAGE = "image/";
+      public static final String BBOX = "bounding_box/";
+      public static final String CLASS_LABELS = "object_classification/class_labels/";
+      public static final String PREDICTED_CLASS_LABELS = "object_classification/prediction";
   }
 
   public class CellH5Coordinate {
@@ -101,8 +101,6 @@ public class CellH5Reader extends FormatReader {
 
   // -- Fields --
 
-  private double pixelSizeX, pixelSizeY, pixelSizeZ;
-  private double minX, minY, minZ, maxX, maxY, maxZ;
   private int seriesCount;
   private transient JHDFService jhdf;
 
@@ -274,8 +272,9 @@ public class CellH5Reader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       seriesCount = 0;
-      pixelSizeX = pixelSizeY = pixelSizeZ = 0;
-
+      CellH5PositionList.clear();
+      CellH5PathsToImageData.clear();
+      cellObjectNames.clear();
       if (jhdf != null) {
         jhdf.close();
       }
@@ -338,7 +337,7 @@ public class CellH5Reader extends FormatReader {
 
     int elementSize = jhdf.getElementSize(CellH5PathsToImageData.get(series));
 
-    int[] arrayOrigin = new int[] {channel, time, zslice, 0, 0};
+    int[] arrayOrigin = new int[] {channel, time, zslice, y, 0};
     int[] arrayDimension = new int[] {1, 1, 1, height, width};
 
     MDIntArray test = jhdf.readIntBlockArray(CellH5PathsToImageData.get(series),
@@ -381,7 +380,6 @@ public class CellH5Reader extends FormatReader {
 
   private void parseStructure() throws FormatException {
     seriesCount = 0;
-    pixelSizeX = pixelSizeY = pixelSizeZ = 1;
     core.clear();
     // read experiment structure and collect coordinates
 

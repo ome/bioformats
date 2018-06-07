@@ -104,7 +104,7 @@ notes = Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including
 type = ImageJ plugin
 class = loci.plugins.ome.About
 version = omeVersion
-url = http://www.openmicroscopy.org/site/products/bio-formats/downloads
+url = https://www.openmicroscopy.org/bio-formats/downloads
 license = GPL
 notes = OME Plugins for ImageJ: a collection of ImageJ plugins including
         the Download from OME and Upload to OME plugins.
@@ -120,7 +120,7 @@ notes = Optional plugin. If you have Image5D installed, the Bio-Formats
 [View5D]
 type = ImageJ plugin
 class = view5d.View5D_
-url = http://www.nanoimaging.de/View5D/
+url = http://www.nanoimaging.uni-jena.de/View5D/View5D.html
 license = GPL
 notes = Optional plugin. If you have View5D installed, the Bio-Formats
         Importer plugin can use View5D to display your image stacks.
@@ -131,7 +131,7 @@ notes = Optional plugin. If you have View5D installed, the Bio-Formats
 type = Java library
 class = loci.formats.IFormatReader
 version = bfVersion
-url = https://www.openmicroscopy.org/site/products/bio-formats/downloads
+url = https://www.openmicroscopy.org/bio-formats/downloads
 license = GPL
 notes = OME Bio-Formats package for reading and converting
         biological file formats.
@@ -200,7 +200,7 @@ notes = Used by Bio-Formats for OLE support in CXD, IPW, OIB and ZVI
 [Simple Logging Facade for Java]
 type = Java library
 class = org.slf4j.Logger
-url = http://www.slf4j.org/
+url = https://www.slf4j.org/
 license = MIT
 notes = Used by the NetCDF Java library.
 

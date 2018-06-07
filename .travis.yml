@@ -13,38 +13,20 @@ cache:
 addons:
   apt_packages:
     - git
-    - cmake
-    - build-essential
-    - libboost-all-dev
 
 jdk:
   - oraclejdk8
   - openjdk7
 
 env:
-  - BUILD=maven_findbugs
   - BUILD=maven
-  - BUILD=sphinx_html
   - BUILD=ant
 
 matrix:
   fast_finish: true
 
 before_install:
-  - if [[ $BUILD == 'sphinx_html' ]]; then pip install --user flake8 Sphinx==1.2.3; fi
-
-install:
-  - if [[ $BUILD != 'ant' ]] && [[ $BUILD != 'sphinx_html' ]]; then git fetch --tags; fi
-  - if [[ $BUILD == 'maven_findbugs' ]]; then mvn install -DskipTests=true; fi
+  - if [[ $BUILD == 'ant' ]]; then pip install --user flake8 Sphinx; fi
 
 script:
   - ./tools/test-build $BUILD
-
-matrix:
-  exclude:
-    - jdk: openjdk7
-      env: BUILD=sphinx_html
-    - jdk: openjdk7
-      env: BUILD=maven_findbugs
-    - jdk: oraclejdk8
-      env: BUILD=maven

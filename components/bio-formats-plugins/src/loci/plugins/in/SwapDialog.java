@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -68,14 +68,14 @@ public class SwapDialog extends ImporterDialog implements ItemListener {
     GenericDialog gd = new GenericDialog("Dimension swapping options");
 
     String[] labels = {"Z", "C", "T"};
-    String[] sizes = new String[] {
-      String.valueOf(reader.getSizeZ()), String.valueOf(reader.getSizeC()),
-      String.valueOf(reader.getSizeT())
-    };
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
       reader.setSeries(s);
 
+      String[] sizes = new String[] {
+          String.valueOf(reader.getSizeZ()), String.valueOf(reader.getSizeC()),
+          String.valueOf(reader.getSizeT())
+        };
       gd.addMessage("Series " + (s + 1) + ":\n");
 
       for (int i=0; i<labels.length; i++) {

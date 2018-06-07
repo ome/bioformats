@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.2.1-SNAPSHOT</version>
+    <version>5.9.0-SNAPSHOT</version>
     <relativePath>../../../</relativePath>
   </parent>
 
@@ -17,7 +17,7 @@
 
   <name>bioformats_package bundle</name>
   <description>A bundle of Bio-Formats and dependencies, without slf4j bindings.</description>
-  <url>http://openmicroscopy.org/site/products/bio-formats</url>
+  <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>
@@ -39,6 +39,27 @@
       <artifactId>bio-formats-tools</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>lwf-stubs</artifactId>
+      <version>${lwf-stubs.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>mipav-stubs</artifactId>
+      <version>${mipav-stubs.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>net.imagej</groupId>
+      <artifactId>ij</artifactId>
+      <version>${imagej1.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <properties>
@@ -57,7 +78,14 @@
           <archive>
             <manifest>
               <mainClass>loci.formats.gui.ImageViewer</mainClass>
+              <addClasspath>true</addClasspath>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <manifestEntries>
+              <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-URL>${project.url}</Implementation-URL>
+            </manifestEntries>
           </archive>
         </configuration>
         <executions>
@@ -72,17 +100,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <!-- NB: for parent project, in case of partial checkout -->
-  <repositories>
-    <repository>
-      <id>ome.releases</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
-    </repository>
-    <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
-  </repositories>
-
 </project>

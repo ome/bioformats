@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -93,21 +93,25 @@ public class PQBinReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    
-    long fileLength = stream.length();
     int bpp = FormatTools.getBytesPerPixel(FormatTools.UINT32);
     stream.order(true);
+
     // Header
-    int sizeX = stream.readInt();
-    int sizeY = stream.readInt();
-    float pixResol = stream.readFloat();  // resolution of time axis of every Decay (in ns)
-    int sizeT = stream.readInt();     
-    if (( sizeX * sizeY * sizeT * bpp) + HEADER_SIZE  == fileLength)  {
-      return true;
-    }
-    else  {
+    long fileLength;
+    int sizeX;
+    int sizeY;
+    int sizeT;
+    try {
+      fileLength = stream.length();
+      sizeX = stream.readInt();
+      sizeY = stream.readInt();
+      stream.readFloat();  // resolution of time axis of every Decay (in ns)
+      sizeT = stream.readInt();
+    } catch (java.io.EOFException eof) {
       return false;
-    } 
+    }
+
+    return (sizeX * sizeY * sizeT * bpp) + HEADER_SIZE == fileLength;
   }
 
   /**

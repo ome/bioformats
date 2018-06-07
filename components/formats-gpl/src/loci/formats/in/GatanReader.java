@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -46,6 +47,7 @@ import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 import ome.units.unit.Unit;
+import ome.xml.model.primitives.Color;
 
 /**
  * GatanReader is the file format reader for Gatan files.
@@ -77,6 +79,12 @@ public class GatanReader extends FormatReader {
   private static final int UNKNOWN = 11;
   private static final int UNKNOWN2 = 12;
 
+  /** Shape types */
+  private static final int LINE = 2;
+  private static final int RECTANGLE = 5;
+  private static final int ELLIPSE = 6;
+  private static final int TEXT = 13;
+
   // -- Fields --
 
   /** Offset to pixel data. */
@@ -86,10 +94,7 @@ public class GatanReader extends FormatReader {
   private List<Double> pixelSizes;
   private List<String> units;
 
-  private int bytesPerPixel;
-
-  private int pixelDataNum = 0;
-  private int numPixelBytes;
+  private long numPixelBytes;
 
   private boolean signed;
   private long timestamp;
@@ -101,6 +106,8 @@ public class GatanReader extends FormatReader {
 
   private boolean adjustEndianness = true;
   private int version;
+
+  private transient List<ROIShape> shapes;
 
   // -- Constructor --
 
@@ -131,7 +138,8 @@ public class GatanReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(pixelOffset);
+    long planeOffset = (long) no * FormatTools.getPlaneSize(this);
+    in.seek(pixelOffset + planeOffset);
     readPlane(in, x, y, w, h, buf);
     return buf;
   }
@@ -142,7 +150,7 @@ public class GatanReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       pixelOffset = 0;
-      bytesPerPixel = pixelDataNum = numPixelBytes = 0;
+      numPixelBytes = 0;
       pixelSizes = null;
       signed = false;
       timestamp = 0;
@@ -153,6 +161,7 @@ public class GatanReader extends FormatReader {
       posX = posY = posZ = null;
       sampleTime = 0;
       units = null;
+      shapes = null;
     }
   }
 
@@ -171,6 +180,7 @@ public class GatanReader extends FormatReader {
     m.littleEndian = false;
     pixelSizes = new ArrayList<Double>();
     units = new ArrayList<String>();
+    shapes = new ArrayList<ROIShape>();
 
     in.order(isLittleEndian());
 
@@ -212,16 +222,20 @@ public class GatanReader extends FormatReader {
     if (getSizeX() == 0 || getSizeY() == 0) {
       throw new FormatException("Dimensions information not found");
     }
-    int bytes = numPixelBytes / (getSizeX() * getSizeY());
 
-    if (bytes != FormatTools.getBytesPerPixel(getPixelType())) {
-      m.pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, false);
+    if (m.sizeZ == 0) {
+      m.sizeZ = 1;
     }
-    m.sizeZ = 1;
     m.sizeC = 1;
     m.sizeT = 1;
     m.dimensionOrder = "XYZTC";
-    m.imageCount = 1;
+    m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+
+    int bytes = (int) (numPixelBytes / (getSizeX() * getSizeY() * (long) getImageCount()));
+    if (bytes != FormatTools.getBytesPerPixel(getPixelType())) {
+      m.pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, false);
+    }
+
     m.rgb = false;
     m.interleaved = false;
     m.metadataComplete = true;
@@ -234,13 +248,17 @@ public class GatanReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int index = 0;
-      if (pixelSizes.size() >= 3) {
+      if (pixelSizes.size() > 4) {
         index = pixelSizes.size() - 3;
       }
-      else if (pixelSizes.size() >= 2) {
-        index = pixelSizes.size() - 2;
+      else if (pixelSizes.size() == 4) {
+        if (Math.abs(pixelSizes.get(0) - 1.0) < Constants.EPSILON) {
+          index = pixelSizes.size() - 2;
+        }
       }
-      if (Math.abs(pixelSizes.get(index + 1) - pixelSizes.get(index + 2)) < Constants.EPSILON) {
+      if (index + 2 < pixelSizes.size() &&
+        Math.abs(pixelSizes.get(index + 1) - pixelSizes.get(index + 2)) < Constants.EPSILON)
+      {
         if (Math.abs(pixelSizes.get(index) - pixelSizes.get(index + 1)) > Constants.EPSILON &&
           getSizeY() > 1)
         {
@@ -272,7 +290,9 @@ public class GatanReader extends FormatReader {
         }
       }
 
-      store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+      String instrument = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrument, 0);
+      store.setImageInstrumentRef(instrument, 0);
 
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
@@ -294,8 +314,8 @@ public class GatanReader extends FormatReader {
       for (String token : scopeInfo) {
         token = token.trim();
         if (token.startsWith("Mode")) {
-          token = token.substring(token.indexOf(" ")).trim();
-          String mode = token.substring(0, token.indexOf(" ")).trim();
+          token = token.substring(token.indexOf(' ')).trim();
+          String mode = token.substring(0, token.indexOf(' ')).trim();
           if (mode.equals("TEM")) mode = "Other";
           store.setChannelAcquisitionMode(getAcquisitionMode(mode), 0, 0);
         }
@@ -304,7 +324,70 @@ public class GatanReader extends FormatReader {
       store.setPlanePositionX(posX, 0, 0);
       store.setPlanePositionY(posY, 0, 0);
       store.setPlanePositionZ(posZ, 0, 0);
-      store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), 0, 0);
+
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), 0, i);
+      }
+    }
+
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS &&
+      shapes.size() > 0)
+    {
+      for (int i=0; i<shapes.size(); i++) {
+        String roi = MetadataTools.createLSID("ROI", i);
+        store.setROIID(roi, i);
+        store.setImageROIRef(roi, 0, i);
+
+        String shapeID = MetadataTools.createLSID("Shape", i, 0);
+        ROIShape shape = shapes.get(i);
+
+        switch (shape.type) {
+          case LINE:
+            store.setLineID(shapeID, i, 0);
+            store.setLineX1(shape.x1, i, 0);
+            store.setLineY1(shape.y1, i, 0);
+            store.setLineX2(shape.x2, i, 0);
+            store.setLineY2(shape.y2, i, 0);
+            store.setLineText(shape.text, i, 0);
+            store.setLineFontSize(shape.fontSize, i, 0);
+            store.setLineStrokeColor(shape.strokeColor, i, 0);
+            break;
+          case TEXT:
+            store.setLabelID(shapeID, i, 0);
+            store.setLabelX(shape.x1, i, 0);
+            store.setLabelY(shape.y1, i, 0);
+            store.setLabelText(shape.text, i, 0);
+            store.setLabelFontSize(shape.fontSize, i, 0);
+            store.setLabelStrokeColor(shape.strokeColor, i, 0);
+            break;
+          case ELLIPSE:
+            store.setEllipseID(shapeID, i, 0);
+
+            double radiusX = (shape.x2 - shape.x1) / 2;
+            double radiusY = (shape.y2 - shape.y1) / 2;
+
+            store.setEllipseX(shape.x1 + radiusX, i, 0);
+            store.setEllipseY(shape.y1 + radiusY, i, 0);
+            store.setEllipseRadiusX(radiusX, i, 0);
+            store.setEllipseRadiusY(radiusY, i, 0);
+            store.setEllipseText(shape.text, i, 0);
+            store.setEllipseFontSize(shape.fontSize, i, 0);
+            store.setEllipseStrokeColor(shape.strokeColor, i, 0);
+            break;
+          case RECTANGLE:
+            store.setRectangleID(shapeID, i, 0);
+            store.setRectangleX(shape.x1, i, 0);
+            store.setRectangleY(shape.y1, i, 0);
+            store.setRectangleWidth(shape.x2 - shape.x1, i, 0);
+            store.setRectangleHeight(shape.y2 - shape.y1, i, 0);
+            store.setRectangleText(shape.text, i, 0);
+            store.setRectangleFontSize(shape.fontSize, i, 0);
+            store.setRectangleStrokeColor(shape.strokeColor, i, 0);
+            break;
+          default:
+            LOGGER.warn("Unknown ROI type: {}", shape.type);
+        }
+      }
     }
   }
 
@@ -326,7 +409,7 @@ public class GatanReader extends FormatReader {
     throws FormatException, IOException, ParseException
   {
     for (int i=0; i<numTags; i++) {
-      if (in.getFilePointer() >= in.length()) break;
+      if (in.getFilePointer() + 3 >= in.length()) break;
 
       byte type = in.readByte();  // can be 21 (data) or 20 (tag group)
       int length = in.readShort();
@@ -357,8 +440,13 @@ public class GatanReader extends FormatReader {
         if (n == 1) {
           if ("Dimensions".equals(parent) && labelString.length() == 0) {
             if (adjustEndianness) in.order(!in.isLittleEndian());
-            if (i == 0) core.get(0).sizeX = in.readInt();
+            if (i == 0) {
+              core.get(0).sizeX = in.readInt();
+            }
             else if (i == 1) core.get(0).sizeY = in.readInt();
+            else if (i == 2) {
+              core.get(0).sizeZ = in.readInt();
+            }
             if (adjustEndianness) in.order(!in.isLittleEndian());
           }
           else value = String.valueOf(readValue(dataType));
@@ -374,12 +462,20 @@ public class GatanReader extends FormatReader {
           if (dataType == GROUP) {  // this should always be true
             skipPadding();
             dataType = in.readInt();
-            skipPadding();
-            length = in.readInt();
+            long dataLength = 0;
+            if (version == 4) {
+              dataLength = in.readLong();
+            }
+            else {
+              dataLength = in.readInt();
+            }
+            length = (int) (dataLength & 0xffffffff);
             if (labelString.equals("Data")) {
-              pixelOffset = in.getFilePointer();
-              in.skipBytes(getNumBytes(dataType) * length);
-              numPixelBytes = (int) (in.getFilePointer() - pixelOffset);
+              if (dataLength > 0) {
+                pixelOffset = in.getFilePointer();
+                in.seek(in.getFilePointer() + getNumBytes(dataType) * dataLength);
+                numPixelBytes = in.getFilePointer() - pixelOffset;
+              }
             }
             else {
               if (dataType == 10) in.skipBytes(length);
@@ -395,38 +491,23 @@ public class GatanReader extends FormatReader {
             skipPadding();
             skipPadding();
             int numFields = in.readInt();
-            StringBuffer s = new StringBuffer();
+            long startFP = in.getFilePointer();
+            final StringBuilder s = new StringBuilder();
             in.skipBytes(4);
             skipPadding();
-            long baseFP = in.getFilePointer() + 4;
+            long baseFP = in.getFilePointer();
+            if (version == 4) {
+              baseFP += 4;
+            }
+            int width = version == 4 ? 16 : 8;
             for (int j=0; j<numFields; j++) {
-              if (version == 4) {
-                in.seek(baseFP + j * 16);
-              }
+              in.seek(baseFP + j * width);
               dataType = in.readInt();
+              in.seek(startFP + numFields * width + j * getNumBytes(dataType));
               s.append(readValue(dataType));
               if (j < numFields - 1) s.append(", ");
             }
             value = s.toString();
-            boolean lastTag = parent == null && i == numTags - 1;
-            if (!lastTag) {
-              // search for next tag
-              // empirically, we need to skip 4, 8, 12, 18, 24, or 28
-              // total bytes
-              byte b = 0;
-              final int[] jumps = {4, 3, 3, 5, 5, 3};
-              for (int j=0; j<jumps.length; j++) {
-                in.skipBytes(jumps[j]);
-                if (in.getFilePointer() >= in.length()) return;
-                b = in.readByte();
-                if (b == GROUP || b == VALUE) break;
-              }
-              if (b != GROUP && b != VALUE) {
-                throw new FormatException("Cannot find next tag (pos=" +
-                  in.getFilePointer() + ", label=" + labelString + ")");
-              }
-              in.seek(in.getFilePointer() - 1); // reread tag type code
-            }
           }
           else if (dataType == GROUP) {
             // this is an array of structs
@@ -469,7 +550,7 @@ public class GatanReader extends FormatReader {
         skipPadding();
         int num = in.readInt();
         LOGGER.debug("{}{}: group({}) {} {", new Object[] {indent, i, num, labelString});
-        parseTags(num, labelString, indent + "  ");
+        parseTags(num, labelString.isEmpty() ? parent : labelString, indent + "  ");
         LOGGER.debug("{}}", indent);
       }
       else {
@@ -480,12 +561,50 @@ public class GatanReader extends FormatReader {
       if (value != null) {
         addGlobalMeta(labelString, value);
 
-        if (labelString.equals("Scale") && !parent.equals("Calibration")) {
-          if (value.indexOf(",") == -1) {
+        if (parent != null && parent.equals("AnnotationGroupList")) {
+          // ROI found
+          ROIShape shape = new ROIShape();
+          if (labelString.equals("AnnotationType")) {
+            shape.type = DataTools.parseDouble(value).intValue();
+            shapes.add(shape);
+          }
+          else if (shapes.size() > 0) {
+            shape = shapes.get(shapes.size() - 1);
+          }
+
+          if (labelString.equals("Rectangle")) {
+            String[] points = value.split(",");
+            shape.y1 = DataTools.parseDouble(points[0].trim());
+            shape.x1 = DataTools.parseDouble(points[1].trim());
+            shape.y2 = DataTools.parseDouble(points[2].trim());
+            shape.x2 = DataTools.parseDouble(points[3].trim());
+          }
+          else if (labelString.equals("Text")) {
+            shape.text = value;
+          }
+          else if (labelString.equals("ForegroundColor")) {
+            String[] colors = value.split(",");
+            int red = DataTools.parseDouble(colors[0].trim()).intValue() & 0xff;
+            int green = DataTools.parseDouble(colors[1].trim()).intValue() & 0xff;
+            int blue = DataTools.parseDouble(colors[2].trim()).intValue() & 0xff;
+            shape.strokeColor = new Color(red, green, blue, 255);
+          }
+        }
+        else if (parent != null && parent.equals("TextFormat")) {
+          if (labelString.equals("FontSize")) {
+            ROIShape shape = shapes.get(shapes.size() - 1);
+            shape.fontSize = FormatTools.getFontSize(DataTools.parseDouble(value).intValue());
+          }
+        }
+
+        boolean validPhysicalSize = parent != null && (parent.equals("Dimension") ||
+          ((pixelSizes.size() == 4 || units.size() == 4) && parent.equals("2")));
+        if (labelString.equals("Scale") && validPhysicalSize) {
+          if (value.indexOf(',') == -1) {
             pixelSizes.add(f.parse(value).doubleValue());
           }
         }
-        else if (labelString.equals("Units") && !parent.equals("Calibration")) {
+        else if (labelString.equals("Units") && validPhysicalSize) {
           // make sure that we don't add more units than sizes
           if (pixelSizes.size() == units.size() + 1) {
             units.add(value);
@@ -623,6 +742,17 @@ public class GatanReader extends FormatReader {
       }
     }
     return UNITS.MICROMETER;
+  }
+
+  class ROIShape {
+    public int type;
+    public double x1;
+    public double y1;
+    public double x2;
+    public double y2;
+    public String text;
+    public Length fontSize;
+    public Color strokeColor;
   }
 
 }

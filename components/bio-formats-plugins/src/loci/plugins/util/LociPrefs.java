@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,13 +30,21 @@ package loci.plugins.util;
 import ij.Prefs;
 
 import loci.formats.ClassList;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.in.CellSensReader;
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.LIFReader;
+import loci.formats.in.MetadataOptions;
+import loci.formats.in.NativeND2Reader;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;
 import loci.formats.in.SDTReader;
 import loci.formats.in.TiffDelegateReader;
+import loci.formats.in.ZeissCZIReader;
+
 
 /**
  * Utility methods for ImageJ preferences for Bio-Formats plugins.
@@ -53,6 +61,18 @@ public final class LociPrefs {
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
   public static final String PREF_TIFF_IMAGEIO = "bioformats.tiff.imageio";
+  public static final String PREF_CZI_AUTOSTITCH =
+    "bioformats.zeissczi.allow.autostitch";
+  public static final String PREF_CZI_ATTACHMENT =
+    "bioformats.zeissczi.include.attachments";
+  public static final String PREF_ND2_CHUNKMAP =
+    "bioformats.nativend2.chunkmap";
+  public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
+    "bioformats.leicalif.physicalsize.compatibility";
+  public static final String PREF_SLICE_LABEL_PATTERN = "bioformats.sliceLabelPattern";
+  public static final String PREF_SLICE_LABEL_BASE_INDEX = "bioformats.sliceLabelBaseIndex";
+  public static final String PREF_CELLSENS_FAIL =
+    "bioformats.cellsens.fail_on_missing_ets";
 
   // -- Constructor --
 
@@ -78,6 +98,21 @@ public final class LociPrefs {
       if (on) enabledClasses.addClass(c[i]);
     }
     ImageReader reader = new ImageReader(enabledClasses);
+
+    MetadataOptions options = reader.getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      ((DynamicMetadataOptions) options).setBoolean(
+        ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY, allowCZIAutostitch());
+      ((DynamicMetadataOptions) options).setBoolean(
+        ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
+      ((DynamicMetadataOptions) options).setBoolean(
+        NativeND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
+      ((DynamicMetadataOptions) options).setBoolean(
+        LIFReader.OLD_PHYSICAL_SIZE_KEY, isLeicaLIFPhysicalSizeBackwardsCompatible());
+      ((DynamicMetadataOptions) options).setBoolean(
+        CellSensReader.FAIL_ON_MISSING_KEY, isCellsensFailOnMissing());
+      reader.setMetadataOptions(options);
+    }
 
     // toggle reader-specific options
     boolean nd2Nikon = LociPrefs.isND2Nikon();
@@ -142,6 +177,37 @@ public final class LociPrefs {
 
   public static boolean isTiffImageIO() {
     return Prefs.get(PREF_TIFF_IMAGEIO, false);
+  }
+
+  public static boolean allowCZIAutostitch() {
+    return Prefs.get(PREF_CZI_AUTOSTITCH,
+                     ZeissCZIReader.ALLOW_AUTOSTITCHING_DEFAULT);
+  }
+
+  public static boolean includeCZIAttachments() {
+    return Prefs.get(PREF_CZI_ATTACHMENT,
+                     ZeissCZIReader.INCLUDE_ATTACHMENTS_DEFAULT);
+  }
+
+  public static boolean useND2Chunkmap() {
+    return Prefs.get(PREF_ND2_CHUNKMAP, NativeND2Reader.USE_CHUNKMAP_DEFAULT);
+  }
+
+  public static boolean isLeicaLIFPhysicalSizeBackwardsCompatible() {
+    return Prefs.get(PREF_LEICA_LIF_PHYSICAL_SIZE,
+      LIFReader.OLD_PHYSICAL_SIZE_DEFAULT);
+  }
+
+  public static String getSliceLabelPattern() {
+    return Prefs.get(PREF_SLICE_LABEL_PATTERN, "%c%z%t- %n");
+  }
+  
+  public static int getSliceLabelBaseIndex() {
+    return Prefs.getInt(PREF_SLICE_LABEL_BASE_INDEX, 1);
+  }
+  
+  public static boolean isCellsensFailOnMissing() {
+    return Prefs.get(PREF_CELLSENS_FAIL, CellSensReader.FAIL_ON_MISSING_DEFAULT);
   }
 
   // -- Helper methods --

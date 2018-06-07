@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,8 +38,6 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
-import loci.common.DataTools;
-
 /**
  * ColorModel that handles 16 bits per channel lookup tables.
  */
@@ -49,8 +47,6 @@ public class Index16ColorModel extends ColorModel {
 
   /** Lookup tables. */
   private short[] redShort, greenShort, blueShort, alphaShort;
-
-  private int pixelBits;
 
   // -- Constructors --
 
@@ -70,7 +66,6 @@ public class Index16ColorModel extends ColorModel {
     if (table.length > 1) greenShort = table[1];
     if (table.length > 2) blueShort = table[2];
     if (table.length > 3) alphaShort = table[3];
-    pixelBits = bits;
   }
 
   // -- Index16ColorModel API methods --

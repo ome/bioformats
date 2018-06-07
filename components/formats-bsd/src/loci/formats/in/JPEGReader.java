@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,7 +33,6 @@
 package loci.formats.in;
 
 import java.awt.color.CMMException;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -52,7 +51,6 @@ import loci.formats.services.EXIFService;
 import java.util.Date;
 import java.util.HashMap;
 import org.joda.time.DateTime;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.Timestamp;
 
@@ -141,9 +139,23 @@ public class JPEGReader extends DelegateReader {
     if (getSizeX() > MAX_SIZE && getSizeY() > MAX_SIZE &&
       !legacyReaderInitialized)
     {
+      // this is a large image, so try to open with TileJPEGReader first
+      // TileJPEGReader requires restart markers to be present; if this file
+      // doesn't contain restarts then TileJPEGReader will throw IOException
+      // and we'll try again with DefaultJPEGReader
       close();
       useLegacy = true;
-      super.setId(id);
+      try {
+        super.setId(id);
+      }
+      catch (IOException e) {
+        // this case usually requires a lot of memory as it's a big image
+        // that requires the whole image to be opened for any size tile
+        LOGGER.debug("Initialization with TileJPEGReader failed", e);
+        close();
+        useLegacy = false;
+        super.setId(id);
+      }
     }
     if (currentId.endsWith(".fixed")) {
       currentId = currentId.substring(0, currentId.lastIndexOf("."));
@@ -187,7 +199,12 @@ public class JPEGReader extends DelegateReader {
 
     /* @see loci.formats.FormatReader#initFile(String) */
     protected void initFile(String id) throws FormatException, IOException {
-      super.initFile(id);
+      try {
+        super.initFile(id);
+      }
+      catch (IllegalArgumentException e) {
+        throw new FormatException(e);
+      }
 
       MetadataStore store = makeFilterMetadata();
       LOGGER.info("Parsing JPEG EXIF data");

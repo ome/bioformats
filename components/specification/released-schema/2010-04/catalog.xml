@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-  <uri name="http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd" uri="ome.xsd"/>
-  <uri name="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04/BinaryFile.xsd" uri="BinaryFile.xsd"/>
-  <uri name="http://www.openmicroscopy.org/Schemas/SPW/2010-04/SPW.xsd" uri="SPW.xsd"/>
-  <uri name="http://www.openmicroscopy.org/Schemas/SA/2010-04/SA.xsd" uri="SA.xsd"/>
-  <uri name="http://www.openmicroscopy.org/Schemas/ROI/2010-04/ROI.xsd" uri="ROI.xsd"/>
-  <uri name="http://www.openmicroscopy.org/Schemas/OMERO/2010-04" uri="OMERO.xsd"/>
-</catalog>

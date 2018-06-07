@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -714,17 +714,17 @@ public class DataConverter extends JFrame implements
       swap.setId(pattern);
 
       String z = zLabel.getText();
-      z = z.substring(0, z.indexOf("<"));
+      z = z.substring(0, z.indexOf('<'));
       z += "<1-" + swap.getSizeZ() + ">";
       zLabel.setText(z);
 
       String t = tLabel.getText();
-      t = t.substring(0, t.indexOf("<"));
+      t = t.substring(0, t.indexOf('<'));
       t += "<1-" + swap.getSizeT() + ">";
       tLabel.setText(t);
 
       String c = cLabel.getText();
-      c = c.substring(0, c.indexOf("<"));
+      c = c.substring(0, c.indexOf('<'));
       c += "<1-" + swap.getEffectiveSizeC() + ">";
       cLabel.setText(c);
 

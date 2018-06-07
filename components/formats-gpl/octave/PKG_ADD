@@ -2,8 +2,7 @@
 ## work properly in Octave.  We must error loading the package if not.
 
 ## First check if Octave was even built with Java support
-
-if (! octave_config_info ("features").JAVA)
+if (! usejava ("jvm"))
   error ("bioformats: support for java was disabled when Octave was built");
 endif
 

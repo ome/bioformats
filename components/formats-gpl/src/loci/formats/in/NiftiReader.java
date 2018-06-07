@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,10 +37,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
@@ -76,6 +75,8 @@ public class NiftiReader extends FormatReader {
   private short nDimensions;
   private String description;
   private double voxelWidth, voxelHeight, sliceThickness, deltaT;
+  private Unit<Length> spatialUnit = UNITS.MICROMETER;
+  private Unit<Time> timeUnit = UNITS.SECOND;
 
   // -- Constructor --
 
@@ -184,6 +185,8 @@ public class NiftiReader extends FormatReader {
       nDimensions = 0;
       description = null;
       voxelWidth = voxelHeight = sliceThickness = deltaT = 0d;
+      spatialUnit = UNITS.MICROMETER;
+      timeUnit = UNITS.SECOND;
     }
   }
 
@@ -245,8 +248,22 @@ public class NiftiReader extends FormatReader {
     m.sizeY = in.readShort();
     m.sizeZ = in.readShort();
     m.sizeT = in.readShort();
+    m.sizeC = 1;
+    int[] extraDims = new int[3];
+    extraDims[0] = in.readShort();
+    extraDims[1] = in.readShort();
+    extraDims[2] = in.readShort();
+    if (nDimensions > 4) {
+      LOGGER.debug("nDimensions = {}", nDimensions);
 
-    in.skipBytes(20);
+      for (int i=0; i<nDimensions-4; i++) {
+        LOGGER.debug("  processing dimension = {}, Z = {}, T = {}, C = {}",
+          extraDims[i], getSizeZ(), getSizeT(), getSizeC());
+        m.sizeC *= extraDims[i];
+      }
+    }
+
+    in.skipBytes(14);
     short dataType = in.readShort();
     in.skipBytes(36);
     pixelOffset = (int) in.readFloat();
@@ -257,16 +274,15 @@ public class NiftiReader extends FormatReader {
 
     LOGGER.info("Populating core metadata");
 
-    m.sizeC = 1;
     if (getSizeZ() == 0) m.sizeZ = 1;
     if (getSizeT() == 0) m.sizeT = 1;
 
-    m.imageCount = getSizeZ() * getSizeT();
+    m.imageCount = getSizeZ() * getSizeT() * getSizeC();
     m.indexed = false;
     m.dimensionOrder = "XYCZT";
 
     populatePixelType(dataType);
-    m.rgb = getSizeC() > 1;
+    m.rgb = getSizeC() > 1 && getImageCount() == getSizeZ() * getSizeT();
     m.interleaved = isRGB();
 
     LOGGER.info("Populating MetadataStore");
@@ -278,11 +294,11 @@ public class NiftiReader extends FormatReader {
       store.setImageDescription(description, 0);
 
       Length sizeX =
-        FormatTools.getPhysicalSizeX(new Double(voxelWidth));
+        FormatTools.getPhysicalSizeX(new Double(voxelWidth), spatialUnit);
       Length sizeY =
-        FormatTools.getPhysicalSizeY(new Double(voxelHeight));
+        FormatTools.getPhysicalSizeY(new Double(voxelHeight), spatialUnit);
       Length sizeZ =
-        FormatTools.getPhysicalSizeZ(new Double(sliceThickness));
+        FormatTools.getPhysicalSizeZ(new Double(sliceThickness), spatialUnit);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -293,7 +309,7 @@ public class NiftiReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(new Time(new Double(deltaT), UNITS.SECOND), 0);
+      store.setPixelsTimeIncrement(new Time(new Double(deltaT), timeUnit), 0);
     }
   }
 
@@ -340,12 +356,13 @@ public class NiftiReader extends FormatReader {
   }
 
   private void populateExtendedMetadata() throws IOException {
-    in.seek(40);
-    char sliceOrdering = in.readChar();
+    in.seek(39);
+    byte sliceOrdering = in.readByte();
     in.skipBytes(8);
     short dim5 = in.readShort();
     short dim6 = in.readShort();
     short dim7 = in.readShort();
+    short dim8 = in.readShort();
 
     float intent1 = in.readFloat();
     float intent2 = in.readFloat();
@@ -368,41 +385,31 @@ public class NiftiReader extends FormatReader {
     float scaleSlope = in.readFloat();
     float scaleIntercept = in.readFloat();
     short sliceEnd = in.readShort();
-    char sliceCode = in.readChar();
-    char units = in.readChar();
+    byte sliceCode = in.readByte();
+    byte units = in.readByte();
 
     int spatialUnits = (units & 7);
     int timeUnits = (units & 0x38);
 
     // correct physical dimensions according to spatial and time units
 
-    int spatialCorrection = 1;
-
     switch (spatialUnits) {
       case UNITS_METER:
-        spatialCorrection = 1000000;
+        spatialUnit = UNITS.METER;
         break;
       case UNITS_MM:
-        spatialCorrection = 1000;
+        spatialUnit = UNITS.MILLIMETER;
         break;
     }
-
-    voxelWidth *= spatialCorrection;
-    voxelHeight *= spatialCorrection;
-    sliceThickness *= spatialCorrection;
-
-    int timeCorrection = 1;
 
     switch (timeUnits) {
       case UNITS_MSEC:
-        timeCorrection = 1000;
+        timeUnit = UNITS.MILLISECOND;
         break;
       case UNITS_USEC:
-        timeCorrection = 1000000;
+        timeUnit = UNITS.MICROSECOND;
         break;
     }
-
-    deltaT /= timeCorrection;
 
     float calMax = in.readFloat();
     float calMin = in.readFloat();
@@ -433,7 +440,7 @@ public class NiftiReader extends FormatReader {
 
     String intentName = in.readString(16);
 
-    if (in.getFilePointer() + 4 < in.length()) {
+    if (in.getFilePointer() + 8 < in.length()) {
       in.skipBytes(4);
       byte extension = in.readByte();
       in.skipBytes(3);
@@ -476,6 +483,7 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Dimension 5", dim5);
     addGlobalMeta("Dimension 6", dim6);
     addGlobalMeta("Dimension 7", dim7);
+    addGlobalMeta("Dimension 8", dim8);
     addGlobalMeta("Intent #1", intent1);
     addGlobalMeta("Intent #2", intent2);
     addGlobalMeta("Intent #3", intent3);
@@ -503,6 +511,10 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Quaternion x parameter", quaternionX);
     addGlobalMeta("Quaternion y parameter", quaternionY);
     addGlobalMeta("Quaternion z parameter", quaternionZ);
+    addGlobalMeta("Slice code", sliceCode);
+    addGlobalMeta("XYZT units", units);
+    addGlobalMeta("XYZ units", spatialUnits);
+    addGlobalMeta("Time units", timeUnits);
   }
 
 }

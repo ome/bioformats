@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -87,8 +87,6 @@ public class JavaWriter extends FormatWriter {
     // write array
     String varName = "series" + series + "Plane" + no;
     Object array = DataTools.makeDataArray(buf, bpp, fp, little);
-    int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
-    int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
 
     out.seek(out.length());
     if (array instanceof byte[]) {

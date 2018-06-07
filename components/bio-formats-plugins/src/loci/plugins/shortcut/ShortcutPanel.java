@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -98,7 +98,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     try {
       URL url = ShortcutPanel.class.getResource("ShortcutPanel.class");
       String path = url.toString();
-      path = path.substring(0, path.indexOf("!")) + "!/plugins.config";
+      path = path.substring(0, path.indexOf('!')) + "!/plugins.config";
       url = new URL(path);
       BufferedReader in = new BufferedReader(
         new InputStreamReader(url.openStream(), Constants.ENCODING));

@@ -13,6 +13,11 @@ def check_version_format(version):
     return re.match(pattern, version) is not None
 
 
+BIO_FORMATS_ARTIFACT = (
+    r"(<groupId>%s</groupId>\n"
+    ".*<artifactId>pom-bio-formats</artifactId>\n"
+    ".*<version>).*(</version>)")
+
 class Replacer(object):
 
     def __init__(self, old_group="ome", new_group="ome"):
@@ -21,9 +26,7 @@ class Replacer(object):
         self.group_pattern = \
             r"(<groupId>)%s(</groupId>)" % \
             old_group
-        self.artifact_pattern = \
-            r"(<groupId>%s</groupId>\n.*\n.*<version>).*(</version>)" % \
-            old_group
+        self.artifact_pattern = BIO_FORMATS_ARTIFACT % old_group
         self.release_version_pattern = \
             r"(<release.version>).*(</release.version>)"
         self.stableversion_pattern = \

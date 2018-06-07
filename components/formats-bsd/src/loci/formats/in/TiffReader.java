@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,8 +50,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
-
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.units.quantity.Time;
 import ome.units.quantity.Length;
@@ -129,6 +127,7 @@ public class TiffReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
     String comment = ifds.get(0).getComment();
+    String lastComment = ifds.get(ifds.size() - 1).getComment();
 
     LOGGER.info("Checking comment style");
 
@@ -161,7 +160,7 @@ public class TiffReader extends BaseTiffReader {
             String metadata =
               DataTools.stripString(new String(b, Constants.ENCODING));
             if (metadata.indexOf("xml") != -1) {
-              metadata = metadata.substring(metadata.indexOf("<"));
+              metadata = metadata.substring(metadata.indexOf('<'));
               metadata = "<root>" + XMLTools.sanitizeXML(metadata) + "</root>";
               try {
                 Hashtable<String, String> xmlMetadata =
@@ -182,7 +181,15 @@ public class TiffReader extends BaseTiffReader {
 
     // check for ImageJ-style TIFF comment
     boolean ij = checkCommentImageJ(comment);
-    if (ij) parseCommentImageJ(comment);
+    if (ij) {
+      parseCommentImageJ(comment);
+    }
+    else {
+      ij = checkCommentImageJ(lastComment);
+      if (ij) {
+        parseCommentImageJ(lastComment);
+      }
+    }
 
     // check for MetaMorph-style TIFF comment
     boolean metamorph = checkCommentMetamorph(comment);
@@ -206,8 +213,8 @@ public class TiffReader extends BaseTiffReader {
       if (files != null) {
         for (String file : files) {
           String name = file;
-          if (name.indexOf(".") != -1) {
-            name = name.substring(0, name.indexOf("."));
+          if (name.indexOf('.') != -1) {
+            name = name.substring(0, name.indexOf('.'));
           }
 
           if (currentName.startsWith(name) &&
@@ -257,6 +264,7 @@ public class TiffReader extends BaseTiffReader {
 
     int z = 1, t = 1;
     int c = getSizeC();
+    int images = 1;
 
     CoreMetadata m = core.get(0);
 
@@ -269,12 +277,15 @@ public class TiffReader extends BaseTiffReader {
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
       String value = null;
-      int eq = token.indexOf("=");
+      int eq = token.indexOf('=');
       if (eq >= 0) value = token.substring(eq + 1);
 
       if (token.startsWith("channels=")) c = parseInt(value);
       else if (token.startsWith("slices=")) z = parseInt(value);
       else if (token.startsWith("frames=")) t = parseInt(value);
+      else if (token.startsWith("images=")) {
+        images = parseInt(value);
+      }
       else if (token.startsWith("mode=")) {
         put("Color mode", value);
       }
@@ -320,10 +331,10 @@ public class TiffReader extends BaseTiffReader {
       m.sizeT = t;
       m.sizeC *= c;
     }
-    else if (ifds.size() == 1 && z * t > ifds.size() &&
+    else if (ifds.size() == 1 && images > ifds.size() &&
       ifds.get(0).getCompression() == TiffCompression.UNCOMPRESSED)
     {
-      // file is likely corrupt (missing end IFDs)
+      // file is likely corrupt or larger than 4GB (missing end IFDs)
       //
       // ImageJ writes TIFF files like this:
       // IFD #0
@@ -407,7 +418,7 @@ public class TiffReader extends BaseTiffReader {
     StringTokenizer st = new StringTokenizer(comment, "\n");
     while (st.hasMoreTokens()) {
       String line = st.nextToken();
-      int colon = line.indexOf(":");
+      int colon = line.indexOf(':');
       if (colon < 0) {
         addGlobalMeta("Comment", line);
         description = line;
@@ -423,20 +434,21 @@ public class TiffReader extends BaseTiffReader {
     if (comment == null) return;
     String[] lines = comment.split("\n");
     if (lines.length > 1) {
-      comment = "";
+      StringBuilder buf = new StringBuilder(comment.length());
       for (String line : lines) {
-        int eq = line.indexOf("=");
+        int eq = line.indexOf('=');
         if (eq != -1) {
           String key = line.substring(0, eq).trim();
           String value = line.substring(eq + 1).trim();
           addGlobalMeta(key, value);
         }
         else if (!line.startsWith("[")) {
-          comment += line + "\n";
+          buf.append(line);
+          buf.append('\n');
         }
       }
-      addGlobalMeta("Comment", comment);
-      description = comment;
+      description = buf.toString();
+      addGlobalMeta("Comment", description);
     }
   }
 

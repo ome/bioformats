@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**
@@ -46,6 +45,10 @@ public class Ecat7Reader extends FormatReader {
   // -- Constants --
 
   public static final String ECAT7_MAGIC = "MATRIX72v";
+
+  // there are three ECAT7 versions, see: https://github.com/neurodebian/spm12/blob/master/spm_ecat2nifti.m
+  public static final String ECAT7_MAGIC_REGEX = "MATRIX7[012]v";
+
   private static final long HEADER_SIZE = 1536;
 
   // -- Constructor --
@@ -99,7 +102,7 @@ public class Ecat7Reader extends FormatReader {
     CoreMetadata ms0 = core.get(0);
 
     String check = in.readString(14).trim();
-    if (!check.equals(ECAT7_MAGIC)) {
+    if (!check.matches(ECAT7_MAGIC_REGEX)) {
       throw new FormatException("Invalid ECAT 7 file.");
     }
 

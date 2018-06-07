@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.2.1-SNAPSHOT</version>
+    <version>5.9.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -16,7 +16,7 @@
 
   <name>Bio-Formats API</name>
   <description>Top-level reader and writer APIs.</description>
-  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
+  <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
   <licenses>
@@ -29,14 +29,21 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>formats-common</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-common</artifactId>
+      <version>${ome-common.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-xml</artifactId>
-      <version>${project.version}</version>
+      <version>${ome-model.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.openmicroscopy</groupId>
+        <artifactId>ome-codecs</artifactId>
+        <version>${ome-codecs.version}</version>
     </dependency>
 
     <dependency>
@@ -108,6 +115,9 @@
           <additionalClasspathElements>
               <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
+          <systemPropertyVariables>
+            <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
@@ -115,7 +125,7 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <licenseName>bsd_2</licenseName>
-          <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
+          <projectName>Top-level reader and writer APIs</projectName>
         </configuration>
       </plugin>
     </plugins>
@@ -187,7 +197,7 @@
       <id>melissa</id>
       <name>Melissa Linkert</name>
       <email>melissa@glencoesoftware.com</email>
-      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <url>https://www.glencoesoftware.com/melissa-linkert.html</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
@@ -195,9 +205,6 @@
         <role>developer</role>
       </roles>
       <timezone>-6</timezone>
-      <properties>
-        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
-      </properties>
     </developer>
     <developer>
       <id>curtis</id>
@@ -216,24 +223,4 @@
       </properties>
     </developer>
   </developers>
-
-  <!-- NB: for project parent, in case of partial checkout -->
-  <repositories>
-    <repository>
-      <id>ome.releases</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
-    </repository>
-    <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>ome.external</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
-    </pluginRepository>
-  </pluginRepositories>
-
 </project>

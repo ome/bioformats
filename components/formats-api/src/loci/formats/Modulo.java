@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,7 +34,7 @@ package loci.formats;
 
 /**
  * Represents a subdimension of Z, C, or T as needed for supporting Modulo
- * annotations.  See http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html
+ * annotations.  See https://docs.openmicroscopy.org/latest/ome-model/developers/6d-7d-and-8d-storage.html
  */
 public class Modulo {
 

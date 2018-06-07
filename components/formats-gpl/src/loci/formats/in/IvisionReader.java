@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -94,7 +94,7 @@ public class IvisionReader extends FormatReader {
     String version = stream.readString(3);
     try {
       Double.parseDouble(version);
-      return version.indexOf(".") != -1 && version.indexOf("-") == -1;
+      return version.indexOf('.') != -1 && version.indexOf('-') == -1;
     }
     catch (NumberFormatException e) { }
     return false;
@@ -248,7 +248,7 @@ public class IvisionReader extends FormatReader {
         in.seek(in.getFilePointer() - 5);
 
         String xml = in.readString((int) (in.length() - in.getFilePointer()));
-        xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf("plist>") + 6);
+        xml = xml.substring(xml.indexOf('<'), xml.lastIndexOf("plist>") + 6);
         IvisionHandler handler = new IvisionHandler();
         try {
           XMLTools.parseXML(xml, handler);

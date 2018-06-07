@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -744,9 +744,20 @@ public final class AWTImageTools {
   public static BufferedImage openImage(byte[] buf, IFormatReader r,
     int w, int h) throws FormatException, IOException
   {
+    return openImage(buf, r, w, h, r.isNormalized());
+  }
+
+  /**
+   * Creates an image from the given byte array, using the given
+   * IFormatReader to retrieve additional information.
+   * The floating point normalization setting is specified by 'normal',
+   * which allows the reader's normalization setting to be overridden.
+   */
+  public static BufferedImage openImage(byte[] buf, IFormatReader r,
+    int w, int h, boolean normal) throws FormatException, IOException
+  {
     int pixelType = r.getPixelType();
     boolean little = r.isLittleEndian();
-    boolean normal = r.isNormalized();
     int rgbChanCount = r.getRGBChannelCount();
     boolean interleaved = r.isInterleaved();
     boolean indexed = r.isIndexed();

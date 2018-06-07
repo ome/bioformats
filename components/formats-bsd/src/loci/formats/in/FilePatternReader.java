@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,8 +42,6 @@ import loci.common.DataTools;
 import loci.common.Location;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
-import loci.formats.DelegateReader;
-import loci.formats.FileInfo;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -82,6 +80,11 @@ public class FilePatternReader extends FormatReader {
   }
 
   // -- IFormatReader methods --
+
+  @Override
+  public void reopenFile() throws IOException {
+    helper.reopenFile();
+  }
 
   @Override
   public int getImageCount() {

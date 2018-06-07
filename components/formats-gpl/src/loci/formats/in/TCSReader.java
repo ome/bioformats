@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,10 +26,10 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -48,7 +48,6 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**
@@ -71,7 +70,7 @@ public class TCSReader extends FormatReader {
   // -- Fields --
 
   /** List of TIFF files. */
-  private Vector<String> tiffs;
+  private List<String> tiffs;
 
   /** Helper readers. */
   private TiffReader[] tiffReaders;
@@ -115,13 +114,13 @@ public class TCSReader extends FormatReader {
 
     // check that there is no LEI file
     String prefix = name;
-    if (prefix.indexOf(".") != -1) {
+    if (prefix.indexOf('.') != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
     }
     Location lei = new Location(prefix + ".lei");
     if (!lei.exists()) {
       lei = new Location(prefix + ".LEI");
-      while (!lei.exists() && prefix.indexOf("_") != -1) {
+      while (!lei.exists() && prefix.indexOf('_') != -1) {
         prefix = prefix.substring(0, prefix.lastIndexOf("_"));
         lei = new Location(prefix + ".lei");
         if (!lei.exists()) lei = new Location(prefix + ".LEI");
@@ -215,7 +214,7 @@ public class TCSReader extends FormatReader {
     if (noPixels) {
       return xmlFile == null ? null : new String[] {xmlFile};
     }
-    Vector<String> v = new Vector<String>();
+    final List<String> v = new ArrayList<String>();
     v.addAll(tiffs);
     if (xmlFile != null) v.add(xmlFile);
     return v.toArray(new String[v.size()]);
@@ -273,7 +272,7 @@ public class TCSReader extends FormatReader {
 
     in = new RandomAccessInputStream(id, 16);
     tiffParser = new TiffParser(in);
-    tiffs = new Vector<String>();
+    tiffs = new ArrayList<String>();
 
     IFDList ifds = tiffParser.getIFDs();
     String date = ifds.get(0).getIFDStringValue(IFD.DATE_TIME);
@@ -314,14 +313,14 @@ public class TCSReader extends FormatReader {
 
         for (int i=axisTypes.length-1; i>=0; i--) {
           if (axisTypes[i] == AxisGuesser.Z_AXIS) {
-            if (getDimensionOrder().indexOf("Z") == -1) {
-              ms0.dimensionOrder += "Z";
+            if (getDimensionOrder().indexOf('Z') == -1) {
+              ms0.dimensionOrder += 'Z';
             }
             ms0.sizeZ *= count[i];
           }
           else if (axisTypes[i] == AxisGuesser.C_AXIS) {
-            if (getDimensionOrder().indexOf("C") == -1) {
-              ms0.dimensionOrder += "C";
+            if (getDimensionOrder().indexOf('C') == -1) {
+              ms0.dimensionOrder += 'C';
             }
             ms0.sizeC *= count[i];
           }
@@ -362,24 +361,24 @@ public class TCSReader extends FormatReader {
       }
       if (unique) {
         ms0.sizeT++;
-        if (getDimensionOrder().indexOf("T") < 0) {
-          ms0.dimensionOrder += "T";
+        if (getDimensionOrder().indexOf('T') < 0) {
+          ms0.dimensionOrder += 'T';
         }
       }
       else if (i > 0) {
-        if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf("C") < 0) {
-          ms0.dimensionOrder += "C";
+        if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf('C') < 0) {
+          ms0.dimensionOrder += 'C';
         }
-        else if (getDimensionOrder().indexOf("Z") < 0) {
-          ms0.dimensionOrder += "Z";
+        else if (getDimensionOrder().indexOf('Z') < 0) {
+          ms0.dimensionOrder += 'Z';
         }
       }
       unique = true;
     }
 
-    if (getDimensionOrder().indexOf("Z") < 0) ms0.dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") < 0) ms0.dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") < 0) ms0.dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') < 0) ms0.dimensionOrder += 'Z';
+    if (getDimensionOrder().indexOf('C') < 0) ms0.dimensionOrder += 'C';
+    if (getDimensionOrder().indexOf('T') < 0) ms0.dimensionOrder += 'T';
 
     if (getSizeC() == 0) ms0.sizeC = 1;
     if (getSizeT() == 0) ms0.sizeT = 1;
@@ -399,7 +398,7 @@ public class TCSReader extends FormatReader {
       String[] lines = comment.split("\n");
       for (String line : lines) {
         if (!line.startsWith("[")) {
-          int eq = line.indexOf("=");
+          int eq = line.indexOf('=');
           if (eq < 0) continue;
           String key = line.substring(0, eq).trim();
           String value = line.substring(eq + 1).trim();

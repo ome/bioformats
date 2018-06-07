@@ -12,4 +12,17 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
+  <target name="test" depends="jar, compile-tests" description="run tests">
+    <testng failureProperty="failedTest">
+      <classpath refid="test.classpath"/>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
+      <xmlfileset file="${tests.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
 </project>

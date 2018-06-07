@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,7 +50,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffRational;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Time;
@@ -453,7 +452,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
       if (artist != null) {
         String firstName = null, lastName = null;
-        int ndx = artist.indexOf(" ");
+        int ndx = artist.indexOf(' ');
         if (ndx < 0) lastName = artist;
         else {
           firstName = artist.substring(0, ndx);
@@ -528,7 +527,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   protected String getImageCreationDate() {
     Object o = ifds.get(0).getIFDValue(IFD.DATE_TIME);
     if (o instanceof String) return (String) o;
-    if (o instanceof String[]) return ((String[]) o)[0];
+    if (o instanceof String[] && ((String[]) o).length > 0) return ((String[]) o)[0];
     return null;
   }
 

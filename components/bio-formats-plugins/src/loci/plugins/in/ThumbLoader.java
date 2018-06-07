@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,12 +32,15 @@ import java.awt.Panel;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import loci.common.DebugTools;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -123,15 +126,29 @@ public class ThumbLoader implements Runnable {
     int series, Panel panel, boolean quiet)
   {
     BF.status(quiet, "Reading thumbnail for series #" + (series + 1));
-    thumbReader.setSeries(series);
-    // open middle image thumbnail
+    // open middle image thumbnail in smallest pyramid resolution
+    List<CoreMetadata> core = thumbReader.getCoreMetadataList();
+    int index = series;
+    for (int i=0; i<=index; i++) {
+      if (core.get(i).resolutionCount > 1 &&
+        i + core.get(i).resolutionCount > index)
+      {
+        index = i + core.get(i).resolutionCount - 1;
+        break;
+      }
+    }
+    thumbReader.setSeries(index);
+
     int z = thumbReader.getSizeZ() / 2;
     int t = thumbReader.getSizeT() / 2;
     int ndx = thumbReader.getIndex(z, 0, t);
     Exception exc = null;
     try {
       BufferedImage thumb = thumbReader.openThumbImage(ndx);
-      thumb = AWTImageTools.autoscale(thumb);
+      // autoscaling floating point thumbnails typically results in a black image
+      if (!FormatTools.isFloatingPoint(thumbReader.getPixelType())) {
+        thumb = AWTImageTools.autoscale(thumb);
+      }
       ImageIcon icon = new ImageIcon(thumb);
       panel.removeAll();
       panel.add(new JLabel(icon));

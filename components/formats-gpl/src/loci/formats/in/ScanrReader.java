@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,7 +50,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -718,7 +717,7 @@ public class ScanrReader extends FormatReader {
     private int nextXPos = 0;
     private int nextYPos = 0;
 
-    private StringBuffer currentValue = new StringBuffer();
+    private final StringBuilder currentValue = new StringBuilder();
 
     // -- DefaultHandler API methods --
 

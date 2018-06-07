@@ -7,37 +7,24 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.2.1-SNAPSHOT</version>
+  <version>5.9.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
   <description>Umbrella project for the Bio-Formats software project.</description>
-  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
+  <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
   <modules>
-    <module>components/specification</module>
-    <module>components/forks/jai</module>
-    <module>components/forks/mdbtools</module>
-    <module>components/forks/poi</module>
     <module>components/forks/turbojpeg</module>
-    <module>components/autogen</module>
     <module>components/formats-api</module>
     <module>components/formats-bsd</module>
     <module>components/formats-gpl</module>
     <module>components/bundles/bioformats_package</module>
-    <module>components/formats-common</module>
     <module>components/bio-formats-plugins</module>
-    <module>components/bundles/loci-tools</module>
-    <module>components/metakit</module>
-    <module>components/bundles/ome-tools</module>
-    <module>components/ome-jxr</module>
-    <module>components/ome-xml</module>
+    <module>components/bundles/loci_tools</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
-    <module>components/stubs/lwf-stubs</module>
-    <module>components/stubs/mipav</module>
-    <module>components/xsd-fu</module>
   </modules>
 
   <properties>
@@ -48,24 +35,30 @@
          When possible, we advise using the relevant groupId and version
          properties for your dependencies rather than hardcoding them. -->
 
-    <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.2.1-SNAPSHOT</release.version>
-    <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
+    <release.version>5.9.0-SNAPSHOT</release.version>
     <date>${maven.build.timestamp}</date>
-    <year>2016</year>
+    <year>2017</year>
     <project.rootdir>${basedir}</project.rootdir>
     <imagej1.version>1.48s</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <log4j.version>1.2.17</log4j.version>
     <logback.version>1.1.1</logback.version>
+    <ome-stubs.version>5.3.0</ome-stubs.version>
+    <lwf-stubs.version>${ome-stubs.version}</lwf-stubs.version>
+    <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
+    <ome-metakit.version>5.3.0</ome-metakit.version>
+    <metakit.version>${ome-metakit.version}</metakit.version>
     <slf4j.version>1.7.6</slf4j.version>
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
-
-    <xsdfu.schemaver>2016-06</xsdfu.schemaver>
-    <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
-    <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
+    <ome-common.version>5.3.2</ome-common.version>
+    <ome-model.version>5.5.4</ome-model.version>
+    <ome-poi.version>5.3.1</ome-poi.version>
+    <ome-mdbtools.version>5.3.0</ome-mdbtools.version>
+    <ome-jai.version>0.1.0</ome-jai.version>
+    <ome-codecs.version>0.2.0</ome-codecs.version>
+    <jxrlib.version>0.2.1</jxrlib.version>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -133,131 +126,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
 
-      <plugin>
-        <groupId>org.codehaus.gmaven</groupId>
-        <artifactId>gmaven-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-          <execution>
-            <phase>initialize</phase>
-            <goals>
-              <goal>execute</goal>
-            </goals>
-            <configuration>
-              <defaults>
-                <default>UNKNOWN</default>
-              </defaults>
-              <source>
-                import java.util.regex.Pattern
-
-                def ant = new AntBuilder()
-                try {
-                  ant.exec(outputproperty:"shortrevision",
-                    failifexecutionfails:"false",
-                    executable: 'git') {
-                      arg(line:"rev-parse --short HEAD")
-                  }
-                }
-                catch (Exception e) { }
-                try {
-                  ant.exec(outputproperty:"revision",
-                    failifexecutionfails:"false",
-                    executable: 'git') {
-                      arg(line:"rev-parse HEAD")
-                  }
-                }
-                catch (Exception e) { }
-
-                try {
-                  ant.exec(outputproperty:"exactTag",
-                    resultproperty:"exactTagRC",
-                    failifexecutionfails:"true",
-                    failonerror:"false",
-                    executable: 'git') {
-                      arg(line:"describe --match=v[0-9]* --exact")
-                  }
-                }
-                catch (Exception e) {
-                  ant.project.properties.exactTagRC = ""
-                  ant.project.properties.exactTag = ""
-                }
-
-                try {
-                  ant.exec(outputproperty:"describe",
-                    failifexecutionfails:"true",
-                    executable: 'git') {
-                      arg(line:"describe --match=v[0-9]*")
-                  }
-                }
-                catch (Exception e) {
-                  ant.project.properties.describe = ""
-                }
-
-                println ant.project.properties.exactTagRC
-                println ant.project.properties.exactTag
-                println ant.project.properties.describe
-
-                if (ant.project.properties.exactTagRC == 0) {
-                  // if we're building from a tag, set the release name
-                  // to be the tag name, minus the leading 'v'
-                  project.properties.release = ant.project.properties.exactTag.substring(1)
-                }
-                else if (ant.project.properties.describe) {
-                  // if we're building within Git, but not from a tag,
-                  // then use the last known tag's number to set a snapshot
-                  // version
-                  try {
-                    def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
-                    def groups = regex.matcher(ant.project.properties.describe)
-                    groups.matches()
-                    def major = groups.group(1)
-                    def minor = groups.group(2)
-                    def patch = groups.group(3)
-                    project.properties.release = major + "." + minor + "." + patch + "-SNAPSHOT"
-                  }
-                  catch (IllegalStateException e) {
-                    project.properties.release = ""
-                  }
-                }
-                else {
-                  // if we're building outside of Git, set a default
-                  // version number
-                  project.properties.release = project.properties.default
-                }
-                project.properties.shortrevision = ant.project.properties.shortrevision
-                project.properties.revision = ant.project.properties.revision
-
-                if (!project.properties.release) {
-                  // assume this is a source package outside of Git
-                  // there should be a ant/gitversion.xml file with the
-                  // version information used when the package was created
-
-                  def xmlfile = project.properties.get('project.rootdir') + "/ant/gitversion.xml"
-
-                  def xml = new XmlParser().parse(xmlfile)
-                  for (property in xml.property) {
-                    println "parsing " + property.'@name'
-                    if ('release.version' == property.'@name') {
-                      project.properties.release = property.'@value'
-                    }
-                    else if ('vcs.revision' == property.'@name') {
-                      project.properties.revision = property.'@value'
-                    }
-                    else if ('vcs.shortrevision' == property.'@name') {
-                      project.properties.shortrevision = property.'@value'
-                    }
-                  }
-                }
-
-                println "shortrevision = " + project.properties.shortrevision
-                println "revision = " + project.properties.revision
-                println "release = " + project.properties.release
-              </source>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <!-- Add Implementation-Build entry to JAR manifest. -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -278,8 +146,6 @@
             <canUpdateCopyright>false</canUpdateCopyright>
           <roots>
             <root>src</root>
-            <root>target/generated-sources</root>
-            <root>target/processed-sources</root>
             <root>test</root>
             <root>utils</root>
             <root>doc</root>
@@ -676,24 +542,14 @@
   <!-- NB: for parent project -->
   <repositories>
     <repository>
-        <id>ome.experimental</id>
-        <url>http://artifacts.openmicroscopy.org/artifactory/ome.experimental</url>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
     </repository>
     <repository>
-      <id>ome.external</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
-    </repository>
-    <repository>
-      <id>ome.releases</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
-    </repository>
-    <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
-    <repository>
-      <id>unidata.releases</id>
-      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+      <id>ome</id>
+      <name>OME Artifactory</name>
+      <url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
     </repository>
   </repositories>
 
@@ -701,27 +557,8 @@
     <pluginRepository>
       <id>central</id>
       <name>Central Repository</name>
-      <url>http://repo.maven.apache.org/maven2</url>
+      <url>https://repo.maven.apache.org/maven2</url>
       <layout>default</layout>
-    </pluginRepository>
-    <pluginRepository>
-      <id>ome.releases</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>ome.external</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>ome.experimental</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.experimental</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -729,12 +566,12 @@
     <repository>
       <id>ome.staging</id>
       <name>OME Staging Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
+      <url>https://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
     </repository>
     <snapshotRepository>
       <id>ome.snapshots</id>
       <name>OME Snapshots Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+      <url>https://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 

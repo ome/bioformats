@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -61,8 +61,7 @@ import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.gui.Index16ColorModel;
-import loci.formats.in.DefaultMetadataOptions;
-import loci.formats.in.MetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -73,6 +72,7 @@ import loci.formats.tiff.IFD;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
+import ome.xml.model.Pixels;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -107,12 +107,14 @@ public final class ImageConverter {
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
   private int saveTileWidth = 0, saveTileHeight = 0;
   private boolean validate = false;
+  private boolean zeroPadding = false;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
 
   private HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
   private boolean firstTile = true;
+  private DynamicMetadataOptions options = new DynamicMetadataOptions();
 
   // -- Constructor --
 
@@ -146,6 +148,10 @@ public final class ImageConverter {
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-validate")) validate = true;
+        else if (args[i].equals("-padded")) zeroPadding = true;
+        else if (args[i].equals("-option")) {
+          options.set(args[++i], args[++i]);
+        }
         else if (args[i].equals("-overwrite")) {
           overwrite = true;
         }
@@ -223,7 +229,8 @@ public final class ImageConverter {
       "    [-bigtiff] [-compression codec] [-series series] [-map id]",
       "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
       "    [-timepoint timepoint] [-nogroup] [-nolookup] [-autoscale]",
-      "    [-version] [-no-upgrade] in_file out_file",
+      "    [-version] [-no-upgrade] [-padded] [-option key value]",
+      "    in_file out_file",
       "",
       "    -version: print the library version and exit",
       " -no-upgrade: do not perform the upgrade check",
@@ -249,6 +256,8 @@ public final class ImageConverter {
       "    -channel: only convert the specified channel (indexed from 0)",
       "          -z: only convert the specified Z section (indexed from 0)",
       "  -timepoint: only convert the specified timepoint (indexed from 0)",
+      "     -padded: filename indexes for series, z, c and t will be zero padded",
+      "     -option: add the specified key/value pair to the options list",
       "",
       "If any of the following patterns are present in out_file, they will",
       "be replaced with the indicated metadata value from the input file.",
@@ -291,7 +300,6 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     nextOutputIndex.clear();
-    MetadataOptions options= new DefaultMetadataOptions();
     options.setValidate(validate);
     writer.setMetadataOptions(options);
     firstTile = true;
@@ -406,21 +414,20 @@ public final class ImageConverter {
     }
 
     if (store instanceof MetadataRetrieve) {
-      if (series >= 0) {
-        try {
-          String xml = service.getOMEXML(service.asRetrieve(store));
-          OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
-          Image exportImage = root.getImage(series);
-
-          IMetadata meta = service.createOMEXMLMetadata(xml);
+      try {
+        String xml = service.getOMEXML(service.asRetrieve(store));
+        OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
+        IMetadata meta = service.createOMEXMLMetadata(xml);
+        if (series >= 0) {
+          Image exportImage = new Image(root.getImage(series));
+          Pixels exportPixels = new Pixels(root.getImage(series).getPixels());
+          exportImage.setPixels(exportPixels);
           OMEXMLMetadataRoot newRoot = (OMEXMLMetadataRoot) meta.getRoot();
           while (newRoot.sizeOfImageList() > 0) {
             newRoot.removeImage(newRoot.getImage(0));
           }
-
           newRoot.addImage(exportImage);
           meta.setRoot(newRoot);
-
           meta.setPixelsSizeX(new PositiveInteger(width), 0);
           meta.setPixelsSizeY(new PositiveInteger(height), 0);
 
@@ -440,31 +447,31 @@ public final class ImageConverter {
 
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
-        catch (ServiceException e) {
-          throw new FormatException(e);
+        else {
+          for (int i=0; i<reader.getSeriesCount(); i++) {
+            meta.setPixelsSizeX(new PositiveInteger(width), 0);
+            meta.setPixelsSizeY(new PositiveInteger(height), 0);
+
+            if (autoscale) {
+              store.setPixelsType(PixelType.UINT8, i);
+            }
+
+            if (channel >= 0) {
+              meta.setPixelsSizeC(new PositiveInteger(1), 0);
+            }
+            if (zSection >= 0) {
+              meta.setPixelsSizeZ(new PositiveInteger(1), 0);
+            }
+            if (timepoint >= 0) {
+              meta.setPixelsSizeT(new PositiveInteger(1), 0);
+            }
+          }
+
+          writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
       }
-      else {
-        for (int i=0; i<reader.getSeriesCount(); i++) {
-          store.setPixelsSizeX(new PositiveInteger(width), 0);
-          store.setPixelsSizeY(new PositiveInteger(height), 0);
-
-          if (autoscale) {
-            store.setPixelsType(PixelType.UINT8, i);
-          }
-
-          if (channel >= 0) {
-            store.setPixelsSizeC(new PositiveInteger(1), 0);
-          }
-          if (zSection >= 0) {
-            store.setPixelsSizeZ(new PositiveInteger(1), 0);
-          }
-          if (timepoint >= 0) {
-            store.setPixelsSizeT(new PositiveInteger(1), 0);
-          }
-        }
-
-        writer.setMetadataRetrieve((MetadataRetrieve) store);
+      catch (ServiceException e) {
+        throw new FormatException(e);
       }
     }
     writer.setWriteSequentially(true);
@@ -531,7 +538,7 @@ public final class ImageConverter {
           continue;
         }
 
-        String outputName = FormatTools.getFilename(q, i, reader, out);
+        String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
         if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
           writer.setId(outputName);
           if (compression != null) writer.setCompression(compression);

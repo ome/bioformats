@@ -11,6 +11,13 @@
   </Match>
 
   <Match>
+    <Confidence value="2"/>
+    <Not>
+      <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
+    </Not>
+  </Match>
+
+  <Match>
     <Class name="~loci\.common\..*"/>
     <Bug pattern="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS,NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
   </Match>

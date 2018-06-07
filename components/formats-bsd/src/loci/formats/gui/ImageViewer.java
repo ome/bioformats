@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -602,10 +602,13 @@ public class ImageViewer extends JFrame implements ActionListener,
         "<li>University of Dundee</li>" +
         "</ul>" +
         "<i>" + FormatTools.URL_BIO_FORMATS + "</i>" +
-        "<br>Revision " + FormatTools.VCS_REVISION + ", built " +
+        "<br>Version " + FormatTools.VERSION + " (VCS revision " +
+        FormatTools.VCS_REVISION + "), built on " +
         FormatTools.DATE + "<br><br>See <a href=\"" +
-        "http://www.openmicroscopy.org/site/support/bio-formats/users/index.html\">" +
-        "http://www.openmicroscopy.org/site/support/bio-formats/users/index.html</a>" +
+        "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+        "/users/index.html\">" +
+        "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+        "/users/index.html</a>" +
         "<br>for help with using Bio-Formats.";
       ImageIcon bioFormatsLogo = new ImageIcon(
           IFormatHandler.class.getResource("bio-formats-logo.png"));
@@ -736,7 +739,7 @@ public class ImageViewer extends JFrame implements ActionListener,
 
   // -- Helper methods --
 
-  protected StringBuffer sb = new StringBuffer();
+  protected final StringBuilder sb = new StringBuilder();
 
   /** Updates cursor probe label. */
   protected void updateLabel(int x, int y) {

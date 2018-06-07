@@ -46,11 +46,11 @@ function [result] = bfopen(id, varargin)
 %     bioformats_package.jar.
 %
 % For many examples of how to use the bfopen function, please see:
-%     http://www.openmicroscopy.org/site/support/bio-formats5.1/developers/matlab-dev.html
+%     https://docs.openmicroscopy.org/latest/bio-formats/developers/matlab-dev.html
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2007 - 2016 Open Microscopy Environment:
+% Copyright (C) 2007 - 2017 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee

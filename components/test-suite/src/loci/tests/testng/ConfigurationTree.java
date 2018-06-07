@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -114,19 +114,9 @@ public class ConfigurationTree {
     if (rootDir == null) {
       throw new IllegalArgumentException("rootDir cannot be null.");
     }
-
+    this.rootDir = new File(rootDir).getAbsolutePath();
     if (configDir != null) {
-      Location rootLocation = new Location(rootDir);
-      Location configLocation = new Location(configDir);
-      while (rootLocation.getName().equals(configLocation.getName())) {
-        rootLocation = rootLocation.getParentFile();
-        configLocation = configLocation.getParentFile();
-      }
-
-      this.rootDir = rootLocation.getAbsolutePath();
-      this.configDir = configLocation.getAbsolutePath();
-    } else {
-      this.rootDir = new File(rootDir).getAbsolutePath();
+        this.configDir = new File(configDir).getAbsolutePath();
     }
     if (cacheDir != null) {
       this.cacheDir = new File(cacheDir).getAbsolutePath();
@@ -161,7 +151,6 @@ public class ConfigurationTree {
    *  Relocate a path from an base directory into a target directory
    */
   public String relocate(String path, String oldRoot, String newRoot) {
-
     String subPath = path.substring((int) Math.min(
       oldRoot.length() + 1, path.length()));
     if (subPath.length() == 0) {

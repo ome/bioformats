@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -29,6 +29,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 import loci.common.DataTools;
 import loci.formats.FileStitcher;
@@ -36,6 +41,8 @@ import loci.formats.FileStitcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Factory;
+
+import static loci.tests.testng.TestTools.getProperty;
 
 /**
  * Factory for scanning a directory structure and generating instances of
@@ -57,20 +64,9 @@ public class FormatReaderTestFactory {
 
   // -- TestNG factory methods --
 
-  /**
-   * Safely return a system property by key excluding default Ant values
-   */
-  public String getProperty(String key) {
-    String value = System.getProperty(key);
-    if (value == null || value.equals("${" + key + "}")) {
-      return null;
-    }
-    return value;
-  }
-
   @Factory
   public Object[] createInstances() {
-    List files = new ArrayList();
+    List<String> files = new ArrayList<String>();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
@@ -189,6 +185,12 @@ public class FormatReaderTestFactory {
       configSuffix = "";
     }
 
+    // detect whether or not to ignore missing configuration
+    final String allowMissingProp = "testng.allow-missing";
+    String allowMissingValue = getProperty(allowMissingProp);
+    boolean allowMissing = Boolean.parseBoolean(allowMissingValue);
+    LOGGER.info("testng.allow-missing = {}", allowMissing);
+
     // display local information
     LOGGER.info("user.language = {}", System.getProperty("user.language"));
     LOGGER.info("user.country = {}", System.getProperty("user.country"));
@@ -222,28 +224,95 @@ public class FormatReaderTestFactory {
     }
 
     // remove duplicates
-    int index = 0;
+    Set<String> fileSet = new LinkedHashSet<String>();
+    Map<String, String> originalPath = new HashMap<String, String>();
+    for (String s: files) {
+      String canonicalPath;
+      try {
+        canonicalPath = (new File(s)).getCanonicalPath();
+      } catch (IOException e) {
+        LOGGER.warn("Could not get canonical path for {}", s);
+        canonicalPath = s;
+      }
+      fileSet.add(canonicalPath);
+      originalPath.put(canonicalPath, s);
+    }
+    Set<String> minimalFiles = new LinkedHashSet<String>();
     FileStitcher reader = new FileStitcher();
-    while (index < files.size()) {
-      String file = (String) files.get(index);
+    Set<String> failingIds = new LinkedHashSet<String>();
+    while (!fileSet.isEmpty()) {
+      String file = fileSet.iterator().next();
       try {
         reader.setId(file);
-        String[] usedFiles = reader.getUsedFiles();
-        for (int q=0; q<usedFiles.length; q++) {
-          if (files.indexOf(usedFiles[q]) > index) {
-            files.remove(usedFiles[q]);
-          }
-        }
+      } catch (Exception e) {
+        LOGGER.error("setId(\"{}\") failed", file, e);
+        failingIds.add(file);
+        fileSet.remove(file);
+        continue;
       }
-      catch (Exception e) { }
+      try {
+        String[] usedFiles = reader.getUsedFiles();
+        Set<String> auxFiles = new LinkedHashSet<String>();
+        for (String s: usedFiles) {
+          auxFiles.add((new File(s)).getCanonicalPath());
+        }
+        fileSet.removeAll(auxFiles);
+        String masterFile = reader.getCurrentFile();
+        auxFiles.remove(masterFile);
+        minimalFiles.removeAll(auxFiles);
+        minimalFiles.add(masterFile);
+      }
+      catch (Exception e) {
+        LOGGER.warn("Could not determine duplicate status for {}", file, e);
+        minimalFiles.add(file);
+      }
       finally {
+        fileSet.remove(file);
         try {
           reader.close();
         }
         catch (IOException e) { }
       }
-
-      index++;
+    }
+    if (!failingIds.isEmpty()) {
+      if (!allowMissing) {
+        String msg = String.format("setId failed on %s", failingIds);
+        LOGGER.error(msg);
+        throw new RuntimeException(msg);
+      }
+      else {
+        for (String id : failingIds) {
+          boolean found = false;
+          try {
+            if (FormatReaderTest.configTree.get(id) != null) {
+              found = true;
+              }
+            }
+          catch (Exception e) {
+            LOGGER.warn("", e);
+          }
+          if (found) {
+            // setId failed and configuration present
+            String msg = String.format("setId failed on %s", id);
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+          }
+          else {
+            // setId failed and configuration missing
+            String msg = String.format("setId failed on %s (skipping)", id);
+            LOGGER.warn(msg);
+          }
+        }
+      }
+    }
+    files = new ArrayList<String>();
+    for (String s: minimalFiles) {
+      if (!originalPath.containsKey(s)) {
+        String msg = "No match found for " + s;
+        LOGGER.error(msg);
+        throw new RuntimeException(msg);
+      }
+      files.add(originalPath.get(s));
     }
 
     // don't remove duplicates if the list of files is pre-defined
@@ -259,23 +328,31 @@ public class FormatReaderTestFactory {
 
     // create test class instances
     System.out.println("Building list of tests...");
-    Object[] tests = new Object[files.size()];
-    for (int i=0; i<tests.length; i++) {
-      String id = (String) files.get(i);
+    List<Object> tests = new ArrayList<>();
+    for (String id : files) {
       try {
+        boolean found = true;
         if (FormatReaderTest.configTree.get(id) == null) {
-          LOGGER.error("{} not configured.", id);
+          found = false;
+          if (allowMissing) {
+            LOGGER.warn("{} not configured (skipping).", id);
+          }
+          else {
+            LOGGER.error("{} not configured.", id);
+          }
+        }
+        if (found || !allowMissing) {
+          tests.add(new FormatReaderTest(id, multiplier, inMemory));
         }
       }
       catch (Exception e) {
         LOGGER.warn("", e);
       }
-      tests[i] = new FormatReaderTest(id, multiplier, inMemory);
     }
-    if (tests.length == 1) System.out.println("Ready to test " + files.get(0));
-    else System.out.println("Ready to test " + tests.length + " files");
+    if (tests.size() == 1) System.out.println("Ready to test " + files.get(0));
+    else System.out.println("Ready to test " + tests.size() + " files");
 
-    return tests;
+    return tests.toArray(new Object[tests.size()]);
   }
 
 }

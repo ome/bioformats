@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,10 +33,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
 
 import loci.common.RandomAccessInputStream;
-import loci.common.Region;
 import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -49,7 +47,7 @@ import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
 
 /**
- * Reader for decoding JPEG images using java.awt.Toolkit.
+ * Reader for decoding JPEG images using java.awt.Toolkit and TurboJPEG.
  * This reader is useful for reading very large JPEG images, as it supports
  * tile-based access.
  *
@@ -60,8 +58,7 @@ public class TileJPEGReader extends FormatReader {
 
   // -- Fields --
 
-  private JPEGTileDecoder decoder;
-  private JPEGTurboService service;
+  private transient JPEGTurboService service;
 
   // -- Constructor --
 
@@ -81,21 +78,7 @@ public class TileJPEGReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (service != null) {
-      service.getTile(buf, x, y, w, h);
-    }
-    else {
-      int c = getRGBChannelCount();
-
-      for (int ty=y; ty<y+h; ty++) {
-        byte[] scanline = decoder.getScanline(ty);
-        if (scanline == null) {
-          decoder.initialize(currentId, 0);
-          scanline = decoder.getScanline(ty);
-        }
-        System.arraycopy(scanline, c * x, buf, (ty - y) * c * w, c * w);
-      }
-    }
+    service.getTile(buf, x, y, w, h);
 
     return buf;
   }
@@ -105,10 +88,6 @@ public class TileJPEGReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      if (decoder != null) {
-        decoder.close();
-      }
-      decoder = null;
       if (service != null) {
         service.close();
       }
@@ -124,34 +103,24 @@ public class TileJPEGReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
-    decoder = new JPEGTileDecoder();
-    decoder.initialize(in, 0, 1, 0);
+    int[] dimensions;
+    try (JPEGTileDecoder decoder = new JPEGTileDecoder()) {
+      dimensions = decoder.preprocess(in);
+    }
 
     CoreMetadata m = core.get(0);
 
     m.interleaved = true;
     m.littleEndian = false;
 
-    m.sizeX = decoder.getWidth();
-    m.sizeY = decoder.getHeight();
+    m.sizeX = dimensions[0];
+    m.sizeY = dimensions[1];
     m.sizeZ = 1;
     m.sizeT = 1;
-    try {
-      m.sizeC = decoder.getScanline(0).length / getSizeX();
-    }
-    catch (Exception e) {
-      decoder.close();
-      in = new RandomAccessInputStream(id);
-      in.seek(0);
-      service = new JPEGTurboServiceImpl();
-      try {
-        service.initialize(in, m.sizeX, m.sizeY);
-      }
-      catch (ServiceException se) {
-        throw new FormatException("Could not initialize JPEG service", se);
-      }
-      m.sizeC = 3;
-    }
+
+    reopenFile();
+
+    m.sizeC = 3;
     m.rgb = getSizeC() > 1;
     m.imageCount = 1;
     m.pixelType = FormatTools.UINT8;
@@ -161,6 +130,23 @@ public class TileJPEGReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+  }
+
+  @Override
+  public void reopenFile() throws IOException {
+    if (in != null) {
+      in.close();
+    }
+    in = new RandomAccessInputStream(currentId);
+    in.seek(0);
+    service = new JPEGTurboServiceImpl();
+    try {
+      service.initialize(in, getSizeX(), getSizeY());
+    }
+    catch (ServiceException se) {
+      service = null;
+      throw new IOException("Could not initialize JPEG service", se);
+    }
   }
 
 }

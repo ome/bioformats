@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,8 +40,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-import loci.formats.tiff.TiffRational;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
@@ -95,7 +93,7 @@ public class FluoviewReader extends BaseTiffReader {
   private static final int BASELINE_OFFSET = 4944;
 
   /** Date format */
-  private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss.SSS";
+  private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
   // -- Fields --
 
@@ -310,8 +308,8 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("event")) {
         m.sizeZ *= size;
-        if (dimensionOrder.indexOf("Z") == -1) {
-          dimensionOrder += "Z";
+        if (dimensionOrder.indexOf('Z') == -1) {
+          dimensionOrder += 'Z';
         }
         if (Double.compare(voxelZ, 1) == 0) {
           voxelZ = voxel;
@@ -319,8 +317,8 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("z")) {
         m.sizeZ *= size;
-        if (dimensionOrder.indexOf("Z") == -1) {
-          dimensionOrder += "Z";
+        if (dimensionOrder.indexOf('Z') == -1) {
+          dimensionOrder += 'Z';
         }
         
         ArrayList<Double> uniqueZ = new ArrayList<Double>();
@@ -350,8 +348,8 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         m.sizeC *= size;
-        if (dimensionOrder.indexOf("C") == -1) {
-          dimensionOrder += "C";
+        if (dimensionOrder.indexOf('C') == -1) {
+          dimensionOrder += 'C';
         }
         voxelC = voxel;
       }
@@ -359,14 +357,14 @@ public class FluoviewReader extends BaseTiffReader {
         name.equals("animation"))
       {
         m.sizeT *= size;
-        if (dimensionOrder.indexOf("T") == -1) {
-          dimensionOrder += "T";
+        if (dimensionOrder.indexOf('T') == -1) {
+          dimensionOrder += 'T';
         }
         voxelT = voxel;
         timeIndex = i - 2;
       }
       else {
-        if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
+        if (dimensionOrder.indexOf('S') == -1) dimensionOrder += 'S';
         seriesCount *= size;
 
         if (name.equals("montage")) montageIndex = i - 2;
@@ -374,10 +372,10 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
 
-    if (dimensionOrder.indexOf("Z") == -1) dimensionOrder += "Z";
-    if (dimensionOrder.indexOf("T") == -1) dimensionOrder += "T";
-    if (dimensionOrder.indexOf("C") == -1) dimensionOrder += "C";
-    if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
+    if (dimensionOrder.indexOf('Z') == -1) dimensionOrder += 'Z';
+    if (dimensionOrder.indexOf('T') == -1) dimensionOrder += 'T';
+    if (dimensionOrder.indexOf('C') == -1) dimensionOrder += 'C';
+    if (dimensionOrder.indexOf('S') == -1) dimensionOrder += 'S';
 
     m.imageCount = ifds.size() / seriesCount;
     if (getSizeZ() > getImageCount()) m.sizeZ = getImageCount();
@@ -755,7 +753,7 @@ public class FluoviewReader extends BaseTiffReader {
       String[] lines = comment.split("\n");
       for (String token : lines) {
         token = token.trim();
-        int eq = token.indexOf("=");
+        int eq = token.indexOf('=');
         if (eq != -1) {
           String key = token.substring(0, eq);
           String value = token.substring(eq + 1);
@@ -829,9 +827,9 @@ public class FluoviewReader extends BaseTiffReader {
         }
         else if (token.startsWith("Z") && token.indexOf(" um ") != -1) {
           // looking for "Z - x um in y planes"
-          String z = token.substring(token.indexOf("-") + 1);
+          String z = token.substring(token.indexOf('-') + 1);
           z = z.replaceAll("\\p{Alpha}", "").trim();
-          int firstSpace = z.indexOf(" ");
+          int firstSpace = z.indexOf(' ');
           double size = Double.parseDouble(z.substring(0, firstSpace));
           double nPlanes = Double.parseDouble(z.substring(firstSpace).trim());
           voxelZ = size / nPlanes;
@@ -839,11 +837,10 @@ public class FluoviewReader extends BaseTiffReader {
       }
       if (date != null) {
         date = DateTools.formatDate(date.trim(),
-          new String[] {"MM/dd/yyyy hh:mm:ss a", "MM-dd-yyyy hh:mm:ss","MM/dd/yyyy H:mm:ss"}, true);
+          new String[] {"dd/MM/yyyy hh:mm:ss a", "MM-dd-yyyy hh:mm:ss","dd/MM/yyyy H:mm:ss"}, true);
         Timestamp timestamp = Timestamp.valueOf(date);
         if (timeIndex >= 0 && timestamp != null) {
           long ms = timestamp.asInstant().getMillis();
-          int nChars = String.valueOf(getImageCount()).length();
           for (int i=0; i<getImageCount(); i++) {
             int[] zct = getZCTCoords(i);
             String key = String.format(
@@ -859,7 +856,7 @@ public class FluoviewReader extends BaseTiffReader {
       int end = comment.indexOf("[Version Info End]");
       if (start != -1 && end != -1 && end > start) {
         comment = comment.substring(start + 14, end).trim();
-        start = comment.indexOf("=") + 1;
+        start = comment.indexOf('=') + 1;
         end = comment.indexOf("\n");
         if (end > start) comment = comment.substring(start, end).trim();
         else comment = comment.substring(start).trim();

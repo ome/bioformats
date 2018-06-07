@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -66,7 +66,7 @@ import loci.formats.Modulo;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
-import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.OMETiffReader;
@@ -132,6 +132,7 @@ public class ImageInfo {
   private String format = null;
   private String cachedir = null;
   private int xmlSpaces = 3;
+  private DynamicMetadataOptions options = new DynamicMetadataOptions();
 
   private IFormatReader reader;
   private IFormatReader baseReader;
@@ -271,6 +272,9 @@ public class ImageInfo {
             cache = true;
             cachedir = args[++i];
         }
+        else if (args[i].equals("-option")) {
+          options.set(args[++i], args[++i]);
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -297,7 +301,7 @@ public class ImageInfo {
       "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
       "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
       "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
-      "    [-cache] [-cache-dir dir]",
+      "    [-cache] [-cache-dir dir] [-option key value]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -338,6 +342,7 @@ public class ImageInfo {
       "  -cache-dir: use the specified directory to store the cached",
       "              initialized reader. If unspecified, the cached reader",
       "              will be stored under the same folder as the image file",
+      "     -option: add the specified key/value pair to the reader's options list",
       "",
       "* = may result in loss of precision",
       ""
@@ -470,9 +475,10 @@ public class ImageInfo {
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(filter);
     reader.setGroupFiles(group);
-    MetadataOptions metaOptions = new DefaultMetadataOptions(doMeta ?
-      MetadataLevel.ALL : MetadataLevel.MINIMUM);
-    reader.setMetadataOptions(metaOptions);
+    options.setMetadataLevel(
+        doMeta ? MetadataLevel.ALL : MetadataLevel.MINIMUM);
+    options.setValidate(validate);
+    reader.setMetadataOptions(options);
     reader.setFlattenedResolutions(flat);
   }
 
@@ -567,6 +573,8 @@ public class ImageInfo {
       Modulo moduloT = reader.getModuloT();
       int thumbSizeX = reader.getThumbSizeX();
       int thumbSizeY = reader.getThumbSizeY();
+      int tileSizeX = reader.getOptimalTileWidth();
+      int tileSizeY = reader.getOptimalTileHeight();
       boolean little = reader.isLittleEndian();
       String dimOrder = reader.getDimensionOrder();
       boolean orderCertain = reader.isOrderCertain();
@@ -630,6 +638,7 @@ public class ImageInfo {
       if (imageCount != sizeZ * effSizeC * sizeT) {
         LOGGER.info("\t************ ZCT mismatch ************");
       }
+      LOGGER.info("\tTile size = {} x {}", tileSizeX, tileSizeY);
       LOGGER.info("\tThumbnail size = {} x {}", thumbSizeX, thumbSizeY);
       LOGGER.info("\tEndianness = {}",
         little ? "intel (little)" : "motorola (big)");
@@ -849,9 +858,16 @@ public class ImageInfo {
             pix = DataTools.normalizeDoubles((double[]) pix);
           }
         }
-        images[i - start] = AWTImageTools.makeImage(ImageTools.make24Bits(pix,
-          sizeX, sizeY, reader.isInterleaved(), false, min, max),
-          sizeX, sizeY, FormatTools.isSigned(pixelType));
+        if (thumbs) {
+          images[i - start] = AWTImageTools.makeImage(ImageTools.make24Bits(pix,
+            sizeX, sizeY, reader.isInterleaved(), false, min, max),
+            sizeX, sizeY, FormatTools.isSigned(pixelType));
+        }
+        else {
+          images[i - start] = AWTImageTools.makeImage(ImageTools.make24Bits(pix,
+            width, height, reader.isInterleaved(), false, min, max),
+            width, height, FormatTools.isSigned(pixelType));
+        }
       }
       if (images[i - start] == null) {
         LOGGER.warn("\t************ Failed to read plane #{} ************", i);
@@ -1015,9 +1031,6 @@ public class ImageInfo {
     // initialize reader
     long s = System.currentTimeMillis();
     try {
-      MetadataOptions options= new DefaultMetadataOptions();
-      options.setValidate(validate);
-      reader.setMetadataOptions(options);
       reader.setId(id);
     } catch (FormatException exc) {
       reader.close();

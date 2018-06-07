@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,17 +38,13 @@ import static ome.xml.model.Pixels.getPhysicalSizeZUnitXsdDefault;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.bind.DatatypeConverter;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -594,6 +590,8 @@ public class FakeReader extends FormatReader {
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
 
+    ArrayList<IniTable> seriesTables = new ArrayList<IniTable>();
+
     // add properties file values to list of tokens.
     if (iniFile != null) {
       IniParser parser = new IniParser();
@@ -621,6 +619,12 @@ public class FakeReader extends FormatReader {
       System.arraycopy(oldTokArr, 0, tokens, 0, oldTokArr.length);
       System.arraycopy(newTokArr, 0, tokens, oldTokArr.length, newTokArr.length);
       // Properties overrides file name values
+
+      int seriesIndex = 0;
+      while (list.getTable("series_" + seriesIndex) != null) {
+        seriesTables.add(list.getTable("series_" + seriesIndex));
+        seriesIndex++;
+      }
     }
 
     // parse tokens from filename
@@ -630,7 +634,7 @@ public class FakeReader extends FormatReader {
         name = token;
         continue;
       }
-      int equals = token.indexOf("=");
+      int equals = token.indexOf('=');
       if (equals < 0) {
         LOGGER.warn("ignoring token: {}", token);
         continue;
@@ -707,7 +711,7 @@ public class FakeReader extends FormatReader {
         // 'color' and 'color_x' can be used together, but 'color_x' takes
         // precedence.  'color' will in that case be used for any missing
         // or invalid 'color_x' values.
-        int index = Integer.parseInt(key.substring(key.indexOf("_") + 1));
+        int index = Integer.parseInt(key.substring(key.indexOf('_') + 1));
 
         while (index >= color.size()) {
           color.add(null);
@@ -789,12 +793,16 @@ public class FakeReader extends FormatReader {
     }
 
     // populate OME metadata
-    boolean planeInfo = (exposureTime != null);
+    boolean planeInfo = (exposureTime != null) || seriesTables.size() > 0;
 
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
     fillPhysicalSizes(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
+      if (currentImageIndex < seriesTables.size()) {
+        parseSeriesTable(seriesTables.get(currentImageIndex), store, currentImageIndex);
+      }
+
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
       fillAcquisitionDate(store, acquisitionDate, currentImageIndex);
@@ -1002,7 +1010,7 @@ public class FakeReader extends FormatReader {
       Double y0 = getY(i) + ROI_SPACING / 2;
       double [] dx = { -0.8, -.3, .4, .5, -.1};
       double [] dy = { -0.4, .6, .5, -.3, -.7};
-      StringBuffer p = new StringBuffer();
+      final StringBuilder p = new StringBuilder();
       for (int j=0; j<5; j++) {
         p.append(x0 + ROI_SPACING /2 * dx[j]);
         p.append(",");
@@ -1115,6 +1123,50 @@ public class FakeReader extends FormatReader {
         roiCount++;
         roiRefCount++;
     }
+  }
+
+  /**
+   * Translate key/value pairs from the INI table for the specified series.
+   */
+  private void parseSeriesTable(IniTable table, MetadataStore store, int newSeries) {
+    int s = getSeries();
+    setSeries(newSeries);
+
+    for (int i=0; i<getImageCount(); i++) {
+      String exposureTime = table.get("ExposureTime_" + i);
+      String exposureTimeUnit = table.get("ExposureTimeUnit_" + i);
+
+      if (exposureTime != null) {
+        try {
+          Double v = Double.valueOf(exposureTime);
+          Time exposure = FormatTools.getTime(v, exposureTimeUnit);
+          if (exposure != null) {
+            store.setPlaneExposureTime(exposure, newSeries, i);
+          }
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Could not parse ExposureTime for series #" + s + " plane #" + i, e);
+        }
+      }
+
+      // TODO: could be cleaned up further when Java 8 is the minimum version
+      Length x = parsePosition("X", s, i, table);
+      if (x != null) {
+        store.setPlanePositionX(x, newSeries, i);
+      }
+
+      Length y = parsePosition("Y", s, i, table);
+      if (y != null) {
+        store.setPlanePositionY(y, newSeries, i);
+      }
+
+      Length z = parsePosition("Z", s, i, table);
+      if (z != null) {
+        store.setPlanePositionZ(z, newSeries, i);
+      }
+    }
+
+    setSeries(s);
   }
 
 // -- Helper methods --
@@ -1285,4 +1337,32 @@ public class FakeReader extends FormatReader {
       }
       return null;
   }
+
+  private Length parsePosition(String axis, int s, int index, IniTable table) {
+    String position = table.get("Position" + axis + "_" + index);
+    String positionUnit = table.get("Position" + axis + "Unit_" + index);
+
+    if (position != null) {
+      try {
+        Double v = Double.valueOf(position);
+        Length size = new Length(v, UNITS.MICROM);
+        if (positionUnit != null) {
+          try {
+            UnitsLength ul = UnitsLength.fromString(positionUnit);
+            size = UnitsLength.create(v, ul);
+          }
+          catch (EnumerationException e) {
+            LOGGER.trace("Could not parse Position" + axis + "Unit for series #" + s + " plane #" + index, e);
+          }
+        }
+        return size;
+      }
+      catch (NumberFormatException e) {
+        LOGGER.trace("Could not parse Position" + axis + " for series #" + s + " plane #" + index, e);
+      }
+    }
+
+    return null;
+  }
+
 }

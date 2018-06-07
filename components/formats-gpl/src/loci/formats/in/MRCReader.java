@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -28,7 +28,6 @@ package loci.formats.in;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -36,7 +35,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 
@@ -83,7 +81,26 @@ public class MRCReader extends FormatReader {
   /** @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return FormatTools.validStream(stream, HEADER_SIZE, false);
+    if (!FormatTools.validStream(stream, HEADER_SIZE, false)) {
+      return false;
+    }
+    stream.seek(ENDIANNESS_OFFSET);
+    stream.order(stream.read() == 68);
+    stream.seek(0);
+
+    int x = stream.readInt();
+    if (x <= 0 || x >= stream.length()) {
+      return false;
+    }
+    int y = stream.readInt();
+    if (y <= 0 || y >= stream.length()) {
+      return false;
+    }
+    int z = stream.readInt();
+    if (z <= 0 || z >= stream.length()) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -276,7 +293,9 @@ public class MRCReader extends FormatReader {
       }
     }
 
-    in.skipBytes(4);
+    int ispg = in.readInt();
+    addGlobalMeta("ISPG", ispg);
+    addGlobalMeta("Is data cube", ispg == 1);
 
     extHeaderSize = in.readInt();
 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,7 +37,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -206,9 +205,9 @@ public class PDSReader extends FormatReader {
     CoreMetadata m = core.get(0);
 
     for (String line : headerData) {
-      int eq = line.indexOf("=");
+      int eq = line.indexOf('=');
       if (eq < 0) continue;
-      int end = line.indexOf("/");
+      int end = line.indexOf('/');
       if (end < 0) end = line.length();
 
       String key = line.substring(0, eq).trim();

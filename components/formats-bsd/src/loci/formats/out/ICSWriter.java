@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -163,10 +163,8 @@ public class ICSWriter extends FormatWriter {
         pixels.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
       }
     }
-    lastPlane = no;
-    if (lastPlane != getPlaneCount() - 1 || uniqueFiles.size() > 1) {
-      overwriteDimensions(getMetadataRetrieve());
-    }
+    lastPlane = realIndex;
+    overwriteDimensions(getMetadataRetrieve());
 
     pixels.close();
     pixels = null;
@@ -256,7 +254,7 @@ public class ICSWriter extends FormatWriter {
 
       out.writeBytes("\nparameter\tscale\t1.000000\t");
 
-      StringBuffer units = new StringBuffer();
+      final StringBuilder units = new StringBuilder();
       for (int i=0; i<outputOrder.length(); i++) {
         char dim = outputOrder.charAt(i);
         Number value = 1.0;
@@ -337,14 +335,14 @@ public class ICSWriter extends FormatWriter {
     int[] pos =
       FormatTools.getZCTCoords(outputOrder, z, c, t, z * c * t, lastPlane);
 
-    StringBuffer dimOrder = new StringBuffer();
+    final StringBuilder dimOrder = new StringBuilder();
     int[] sizes = new int[6];
     int nextSize = 0;
     sizes[nextSize++] = 8 * bytesPerPixel;
 
     if (rgbChannels > 1) {
       dimOrder.append("ch\t");
-      sizes[nextSize++] = pos[1] + 1;
+      sizes[nextSize++] = rgbChannels;
     }
 
     for (int i=0; i<outputOrder.length(); i++) {

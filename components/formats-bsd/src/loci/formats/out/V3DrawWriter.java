@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 package loci.formats.out;
@@ -46,7 +42,7 @@ import static loci.common.DataTools.unpackBytes;
 
 /**
  * V3DrawWriter writes images in the .v3draw format for rapid I/O in <a
- * href="http://vaa3d.org">Vaa3D</a>, an open-source 3D visualization and
+ * href="http://www.alleninstitute.org/what-we-do/brain-science/research/products-tools/vaa3d/">Vaa3D</a>, an open-source 3D visualization and
  * analysis toolkit.
  *
  * <dd><a

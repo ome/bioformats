@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -243,7 +243,7 @@ public class JPEG2000Reader extends FormatReader {
     LOGGER.debug("Found {} comments", comments.size());
     for (int i=0; i<comments.size(); i++) {
       String comment = comments.get(i);
-      int equal = comment.indexOf("=");
+      int equal = comment.indexOf('=');
       if (equal >= 0) {
         String key = comment.substring(0, equal);
         String value = comment.substring(equal + 1);

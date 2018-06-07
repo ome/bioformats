@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -29,12 +29,9 @@ import ch.systemsx.cisd.base.mdarray.MDIntArray;
 import ch.systemsx.cisd.base.mdarray.MDShortArray;
 import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import loci.common.services.Service;
-import loci.common.services.ServiceException;
 
 /**
  * Utility class for working with NetCDF/HDF files.

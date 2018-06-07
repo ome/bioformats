@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,18 +38,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.ServiceLoader;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
 import loci.formats.codec.JPEG2000CodecOptions;
+import loci.formats.FormatTools;
 
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam;
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
@@ -70,7 +71,8 @@ public class JAIIIOServiceImpl extends AbstractService
   public static final String NO_J2K_MSG =
     "The JAI Image I/O Tools are required to read JPEG-2000 files. " +
     "Please obtain jai_imageio.jar from " +
-    "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html";
+    "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+    "/developers/java-library.html";
 
   // -- Fields --
 
@@ -102,7 +104,7 @@ public class JAIIIOServiceImpl extends AbstractService
 
     IIORegistry registry = IIORegistry.getDefaultInstance();
     Iterator<J2KImageWriterSpi> iter = 
-      ServiceRegistry.lookupProviders(J2KImageWriterSpi.class);
+      ServiceLoader.load(J2KImageWriterSpi.class).iterator();
     registry.registerServiceProviders(iter);
     J2KImageWriterSpi spi =
       registry.getServiceProviderByClass(J2KImageWriterSpi.class);
@@ -149,6 +151,7 @@ public class JAIIIOServiceImpl extends AbstractService
       param.setResolution(options.resolution.intValue());
     }
     BufferedImage image = reader.read(0, param);
+    mciis.close();
     reader.dispose();
     return image;
   }
@@ -174,6 +177,7 @@ public class JAIIIOServiceImpl extends AbstractService
       param.setResolution(options.resolution.intValue());
     }
     Raster raster = reader.readRaster(0, param);
+    mciis.close();
     reader.dispose();
     return raster;
   }
@@ -196,7 +200,7 @@ public class JAIIIOServiceImpl extends AbstractService
   private static IIORegistry registerServiceProviders() {
     IIORegistry registry = IIORegistry.getDefaultInstance();
     Iterator<J2KImageReaderSpi> iter =
-      ServiceRegistry.lookupProviders(J2KImageReaderSpi.class);
+            ServiceLoader.load(J2KImageReaderSpi.class).iterator();
     registry.registerServiceProviders(iter);
     return registry;
   }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**
@@ -105,7 +104,7 @@ public class INRReader extends FormatReader {
     CoreMetadata m = core.get(0);
 
     for (String line : lines) {
-      int index = line.indexOf("=");
+      int index = line.indexOf('=');
       if (index >= 0) {
         String key = line.substring(0, index);
         String value = line.substring(index + 1);
@@ -128,7 +127,7 @@ public class INRReader extends FormatReader {
           isSigned = value.toLowerCase().startsWith("signed");
         }
         else if (key.equals("PIXSIZE")) {
-          String bits = value.substring(0, value.indexOf(" "));
+          String bits = value.substring(0, value.indexOf(' '));
           nBits = Integer.parseInt(bits);
         }
         else if (key.equals("VX")) {

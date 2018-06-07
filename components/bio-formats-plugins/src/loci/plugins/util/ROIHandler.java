@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -949,7 +949,7 @@ public class ROIHandler {
 
     for (int q=0; q<pointList.length; q++) {
       pointList[q] = pointList[q].trim();
-      int delim = pointList[q].indexOf(",");
+      int delim = pointList[q].indexOf(',');
       coordinates[0][q] =
           (int) Double.parseDouble(pointList[q].substring(0, delim));
       coordinates[1][q] =

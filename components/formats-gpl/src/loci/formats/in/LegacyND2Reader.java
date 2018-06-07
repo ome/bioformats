@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -52,7 +52,8 @@ public class LegacyND2Reader extends FormatReader {
   private static final int MULTI_PHOTON = 5;
 
   private static final String URL_NIKON_ND2 =
-    "http://www.openmicroscopy.org/site/support/bio-formats/formats/nikon-nis-elements-nd2.html";
+   "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+   "/formats/nikon-nis-elements-nd2.html";
   private static final String NO_NIKON_MSG = "Nikon ND2 library not found. " +
     "Please see " + URL_NIKON_ND2 + " for details.";
 

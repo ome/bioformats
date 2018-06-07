@@ -17,7 +17,7 @@ function bfsave(varargin)
 %    OME-XML metadata object when saving the file instead of creating a
 %    minimal OME-XML metadata object from the input 5D matrix.
 %
-%    For more information, see https://www.openmicroscopy.org/site/support/bio-formats5/developers/matlab-dev.html
+%    For more information, see https://docs.openmicroscopy.org/latest/bio-formats/developers/matlab-dev.html
 %
 %    Examples:
 %
@@ -32,7 +32,7 @@ function bfsave(varargin)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2016 Open Microscopy Environment:
+% Copyright (C) 2012 - 2017 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee

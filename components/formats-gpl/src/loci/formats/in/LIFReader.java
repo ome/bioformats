@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,6 +44,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -88,11 +89,18 @@ public class LIFReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String OLD_PHYSICAL_SIZE_KEY =
+    "leicalif.old_physical_size";
+  public static final boolean OLD_PHYSICAL_SIZE_DEFAULT = false;
+
   public static final byte LIF_MAGIC_BYTE = 0x70;
   public static final byte LIF_MEMORY_BYTE = 0x2a;
 
   /** The encoding used in this file.*/
   private static final String ENCODING = "ISO-8859-1";
+
+  private static final String LOGO_FILE = "LeicaLogo.jpg";
+  private static final String STYLESHEET_FILE = "LASAF_CIP.xsl";
 
   private static final ImmutableMap<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
@@ -141,7 +149,7 @@ public class LIFReader extends FormatReader {
   private Length[] posX, posY, posZ;
   private Double[] refractiveIndex;
   private List[] cutIns, cutOuts, filterModels;
-  private double[][] timestamps;
+  private Double[][] timestamps;
   private List[] laserWavelength, laserIntensity, laserActive, laserFrap;
 
   private ROI[][] imageROIs;
@@ -150,6 +158,7 @@ public class LIFReader extends FormatReader {
   private double[] acquiredDate;
 
   private int[] tileCount;
+  private long[] tileBytesInc;
   private long endPointer;
 
   // -- Constructor --
@@ -158,7 +167,17 @@ public class LIFReader extends FormatReader {
   public LIFReader() {
     super("Leica Image File Format", "lif");
     suffixNecessary = false;
+    hasCompanionFiles = true;
     domains = new String[] {FormatTools.LM_DOMAIN};
+  }
+
+  public boolean useOldPhysicalSizeCalculation() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        OLD_PHYSICAL_SIZE_KEY, OLD_PHYSICAL_SIZE_DEFAULT);
+    }
+    return OLD_PHYSICAL_SIZE_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -316,21 +335,13 @@ public class LIFReader extends FormatReader {
       return buf;
     }
 
-    in.seek(offset + planeSize * no);
-
-    int tile = series;
-    for (int i=0; i<index; i++) {
-      tile -= tileCount[i];
-    }
-
-    // seek instead of skipBytes to prevent dangerous int cast
-    in.seek(in.getFilePointer() + tile * planeSize * getImageCount());
-    in.skipBytes(bytesToSkip * getSizeY() * no);
+    seekStartOfPlane(no, offset, planeSize);
 
     if (bytesToSkip == 0) {
       readPlane(in, x, y, w, h, buf);
     }
     else {
+      in.skipBytes(bytesToSkip * getSizeY() * no);
       in.skipBytes(y * (getSizeX() * bpp + bytesToSkip));
       for (int row=0; row<h; row++) {
         in.skipBytes(x * bpp);
@@ -345,6 +356,76 @@ public class LIFReader extends FormatReader {
     }
 
     return buf;
+  }
+  
+  private void seekStartOfPlane(int no, long dataOffset, long planeSize)
+    throws IOException
+  {
+    int index = getTileIndex(series);
+    long posInFile;
+
+    int numberOfTiles = tileCount[index];
+    if (numberOfTiles > 1) {
+      // LAS AF treats tiles just like any other dimension, while we do not.
+      // Hence we need to take the tiles into account for a frame's position.
+      long bytesIncPerTile = tileBytesInc[index];
+      long framesPerTile = bytesIncPerTile / planeSize;
+
+      if (framesPerTile > Integer.MAX_VALUE) {
+        throw new IOException("Could not read frame due to int overflow");
+      }
+
+      int noOutsideTiles = no / (int) framesPerTile;
+      int noInsideTiles = no % (int) framesPerTile;
+
+      int tile = series;
+      for (int i = 0; i < index; i++) {
+        tile -= tileCount[i];
+      }
+
+      posInFile = dataOffset;
+      posInFile += noOutsideTiles * bytesIncPerTile * numberOfTiles;
+      posInFile += tile * bytesIncPerTile;
+      posInFile += noInsideTiles * planeSize;
+    }
+    else {
+      posInFile = dataOffset + no * planeSize;
+    }
+    
+    // seek instead of skipBytes to prevent dangerous int cast
+    in.seek(posInFile);
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    final List<String> files = new ArrayList<String>();
+    files.add(currentId);
+
+    Location currentFile = new Location(currentId).getAbsoluteFile();
+    Location parent = currentFile.getParentFile();
+    if (parent != null && getSeries() < imageNames.length &&
+      imageNames[getSeries()] != null)
+    {
+      // look for an XML file with the same name as this series
+      Location xmlFile = new Location(parent, imageNames[getSeries()].trim() + ".xml");
+      if (xmlFile.exists()) {
+        files.add(xmlFile.getAbsolutePath());
+      }
+
+      Location logoFile = new Location(parent, LOGO_FILE);
+      if (logoFile.exists()) {
+        files.add(logoFile.getAbsolutePath());
+      }
+
+      Location stylesheetFile = new Location(parent, STYLESHEET_FILE);
+      if (stylesheetFile.exists()) {
+        files.add(stylesheetFile.getAbsolutePath());
+      }
+    }
+
+    return files.toArray(new String[files.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -381,6 +462,7 @@ public class LIFReader extends FormatReader {
       acquiredDate = null;
       detectorIndexes = null;
       tileCount = null;
+      tileBytesInc = null;
       fieldPosX.clear();
       fieldPosY.clear();
       endPointer = 0;
@@ -519,6 +601,7 @@ public class LIFReader extends FormatReader {
       "</LEICA>";
 
     xml = XMLTools.sanitizeXML(xml);
+    LOGGER.trace(xml);
 
     translateMetadata(getMetadataRoot(xml));
 
@@ -776,7 +859,7 @@ public class LIFReader extends FormatReader {
       if (acquiredDate[index] > 0) {
         store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
           (long) (acquiredDate[index] * 1000), DateTools.COBOL,
-          DateTools.ISO8601_FORMAT, true)), i);
+          DateTools.ISO8601_FORMAT, false)), i);
       }
       store.setImageName(imageNames[index].trim(), i);
 
@@ -948,14 +1031,16 @@ public class LIFReader extends FormatReader {
         }
         store.setPlanePositionZ(posZ[index], i, image);
         if (timestamps[index] != null) {
-          double timestamp = timestamps[index][image];
-          if (timestamps[index][0] == acquiredDate[index]) {
-            timestamp -= acquiredDate[index];
+          if (timestamps[index][image] != null) {
+            double timestamp = timestamps[index][image];
+            if (timestamps[index][0] == acquiredDate[index]) {
+              timestamp -= acquiredDate[index];
+            }
+            else if (timestamp == acquiredDate[index] && image > 0) {
+              timestamp = timestamps[index][0];
+            }
+            store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, image);
           }
-          else if (timestamp == acquiredDate[index] && image > 0) {
-            timestamp = timestamps[index][0];
-          }
-          store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, image);
         }
 
         if (expTimes[index] != null) {
@@ -1049,6 +1134,7 @@ public class LIFReader extends FormatReader {
 
     tileCount = new int[imageNodes.size()];
     Arrays.fill(tileCount, 1);
+    tileBytesInc = new long[imageNodes.size()];
     core = new ArrayList<CoreMetadata>(imageNodes.size());
     acquiredDate = new double[imageNodes.size()];
     descriptions = new String[imageNodes.size()];
@@ -1056,7 +1142,7 @@ public class LIFReader extends FormatReader {
     laserIntensity = new List[imageNodes.size()];
     laserActive = new List[imageNodes.size()];
     laserFrap = new List[imageNodes.size()];
-    timestamps = new double[imageNodes.size()][];
+    timestamps = new Double[imageNodes.size()][];
     activeDetector = new List[imageNodes.size()];
     serialNumber = new String[imageNodes.size()];
     lensNA = new Double[imageNodes.size()];
@@ -1139,7 +1225,7 @@ public class LIFReader extends FormatReader {
       if (suffix == null || suffix.trim().length() == 0) {
         suffix = root.getAttribute("Description");
       }
-      StringBuffer key = new StringBuffer();
+      final StringBuilder key = new StringBuilder();
       final Iterator<String> nameStackIterator = nameStack.descendingIterator();
       while (nameStackIterator.hasNext()) {
         final String k = nameStackIterator.next();
@@ -1195,7 +1281,7 @@ public class LIFReader extends FormatReader {
     imageNames[image] = "";
     for (int i=names.size() - 2; i>=0; i--) {
       imageNames[image] += names.get(i);
-      if (i > 0) imageNames[image] += "/";
+      if (i > 0) imageNames[image] += '/';
     }
   }
 
@@ -1537,42 +1623,75 @@ public class LIFReader extends FormatReader {
   private void translateTimestamps(Element imageNode, int image)
     throws FormatException
   {
-    NodeList timestampNodes = getNodes(imageNode, "TimeStamp");
-    if (timestampNodes == null) return;
+    NodeList timeStampLists = getNodes(imageNode, "TimeStampList");
+    if (timeStampLists == null) return;
 
-    timestamps[image] = new double[getImageCount()];
-
-    if (timestampNodes != null) {
-      for (int stamp=0; stamp<timestampNodes.getLength(); stamp++) {
+    Element timeStampList = (Element)timeStampLists.item(0);
+    timestamps[image] = new Double[getImageCount()];
+    
+    // probe if timestamps are saved in the format of LAS AF 3.1 or newer
+    String numberOfTimeStamps = timeStampList.getAttribute("NumberOfTimeStamps");
+    if (numberOfTimeStamps != null && !numberOfTimeStamps.isEmpty()) {
+      // LAS AF 3.1 (or newer) timestamps are available
+      String timeStampsRaw = timeStampList.getTextContent();
+      List<String> timeStamps = Arrays.asList(timeStampsRaw.split(" "));
+      for (int stamp = 0; stamp < timeStamps.size(); stamp++) {
         if (stamp < getImageCount()) {
-          Element timestamp = (Element) timestampNodes.item(stamp);
-          String stampHigh = timestamp.getAttribute("HighInteger");
-          String stampLow = timestamp.getAttribute("LowInteger");
-          long high =
-            stampHigh == null || stampHigh.trim().isEmpty() ? 0 :
-                Long.parseLong(stampHigh.trim());
-          long low =
-            stampLow == null || stampHigh.trim().isEmpty() ? 0 :
-                Long.parseLong(stampLow.trim());
-
-          long ms = DateTools.getMillisFromTicks(high, low);
-
-          timestamps[image][stamp] = ms / 1000.0;
+          String timestamp = timeStamps.get(stamp);
+          timestamps[image][stamp] = translateSingleTimestamp(timestamp);
         }
       }
     }
+    else {
+      // probe if timestamps are saved in the format of LAS AF 3.0 or older
+      NodeList timestampNodes = getNodes(imageNode, "TimeStamp");
+      if (timestampNodes != null) {
+        // LAS AF 3.0 (or older) timestamps are available
+        for (int stamp = 0; stamp < timestampNodes.getLength(); stamp++) {
+          if (stamp < getImageCount()) {
+            Element timestamp = (Element) timestampNodes.item(stamp);
+            timestamps[image][stamp] = translateSingleTimestamp(timestamp);
+          }
+        }
+      }
+      else {
+        return;
+      }
+    }
+    
     acquiredDate[image] = timestamps[image][0];
+  }
 
-    NodeList relTimestampNodes = getNodes(imageNode, "RelTimeStamp");
-    if (relTimestampNodes != null) {
-      for (int stamp=0; stamp<relTimestampNodes.getLength(); stamp++) {
-        if (stamp < getImageCount()) {
-          Element timestamp = (Element) relTimestampNodes.item(stamp);
-          timestamps[image][stamp] =
-            new Double(timestamp.getAttribute("Time"));
-        }
-      }
-    }
+  private double translateSingleTimestamp(String timestamp) {
+    timestamp = timestamp.trim();
+    int stampLowStart = Math.max(0, timestamp.length() - 8);
+    int stampHighEnd = Math.max(0, stampLowStart);
+    String stampHigh = timestamp.substring(0, stampHighEnd);
+    String stampLow = timestamp.substring(stampLowStart, timestamp.length());
+    long high
+            = stampHigh == null || stampHigh.trim().isEmpty() ? 0
+                    : Long.parseLong(stampHigh.trim(), 16);
+    long low
+            = stampLow == null || stampLow.trim().isEmpty() ? 0
+                    : Long.parseLong(stampLow.trim(), 16);
+    long milliseconds = DateTools.getMillisFromTicks(high, low);
+    double seconds = (double)milliseconds / 1000;
+    return seconds;
+  }
+  
+  private double translateSingleTimestamp(Element timestamp) {
+    String stampHigh = timestamp.getAttribute("HighInteger");
+    String stampLow = timestamp.getAttribute("LowInteger");
+    long high
+            = stampHigh == null || stampHigh.trim().isEmpty() ? 0
+                    : Long.parseLong(stampHigh.trim());
+    long low
+            = stampLow == null || stampLow.trim().isEmpty() ? 0
+                    : Long.parseLong(stampLow.trim());
+
+    long milliseconds = DateTools.getMillisFromTicks(high, low);
+    double seconds = (double)milliseconds / 1000;
+    return seconds;
   }
 
   private void translateFilterSettings(Element imageNode, int image)
@@ -1620,10 +1739,10 @@ public class LIFReader extends FormatReader {
       else if (attribute.equals("Objective")) {
         StringTokenizer tokens = new StringTokenizer(variant, " ");
         boolean foundMag = false;
-        StringBuffer model = new StringBuffer();
+        final StringBuilder model = new StringBuilder();
         while (!foundMag) {
           String token = tokens.nextToken();
-          int x = token.indexOf("x");
+          int x = token.indexOf('x');
           if (x != -1) {
             foundMag = true;
 
@@ -1925,14 +2044,25 @@ public class LIFReader extends FormatReader {
       }
       String unit = dimension.getAttribute("Unit");
 
-      physicalLen /= len;
+      double offByOnePhysicalLen = 0d;
+      if (len > 1) {
+        offByOnePhysicalLen = physicalLen / len;
+        physicalLen /= (len - 1);
+      }
+      else {
+        physicalLen = 0d;
+      }
+      
       if (unit.equals("Ks")) {
         physicalLen /= 1000;
+        offByOnePhysicalLen /= 1000;
       }
       else if (unit.equals("m")) {
         physicalLen *= 1000000;
+        offByOnePhysicalLen *= 1000000;
       }
 
+      boolean oldPhysicalSize = useOldPhysicalSizeCalculation();
       switch (id) {
         case 1: // X axis
           ms.sizeX = len;
@@ -1940,14 +2070,14 @@ public class LIFReader extends FormatReader {
           if (ms.rgb) nBytes /= 3;
           ms.pixelType =
             FormatTools.pixelTypeFromBytes((int) nBytes, false, true);
-          physicalSizeX = physicalLen;
+          physicalSizeX = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           break;
         case 2: // Y axis
           if (ms.sizeY != 0) {
             if (ms.sizeZ == 1) {
               ms.sizeZ = len;
               bytesPerAxis.put(nBytes, "Z");
-              physicalSizeZ = (physicalLen * len) / (len - 1);
+              physicalSizeZ = physicalLen;
             }
             else if (ms.sizeT == 1) {
               ms.sizeT = len;
@@ -1956,7 +2086,7 @@ public class LIFReader extends FormatReader {
           }
           else {
             ms.sizeY = len;
-            physicalSizeY = physicalLen;
+            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
           break;
         case 3: // Z axis
@@ -1965,12 +2095,12 @@ public class LIFReader extends FormatReader {
             ms.sizeY = len;
             ms.sizeZ = 1;
             bytesPerAxis.put(nBytes, "Y");
-            physicalSizeY = physicalLen;
+            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
           else {
             ms.sizeZ = len;
             bytesPerAxis.put(nBytes, "Z");
-            physicalSizeZ = (physicalLen * len) / (len - 1);
+            physicalSizeZ = physicalLen;
           }
           break;
         case 4: // T axis
@@ -1979,7 +2109,7 @@ public class LIFReader extends FormatReader {
             ms.sizeY = len;
             ms.sizeT = 1;
             bytesPerAxis.put(nBytes, "Y");
-            physicalSizeY = physicalLen;
+            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
           else {
             ms.sizeT = len;
@@ -1988,6 +2118,7 @@ public class LIFReader extends FormatReader {
           break;
         case 10: // tile axis
           tileCount[i] *= len;
+          tileBytesInc[i] = nBytes;
           break;
         default:
           extras *= len;
@@ -2029,7 +2160,7 @@ public class LIFReader extends FormatReader {
     ms.dimensionOrder = "XY";
     if (getRGBChannelCount() == 1 || getRGBChannelCount() == getSizeC()) {
       if (getSizeC() > 1 && getSizeT() > 1) {
-        ms.dimensionOrder += "C";
+        ms.dimensionOrder += 'C';
       }
       for (Long nBytes : bytes) {
         String axis = bytesPerAxis.get(nBytes);
@@ -2039,14 +2170,14 @@ public class LIFReader extends FormatReader {
       }
     }
 
-    if (ms.dimensionOrder.indexOf("Z") == -1) {
-      ms.dimensionOrder += "Z";
+    if (ms.dimensionOrder.indexOf('Z') == -1) {
+      ms.dimensionOrder += 'Z';
     }
-    if (ms.dimensionOrder.indexOf("C") == -1) {
-      ms.dimensionOrder += "C";
+    if (ms.dimensionOrder.indexOf('C') == -1) {
+      ms.dimensionOrder += 'C';
     }
-    if (ms.dimensionOrder.indexOf("T") == -1) {
-      ms.dimensionOrder += "T";
+    if (ms.dimensionOrder.indexOf('T') == -1) {
+      ms.dimensionOrder += 'T';
     }
   }
 
@@ -2190,7 +2321,7 @@ public class LIFReader extends FormatReader {
       String shapeID = MetadataTools.createLSID("Shape", roi, 1);
       switch (type) {
         case POLYGON:
-          StringBuffer points = new StringBuffer();
+          final StringBuilder points = new StringBuilder();
           for (int i=0; i<x.size(); i++) {
             points.append(x.get(i).doubleValue() + roiX);
             points.append(",");

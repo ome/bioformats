@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -54,7 +54,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -318,9 +317,13 @@ public class MicromanagerReader extends FormatReader {
         }
       }
 
-      if (positions.size() > 1) {
-        Location parent = new Location(p.metadataFile).getParentFile();
-        store.setImageName(parent.getName(), i);
+      if (p.name != null) {
+        store.setImageName(p.name, i);
+      } else {
+        if (positions.size() > 1) {
+          Location parent = new Location(p.metadataFile).getParentFile();
+          store.setImageName(parent.getName(), i);
+        }
       }
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -532,13 +535,14 @@ public class MicromanagerReader extends FormatReader {
               (key != null && value == null))
             {
               if (value == null && (propType == null || !propType.equals("PropType"))) {
-                value = token;
+                StringBuilder sb = new StringBuilder(token);
 
                 while (q + 1 < tokens.length && tokens[q + 1].trim().length() > 0) {
-                  value += ":";
-                  value += tokens[q + 1];
+                  sb.append(':');
+                  sb.append(tokens[q + 1]);
                   q++;
                 }
+                value = sb.toString();
               }
               if (!value.equals("PropVal")) {
                 parseKeyAndValue(key, value, digits, plane + i, 1);
@@ -667,8 +671,8 @@ public class MicromanagerReader extends FormatReader {
     int[] slice = new int[3];
     while (st.hasMoreTokens()) {
       String token = st.nextToken().trim();
-      boolean open = token.indexOf("[") != -1;
-      boolean closed = token.indexOf("]") != -1;
+      boolean open = token.indexOf('[') != -1;
+      boolean closed = token.indexOf(']') != -1;
       if (open || (!open && !closed && !token.equals("{") &&
         !token.startsWith("}")))
       {
@@ -677,13 +681,13 @@ public class MicromanagerReader extends FormatReader {
         String value = null;
 
         if (open == closed) {
-          value = token.substring(token.indexOf(":") + 1);
+          value = token.substring(token.indexOf(':') + 1);
         }
         else if (!closed) {
-          StringBuffer valueBuffer = new StringBuffer();
+          final StringBuilder valueBuffer = new StringBuilder();
           while (!closed) {
             token = st.nextToken();
-            closed = token.indexOf("]") != -1;
+            closed = token.indexOf(']') != -1;
             valueBuffer.append(token);
           }
           value = valueBuffer.toString();
@@ -691,8 +695,8 @@ public class MicromanagerReader extends FormatReader {
         }
         if (value == null) continue;
 
-        int startIndex = value.indexOf("[");
-        int endIndex = value.indexOf("]");
+        int startIndex = value.indexOf('[');
+        int endIndex = value.indexOf(']');
         if (endIndex == -1) endIndex = value.length();
 
         value = value.substring(startIndex + 1, endIndex).trim();
@@ -766,7 +770,7 @@ public class MicromanagerReader extends FormatReader {
       }
 
       if (token.startsWith("\"FrameKey")) {
-        int dash = token.indexOf("-") + 1;
+        int dash = token.indexOf('-') + 1;
         int nextDash = token.indexOf("-", dash);
         slice[2] = Integer.parseInt(token.substring(dash, nextDash));
         dash = nextDash + 1;
@@ -777,7 +781,8 @@ public class MicromanagerReader extends FormatReader {
           token.indexOf("\"", dash)));
 
         token = st.nextToken().trim();
-        String key = "", value = "";
+        String key = "";
+        StringBuilder valueBuffer = new StringBuilder();
         boolean valueArray = false;
         int nestedCount = 0;
 
@@ -794,23 +799,23 @@ public class MicromanagerReader extends FormatReader {
             continue;
           }
 
-          if (valueArray) {
+          if (valueArray || token.trim().equals("],")) {
             if (token.trim().equals("],")) {
               valueArray = false;
             }
             else {
-              value += token.trim().replaceAll("\"", "");
+              valueBuffer.append(token.trim().replaceAll("\"", ""));
               token = st.nextToken().trim();
               continue;
             }
           }
           else {
-            int colon = token.indexOf(":");
+            int colon = token.indexOf(':');
             key = token.substring(1, colon).trim();
-            value = token.substring(colon + 1, token.length() - 1).trim();
+            valueBuffer.setLength(0);
+            valueBuffer.append(token.substring(colon + 1, token.length() - 1).trim().replaceAll("\"", ""));
 
             key = key.replaceAll("\"", "");
-            value = value.replaceAll("\"", "");
 
             if (token.trim().endsWith("[")) {
               valueArray = true;
@@ -819,6 +824,7 @@ public class MicromanagerReader extends FormatReader {
             }
           }
 
+          String value = valueBuffer.toString();
           addSeriesMeta(key, value);
 
           if (key.equals("Exposure-ms")) {
@@ -829,7 +835,7 @@ public class MicromanagerReader extends FormatReader {
           }
           else if (key.equals("Core-Camera")) p.cameraRef = value;
           else if (key.equals(p.cameraRef + "-Binning")) {
-            if (value.indexOf("x") != -1) p.binning = value;
+            if (value.indexOf('x') != -1) p.binning = value;
             else p.binning = value + "x" + value;
           }
           else if (key.equals(p.cameraRef + "-CameraID")) p.detectorID = value;
@@ -851,6 +857,9 @@ public class MicromanagerReader extends FormatReader {
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
             p.voltage.add(new Double(value));
           }
+          else if (key.equals("PositionName") && !value.equals("null")) {
+            p.name = value;
+          }
           else if (key.equals("FileName")) {
             p.fileNameMap.put(new Index(slice), value);
             Location realFile = new Location(parent, value);
@@ -869,12 +878,12 @@ public class MicromanagerReader extends FormatReader {
         }
       }
       else if (token.startsWith("\"Coords-")) {
-        String path = token.substring(token.indexOf("-") + 1, token.lastIndexOf("\""));
+        String path = token.substring(token.indexOf('-') + 1, token.lastIndexOf("\""));
 
         int[] zct = new int[3];
         int position = 0;
         while (!token.startsWith("}")) {
-          int sep = token.indexOf(":");
+          int sep = token.indexOf(':');
           if (sep > 0) {
             String key = token.substring(0, sep);
             String value = token.substring(sep + 1);
@@ -945,7 +954,7 @@ public class MicromanagerReader extends FormatReader {
     }
 
     String[] blocks = baseTiff.split("_");
-    StringBuffer filename = new StringBuffer();
+    StringBuilder filename = new StringBuilder();
 
     for (int t=0; t<getSizeT(); t++) {
       for (int c=0; c<getSizeC(); c++) {
@@ -972,8 +981,8 @@ public class MicromanagerReader extends FormatReader {
 
           if (blocks[2].length() > 0) {
             String channel = p.channels[c];
-            if (channel.indexOf("-") != -1) {
-              channel = channel.substring(0, channel.indexOf("-"));
+            if (channel.indexOf('-') != -1) {
+              channel = channel.substring(0, channel.indexOf('-'));
             }
             filename.append(channel);
           }
@@ -991,7 +1000,7 @@ public class MicromanagerReader extends FormatReader {
           {
             // rewind and try using the full channel name
 
-            filename = new StringBuffer(prechannel);
+            filename = new StringBuilder(prechannel);
             String channel = p.channels[c];
             filename.append(channel);
             filename.append("_");
@@ -1067,7 +1076,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   private String getPrefixMetadataName(String baseName) {
-    int dot = baseName.indexOf(".");
+    int dot = baseName.indexOf('.');
     if (dot > 0) {
       return baseName.substring(0, dot) + "_" + METADATA;
     }
@@ -1098,6 +1107,7 @@ public class MicromanagerReader extends FormatReader {
 
     public String metadataFile;
     public String xmlFile;
+    public transient String name;
 
     public String[] channels;
 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,8 +39,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.ElectricPotential;
@@ -104,7 +102,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     if (xml.length() == 0) {
       xml = ifds.get(0).getIFDTextValue(NIKON_XML_TAG_2).trim();
     }
-    int open = xml.indexOf("<");
+    int open = xml.indexOf('<');
     if (open >= 0) {
       xml = xml.substring(open);
     }

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,8 +33,12 @@
 package loci.formats.in;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
+import java.util.zip.GZIPInputStream;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.ClassList;
@@ -48,10 +52,7 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Length;
-import ome.units.UNITS;
 
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
@@ -78,8 +79,10 @@ public class NRRDReader extends FormatReader {
 
   private String[] pixelSizes;
 
-  private boolean lookForCompanion = true;
   private boolean initializeHelper = false;
+
+  private transient GZIPInputStream gzip;
+  private transient int lastPlane = -1;
 
   // -- Constructor --
 
@@ -119,7 +122,7 @@ public class NRRDReader extends FormatReader {
       return true;
     }
 
-    if (name.indexOf(".") >= 0) {
+    if (name.indexOf('.') >= 0) {
       name = name.substring(0, name.lastIndexOf("."));
     }
 
@@ -168,17 +171,40 @@ public class NRRDReader extends FormatReader {
 
     // TODO : add support for additional encoding types
     if (dataFile == null) {
+      long planeSize = FormatTools.getPlaneSize(this);
       if (encoding.equals("raw")) {
-        long planeSize = FormatTools.getPlaneSize(this);
         in.seek(offset + no * planeSize);
-
         readPlane(in, x, y, w, h, buf);
-        return buf;
+      }
+      else if (encoding.equals("gzip")) {
+        if (gzip == null || no <= lastPlane) {
+          FileInputStream fis = new FileInputStream(getCurrentFile());
+          safeSkip(fis, offset);
+          gzip = new GZIPInputStream(fis);
+          lastPlane = -1;
+        }
+
+        int bpp = getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+        int rowLen = getSizeX() * bpp;
+        int diff = no - (lastPlane + 1);
+        safeSkip(gzip, (planeSize * diff) + (y * rowLen));
+        int readLen = w * bpp;
+        for (int row=0; row<h; row++) {
+          safeSkip(gzip, x * bpp);
+
+          int toRead = readLen;
+          while (toRead > 0) {
+            toRead -= gzip.read(buf, ((row + y) * readLen) + (readLen - toRead), toRead);
+          }
+          safeSkip(gzip, (getSizeX() - w - x) * bpp);
+        }
+        lastPlane = no;
       }
       else {
         throw new UnsupportedCompressionException(
           "Unsupported encoding: " + encoding);
       }
+      return buf;
     }
     else if (encoding.equals("raw")) {
       RandomAccessInputStream s = new RandomAccessInputStream(dataFile);
@@ -202,6 +228,11 @@ public class NRRDReader extends FormatReader {
       offset = 0;
       pixelSizes = null;
       initializeHelper = false;
+      if (gzip != null) {
+        gzip.close();
+      }
+      gzip = null;
+      lastPlane = -1;
     }
   }
 
@@ -240,6 +271,7 @@ public class NRRDReader extends FormatReader {
       new DefaultMetadataOptions(MetadataLevel.MINIMUM));
 
     String key, v;
+    String[] pixelSizeUnits = null;
 
     int numDimensions = 0;
 
@@ -256,12 +288,12 @@ public class NRRDReader extends FormatReader {
     while (line != null && line.length() > 0) {
       if (!line.startsWith("#") && !line.startsWith("NRRD")) {
         // parse key/value pair
-        key = line.substring(0, line.indexOf(":")).trim();
-        v = line.substring(line.indexOf(":") + 1).trim();
+        key = line.substring(0, line.indexOf(':')).trim();
+        v = line.substring(line.indexOf(':') + 1).trim();
         addGlobalMeta(key, v);
 
         if (key.equals("type")) {
-          if (v.indexOf("char") != -1 || v.indexOf("8") != -1) {
+          if (v.indexOf("char") != -1 || v.indexOf('8') != -1) {
             m.pixelType = FormatTools.UINT8;
           }
           else if (v.indexOf("short") != -1 || v.indexOf("16") != -1) {
@@ -310,8 +342,11 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("endian")) {
           m.littleEndian = v.equals("little");
         }
-        else if (key.equals("spacings")) {
+        else if (key.equals("spacings") || key.equals("space directions")) {
           pixelSizes = v.split(" ");
+        }
+        else if (key.equals("space units")) {
+          pixelSizeUnits = v.split(" ");
         }
         else if (key.equals("byte skip")) {
           offset = Long.parseLong(v);
@@ -352,21 +387,23 @@ public class NRRDReader extends FormatReader {
         for (int i=0; i<pixelSizes.length; i++) {
           if (pixelSizes[i] == null) continue;
           try {
-            Double d = new Double(pixelSizes[i].trim());
+            Double d = parsePixelSize(i);
+            String unit = pixelSizeUnits == null || i >= pixelSizeUnits.length ?
+              null : pixelSizeUnits[i].replaceAll("\"", "");
             if (i == 0) {
-              Length x = FormatTools.getPhysicalSizeX(d);
+              Length x = FormatTools.getPhysicalSizeX(d, unit);
               if (x != null) {
                 store.setPixelsPhysicalSizeX(x, 0);
               }
             }
             else if (i == 1) {
-              Length y = FormatTools.getPhysicalSizeY(d);
+              Length y = FormatTools.getPhysicalSizeY(d, unit);
               if (y != null) {
                 store.setPixelsPhysicalSizeY(y, 0);
               }
             }
             else if (i == 2) {
-              Length z = FormatTools.getPhysicalSizeZ(d);
+              Length z = FormatTools.getPhysicalSizeZ(d, unit);
               if (z != null) {
                 store.setPixelsPhysicalSizeZ(z, 0);
               }
@@ -376,6 +413,24 @@ public class NRRDReader extends FormatReader {
         }
       }
     }
+  }
+
+  private void safeSkip(InputStream stream, long skip) throws IOException {
+    while (skip > 0) {
+      skip -= stream.skip((int) Math.min(skip, Integer.MAX_VALUE));
+    }
+  }
+
+  private Double parsePixelSize(int index) {
+    String size = pixelSizes[index].trim();
+    if (size.startsWith("(")) {
+      size = size.substring(1, size.length() - 1);
+      String[] vector = size.split(",");
+      if (index < vector.length) {
+        return DataTools.parseDouble(vector[index].trim());
+      }
+    }
+    return DataTools.parseDouble(size);
   }
 
 }

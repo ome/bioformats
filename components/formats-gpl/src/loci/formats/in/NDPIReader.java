@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,7 +34,6 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
@@ -43,7 +42,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 
@@ -378,7 +376,6 @@ public class NDPIReader extends BaseTiffReader {
 
     int seriesCount = pyramidHeight + (ifds.size() - pyramidHeight * sizeZ);
 
-    long prevMarkerOffset = 0;
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
       ifd.remove(THUMB_TAG_2);
@@ -446,7 +443,7 @@ public class NDPIReader extends BaseTiffReader {
     if (metadataTag != null) {
       String[] entries = metadataTag.split("\n");
       for (String entry : entries) {
-        int eq = entry.indexOf("=");
+        int eq = entry.indexOf('=');
         if (eq < 0) {
           continue;
         }
@@ -490,7 +487,22 @@ public class NDPIReader extends BaseTiffReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName("Series " + (i + 1), i);
+      if (hasFlattenedResolutions() || i > 2) {
+        store.setImageName("Series " + (i + 1), i);
+      }
+      else {
+        switch (i) {
+          case 0:
+            store.setImageName("", i);
+            break;
+          case 1:
+            store.setImageName("macro image", i);
+            break;
+          case 2:
+            store.setImageName("macro mask image", i);
+            break;
+        }
+      }
 
       store.setImageInstrumentRef(instrumentID, i);
       store.setObjectiveSettingsID(objectiveID, i);

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -418,8 +418,17 @@ public class ZeissTIFFReader extends BaseZeissReader {
     // Determine number of separate timepoints, channels, and z slices.
     for (ZeissTIFFHandler.Plane p : tiffInfo.handler.planes) {
       Plane np = new Plane();
+      boolean tag_1047_present = false;
       for (Tag t : p.tagset.tags) {
-        np.tags.put(t.getKey(), t.getValue());
+        if (t.getKeyID() == 1047)
+          tag_1047_present = true;
+      }
+      for (Tag t : p.tagset.tags) {
+         // Use 1047 in preference to 1025 since 1025 is a
+         // locale-specific text date rather than a float, and it's
+         // better to use the latter.
+        if (t.getKeyID() != 1025 || tag_1047_present == false)
+          np.tags.put(t.getKey(), t.getValue());
       }
       np.taglist = p.tagset.tags;
       // Special case: _single plane is for base image only.  Should only occur when we don't have a _files directory.
@@ -611,12 +620,17 @@ public class ZeissTIFFReader extends BaseZeissReader {
     public String
     toString()
     {
-      String s = new String("---Plane---\n");
-      s += "  file=" + filename + "\n keys=\n";
+      StringBuilder s = new StringBuilder("---Plane---\n  file=");
+      s.append(filename);
+      s.append("\n keys=\n");
       for (String k : tags.keySet()) {
-        s += "    " + k + "=" + tags.get(k) + "\n";
+        s.append("    ");
+        s.append(k);
+        s.append("=");
+        s.append(tags.get(k));
+        s.append("\n");
       }
-      return s;
+      return s.toString();
     }
   }
 

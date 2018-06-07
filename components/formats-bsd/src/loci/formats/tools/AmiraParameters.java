@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -87,13 +87,13 @@ public class AmiraParameters {
     throws FormatException, IOException
   {
     String firstLine = inputStream.readLine();
-    Matcher amiraMeshDef = Pattern.compile("#\\s+AmiraMesh.*?" +
+    Matcher amiraMeshDef = Pattern.compile("#\\s+(AmiraMesh|Avizo).*?" +
       "(BINARY|ASCII)(-LITTLE-ENDIAN)*").matcher(firstLine);
     if (amiraMeshDef.find()) {
-      if (amiraMeshDef.group(1).equals("BINARY")) {
-        littleEndian = amiraMeshDef.group(2) != null;
+      if (amiraMeshDef.group(2).equals("BINARY")) {
+        littleEndian = amiraMeshDef.group(3) != null;
       }
-      else if (amiraMeshDef.group(1).equals("ASCII")) {
+      else if (amiraMeshDef.group(2).equals("ASCII")) {
         ascii = true;
       }
       else {
@@ -244,27 +244,27 @@ public class AmiraParameters {
   }
 
   protected String readKey() throws IOException {
-    String result = "";
+    StringBuilder result = new StringBuilder();
     while (c >= '0' || c == '-') {
-      result += c;
+      result.append(c);
       readByte();
     }
-    return result;
+    return result.toString();
   }
 
   protected Number readNumber() throws FormatException, IOException {
-    String string = "";
+    StringBuilder string = new StringBuilder();
     while ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+' ||
       c == 'e')
     {
-      string += c;
+      string.append(c);
       readByte();
     }
     try {
-      if (string.indexOf('.') < 0 && string.indexOf('e') < 0) {
-        return Integer.valueOf(string);
+      if (string.indexOf(".") < 0 && string.indexOf("e") < 0) {
+        return Integer.valueOf(string.toString());
       }
-      return Double.valueOf(string);
+      return Double.valueOf(string.toString());
     }
     catch (NumberFormatException e) {
       syntaxError(e.getMessage());
@@ -348,17 +348,17 @@ public class AmiraParameters {
     else if (quote != '"' && quote != '\'') {
       syntaxError("Invalid quote: " + c);
     }
-    String result = "";
+    StringBuilder result = new StringBuilder();
     for (;;) {
       readByte();
       if (c == quote) {
         readByte();
-        return result;
+        return result.toString();
       }
       if (quote == '"' && c == '\\') {
         readByte();
       }
-      result += c;
+      result.append(c);
     }
   }
 
@@ -454,7 +454,8 @@ public class AmiraParameters {
       return object.toString();
     }
     if (object instanceof String) {
-      String string = (String) object, result = "\"";
+      String string = (String) object;
+      StringBuilder result = new StringBuilder("\"");
       int offset = 0;
       for (;;) {
         int nextOffset = string.indexOf('"', offset + 1);
@@ -462,41 +463,51 @@ public class AmiraParameters {
           break;
         }
         if (nextOffset > offset + 1) {
-          result += string.substring(offset, nextOffset);
+          result.append(string, offset, nextOffset);
         }
-        result += "\\";
+        result.append("\\");
         offset = nextOffset;
       }
       if (offset + 1 < string.length()) {
-        result += string.substring(offset);
+        result.append(string, offset, string.length());
       }
-      return result + "\"";
+      result.append("\"");
+      return result.toString();
     }
     if (object instanceof Integer[]) {
       Integer[] array = (Integer[]) object;
-      String result = null;
+      StringBuilder result = new StringBuilder();
       for (int i = 0; i < array.length; i++) {
-        result = (i > 0 ? result + " " : "") + array[i];
+        if (i > 0) {
+          result.append(" ");
+        }
+        result.append(array[i]);
       }
-      return result;
+      return result.toString();
     }
     if (object instanceof Double[]) {
       Double[] array = (Double[]) object;
-      String result = null;
+      StringBuilder result = new StringBuilder();
       for (int i = 0; i < array.length; i++) {
-        result = (i > 0 ? result + " " : "") + array[i];
+        if (i > 0) {
+          result.append(" ");
+        }
+        result.append(array[i]);
       }
-      return result;
+      return result.toString();
     }
     if (object instanceof Map) {
       return "{\n" + toString((Map) object, indent + "\t") + indent + "}";
     }
     if (object instanceof ArrayList) {
-      String result = "{\n";
+      StringBuilder result = new StringBuilder("{\n");
       for (Object item : (ArrayList) object) {
-        result += entryToString(item, indent + "\t") + "\n";
+        result.append(entryToString(item, indent + "\t"));
+        result.append("\n");
       }
-      return result + indent + "}";
+      result.append(indent);
+      result.append("}");
+      return result.toString();
     }
     throw new FormatException("Illegal value type: " +
       object.getClass().getName());

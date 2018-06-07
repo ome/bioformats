@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,7 +26,6 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -42,8 +41,6 @@ import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
-
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * VeecoReader is the file format reader for Veeco HDF files.
@@ -77,7 +74,7 @@ public class VeecoReader extends FormatReader {
 
     if (image instanceof byte[][]) {
       byte[][] byteImage = (byte[][]) image;
-      for (int row=h+y-1; row>=y; row--) {
+      for (int row=getSizeY()-1-y; row>=getSizeY()-y-h; row--) {
         System.arraycopy(byteImage[row], x, buf, (row - y) * w, w);
       }
     }
@@ -85,7 +82,7 @@ public class VeecoReader extends FormatReader {
       short[][] shortImage = (short[][]) image;
       int output = 0;
 
-      for (int row=h+y-1; row>=y; row--) {
+      for (int row=getSizeY()-1-y; row>=getSizeY()-y-h; row--) {
         for (int col=x; col<x+w; col++) {
           DataTools.unpackBytes(
             shortImage[row][col], buf, output, 2, unpackEndian);

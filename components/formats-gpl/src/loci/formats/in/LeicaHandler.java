@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -53,13 +53,7 @@ import ome.xml.model.enums.MicroscopeType;
 import ome.xml.model.enums.handlers.CorrectionEnumHandler;
 import ome.xml.model.enums.handlers.DetectorTypeEnumHandler;
 import ome.xml.model.enums.handlers.ImmersionEnumHandler;
-import ome.xml.model.enums.handlers.LaserMediumEnumHandler;
-import ome.xml.model.enums.handlers.LaserTypeEnumHandler;
-import ome.xml.model.enums.handlers.MicroscopeTypeEnumHandler;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
@@ -102,7 +96,6 @@ public class LeicaHandler extends BaseHandler {
   private int nextChannel = 0;
   private Double zoom, pinhole;
   private List<Integer> detectorIndices;
-  private String filterWheelName;
   private int nextFilter = 0;
   private int nextROI = 0;
   private ROI roi;
@@ -299,7 +292,7 @@ public class LeicaHandler extends BaseHandler {
 
     if (!canParse) return;
 
-    StringBuffer key = new StringBuffer();
+    final StringBuilder key = new StringBuilder();
     final Iterator<String> nameStackIterator = nameStack.descendingIterator();
     while (nameStackIterator.hasNext()) {
       final String k = nameStackIterator.next();
@@ -618,10 +611,10 @@ public class LeicaHandler extends BaseHandler {
       else if (attribute.equals("Objective")) {
         StringTokenizer tokens = new StringTokenizer(variant, " ");
         boolean foundMag = false;
-        StringBuffer model = new StringBuffer();
+        final StringBuilder model = new StringBuilder();
         while (!foundMag) {
           String token = tokens.nextToken();
-          int x = token.indexOf("x");
+          int x = token.indexOf('x');
           if (x != -1) {
             foundMag = true;
 
@@ -1072,7 +1065,7 @@ public class LeicaHandler extends BaseHandler {
       String shapeID = MetadataTools.createLSID("Shape", roi, 1);
       switch (type) {
         case POLYGON:
-          StringBuffer points = new StringBuffer();
+          final StringBuilder points = new StringBuilder();
           for (int i=0; i<x.size(); i++) {
             points.append(x.get(i).doubleValue() + roiX);
             points.append(",");

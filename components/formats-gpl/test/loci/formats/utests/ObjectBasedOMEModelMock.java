@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,14 +27,11 @@ package loci.formats.utests;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Arc;
-import ome.xml.model.BinaryFile;
 import ome.xml.model.BooleanAnnotation;
 import ome.xml.model.Channel;
 import ome.xml.model.CommentAnnotation;
 import ome.xml.model.Detector;
 import ome.xml.model.Dichroic;
-import ome.xml.model.DoubleAnnotation;
-import ome.xml.model.External;
 import ome.xml.model.Filament;
 import ome.xml.model.Filter;
 import ome.xml.model.FilterSet;
@@ -45,7 +42,6 @@ import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
 import ome.xml.model.Objective;
-import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plate;
 import ome.xml.model.ROI;

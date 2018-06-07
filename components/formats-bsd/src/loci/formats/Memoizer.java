@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -548,20 +548,18 @@ public class Memoizer extends ReaderWrapper {
   /**
    * Returns {@code true} if the version of the memo file as returned by
    * {@link Deser#loadReleaseVersion()} and {@link Deser#loadRevision()}
-   * do not match the current version as specified by {@link FormatTools#VERSION}
-   * and {@link FormatTools#VCS_REVISION}, respectively.
+   * do not match the current version as specified by {@link FormatTools#VERSION}.
    */
   public boolean versionMismatch() throws IOException {
 
       final String releaseVersion = ser.loadReleaseVersion();
-      final String revision = ser.loadRevision();
 
       if (!isVersionChecking()) {
         return false;
       }
 
       String minor = releaseVersion;
-      int firstDot = minor.indexOf(".");
+      int firstDot = minor.indexOf('.');
       if (firstDot >= 0) {
         int secondDot = minor.indexOf(".", firstDot + 1);
         if (secondDot >= 0) {
@@ -570,7 +568,7 @@ public class Memoizer extends ReaderWrapper {
       }
 
       String currentMinor = FormatTools.VERSION.substring(0,
-        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
+        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf('.') + 1));
       if (!currentMinor.equals(minor)) {
         LOGGER.info("Different release version: {} not {}",
           releaseVersion, FormatTools.VERSION);
@@ -578,9 +576,10 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // REVISION NUMBER
-      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
-        LOGGER.info("Different Git version: {} not {}",
-          revision, FormatTools.VCS_REVISION);
+      if (!versionChecking &&
+          FormatTools.VERSION.endsWith("-SNAPSHOT")) {
+        LOGGER.info("Development version: {}",
+          FormatTools.VERSION);
         return true;
       }
 
@@ -769,7 +768,7 @@ public class Memoizer extends ReaderWrapper {
     return service;
   }
   protected Slf4JStopWatch stopWatch() {
-      return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
+    return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
   }
 
   /**
@@ -811,7 +810,7 @@ public class Memoizer extends ReaderWrapper {
 
       // Check either the in-place folder or the main memoizer directory
       // exists and is writeable
-      if (!writeDirectory.exists() || !writeDirectory.canWrite()) {
+      if (!isWritableDirectory(writeDirectory)) {
         LOGGER.warn("skipping memo: directory not writeable - {}",
           writeDirectory);
         return null;
@@ -822,6 +821,15 @@ public class Memoizer extends ReaderWrapper {
     String p = f.getParent();
     String n = f.getName();
     return new File(p, "." + n + ".bfmemo");
+  }
+
+  /**
+   * Test if the given {@link File} instance is a writable directory.
+   * @param writeDirectory a possible writable directory
+   * @return if the given {@link File} is indeed a writable directory
+   */
+  protected boolean isWritableDirectory(File writeDirectory) {
+    return writeDirectory.canWrite() && writeDirectory.isDirectory();
   }
 
   /**
@@ -957,7 +965,6 @@ public class Memoizer extends ReaderWrapper {
       // Save to temporary location.
       ser.saveVersion(VERSION);
       ser.saveReleaseVersion(FormatTools.VERSION);
-      ser.saveRevision(FormatTools.VCS_REVISION);
       ser.saveReader(reader);
       ser.saveStop();
       LOGGER.debug("saved to temp file: {}", tempFile);

@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -140,10 +140,14 @@ public abstract class WriterWrapper implements IFormatWriter {
     ColorModel cm = getColorModel();
     int rate = getFramesPerSecond();
     String compress = getCompression();
+    int tileSizeX = getTileSizeX();
+    int tileSizeY = getTileSizeY();
     wrapperCopy.setInterleaved(interleaved);
     wrapperCopy.setColorModel(cm);
     wrapperCopy.setFramesPerSecond(rate);
     wrapperCopy.setCompression(compress);
+    wrapperCopy.setTileSizeX(tileSizeX);
+    wrapperCopy.setTileSizeY(tileSizeY);
     return wrapperCopy;
   }
 
@@ -320,6 +324,30 @@ public abstract class WriterWrapper implements IFormatWriter {
   @Override
   public void setWriteSequentially(boolean sequential) {
     writer.setWriteSequentially(sequential);
+  }
+  
+  /* @see IFormatWriter#getTileSizeX() */
+  @Override
+  public int getTileSizeX() throws FormatException {
+    return writer.getTileSizeX();
+  }
+
+  /* @see IFormatWriter#setTileSizeX(int) */
+  @Override
+  public int setTileSizeX(int tileSize) throws FormatException {
+    return writer.setTileSizeX(tileSize);
+  }
+
+  /* @see IFormatWriter#getTileSizeY() */
+  @Override
+  public int getTileSizeY() throws FormatException {
+    return writer.getTileSizeY();
+  }
+
+  /* @see IFormatWriter#setTileSizeY(int) */
+  @Override
+  public int setTileSizeY(int tileSize) throws FormatException {
+    return writer.setTileSizeY(tileSize);
   }
 
   // -- IFormatHandler API methods --

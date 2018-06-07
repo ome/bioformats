@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,6 +45,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 import org.slf4j.Logger;
@@ -120,10 +121,13 @@ public class ImageReader implements IFormatReader {
     // add readers to the list
     List<IFormatReader> list = new ArrayList<IFormatReader>();
     Class<? extends IFormatReader>[] c = classList.getClasses();
+    // assign the same options instance to all readers
+    MetadataOptions opt = new DynamicMetadataOptions();
     for (int i=0; i<c.length; i++) {
       IFormatReader reader = null;
       try {
         reader = c[i].newInstance();
+        reader.setMetadataOptions(opt);
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
@@ -171,6 +175,9 @@ public class ImageReader implements IFormatReader {
    // e.g., for files, this will throw an exception if the file is missing.
    if (!fake && !omero) {
      Location.checkValidId(id);
+     if (new Location(id).length() == 0) {
+       LOGGER.error("File has length 0 and may be corrupt");
+     }
    }
 
     if (!id.equals(currentId)) {

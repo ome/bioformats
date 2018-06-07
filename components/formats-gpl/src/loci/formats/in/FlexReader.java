@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -282,8 +282,13 @@ public class FlexReader extends FormatReader {
     // read pixels from the file
     TiffParser tp = new TiffParser(s);
     tp.fillInIFD(ifd);
+
+    // log the first offset used
+    LOGGER.trace("first offset for series={} no={}: {}", getCoreIndex(), no, ifd.getStripOffsets()[0]);
+
     tp.getSamples(ifd, buf, x, y, w, h);
     factor = file.factors == null ? 1d : file.factors[imageNumber];
+    LOGGER.trace("  using factor = {}", factor);
     tp.getStream().close();
 
     // expand pixel values with multiplication by factor[no]
@@ -968,6 +973,10 @@ public class FlexReader extends FormatReader {
 
     ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
 
+    if (getImageCount() == imageNames.size()) {
+      fieldCount = 1;
+    }
+
     // if the calculated image count is the same as the number of planes
     // in the file, then we can assume one field per file
     // otherwise assume that fields are stored within the files
@@ -1307,10 +1316,16 @@ public class FlexReader extends FormatReader {
             compressed =
               firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
 
-            if (compressed || firstIFD.getStripOffsets()[0] == 16) {
+            if (compressed || firstIFD.getStripOffsets()[0] == 16 ||
+              firstIFD.getStripOffsets().length == 1)
+            {
               tp.setDoCaching(false);
               file.ifds = tp.getIFDs();
               file.ifds.set(0, firstIFD);
+              if (firstIFD.getStripOffsets().length == 1) {
+                // used to ensure that image offsets are read, not calculated
+                compressed = true;
+              }
             }
             else {
               // if the pixel data is uncompressed and the IFD is stored
@@ -1432,7 +1447,7 @@ public class FlexReader extends FormatReader {
 
     private String filterSet;
 
-    private StringBuffer charData = new StringBuffer();
+    private final StringBuilder charData = new StringBuilder();
 
     public FlexHandler(List<String> names, List<String> factors,
       MetadataStore store, boolean populateCore, int well, int thisField)
@@ -1454,7 +1469,7 @@ public class FlexReader extends FormatReader {
     @Override
     public void endElement(String uri, String localName, String qName) {
       String value = charData.toString();
-      charData = new StringBuffer();
+      charData.setLength(0);
 
       if (qName.equals("XSize") && "Plate".equals(parentQName)) {
         wellRows = Integer.parseInt(value);
@@ -1957,7 +1972,7 @@ public class FlexReader extends FormatReader {
    * If other paths were mapped to 'alias', they will be overwritten.
    */
   public static void mapServer(String alias, String[] realNames) {
-    StringBuffer msg = new StringBuffer("mapServer(");
+    final StringBuilder msg = new StringBuilder("mapServer(");
     msg.append(alias);
     if (realNames != null) {
       msg.append(", [");
@@ -2011,7 +2026,7 @@ public class FlexReader extends FormatReader {
     String[] lines = DataTools.readFile(configFile).split("[\r\n]");
     for (String line : lines) {
       LOGGER.trace(line);
-      int eq = line.indexOf("=");
+      int eq = line.indexOf('=');
       if (eq == -1 || line.startsWith("#")) continue;
       String alias = line.substring(0, eq).trim();
       String[] servers = line.substring(eq + 1).trim().split(";");

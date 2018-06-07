@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,7 +33,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
@@ -126,10 +127,10 @@ public class AVIReader extends FormatReader {
   // -- Fields --
 
   /** Offset to each plane. */
-  private Vector<Long> offsets;
+  private List<Long> offsets;
 
   /** Number of bytes in each plane. */
-  private Vector<Long> lengths;
+  private List<Long> lengths;
 
   private String listString;
   private String type = "error";
@@ -194,7 +195,7 @@ public class AVIReader extends FormatReader {
     }
 
     long fileOff = offsets.get(no).longValue();
-    long end = no < offsets.size() - 1 ? offsets.get(no + 1) : in.length();
+    long end = no < offsets.size() - 1 ? offsets.get(no + 1) : fileOff + lengths.get(no);
     long maxBytes = end - fileOff;
     in.seek(fileOff);
 
@@ -231,6 +232,10 @@ public class AVIReader extends FormatReader {
 
     int pad = (bmpScanLineSize / getRGBChannelCount()) - getSizeX() * bytes;
     int scanline = w * bytes * (isInterleaved() ? getRGBChannelCount() : 1);
+
+    if (bmpBitsPerPixel > 8 && pad == getRGBChannelCount()) {
+      pad = bytes;
+    }
 
     in.skipBytes((getSizeX() + pad) * (bmpBitsPerPixel / 8) * (getSizeY() - h - y));
 
@@ -309,8 +314,8 @@ public class AVIReader extends FormatReader {
 
     LOGGER.info("Verifying AVI format");
 
-    offsets = new Vector<Long>();
-    lengths = new Vector<Long>();
+    offsets = new ArrayList<Long>();
+    lengths = new ArrayList<Long>();
     lastImageNo = -1;
 
     while (in.getFilePointer() < in.length() - 8) {
