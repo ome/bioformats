@@ -95,7 +95,7 @@ public class MetamorphReader extends BaseTiffReader {
   public static final String SHORT_DATE_FORMAT = "yyyyMMdd HH:mm:ss";
   public static final String LONG_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
-  public static final String[] ND_SUFFIX = {"nd"};
+  public static final String[] ND_SUFFIX = {"nd", "scan"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
   public static final Pattern WELL_COORDS = Pattern.compile(
@@ -164,12 +164,12 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() {
-    super("Metamorph STK", new String[] {"stk", "nd", "tif", "tiff"});
+    super("Metamorph STK", new String[] {"stk", "nd", "scan", "tif", "tiff"});
     domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
     datasetDescription = "One or more .stk or .tif/.tiff files plus an " +
-      "optional .nd file";
+      "optional .nd or .scan file";
   }
 
   // -- IFormatReader API methods --
