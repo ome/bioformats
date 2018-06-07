@@ -679,6 +679,9 @@ public class MetamorphReader extends BaseTiffReader {
       ms0.sizeC = cc;
       ms0.sizeT = tc;
       ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      if (isRGB()) {
+        ms0.sizeC *= 3;
+      }
       ms0.dimensionOrder = "XYZCT";
 
       if (stks != null && stks.length > 1) {
@@ -1003,8 +1006,8 @@ public class MetamorphReader extends BaseTiffReader {
           exposureTimes.add(exposureTime);
         }
       }
-      else if (exposureTimes.size() == 1 && exposureTimes.size() < getSizeC()) {
-        for (int c=1; c<getSizeC(); c++) {
+      else if (exposureTimes.size() == 1 && exposureTimes.size() < getEffectiveSizeC()) {
+        for (int c=1; c<getEffectiveSizeC(); c++) {
           MetamorphHandler channelHandler = new MetamorphHandler();
 
           String channelComment = getComment(i, c);
