@@ -40,6 +40,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
@@ -127,12 +128,25 @@ public class KLBReader extends FormatReader {
       fileName = yzProjections[currentCoords[2]][currentCoords[1]];
     }
     in = new RandomAccessInputStream(fileName);
-    
+
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    
+
     //As number of offsets can be greater than INT_MAX only storing enough required for given plane
     //New offsets are read from header each time openBytes is called
     reCalculateBlockOffsets(no);
+    
+    //Calculate block offsets for tiled reading
+    int xBlockOffset = x % dims_blockSize[0];
+    int yBlockOffset = y % dims_blockSize[1];
+    int xBlockRemainder = dims_blockSize[0] - xBlockOffset;
+    int yBlockRemainder = dims_blockSize[1] - yBlockOffset;
+    int xNumBlocks = 1 + (int) (Math.ceil((float)(w - xBlockRemainder)/dims_blockSize[0]));
+    int yNumBlocks = 1 + (int) (Math.ceil((float)(h - yBlockRemainder)/dims_blockSize[1]));
+    int blocksPerImageRow = (int) (Math.ceil((float)getSizeX()/dims_blockSize[0]));
+    int xBlockStartIndex = 0;
+    if (x > 0) xBlockStartIndex = x / dims_blockSize[0];
+    int yBlockStartIndex = 0;
+    if (y > 0) yBlockStartIndex = y / dims_blockSize[1];
     
     int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
     int blockSizeBytes = bytesPerPixel;
@@ -148,84 +162,90 @@ public class KLBReader extends FormatReader {
     }
 
     long compressedBlockSize = blockOffsets[1] - blockOffsets[0];
-    int firstBlock = 0;
     int outputOffset = 0;
 
-    for (int xx=0; xx < blocksPerPlane; xx++) {
+    int index = 0;
+    for (int yy=0; yy < yNumBlocks; yy++) {
+      for (int xx=0; xx < xNumBlocks; xx++) {
 
-      //calculate coordinate (in block space)
-      int blockIdx_aux = xx;
-      for (int ii = 0; ii < KLB_DATA_DIMS; ii++)
-      {
-        coordBlock[ii] = blockIdx_aux % dimsBlock[ii];
-        blockIdx_aux -= coordBlock[ii];
-        blockIdx_aux /= dimsBlock[ii];
-        coordBlock[ii] *= dims_blockSize[ii];//parsing coordinates to image space (not block anymore)
-        
-      }
- 
-      compressedBlockSize = xx == 0 ? blockOffsets[0] : blockOffsets[xx] - blockOffsets[xx-1];
-      long offset =  xx == 0 ? 0 : blockOffsets[firstBlock + xx - 1];
+        //calculate coordinate (in block space)        
+        int blockId = (yBlockStartIndex + yy) * blocksPerImageRow + xBlockStartIndex + xx;
+        int blockIdx_aux = index;
+        index++;
 
-      //Seek to start of block
-      in.seek((long) (headerSize + offset));
-        
-      //Read compressed block
-      byte[] block = new byte[(int) compressedBlockSize];
-      in.read(block);
+        for (int ii = 0; ii < KLB_DATA_DIMS; ii++)
+        {
+          coordBlock[ii] = blockIdx_aux % dimsBlock[ii];
+          blockIdx_aux -= coordBlock[ii];
+          blockIdx_aux /= dimsBlock[ii];
+          coordBlock[ii] *= dims_blockSize[ii];//parsing coordinates to image space (not block anymore)
+        }
+        compressedBlockSize = blockId == 0 ? blockOffsets[0] : blockOffsets[blockId] - blockOffsets[blockId-1];
+        long offset =  blockId == 0 ? 0 : blockOffsets[blockId-1];
 
-      //Decompress block
-      if (compressionType == COMPRESSION_BZIP2) {
-        // Discard first two bytes of BZIP2 header
-        byte[] tempPixels = block;
-        block = new byte[tempPixels.length - 2];
-        System.arraycopy(tempPixels, 2, block, 0, block.length);
+        //Seek to start of block
+        in.seek((long) (headerSize + offset));
+
+        //Read compressed block
+        byte[] block = new byte[(int) compressedBlockSize];
+        in.read(block);
+
+        //Decompress block
+        if (compressionType == COMPRESSION_BZIP2) {
+          // Discard first two bytes of BZIP2 header
+          byte[] tempPixels = block;
+          block = new byte[tempPixels.length - 2];
+          System.arraycopy(tempPixels, 2, block, 0, block.length);
+
+          try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(block);
+            CBZip2InputStream bzip = new CBZip2InputStream(bais);
+            block = new byte[blockSizeBytes];
+            bzip.read(block, 0, block.length);
+            tempPixels = null;
+            bais.close();
+            bzip.close();
+            bais = null;
+            bzip = null;
+          }
+          catch(IOException e) {
+            LOGGER.debug("IOException while decompressing block {}", xx);
+            throw e;
+          }
+        }
+        else if (compressionType == COMPRESSION_ZLIB) {
+          CodecOptions options = new CodecOptions();
+          block = new ZlibCodec().decompress(block, options);
+        }
+
+        // Calculate block size in case we had border block        
+        for (int ii = 0; ii < KLB_DATA_DIMS; ii++) {
+          blockSizeAux[ii] = Math.min(dims_blockSize[ii], (dims_xyzct[ii] - coordBlock[ii]));
+        }
 
         try {
-          ByteArrayInputStream bais = new ByteArrayInputStream(block);
-          CBZip2InputStream bzip = new CBZip2InputStream(bais);
-          block = new byte[blockSizeBytes];
-          bzip.read(block, 0, block.length);
-          tempPixels = null;
-          bais.close();
-          bzip.close();
-          bais = null;
-          bzip = null;
+          int imageRowSize = w * bytesPerPixel;
+          int blockRowSize = blockSizeAux[0] * bytesPerPixel;
+
+          // Location in output buffer to copy block
+          outputOffset = (imageRowSize * coordBlock[1]) + (coordBlock[0] * bytesPerPixel);
+
+          // Location within the block for required XY plane
+          int inputOffset = (coordBlock[2] % dims_blockSize[2]) * blockRowSize * blockSizeAux[1];
+          inputOffset += (coordBlock[3] % dims_blockSize[3]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2];
+          inputOffset += (coordBlock[4] % dims_blockSize[4]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2] * blockSizeAux[3];
+
+          // Copy row at a time from decompressed block to output buffer
+          for (int numRows = 0; numRows < blockSizeAux[1]; numRows++) {
+            int destPos = outputOffset + (numRows * imageRowSize);
+            if (destPos + blockRowSize <= buf.length) {
+              System.arraycopy(block, inputOffset + (numRows * blockRowSize), buf, outputOffset + (numRows * imageRowSize), blockRowSize);
+            }
+          }
         }
-        catch(IOException e) {
-          LOGGER.debug("IOException while decompressing block {}", xx);
-          throw e;
+        catch(Exception e) {
+          throw new FormatException("Exception caught while copying decompressed block data to output buffer : " + e);
         }
-      }
-      else if (compressionType == COMPRESSION_ZLIB) {
-        CodecOptions options = new CodecOptions();
-        block = new ZlibCodec().decompress(block, options);
-      }
-
-      // Calculate block size in case we had border block        
-      for (int ii = 0; ii < KLB_DATA_DIMS; ii++) {
-        blockSizeAux[ii] = Math.min(dims_blockSize[ii], (dims_xyzct[ii] - coordBlock[ii]));
-      }
-
-      try {
-        int imageRowSize = dims_xyzct[0] * bytesPerPixel;
-        int blockRowSize = blockSizeAux[0] * bytesPerPixel;
-
-        // Location in output buffer to copy block
-        outputOffset = (imageRowSize * coordBlock[1]) + (coordBlock[0] * bytesPerPixel);
-
-        // Location within the block for required XY plane
-        int inputOffset = (coordBlock[2] % dims_blockSize[2]) * blockRowSize * blockSizeAux[1];
-        inputOffset += (coordBlock[3] % dims_blockSize[3]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2];
-        inputOffset += (coordBlock[4] % dims_blockSize[4]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2] * blockSizeAux[3];
-
-        // Copy row at a time from decompressed block to output buffer
-        for (int numRows = 0; numRows < blockSizeAux[1]; numRows++) {
-          System.arraycopy(block, inputOffset + (numRows * blockRowSize), buf, outputOffset + (numRows * imageRowSize), blockRowSize);
-        }
-      }
-      catch(Exception e) {
-        throw new FormatException("Exception caught while copying decompressed block data to output buffer");
       }
     }
 
@@ -250,19 +270,21 @@ public class KLBReader extends FormatReader {
     String parent = new Location(id).getAbsoluteFile().getParent();
     File folder = new File(parent);
     File[] listOfFiles = folder.listFiles();
-    String basePrefix = id.substring(0, id.indexOf("_CHN"));
+    String basePrefix = id.substring(id.lastIndexOf(File.separator) + 1, id.indexOf("_CHN"));
     for (int i=0; i < listOfFiles.length; i++) {
       String fileName = listOfFiles[i].getName();
-      int channelNum = DataTools.parseInteger(fileName.substring(fileName.indexOf("_CHN")+4, fileName.indexOf('.')));
-      if (channelNum == sizeC) {
-        sizeC = channelNum + 1;
+      if (fileName.contains(basePrefix)) {
+        int channelNum = DataTools.parseInteger(fileName.substring(fileName.indexOf("_CHN")+4, fileName.indexOf('.')));
+        if (channelNum == sizeC) {
+          sizeC = channelNum + 1;
+        }
       }
     }
 
     String topLevelFolder = new Location(parent).getAbsoluteFile().getParent();
     folder = new File(topLevelFolder);
     listOfFiles = folder.listFiles();
-    basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.indexOf('.'));
+    basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.lastIndexOf('.'));
 
     for (int i=0; i < listOfFiles.length; i++) {
       String fileName = listOfFiles[i].getName();
@@ -275,7 +297,7 @@ public class KLBReader extends FormatReader {
     xzProjections = new String[sizeT][sizeC];
     yzProjections = new String[sizeT][sizeC];
 
-    basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.indexOf('.'));
+    basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.lastIndexOf('.'));
     for (int i=0; i < listOfFiles.length; i++) {
       String fileName = listOfFiles[i].getName();
       if (fileName.startsWith(basePrefix)) {
@@ -316,6 +338,12 @@ public class KLBReader extends FormatReader {
         }
       }
     }
+    String imageID = MetadataTools.createLSID("Image", 0);
+    store.setImageID(imageID, 0);
+    imageID = MetadataTools.createLSID("Image", 1);
+    store.setImageID(imageID, 1);
+    imageID = MetadataTools.createLSID("Image", 2);
+    store.setImageID(imageID, 2);
   }
 
   private void readHeader(CoreMetadata coreMeta) throws IOException, FormatException {
@@ -387,7 +415,7 @@ public class KLBReader extends FormatReader {
   
   // Needed as offsets array can only be int max and full image may be greater
   private void reCalculateBlockOffsets(int no) throws IOException, FormatException {
-    
+    LOGGER.error("Beginning calulating offsets for plane : " + no);
     headerVersion = in.readUnsignedByte();
     for (int i=0; i < KLB_DATA_DIMS; i++) {
       dims_xyzct[i] = readUInt32();
@@ -430,6 +458,7 @@ public class KLBReader extends FormatReader {
       blockOffsets[i] = readUInt64();
     }
     in.seek(filePoointer);
+    LOGGER.error("Finished calulating offsets for plane : " + no);
   }
 
   // Helper methods
