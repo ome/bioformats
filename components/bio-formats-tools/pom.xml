@@ -79,14 +79,14 @@
       <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>xalan</groupId>
       <artifactId>serializer</artifactId>
-      <version>2.7.2</version>
+      <version>${xalan.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
-      <version>2.7.2</version>
+      <version>${xalan.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -103,6 +103,10 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
