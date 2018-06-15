@@ -274,7 +274,7 @@ public class TCSReader extends FormatReader {
     tiffParser = new TiffParser(in);
     tiffs = new ArrayList<String>();
 
-    IFDList ifds = tiffParser.getIFDs();
+    IFDList ifds = tiffParser.getMainIFDs();
     String date = ifds.get(0).getIFDStringValue(IFD.DATE_TIME);
     if (date != null) {
       datestamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
@@ -537,10 +537,10 @@ public class TCSReader extends FormatReader {
     RandomAccessInputStream s =
       new RandomAccessInputStream(current.getAbsolutePath(), 16);
     TiffParser p = new TiffParser(s);
-    IFD ifd = p.getIFDs().get(0);
+    IFD ifd = p.getMainIFDs().get(0);
     s.close();
 
-    int expectedIFDCount = p.getIFDs().size();
+    int expectedIFDCount = p.getMainIFDs().size();
     long width = ifd.getImageWidth();
     long height = ifd.getImageLength();
     int samples = ifd.getSamplesPerPixel();
@@ -554,9 +554,9 @@ public class TCSReader extends FormatReader {
       if (!tp.isValidHeader()) {
         continue;
       }
-      ifd = tp.getIFDs().get(0);
+      ifd = tp.getMainIFDs().get(0);
 
-      if (tp.getIFDs().size() != expectedIFDCount ||
+      if (tp.getMainIFDs().size() != expectedIFDCount ||
         ifd.getImageWidth() != width || ifd.getImageLength() != height ||
         ifd.getSamplesPerPixel() != samples)
       {
@@ -584,7 +584,7 @@ public class TCSReader extends FormatReader {
       for (String tiff : tiffs) {
         s = new RandomAccessInputStream(tiff, 16);
         TiffParser parser = new TiffParser(s);
-        ifd = parser.getIFDs().get(0);
+        ifd = parser.getMainIFDs().get(0);
         s.close();
 
         String date = ifd.getIFDStringValue(IFD.DATE_TIME);

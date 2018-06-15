@@ -139,7 +139,7 @@ public class GelReader extends BaseTiffReader {
   /* @see BaseTiffReader#initMetadata() */
   @Override
   protected void initMetadata() throws FormatException, IOException {
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
     if (ifds.size() > 1) {
       IFDList tmpIFDs = ifds;
       ifds = new IFDList();

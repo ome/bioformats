@@ -214,7 +214,7 @@ public class TrestleReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
     for (IFD ifd : ifds) {
       tiffParser.fillInIFD(ifd);
     }

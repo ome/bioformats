@@ -195,7 +195,7 @@ public class VectraReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
     thumbnailIFDs = null;
 
     for (IFD ifd : ifds) {
