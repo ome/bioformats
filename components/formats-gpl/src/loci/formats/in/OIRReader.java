@@ -616,7 +616,7 @@ public class OIRReader extends FormatReader {
       s.findString("<?xml");
       s.seek(s.getFilePointer() - 9);
       int length = s.readInt();
-      if (length < 0 || length + s.getFilePointer() > s.length()) {
+      if (length <= 0 || length + s.getFilePointer() > s.length()) {
         break;
       }
       long fp = s.getFilePointer();
