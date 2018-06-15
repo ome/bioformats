@@ -929,8 +929,11 @@ public class NativeND2Reader extends FormatReader {
           long doubleOffset = fp + 8 * (nDoubles - imageOffsets.size());
           long intOffset = fp + 4 * (nInts - imageOffsets.size());
           if (blockType.startsWith("CustomData|A")) {
-            customDataOffsets.add(fp);
-            customDataLengths.add(new int[] {nameLength, (int) dataLength});
+            blockType += in.readString(nameLength-12);
+            if (blockType.equals("CustomData|AcqTimesCache!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ")) {
+              customDataOffsets.add(fp);
+              customDataLengths.add(new int[] {nameLength, (int) dataLength});
+            }
           }
           else if (blockType.startsWith("CustomData|Z")) {
             if (zOffset == 0) {
@@ -1575,24 +1578,23 @@ public class NativeND2Reader extends FormatReader {
       // read first CustomData block
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        if (customDataOffsets.size() > 0) {
-          in.seek(customDataOffsets.get(0).longValue());
-          int[] p = customDataLengths.get(0);
-          int len = p[0] + p[1];
-
-          int timestampBytes = imageOffsets.size() * 8;
-          in.skipBytes(len - timestampBytes);
+        for (int i = 0; i < customDataOffsets.size(); i++) {
+          in.seek(customDataOffsets.get(i).longValue());
+          int[] p = customDataLengths.get(i);
+          int numTimeStamps = p[1] / 8;
+          in.skipBytes(p[0]);
 
           // the acqtimecache is a undeliniated stream of doubles
-
-          for (int series=0; series<getSeriesCount(); series++) {
-            setSeries(series);
-            int count = split ? getImageCount() / getSizeC() : getImageCount();
-            for (int plane=0; plane<count; plane++) {
-              // timestamps are stored in ms; we want them in seconds
-              double time = in.readDouble() / 1000;
-              tsT.add(time);
-              addSeriesMetaList("timestamp", time);
+          int count = split ? getImageCount() / getSizeC() : getImageCount();
+          if (numTimeStamps == count) {
+            for (int series=0; series < getSeriesCount(); series++) {
+              setSeries(series);
+              for (int plane=0; plane < numTimeStamps; plane++) {
+                // timestamps are stored in ms; we want them in seconds
+                double time = in.readDouble() / 1000;
+                tsT.add(time);
+                addSeriesMetaList("timestamp", time);
+              }
             }
           }
           setSeries(0);
