@@ -16,7 +16,7 @@ addons:
     - git
 
 jdk:
-  - oraclejdk9
+  - oraclejdk10
   - oraclejdk8
   - openjdk7
 
@@ -27,7 +27,7 @@ env:
 matrix:
   fast_finish: true
   exclude:
-  - jdk: oraclejdk9
+  - jdk: oraclejdk10
     env: BUILD=ant
   - jdk: openjdk7
     env: BUILD=ant
