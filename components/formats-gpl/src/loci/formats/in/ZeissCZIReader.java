@@ -890,7 +890,7 @@ public class ZeissCZIReader extends FormatReader {
         plane.pixelTypeIndex = pixelTypes.indexOf(plane.directoryEntry.pixelType);
       }
 
-      if (seriesCount * pixelTypes.size() > 1) {
+      if (core.size() * pixelTypes.size() > 1) {
         core.clear();
         for (int j=0; j<pixelTypes.size(); j++) {
           for (int i=0; i<seriesCount; i++) {
@@ -906,6 +906,14 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+    }
+
+    // usually this indicates a big image for which a pyramid is
+    // expected but not present
+    if ((prestitched != null && prestitched) &&
+      seriesCount == mosaics && maxResolution == 0)
+    {
+      seriesCount = 1;
     }
 
     if (seriesCount > 1 || maxResolution > 0) {
@@ -924,7 +932,7 @@ public class ZeissCZIReader extends FormatReader {
 
     assignPlaneIndices();
 
-    if (maxResolution > 0) {
+    if (maxResolution > 0 || (mosaics > 1 && seriesCount == 1)) {
       tileWidth = new int[core.size()];
       tileHeight = new int[core.size()];
       for (int s=0; s<core.size();) {
