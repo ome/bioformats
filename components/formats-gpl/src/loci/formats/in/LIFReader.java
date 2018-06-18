@@ -2159,7 +2159,7 @@ public class LIFReader extends FormatReader {
     Arrays.sort(bytes);
     ms.dimensionOrder = "XY";
     if (getRGBChannelCount() == 1 || getRGBChannelCount() == getSizeC()) {
-      if (getSizeC() > 1 && getSizeT() > 1) {
+      if (getRGBChannelCount() > 1) {
         ms.dimensionOrder += 'C';
       }
       for (Long nBytes : bytes) {
