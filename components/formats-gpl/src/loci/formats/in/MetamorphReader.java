@@ -364,6 +364,7 @@ public class MetamorphReader extends BaseTiffReader {
       hasAbsoluteZ = false;
       hasAbsoluteZValid = false;
       stageLabels = null;
+      isHCS = false;
     }
   }
 
@@ -1207,14 +1208,12 @@ public class MetamorphReader extends BaseTiffReader {
       if (uic2tagEntry != null) {
         parseUIC2Tags(uic2tagEntry.getValueOffset());
       }
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        if (uic4tagEntry != null) {
-          parseUIC4Tags(uic4tagEntry.getValueOffset());
-        }
-        if (uic1tagEntry != null) {
-          parseUIC1Tags(uic1tagEntry.getValueOffset(),
-            uic1tagEntry.getValueCount());
-        }
+      if (uic4tagEntry != null) {
+        parseUIC4Tags(uic4tagEntry.getValueOffset());
+      }
+      if (uic1tagEntry != null) {
+        parseUIC1Tags(uic1tagEntry.getValueOffset(),
+          uic1tagEntry.getValueCount());
       }
       in.seek(uic4tagEntry.getValueOffset());
     }
