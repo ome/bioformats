@@ -32,7 +32,7 @@ init:
   - 'if [%java%] == [9] set "JAVA_HOME=C:\Program Files\Java\jdk9"'
   - PATH=%JAVA_HOME%\bin;%PATH%
   - 'if [%build%] == [maven] set "MAVEN_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
-  - 'if [%build%] == [maven] and [%java%] == [1.7] set "MAVEN_OPTS=-Dmaven.repo.local=%AV_BF_M2% -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2"'
+  - 'if [%java%] == [1.7] set "MAVEN_OPTS=-Dmaven.repo.local=%AV_BF_M2% -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2"'
   - 'if [%build%] == [ant] set "ANT_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
 
 build_script:
