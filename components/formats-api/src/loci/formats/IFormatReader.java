@@ -341,23 +341,48 @@ public interface IFormatReader extends IFormatHandler {
    */
   int fileGroupOption(String id) throws FormatException, IOException;
 
-  /** Returns an array of filenames needed to open this dataset. */
+  /**
+   * Returns an array of filenames needed to open this dataset.
+   * The first element in the array is expected to be the path passed to
+   * {@link #setId(String)}.  The remaining elements are expected to be in a
+   * consistent order; if a directory listing is necessary to build the list
+   * then it should be sorted first.
+   */
   String[] getUsedFiles();
 
   /**
    * Returns an array of filenames needed to open this dataset.
    * If the 'noPixels' flag is set, then only files that do not contain
    * pixel data will be returned.
+   *
+   * The first element in the array is expected to be the path passed to
+   * {@link #setId(String)}, if appropriate based upon 'noPixels'.
+   * The remaining elements are expected to be in a consistent order;
+   * if a directory listing is necessary to build the list then it should
+   * be sorted first.
    */
   String[] getUsedFiles(boolean noPixels);
 
-  /** Returns an array of filenames needed to open the current series. */
+  /**
+   * Returns an array of filenames needed to open the current series.
+   *
+   * The first element in the array is expected to be the path passed to
+   * {@link #setId(String)}.  The remaining elements are expected to be in a
+   * consistent order; if a directory listing is necessary to build the list
+   * then it should be sorted first.
+   */
   String[] getSeriesUsedFiles();
 
   /**
    * Returns an array of filenames needed to open the current series.
    * If the 'noPixels' flag is set, then only files that do not contain
    * pixel data will be returned.
+   *
+   * The first element in the array is expected to be the path passed to
+   * {@link #setId(String)}, if appropriate based upon 'noPixels'.
+   * The remaining elements are expected to be in a consistent order;
+   * if a directory listing is necessary to build the list then it should
+   * be sorted first.
    */
   String[] getSeriesUsedFiles(boolean noPixels);
 
