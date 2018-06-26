@@ -174,6 +174,14 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
+    return isHCS ? new String[] {FormatTools.HCS_DOMAIN} :
+      new String[] {FormatTools.LM_DOMAIN};
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   @Override
   public boolean isThisType(String name, boolean open) {
@@ -356,6 +364,7 @@ public class MetamorphReader extends BaseTiffReader {
       hasAbsoluteZ = false;
       hasAbsoluteZValid = false;
       stageLabels = null;
+      isHCS = false;
     }
   }
 
@@ -1202,14 +1211,12 @@ public class MetamorphReader extends BaseTiffReader {
       if (uic2tagEntry != null) {
         parseUIC2Tags(uic2tagEntry.getValueOffset());
       }
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        if (uic4tagEntry != null) {
-          parseUIC4Tags(uic4tagEntry.getValueOffset());
-        }
-        if (uic1tagEntry != null) {
-          parseUIC1Tags(uic1tagEntry.getValueOffset(),
-            uic1tagEntry.getValueCount());
-        }
+      if (uic4tagEntry != null) {
+        parseUIC4Tags(uic4tagEntry.getValueOffset());
+      }
+      if (uic1tagEntry != null) {
+        parseUIC1Tags(uic1tagEntry.getValueOffset(),
+          uic1tagEntry.getValueCount());
       }
       in.seek(uic4tagEntry.getValueOffset());
     }
