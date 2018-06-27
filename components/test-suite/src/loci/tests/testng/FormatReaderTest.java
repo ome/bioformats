@@ -1733,6 +1733,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Inveon only reliably detected from header file
+          if (reader.getFormat().equals("Inveon")) {
+            continue;
+          }
+
           // pattern datasets can only be detected with the pattern file
           if (reader.getFormat().equals("File pattern")) {
             continue;
@@ -2410,6 +2415,11 @@ public class FormatReaderTest {
             if (!used[i].toLowerCase().endsWith(".lif") &&
               r instanceof LIFReader)
             {
+              continue;
+            }
+
+            // Inveon only reliably detected from header file
+            if (!result && r instanceof InveonReader) {
               continue;
             }
 
