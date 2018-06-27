@@ -156,6 +156,7 @@ public class OBFReader extends FormatReader {
       for (String key = readString(); key.length() > 0; key = readString()) {
         if (key.equals("ome_xml")) {
           final String ome_xml = readString();
+          LOGGER.trace("OME-xml = {}", ome_xml);
 
           try {
             ServiceFactory factory = new ServiceFactory();
@@ -220,7 +221,7 @@ public class OBFReader extends FormatReader {
         CoreMetadata meta_data = core.get(image);
 
         final String name = meta_data.seriesMetadata.get("Name").toString();
-        metadataStore.setImageName(name, image);
+        metadataStore.setImageName(name.trim(), image);
 
         @SuppressWarnings("unchecked")
         final List<Double> lengths = (List<Double>) meta_data.seriesMetadata.get("Lengths");
@@ -448,6 +449,22 @@ public class OBFReader extends FormatReader {
           final int length = in.readInt();
           final String label = in.readString(length);
           labels.add(label);
+
+          if (label.endsWith("X") || (dimension == 1 && isFLIMLabel(labels.get(0)))) {
+            meta_data.sizeX = sizes[dimension];
+          }
+          else if (label.endsWith("Y") || (dimension == 2 && isFLIMLabel(labels.get(0)))) {
+            meta_data.sizeY = sizes[dimension];
+          }
+          else if (isFLIMLabel(label)) {
+            meta_data.sizeZ = sizes[dimension];
+            meta_data.moduloZ.type = FormatTools.LIFETIME;
+            meta_data.moduloZ.typeDescription = label;
+            meta_data.moduloZ.start = 0;
+            meta_data.moduloZ.step = 1;
+            meta_data.moduloZ.end = meta_data.sizeZ - 1;
+            meta_data.imageCount = meta_data.sizeZ * meta_data.sizeC * meta_data.sizeT;
+          }
         }
         meta_data.seriesMetadata.put("Labels", labels);
 
@@ -483,6 +500,10 @@ public class OBFReader extends FormatReader {
     else {
       throw new FormatException("Unsupported stack format");
     }
+  }
+
+  private boolean isFLIMLabel(String label) {
+    return label.startsWith("SPCM");
   }
 
   private int getPixelType(int type) throws FormatException {
@@ -550,11 +571,17 @@ public class OBFReader extends FormatReader {
     final int columns = getSizeX();
     final int bytesPerPixel = getBitsPerPixel() / 8;
 
+    boolean isFLIM = FormatTools.LIFETIME.equals(getModuloZ().type);
+
     final int series = getSeries();
     final Stack stack = stacks.get(series);
     if (stack.compression) {
       if (series != currentInflatedFrame.series) {
-        currentInflatedFrame.bytes = new byte[rows * columns * bytesPerPixel];
+        int bufferSize = rows * columns * bytesPerPixel;
+        if (isFLIM) {
+          bufferSize *= getSizeZ();
+        }
+        currentInflatedFrame.bytes = new byte[bufferSize];
         currentInflatedFrame.series = series;
         currentInflatedFrame.number = - 1;
       }
@@ -565,7 +592,7 @@ public class OBFReader extends FormatReader {
 
       byte[] bytes = currentInflatedFrame.bytes;
       if (no != currentInflatedFrame.number) {
-        if (no < currentInflatedFrame.number) {
+        if (no < currentInflatedFrame.number && !isFLIM) {
           currentInflatedFrame.number = - 1;
         }
         if (currentInflatedFrame.number == - 1) {
@@ -574,7 +601,9 @@ public class OBFReader extends FormatReader {
         }
 
         byte[] input = new byte[8192];
-        while (no != currentInflatedFrame.number) {
+        int end = isFLIM ? getSizeZ() - 1 : no;
+
+        while (currentInflatedFrame.number != end) {
           int offset = 0;
           while (offset != bytes.length) {
             if (inflater.needsInput()) {
@@ -584,6 +613,10 @@ public class OBFReader extends FormatReader {
 
                 in.read(input, 0, length);
                 inflater.setInput(input, 0, length);
+              }
+              else if (isFLIM && remainder == 0 && currentInflatedFrame.number >= 0) {
+                offset = bytes.length;
+                continue;
               }
               else {
                 throw new FormatException("Corrupted zlib compression");
@@ -602,14 +635,37 @@ public class OBFReader extends FormatReader {
           ++ currentInflatedFrame.number;
         }
       }
-      for (int row = 0; row != h; ++ row) {
-        System.arraycopy(bytes, ((row + y) * columns + x) * bytesPerPixel, buffer, row * w * bytesPerPixel, w * bytesPerPixel);
+      if (isFLIM) {
+        for (int yy=y; yy<y+h; yy++) {
+          for (int xx=x; xx<x+w; xx++) {
+            int src = getSizeZ() * bytesPerPixel * ((yy * getSizeX()) + xx) + no * bytesPerPixel;
+            int dest = ((yy - y) * w * bytesPerPixel) + ((xx - x) * bytesPerPixel);
+            System.arraycopy(bytes, src, buffer, dest, bytesPerPixel);
+          }
+        }
+      }
+      else {
+        for (int row = 0; row != h; ++ row) {
+          System.arraycopy(bytes, ((row + y) * columns + x) * bytesPerPixel, buffer, row * w * bytesPerPixel, w * bytesPerPixel);
+        }
       }
     }
     else {
-      for (int row = 0; row != h; ++ row) {
-        in.seek(stack.position + ((no * rows + row + y) * columns + x) * bytesPerPixel);
-        in.read(buffer, row * w * bytesPerPixel, w * bytesPerPixel);
+      if (isFLIM) {
+        for (int yy=y; yy<y+h; yy++) {
+          for (int xx=x; xx<x+w; xx++) {
+            long src = stack.position + getSizeZ() * bytesPerPixel * ((yy * getSizeX()) + xx) + no * bytesPerPixel;
+            int dest = ((yy - y) * w * bytesPerPixel) + ((xx - x) * bytesPerPixel);
+            in.seek(src);
+            in.read(buffer, dest, bytesPerPixel);
+          }
+        }
+      }
+      else {
+        for (int row = 0; row != h; ++ row) {
+          in.seek(stack.position + ((no * rows + row + y) * columns + x) * bytesPerPixel);
+          in.read(buffer, row * w * bytesPerPixel, w * bytesPerPixel);
+        }
       }
     }
 
