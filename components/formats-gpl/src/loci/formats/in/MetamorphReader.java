@@ -1482,7 +1482,7 @@ public class MetamorphReader extends BaseTiffReader {
       String prefix = name.substring(0, name.indexOf('_'));
       String suffix = name.substring(name.indexOf('_'));
 
-      String basePrefix = new Location(currentId).getName();
+      String basePrefix = new Location(ndFilename).getName();
       int end = basePrefix.indexOf('_');
       if (end < 0) end = basePrefix.indexOf('.');
       basePrefix = basePrefix.substring(0, end);
