@@ -616,7 +616,7 @@ public class Memoizer extends ReaderWrapper {
    * If {@code true}, then a memo file will not be saved.  This effectively
    * makes the current Memoizer read-only.
    */
-  public void setReadOnly(boolean skip) {
+  public void skipSave(boolean skip) {
     this.skipSave = skip;
   }
 
