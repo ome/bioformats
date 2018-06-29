@@ -88,25 +88,26 @@ public class LEOReader extends BaseTiffReader {
 
     String tag = ifds.get(0).getIFDTextValue(LEO_TAG);
     String[] lines = tag.split("\n");
-
-    date = "";
-
-    for (int line=10; line<lines.length; line++) {
-      if (lines[line].equals("clock")) {
-        date += lines[++line];
-      }
-      else if (lines[line].equals("date")) {
-        date += " " + lines[++line];
-      }
-    }
+   
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      // physical sizes stored in meters
-      xSize = Double.parseDouble(lines[3]) * 1000000;
+      for (int row=36; row<lines.length; row++) {
+        if (lines[row].equals("AP_IMAGE_PIXEL_SIZE")) {
+          // pixel size is stored in nm, converted now to micrometers
+          double xSize = Double.parseDouble(lines[row+ 1].split("\\s+=\\s+")[1].replace(" nm","e+03"));
+        }
+        else if (lines[line].equals("AP_WD")) {
+          //working distance stored in mm, converting now to micrometers
+          double workingDistance = Double.parseDouble(lines[row+ 1].split("\\s+=\\s+")[1].replace(" mm","e-03"));
+        }
+        else if (lines[line].equals("AP_ACTUALCURRENT")) {
+          double filament = Double.parseDouble(lines[row+ 1].split("\\s+=\\s+")[1].replace(" A",""));
+        }
+        else if (lines[line].equals("AP_ACTUALKV")) {
+          double eht = Double.parseDouble(lines[row+ 1].split("\\s+=\\s+")[1].replace(" kV","e+03").replace(" V",""));
+        }
+      }
 
-      double eht = Double.parseDouble(lines[6]);
-      double filament = Double.parseDouble(lines[7]);
-      workingDistance = Double.parseDouble(lines[9]);
       addGlobalMeta("EHT", eht);
       addGlobalMeta("Filament", filament);
       addGlobalMeta("Working Distance", workingDistance);
