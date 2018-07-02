@@ -55,6 +55,8 @@ public class LEOReader extends BaseTiffReader {
   // -- Fields --
 
   private double xSize;
+  private double filament;
+  private double eht;
   private String date;
   private double workingDistance;
 
