@@ -73,9 +73,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
   // -- Fields --
 
   private String[] files;
-  private int wellCount = 0;
-  private int fieldRowCount = 0;
-  private int fieldColumnCount = 0;
+  private int wellCount = 1;
+  private int fieldRowCount = 1;
+  private int fieldColumnCount = 1;
   private boolean dualCamera = false;
 
   // -- Constructor --
@@ -123,9 +123,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
     super.close(fileOnly);
     if (!fileOnly) {
       files = null;
-      wellCount = 0;
-      fieldRowCount = 0;
-      fieldColumnCount = 0;
+      wellCount = 1;
+      fieldRowCount = 1;
+      fieldColumnCount = 1;
       dualCamera = false;
     }
   }
@@ -240,17 +240,19 @@ public class MetamorphTiffReader extends BaseTiffReader {
       parseFile(files[files.length - 1], handler);
 
       String lastStageLabel = handler.getStageLabel();
-      int lastField = getField(lastStageLabel);
-      int lastWellRow = getWellRow(lastStageLabel);
-      int lastWellColumn = getWellColumn(lastStageLabel);
-
-      int field = getField(stageLabel);
-      int fieldRow = getWellRow(stageLabel);
-      int fieldColumn = getWellColumn(stageLabel);
-
-      wellCount = lastField - field + 1;
-      fieldRowCount = lastWellRow - fieldRow + 1;
-      fieldColumnCount = lastWellColumn - fieldColumn + 1;
+      if (lastStageLabel!= null && stageLabel != null) {
+        int lastField = getField(lastStageLabel);
+        int lastWellRow = getWellRow(lastStageLabel);
+        int lastWellColumn = getWellColumn(lastStageLabel);
+  
+        int field = getField(stageLabel);
+        int fieldRow = getWellRow(stageLabel);
+        int fieldColumn = getWellColumn(stageLabel);
+  
+        wellCount = lastField - field + 1;
+        fieldRowCount = lastWellRow - fieldRow + 1;
+        fieldColumnCount = lastWellColumn - fieldColumn + 1;
+      }
       m.sizeC = uniqueChannels.size();
       m.sizeZ = uniqueZs.size();
     }
