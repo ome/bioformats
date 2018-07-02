@@ -96,23 +96,23 @@ public class LEOReader extends BaseTiffReader {
       for (int line=36; line<lines.length; line++) {
         if (lines[line].equals("AP_IMAGE_PIXEL_SIZE")) {
           // pixel size is stored in nm, converted now to micrometers
-          double xSize = Double.parseDouble(lines[line++].split("\\s+=\\s+")[1].replace(" nm","e+03"));
+          double xSize = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" nm","e-03"));
         }
         else if (lines[line].equals("AP_WD")) {
           //working distance stored in mm, converting now to micrometers
-          double workingDistance = Double.parseDouble(lines[line++].split("\\s+=\\s+")[1].replace(" mm","e-03"));
+          double workingDistance = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" mm","e+03"));
         }
         else if (lines[line].equals("AP_ACTUALCURRENT")) {
-          double filament = Double.parseDouble(lines[line++].split("\\s+=\\s+")[1].replace(" A",""));
+          double filament = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" A",""));
         }
         else if (lines[line].equals("AP_ACTUALKV")) {
-          double eht = Double.parseDouble(lines[line++].split("\\s+=\\s+")[1].replace(" kV","e+03").replace(" V",""));
+          double eht = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" kV","e+03").replace(" V",""));
         }
         else if (lines[line].equals("AP_TIME")) {
-          date += lines[line++].split(" :")[1];
+          date += lines[++line].split(" :")[1];
         }
         else if (lines[line].equals("AP_DATE")) {
-          date += " " + lines[line++].split(" :")[1];
+          date += " " + lines[++line].split(" :")[1];
         }
       }
 
