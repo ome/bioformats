@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# cachegen: a script for generating cache (memo) files
+
+# Required JARs: loci_tools.jar or bioformats_package.jar
+
+BF_DIR=`dirname "$0"`
+
+BF_PROG=loci.formats.tools.GenerateCache "$BF_DIR/bf.sh" "$@"
