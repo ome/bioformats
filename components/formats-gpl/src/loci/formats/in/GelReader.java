@@ -121,7 +121,7 @@ public class GelReader extends BaseTiffReader {
       int originalBytes = ifd.getBitsPerSample()[0] / 8;
 
       for (int i=0; i<tmp.length/4; i++) {
-        long value = DataTools.bytesToShort(tmp, i*originalBytes,
+        long value = DataTools.bytesToInt(tmp, i*originalBytes,
           originalBytes, isLittleEndian());
         long square = value * value;
         float pixel = square * scale;

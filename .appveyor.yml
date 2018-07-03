@@ -12,8 +12,6 @@ environment:
     - java: 1.8
       build: ant
       ant_version: 1.10.1
-    - java: 1.7
-      build: maven
 
 cache:
   - '%AV_BF_M2% -> appveyor.yml'
@@ -27,7 +25,6 @@ init:
   - git config --global core.autocrlf input
   - if [%build%] == [ant] appveyor-retry cinst -y ant --version %ant_version%
   - refreshenv
-  - 'if [%java%] == [1.7] set "JAVA_HOME=C:\Program Files\Java\jdk1.7.0"'
   - 'if [%java%] == [1.8] set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0"'
   - 'if [%java%] == [10] set "JAVA_HOME=C:\Program Files\Java\jdk10"'
   - PATH=%JAVA_HOME%\bin;%PATH%
@@ -36,12 +33,3 @@ init:
 
 build_script:
   - tools\test-build %build%
-
-#artifacts:
-#  - path: 'components\bundles\bioformats_package\target\*.zip'
-#  - path: 'components\bundles\bioformats_package\target\*.jar'
-#  - path: 'components\bundles\bioformats_package\target\*.tar.*'
-#  - path: 'artifacts\bioformats_package.jar'
-#  - path: 'artifacts\bftools.zip'
-#  - path: 'artifacts\bfmatlab.zip'
-#  - path: 'artifacts\bioformats-octave*.tar.*'

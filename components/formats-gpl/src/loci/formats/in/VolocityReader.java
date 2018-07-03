@@ -298,6 +298,8 @@ public class VolocityReader extends FormatReader {
         (sampleTable[i][14] != null && !sampleTable[i][14].equals(0)) ||
         ((byte[]) sampleTable[i][13]).length > 21))
       {
+        String parentName = getParentName((Integer) sampleTable[i][1]);
+
         if (channelIndex < 0) {
           RandomAccessInputStream s = getStream(i);
           s.seek(0);
@@ -309,13 +311,13 @@ public class VolocityReader extends FormatReader {
           int y = s.readInt();
           int z = s.readInt();
           if (x * y * z > 0 && x * y * z < (s.length() * 3)) {
-            stackNames.add(name);
+            stackNames.add(parentName + name);
             parentIDs.add((Integer) sampleTable[i][0]);
           }
           s.close();
         }
         else {
-          stackNames.add(name);
+          stackNames.add(parentName + name);
           parentIDs.add((Integer) sampleTable[i][0]);
         }
       }
@@ -784,6 +786,24 @@ public class VolocityReader extends FormatReader {
       }
     }
     setSeries(0);
+  }
+
+  private String getParentName(Integer parentID) {
+    String parentName = "";
+    while (parentID != 1) {
+      Integer originalID = parentID;
+      for (int row=0; row<sampleTable.length; row++) {
+        if (parentID.intValue() == ((Integer) sampleTable[row][0]).intValue()) {
+          parentName = getString((Integer) sampleTable[row][11]) + "/" + parentName;
+          parentID = (Integer) sampleTable[row][1];
+          break;
+        }
+      }
+      if (parentID.equals(originalID)) {
+        break;
+      }
+    }
+    return parentName;
   }
 
   private String getString(Integer stringID) {

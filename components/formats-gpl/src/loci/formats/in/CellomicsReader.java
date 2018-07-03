@@ -210,10 +210,6 @@ public class CellomicsReader extends FormatReader {
     wellRows = uniqueRows.size();
     wellColumns = uniqueCols.size();
 
-    if (fields * wellRows * wellColumns > files.length) {
-      files = new String[] {id};
-    }
-
     Arrays.sort(files, new Comparator<String>() {
         @Override
         public int compare(String f1, String f2) {
@@ -250,7 +246,6 @@ public class CellomicsReader extends FormatReader {
 
         }
     });
-
 
     core.clear();
 
@@ -360,7 +355,7 @@ public class CellomicsReader extends FormatReader {
       store.setImageName(
         String.format("Well %s%02d, Field #%02d",
                       new String(Character.toChars(row+'A')),
-                      col, fieldIndex), i);
+                      col + 1, fieldIndex), i);
 
       if (files.length == 1) {
         row = 0;
@@ -477,7 +472,7 @@ public class CellomicsReader extends FormatReader {
     if ((wellName == null) || (wellName.length() <= 2)) return 0;
     if (! Character.isDigit(wellName.charAt(1))) return 0;
     if (! Character.isDigit(wellName.charAt(2))) return 0;
-    return Integer.parseInt(wellName.substring(1, 3));
+    return Integer.parseInt(wellName.substring(1, 3)) - 1;
   }
 
   private int getField(String filename) {

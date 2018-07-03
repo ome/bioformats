@@ -114,6 +114,8 @@ public class FormatReaderTest {
   private boolean skip = false;
   private Configuration config;
   private String omexmlDir = System.getProperty("testng.omexmlDirectory");
+  private String cacheDir  = System.getProperty("testng.cacheDirectory");
+  private String fileList = System.getProperty("testng.file-list");
 
   /**
    * Multiplier for use adjusting timing values. Slower machines take longer to
@@ -1741,6 +1743,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Inveon only reliably detected from header file
+          if (reader.getFormat().equals("Inveon")) {
+            continue;
+          }
+
           // pattern datasets can only be detected with the pattern file
           if (reader.getFormat().equals("File pattern")) {
             continue;
@@ -2447,6 +2454,11 @@ public class FormatReaderTest {
               continue;
             }
 
+            // Inveon only reliably detected from header file
+            if (!result && r instanceof InveonReader) {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
@@ -2475,7 +2487,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  @Test(groups = {"all",  "automated"})
+  @Test(groups = {"all",  "automated", "memoizer"})
   public void testMemoFileUsage() {
     String testName = "testMemoFileUsage";
     if (!initFile()) result(testName, false, "initFile");
@@ -2494,12 +2506,48 @@ public class FormatReaderTest {
       if (!memo.isSavedToMemo()) {
         result(testName, false, "Memo file not saved");
       }
+
+      // first test memo file generated with current build
+
       memo.setId(reader.getCurrentFile());
       if (!memo.isLoadedFromMemo()) {
         result(testName, false, "Memo file could not be loaded");
       }
       memo.openBytes(0, 0, 0, 1, 1);
       memo.close();
+
+      // now test pre-generated memo file in the cache directory
+
+      String cacheDir = configTree.getCacheDirectory();
+      if (cacheDir != null) {
+        LOGGER.debug("Loading memo from populated cache");
+        File dir = new File(cacheDir);
+
+        if (!dir.exists() || !dir.isDirectory() || !dir.canRead()) {
+          result(testName, false, "Cached memo directory does not exist");
+        }
+
+        File currentFile = new File(reader.getCurrentFile());
+        String relativeName = "." + currentFile.getName() + ".bfmemo";
+        File expectedMemo = new File(cacheDir, currentFile.getParent());
+        expectedMemo = new File(expectedMemo, relativeName);
+
+        if (expectedMemo.exists()) {
+          memo = new Memoizer(0, dir);
+          // do not allow an existing memo file to be overwritten
+          memo.skipSave(true);
+          memo.setId(reader.getCurrentFile());
+          if (!memo.isLoadedFromMemo()) {
+            result(testName, false, "Existing memo file could not be loaded");
+          }
+          memo.openBytes(0, 0, 0, 1, 1);
+          memo.close();
+        }
+        else {
+          LOGGER.warn("Missing memo file {}; passing test anyway", expectedMemo);
+        }
+      }
+
       result(testName, true);
     }
     catch (Throwable t) {
@@ -2539,7 +2587,7 @@ public class FormatReaderTest {
   }
 
   @Test(groups = {"config"})
-  public void writeConfigFile() {
+  public void writeConfigFile() throws IOException {
     setupReader();
     if (!initFile(false)) return;
     String file = reader.getCurrentFile();
@@ -2558,11 +2606,35 @@ public class FormatReaderTest {
       LOGGER.info("Generating configuration: {}", f);
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
       newConfig.saveToFile();
-      reader.close();
     }
     catch (Throwable t) {
       LOGGER.info("", t);
       assert false;
+    } finally {
+      reader.close();
+    }
+  }
+
+  @Test(groups = {"cache"})
+  public void writeCacheFile() throws IOException {
+    setupReader();
+    if (!initFile(false)) return;
+    String cacheDir = configTree.getCacheDirectory();
+    if (cacheDir == null) {
+      LOGGER.info("No cache directory specified");
+      return;
+    }
+    try {
+      Memoizer memo = new Memoizer(0, new File(cacheDir));
+      assert memo.generateMemo(reader.getCurrentFile());
+      File memoFile = memo.getMemoFile(reader.getCurrentFile());
+      LOGGER.info("Saved memo file to {}", memoFile);
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      assert false;
+    } finally {
+      reader.close();
     }
   }
 
@@ -2590,11 +2662,32 @@ public class FormatReaderTest {
     }
   }
 
+  @Test(groups = {"file-list"})
+  public void saveFileScanList() {
+    try {
+      File f = new File(fileList);
+      OutputStreamWriter writer =
+        new OutputStreamWriter(new FileOutputStream(f, true),
+        Constants.ENCODING);
+      if (f.length() == 0) {
+        // make sure the first line is the base directory
+        writer.write(System.getProperty("testng.directory"));
+        writer.write("\n");
+      }
+      writer.write(id);
+      writer.write("\n");
+      writer.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      assert false;
+    }
+  }
+
   // -- Helper methods --
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    // Remove external SlideBook6Reader class for testing purposes
     ImageReader ir = new ImageReader();
     reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
     reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));

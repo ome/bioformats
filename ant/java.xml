@@ -251,7 +251,7 @@ your FindBugs installation's lib directory. E.g.:
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>
-      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
+      <link href="https://imagej.nih.gov/ij/developer/api/"/>
       <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/"/>
       <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
       <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->

@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,8 +128,10 @@ public class TrestleReader extends BaseTiffReader {
       return files.toArray(new String[files.size()]);
     }
     String[] allFiles = new String[files.size() + 1];
-    files.toArray(allFiles);
-    allFiles[allFiles.length - 1] = currentId;
+    allFiles[0] = new Location(currentId).getAbsolutePath();
+    for (int i=0; i<files.size(); i++) {
+      allFiles[i + 1] = files.get(i);
+    }
     return allFiles;
   }
 
@@ -292,6 +295,7 @@ public class TrestleReader extends BaseTiffReader {
     roiDrawFile = new Location(parent, name + "ROI-draw").getAbsolutePath();
 
     String[] list = parent.list(true);
+    Arrays.sort(list);
     for (String f : list) {
       if (!f.equals(baseFile.getName())) {
         files.add(new Location(parent, f).getAbsolutePath());

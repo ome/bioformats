@@ -300,12 +300,15 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       int rowLength = getSizeX() * pixel + scanlinePad * bpp;
       int destLength = w * pixel;
 
-      in.skipBytes(rowLength * y);
+      long skip = (long) rowLength * y;
+      in.seek(in.getFilePointer() + skip);
       byte[] pix = new byte[destLength * h];
+      long pre = (long) x * pixel;
+      long post = (long) pixel * (getSizeX() - w - x) + (scanlinePad * bpp);
       for (int row=0; row<h; row++) {
-        in.skipBytes(x * pixel);
+        in.seek(in.getFilePointer() + pre);
         in.read(pix, row * destLength, destLength);
-        in.skipBytes(pixel * (getSizeX() - w - x) + scanlinePad * bpp);
+        in.seek(in.getFilePointer() + post);
       }
 
       pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
