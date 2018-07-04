@@ -23,5 +23,5 @@ if [%build%] == [ant] (
   ant clean utils || exit /b 1
   REM Do not clean here so that we can potentially archive the
   REM java archives.
-  ant tools dist-bftools dist-matlab dist-octave || exit /b 1
+  ant tools dist-bftools || exit /b 1
 )

@@ -43,5 +43,3 @@ build_script:
 #  - path: 'components\bundles\bioformats_package\target\*.tar.*'
 #  - path: 'artifacts\bioformats_package.jar'
 #  - path: 'artifacts\bftools.zip'
-#  - path: 'artifacts\bfmatlab.zip'
-#  - path: 'artifacts\bioformats-octave*.tar.*'
