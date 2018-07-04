@@ -81,6 +81,14 @@ public class MicromanagerReader extends FormatReader {
   private static final int MM_JSON_TAG = 51123;
 
   /**
+   * Defines maximum Micro-Manager version supported.
+   * Anything acquired with a version after 1.4.22 (especially 2.x.x)
+   * is expected to not work reliably.
+   */
+  private static final int MAX_MAJOR_VERSION = 1;
+  private static final String MAX_VERSION = "1.4.22";
+
+  /**
    * Optional file containing additional acquisition parameters.
    * (And yes, the spelling is correct.)
    */
@@ -706,7 +714,7 @@ public class MicromanagerReader extends FormatReader {
         value = value.substring(0, value.length() - 1);
         value = value.replaceAll("\"", "");
         if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
-        addSeriesMeta(key, value);
+        handleKeyValue(key, value);
         if (key.equals("Channels")) {
           ms.sizeC = Integer.parseInt(value);
         }
@@ -825,7 +833,7 @@ public class MicromanagerReader extends FormatReader {
           }
 
           String value = valueBuffer.toString();
-          addSeriesMeta(key, value);
+          handleKeyValue(key, value);
 
           if (key.equals("Exposure-ms")) {
             p.exposureTime = new Time(Double.valueOf(value), UNITS.MILLISECOND);
@@ -1083,6 +1091,33 @@ public class MicromanagerReader extends FormatReader {
     return baseName + "_" + METADATA;
   }
 
+  /**
+   * Process a piece of metadata represented by a key/value pair.
+   * Mostly this just adds to the original metadata table, but
+   * is also helpful for handling specific keys consistently independent of
+   * which file/INI table the key and value came from.
+   */
+  private void handleKeyValue(String key, String value) {
+    addSeriesMeta(key, value);
+
+    if (key.equals("MicroManagerVersion")) {
+      String[] version = value.split("\\.");
+      Integer major = null;
+      try {
+        if (version.length > 0) {
+          major = new Integer(version[0]);
+        }
+      }
+      catch (NumberFormatException e) {
+        LOGGER.trace("Could not parse major version " + version[0], e);
+      }
+      if (major == null || major > MAX_MAJOR_VERSION) {
+        LOGGER.warn("Dataset acquired with Micro-Manager {}; " +
+          "versions greater than {} are not officially supported", value, MAX_VERSION);
+      }
+    }
+  }
+
   // -- Helper classes --
 
   /** SAX handler for parsing Acqusition.xml. */
@@ -1095,7 +1130,7 @@ public class MicromanagerReader extends FormatReader {
         String key = attributes.getValue("key");
         String value = attributes.getValue("value");
 
-        addSeriesMeta(key, value);
+        handleKeyValue(key, value);
       }
     }
   }
