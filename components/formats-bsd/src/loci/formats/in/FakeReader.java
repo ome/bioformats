@@ -128,6 +128,8 @@ public class FakeReader extends FormatReader {
   public static final int DEFAULT_RGB_CHANNEL_COUNT = 1;
   public static final String DEFAULT_DIMENSION_ORDER = "XYZCT";
 
+  public static final int DEFAULT_RESOLUTION_SCALE = 2;
+
   private static final String TOKEN_SEPARATOR = "&";
   private static final long SEED = 0xcafebabe;
 
@@ -576,6 +578,8 @@ public class FakeReader extends FormatReader {
     boolean withMicrobeam = false;
 
     int seriesCount = 1;
+    int resolutionCount = 1;
+    int resolutionScale = DEFAULT_RESOLUTION_SCALE;
     int lutLength = 3;
 
     String acquisitionDate = null;
@@ -673,6 +677,8 @@ public class FakeReader extends FormatReader {
       else if (key.equals("metadataComplete")) metadataComplete = boolValue;
       else if (key.equals("thumbnail")) thumbnail = boolValue;
       else if (key.equals("series")) seriesCount = intValue;
+      else if (key.equals("resolutions")) resolutionCount = intValue;
+      else if (key.equals("resolutionScale")) resolutionScale = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
       else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.SECOND);
@@ -746,6 +752,12 @@ public class FakeReader extends FormatReader {
     if (lutLength < 1) {
       throw new FormatException("Invalid lutLength: " + lutLength);
     }
+    if (resolutionCount < 1) {
+      throw new FormatException("Invalid resolutionCount: " + resolutionCount);
+    }
+    if (resolutionScale <= 1) {
+      throw new FormatException("Invalid resolutionScale: " + resolutionScale);
+    }
 
     // populate SPW metadata
     MetadataStore store = makeFilterMetadata();
@@ -770,6 +782,7 @@ public class FakeReader extends FormatReader {
     core.clear();
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
+      ms.resolutionCount = resolutionCount;
       core.add(ms);
       ms.sizeX = sizeX;
       ms.sizeY = sizeY;
@@ -790,6 +803,14 @@ public class FakeReader extends FormatReader {
       ms.falseColor = falseColor;
       ms.metadataComplete = metadataComplete;
       ms.thumbnail = thumbnail;
+
+      for (int r=1; r<resolutionCount; r++) {
+        CoreMetadata subres = new CoreMetadata(ms);
+        int scale = (int) Math.pow(resolutionScale, r);
+        subres.sizeX /= scale;
+        subres.sizeY /= scale;
+        core.add(subres);
+      }
     }
 
     // populate OME metadata
