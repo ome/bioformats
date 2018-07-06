@@ -1098,6 +1098,9 @@ public class MicromanagerReader extends FormatReader {
    * which file/INI table the key and value came from.
    */
   private void handleKeyValue(String key, String value) {
+    if (key == null || value == null) {
+      return;
+    }
     addSeriesMeta(key, value);
 
     if (key.equals("MicroManagerVersion")) {
