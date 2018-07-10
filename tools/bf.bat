@@ -59,7 +59,7 @@ if exist "%BF_JAR_DIR%\bioformats_package.jar" (
   echo Required JAR libraries not found. Please download:
   echo   bioformats_package.jar
   echo from:
-  echo   http://downloads.openmicroscopy.org/latest/bio-formats5.1
+  echo   https://downloads.openmicroscopy.org/latest/bio-formats/artifacts/
   echo and place in the same directory as the command line tools.
   goto end
 )

@@ -59,8 +59,8 @@ public class NDPISReader extends FormatReader {
   private String[] ndpiFiles;
   private ChannelSeparator[] readers;
   private int[] bandUsed;
-  private final static int TAG_CHANNEL = 65434;
-  private final static int TAG_EMISSION_WAVELENGTH = 65451;
+  private static final int TAG_CHANNEL = 65434;
+  private static final int TAG_EMISSION_WAVELENGTH = 65451;
 
   // -- Constructor --
 

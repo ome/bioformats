@@ -77,7 +77,20 @@ public class FormatReaderTestFactory {
       return new Object[0];
     }
 
+    String cachedFileList = getProperty("testng.file-list");
+    String[] cachedFiles = null;
+    if (cachedFileList != null && new File(cachedFileList).exists()) {
+      try {
+        cachedFiles = DataTools.readFile(cachedFileList).split("\n");
+      }
+      catch (IOException e) {
+        LOGGER.warn("Could not read file: {}", cachedFileList, e);
+      }
+    }
+
     String baseDir = null;
+    String configDir = null;
+    String cacheDir = null;
     String[] validSubdirs = null;
     if (filename == null) {
       // parse base directory
@@ -93,6 +106,9 @@ public class FormatReaderTestFactory {
         catch (IOException e) {
           LOGGER.debug("", e);
         }
+      }
+      if (baseDir == null && cachedFiles != null) {
+        baseDir = cachedFiles[0];
       }
 
       // Return early if no base directory is supplied
@@ -114,16 +130,24 @@ public class FormatReaderTestFactory {
         LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
+      LOGGER.info("testng.directory = {}", baseDir);
 
       // check for an alternate configuration directory
       final String configDirProperty = "testng.configDirectory";
-      String configDir = getProperty(configDirProperty);
-      LOGGER.info("testng.directory = {}", baseDir);
+      configDir = getProperty(configDirProperty);
       if (configDir != null) {
         LOGGER.info("testng.configDirectory = {}", configDir);
       }
 
-      FormatReaderTest.configTree = new ConfigurationTree(baseDir, configDir);
+      // check for an alternate configuration directory
+      final String cacheDirProperty = "testng.cacheDirectory";
+      cacheDir = getProperty(cacheDirProperty);
+      if (cacheDir != null) {
+        LOGGER.info("testng.cacheDirectory = {}", cacheDir);
+      }
+
+      FormatReaderTest.configTree = new ConfigurationTree(
+        baseDir, configDir, cacheDir);
     }
 
     // parse multiplier
@@ -147,7 +171,6 @@ public class FormatReaderTestFactory {
     LOGGER.info("testng.in-memory = {}", inMemory);
 
     // check for an alternate top level configuration file
-
     final String toplevelConfig = "testng.toplevel-config";
     String configFile = getProperty(toplevelConfig);
     if (configFile != null) {
@@ -176,7 +199,7 @@ public class FormatReaderTestFactory {
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
     LOGGER.info("Maximum heap size = {} MB", maxMemory);
 
-    if (filename == null) {
+    if (filename == null && cachedFiles == null) {
       // scan for files
       System.out.println("Scanning for files...");
       long start = System.currentTimeMillis();
@@ -196,7 +219,7 @@ public class FormatReaderTestFactory {
       LOGGER.info("Scan time: {} s ({} ms/file)", time, avg);
       LOGGER.info(TestTools.DIVIDER);
     }
-    else {
+    else if (filename != null) {
       files.add(filename);
     }
 
@@ -290,6 +313,17 @@ public class FormatReaderTestFactory {
         throw new RuntimeException(msg);
       }
       files.add(originalPath.get(s));
+    }
+
+    // don't remove duplicates if the list of files is pre-defined
+    if (cachedFiles != null) {
+      // assumes a configuration directory is present
+      FormatReaderTest.configTree = new ConfigurationTree(
+        baseDir, configDir, cacheDir);
+      TestTools.parseConfigFiles(configDir, FormatReaderTest.configTree);
+      for (int i=1; i<cachedFiles.length; i++) {
+        files.add(cachedFiles[i]);
+      }
     }
 
     // create test class instances

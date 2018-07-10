@@ -175,6 +175,14 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
+    return isHCS ? new String[] {FormatTools.HCS_DOMAIN} :
+      new String[] {FormatTools.LM_DOMAIN};
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   @Override
   public boolean isThisType(String name, boolean open) {
@@ -357,6 +365,7 @@ public class MetamorphReader extends BaseTiffReader {
       hasAbsoluteZ = false;
       hasAbsoluteZValid = false;
       stageLabels = null;
+      isHCS = false;
     }
   }
 
@@ -680,6 +689,9 @@ public class MetamorphReader extends BaseTiffReader {
       ms0.sizeC = cc;
       ms0.sizeT = tc;
       ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      if (isRGB()) {
+        ms0.sizeC *= 3;
+      }
       ms0.dimensionOrder = "XYZCT";
 
       if (stks != null && stks.length > 1) {
@@ -1004,8 +1016,8 @@ public class MetamorphReader extends BaseTiffReader {
           exposureTimes.add(exposureTime);
         }
       }
-      else if (exposureTimes.size() == 1 && exposureTimes.size() < getSizeC()) {
-        for (int c=1; c<getSizeC(); c++) {
+      else if (exposureTimes.size() == 1 && exposureTimes.size() < getEffectiveSizeC()) {
+        for (int c=1; c<getEffectiveSizeC(); c++) {
           MetamorphHandler channelHandler = new MetamorphHandler();
 
           String channelComment = getComment(i, c);
@@ -1200,14 +1212,12 @@ public class MetamorphReader extends BaseTiffReader {
       if (uic2tagEntry != null) {
         parseUIC2Tags(uic2tagEntry.getValueOffset());
       }
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        if (uic4tagEntry != null) {
-          parseUIC4Tags(uic4tagEntry.getValueOffset());
-        }
-        if (uic1tagEntry != null) {
-          parseUIC1Tags(uic1tagEntry.getValueOffset(),
-            uic1tagEntry.getValueCount());
-        }
+      if (uic4tagEntry != null) {
+        parseUIC4Tags(uic4tagEntry.getValueOffset());
+      }
+      if (uic1tagEntry != null) {
+        parseUIC1Tags(uic1tagEntry.getValueOffset(),
+          uic1tagEntry.getValueCount());
       }
       in.seek(uic4tagEntry.getValueOffset());
     }
