@@ -535,86 +535,12 @@ public class ZeissTIFFReader extends BaseZeissReader {
   }
   // -- Helpers --
 
-  class Channel
-  {
-    int id;
-
-    Channel(int id)
-    {
-      this.id = id;
-    }
-  }
-
-  HashMap<Integer,Channel> channels = new HashMap<Integer,Channel>();
-
-  Channel getChannel (int id)
-  {
-    Channel c = channels.get(id);
-    if (c == null)
-    {
-      c = new Channel(id);
-      channels.put(id,c);
-    }
-    return c;
-  }
-
-  class Slice
-  {
-    public int id;
-
-    Slice(int id)
-    {
-      this.id = id;
-    }
-  }
-
-  HashMap<Integer,Slice> slices = new HashMap<Integer,Slice>();
-
-  Slice getslice (int id)
-  {
-    Slice s = slices.get(id);
-    if (s == null)
-    {
-      s = new Slice(id);
-      slices.put(id,s);
-    }
-    return s;
-  }
-
-  class Timepoint
-  {
-    int id;
-
-    Timepoint(int id)
-    {
-      this.id = id;
-    }
-  }
-
-  HashMap<Integer,Timepoint> timepoints = new HashMap<Integer,Timepoint>();
-
-  Timepoint getTimepoint (int id)
-  {
-    Timepoint t = timepoints.get(id);
-    if (t == null)
-    {
-      t = new Timepoint(id);
-      timepoints.put(id,t);
-    }
-    return t;
-  }
-
   class Plane
   {
     public String filename;
     public HashMap<String,String> tags = new HashMap<String,String>();
     public ArrayList<Tag> taglist;
     public int site;
-    RandomAccessInputStream in;
-
-    Plane()
-    {
-    }
 
     @Override
     public String
