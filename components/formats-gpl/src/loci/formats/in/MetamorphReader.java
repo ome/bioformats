@@ -96,7 +96,6 @@ public class MetamorphReader extends BaseTiffReader {
   public static final String LONG_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
   public static final String[] ND_SUFFIX = {"nd", "scan"};
-  public static final String[] PARENT_INDEX_SUFFIX = {"nd", "scan", "htd"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
   public static final Pattern WELL_COORDS = Pattern.compile(
@@ -192,11 +191,15 @@ public class MetamorphReader extends BaseTiffReader {
       while (baseName.indexOf('_') >= 0) {
         baseName = baseName.substring(0, baseName.lastIndexOf("_"));
         if (checkSuffix(name, suffixes)) {
-          for (String ext : PARENT_INDEX_SUFFIX) {
+          for (String ext : ND_SUFFIX) {
             if ((new Location(parent, baseName + "." + ext)).exists() ||
                 (new Location(parent, baseName + "." + ext.toUpperCase())).exists()) {
               return true;
             }
+          }
+          if ((new Location(parent, baseName + ".htd")).exists() ||
+              (new Location(parent, baseName + ".HTD")).exists()) {
+            return false;
           }
         }
       }
