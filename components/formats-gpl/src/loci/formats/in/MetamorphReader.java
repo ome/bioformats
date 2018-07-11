@@ -192,13 +192,13 @@ public class MetamorphReader extends BaseTiffReader {
         baseName = baseName.substring(0, baseName.lastIndexOf("_"));
         if (checkSuffix(name, suffixes)) {
           for (String ext : ND_SUFFIX) {
-            if ((new Location(parent, baseName + "." + ext)).exists() ||
-                (new Location(parent, baseName + "." + ext.toUpperCase())).exists()) {
+            if (new Location(parent, baseName + "." + ext).exists() ||
+                new Location(parent, baseName + "." + ext.toUpperCase()).exists()) {
               return true;
             }
           }
-          if ((new Location(parent, baseName + ".htd")).exists() ||
-              (new Location(parent, baseName + ".HTD")).exists()) {
+          if (new Location(parent, baseName + ".htd").exists() ||
+              new Location(parent, baseName + ".HTD").exists()) {
             return false;
           }
         }
