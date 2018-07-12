@@ -97,6 +97,7 @@ import ome.units.UNITS;
  *  <li>showinf 'SPW&amp;screens=2&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=1&amp;plateAcqs=1.fake'</li>
  *  <li>showinf 'Plate&amp;screens=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  *  <li>showinf 'regions&amp;points=10&amp;ellipses=5&amp;rectangles=10.fake'</li>
+ *  <li>showinf 'pyramid&amp;sizeX=10000&amp;sizeY=10000&amp;resolutions=5&amp;resolutionScale=2.fake' -noflat -resolution 4</li>
  * </ul></p>
  */
 public class FakeReader extends FormatReader {
