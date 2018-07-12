@@ -46,6 +46,7 @@ import java.nio.file.Path;
 
 import loci.common.Constants;
 import loci.common.Location;
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.in.FakeReader;
 import loci.formats.ome.OMEXMLMetadata;
@@ -190,6 +191,7 @@ public class FakeReaderTest {
     ServiceFactory sf = new ServiceFactory();
     service = sf.getInstance(OMEXMLService.class);
     reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setFlattenedResolutions(false);
   }
 
   @AfterMethod
@@ -650,6 +652,51 @@ public class FakeReaderTest {
       specialPixels[i] = lut[0][(int)indices[i]];
     }
     assertEquals(specialPixels, exp);
+  }
+
+  @Test
+  public void testPyramidDefaultScale() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=4.fake");
+    assertEquals(reader.getSeriesCount(), 1);
+    assertEquals(reader.getResolutionCount(), 4);
+    for (int i=1; i<reader.getResolutionCount(); i++) {
+      int x = reader.getSizeX();
+      int y = reader.getSizeY();
+      reader.setResolution(i);
+      assertEquals(x / 2, reader.getSizeX());
+      assertEquals(y / 2, reader.getSizeY());
+    }
+  }
+
+  @Test
+  public void testPyramidValidScale() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=3&resolutionScale=4.fake");
+    assertEquals(reader.getSeriesCount(), 1);
+    assertEquals(reader.getResolutionCount(), 3);
+    for (int i=1; i<reader.getResolutionCount(); i++) {
+      int x = reader.getSizeX();
+      int y = reader.getSizeY();
+      reader.setResolution(i);
+      assertEquals(x / 4, reader.getSizeX());
+      assertEquals(y / 4, reader.getSizeY());
+    }
+  }
+
+  @Test(expectedExceptions={FormatException.class})
+  public void testPyramidInvalidScale() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=4&resolutionScale=0.fake");
+  }
+
+  @Test(expectedExceptions={FormatException.class})
+  public void testPyramidInvalidResolutions() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=0.fake");
+  }
+
+  @Test
+  public void testPyramidNoResolutions() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=1.fake");
+    assertEquals(reader.getSeriesCount(), 1);
+    assertEquals(reader.getResolutionCount(), 1);
   }
 
 }
