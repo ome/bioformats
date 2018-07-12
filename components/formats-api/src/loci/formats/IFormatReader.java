@@ -64,10 +64,22 @@ public interface IFormatReader extends IFormatHandler {
    */
   boolean isThisType(String name, boolean open);
 
-  /** Checks if the given block is a valid header for this file format. */
+  /**
+   * Checks if the given block is a valid header for this file format.
+   * @see #isThisType(RandomAccessInputStream)
+   */
   boolean isThisType(byte[] block);
 
-  /** Checks if the given stream is a valid stream for this file format. */
+  /**
+   * Checks if the given stream is a valid stream for this file format.
+   * The number of bytes read is format-dependent.
+   *
+   * @param stream A RandomAccessInputStream representing the file to check.
+   *    The first byte in the stream is assumed to be the first byte
+   *    in the file.
+   * @return true if the file represented by the stream can be read by this
+   *    reader; false otherwise.
+   */
   boolean isThisType(RandomAccessInputStream stream) throws IOException;
 
   /** Determines the number of image planes in the current file. */
@@ -326,18 +338,44 @@ public interface IFormatReader extends IFormatHandler {
    */
   boolean isOriginalMetadataPopulated();
 
-  /** Specifies whether or not to force grouping in multi-file formats. */
+  /**
+   * Specifies whether or not to force grouping in multi-file formats.
+   *
+   * @see #fileGroupOption(String)
+   * @see #isGroupFiles()
+   */
   void setGroupFiles(boolean group);
 
-  /** Returns true if we should group files in multi-file formats.*/
+  /**
+   * Returns true if we should group files in multi-file formats.
+   *
+   * @see #setGroupFiles(boolean)
+   * @see #fileGroupOptions(String)
+   */
   boolean isGroupFiles();
 
   /** Returns true if this format's metadata is completely parsed. */
   boolean isMetadataComplete();
 
   /**
-   * Returns an int indicating that we cannot, must, or might group the files
-   * in a given dataset.
+   * Returns an indication of whether the files in a multi-file dataset can
+   * be handled individually.  This method is only useful for formats and
+   * datasets which contain multiple files.
+   *
+   * @param id a file in the multi-file dataset
+   * @return an int indicating that we cannot, must, or might group the files.
+   *    A return value of {@link FormatTools#MUST_GROUP} indicates that the
+   *    files cannot be handled separately; the reader will always detect and
+   *    read all files in the dataset.  {@link FormatTools#CAN_GROUP} indicates
+   *    that the files may be handled separately, but file grouping must then
+   *    be disabled via {@link #setGroupFiles(boolean)}.
+   *    {@link FormatTools#CANNOT_GROUP} indicates that the files must be handled
+   *    separately; the reader will not attempt to read all files in the dataset
+   *    (this is rare).
+   *
+   * @see FormatTools#MUST_GROUP
+   * @see FormatTools#CAN_GROUP
+   * @see FormatTools#CANNOT_GROUP
    */
   int fileGroupOption(String id) throws FormatException, IOException;
 
@@ -513,7 +551,10 @@ public interface IFormatReader extends IFormatHandler {
    */
   IFormatReader[] getUnderlyingReaders();
 
-  /** Returns true if this is a single-file format. */
+  /**
+   * Returns true if the named file is expected to be the only
+   * file in the dataset.  For single-file formats, always returns true.
+   */
   boolean isSingleFile(String id) throws FormatException, IOException;
 
   /**
