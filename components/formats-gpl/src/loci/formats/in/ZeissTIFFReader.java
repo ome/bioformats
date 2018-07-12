@@ -105,11 +105,12 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import loci.common.DataTools;
@@ -143,6 +144,9 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
   /** Helper reader for TIFF files. */
   private MinimalTiffReader tiffReader;
+
+  private transient HashMap<String, String[]> directoryCache =
+    new HashMap<String, String[]>();
 
   // -- Constructor --
 
@@ -214,7 +218,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    HashSet<String> files = new HashSet<String>();
+    ArrayList<String> files = new ArrayList<String>();
 
     Location xml = new Location(tiffInfo.xmlname);
     if (xml.exists()) {
@@ -227,8 +231,9 @@ public class ZeissTIFFReader extends BaseZeissReader {
     if (!noPixels) {
       for (String tiff : imageFiles) {
         Location tiffLocation = new Location(tiff);
-        if (tiffLocation.exists()) {
-          files.add(tiffLocation.getAbsolutePath());
+        String path = tiffLocation.getAbsolutePath();
+        if (tiffLocation.exists() && !files.contains(path)) {
+          files.add(path);
         }
       }
     }
@@ -244,6 +249,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
       tiffInfo = null;
       tiffReader = null;
       planes = null;
+      directoryCache.clear();
     }
   }
 
@@ -360,7 +366,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
       info.basedir = l.getAbsolutePath();
     }
     l = new Location(l.getParent(), info.prefix + ".tif");
-    info.origname = l.getAbsolutePath();
+    info.origname = lookup(l.getAbsolutePath());
 
     return info;
   }
@@ -416,10 +422,10 @@ public class ZeissTIFFReader extends BaseZeissReader {
       // Special case: _single plane is for base image only.  Should only occur when we don't have a _files directory.
       // Other planes: _files/_meta
       if (nplanes == 1 && !tiffInfo.multifile) {
-        np.filename = tiffInfo.origname;
+        np.filename = lookup(tiffInfo.origname);
       }
       else {
-        np.filename = new Location(tiffInfo.basedir + "/" + tiffInfo.prefix + "_" + p.basename + ".tif").getAbsolutePath();
+        np.filename = lookup(tiffInfo.basedir + File.separator + tiffInfo.prefix + "_" + p.basename + ".tif");
       }
 
       int tileid = parseInt(np.tags.get("ImageTile Index"));
@@ -518,6 +524,33 @@ public class ZeissTIFFReader extends BaseZeissReader {
     super.countImages();
   }
   // -- Helpers --
+
+  /**
+   * Translate a file path from the XML file to an actual path on disk.
+   * The path stored in the XML file may not have the same case as the path on
+   * disk (typically all lower case on disk and possibly mixed case in XML).
+   * If a matching file cannot be found, then the path from the XML file is returned.
+   *
+   * Uses {@link directoryCache} so that any given directory is only listed once
+   * per initialization, not once per lookup.
+   */
+  private String lookup(String src) {
+    Location f = new Location(src);
+    String parent = f.getParent();
+    String name = f.getName();
+    String[] list = directoryCache.get(parent);
+    if (list == null) {
+      list = f.getParentFile().list();
+      Arrays.sort(list);
+      directoryCache.put(parent, list);
+    }
+    for (String s : list) {
+      if (s.equalsIgnoreCase(name)) {
+        return new Location(f.getParentFile(), s).getAbsolutePath();
+      }
+    }
+    return src;
+  }
 
   class Plane
   {
