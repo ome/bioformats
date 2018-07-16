@@ -62,7 +62,7 @@ public class OMEPyramidStore extends OMEXMLMetadataImpl implements IPyramidStore
   /* @see IPyramidStore#getResolutionCount(int) */
   public int getResolutionCount(int image) {
     checkImageIndex(image);
-    return resolutions.get(image).size();
+    return image < resolutions.size() ? resolutions.get(image).size() : 1;
   }
 
   /* @see IPyramidStore#getResolutionSizeX(int, int) */
