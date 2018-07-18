@@ -157,6 +157,17 @@ public final class MetadataTools {
       store.setPixelsSignificantBits(
         new PositiveInteger(r.getBitsPerPixel()), i);
 
+      if (store instanceof IPyramidStore) {
+        for (int res=1; res<r.getResolutionCount(); res++) {
+          r.setResolution(res);
+          ((IPyramidStore) store).setResolutionSizeX(
+            new PositiveInteger(r.getSizeX()), i, res);
+          ((IPyramidStore) store).setResolutionSizeY(
+            new PositiveInteger(r.getSizeY()), i, res);
+        }
+        r.setResolution(0);
+      }
+
       try {
         OMEXMLService service =
           new ServiceFactory().getInstance(OMEXMLService.class);
@@ -265,11 +276,13 @@ public final class MetadataTools {
 
       if (store instanceof IPyramidStore) {
         for (int res=1; res<r.getResolutionCount(); res++) {
+          r.setResolution(res);
           ((IPyramidStore) store).setResolutionSizeX(
             new PositiveInteger(r.getSizeX()), i, res);
           ((IPyramidStore) store).setResolutionSizeY(
             new PositiveInteger(r.getSizeY()), i, res);
         }
+        r.setResolution(0);
       }
     }
     r.setSeries(oldSeries);

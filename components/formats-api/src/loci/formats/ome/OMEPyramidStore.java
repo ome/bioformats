@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import loci.formats.meta.IPyramidStore;
+import ome.xml.meta.MetadataRoot;
+import ome.xml.model.MapPair;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -43,7 +45,69 @@ import ome.xml.model.primitives.PositiveInteger;
  */
 public class OMEPyramidStore extends OMEXMLMetadataImpl implements IPyramidStore {
 
+  public static final String NAMESPACE = "openmicroscopy.org/PyramidResolution";
+
   private List<List<Resolution>> resolutions = new ArrayList<List<Resolution>>();
+
+  @Override
+  public String dumpXML() {
+    // insert resolution data as an annotation
+
+    int annIndex = 0;
+    try {
+      annIndex = getMapAnnotationCount();
+    }
+    catch (NullPointerException e) {
+      // just means there are no other map annotations
+    }
+    for (int i=0; i<resolutions.size(); i++) {
+      List<MapPair> resAnnotation = new ArrayList<MapPair>();
+      for (int r=1; r<resolutions.get(i).size(); r++) {
+        resAnnotation.add(
+          new MapPair(String.valueOf(r), resolutions.get(i).get(r).toString()));
+      }
+      String mapId = "Annotation:Resolution:" + i;
+      setMapAnnotationID(mapId, annIndex);
+      setMapAnnotationNamespace(NAMESPACE, annIndex);
+      setMapAnnotationValue(resAnnotation, annIndex);
+      annIndex++;
+    }
+
+    String xml = super.dumpXML();
+    return xml;
+  }
+
+  @Override
+  public void setRoot(MetadataRoot root) {
+    super.setRoot(root);
+
+    // look for resolution data annotation
+
+    int mapCount = 0;
+    try {
+      mapCount = getMapAnnotationCount();
+    }
+    catch (NullPointerException e) {
+      // no map annotations
+    }
+    for (int i=0; i<mapCount; i++) {
+      if (getMapAnnotationNamespace(i).equals(NAMESPACE)) {
+        List<MapPair> resAnnotation = getMapAnnotationValue(i);
+        List<Resolution> r = new ArrayList<Resolution>();
+
+        r.add(new Resolution());
+        for (MapPair p : resAnnotation) {
+          int index = Integer.parseInt(p.getName());
+          if (index == r.size()) {
+            r.add(new Resolution(p.getValue()));
+          }
+          else LOGGER.warn("Out of order");
+        }
+
+        resolutions.add(r);
+      }
+    }
+  }
 
   /* @see IPyramidStore#setResolutionSizeX(PositiveInteger, int, int) */
   public void setResolutionSizeX(PositiveInteger sizeX, int image, int resolution) {
@@ -176,8 +240,21 @@ public class OMEPyramidStore extends OMEXMLMetadataImpl implements IPyramidStore
 
   class Resolution {
     public PositiveInteger x, y;
-    public int index;
-    public int parentImage = -1;
+
+    public Resolution() {
+    }
+
+    public Resolution(String v) {
+      String[] split = v.split(" ");
+      this.x = new PositiveInteger(Integer.parseInt(split[0]));
+      this.y = new PositiveInteger(Integer.parseInt(split[1]));
+    }
+
+    @Override
+    public String toString() {
+      return x.getValue() + " " + y.getValue();
+    }
+
   }
 
 }
