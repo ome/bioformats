@@ -42,6 +42,7 @@ import loci.common.RandomAccessOutputStream;
 import loci.common.Region;
 import loci.formats.codec.CodecOptions;
 import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.IPyramidStore;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -95,6 +96,9 @@ public abstract class FormatWriter extends FormatHandler
 
   /** Current file. */
   protected RandomAccessOutputStream out;
+
+  /** Current pyramid resolution. */
+  protected int resolution = -1;
 
   // -- Constructors --
 
@@ -171,6 +175,7 @@ public abstract class FormatWriter extends FormatHandler
         metadataRetrieve.getImageCount() + " series.");
     }
     this.series = series;
+    resolution = 0;
   }
 
   /* @see IFormatWriter#getSeries() */
@@ -326,6 +331,37 @@ public abstract class FormatWriter extends FormatHandler
     return height.getValue();
   }
 
+  // -- IPyramidHandler API methods --
+
+  /* @see IPyramidHandler#getResolutionCount() */
+  @Override
+  public int getResolutionCount() {
+    MetadataRetrieve r = getMetadataRetrieve();
+    if (r instanceof IPyramidStore) {
+      return ((IPyramidStore) r).getResolutionCount(getSeries());
+    }
+    return 1;
+  }
+
+  /* @see IPyramidHandler#getResolution() */
+  @Override
+  public int getResolution() {
+    return resolution;
+  }
+
+  /* @see IPyramidHandler#setResolution(int) */
+  @Override
+  public void setResolution(int resolution) {
+    if (resolution < 0 || resolution >= getResolutionCount()) {
+      throw new IllegalArgumentException(
+        "Resolution must be positive and less than " +
+        getResolutionCount() + " (was " + resolution + ")");
+    }
+    this.resolution = resolution;
+  }
+
+
+
   // -- IFormatHandler API methods --
 
   /**
@@ -351,6 +387,8 @@ public abstract class FormatWriter extends FormatHandler
     for (int i=0; i<r.getImageCount(); i++) {
       initialized[i] = new boolean[getPlaneCount(i)];
     }
+
+    resolution = 0;
   }
 
   /* @see IFormatHandler#close() */
@@ -360,6 +398,7 @@ public abstract class FormatWriter extends FormatHandler
     out = null;
     currentId = null;
     initialized = null;
+    resolution = -1;
   }
 
   // -- Helper methods --

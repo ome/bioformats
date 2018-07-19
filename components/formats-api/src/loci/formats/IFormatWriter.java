@@ -42,7 +42,7 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * Interface for all biological file format writers.
  */
-public interface IFormatWriter extends IFormatHandler {
+public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
 
   /**
    * Saves the given image to the current series in the current file.

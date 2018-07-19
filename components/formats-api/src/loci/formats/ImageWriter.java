@@ -487,4 +487,24 @@ public class ImageWriter implements IFormatWriter {
     getWriter().close();
   }
 
+  // -- IPyramidHandler API methods --
+
+  /* @see IPyramidHandler#getResolutionCount() */
+  @Override
+  public int getResolutionCount() {
+    return getWriter().getResolutionCount();
+  }
+
+  /* @see IPyramidHandler#getResolution() */
+  @Override
+  public int getResolution() {
+    return getWriter().getResolution();
+  }
+
+  /* @see IPyramidHandler#setResolution(int) */
+  @Override
+  public void setResolution(int resolution) {
+    getWriter().setResolution(resolution);
+  }
+
 }

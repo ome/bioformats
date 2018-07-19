@@ -382,6 +382,21 @@ public abstract class WriterWrapper implements IFormatWriter {
     writer.close();
   }
 
+  @Override
+  public int getResolutionCount() {
+    return writer.getResolutionCount();
+  }
+
+  @Override
+  public int getResolution() {
+    return writer.getResolution();
+  }
+
+  @Override
+  public void setResolution(int resolution) {
+    writer.setResolution(resolution);
+  }
+
   // -- Helper methods --
 
   private WriterWrapper duplicateRecurse(
