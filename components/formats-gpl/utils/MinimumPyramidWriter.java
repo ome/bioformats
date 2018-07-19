@@ -23,6 +23,8 @@
  * #L%
  */
 
+import java.util.Arrays;
+
 import loci.common.services.ServiceFactory;
 import loci.formats.*;
 import loci.formats.ome.OMEPyramidStore;
@@ -79,7 +81,13 @@ public class MinimumPyramidWriter {
     writer.setId(id);
     writer.saveBytes(0, img);
     for (int i=1; i<resolutions; i++) {
-      // TODO
+      writer.setResolution(i);
+      int x = meta.getResolutionSizeX(0, i).getValue();
+      int y = meta.getResolutionSizeY(0, i).getValue();
+      byte[] downsample = new byte[x * y * bpp * c];
+      // don't use random data, so it's obvious that the correct resolution is read
+      Arrays.fill(downsample, (byte) i);
+      writer.saveBytes(0, downsample);
     }
     writer.close();
 
