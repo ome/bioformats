@@ -122,8 +122,8 @@ public abstract class FormatWriter extends FormatHandler
   @Override
   public void saveBytes(int no, byte[] buf) throws FormatException, IOException
   {
-    int width = metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
-    int height = metadataRetrieve.getPixelsSizeY(getSeries()).getValue();
+    int width = getSizeX();
+    int height = getSizeY();
     saveBytes(no, buf, 0, 0, width, height);
   }
 
@@ -140,8 +140,8 @@ public abstract class FormatWriter extends FormatHandler
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
-    int width = metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
-    int height = metadataRetrieve.getPixelsSizeY(getSeries()).getValue();
+    int width = getSizeX();
+    int height = getSizeY();
     savePlane(no, plane, 0, 0, width, height);
   }
 
@@ -300,35 +300,29 @@ public abstract class FormatWriter extends FormatHandler
   /* @see IFormatWriter#getTileSizeX() */
   @Override
   public int getTileSizeX() throws FormatException {
-    PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
-    if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to get tile size.");
-    return width.getValue();
+    return getSizeX();
   }
 
   /* @see IFormatWriter#setTileSizeX(int) */
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
-    PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
-    if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to set tile size.");
+    int width = getSizeX();
     if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
-    return width.getValue();
+    return width;
   }
 
   /* @see IFormatWriter#getTileSizeY() */
   @Override
   public int getTileSizeY() throws FormatException {
-    PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
-    if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to get tile size.");
-    return height.getValue();
+    return getSizeY();
   }
 
   /* @see IFormatWriter#setTileSizeY(int) */
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
-    PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
-    if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to set tile size.");
+    int height = getSizeY();
     if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
-    return height.getValue();
+    return height;
   }
 
   // -- IPyramidHandler API methods --
@@ -427,8 +421,8 @@ public abstract class FormatWriter extends FormatHandler
           "Plane index:%d must be < %d", no, planes));
     }
 
-    int sizeX = r.getPixelsSizeX(series).getValue().intValue();
-    int sizeY = r.getPixelsSizeY(series).getValue().intValue();
+    int sizeX = getSizeX();
+    int sizeY = getSizeY();
     if (x < 0) throw new FormatException(String.format("X:%d must be >= 0", x));
     if (y < 0) throw new FormatException(String.format("Y:%d must be >= 0", y));
     if (x >= sizeX) {
@@ -481,7 +475,7 @@ public abstract class FormatWriter extends FormatHandler
 
     if (interleaved) bpp *= samples;
 
-    int sizeX = r.getPixelsSizeX(series).getValue().intValue();
+    int sizeX = getSizeX();
 
     out.skipBytes(bpp * (y * sizeX + x));
   }
@@ -492,8 +486,8 @@ public abstract class FormatWriter extends FormatHandler
    */
   protected boolean isFullPlane(int x, int y, int w, int h) {
     MetadataRetrieve r = getMetadataRetrieve();
-    int sizeX = r.getPixelsSizeX(series).getValue().intValue();
-    int sizeY = r.getPixelsSizeY(series).getValue().intValue();
+    int sizeX = getSizeX();
+    int sizeY = getSizeY();
     return x == 0 && y == 0 && w == sizeX && h == sizeY;
   }
 
@@ -529,6 +523,25 @@ public abstract class FormatWriter extends FormatHandler
 
   protected RandomAccessOutputStream createOutputStream() throws IOException {
     return new RandomAccessOutputStream(currentId);
+  }
+
+  protected int getSizeX() {
+    MetadataRetrieve r = getMetadataRetrieve();
+    if (getResolution() == 0) {
+      return r.getPixelsSizeX(getSeries()).getValue().intValue();
+    }
+    return ((IPyramidStore) r).getResolutionSizeX(
+      getSeries(), getResolution()).getValue().intValue();
+  }
+
+  protected int getSizeY() {
+    MetadataRetrieve r = getMetadataRetrieve();
+    if (getResolution() == 0) {
+      return r.getPixelsSizeY(getSeries()).getValue().intValue();
+    }
+    return ((IPyramidStore) r).getResolutionSizeY(
+      getSeries(), getResolution()).getValue().intValue();
+
   }
 
 }
