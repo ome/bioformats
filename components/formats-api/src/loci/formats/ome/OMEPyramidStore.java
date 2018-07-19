@@ -48,33 +48,37 @@ public class OMEPyramidStore extends OMEXMLMetadataImpl implements IPyramidStore
   public static final String NAMESPACE = "openmicroscopy.org/PyramidResolution";
 
   private List<List<Resolution>> resolutions = new ArrayList<List<Resolution>>();
+  private boolean written = false;
 
   @Override
   public String dumpXML() {
     // insert resolution data as an annotation
 
-    int annIndex = 0;
-    try {
-      annIndex = getMapAnnotationCount();
-    }
-    catch (NullPointerException e) {
-      // just means there are no other map annotations
-    }
-    for (int i=0; i<resolutions.size(); i++) {
-      List<MapPair> resAnnotation = new ArrayList<MapPair>();
-      for (int r=1; r<resolutions.get(i).size(); r++) {
-        resAnnotation.add(
-          new MapPair(String.valueOf(r), resolutions.get(i).get(r).toString()));
+    // TODO: doesn't allow for updating resolutions
+    if (!written) {
+      int annIndex = 0;
+      try {
+        annIndex = getMapAnnotationCount();
       }
-      String mapId = "Annotation:Resolution:" + i;
-      setMapAnnotationID(mapId, annIndex);
-      setMapAnnotationNamespace(NAMESPACE, annIndex);
-      setMapAnnotationValue(resAnnotation, annIndex);
-      annIndex++;
+      catch (NullPointerException e) {
+        // just means there are no other map annotations
+      }
+      for (int i=0; i<resolutions.size(); i++) {
+        List<MapPair> resAnnotation = new ArrayList<MapPair>();
+        for (int r=1; r<resolutions.get(i).size(); r++) {
+          resAnnotation.add(
+            new MapPair(String.valueOf(r), resolutions.get(i).get(r).toString()));
+        }
+        String mapId = "Annotation:Resolution:" + i;
+        setMapAnnotationID(mapId, annIndex);
+        setMapAnnotationNamespace(NAMESPACE, annIndex);
+        setMapAnnotationValue(resAnnotation, annIndex);
+          annIndex++;
+      }
+      written = true;
     }
 
-    String xml = super.dumpXML();
-    return xml;
+    return super.dumpXML();
   }
 
   @Override
@@ -105,6 +109,7 @@ public class OMEPyramidStore extends OMEXMLMetadataImpl implements IPyramidStore
         }
 
         resolutions.add(r);
+        written = true;
       }
     }
   }
