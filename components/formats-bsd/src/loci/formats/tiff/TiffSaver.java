@@ -659,6 +659,22 @@ public class TiffSaver {
     writeIntValue(out, 0);
   }
 
+  public void overwriteIFDOffset(RandomAccessInputStream raf, long offset,
+    long nextPointer)
+    throws FormatException, IOException
+  {
+    if (raf == null) {
+      throw new FormatException("Input stream cannot be null");
+    }
+    int bytesPerEntry = bigTiff ?
+      TiffConstants.BIG_TIFF_BYTES_PER_ENTRY : TiffConstants.BYTES_PER_ENTRY;
+    raf.seek(offset);
+    long entries = bigTiff ? raf.readLong() : raf.readUnsignedShort();
+    long overwriteOffset = offset + bytesPerEntry * entries + (bigTiff ? 8 : 2);
+    out.seek(overwriteOffset);
+    writeIntValue(out, nextPointer);
+  }
+
   /**
    * Surgically overwrites an existing IFD value with the given one. This
    * method requires that the IFD directory entry already exist. It
@@ -779,7 +795,7 @@ public class TiffSaver {
         writeIntValue(out, newOffset);
         if (extraBuf.length() > 0) {
           out.seek(newOffset);
-          out.write(extraBuf.getByteBuffer(), 0, newCount);
+          out.write(extraBuf.getByteBuffer());
         }
         return;
       }

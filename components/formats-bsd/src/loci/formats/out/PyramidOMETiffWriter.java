@@ -59,6 +59,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.DynamicMetadataOptions;
@@ -91,13 +92,78 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    if (ifd == null) {
+      ifd = new IFD();
+    }
     if (getResolution() > 0) {
-      if (ifd == null) {
-        ifd = new IFD();
-      }
       ifd.put(IFD.NEW_SUBFILE_TYPE, 1);
     }
+    else {
+      if (!ifd.containsKey(IFD.SUB_IFD)) {
+        ifd.put(IFD.SUB_IFD, (long) 0);
+      }
+    }
+
     super.saveBytes(no, buf, ifd, x, y, w, h);
+  }
+
+  @Override
+  public void close() throws IOException {
+    String id = currentId;
+    MetadataRetrieve r = getMetadataRetrieve();
+    int[] planeCounts = new int[r.getImageCount()];
+    for (int i=0; i<planeCounts.length; i++) {
+      planeCounts[i] = getPlaneCount(i);
+    }
+    super.close();
+
+    // post-processing step to fill in all SubIFD arrays
+
+    RandomAccessInputStream in = null;
+    RandomAccessOutputStream out = null;
+    try {
+      in = new RandomAccessInputStream(id);
+      TiffParser parser = new TiffParser(in);
+      long[] allOffsets = parser.getIFDOffsets();
+      in.close();
+
+      int mainIFDIndex = 0;
+      for (int i=0; i<r.getImageCount(); i++) {
+        setSeries(i);
+        for (int p=0; p<planeCounts[i]; p++) {
+          int resCount = ((IPyramidStore) r).getResolutionCount(i);
+          long[] subIFDOffsets = new long[resCount - 1];
+          System.arraycopy(allOffsets, mainIFDIndex + 1, subIFDOffsets, 0,
+            subIFDOffsets.length);
+
+          out = new RandomAccessOutputStream(id);
+          TiffSaver saver = new TiffSaver(out, id);
+          saver.setBigTiff(isBigTiff);
+          in = new RandomAccessInputStream(id);
+          long nextPointer = (mainIFDIndex + resCount < allOffsets.length) ?
+            allOffsets[mainIFDIndex + resCount] : 0;
+          saver.overwriteIFDOffset(in, allOffsets[mainIFDIndex], nextPointer);
+          saver.overwriteIFDValue(in, mainIFDIndex, IFD.SUB_IFD, subIFDOffsets);
+          saver.close();
+          out.close();
+          in.close();
+
+          mainIFDIndex += resCount;
+        }
+      }
+      setSeries(0);
+    }
+    catch (FormatException e) {
+      throw new IOException("Failed to assemble SubIFD offsets", e);
+    }
+    finally {
+      if (in != null) {
+        in.close();
+      }
+      if (out != null) {
+        out.close();
+      }
+    }
   }
 
 }
