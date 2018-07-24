@@ -93,6 +93,7 @@ public class KLBReader extends FormatReader {
   private String[][] xyProjections;
   private String[][] xzProjections;
   private String[][] yzProjections;
+  private String[][] fusedStacks;
   // -- Constructor --
 
   /**
@@ -124,8 +125,11 @@ public class KLBReader extends FormatReader {
     else if (currentSeries == 1) {
       fileName = xzProjections[currentCoords[2]][currentCoords[1]];
     }
-    else {
+    else if (currentSeries == 2) {
       fileName = yzProjections[currentCoords[2]][currentCoords[1]];
+    }
+    else {
+      fileName = fusedStacks[currentCoords[2]][currentCoords[1]];
     }
     in = new RandomAccessInputStream(fileName);
 
@@ -296,6 +300,7 @@ public class KLBReader extends FormatReader {
     xyProjections = new String[sizeT][sizeC];
     xzProjections = new String[sizeT][sizeC];
     yzProjections = new String[sizeT][sizeC];
+    fusedStacks = new String[sizeT][sizeC];
 
     basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.lastIndexOf('.'));
     for (int i=0; i < listOfFiles.length; i++) {
@@ -333,6 +338,14 @@ public class KLBReader extends FormatReader {
                   readHeader(core.get(2));
                 }
               }
+              else {
+                fusedStacks[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
+                if (currentTimepoint == 0 && currentChannelNum == 0) {
+                  in.close();
+                  in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
+                  readHeader(core.get(2));
+                }
+              }
             }
           }
         }
@@ -344,6 +357,8 @@ public class KLBReader extends FormatReader {
     store.setImageID(imageID, 1);
     imageID = MetadataTools.createLSID("Image", 2);
     store.setImageID(imageID, 2);
+    imageID = MetadataTools.createLSID("Image", 3);
+    store.setImageID(imageID, 3);
   }
 
   private void readHeader(CoreMetadata coreMeta) throws IOException, FormatException {
@@ -400,14 +415,15 @@ public class KLBReader extends FormatReader {
   @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    String [] fileList = new String[getSizeT() * getSizeC() * 3];
+    String [] fileList = new String[getSizeT() * getSizeC() * 4];
     int index = 0;
     for (int timepoint = 0; timepoint < getSizeT(); timepoint++) {
       for (int channel = 0; channel < getSizeC(); channel++) {
         fileList[index] = xyProjections[timepoint][channel];
         fileList[index + 1] = xzProjections[timepoint][channel];
         fileList[index + 2] = yzProjections[timepoint][channel];
-        index += 3;
+        fileList[index + 2] = fusedStacks[timepoint][channel];
+        index += 4;
       }
     }
     return noPixels ? ArrayUtils.EMPTY_STRING_ARRAY : fileList;
