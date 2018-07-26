@@ -267,6 +267,7 @@ public class KLBReader extends FormatReader {
 
     core.add(new CoreMetadata(this, 0));
     core.add(new CoreMetadata(this, 0));
+    core.add(new CoreMetadata(this, 0));
 
     int sizeT = 0;
     int sizeC = 1;
@@ -310,7 +311,7 @@ public class KLBReader extends FormatReader {
         File[] innerFileList = listOfFiles[i].listFiles();
         for (int j=0; j < innerFileList.length; j++) {
           String innerFileName = innerFileList[j].getName();
-          if (innerFileName.contains("Projection")) {
+          if (innerFileName.contains("fusedStack")) {
             int currentChannelNum = DataTools.parseInteger(innerFileName.substring(innerFileName.indexOf("_CHN")+4, innerFileName.indexOf('.')));
             if (innerFileName.indexOf("fusedStack_") >= 0) {
               String projection = innerFileName.substring(innerFileName.indexOf("fusedStack_")+11, innerFileName.indexOf("Projection"));
@@ -338,13 +339,13 @@ public class KLBReader extends FormatReader {
                   readHeader(core.get(2));
                 }
               }
-              else {
-                fusedStacks[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
-                if (currentTimepoint == 0 && currentChannelNum == 0) {
-                  in.close();
-                  in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
-                  readHeader(core.get(2));
-                }
+            }
+            else {
+              fusedStacks[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
+              if (currentTimepoint == 0 && currentChannelNum == 0) {
+                in.close();
+                in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
+                readHeader(core.get(3));
               }
             }
           }
