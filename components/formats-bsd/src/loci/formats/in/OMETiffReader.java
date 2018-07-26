@@ -1257,6 +1257,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   }
 
   private void addSubResolutions() throws IOException, FormatException {
+    boolean repopulateMetadata = false;
     for(int s = 0; s < core.size(); s++) {
       OMETiffCoreMetadata c0 = (OMETiffCoreMetadata) core.get(s, 0);
       int i = info[s][0].ifd;
@@ -1276,6 +1277,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
       TiffParser p = new TiffParser(rs);
       IFDList subifds = p.getSubIFDs(ifd);
       c0.resolutionCount = subifds.size() + 1;
+
+      if (c0.resolutionCount > 1 && hasFlattenedResolutions()) {
+        repopulateMetadata = true;
+      }
 
       for (int si = 0; si < subifds.size(); si++) {
         IFD subifd = subifds.get(si);
@@ -1310,6 +1315,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
     }
     core.reorder();
+
+    // make sure the Image count matches the series count when
+    // the resolutions are flattened
+    if (repopulateMetadata) {
+      MetadataTools.populatePixels(metadataStore, this);
+    }
   }
 
   /** Extracts the OME-XML from the current {@link #metadataFile}. */
