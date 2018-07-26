@@ -411,11 +411,13 @@ public class TiffWriter extends FormatWriter {
 
     int index = (no * getResolutionCount()) + getResolution();
     int currentSeries = getSeries();
+    int currentResolution = getResolution();
     for (int i=0; i<currentSeries; i++) {
       setSeries(i);
       index += (getPlaneCount() * getResolutionCount());
     }
     setSeries(currentSeries);
+    setResolution(currentResolution);
     return index;
   }
 
