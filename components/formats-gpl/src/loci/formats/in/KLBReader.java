@@ -463,7 +463,9 @@ public class KLBReader extends FormatReader {
     int[] ztc = FormatTools.getZCTCoords(order, getSizeZ(), getSizeC(), getSizeT(), getImageCount(), no);
 
     // Calculate the first required block
-    int requiredBlockNum = (ztc[0] / dims_blockSize[2]) * (ztc[2] / dims_blockSize[3]) * (ztc[1] / dims_blockSize[4]);
+    //TODO: Correct calculation for T and C blocks
+    //int requiredBlockNum = (ztc[0] / dims_blockSize[2]) * (ztc[2] / dims_blockSize[3]) * (ztc[1] / dims_blockSize[4]);
+    int requiredBlockNum = (ztc[0] / dims_blockSize[2]);
 
     // Mark the current file pointer to return after reading offsets
     long filePoointer = in.getFilePointer();
