@@ -124,32 +124,45 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
     try {
       in = new RandomAccessInputStream(id);
       TiffParser parser = new TiffParser(in);
+      boolean littleEndian = parser.checkHeader();
       long[] allOffsets = parser.getIFDOffsets();
       in.close();
 
       int mainIFDIndex = 0;
+      int currentFullResolution = 0;
       for (int i=0; i<r.getImageCount(); i++) {
         setSeries(i);
+        int resCount = ((IPyramidStore) r).getResolutionCount(i);
         for (int p=0; p<planeCounts[i]; p++) {
-          int resCount = ((IPyramidStore) r).getResolutionCount(i);
           long[] subIFDOffsets = new long[resCount - 1];
-          System.arraycopy(allOffsets, mainIFDIndex + 1, subIFDOffsets, 0,
-            subIFDOffsets.length);
+          for (int res=0; res<subIFDOffsets.length; res++) {
+            subIFDOffsets[res] = allOffsets[mainIFDIndex + (res + 1) * planeCounts[i]];
+          }
 
           out = new RandomAccessOutputStream(id);
+          out.order(littleEndian);
           TiffSaver saver = new TiffSaver(out, id);
           saver.setBigTiff(isBigTiff);
+          saver.setLittleEndian(littleEndian);
           in = new RandomAccessInputStream(id);
-          long nextPointer = (mainIFDIndex + resCount < allOffsets.length) ?
-            allOffsets[mainIFDIndex + resCount] : 0;
+          in.order(littleEndian);
+
+          int index = mainIFDIndex + 1;
+          if (p == planeCounts[i] - 1) {
+            index += (planeCounts[i] * (resCount - 1));
+          }
+          long nextPointer = index < allOffsets.length ? allOffsets[index] : 0;
+
           saver.overwriteIFDOffset(in, allOffsets[mainIFDIndex], nextPointer);
-          saver.overwriteIFDValue(in, mainIFDIndex, IFD.SUB_IFD, subIFDOffsets);
+          saver.overwriteIFDValue(in, currentFullResolution, IFD.SUB_IFD, subIFDOffsets);
           saver.close();
           out.close();
           in.close();
 
-          mainIFDIndex += resCount;
+          mainIFDIndex++;
+          currentFullResolution++;
         }
+        mainIFDIndex += (planeCounts[i] * (resCount - 1));
       }
       setSeries(0);
     }

@@ -295,7 +295,7 @@ public class TiffWriterTest {
       writer.setTileSizeY(tile_size);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Pixels Size Y must not be null when attempting to set tile size")) {
+      if (e.getMessage().contains("Size Y must not be null")) {
         thrown = true;
       }
     }
@@ -305,7 +305,7 @@ public class TiffWriterTest {
       writer.setTileSizeX(tile_size);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Pixels Size X must not be null when attempting to set tile size")) {
+      if (e.getMessage().contains("Size X must not be null")) {
         thrown = true;
       }
     }
@@ -315,7 +315,7 @@ public class TiffWriterTest {
       writer.getTileSizeX();
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Pixels Size X must not be null when attempting to get tile size")) {
+      if (e.getMessage().contains("Size X must not be null")) {
         thrown = true;
       }
     }
@@ -325,7 +325,7 @@ public class TiffWriterTest {
       writer.getTileSizeY();
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Pixels Size Y must not be null when attempting to get tile size")) {
+      if (e.getMessage().contains("Size Y must not be null")) {
         thrown = true;
       }
     }

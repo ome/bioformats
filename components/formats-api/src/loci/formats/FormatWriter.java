@@ -98,7 +98,7 @@ public abstract class FormatWriter extends FormatHandler
   protected RandomAccessOutputStream out;
 
   /** Current pyramid resolution. */
-  protected int resolution = -1;
+  protected int resolution = 0;
 
   // -- Constructors --
 
@@ -392,7 +392,7 @@ public abstract class FormatWriter extends FormatHandler
     out = null;
     currentId = null;
     initialized = null;
-    resolution = -1;
+    resolution = 0;
   }
 
   // -- Helper methods --
@@ -475,16 +475,20 @@ public abstract class FormatWriter extends FormatHandler
 
     if (interleaved) bpp *= samples;
 
-    int sizeX = getSizeX();
-
-    out.skipBytes(bpp * (y * sizeX + x));
+    try {
+      int sizeX = getSizeX();
+      out.skipBytes(bpp * (y * sizeX + x));
+    }
+    catch (FormatException e) {
+      throw new IOException(e);
+    }
   }
 
   /**
    * Returns true if the given rectangle coordinates correspond to a full
    * image in the given series.
    */
-  protected boolean isFullPlane(int x, int y, int w, int h) {
+  protected boolean isFullPlane(int x, int y, int w, int h) throws FormatException {
     MetadataRetrieve r = getMetadataRetrieve();
     int sizeX = getSizeX();
     int sizeY = getSizeY();
@@ -525,23 +529,40 @@ public abstract class FormatWriter extends FormatHandler
     return new RandomAccessOutputStream(currentId);
   }
 
-  protected int getSizeX() {
+  protected int getSizeX() throws FormatException {
     MetadataRetrieve r = getMetadataRetrieve();
-    if (getResolution() == 0) {
-      return r.getPixelsSizeX(getSeries()).getValue().intValue();
+    if (r == null) {
+      throw new FormatException("MetadataRetrieve cannot be null");
     }
-    return ((IPyramidStore) r).getResolutionSizeX(
-      getSeries(), getResolution()).getValue().intValue();
+    PositiveInteger x= null;
+    if (getResolution() == 0) {
+      x = r.getPixelsSizeX(getSeries());
+    }
+    else {
+      x = ((IPyramidStore) r).getResolutionSizeX(getSeries(), getResolution());
+    }
+    if (x == null) {
+      throw new FormatException("Size X must not be null");
+    }
+    return x.getValue().intValue();
   }
 
-  protected int getSizeY() {
+  protected int getSizeY() throws FormatException {
     MetadataRetrieve r = getMetadataRetrieve();
-    if (getResolution() == 0) {
-      return r.getPixelsSizeY(getSeries()).getValue().intValue();
+    if (r == null) {
+      throw new FormatException("MetadataRetrieve cannot be null");
     }
-    return ((IPyramidStore) r).getResolutionSizeY(
-      getSeries(), getResolution()).getValue().intValue();
-
+    PositiveInteger y = null;
+    if (getResolution() == 0) {
+      y = r.getPixelsSizeY(getSeries());
+    }
+    else {
+      y = ((IPyramidStore) r).getResolutionSizeY(getSeries(), getResolution());
+    }
+    if (y == null) {
+      throw new FormatException("Size Y must not be null");
+    }
+    return y.getValue().intValue();
   }
 
 }
