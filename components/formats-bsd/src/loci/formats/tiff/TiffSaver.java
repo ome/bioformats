@@ -735,9 +735,11 @@ public class TiffSaver {
         ByteArrayHandle extraBuf = new ByteArrayHandle();
         RandomAccessOutputStream extraOut =
           new RandomAccessOutputStream(extraBuf);
+        ifdOut.order(little);
         extraOut.order(little);
         TiffSaver saver = new TiffSaver(ifdOut, ifdBuf);
-        saver.setLittleEndian(isLittleEndian());
+        saver.setLittleEndian(little);
+        saver.setBigTiff(bigTiff);
         saver.writeIFDValue(extraOut, entry.getValueOffset(), tag, value);
         ifdOut.close();
         saver.close();
@@ -752,7 +754,7 @@ public class TiffSaver {
         int newCount;
         long newOffset;
         if (bigTiff) {
-          newCount = ifdBuf.readInt();
+          newCount = (int) ifdBuf.readLong();
           newOffset = ifdBuf.readLong();
         }
         else {
