@@ -78,6 +78,9 @@ public class DeltavisionReader extends FormatReader {
   private static final short LITTLE_ENDIAN = -16224;
   private static final int HEADER_LENGTH = 1024;
 
+  private static final int NEW_TYPE = 100;
+  private static final int MAX_CHANNELS = 12;
+
   private static final String[] IMAGE_TYPES = new String[] {
     "normal", "Tilt-series", "Stereo tilt-series", "Averaged images",
     "Averaged stereo pairs"
@@ -593,8 +596,8 @@ public class DeltavisionReader extends FormatReader {
     int yAxisSeq = in.readInt();
     int zAxisSeq = in.readInt();
 
-    float[] minWave = new float[5];
-    float[] maxWave = new float[5];
+    float[] minWave = new float[MAX_CHANNELS];
+    float[] maxWave = new float[MAX_CHANNELS];
 
     minWave[0] = in.readFloat();
     maxWave[0] = in.readFloat();
@@ -628,8 +631,9 @@ public class DeltavisionReader extends FormatReader {
 
     in.skipBytes(2);
 
-    short[] waves = new short[5];
-    for (int i=0; i<waves.length; i++) {
+    short[] waves = new short[MAX_CHANNELS];
+    // only first 5 wavelengths are here (for compatibility with old DV files)
+    for (int i=0; i<5; i++) {
       waves[i] = in.readShort();
     }
 
@@ -639,10 +643,33 @@ public class DeltavisionReader extends FormatReader {
 
     in.skipBytes(4);
 
-    String[] title = new String[10];
+    // "new" type DV files limit the number of titles so
+    // that metadata describing additional channels can be
+    // packed into the same size header
+    int titleCount = type < NEW_TYPE ? 10 : 4;
+    String[] title = new String[titleCount];
     for (int i=0; i<title.length; i++) {
       // Make sure that "null" characters are stripped out
       title[i] = in.readByteToString(80).replaceAll("\0", "");
+    }
+
+    // intensity and wavelength data for channels 6-12 follows titles
+    if (type == NEW_TYPE) {
+      for (int i=5; i<MAX_CHANNELS; i++) {
+        minWave[i] = in.readFloat();
+      }
+      in.skipBytes(16); // undefined
+      for (int i=5; i<MAX_CHANNELS; i++) {
+        maxWave[i] = in.readFloat();
+      }
+      in.skipBytes(16); // undefined
+      // skip mean intensities for now
+      in.skipBytes(4 * (MAX_CHANNELS - 5));
+      in.skipBytes(16); // undefined
+
+      for (int i=5; i<MAX_CHANNELS; i++) {
+        waves[i] = in.readShort();
+      }
     }
 
     // --- compute some secondary values ---
