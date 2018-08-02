@@ -79,6 +79,9 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
     if (!super.isThisType(name)) {
       return false;
     }
+    if (resolutionData.size() > 0) {
+      return true;
+    }
     MetadataRetrieve r = getMetadataRetrieve();
     if (!(r instanceof IPyramidStore)) {
       return false;
@@ -112,8 +115,16 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
     String id = currentId;
     MetadataRetrieve r = getMetadataRetrieve();
     int[] planeCounts = new int[r.getImageCount()];
+    int[] resCounts = new int[r.getImageCount()];
     for (int i=0; i<planeCounts.length; i++) {
       planeCounts[i] = getPlaneCount(i);
+      try {
+        setSeries(i);
+      }
+      catch (FormatException e) {
+        throw new IOException(e);
+      }
+      resCounts[i] = getResolutionCount();
     }
     super.close();
 
@@ -132,7 +143,7 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
       int currentFullResolution = 0;
       for (int i=0; i<r.getImageCount(); i++) {
         setSeries(i);
-        int resCount = ((IPyramidStore) r).getResolutionCount(i);
+        int resCount = resCounts[i];
         for (int p=0; p<planeCounts[i]; p++) {
           long[] subIFDOffsets = new long[resCount - 1];
           for (int res=0; res<subIFDOffsets.length; res++) {

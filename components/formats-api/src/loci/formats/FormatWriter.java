@@ -34,6 +34,8 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -99,6 +101,8 @@ public abstract class FormatWriter extends FormatHandler
 
   /** Current pyramid resolution. */
   protected int resolution = 0;
+
+  protected List<List<Resolution>> resolutionData = new ArrayList<List<Resolution>>();
 
   // -- Constructors --
 
@@ -325,11 +329,30 @@ public abstract class FormatWriter extends FormatHandler
     return height;
   }
 
+  /* @see IFormatWriter#setResolutions(List<Resolution>) */
+  @Override
+  public void setResolutions(List<Resolution> resolutions) {
+    while (getSeries() >= resolutionData.size()) {
+      resolutionData.add(null);
+    }
+    resolutionData.set(getSeries(), resolutions);
+  }
+
+  /* @see IFormatWriter#getResolutions() */
+  @Override
+  public List<Resolution> getResolutions() {
+    return getSeries() < resolutionData.size() ?
+      resolutionData.get(getSeries()) : null;
+  }
+
   // -- IPyramidHandler API methods --
 
   /* @see IPyramidHandler#getResolutionCount() */
   @Override
   public int getResolutionCount() {
+    if (hasResolutions()) {
+      return resolutionData.get(getSeries()).size() + 1;
+    }
     MetadataRetrieve r = getMetadataRetrieve();
     if (r instanceof IPyramidStore) {
       return ((IPyramidStore) r).getResolutionCount(getSeries());
@@ -393,6 +416,7 @@ public abstract class FormatWriter extends FormatHandler
     currentId = null;
     initialized = null;
     resolution = 0;
+    resolutionData.clear();
   }
 
   // -- Helper methods --
@@ -534,9 +558,12 @@ public abstract class FormatWriter extends FormatHandler
     if (r == null) {
       throw new FormatException("MetadataRetrieve cannot be null");
     }
-    PositiveInteger x= null;
+    PositiveInteger x = null;
     if (getResolution() == 0) {
       x = r.getPixelsSizeX(getSeries());
+    }
+    else if (hasResolutions()) {
+      x = resolutionData.get(getSeries()).get(getResolution() - 1).sizeX;
     }
     else {
       x = ((IPyramidStore) r).getResolutionSizeX(getSeries(), getResolution());
@@ -556,6 +583,9 @@ public abstract class FormatWriter extends FormatHandler
     if (getResolution() == 0) {
       y = r.getPixelsSizeY(getSeries());
     }
+    else if (hasResolutions()) {
+      y = resolutionData.get(getSeries()).get(getResolution() - 1).sizeY;
+    }
     else {
       y = ((IPyramidStore) r).getResolutionSizeY(getSeries(), getResolution());
     }
@@ -563,6 +593,11 @@ public abstract class FormatWriter extends FormatHandler
       throw new FormatException("Size Y must not be null");
     }
     return y.getValue().intValue();
+  }
+
+  protected boolean hasResolutions() {
+    return getSeries() < resolutionData.size() &&
+      resolutionData.get(getSeries()) != null;
   }
 
 }

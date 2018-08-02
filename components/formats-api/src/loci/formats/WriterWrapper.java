@@ -35,6 +35,7 @@ package loci.formats;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Set;
 
 import loci.common.Region;
@@ -348,6 +349,18 @@ public abstract class WriterWrapper implements IFormatWriter {
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     return writer.setTileSizeY(tileSize);
+  }
+
+  /* @see IFormatWriter#setResolutions(List<Resolution>) */
+  @Override
+  public void setResolutions(List<Resolution> resolutions) {
+    writer.setResolutions(resolutions);
+  }
+
+  /* @see IFormatWriter#getResolutions() */
+  @Override
+  public List<Resolution> getResolutions() {
+    return writer.getResolutions();
   }
 
   // -- IFormatHandler API methods --

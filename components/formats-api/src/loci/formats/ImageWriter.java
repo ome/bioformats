@@ -207,6 +207,18 @@ public class ImageWriter implements IFormatWriter {
     return getWriter().setTileSizeY(tileSize);
   }
 
+  @Override
+  public void setResolutions(List<Resolution> resolutions) {
+    for (IFormatWriter w : writers) {
+      w.setResolutions(resolutions);
+    }
+  }
+
+  @Override
+  public List<Resolution> getResolutions() {
+    return getWriter().getResolutions();
+  }
+
   // -- IMetadataConfigurable API methods --
 
   /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */
