@@ -170,7 +170,7 @@ public class DeltavisionReader extends FormatReader {
     if(new TiffParser(stream).isValidHeader()) {
       return false;
     }
-    final int blockLen = 98;
+    final int blockLen = 212;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     stream.seek(96);
     int magic = stream.readShort() & 0xffff;
@@ -179,6 +179,11 @@ public class DeltavisionReader extends FormatReader {
       return false;
     }
     stream.order(magic == (LITTLE_ENDIAN & 0xffff));
+    stream.seek(208);
+    boolean isMap = stream.readString(4).trim().equals("MAP");
+    if (isMap) {
+      return false;
+    }
     stream.seek(0);
     int x = stream.readInt();
     int y = stream.readInt();
