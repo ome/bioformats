@@ -55,8 +55,6 @@ public class LEOReader extends BaseTiffReader {
   // -- Fields --
 
   private double xSize;
-  private double filament;
-  private double eht;
   private String date;
   private double workingDistance;
 
@@ -91,6 +89,9 @@ public class LEOReader extends BaseTiffReader {
     String tag = ifds.get(0).getIFDTextValue(LEO_TAG);
     String[] lines = tag.split("\n");
     date = "";
+
+    double filament = 0;
+    double eht = 0;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int line=36; line<lines.length; line++) {
