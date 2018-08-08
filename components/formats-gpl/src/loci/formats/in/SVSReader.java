@@ -47,6 +47,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -79,6 +80,8 @@ public class SVSReader extends BaseTiffReader {
   private Double magnification;
   private String date, time;
   private ArrayList<String> dyeNames = new ArrayList<String>();
+
+  private transient Color displayColor = null;
 
   // -- Constructor --
 
@@ -214,6 +217,7 @@ public class SVSReader extends BaseTiffReader {
       date = null;
       time = null;
       dyeNames.clear();
+      displayColor = null;
     }
   }
 
@@ -314,6 +318,11 @@ public class SVSReader extends BaseTiffReader {
               }
               else if (key.equals("Dye")) {
                 dyeNames.add(value);
+              }
+              else if (key.equals("DisplayColor")) {
+                // stored color is RGB, Color expects RGBA
+                int color = Integer.parseInt(value);
+                displayColor = new Color((color << 8) | 0xff);
               }
             }
           }
@@ -430,6 +439,10 @@ public class SVSReader extends BaseTiffReader {
           store.setChannelExcitationWavelength(getExcitation(), i, c);
         }
 
+        // display color not set here as investigation with Aperio ImageScope
+        // indicates that the display color is only used when there is an
+        // .afi file (see AFIReader)
+
         if (c < dyeNames.size()) {
           store.setChannelName(dyeNames.get(c), i, c);
         }
@@ -525,6 +538,10 @@ public class SVSReader extends BaseTiffReader {
 
   protected ArrayList<String> getDyeNames() {
     return dyeNames;
+  }
+
+  protected Color getDisplayColor() {
+    return displayColor;
   }
 
 }

@@ -45,6 +45,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -318,6 +319,7 @@ public class AFIReader extends FormatReader {
       Timestamp[] datestamp = new Timestamp[pixels.size()];
       Length[] physicalSizes = null;
       double magnification = Double.NaN;
+      Color[] displayColor = new Color[pixels.size()];
 
       for (int c=0; c<pixels.size(); c++) {
         SVSReader baseReader = (SVSReader) reader[c].getReader();
@@ -326,6 +328,7 @@ public class AFIReader extends FormatReader {
         exposure[c] = baseReader.getExposureTime();
         datestamp[c] = baseReader.getDatestamp();
         physicalSizes = baseReader.getPhysicalSizes();
+        displayColor[c] = baseReader.getDisplayColor();
 
         if (c == 0) {
           magnification = baseReader.getMagnification();
@@ -362,6 +365,9 @@ public class AFIReader extends FormatReader {
           }
           if (excitation[c] != null) {
             store.setChannelExcitationWavelength(excitation[c], i, c);
+          }
+          if (displayColor[c] != null) {
+            store.setChannelColor(displayColor[c], i, c);
           }
 
           store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.SECOND), i, c);
