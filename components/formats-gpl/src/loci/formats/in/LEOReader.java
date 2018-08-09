@@ -94,8 +94,11 @@ public class LEOReader extends BaseTiffReader {
     double eht = 0;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      // physical sizes stored in meters
+      xSize = Double.parseDouble(lines[3]) * 1000000;
       for (int line=36; line<lines.length; line++) {
         if (lines[line].equals("AP_IMAGE_PIXEL_SIZE")) {
+          // if Image Pixel Size is present it is used to override Pixel Size
           // pixel size is stored in nm, converted now to micrometers
           xSize = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" nm","e-03"));
         }
