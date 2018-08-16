@@ -95,7 +95,7 @@ public class OMEPyramidStore extends OMEXMLMetadataImpl implements IPyramidStore
       // no map annotations
     }
     for (int i=0; i<mapCount; i++) {
-      if (getMapAnnotationNamespace(i).equals(NAMESPACE)) {
+      if (NAMESPACE.equals(getMapAnnotationNamespace(i))) {
         List<MapPair> resAnnotation = getMapAnnotationValue(i);
         List<Resolution> r = new ArrayList<Resolution>();
 
