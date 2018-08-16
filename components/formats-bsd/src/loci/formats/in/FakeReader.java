@@ -97,6 +97,7 @@ import ome.units.UNITS;
  *  <li>showinf 'SPW&amp;screens=2&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=1&amp;plateAcqs=1.fake'</li>
  *  <li>showinf 'Plate&amp;screens=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  *  <li>showinf 'regions&amp;points=10&amp;ellipses=5&amp;rectangles=10.fake'</li>
+ *  <li>showinf 'pyramid&amp;sizeX=10000&amp;sizeY=10000&amp;resolutions=5&amp;resolutionScale=2.fake' -noflat -resolution 4</li>
  * </ul></p>
  */
 public class FakeReader extends FormatReader {
@@ -127,6 +128,8 @@ public class FakeReader extends FormatReader {
   public static final int DEFAULT_PIXEL_TYPE = FormatTools.UINT8;
   public static final int DEFAULT_RGB_CHANNEL_COUNT = 1;
   public static final String DEFAULT_DIMENSION_ORDER = "XYZCT";
+
+  public static final int DEFAULT_RESOLUTION_SCALE = 2;
 
   private static final String TOKEN_SEPARATOR = "&";
   private static final long SEED = 0xcafebabe;
@@ -576,6 +579,8 @@ public class FakeReader extends FormatReader {
     boolean withMicrobeam = false;
 
     int seriesCount = 1;
+    int resolutionCount = 1;
+    int resolutionScale = DEFAULT_RESOLUTION_SCALE;
     int lutLength = 3;
 
     String acquisitionDate = null;
@@ -673,6 +678,8 @@ public class FakeReader extends FormatReader {
       else if (key.equals("metadataComplete")) metadataComplete = boolValue;
       else if (key.equals("thumbnail")) thumbnail = boolValue;
       else if (key.equals("series")) seriesCount = intValue;
+      else if (key.equals("resolutions")) resolutionCount = intValue;
+      else if (key.equals("resolutionScale")) resolutionScale = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
       else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.SECOND);
@@ -746,6 +753,12 @@ public class FakeReader extends FormatReader {
     if (lutLength < 1) {
       throw new FormatException("Invalid lutLength: " + lutLength);
     }
+    if (resolutionCount < 1) {
+      throw new FormatException("Invalid resolutionCount: " + resolutionCount);
+    }
+    if (resolutionScale <= 1) {
+      throw new FormatException("Invalid resolutionScale: " + resolutionScale);
+    }
 
     // populate SPW metadata
     MetadataStore store = makeFilterMetadata();
@@ -770,6 +783,7 @@ public class FakeReader extends FormatReader {
     core.clear();
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
+      ms.resolutionCount = resolutionCount;
       core.add(ms);
       ms.sizeX = sizeX;
       ms.sizeY = sizeY;
@@ -790,6 +804,14 @@ public class FakeReader extends FormatReader {
       ms.falseColor = falseColor;
       ms.metadataComplete = metadataComplete;
       ms.thumbnail = thumbnail;
+
+      for (int r=1; r<resolutionCount; r++) {
+        CoreMetadata subres = new CoreMetadata(ms);
+        int scale = (int) Math.pow(resolutionScale, r);
+        subres.sizeX /= scale;
+        subres.sizeY /= scale;
+        core.add(subres);
+      }
     }
 
     // populate OME metadata
