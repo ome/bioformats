@@ -42,6 +42,7 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.IPyramidStore;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
@@ -156,6 +157,17 @@ public final class MetadataTools {
       store.setPixelsSignificantBits(
         new PositiveInteger(r.getBitsPerPixel()), i);
 
+      if (store instanceof IPyramidStore) {
+        for (int res=1; res<r.getResolutionCount(); res++) {
+          r.setResolution(res);
+          ((IPyramidStore) store).setResolutionSizeX(
+            new PositiveInteger(r.getSizeX()), i, res);
+          ((IPyramidStore) store).setResolutionSizeY(
+            new PositiveInteger(r.getSizeY()), i, res);
+        }
+        r.setResolution(0);
+      }
+
       try {
         OMEXMLService service =
           new ServiceFactory().getInstance(OMEXMLService.class);
@@ -261,6 +273,17 @@ public final class MetadataTools {
       populatePixelsOnly(store, i, r.isLittleEndian(), r.getDimensionOrder(),
         pixelType, r.getSizeX(), r.getSizeY(), r.getSizeZ(), r.getSizeC(),
         r.getSizeT(), r.getRGBChannelCount());
+
+      if (store instanceof IPyramidStore) {
+        for (int res=1; res<r.getResolutionCount(); res++) {
+          r.setResolution(res);
+          ((IPyramidStore) store).setResolutionSizeX(
+            new PositiveInteger(r.getSizeX()), i, res);
+          ((IPyramidStore) store).setResolutionSizeY(
+            new PositiveInteger(r.getSizeY()), i, res);
+        }
+        r.setResolution(0);
+      }
     }
     r.setSeries(oldSeries);
   }

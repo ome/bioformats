@@ -108,6 +108,7 @@ public final class ImageConverter {
   private int saveTileWidth = 0, saveTileHeight = 0;
   private boolean validate = false;
   private boolean zeroPadding = false;
+  private boolean flat = true;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -149,6 +150,7 @@ public final class ImageConverter {
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-validate")) validate = true;
         else if (args[i].equals("-padded")) zeroPadding = true;
+        else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-option")) {
           options.set(args[++i], args[++i]);
         }
@@ -226,11 +228,11 @@ public final class ImageConverter {
     String[] s = {
       "To convert a file between formats, run:",
       "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
-      "    [-bigtiff] [-compression codec] [-series series] [-map id]",
-      "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
-      "    [-timepoint timepoint] [-nogroup] [-nolookup] [-autoscale]",
-      "    [-version] [-no-upgrade] [-padded] [-option key value]",
-      "    in_file out_file",
+      "    [-bigtiff] [-compression codec] [-series series] [-noflat]",
+      "    [-map id] [-range start end] [-crop x,y,w,h]",
+      "    [-channel channel] [-z Z] [-timepoint timepoint] [-nogroup]",
+      "    [-nolookup] [-autoscale] [-version] [-no-upgrade] [-padded]",
+      "    [-option key value] in_file out_file",
       "",
       "    -version: print the library version and exit",
       " -no-upgrade: do not perform the upgrade check",
@@ -242,6 +244,7 @@ public final class ImageConverter {
       "    -bigtiff: force BigTIFF files to be written",
       "-compression: specify the codec to use when saving images",
       "     -series: specify which image series to convert",
+      "     -noflat: do not flatten subresolutions",
       "        -map: specify file on disk to which name should be mapped",
       "      -range: specify range of planes to convert (inclusive)",
       "    -nogroup: force multi-file datasets to be read as individual" +
@@ -369,6 +372,7 @@ public final class ImageConverter {
     reader.setGroupFiles(group);
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
+    reader.setFlattenedResolutions(flat);
     OMEXMLService service = null;
     try {
       ServiceFactory factory = new ServiceFactory();
@@ -499,95 +503,99 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
-      firstTile = true;
+      for (int res=0; res<reader.getResolutionCount(); res++) {
+        reader.setResolution(res);
+        firstTile = true;
 
-      if (!dimensionsSet) {
-        width = reader.getSizeX();
-        height = reader.getSizeY();
-      }
-
-      int writerSeries = series == -1 ? q : 0;
-      writer.setSeries(writerSeries);
-      writer.setInterleaved(reader.isInterleaved() && !autoscale);
-      writer.setValidBitsPerPixel(reader.getBitsPerPixel());
-      int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
-
-      int startPlane = (int) Math.max(0, firstPlane);
-      int endPlane = (int) Math.min(numImages, lastPlane);
-      numImages = endPlane - startPlane;
-
-      if (channel >= 0) {
-        numImages /= reader.getEffectiveSizeC();
-      }
-      if (zSection >= 0) {
-        numImages /= reader.getSizeZ();
-      }
-      if (timepoint >= 0) {
-        numImages /= reader.getSizeT();
-      }
-
-      total += numImages;
-
-      int count = 0;
-      for (int i=startPlane; i<endPlane; i++) {
-        int[] coords = reader.getZCTCoords(i);
-
-        if ((zSection >= 0 && coords[0] != zSection) || (channel >= 0 &&
-          coords[1] != channel) || (timepoint >= 0 && coords[2] != timepoint))
-        {
-          continue;
+        if (!dimensionsSet) {
+          width = reader.getSizeX();
+          height = reader.getSizeY();
         }
 
-        String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
-        if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
-          writer.setId(outputName);
-          if (compression != null) writer.setCompression(compression);
+        int writerSeries = series == -1 ? q : 0;
+        writer.setSeries(writerSeries);
+        writer.setResolution(res);
+        writer.setInterleaved(reader.isInterleaved() && !autoscale);
+        writer.setValidBitsPerPixel(reader.getBitsPerPixel());
+        int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
+
+        int startPlane = (int) Math.max(0, firstPlane);
+        int endPlane = (int) Math.min(numImages, lastPlane);
+        numImages = endPlane - startPlane;
+
+        if (channel >= 0) {
+          numImages /= reader.getEffectiveSizeC();
         }
-        else {
-          int tileNum = outputName.indexOf(FormatTools.TILE_NUM);
-          int tileX = outputName.indexOf(FormatTools.TILE_X);
-          int tileY = outputName.indexOf(FormatTools.TILE_Y);
-          if (tileNum < 0 && (tileX < 0 || tileY < 0)) {
-            throw new FormatException("Invalid file name pattern; " +
-              FormatTools.TILE_NUM + " or both of " + FormatTools.TILE_X +
-              " and " + FormatTools.TILE_Y + " must be specified.");
+        if (zSection >= 0) {
+          numImages /= reader.getSizeZ();
+        }
+        if (timepoint >= 0) {
+          numImages /= reader.getSizeT();
+        }
+
+        total += numImages;
+
+        int count = 0;
+        for (int i=startPlane; i<endPlane; i++) {
+          int[] coords = reader.getZCTCoords(i);
+
+          if ((zSection >= 0 && coords[0] != zSection) || (channel >= 0 &&
+            coords[1] != channel) || (timepoint >= 0 && coords[2] != timepoint))
+          {
+            continue;
           }
-        }
 
-        int outputIndex = 0;
-        if (nextOutputIndex.containsKey(outputName)) {
-          outputIndex = nextOutputIndex.get(outputName);
-        }
-
-        long s = System.currentTimeMillis();
-        long m = convertPlane(writer, i, outputIndex, outputName);
-        long e = System.currentTimeMillis();
-        read += m - s;
-        write += e - m;
-
-        nextOutputIndex.put(outputName, outputIndex + 1);
-        if (i == endPlane - 1) {
-          nextOutputIndex.remove(outputName);
-        }
-
-        // log number of planes processed every second or so
-        if (count == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
-          int current = (count - startPlane) + 1;
-          int percent = 100 * current / numImages;
-          StringBuilder sb = new StringBuilder();
-          sb.append("\t");
-          int numSeries = last - first;
-          if (numSeries > 1) {
-            sb.append("Series ");
-            sb.append(q);
-            sb.append(": converted ");
+          String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
+          if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
+            writer.setId(outputName);
+            if (compression != null) writer.setCompression(compression);
           }
-          else sb.append("Converted ");
-          LOGGER.info(sb.toString() + "{}/{} planes ({}%)",
-            new Object[] {current, numImages, percent});
-          timeLastLogged = e;
+          else {
+            int tileNum = outputName.indexOf(FormatTools.TILE_NUM);
+            int tileX = outputName.indexOf(FormatTools.TILE_X);
+            int tileY = outputName.indexOf(FormatTools.TILE_Y);
+            if (tileNum < 0 && (tileX < 0 || tileY < 0)) {
+              throw new FormatException("Invalid file name pattern; " +
+                FormatTools.TILE_NUM + " or both of " + FormatTools.TILE_X +
+                " and " + FormatTools.TILE_Y + " must be specified.");
+            }
+          }
+
+          int outputIndex = 0;
+          if (nextOutputIndex.containsKey(outputName)) {
+            outputIndex = nextOutputIndex.get(outputName);
+          }
+
+          long s = System.currentTimeMillis();
+          long m = convertPlane(writer, i, outputIndex, outputName);
+          long e = System.currentTimeMillis();
+          read += m - s;
+          write += e - m;
+
+          nextOutputIndex.put(outputName, outputIndex + 1);
+          if (i == endPlane - 1) {
+            nextOutputIndex.remove(outputName);
+          }
+
+          // log number of planes processed every second or so
+          if (count == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
+            int current = (count - startPlane) + 1;
+            int percent = 100 * current / numImages;
+            StringBuilder sb = new StringBuilder();
+            sb.append("\t");
+            int numSeries = last - first;
+            if (numSeries > 1) {
+              sb.append("Series ");
+              sb.append(q);
+              sb.append(": converted ");
+            }
+            else sb.append("Converted ");
+            LOGGER.info(sb.toString() + "{}/{} planes ({}%)",
+              new Object[] {current, numImages, percent});
+            timeLastLogged = e;
+          }
+          count++;
         }
-        count++;
       }
     }
     writer.close();

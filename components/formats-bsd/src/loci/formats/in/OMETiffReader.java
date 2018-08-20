@@ -267,7 +267,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
   /* @see loci.formats.SubResolutionFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    int series = getSeries();
     if (info[series][lastPlane] == null ||
       info[series][lastPlane].reader == null ||
       info[series][lastPlane].id == null)
@@ -281,7 +280,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
   /* @see loci.formats.SubResolutionFormatReader#get16BitLookupTable() */
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
-    int series = getSeries();
     if (info[series][lastPlane] == null ||
       info[series][lastPlane].reader == null ||
       info[series][lastPlane].id == null)
@@ -316,7 +314,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    int series = getSeries();
     lastPlane = no;
     int i = info[series][no].ifd;
 
@@ -358,7 +355,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    int series = getSeries();
     if (noPixels) return null;
     final List<String> usedFiles = new ArrayList<>();
     if (metadataFile != null) {
@@ -428,18 +424,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return ((OMETiffCoreMetadata) currentCore()).tileHeight;
-  }
-
-  /* @see IFormatReader#getcoredataList() */
-  @Override
-  public List<CoreMetadata> getCoreMetadataList() {
-    FormatTools.assertId(currentId, true, 1);
-    if (flattenedResolutions) {
-      return core.getSeriesList();
-    }
-    else {
-      return core.getFlattenedList();
-    }
   }
 
   // -- Internal FormatReader API methods --
@@ -1273,14 +1257,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   }
 
   private void addSubResolutions() throws IOException, FormatException {
-    // If sub-resolutions are flattened, we simply ignore them.  This
-    // is because the MetadataStore contains only the Images present
-    // in the original OME-XML and adding additional ones afterward is
-    // rather difficult.  It also interacts badly with the reader
-    // wrappers.
-    if(flattenedResolutions) {
-      return;
-    }
+    boolean repopulateMetadata = false;
     for(int s = 0; s < core.size(); s++) {
       OMETiffCoreMetadata c0 = (OMETiffCoreMetadata) core.get(s, 0);
       int i = info[s][0].ifd;
@@ -1299,6 +1276,11 @@ public class OMETiffReader extends SubResolutionFormatReader {
         new RandomAccessInputStream(info[s][0].id, 16);
       TiffParser p = new TiffParser(rs);
       IFDList subifds = p.getSubIFDs(ifd);
+      c0.resolutionCount = subifds.size() + 1;
+
+      if (c0.resolutionCount > 1 && hasFlattenedResolutions()) {
+        repopulateMetadata = true;
+      }
 
       for (int si = 0; si < subifds.size(); si++) {
         IFD subifd = subifds.get(si);
@@ -1333,6 +1315,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
     }
     core.reorder();
+
+    // make sure the Image count matches the series count when
+    // the resolutions are flattened
+    if (repopulateMetadata) {
+      MetadataTools.populatePixels(metadataStore, this);
+    }
   }
 
   /** Extracts the OME-XML from the current {@link #metadataFile}. */

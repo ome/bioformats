@@ -34,6 +34,7 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.io.IOException;
+import java.util.List;
 
 import loci.common.Region;
 import loci.formats.codec.CodecOptions;
@@ -42,7 +43,7 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * Interface for all biological file format writers.
  */
-public interface IFormatWriter extends IFormatHandler {
+public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
 
   /**
    * Saves the given image to the current series in the current file.
@@ -234,5 +235,17 @@ public interface IFormatWriter extends IFormatHandler {
    * @throws FormatException Tile size must be greater than 0 and less than the image height
    */
   int setTileSizeY(int tileSize) throws FormatException;
+
+  /**
+   * Specify a list of resolution objects for the current series.
+   * If resolutions are specified using this method, then any resolution
+   * data supplied via the MetadataRetrieve will be ignored.
+   */
+  void setResolutions(List<Resolution> resolutions);
+
+  /**
+   * Get a list of resolution objects for the current series.
+   */
+  List<Resolution> getResolutions();
 
 }
