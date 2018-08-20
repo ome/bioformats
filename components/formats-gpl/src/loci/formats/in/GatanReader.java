@@ -553,8 +553,13 @@ public class GatanReader extends FormatReader {
         parseTags(num, labelString.isEmpty() ? parent : labelString, indent + "  ");
         LOGGER.debug("{}}", indent);
       }
+      else if (type == 23) {
+        in.skipBytes(5);
+        i--;
+      }
       else {
         LOGGER.debug("{}{}: unknown type: {}", new Object[] {indent, i, type});
+        LOGGER.debug("  unknown type @ fp = {}", in.getFilePointer());
       }
 
       NumberFormat f = NumberFormat.getInstance(Locale.ENGLISH);
