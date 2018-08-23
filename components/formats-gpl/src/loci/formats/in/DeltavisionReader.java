@@ -1570,7 +1570,7 @@ public class DeltavisionReader extends FormatReader {
       case 10116: // Olympus 4X/0.16, U-Plan S-Apo, UIS2, 1-U2B822
         lensNA = 0.16;
         magnification = 4.0;
-        workingDistance = 13;
+        workingDistance = 13.;
         immersion = getImmersion("Air");
         model = "1-U2B822";
         break;
