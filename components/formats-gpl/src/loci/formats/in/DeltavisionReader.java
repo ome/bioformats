@@ -1425,7 +1425,6 @@ public class DeltavisionReader extends FormatReader {
     String manufacturer = null;
     String model = null;
     double magnification = 0;
-    Double calibratedMagnification = null;
 
     if (lensID >= 10000 && lensID <= 32000) {
       if (lensID < 12000) {
@@ -2781,9 +2780,6 @@ public class DeltavisionReader extends FormatReader {
     store.setObjectiveManufacturer(manufacturer, 0, 0);
     store.setObjectiveModel(model, 0, 0);
     store.setObjectiveNominalMagnification(magnification, 0, 0);
-    if (calibratedMagnification != null) {
-      store.setObjectiveCalibratedMagnification(calibratedMagnification, 0, 0);
-    }
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MILLIMETER), 0, 0);
     }
