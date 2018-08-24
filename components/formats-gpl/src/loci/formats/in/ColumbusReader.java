@@ -28,7 +28,6 @@ package loci.formats.in;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -479,7 +478,6 @@ public class ColumbusReader extends FormatReader {
       Element image = (Element) images.item(i);
       Plane p = new Plane();
 
-      Location fileLoc = null;
       NodeList children = image.getChildNodes();
       for (int q=0; q<children.getLength(); q++) {
         Node child = children.item(q);
@@ -487,7 +485,6 @@ public class ColumbusReader extends FormatReader {
         String value = child.getTextContent();
         NamedNodeMap attrs = child.getAttributes();
         if (name.equals("URL")) {
-          fileLoc = new Location(parent, value);
           p.file = new Location(parent, value).getAbsolutePath();
 
           String buffer = attrs.getNamedItem("BufferNo").getNodeValue();
@@ -503,7 +500,10 @@ public class ColumbusReader extends FormatReader {
           p.field = Integer.parseInt(value) - 1;
         }
         else if (name.equals("PlaneID")) {
-          p.field = Integer.parseInt(value) - 1;
+          int planeID = Integer.parseInt(value) - 1;
+          if (planeID > p.field) {
+            p.field = planeID;
+          }
         }
         else if (name.equals("TimepointID")) {
           p.timepoint = Integer.parseInt(value) - 1;
@@ -563,9 +563,7 @@ public class ColumbusReader extends FormatReader {
         }
       }
 
-      if (fileLoc.exists()) {
-        planes.add(p);
-      }
+      planes.add(p);
     }
 
   }
