@@ -2387,7 +2387,7 @@ public class DeltavisionReader extends FormatReader {
       case 14001: // Zeiss 100X/1.40, Plan - APOCHROMAT
         lensNA = 1.40;
         magnification = 100.0;
-        workingDistance = 0.1 ;
+        workingDistance = 0.1;
         immersion = getImmersion("Oil");
         model = "44 07 08 (02)";
         correction = getCorrection("PlanApo");
@@ -2466,14 +2466,14 @@ public class DeltavisionReader extends FormatReader {
         lensNA = 1.00;
         magnification = 40.0;
         immersion = getImmersion("Oil");
-        model = "44 07 51 ";
+        model = "44 07 51";
         correction = getCorrection("PlanApo");
         break;
       case 14403: // Zeiss 40X/1.20, Water Immersion, Corr Collar, C - APOCHROMAT
         lensNA = 1.20;
         magnification = 40.;
         immersion = getImmersion("Water");
-        model = "44 00 52 ";
+        model = "44 00 52";
         correction = getCorrection("Apo");
         break;
       case 14404: // Zeiss 40X/0.75, Plan - NEOFLUAR, Phase2
