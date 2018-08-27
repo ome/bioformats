@@ -183,7 +183,20 @@ public class Configuration {
   }
 
   public int getSeriesCount() {
-    return Integer.parseInt(globalTable.get(SERIES_COUNT));
+    return getSeriesCount(true);
+  }
+
+  public int getSeriesCount(boolean flattened) {
+    int tableCount = Integer.parseInt(globalTable.get(SERIES_COUNT));
+    if (flattened) {
+      int count = 0;
+      for (int i=0; i<tableCount; i++) {
+        setSeries(i, false);
+        count += getResolutionCount();
+      }
+      return count;
+    }
+    return tableCount;
   }
 
   // -- Per-series metadata --
@@ -408,13 +421,44 @@ public class Configuration {
     return currentTable.get(DATE);
   }
 
+  public int getResolutionCount() {
+    int count = 1;
+    if (currentTable.get(RESOLUTION_COUNT) != null) {
+      count = Integer.parseInt(currentTable.get(RESOLUTION_COUNT));
+    }
+    return count;
+  }
+
   public void setSeries(int series) throws IndexOutOfBoundsException {
+    setSeries(series, true);
+  }
+
+  public void setSeries(int series, boolean flattened) throws IndexOutOfBoundsException {
     Location file = new Location(dataFile);
+    int s = series, r = 0;
+    int index = series;
+    if (flattened) {
+      index = 0;
+      s = 0;
+      while (index < series) {
+        setSeries(s, false);
+        int resolutionCount = getResolutionCount();
+        if (resolutionCount + index <= series) {
+          index += resolutionCount;
+          s++;
+        }
+        else {
+          r = series - index;
+          index += r;
+        }
+      }
+    }
+
     try {
-      setResolution(series, 0);
+      setResolution(s, r);
     }
     catch (IndexOutOfBoundsException e) {
-      String tableName = file.getName() + SERIES + series;
+      String tableName = file.getName() + SERIES + index;
       currentTable = ini.getTable(tableName);
       if (currentTable == null) {
         throw new IndexOutOfBoundsException("Invalid table name: " + tableName);
@@ -426,6 +470,10 @@ public class Configuration {
     Location file = new Location(dataFile);
     String tableName = file.getName() + SERIES + series + " " + RESOLUTION + resolution;
     currentTable = ini.getTable(tableName);
+    if (currentTable == null && resolution == 0) {
+      // don't require the resolution key for single-resolution series
+      currentTable = ini.getTable(file.getName() + SERIES + series);
+    }
     if (currentTable == null) {
       throw new IndexOutOfBoundsException("Invalid table name: " + tableName);
     }
