@@ -423,7 +423,7 @@ public class KLBReader extends FormatReader {
         fileList[index] = xyProjections[timepoint][channel];
         fileList[index + 1] = xzProjections[timepoint][channel];
         fileList[index + 2] = yzProjections[timepoint][channel];
-        fileList[index + 2] = fusedStacks[timepoint][channel];
+        fileList[index + 3] = fusedStacks[timepoint][channel];
         index += 4;
       }
     }
