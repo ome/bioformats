@@ -408,15 +408,21 @@ public class NDPIReader extends BaseTiffReader {
     core.clear();
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
-      core.add(ms);
       if (s == 0) {
         ms.resolutionCount = pyramidHeight;
+        core.add(ms);
+      }
+      else if (s < pyramidHeight) {
+        core.add(0, ms);
+      }
+      else {
+        core.add(ms);
       }
     }
 
     for (int s=0; s<core.size(); s++) {
       for (int r = 0; r < core.size(s); r++) {
-        IFD ifd = ifds.get(getIFDIndex(s, 0));
+        IFD ifd = ifds.get(getIFDIndex(core.flattenedIndex(s, r), 0));
         PhotoInterp p = ifd.getPhotometricInterpretation();
         int samples = ifd.getSamplesPerPixel();
         CoreMetadata ms = core.get(s, r);
