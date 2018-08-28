@@ -229,13 +229,18 @@ public class VectraReader extends BaseTiffReader {
       if (s == 0) {
         ms.resolutionCount = pyramidDepth;
       }
-      core.add(ms);
+      if (s > 0 && s < pyramidDepth) {
+        core.add(0, ms);
+      }
+      else {
+        core.add(ms);
+      }
     }
 
     for (int s = 0; s < core.size(); s++) {
       for (int r = 0; r < core.size(s); r++) {
         CoreMetadata ms = core.get(s, r);
-        int index = getIFDIndex(s, 0);
+        int index = getIFDIndex(core.flattenedIndex(s, r), 0);
         IFD ifd = ifds.get(index);
         PhotoInterp p = ifd.getPhotometricInterpretation();
         int samples = ifd.getSamplesPerPixel();
@@ -257,7 +262,7 @@ public class VectraReader extends BaseTiffReader {
         ms.interleaved = false;
         ms.falseColor = false;
         ms.dimensionOrder = "XYCZT";
-        ms.thumbnail = s != 0;
+        ms.thumbnail = s != 0 || r > 0;
       }
     }
   }
@@ -403,7 +408,7 @@ public class VectraReader extends BaseTiffReader {
     if (name != null) {
       return name;
     }
-    return core.size() == ifds.size() - 1 ? "label" : "macro";
+    return core.flattenedSize() == ifds.size() - 1 ? "label" : "macro";
   }
 
   private String getIFDComment(int ifdIndex) {
@@ -457,7 +462,7 @@ public class VectraReader extends BaseTiffReader {
 
     }
     // optional extra macro or label image at the end of the IFD list
-    return ifds.size() - (core.size() - coreIndex);
+    return ifds.size() - (core.flattenedSize() - coreIndex);
   }
 
 }
