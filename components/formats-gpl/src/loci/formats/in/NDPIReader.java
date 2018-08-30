@@ -422,7 +422,8 @@ public class NDPIReader extends BaseTiffReader {
 
     for (int s=0; s<core.size(); s++) {
       for (int r = 0; r < core.size(s); r++) {
-        IFD ifd = ifds.get(getIFDIndex(core.flattenedIndex(s, r), 0));
+        int index = core.flattenedIndex(s, r);
+        IFD ifd = ifds.get(getIFDIndex(index, 0));
         PhotoInterp p = ifd.getPhotometricInterpretation();
         int samples = ifd.getSamplesPerPixel();
         CoreMetadata ms = core.get(s, r);
@@ -430,7 +431,7 @@ public class NDPIReader extends BaseTiffReader {
 
         ms.sizeX = (int) ifd.getImageWidth();
         ms.sizeY = (int) ifd.getImageLength();
-        ms.sizeZ = s < pyramidHeight ? sizeZ : 1;
+        ms.sizeZ = index < pyramidHeight ? sizeZ : 1;
         ms.sizeT = 1;
         ms.sizeC = ms.rgb ? samples : 1;
         ms.littleEndian = ifd.isLittleEndian();
@@ -443,7 +444,7 @@ public class NDPIReader extends BaseTiffReader {
           ms.sizeX > MAX_SIZE && ms.sizeY > MAX_SIZE;
         ms.falseColor = false;
         ms.dimensionOrder = "XYCZT";
-        ms.thumbnail = s != 0;
+        ms.thumbnail = index != 0;
       }
     }
 
