@@ -129,6 +129,9 @@ public class Configuration {
   private IniTable currentTable;
   private IniTable globalTable;
 
+  // flattened series count for this dataset
+  private Integer flattenedCount = null;
+
   // -- Constructors --
 
   public Configuration(String dataFile, String configFile) throws IOException {
@@ -189,12 +192,15 @@ public class Configuration {
   public int getSeriesCount(boolean flattened) {
     int tableCount = Integer.parseInt(globalTable.get(SERIES_COUNT));
     if (flattened) {
-      int count = 0;
-      for (int i=0; i<tableCount; i++) {
-        setSeries(i, false);
-        count += getResolutionCount();
+      if (flattenedCount == null) {
+        int count = 0;
+        for (int i=0; i<tableCount; i++) {
+          setSeries(i, false);
+          count += getResolutionCount();
+        }
+        flattenedCount = count;
       }
-      return count;
+      return flattenedCount;
     }
     return tableCount;
   }
@@ -434,10 +440,10 @@ public class Configuration {
   }
 
   public void setSeries(int series, boolean flattened) throws IndexOutOfBoundsException {
-    Location file = new Location(dataFile);
     int s = series, r = 0;
     int index = series;
-    if (flattened) {
+
+    if (flattened && getSeriesCount(true) != getSeriesCount(false)) {
       index = 0;
       s = 0;
       while (index < series) {
@@ -458,6 +464,7 @@ public class Configuration {
       setResolution(s, r);
     }
     catch (IndexOutOfBoundsException e) {
+      Location file = new Location(dataFile);
       String tableName = file.getName() + SERIES + index;
       currentTable = ini.getTable(tableName);
       if (currentTable == null) {
