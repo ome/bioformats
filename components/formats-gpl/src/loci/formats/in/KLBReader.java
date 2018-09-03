@@ -151,7 +151,7 @@ public class KLBReader extends FormatReader {
     if (x > 0) xBlockStartIndex = x / dims_blockSize[0];
     int yBlockStartIndex = 0;
     if (y > 0) yBlockStartIndex = y / dims_blockSize[1];
-    
+
     int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
     int blockSizeBytes = bytesPerPixel;
     
@@ -168,21 +168,22 @@ public class KLBReader extends FormatReader {
     long compressedBlockSize = blockOffsets[1] - blockOffsets[0];
     int outputOffset = 0;
 
-    int index = 0;
     for (int yy=0; yy < yNumBlocks; yy++) {
       for (int xx=0; xx < xNumBlocks; xx++) {
 
         //calculate coordinate (in block space)        
         int blockId = (yBlockStartIndex + yy) * blocksPerImageRow + xBlockStartIndex + xx;
-        int blockIdx_aux = index;
-        index++;
 
         for (int ii = 0; ii < KLB_DATA_DIMS; ii++)
         {
-          coordBlock[ii] = blockIdx_aux % dimsBlock[ii];
-          blockIdx_aux -= coordBlock[ii];
-          blockIdx_aux /= dimsBlock[ii];
-          coordBlock[ii] *= dims_blockSize[ii];//parsing coordinates to image space (not block anymore)
+          //parsing coordinates to image space (not block anymore)
+          if (ii == 1) {
+            coordBlock[1] = blockId / dimsBlock[0];
+          }
+          else {
+            coordBlock[ii] = blockId % dimsBlock[ii];
+          }
+          coordBlock[ii] *= dims_blockSize[ii];
         }
         compressedBlockSize = blockId == 0 ? blockOffsets[0] : blockOffsets[blockId] - blockOffsets[blockId-1];
         long offset =  blockId == 0 ? 0 : blockOffsets[blockId-1];
@@ -222,20 +223,30 @@ public class KLBReader extends FormatReader {
           block = new ZlibCodec().decompress(block, options);
         }
 
-        // Calculate block size in case we had border block        
-        for (int ii = 0; ii < KLB_DATA_DIMS; ii++) {
+        // Calculate block size in case we had border block
+        blockSizeAux[0] = Math.min(dims_blockSize[0], (x + w - coordBlock[0]));
+        blockSizeAux[0] = Math.min(blockSizeAux[0], coordBlock[0] + dims_blockSize[0] - x);
+        blockSizeAux[1] = Math.min(dims_blockSize[1], (y + h - coordBlock[1]));
+        blockSizeAux[1] = Math.min(blockSizeAux[1], coordBlock[1] + dims_blockSize[1] - y);
+        for (int ii = 2; ii < KLB_DATA_DIMS; ii++) {
           blockSizeAux[ii] = Math.min(dims_blockSize[ii], (dims_xyzct[ii] - coordBlock[ii]));
         }
 
         try {
           int imageRowSize = w * bytesPerPixel;
           int blockRowSize = blockSizeAux[0] * bytesPerPixel;
+          int fullBlockRowSize = dims_blockSize[0] * bytesPerPixel;
 
           // Location in output buffer to copy block
-          outputOffset = (imageRowSize * coordBlock[1]) + (coordBlock[0] * bytesPerPixel);
+          outputOffset = (imageRowSize * (coordBlock[1] - y)) + ((coordBlock[0] - x) * bytesPerPixel);
+          if (coordBlock[0] < x && blockSizeAux[0] != dims_blockSize[0]) outputOffset += (dims_blockSize[0] - blockSizeAux[0]) * bytesPerPixel;
+          if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1]) outputOffset = (coordBlock[0] - x) * bytesPerPixel;
+          if (coordBlock[1] < y && coordBlock[0] < x && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) outputOffset = 0;
 
           // Location within the block for required XY plane
           int inputOffset = (coordBlock[2] % dims_blockSize[2]) * blockRowSize * blockSizeAux[1];
+          if (coordBlock[0] < x && blockSizeAux[0] != dims_blockSize[0]) inputOffset += (dims_blockSize[0] - blockSizeAux[0]) * bytesPerPixel;
+          if (coordBlock[1] < x && blockSizeAux[1] != dims_blockSize[1]) inputOffset += dims_blockSize[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
           inputOffset += (coordBlock[3] % dims_blockSize[3]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2];
           inputOffset += (coordBlock[4] % dims_blockSize[4]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2] * blockSizeAux[3];
 
@@ -243,7 +254,7 @@ public class KLBReader extends FormatReader {
           for (int numRows = 0; numRows < blockSizeAux[1]; numRows++) {
             int destPos = outputOffset + (numRows * imageRowSize);
             if (destPos + blockRowSize <= buf.length) {
-              System.arraycopy(block, inputOffset + (numRows * blockRowSize), buf, outputOffset + (numRows * imageRowSize), blockRowSize);
+              System.arraycopy(block, inputOffset + (numRows * fullBlockRowSize), buf, outputOffset + (numRows * imageRowSize), blockRowSize);
             }
           }
         }
@@ -360,6 +371,13 @@ public class KLBReader extends FormatReader {
     store.setImageID(imageID, 2);
     imageID = MetadataTools.createLSID("Image", 3);
     store.setImageID(imageID, 3);
+    MetadataTools.populatePixels(store, this);
+    for (int c = 0; c < sizeC; c++) {
+      store.setChannelName(MetadataTools.createLSID("Channel", c), 0, c);
+      store.setChannelName(MetadataTools.createLSID("Channel", c), 1, c);
+      store.setChannelName(MetadataTools.createLSID("Channel", c), 2, c);
+      store.setChannelName(MetadataTools.createLSID("Channel", c), 3, c);
+    }
   }
 
   private void readHeader(CoreMetadata coreMeta) throws IOException, FormatException {
