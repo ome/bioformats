@@ -350,7 +350,7 @@ public interface IFormatReader extends IFormatHandler {
    * Returns true if we should group files in multi-file formats.
    *
    * @see #setGroupFiles(boolean)
-   * @see #fileGroupOptions(String)
+   * @see #fileGroupOption(String)
    */
   boolean isGroupFiles();
 
