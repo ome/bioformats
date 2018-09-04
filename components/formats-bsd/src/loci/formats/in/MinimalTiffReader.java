@@ -97,6 +97,12 @@ public class MinimalTiffReader extends FormatReader {
   /** Merge SubIFDs into the main IFD list. */
   protected transient boolean mergeSubIFDs = false;
 
+  /**
+   * Whether or not IFDs with different dimensions can be
+   * split into separate series.
+   */
+  protected transient boolean canSeparateSeries = true;
+
   /** Number of JPEG 2000 resolution levels. */
   private Integer resolutionLevels;
 
@@ -490,7 +496,7 @@ public class MinimalTiffReader extends FormatReader {
             (int) ifd.getImageLength() != y ||
             ifd.getPixelType() != type)
           {
-            separateSeries = true;
+            separateSeries = canSeparateSeries;
           }
         }
       }
