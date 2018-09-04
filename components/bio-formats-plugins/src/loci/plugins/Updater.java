@@ -63,7 +63,7 @@ public class Updater implements PlugIn {
   @Override
   public void run(String arg) {
     if (isFiji()) {
-      IJ.showMessage("Please use 'Help > Update Fiji' to update.");
+      IJ.showMessage("Please use 'Help > Update...' to update.");
       return;
     }
 
