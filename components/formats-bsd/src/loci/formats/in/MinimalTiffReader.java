@@ -511,7 +511,9 @@ public class MinimalTiffReader extends FormatReader {
 
     if (separateSeries) {
       core.clear();
-      for (int i=0; i<ifds.size(); i++) {
+      ms0.imageCount = 1;
+      core.add(ms0);
+      for (int i=1; i<ifds.size(); i++) {
         core.add(new CoreMetadata());
         core.get(i).imageCount = 1;
       }
@@ -633,6 +635,9 @@ public class MinimalTiffReader extends FormatReader {
 
     // New core metadata now that we know how many sub-resolutions we have.
     if (resolutionLevels != null && subResolutionIFDs.size() > 0) {
+      ms0 = core.get(0);
+      core.clear();
+      core.add(ms0);
       IFDList ifds = subResolutionIFDs.get(0);
       int seriesCount = ifds.size() + 1;
       if (!hasFlattenedResolutions()) {
@@ -650,7 +655,7 @@ public class MinimalTiffReader extends FormatReader {
       }
 
       for (IFD ifd : ifds) {
-        CoreMetadata ms =  new CoreMetadata(this, 0);
+        CoreMetadata ms = new CoreMetadata(this, 0);
         core.add(ms);
         ms.sizeX = (int) ifd.getImageWidth();
         ms.sizeY = (int) ifd.getImageLength();
