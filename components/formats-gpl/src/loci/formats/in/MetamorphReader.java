@@ -622,7 +622,7 @@ public class MetamorphReader extends BaseTiffReader {
             }
             stks[seriesNdx][pt[seriesNdx]] = prefix;
             String formatSuffix = ".TIF";
-            if (version.equals(NDINFOFILE_VER1) && anyZ && j < hasZ.size() && hasZ.get(j)) {
+            if (version.equals(NDINFOFILE_VER1) && ((anyZ && j < hasZ.size() && hasZ.get(j)) || globalDoZ)) {
               formatSuffix = ".STK";
             }
 
