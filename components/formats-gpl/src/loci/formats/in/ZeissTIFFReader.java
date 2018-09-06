@@ -280,7 +280,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     TIFFInfo info = new TIFFInfo();
 
     Location lxml = null;
-    Location l = new Location(id);
+    Location l = new Location(id).getAbsoluteFile();
     String name = l.getAbsolutePath();
     // This "original" name is only tentative; it might be set to to eiher the top-level image or thumbnail (if it's the XML file, and the top-level file exists, or the XML file if it does not exist)
     if (name.endsWith(".tif")) {
@@ -294,6 +294,9 @@ public class ZeissTIFFReader extends BaseZeissReader {
         info.multifile = false;
       } else { // Multiple planes
         Location lb = new Location(name + "_files");
+        if (!lb.exists()) {
+          lb = new Location(name + "_Files");
+        }
         lxml = new Location(lb, XML_NAME);
         if (lb.exists() && lxml.exists()) { // Planes in subdirectory
           info.xmlname = lxml.getAbsolutePath();
