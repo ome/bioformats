@@ -534,7 +534,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
    * disk (typically all lower case on disk and possibly mixed case in XML).
    * If a matching file cannot be found, then the path from the XML file is returned.
    *
-   * Uses {@link directoryCache} so that any given directory is only listed once
+   * Uses {@link #directoryCache} so that any given directory is only listed once
    * per initialization, not once per lookup.
    */
   private String lookup(String src) {
