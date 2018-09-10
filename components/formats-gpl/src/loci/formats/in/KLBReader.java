@@ -153,7 +153,6 @@ public class KLBReader extends FormatReader {
     if (y > 0) yBlockStartIndex = y / dims_blockSize[1];
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
-    int blockSizeBytes = bytesPerPixel;
     
     int[]dimsBlock = new int[KLB_DATA_DIMS]; //Number of blocks on each dimension
     int[] coordBlock = new int[KLB_DATA_DIMS]; //Coordinates
@@ -161,7 +160,6 @@ public class KLBReader extends FormatReader {
 
     for (int ii = 0; ii < KLB_DATA_DIMS; ii++)
     {
-      blockSizeBytes *= dims_blockSize[ii];
       dimsBlock[ii] = (int) Math.ceil((float)dims_xyzct[ii] / (float)dims_blockSize[ii]);
     }
 
@@ -185,6 +183,27 @@ public class KLBReader extends FormatReader {
           }
           coordBlock[ii] *= dims_blockSize[ii];
         }
+
+        // Calculate block size in case we had border block
+        blockSizeAux[0] = Math.min(dims_blockSize[0], (x + w - coordBlock[0]));
+        blockSizeAux[0] = Math.min(blockSizeAux[0], coordBlock[0] + dims_blockSize[0] - x);
+        blockSizeAux[1] = Math.min(dims_blockSize[1], (y + h - coordBlock[1]));
+        blockSizeAux[1] = Math.min(blockSizeAux[1], coordBlock[1] + dims_blockSize[1] - y);
+        for (int ii = 2; ii < KLB_DATA_DIMS; ii++) {
+          blockSizeAux[ii] = Math.min(dims_blockSize[ii], (dims_xyzct[ii] - coordBlock[ii]));
+        }
+
+        int blockSizeBytes = bytesPerPixel;
+        for (int ii = 0; ii < KLB_DATA_DIMS; ii++)
+        {
+          if (ii == 0 && coordBlock[ii] + blockSizeAux[ii] >= dims_xyzct[ii]) {
+            blockSizeBytes *= blockSizeAux[0];
+          }
+          else {
+            blockSizeBytes *= dims_blockSize[ii];
+          }
+        }
+
         compressedBlockSize = blockId == 0 ? blockOffsets[0] : blockOffsets[blockId] - blockOffsets[blockId-1];
         long offset =  blockId == 0 ? 0 : blockOffsets[blockId-1];
 
@@ -223,15 +242,6 @@ public class KLBReader extends FormatReader {
           block = new ZlibCodec().decompress(block, options);
         }
 
-        // Calculate block size in case we had border block
-        blockSizeAux[0] = Math.min(dims_blockSize[0], (x + w - coordBlock[0]));
-        blockSizeAux[0] = Math.min(blockSizeAux[0], coordBlock[0] + dims_blockSize[0] - x);
-        blockSizeAux[1] = Math.min(dims_blockSize[1], (y + h - coordBlock[1]));
-        blockSizeAux[1] = Math.min(blockSizeAux[1], coordBlock[1] + dims_blockSize[1] - y);
-        for (int ii = 2; ii < KLB_DATA_DIMS; ii++) {
-          blockSizeAux[ii] = Math.min(dims_blockSize[ii], (dims_xyzct[ii] - coordBlock[ii]));
-        }
-
         try {
           int imageRowSize = w * bytesPerPixel;
           int blockRowSize = blockSizeAux[0] * bytesPerPixel;
@@ -245,16 +255,23 @@ public class KLBReader extends FormatReader {
 
           // Location within the block for required XY plane
           int inputOffset = (coordBlock[2] % dims_blockSize[2]) * blockRowSize * blockSizeAux[1];
-          if (coordBlock[0] < x && blockSizeAux[0] != dims_blockSize[0]) inputOffset += (dims_blockSize[0] - blockSizeAux[0]) * bytesPerPixel;
-          if (coordBlock[1] < x && blockSizeAux[1] != dims_blockSize[1]) inputOffset += dims_blockSize[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
+          if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) inputOffset += blockSizeAux[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
+          else if (coordBlock[0] < x && blockSizeAux[0] != dims_blockSize[0]) inputOffset += (dims_blockSize[0] - blockSizeAux[0]) * bytesPerPixel;
+          else if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1]) inputOffset += dims_blockSize[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
+          
           inputOffset += (coordBlock[3] % dims_blockSize[3]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2];
           inputOffset += (coordBlock[4] % dims_blockSize[4]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2] * blockSizeAux[3];
 
+          // If its the last block in a row then use the corrected rowSize
+          if (coordBlock[0] + blockSizeAux[0] == dims_xyzct[0] ) {
+            fullBlockRowSize = blockRowSize;
+          }
+    
           // Copy row at a time from decompressed block to output buffer
           for (int numRows = 0; numRows < blockSizeAux[1]; numRows++) {
             int destPos = outputOffset + (numRows * imageRowSize);
             if (destPos + blockRowSize <= buf.length) {
-              System.arraycopy(block, inputOffset + (numRows * fullBlockRowSize), buf, outputOffset + (numRows * imageRowSize), blockRowSize);
+              System.arraycopy(block, inputOffset + (numRows * fullBlockRowSize), buf, destPos, blockRowSize);
             }
           }
         }
