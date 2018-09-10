@@ -243,6 +243,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>

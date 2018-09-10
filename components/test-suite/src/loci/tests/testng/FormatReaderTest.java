@@ -682,7 +682,9 @@ public class FormatReaderTest {
     String testName = "SeriesCount";
     if (!initFile()) result(testName, false, "initFile");
 
-    result(testName, reader.getSeriesCount() == config.getSeriesCount());
+    result(testName, reader.getSeriesCount() == config.getSeriesCount(),
+      "got " + reader.getSeriesCount() +
+      ", expected " + config.getSeriesCount());
   }
 
   @Test(groups = {"all", "fast", "automated"})
@@ -1921,6 +1923,11 @@ public class FormatReaderTest {
       resolutionReader.setMetadataFiltered(true);
       resolutionReader.setId(id);
 
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
+
       // check the MD5 of the first plane in each resolution
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
@@ -2087,6 +2094,11 @@ public class FormatReaderTest {
       resolutionReader.setOriginalMetadataPopulated(false);
       resolutionReader.setMetadataFiltered(true);
       resolutionReader.setId(id);
+
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
 
       // check the MD5 of the first plane in each resolution
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
@@ -2761,9 +2773,6 @@ public class FormatReaderTest {
         Location.setIdMap(idMap);
 
         reallyInMemory = TestTools.mapFile(id);
-      }
-      if(id.endsWith(".ome.tiff")) {
-        reader.setFlattenedResolutions(false);
       }
       reader.setId(id);
       // remove used files
