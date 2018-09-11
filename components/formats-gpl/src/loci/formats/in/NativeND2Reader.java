@@ -386,9 +386,9 @@ public class NativeND2Reader extends FormatReader {
 
       ArrayList<String> imageNames = new ArrayList<String>();
       ArrayList<Long> imageOffsets = new ArrayList<Long>();
-      ArrayList<int[]> imageLengths = new ArrayList<int[]>();
+      ArrayList<long[]> imageLengths = new ArrayList<long[]>();
       ArrayList<Long> customDataOffsets = new ArrayList<Long>();
-      ArrayList<int[]> customDataLengths = new ArrayList<int[]>();
+      ArrayList<long[]> customDataLengths = new ArrayList<long[]>();
 
       // order matters when working with the text blocks, which is
       // why two ArrayLists are used instead of a HashMap
@@ -686,7 +686,7 @@ public class NativeND2Reader extends FormatReader {
 
               imageOffsets.add(new Long(entry.position + 16));
               int realLength = (int) Math.max(entry.name.length() + 1, nameLength);
-              imageLengths.add(new int[] {realLength, (int)(entry.length - nameLength - 16), getSizeX() * getSizeY()});
+              imageLengths.add(new long[] {realLength, entry.length - nameLength - 16, getSizeX() * getSizeY()});
               imageNames.add(entry.name.substring(12));
 
               blockCount ++;
@@ -717,7 +717,7 @@ public class NativeND2Reader extends FormatReader {
             "Adding non-chunkmap offset {}, nameLength = {}, dataLength = {}",
               fp, nameLength, dataLength);
           imageOffsets.add(fp);
-          imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
+          imageLengths.add(new long[] {nameLength, dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
           while (b != '!') {
             name.append(b);
@@ -933,7 +933,7 @@ public class NativeND2Reader extends FormatReader {
           long intOffset = fp + 4 * (nInts - imageOffsets.size());
           if (blockType.startsWith("CustomData|A")) {
             customDataOffsets.add(fp);
-            customDataLengths.add(new int[] {nameLength, (int) dataLength});
+            customDataLengths.add(new long[] {nameLength, dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
             if (zOffset == 0) {
@@ -1099,7 +1099,7 @@ public class NativeND2Reader extends FormatReader {
       isLossless = true;
 
       long fp = in.getFilePointer();
-      int[] firstLengths = imageLengths.get(0);
+      long[] firstLengths = imageLengths.get(0);
       in.seek(firstOffset + firstLengths[0] + 8);
 
       if (codec == null) codec = createCodec(false);
@@ -1136,8 +1136,8 @@ public class NativeND2Reader extends FormatReader {
         boolean fixByteCounts = false;
         if (plane > 0) {
           for (int i=0; i<imageOffsets.size(); i++) {
-            int check = imageLengths.get(i)[2];
-            int length = imageLengths.get(i)[1] - 8;
+            long check = imageLengths.get(i)[2];
+            long length = imageLengths.get(i)[1] - 8;
             if ((length % plane != 0 && length % (getSizeX() * getSizeY()) != 0) || (check > 0 && plane != check)) {
               if (imageOffsets.get(i) - length != offsetDiff + 8) {
                 if (i == 0) {
@@ -1465,12 +1465,12 @@ public class NativeND2Reader extends FormatReader {
       boolean oneIndexed = false;
       for (int i=0; i<imageOffsets.size(); i++) {
         long offset = imageOffsets.get(i).longValue();
-        int[] p = imageLengths.get(i);
-        int length = p[0] + p[1];
+        long[] p = imageLengths.get(i);
+        long length = p[0] + p[1];
 
         if (getSizeC() == 0) {
-          int sizeC = length / (getSizeX() * getSizeY() *
-            FormatTools.getBytesPerPixel(getPixelType()));
+          int sizeC = (int) (length / (getSizeX() * getSizeY() *
+            FormatTools.getBytesPerPixel(getPixelType())));
           for (int q=0; q<getSeriesCount(); q++) {
             core.get(q).sizeC = sizeC;
           }
@@ -1580,11 +1580,11 @@ public class NativeND2Reader extends FormatReader {
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         if (customDataOffsets.size() > 0) {
           in.seek(customDataOffsets.get(0).longValue());
-          int[] p = customDataLengths.get(0);
-          int len = p[0] + p[1];
+          long[] p = customDataLengths.get(0);
+          long len = p[0] + p[1];
 
           int timestampBytes = imageOffsets.size() * 8;
-          in.skipBytes(len - timestampBytes);
+          in.seek(in.getFilePointer() + (len - timestampBytes));
 
           // the acqtimecache is a undeliniated stream of doubles
 
