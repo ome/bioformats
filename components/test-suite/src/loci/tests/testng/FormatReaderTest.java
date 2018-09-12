@@ -2699,10 +2699,7 @@ public class FormatReaderTest {
       try {
         ir.setId(id);
       }
-      catch (FormatException e) {
-        LOGGER.error("Could not initialize " + id, e);
-      }
-      catch (IOException e) {
+      catch (FormatException | IOException e) {
         LOGGER.error("Could not initialize " + id, e);
       }
     }
