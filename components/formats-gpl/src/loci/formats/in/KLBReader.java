@@ -233,7 +233,7 @@ public class KLBReader extends FormatReader {
             bzip = null;
           }
           catch(IOException e) {
-            LOGGER.debug("IOException while decompressing block {}", xx);
+            LOGGER.error("IOException while decompressing block {}", xx);
             throw e;
           }
         }
@@ -470,7 +470,7 @@ public class KLBReader extends FormatReader {
   
   // Needed as offsets array can only be int max and full image may be greater
   private void reCalculateBlockOffsets(int no) throws IOException, FormatException {
-    LOGGER.error("Beginning calulating offsets for plane : " + no);
+    LOGGER.debug("Beginning calulating offsets for plane : " + no);
     headerVersion = in.readUnsignedByte();
     for (int i=0; i < KLB_DATA_DIMS; i++) {
       dims_xyzct[i] = readUInt32();
@@ -515,7 +515,6 @@ public class KLBReader extends FormatReader {
       blockOffsets[i] = readUInt64();
     }
     in.seek(filePoointer);
-    LOGGER.error("Finished calulating offsets for plane : " + no);
   }
 
   // Helper methods
