@@ -78,6 +78,7 @@ public class NDPIReader extends BaseTiffReader {
   public NDPIReader() {
     super("Hamamatsu NDPI", new String[] {"ndpi"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --

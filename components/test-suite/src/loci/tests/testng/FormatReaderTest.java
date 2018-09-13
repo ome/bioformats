@@ -1728,6 +1728,12 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("Image-Pro Sequence") &&
+            file.toLowerCase().endsWith(".ips"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();

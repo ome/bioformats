@@ -74,6 +74,7 @@ public class SISReader extends BaseTiffReader {
     suffixSufficient = false;
     suffixNecessary = true;
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --
