@@ -255,15 +255,18 @@ public class KLBReader extends FormatReader {
 
           // Location within the block for required XY plane
           int inputOffset = (coordBlock[2] % dims_blockSize[2]) * blockRowSize * blockSizeAux[1];
-          if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) inputOffset += blockSizeAux[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
+          if (coordBlock[0] < x && coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) inputOffset += ((dims_blockSize[0] * (dims_blockSize[1] - blockSizeAux[1])) + (x - coordBlock[0])) * bytesPerPixel;
+          // Partial block at the start of x tile
           else if (coordBlock[0] < x && blockSizeAux[0] != dims_blockSize[0]) inputOffset += (dims_blockSize[0] - blockSizeAux[0]) * bytesPerPixel;
+          // Partial block at the start of y tile
+          else if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && coordBlock[0] + blockSizeAux[0] == dims_xyzct[0]) inputOffset += blockSizeAux[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
           else if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1]) inputOffset += dims_blockSize[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
           
           inputOffset += (coordBlock[3] % dims_blockSize[3]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2];
           inputOffset += (coordBlock[4] % dims_blockSize[4]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2] * blockSizeAux[3];
 
           // If its the last block in a row then use the corrected rowSize
-          if (coordBlock[0] + blockSizeAux[0] == dims_xyzct[0] ) {
+          if (coordBlock[0] + blockSizeAux[0] == dims_xyzct[0]) {
             fullBlockRowSize = blockRowSize;
           }
     
