@@ -627,7 +627,7 @@ public class FormatReaderTest {
     String msg = null;
     IFormatReader unflattenedReader = null;
     try {
-      unflattenedReader = setupUnflattenedReader();
+      unflattenedReader = setupReader(false, true);
       msg = checkOMEXML(unflattenedReader);
     }
     catch (Exception e) {
@@ -1888,7 +1888,7 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      IFormatReader resolutionReader = setupUnflattenedReader();
+      IFormatReader resolutionReader = setupReader(false, true);
 
       if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
         success = false;
@@ -2054,7 +2054,7 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      IFormatReader resolutionReader = setupUnflattenedReader();
+      IFormatReader resolutionReader = setupReader(false, true);
 
       if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
         success = false;
@@ -2661,12 +2661,28 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    ImageReader ir = new ImageReader();
-    reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
-    reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
-    reader.setNormalized(true);
-    reader.setOriginalMetadataPopulated(false);
-    reader.setMetadataFiltered(true);
+    setupReader(true, false);
+  }
+
+  /**
+   * Set up an IFormatReader for either flattened or unflattened testing.
+   *
+   * @param flattened the value to pass to IFormatReader.setFlattenedResolutions
+   * @param initialize true if setId should be called on the current file
+   * @return the configured reader
+   */
+  private IFormatReader setupReader(boolean flattened, boolean initialize) {
+    IFormatReader ir = null;
+    if (flattened) {
+      ir = new ImageReader();
+      ir = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
+      ir.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+    }
+    else {
+      ir = new BufferedImageReader(new FileStitcher());
+      ir.setFlattenedResolutions(false);
+    }
+
     MetadataStore store = null;
     try {
       store = omexmlService.createOMEXMLMetadata();
@@ -2674,7 +2690,23 @@ public class FormatReaderTest {
     catch (ServiceException e) {
       LOGGER.warn("Could not parse OME-XML", e);
     }
-    reader.setMetadataStore(store);
+    ir.setMetadataStore(store);
+    ir.setNormalized(true);
+    ir.setOriginalMetadataPopulated(false);
+    ir.setMetadataFiltered(true);
+
+    if (initialize) {
+      try {
+        ir.setId(id);
+      }
+      catch (FormatException | IOException e) {
+        LOGGER.error("Could not initialize " + id, e);
+      }
+    }
+    if (flattened) {
+      reader = (BufferedImageReader) ir;
+    }
+    return ir;
   }
 
   /** Initializes the reader and configuration tree. */
@@ -2854,27 +2886,6 @@ public class FormatReaderTest {
       msg = t.getMessage();
     }
     return msg;
-  }
-
-  private IFormatReader setupUnflattenedReader() throws FormatException, IOException {
-    IFormatReader resolutionReader =
-      new BufferedImageReader(new FileStitcher());
-    resolutionReader.setFlattenedResolutions(false);
-    resolutionReader.setNormalized(true);
-    resolutionReader.setOriginalMetadataPopulated(false);
-    resolutionReader.setMetadataFiltered(true);
-
-    MetadataStore store = null;
-    try {
-      store = omexmlService.createOMEXMLMetadata();
-    }
-    catch (ServiceException e) {
-      LOGGER.warn("Could not parse OME-XML", e);
-    }
-    resolutionReader.setMetadataStore(store);
-
-    resolutionReader.setId(id);
-    return resolutionReader;
   }
 
 }
