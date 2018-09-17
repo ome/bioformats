@@ -89,6 +89,7 @@ public class SVSReader extends BaseTiffReader {
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixNecessary = true;
     noSubresolutions = true;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --

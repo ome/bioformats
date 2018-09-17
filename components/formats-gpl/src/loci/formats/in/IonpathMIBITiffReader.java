@@ -68,6 +68,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
     super("Ionpath MIBI", new String[] {"tif, tiff"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
     suffixSufficient = false;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --

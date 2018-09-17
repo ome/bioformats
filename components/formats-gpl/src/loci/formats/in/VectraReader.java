@@ -81,6 +81,7 @@ public class VectraReader extends BaseTiffReader {
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN};
     noSubresolutions = true;
     suffixSufficient = false;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --

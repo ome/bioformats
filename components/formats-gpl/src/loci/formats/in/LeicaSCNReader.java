@@ -83,6 +83,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixNecessary = false;
     suffixSufficient = false;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --
