@@ -127,16 +127,14 @@ public class CV7000Reader extends FormatReader {
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
-    if (noPixels) {
-      HashSet<String> files = new HashSet<String>();
-      for (String file : allFiles) {
-        if (!checkSuffix(file, "tif")) {
-          files.add(file);
-        }
+    ArrayList<String> files = new ArrayList<String>();
+    files.add(new Location(currentId).getAbsolutePath());
+    for (String file : allFiles) {
+      if (!files.contains(file) && (!noPixels || !checkSuffix(file, "tif"))) {
+        files.add(file);
       }
-      return files.toArray(new String[files.size()]);
     }
-    return allFiles;
+    return files.toArray(new String[files.size()]);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -145,7 +143,7 @@ public class CV7000Reader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     HashSet<String> files = new HashSet<String>();
-    files.add(currentId);
+    files.add(new Location(currentId).getAbsolutePath());
     files.add(measurementPath);
     if (detailPath != null) {
       files.add(detailPath);
