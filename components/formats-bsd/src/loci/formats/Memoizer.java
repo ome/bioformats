@@ -607,6 +607,19 @@ public class Memoizer extends ReaderWrapper {
     this.versionChecking = version;
   }
 
+  /**
+   * Set whether a memo file should be saved if a valid file is not present.
+   *
+   * If {@code false} (default), then a memo file will be saved.  This may
+   * cause an existing memo file to be overwritten.
+   *
+   * If {@code true}, then a memo file will not be saved.  This effectively
+   * makes the current Memoizer read-only.
+   */
+  public void skipSave(boolean skip) {
+    this.skipSave = skip;
+  }
+
   protected void cleanup() {
     if (ser != null) {
       ser.close();
@@ -715,7 +728,7 @@ public class Memoizer extends ReaderWrapper {
    */
   protected boolean deleteQuietly(File file) {
     try {
-      if (file != null && file.exists()) {
+      if (file != null && file.exists() && !skipSave) {
         if (file.delete()) {
           LOGGER.trace("deleted {}", file);
           return true;
@@ -1050,6 +1063,26 @@ public class Memoizer extends ReaderWrapper {
 
     }
     return memo;
+  }
+
+  /**
+   * Convenience method to generate (or regenerate) the memo file for a given file.
+   * Uses the cache directory and timing settings passed via Memoizer's constructor.
+   *
+   * @param file the file for which to generate a memo file
+   * @return true if a memo file was saved
+   */
+  public boolean generateMemo(String file) throws IOException {
+    try {
+      setId(file);
+    }
+    catch (FormatException e) {
+      LOGGER.warn("Could not initialize " + file, e);
+    }
+    finally {
+      close();
+    }
+    return isSavedToMemo();
   }
 
   public static void main(String[] args) throws Exception {

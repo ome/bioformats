@@ -27,10 +27,13 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
@@ -54,16 +57,27 @@ public class SEQReader extends BaseTiffReader {
 
   private static final int IMAGE_PRO_TAG_3 = 40100;
 
+  private String[] files = null;
+
   // -- Constructor --
 
   /** Constructs a new Image-Pro SEQ reader. */
   public SEQReader() {
-    super("Image-Pro Sequence", "seq");
+    super("Image-Pro Sequence", new String[] {"seq", "ips"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
     suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "ips")) {
+      return true;
+    }
+    return super.isThisType(name, open);
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
@@ -77,6 +91,124 @@ public class SEQReader extends BaseTiffReader {
     Object tag3 = ifd.get(IMAGE_PRO_TAG_3);
     return (tag1 != null && (tag1 instanceof short[])) || (tag3 != null &&
       (tag3 instanceof int[]));
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    if (files == null) {
+      return super.getSeriesUsedFiles(noPixels);
+    }
+    if (noPixels) {
+      return new String[] {getCurrentFile()};
+    }
+
+    String[] seriesFiles = new String[(files.length / core.size()) + 1];
+    seriesFiles[0] = getCurrentFile();
+
+    int[] coords = new int[] {0, 0, getCoreIndex(), 0};
+    int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(), core.size(), getSizeT()};
+    int next = 1;
+    for (int t=0; t<getSizeT(); t++) {
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        for (int z=0; z<getSizeZ(); z++) {
+          coords[0] = z;
+          coords[1] = c;
+          coords[3] = t;
+          int index = FormatTools.positionToRaster(lengths, coords);
+          seriesFiles[next++] = files[index];
+        }
+      }
+    }
+
+    return seriesFiles;
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      files = null;
+    }
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h) throws FormatException, IOException {
+    if (files == null) {
+      return super.openBytes(no, buf, x, y, w, h);
+    }
+
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    int[] zct = getZCTCoords(no);
+    int[] coords = new int[] {zct[0], zct[1], getCoreIndex(), zct[2]};
+    int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(), core.size(), getSizeT()};
+    int index = FormatTools.positionToRaster(lengths, coords);
+
+    TiffParser p = new TiffParser(files[index]);
+    IFD ifd = p.getFirstIFD();
+    p.getSamples(ifd, buf, x, y, w, h);
+    return buf;
+  }
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
+  protected void initFile(String id) throws FormatException, IOException {
+    if (!checkSuffix(id, "ips")) {
+      super.initFile(id);
+      return;
+    }
+
+    // found a metadata file used for grouping multiple SEQ TIFF files together
+
+    RandomAccessInputStream in = new RandomAccessInputStream(id);
+    in.order(true);
+
+    in.seek(27);
+    int channelCount = in.readInt();
+    String[] channelNames = new String[channelCount];
+    for (int c=0; c<channelCount; c++) {
+      channelNames[c] = in.readString(in.read());
+    }
+
+    int fileCount = in.readInt();
+    String[] pixelsFiles = new String[fileCount];
+    Location current = new Location(id).getAbsoluteFile();
+    String ips = current.getAbsolutePath();
+    Location parent = current.getParentFile();
+    for (int f=0; f<fileCount; f++) {
+      pixelsFiles[f] = in.readString(in.read());
+      pixelsFiles[f] = new Location(parent, pixelsFiles[f]).getAbsolutePath();
+    }
+
+    int tCount = in.readInt();
+    int posCount = in.readInt();
+    int unknownCount = in.readInt();
+    int zCount = in.readInt();
+
+    initFile(pixelsFiles[0]);
+    currentId = ips;
+    files = pixelsFiles;
+
+    CoreMetadata m = core.get(0);
+    m.sizeT = tCount;
+    m.sizeZ = zCount;
+    m.sizeC *= channelCount;
+    m.imageCount *= getSizeZ() * getSizeT() * channelCount;
+    for (int i=1; i<posCount; i++) {
+      core.add(new CoreMetadata(m));
+    }
+
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this);
+
+    for (int i=0; i<posCount; i++) {
+      for (int c=0; c<channelCount; c++) {
+        store.setChannelName(channelNames[c], i, c);
+      }
+    }
   }
 
   // -- Internal BaseTiffReader API methods --

@@ -83,6 +83,8 @@ public class DNGReader extends BaseTiffReader {
       new String[] {"cr2", "crw", "jpg", "thm", "wav", "tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    mergeSubIFDs = true;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --

@@ -307,7 +307,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     int count = handler.count();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
 
     if (ifds.size() < count) {
       count = ifds.size();

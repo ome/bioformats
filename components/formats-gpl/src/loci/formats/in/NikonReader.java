@@ -116,6 +116,8 @@ public class NikonReader extends BaseTiffReader {
     super("Nikon NEF", new String[] {"nef", "tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    mergeSubIFDs = true;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --

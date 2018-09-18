@@ -512,6 +512,7 @@ public class Configuration {
       try {
         planeSize = DataTools.safeMultiply32(reader.getSizeX(),
           reader.getSizeY(), reader.getEffectiveSizeC(),
+          reader.getRGBChannelCount(),
           FormatTools.getBytesPerPixel(reader.getPixelType()));
         canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
       }
