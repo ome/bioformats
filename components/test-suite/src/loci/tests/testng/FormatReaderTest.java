@@ -1745,6 +1745,12 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("MicroCT") &&
+            !base[i].toLowerCase().endsWith(".vff"))
+          {
+            continue;
+          }
+
           if (reader.getFormat().equals("Image-Pro Sequence") &&
             file.toLowerCase().endsWith(".ips"))
           {
@@ -2219,14 +2225,12 @@ public class FormatReaderTest {
             // TIFF reader is allowed to redundantly green-light files
             if (result && readers[j] instanceof TiffDelegateReader) continue;
 
-            // Bio-Rad reader is allowed to redundantly
-            // green-light PIC files from NRRD datasets
-            if (result && r instanceof NRRDReader &&
-              readers[j] instanceof BioRadReader)
+            // expect NRRD to pick up .nhdr files, and a non-NRRD reader
+            // to pick up any other file in the same set as an .nhdr
+            if (result && (r instanceof NRRDReader ||
+              readers[j] instanceof NRRDReader))
             {
-              String low = used[i].toLowerCase();
-              boolean isPic = low.endsWith(".pic") || low.endsWith(".pic.gz");
-              if (isPic) continue;
+              continue;
             }
 
             // Analyze reader is allowed to redundantly accept NIfTI files
@@ -2422,6 +2426,12 @@ public class FormatReaderTest {
             // ignore companion files for Leica LIF
             if (!used[i].toLowerCase().endsWith(".lif") &&
               r instanceof LIFReader)
+            {
+              continue;
+            }
+
+            if (!used[i].toLowerCase().endsWith(".vff") &&
+              r instanceof MicroCTReader)
             {
               continue;
             }
