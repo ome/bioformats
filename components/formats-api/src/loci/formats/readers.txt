@@ -153,7 +153,7 @@ loci.formats.in.LeicaReader           # lei, tif
 loci.formats.in.NikonReader           # nef, tif
 loci.formats.in.FluoviewReader        # tif
 loci.formats.in.PrairieReader         # xml, cfg, tif
-loci.formats.in.MetamorphReader       # stk, tif, nd
+loci.formats.in.MetamorphReader       # stk, tif, nd, scan
 loci.formats.in.MicromanagerReader    # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
