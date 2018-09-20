@@ -34,10 +34,12 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -722,6 +724,7 @@ public class MicromanagerReader extends FormatReader {
     s.close();
 
     int[] slice = new int[3];
+    start = 0;
     while (start < b.length) {
       String token = getNextLine(b).trim();
       boolean open = token.indexOf('[') != -1;
@@ -866,10 +869,7 @@ public class MicromanagerReader extends FormatReader {
             }
           }
           else {
-            int colon = token.indexOf("\":") + 1;
-            if (colon == 0) {
-              colon = token.indexOf(':');
-            }
+            int colon = token.indexOf(":");
             key = token.substring(1, colon).trim();
             valueBuffer.setLength(0);
             valueBuffer.append(token.substring(colon + 1, token.length() - 1).trim().replaceAll("\"", ""));
@@ -1121,12 +1121,18 @@ public class MicromanagerReader extends FormatReader {
     XMLTools.parseXML(xmlData, handler);
   }
 
-  /** Initialize the TIFF reader with the first file in the current series. */
+  /** Initialize the TIFF reader with the first non-null file in the current series. */
   private void setupReader() {
     try {
+      int plane = 0;
       String file = positions.get(getSeries()).getFile(
         getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
-        getImageCount(), 0);
+        getImageCount(), plane++);
+      while (file == null && plane < getImageCount()) {
+        file = positions.get(getSeries()).getFile(
+          getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+          getImageCount(), plane++);
+      }
       tiffReader.setId(file);
     }
     catch (Exception e) {
@@ -1172,15 +1178,17 @@ public class MicromanagerReader extends FormatReader {
     }
   }
 
-  private String getNextLine(byte[] buf) {
+  private String getNextLine(byte[] buf) throws UnsupportedEncodingException {
     for (int i=start; i<buf.length; i++) {
       if (buf[i] == '\n') {
-        String line = new String(buf, start, (i - start) + 1);
+        String line = new String(buf, start, (i - start) + 1, Constants.ENCODING);
         start = i + 1;
         return line;
       }
     }
-    return null;
+    String line = new String(buf, start, buf.length - start, Constants.ENCODING);
+    start = buf.length;
+    return line;
   }
 
   // -- Helper classes --
