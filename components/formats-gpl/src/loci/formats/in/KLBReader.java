@@ -24,11 +24,19 @@
  */
 package loci.formats.in;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -89,11 +97,19 @@ public class KLBReader extends FormatReader {
   private int blocksPerPlane;
   private long offsetFilePointer;
   private int headerVersion;
-  
-  private String[][] xyProjections;
-  private String[][] xzProjections;
-  private String[][] yzProjections;
-  private String[][] fusedStacks;
+
+  private LinkedHashMap<String, String[][]> filelist = new LinkedHashMap<String, String[][]>();
+  private static final String DEFAULT_SERIES = "Default";
+
+  /** Prefixes indicating dimensions and projections */
+  public static final String CHANNEL_PREFIX = "_CHN";
+  public static final String TIME_PREFIX = ".TM";
+  public static final String TIME_SUFFIX = "_timeFused";
+  public static final String PROJECTION_PREFIX = "fusedStack_";
+  public static final String PROJECTION_SUFFIX = "Projection";
+  public static final Set<String> SERIES_PREFIXES = unmodifiableSet(
+      new HashSet<String>(Arrays.asList("xy", "xz", "yz")));
+
   // -- Constructor --
 
   /**
@@ -103,6 +119,7 @@ public class KLBReader extends FormatReader {
     super("KLB", "klb");
     suffixSufficient = true;
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
+    setGroupFiles(true);
   }
 
   // -- IFormatReader API methods --
@@ -119,18 +136,9 @@ public class KLBReader extends FormatReader {
     int[] currentCoords = getZCTCoords(no);
     int currentSeries = getSeries();
 
-    if (currentSeries == 0) {
-      fileName = xyProjections[currentCoords[2]][currentCoords[1]];
-    }
-    else if (currentSeries == 1) {
-      fileName = xzProjections[currentCoords[2]][currentCoords[1]];
-    }
-    else if (currentSeries == 2) {
-      fileName = yzProjections[currentCoords[2]][currentCoords[1]];
-    }
-    else {
-      fileName = fusedStacks[currentCoords[2]][currentCoords[1]];
-    }
+    Set<String> keys = filelist.keySet();
+    fileName = filelist.get(keys.toArray()[currentSeries])[currentCoords[2]][currentCoords[1]];
+
     in = new RandomAccessInputStream(fileName);
 
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
@@ -171,7 +179,6 @@ public class KLBReader extends FormatReader {
 
         //calculate coordinate (in block space)        
         int blockId = (yBlockStartIndex + yy) * blocksPerImageRow + xBlockStartIndex + xx;
-
         for (int ii = 0; ii < KLB_DATA_DIMS; ii++)
         {
           //parsing coordinates to image space (not block anymore)
@@ -203,10 +210,9 @@ public class KLBReader extends FormatReader {
             blockSizeBytes *= dims_blockSize[ii];
           }
         }
-
-        compressedBlockSize = blockId == 0 ? blockOffsets[0] : blockOffsets[blockId] - blockOffsets[blockId-1];
-        long offset =  blockId == 0 ? 0 : blockOffsets[blockId-1];
-
+        
+        compressedBlockSize = blockOffsets[blockId+1] - blockOffsets[blockId];
+        long offset =  blockOffsets[blockId];
         //Seek to start of block
         in.seek((long) (headerSize + offset));
 
@@ -269,7 +275,6 @@ public class KLBReader extends FormatReader {
           if (coordBlock[0] + blockSizeAux[0] == dims_xyzct[0]) {
             fullBlockRowSize = blockRowSize;
           }
-    
           // Copy row at a time from decompressed block to output buffer
           for (int numRows = 0; numRows < blockSizeAux[1]; numRows++) {
             int destPos = outputOffset + (numRows * imageRowSize);
@@ -296,108 +301,91 @@ public class KLBReader extends FormatReader {
     store = makeFilterMetadata();
     in = new RandomAccessInputStream(id);
 
-    core.add(new CoreMetadata(this, 0));
-    core.add(new CoreMetadata(this, 0));
-    core.add(new CoreMetadata(this, 0));
-
     int sizeT = 0;
     int sizeC = 1;
 
+    String basePrefix;
     String parent = new Location(id).getAbsoluteFile().getParent();
     File folder = new File(parent);
     File[] listOfFiles = folder.listFiles();
-    String basePrefix = id.substring(id.lastIndexOf(File.separator) + 1, id.indexOf("_CHN"));
-    for (int i=0; i < listOfFiles.length; i++) {
-      String fileName = listOfFiles[i].getName();
-      if (fileName.contains(basePrefix)) {
-        int channelNum = DataTools.parseInteger(fileName.substring(fileName.indexOf("_CHN")+4, fileName.indexOf('.')));
-        if (channelNum == sizeC) {
-          sizeC = channelNum + 1;
+    if (isGroupFiles() && id.indexOf(CHANNEL_PREFIX) >= 0) {
+      basePrefix = id.substring(id.lastIndexOf(File.separator) + 1, id.indexOf(CHANNEL_PREFIX));
+      for (int i=0; i < listOfFiles.length; i++) {
+        String fileName = listOfFiles[i].getName();
+        if (fileName.contains(basePrefix)) {
+          int channelNum = DataTools.parseInteger(fileName.substring(fileName.indexOf(CHANNEL_PREFIX)+CHANNEL_PREFIX.length(), fileName.indexOf('.')));
+          if (channelNum == sizeC) {
+            sizeC = channelNum + 1;
+          }
+        }
+      }
+
+      String topLevelFolder = new Location(parent).getAbsoluteFile().getParent();
+      folder = new File(topLevelFolder);
+      listOfFiles = folder.listFiles();
+      basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.lastIndexOf('.'));
+
+      for (int i=0; i < listOfFiles.length; i++) {
+        String fileName = listOfFiles[i].getName();
+        if (fileName.startsWith(basePrefix)) {
+          sizeT++;
         }
       }
     }
 
-    String topLevelFolder = new Location(parent).getAbsoluteFile().getParent();
-    folder = new File(topLevelFolder);
-    listOfFiles = folder.listFiles();
-    basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.lastIndexOf('.'));
-
-    for (int i=0; i < listOfFiles.length; i++) {
-      String fileName = listOfFiles[i].getName();
-      if (fileName.startsWith(basePrefix)) {
-        sizeT++;
-      }
-    }
-
-    xyProjections = new String[sizeT][sizeC];
-    xzProjections = new String[sizeT][sizeC];
-    yzProjections = new String[sizeT][sizeC];
-    fusedStacks = new String[sizeT][sizeC];
-
-    basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.lastIndexOf('.'));
-    for (int i=0; i < listOfFiles.length; i++) {
-      String fileName = listOfFiles[i].getName();
-      if (fileName.startsWith(basePrefix)) {
-        int currentTimepoint = DataTools.parseInteger(fileName.substring(fileName.indexOf(".TM")+3, fileName.indexOf("_timeFused")));
-        File[] innerFileList = listOfFiles[i].listFiles();
-        for (int j=0; j < innerFileList.length; j++) {
-          String innerFileName = innerFileList[j].getName();
-          if (innerFileName.contains("fusedStack")) {
-            int currentChannelNum = DataTools.parseInteger(innerFileName.substring(innerFileName.indexOf("_CHN")+4, innerFileName.indexOf('.')));
-            if (innerFileName.indexOf("fusedStack_") >= 0) {
-              String projection = innerFileName.substring(innerFileName.indexOf("fusedStack_")+11, innerFileName.indexOf("Projection"));
-              if (projection.equals("xy")) {
-                xyProjections[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
+    if (isGroupFiles() && sizeT > 0) {
+      filelist.put(DEFAULT_SERIES, new String[sizeT][sizeC]);
+      basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.lastIndexOf('.'));
+      for (int i=0; i < listOfFiles.length; i++) {
+        String fileName = listOfFiles[i].getName();
+        if (fileName.startsWith(basePrefix)) {
+          String timepointString = fileName.substring(fileName.indexOf(TIME_PREFIX)+TIME_PREFIX.length(), fileName.indexOf(TIME_SUFFIX));
+          int currentTimepoint = DataTools.parseInteger(timepointString);
+          File[] innerFileList = listOfFiles[i].listFiles();
+          for (int j=0; j < innerFileList.length; j++) {
+            String innerFileName = innerFileList[j].getName();
+            if (innerFileName.contains(PROJECTION_PREFIX.substring(0, PROJECTION_PREFIX.length()-1))) {
+              String channelNumString = innerFileName.substring(innerFileName.indexOf(CHANNEL_PREFIX)+CHANNEL_PREFIX.length(), innerFileName.indexOf('.'));
+              int currentChannelNum = DataTools.parseInteger(channelNumString);
+              if (innerFileName.indexOf(PROJECTION_PREFIX) >= 0) {
+                String projection = innerFileName.substring(innerFileName.indexOf(PROJECTION_PREFIX)+PROJECTION_PREFIX.length(), innerFileName.indexOf(PROJECTION_SUFFIX));
+                if (SERIES_PREFIXES.contains(projection)) {
+                  if (filelist.get(projection) == null) {
+                    filelist.put(projection, new String[sizeT][sizeC]);
+                    core.add(new CoreMetadata(this, 0));
+                  }
+                  filelist.get(projection)[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
+                  if (currentTimepoint == 0 && currentChannelNum == 0) {
+                    in.close();
+                    in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
+                    List<String> stringsList = new ArrayList<>(filelist.keySet());
+                    readHeader(core.get(stringsList.indexOf(projection)));
+                  }
+                }
+              }
+              else {
+                filelist.get(DEFAULT_SERIES)[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
                 if (currentTimepoint == 0 && currentChannelNum == 0) {
                   in.close();
                   in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
                   readHeader(core.get(0));
                 }
               }
-              else if (projection.equals("xz")) {
-                xzProjections[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
-                if (currentTimepoint == 0 && currentChannelNum == 0) {
-                  in.close();
-                  in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
-                  readHeader(core.get(1));
-                }
-              }
-              else if (projection.equals("yz")) {
-                yzProjections[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
-                if (currentTimepoint == 0 && currentChannelNum == 0) {
-                  in.close();
-                  in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
-                  readHeader(core.get(2));
-                }
-              }
-            }
-            else {
-              fusedStacks[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
-              if (currentTimepoint == 0 && currentChannelNum == 0) {
-                in.close();
-                in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
-                readHeader(core.get(3));
-              }
             }
           }
         }
       }
     }
-    String imageID = MetadataTools.createLSID("Image", 0);
-    store.setImageID(imageID, 0);
-    imageID = MetadataTools.createLSID("Image", 1);
-    store.setImageID(imageID, 1);
-    imageID = MetadataTools.createLSID("Image", 2);
-    store.setImageID(imageID, 2);
-    imageID = MetadataTools.createLSID("Image", 3);
-    store.setImageID(imageID, 3);
-    MetadataTools.populatePixels(store, this);
-    for (int c = 0; c < sizeC; c++) {
-      store.setChannelName(MetadataTools.createLSID("Channel", c), 0, c);
-      store.setChannelName(MetadataTools.createLSID("Channel", c), 1, c);
-      store.setChannelName(MetadataTools.createLSID("Channel", c), 2, c);
-      store.setChannelName(MetadataTools.createLSID("Channel", c), 3, c);
+    else {
+      //Dealing with a single file
+      filelist.put(DEFAULT_SERIES, new String[1][1]);
+      String absolutePath = new Location(id).getAbsolutePath();
+      filelist.get(DEFAULT_SERIES)[0][0] = absolutePath;
+      in = new RandomAccessInputStream(absolutePath);
+      readHeader(core.get(0));
     }
+
+    MetadataTools.populatePixels(store, this);
   }
 
   private void readHeader(CoreMetadata coreMeta) throws IOException, FormatException {
@@ -411,10 +399,14 @@ public class KLBReader extends FormatReader {
     coreMeta.sizeX = dims_xyzct[0];
     coreMeta.sizeY = dims_xyzct[1];
     coreMeta.sizeZ = dims_xyzct[2];
-    //coreMeta.sizeC = dims_xyzct[3];
-    //coreMeta.sizeT = dims_xyzct[4];
-    coreMeta.sizeT = xyProjections.length;
-    coreMeta.sizeC = xyProjections[0].length;
+    if (!isGroupFiles() && filelist.size() > 1) {
+      coreMeta.sizeC = dims_xyzct[3];
+      coreMeta.sizeT = dims_xyzct[4];
+    }
+    else {
+      coreMeta.sizeT = filelist.get(DEFAULT_SERIES).length;
+      coreMeta.sizeC = filelist.get(DEFAULT_SERIES)[0].length;
+    }
     coreMeta.imageCount = coreMeta.sizeZ * coreMeta.sizeC * coreMeta.sizeT;
 
     PositiveFloat[] dims_pixelSize = new PositiveFloat[KLB_DATA_DIMS];
@@ -454,18 +446,18 @@ public class KLBReader extends FormatReader {
   @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    String [] fileList = new String[getSizeT() * getSizeC() * 4];
+    String [] completeFileList = new String[getSizeT() * getSizeC() * filelist.size()];
     int index = 0;
-    for (int timepoint = 0; timepoint < getSizeT(); timepoint++) {
-      for (int channel = 0; channel < getSizeC(); channel++) {
-        fileList[index] = xyProjections[timepoint][channel];
-        fileList[index + 1] = xzProjections[timepoint][channel];
-        fileList[index + 2] = yzProjections[timepoint][channel];
-        fileList[index + 3] = fusedStacks[timepoint][channel];
-        index += 4;
+    for (String seriesKey: filelist.keySet()) {
+      String[][] seriesFiles = filelist.get(seriesKey);
+      for (int timepoint = 0; timepoint < getSizeT(); timepoint++) {
+        for (int channel = 0; channel < getSizeC(); channel++) {
+          completeFileList[index] = seriesFiles[timepoint][channel];
+          index ++;
+        }
       }
     }
-    return noPixels ? ArrayUtils.EMPTY_STRING_ARRAY : fileList;
+    return noPixels ? ArrayUtils.EMPTY_STRING_ARRAY : completeFileList;
   }
   
   // Needed as offsets array can only be int max and full image may be greater
@@ -501,18 +493,24 @@ public class KLBReader extends FormatReader {
     int[] ztc = FormatTools.getZCTCoords(order, getSizeZ(), getSizeC(), getSizeT(), getImageCount(), no);
 
     // Calculate the first required block
-    //TODO: Correct calculation for T and C blocks
-    //int requiredBlockNum = (ztc[0] / dims_blockSize[2]) * (ztc[2] / dims_blockSize[3]) * (ztc[1] / dims_blockSize[4]);
     int requiredBlockNum = (ztc[0] / dims_blockSize[2]);
 
     // Mark the current file pointer to return after reading offsets
     long filePoointer = in.getFilePointer();
 
     // Seek to start of offsets and read required offsets
-    blockOffsets = new long[blocksPerPlane];
+    blockOffsets = new long[blocksPerPlane + 1];
     in.seek(offsetFilePointer + (requiredBlockNum * blocksPerPlane * 8));
     for (int i=0; i < blocksPerPlane; i++) {
-      blockOffsets[i] = readUInt64();
+      blockOffsets[i+1] = readUInt64();
+    }
+
+    // If not the first plane then the first offset needs to be calculated as last of previous plane
+    if (requiredBlockNum > 0) {
+      in.seek(offsetFilePointer + (requiredBlockNum * blocksPerPlane * 8) - 8);
+      blockOffsets[0] = readUInt64();
+    } else {
+      blockOffsets[0] = 0;
     }
     in.seek(filePoointer);
   }
@@ -572,6 +570,28 @@ public class KLBReader extends FormatReader {
     in.read(b, 0, 4);
     ByteBuffer bb = ByteBuffer.wrap(b).order(ByteOrder.LITTLE_ENDIAN);
     return new PositiveFloat((double) bb.getFloat());
+  }
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.CAN_GROUP;
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    filelist.clear();
+    Arrays.fill(dims_blockSize, 0);
+    Arrays.fill(dims_xyzct, 0);
+    blockOffsets = null;
+    compressionType = 0;
+    numBlocks = 1;
+    headerSize = 0;
+    blocksPerPlane = 0;
+    offsetFilePointer = 0;
+    headerVersion = 0;    
   }
 
 }
