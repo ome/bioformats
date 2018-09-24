@@ -84,6 +84,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     suffixNecessary = false;
     suffixSufficient = false;
     canSeparateSeries = false;
+    noSubresolutions = true;
   }
 
   // -- IFormatReader API methods --
