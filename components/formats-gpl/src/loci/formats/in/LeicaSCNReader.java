@@ -234,6 +234,12 @@ public class LeicaSCNReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
+  @Override
+  protected void initTiffParser() {
+    super.initTiffParser();
+    tiffParser.setYCbCrCorrection(false);
+  }
+
   protected void initCoreMetadata(int series, int resolution) throws FormatException, IOException {
     int pos = core.flattenedIndex(series, resolution);
     ImageCollection c = handler.collection;
