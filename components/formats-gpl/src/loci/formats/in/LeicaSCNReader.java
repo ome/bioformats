@@ -238,7 +238,12 @@ public class LeicaSCNReader extends BaseTiffReader {
   @Override
   protected void initTiffParser() {
     super.initTiffParser();
-    tiffParser.setYCbCrCorrection(false);
+    // older .scn files require color correction
+    // newer files from Versa systems do not
+    if (handler != null) {
+      Image i = handler.imageMap.get(0);
+      tiffParser.setYCbCrCorrection(!"versa".equalsIgnoreCase(i.devModel));
+    }
   }
 
   protected void initCoreMetadata(int series, int resolution) throws FormatException, IOException {
@@ -329,6 +334,8 @@ public class LeicaSCNReader extends BaseTiffReader {
         throw new FormatException("Failed to parse XML", se);
       }
     }
+    initTiffParser();
+    tiffParser.setDoCaching(true);
 
     int count = handler.count();
 
