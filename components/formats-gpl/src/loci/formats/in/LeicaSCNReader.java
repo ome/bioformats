@@ -256,6 +256,9 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     if (resolution == 0) {
       ms.resolutionCount = i.pixels.sizeR;
+      if (ms.resolutionCount == 0) {
+        ms.resolutionCount = 1;
+      }
     }
 
     Dimension dimension = i.pixels.lookupDimension(0, 0, resolution);
@@ -275,6 +278,19 @@ public class LeicaSCNReader extends BaseTiffReader {
     ms.sizeT = 1;
     ms.sizeC = ms.rgb ? samples : i.pixels.sizeC;
 
+    if (ms.sizeX == 0) {
+      ms.sizeX = (int) ifd.getImageWidth();
+    }
+    if (ms.sizeY == 0) {
+      ms.sizeY = (int) ifd.getImageLength();
+    }
+    if (ms.sizeZ == 0) {
+      ms.sizeZ = 1;
+    }
+    if (ms.sizeC == 0) {
+      ms.sizeC = 1;
+    }
+
     if ((ifd.getImageWidth() != ms.sizeX) || (ifd.getImageLength() != ms.sizeY))
     {
       throw new FormatException("IFD dimensions do not match XML dimensions for image " +
@@ -286,7 +302,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     ms.littleEndian = ifd.isLittleEndian();
     ms.indexed = pi == PhotoInterp.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
-    ms.imageCount = i.pixels.sizeZ * i.pixels.sizeC;
+    ms.imageCount = getSizeZ() * (ms.rgb ? 1 : getSizeC());
     ms.pixelType = ifd.getPixelType();
     ms.metadataComplete = true;
     ms.interleaved = false;
@@ -397,7 +413,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
         int inst = instrumentIDs.get(i.devModel);
         String objectiveName = i.devModel + ":" + i.objMag;
-        if (objectives.get(objectiveName) == null) {
+        if (objectives.get(objectiveName) == null && i.objMag != null) {
           String objectiveID = MetadataTools.createLSID("Objective", inst, objectiveidno);
           objectives.put(objectiveName, objectiveID);
           store.setObjectiveID(objectiveID, inst, objectiveidno);
@@ -411,9 +427,11 @@ public class LeicaSCNReader extends BaseTiffReader {
 
         store.setImageInstrumentRef(
           MetadataTools.createLSID("Instrument", inst), pos);
-        store.setObjectiveSettingsID(objectives.get(objectiveName), pos);
+        if (objectives.containsKey(objectiveName)) {
+          store.setObjectiveSettingsID(objectives.get(objectiveName), pos);
+        }
         // TODO: Only "brightfield" has been seen in example files
-        if (i.illumSource.equals("brightfield")) {
+        if (i.illumSource != null && i.illumSource.equals("brightfield")) {
           store.setChannelIlluminationType(IlluminationType.TRANSMITTED, pos, 0);
         } else {
           store.setChannelIlluminationType(IlluminationType.OTHER, pos, 0);
@@ -430,7 +448,9 @@ public class LeicaSCNReader extends BaseTiffReader {
         store.setImageName(i.name + " (R" + subresolution + ")", pos);
         store.setImageDescription("Collection " + c.name, pos);
 
-        store.setImageAcquisitionDate(new Timestamp(i.creationDate), pos);
+        if (i.creationDate != null) {
+          store.setImageAcquisitionDate(new Timestamp(i.creationDate), pos);
+        }
 
         // Original metadata...
         addSeriesMeta("collection.name", c.name);
@@ -618,6 +638,25 @@ public class LeicaSCNReader extends BaseTiffReader {
       }
       else if (qName.equals("view")) {
         currentImage.setView(attributes);
+      }
+      else if (qName.equals("supplementalImage")) {
+        // supplemental images (barcodes etc.) only have
+        // a type (name) and IFD index
+
+        String type = attributes.getValue("type");
+        String ifd = attributes.getValue("ifd");
+
+        if (ifd != null) {
+          currentImage = new Image(attributes);
+          currentImage.pixels = new Pixels(attributes);
+          Dimension dim = new Dimension(attributes);
+          currentImage.pixels.dims.add(dim);
+          currentImage.name = type;
+          collection.images.add(currentImage);
+          imageMap.add(currentImage);
+          IFDMap.add(Integer.parseInt(ifd));
+          resolutionCount++;
+        }
       }
 
       nameStack.push(qName);
