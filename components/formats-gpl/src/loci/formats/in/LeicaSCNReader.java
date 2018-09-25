@@ -452,7 +452,17 @@ public class LeicaSCNReader extends BaseTiffReader {
           store.setPlanePositionY(offsetY, pos, q);
         }
 
-        store.setImageName(i.name + " (R" + subresolution + ")", pos);
+        if (hasFlattenedResolutions()) {
+          store.setImageName(i.name + " (R" + subresolution + ")", pos);
+        }
+        else {
+          if (ms.resolutionCount > 1) {
+            store.setImageName("", pos);
+          }
+          else {
+            store.setImageName(i.name, pos);
+          }
+        }
         store.setImageDescription("Collection " + c.name, pos);
 
         if (i.creationDate != null) {
