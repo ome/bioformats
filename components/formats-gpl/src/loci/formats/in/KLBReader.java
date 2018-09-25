@@ -336,12 +336,14 @@ public class KLBReader extends FormatReader {
     if (isGroupFiles() && sizeT > 0) {
       filelist.put(DEFAULT_SERIES, new String[sizeT][sizeC]);
       basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.lastIndexOf('.'));
+      Arrays.sort(listOfFiles);
       for (int i=0; i < listOfFiles.length; i++) {
         String fileName = listOfFiles[i].getName();
         if (fileName.startsWith(basePrefix)) {
           String timepointString = fileName.substring(fileName.indexOf(TIME_PREFIX)+TIME_PREFIX.length(), fileName.indexOf(TIME_SUFFIX));
           int currentTimepoint = DataTools.parseInteger(timepointString);
           File[] innerFileList = listOfFiles[i].listFiles();
+          Arrays.sort(innerFileList);
           for (int j=0; j < innerFileList.length; j++) {
             String innerFileName = innerFileList[j].getName();
             if (innerFileName.contains(PROJECTION_PREFIX.substring(0, PROJECTION_PREFIX.length()-1))) {
