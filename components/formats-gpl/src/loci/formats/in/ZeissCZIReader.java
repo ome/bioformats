@@ -1328,25 +1328,25 @@ public class ZeissCZIReader extends FormatReader {
           startTime = p.timestamp;
         }
 
-        if (p.stageX != null) {
-          store.setPlanePositionX(p.stageX, i, plane);
-        }
-        else if (positionsX != null && i < positionsX.length &&
+        if (positionsX != null && i < positionsX.length &&
           positionsX[i] != null)
         {
           store.setPlanePositionX(positionsX[i], i, plane);
+        }
+        else if (p.stageX != null) {
+          store.setPlanePositionX(p.stageX, i, plane);
         }
         else {
           store.setPlanePositionX(new Length(p.col, UNITS.REFERENCEFRAME), i, plane);
         }
 
-        if (p.stageY != null) {
-          store.setPlanePositionY(p.stageY, i, plane);
-        }
-        else if (positionsY != null && i < positionsY.length &&
+        if (positionsY != null && i < positionsY.length &&
           positionsY[i] != null)
         {
           store.setPlanePositionY(positionsY[i], i, plane);
+        }
+        else if (p.stageY != null) {
+          store.setPlanePositionY(p.stageY, i, plane);
         }
         else {
           store.setPlanePositionY(new Length(p.row, UNITS.REFERENCEFRAME), i, plane);
@@ -2039,6 +2039,16 @@ public class ZeissCZIReader extends FormatReader {
               positionsZ[nextPosition] = new Length(DataTools.parseDouble(z), UNITS.MICROMETER);
               nextPosition++;
             }
+          }
+          if (positions.getLength() == 0) {
+            positions = scene.getElementsByTagName("CenterPosition");
+            if (positions.getLength() > 0) {
+              Element position = (Element) positions.item(0);
+              String[] pos = position.getTextContent().split(",");
+              positionsX[nextPosition] = new Length(DataTools.parseDouble(pos[0]), UNITS.MICROM);
+              positionsY[nextPosition] = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROM);
+            }
+            nextPosition++;
           }
         }
       }
