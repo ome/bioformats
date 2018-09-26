@@ -65,9 +65,13 @@ ip.addRequired('I', @isnumeric);
 ip.addRequired('outputPath', @ischar);
 ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
 ip.addParamValue('metadata', [], @(x) isa(x, 'loci.formats.ome.OMEXMLMetadata'));
-ip.addParamValue('Compression', '',  @(x) ismember(x, getCompressionTypes()));
+ip.addParamValue('Compression', '',  @ischar);
 ip.addParamValue('BigTiff', false , @islogical);
 ip.parse(varargin{:});
+
+% Create Writer object from output path
+imageWriter = javaObject('loci.formats.ImageWriter');
+writer = imageWriter.getWriter(ip.Results.outputPath);
 
 % Create metadata
 if isempty(ip.Results.metadata)
@@ -80,15 +84,13 @@ else
     end
 end
 
-% Create ImageWriter
-writer = javaObject('loci.formats.ImageWriter');
 writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 if ~isempty(ip.Results.Compression)
     writer.setCompression(ip.Results.Compression);
 end
 if ip.Results.BigTiff
-    writer.getWriter(ip.Results.outputPath).setBigTiff(ip.Results.BigTiff);
+    writer.setBigTiff(ip.Results.BigTiff);
 end
 writer.setId(ip.Results.outputPath);
 
@@ -125,14 +127,13 @@ function dimensionOrders = getDimensionOrders()
 % List all values of DimensionOrder
 dimensionOrderValues = javaMethod('values', 'ome.xml.model.enums.DimensionOrder');
 dimensionOrders = cell(numel(dimensionOrderValues), 1);
-for i = 1 :numel(dimensionOrderValues),
+for i = 1 :numel(dimensionOrderValues)
     dimensionOrders{i} = char(dimensionOrderValues(i).toString());
 end
 end
 
-function compressionTypes = getCompressionTypes()
+function compressionTypes = getCompressionTypes(writer)
 % List all values of Compression
-writer = javaObject('loci.formats.ImageWriter');
 if is_octave()
     %% FIXME when https://savannah.gnu.org/bugs/?42700 gets fixed
     types = writer.getCompressionTypes();
