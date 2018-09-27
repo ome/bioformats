@@ -36,16 +36,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.SubResolutionFormatReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
-import loci.formats.FormatReader;
-import loci.formats.FormatTools;
-import loci.formats.MetadataTools;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -60,7 +60,7 @@ import loci.formats.tiff.TiffParser;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class MinimalTiffReader extends FormatReader {
+public class MinimalTiffReader extends SubResolutionFormatReader {
 
   // -- Constants --
 
@@ -507,7 +507,7 @@ public class MinimalTiffReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(0, 0);
 
     if (separateSeries) {
       core.clear();
@@ -515,7 +515,7 @@ public class MinimalTiffReader extends FormatReader {
       core.add(ms0);
       for (int i=1; i<ifds.size(); i++) {
         core.add(new CoreMetadata());
-        core.get(i).imageCount = 1;
+        core.get(i, 0).imageCount = 1;
       }
       seriesToIFD = true;
     }
@@ -604,38 +604,38 @@ public class MinimalTiffReader extends FormatReader {
       PhotoInterp photo = firstIFD.getPhotometricInterpretation();
       int samples = firstIFD.getSamplesPerPixel();
 
-      core.get(i).rgb = samples > 1 || photo == PhotoInterp.RGB;
-      core.get(i).interleaved = false;
-      core.get(i).littleEndian = firstIFD.isLittleEndian();
+      core.get(i, 0).rgb = samples > 1 || photo == PhotoInterp.RGB;
+      core.get(i, 0).interleaved = false;
+      core.get(i, 0).littleEndian = firstIFD.isLittleEndian();
 
-      core.get(i).sizeX = (int) firstIFD.getImageWidth();
-      core.get(i).sizeY = (int) firstIFD.getImageLength();
-      core.get(i).sizeZ = 1;
-      core.get(i).sizeC = isRGB() ? samples : 1;
-      core.get(i).sizeT = core.size() == 1 ? ifds.size() : 1;
+      core.get(i, 0).sizeX = (int) firstIFD.getImageWidth();
+      core.get(i, 0).sizeY = (int) firstIFD.getImageLength();
+      core.get(i, 0).sizeZ = 1;
+      core.get(i, 0).sizeC = isRGB() ? samples : 1;
+      core.get(i, 0).sizeT = core.size() == 1 ? ifds.size() : 1;
 
-      core.get(i).pixelType = firstIFD.getPixelType();
-      core.get(i).metadataComplete = true;
-      core.get(i).indexed = photo == PhotoInterp.RGB_PALETTE &&
+      core.get(i, 0).pixelType = firstIFD.getPixelType();
+      core.get(i, 0).metadataComplete = true;
+      core.get(i, 0).indexed = photo == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
       if (isIndexed()) {
-        core.get(i).sizeC = 1;
-        core.get(i).rgb = false;
+        core.get(i, 0).sizeC = 1;
+        core.get(i, 0).rgb = false;
         for (IFD ifd : ifds) {
           ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION,
             PhotoInterp.RGB_PALETTE);
         }
       }
-      if (getSizeC() == 1 && !isIndexed()) core.get(i).rgb = false;
-      core.get(i).dimensionOrder = "XYCZT";
-      core.get(i).bitsPerPixel = firstIFD.getBitsPerSample()[0];
-      core.get(i).imageCount = core.size() == 1 ? ifds.size() : 1;
+      if (getSizeC() == 1 && !isIndexed()) core.get(i, 0).rgb = false;
+      core.get(i, 0).dimensionOrder = "XYCZT";
+      core.get(i, 0).bitsPerPixel = firstIFD.getBitsPerSample()[0];
+      core.get(i, 0).imageCount = core.size() == 1 ? ifds.size() : 1;
     }
     setSeries(0);
 
     // New core metadata now that we know how many sub-resolutions we have.
     if (resolutionLevels != null && subResolutionIFDs.size() > 0) {
-      ms0 = core.get(0);
+      ms0 = core.get(0, 0);
       core.clear();
       core.add(ms0);
       IFDList ifds = subResolutionIFDs.get(0);
@@ -656,7 +656,7 @@ public class MinimalTiffReader extends FormatReader {
 
       for (IFD ifd : ifds) {
         CoreMetadata ms = new CoreMetadata(this, 0);
-        core.add(ms);
+        core.add(0, ms);
         ms.sizeX = (int) ifd.getImageWidth();
         ms.sizeY = (int) ifd.getImageLength();
         ms.sizeT = ms0.sizeT;

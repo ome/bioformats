@@ -218,7 +218,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       }
     }
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     m.sizeT = 1;
     if (getSizeZ() == 0) m.sizeZ = 1;

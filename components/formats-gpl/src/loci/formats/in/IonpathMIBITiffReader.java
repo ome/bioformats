@@ -68,6 +68,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
     super("Ionpath MIBI", new String[] {"tif, tiff"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
     suffixSufficient = false;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --
@@ -146,7 +147,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
           throw new FormatException("Only type 'SIMS' can have >1 image per file.");
         }
         seriesIndex = seriesTypes.get(imageType);
-        CoreMetadata ms = core.get(seriesIndex);
+        CoreMetadata ms = core.get(seriesIndex, 0);
         ms.sizeC += 1;
         ms.imageCount += 1;
       } else {
@@ -173,7 +174,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
           }
         }
 
-        CoreMetadata ms = core.get(seriesIndex);
+        CoreMetadata ms = core.get(seriesIndex, 0);
         PhotoInterp p = ifd.getPhotometricInterpretation();
         int samples = ifd.getSamplesPerPixel();
         ms.rgb = samples > 1 || p == PhotoInterp.RGB;

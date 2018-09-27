@@ -42,7 +42,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * Interface for all biological file format readers.
  */
-public interface IFormatReader extends IFormatHandler {
+public interface IFormatReader extends IFormatHandler, IPyramidHandler {
 
   // -- Constants --
 
@@ -508,7 +508,10 @@ public interface IFormatReader extends IFormatHandler {
    */
   Hashtable<String, Object> getSeriesMetadata();
 
-  /** Obtains the core metadata values for the current file. */
+  /** Obtains the core metadata values for the current file.
+   * @deprecated Reader internals should not be accessed by reader users
+   */
+  @Deprecated
   List<CoreMetadata> getCoreMetadataList();
 
   /**
@@ -590,13 +593,22 @@ public interface IFormatReader extends IFormatHandler {
 
   // -- Sub-resolution API methods --
 
-  /** Returns the first core index corresponding to the specified series. */
+  /** Returns the first core index corresponding to the specified series.
+   * @deprecated This method is no longer required for sub-resolution support.
+   */
+  @Deprecated
   int seriesToCoreIndex(int series);
 
-  /** Returns the series corresponding to the specified core index. */
+  /** Returns the series corresponding to the specified core index.
+   * @deprecated This method is no longer required for sub-resolution support.
+   */
+  @Deprecated
   int coreIndexToSeries(int index);
 
-  /** Return the index into CoreMetadata of the current resolution/series. */
+  /** Return the index into CoreMetadata of the current resolution/series.
+   * @deprecated This method is no longer required for sub-resolution support.
+   */
+  @Deprecated
   int getCoreIndex();
 
   /**
@@ -604,30 +616,11 @@ public interface IFormatReader extends IFormatHandler {
    *
    * Equivalent to setSeries, but with flattened resolutions always
    * set to false.
+   *
+   * @deprecated This method is no longer required for sub-resolution support.
    */
+  @Deprecated
   void setCoreIndex(int no);
-
-  /**
-   * Return the number of resolutions for the current series.
-   *
-   * Resolutions are stored in descending order, so the largest resolution is
-   * first and the smallest resolution is last.
-   */
-  int getResolutionCount();
-
-  /**
-   * Set the resolution level.
-   *
-   * @see #getResolutionCount()
-   */
-  void setResolution(int resolution);
-
-  /**
-   * Get the current resolution level.
-   *
-   * @see #getResolutionCount()
-   */
-  int getResolution();
 
   /** Return whether or not resolution flattening is enabled. */
   boolean hasFlattenedResolutions();

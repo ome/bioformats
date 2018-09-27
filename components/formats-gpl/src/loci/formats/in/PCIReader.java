@@ -433,10 +433,10 @@ public class PCIReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0);
         store.setInstrumentID(instrumentID, 0);
         store.setDetectorID(detectorID, 0, 0);
-        store.setDetectorType(getDetectorType("Other"), 0, 0);
+        store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
         store.setImageInstrumentRef(instrumentID, 0);
 
-        Binning binningEnum = getBinning(binning + "x" + binning);
+        Binning binningEnum = MetadataTools.getBinning(binning + "x" + binning);
         for (int c=0; c<getEffectiveSizeC(); c++) {
           store.setDetectorSettingsID(detectorID, 0, c);
           store.setDetectorSettingsBinning(binningEnum, 0, c);

@@ -366,7 +366,6 @@
             </execution>
           </executions>
           <configuration>
-            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
             <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
           </configuration>
         </plugin>

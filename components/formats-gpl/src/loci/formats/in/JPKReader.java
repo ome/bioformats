@@ -45,6 +45,7 @@ public class JPKReader extends BaseTiffReader {
   public JPKReader() {
     super("JPK Instruments", "jpk");
     domains = new String[] {FormatTools.SEM_DOMAIN};
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --

@@ -1403,9 +1403,9 @@ public class ZeissLSMReader extends FormatReader {
         binning = recording.binning;
       }
       store.setObjectiveCorrection(
-        getCorrection(recording.correction), instrument, 0);
+        MetadataTools.getCorrection(recording.correction), instrument, 0);
       store.setObjectiveImmersion(
-        getImmersion(recording.immersion), instrument, 0);
+        MetadataTools.getImmersion(recording.immersion), instrument, 0);
       if (recording.magnification != null) {
         store.setObjectiveNominalMagnification(
           recording.magnification, instrument, 0);
@@ -1417,11 +1417,11 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof Laser) {
       Laser laser = (Laser) block;
       if (laser.medium != null) {
-        store.setLaserLaserMedium(getLaserMedium(laser.medium),
+        store.setLaserLaserMedium(MetadataTools.getLaserMedium(laser.medium),
           instrument, nextLaser);
       }
       if (laser.type != null) {
-        store.setLaserType(getLaserType(laser.type), instrument, nextLaser);
+        store.setLaserType(MetadataTools.getLaserType(laser.type), instrument, nextLaser);
       }
       if (laser.model != null) {
         store.setLaserModel(laser.model, instrument, nextLaser);
@@ -1462,7 +1462,7 @@ public class ZeissLSMReader extends FormatReader {
           if (type.equals("BP")) type = "BandPass";
           else if (type.equals("LP")) type = "LongPass";
 
-          store.setFilterType(getFilterType(type), instrument, nextFilter);
+          store.setFilterType(MetadataTools.getFilterType(type), instrument, nextFilter);
 
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
@@ -1505,7 +1505,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.gain != null) {
         store.setDetectorGain(channel.gain, instrument, nextDetector);
       }
-      store.setDetectorType(getDetectorType("PMT"), instrument, nextDetector);
+      store.setDetectorType(MetadataTools.getDetectorType("PMT"), instrument, nextDetector);
       store.setDetectorZoom(zoom, instrument, nextDetector);
       nextDetectChannel++;
       nextDetector++;

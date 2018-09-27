@@ -246,7 +246,7 @@ public class AliconaReader extends FormatReader {
         store.setDetectorSettingsID(detectorID, 0, 0);
 
         // set required Detector type
-        store.setDetectorType(getDetectorType("Other"), 0, 0);
+        store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
       }
 
       // populate Objective data
@@ -260,8 +260,8 @@ public class AliconaReader extends FormatReader {
         store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
       }
 
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
 
       // link Objective to an Image using ObjectiveSettings
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);

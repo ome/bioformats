@@ -296,8 +296,8 @@ public class GatanReader extends FormatReader {
 
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
-      store.setObjectiveCorrection(getCorrection("Unknown"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Unknown"), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Unknown"), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Unknown"), 0, 0);
       store.setObjectiveNominalMagnification(mag, 0, 0);
 
       store.setObjectiveSettingsID(objective, 0);
@@ -317,7 +317,7 @@ public class GatanReader extends FormatReader {
           token = token.substring(token.indexOf(' ')).trim();
           String mode = token.substring(0, token.indexOf(' ')).trim();
           if (mode.equals("TEM")) mode = "Other";
-          store.setChannelAcquisitionMode(getAcquisitionMode(mode), 0, 0);
+          store.setChannelAcquisitionMode(MetadataTools.getAcquisitionMode(mode), 0, 0);
         }
       }
 

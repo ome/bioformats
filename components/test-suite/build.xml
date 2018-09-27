@@ -70,6 +70,26 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
+  <target name="test-equivalent" depends="compile"
+    description="test if two files are pixels-equivalent">
+    <testng testname="Pixels equivalence test" failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${basedir}"/>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <classpath refid="test.classpath"/>
+      <classfileset file="${classes.dir}/loci/tests/testng/EquivalentPixelsTest.class"/>
+      <sysproperty key="src" value="${testng.src}"/>
+      <sysproperty key="check" value="${testng.check}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
+      <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
   <target name="test-convert" depends="compile"
     description="run automated tests on writers">
     <testng groups="all" testname="Writer tests"
@@ -147,6 +167,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -242,6 +263,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>

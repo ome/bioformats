@@ -580,7 +580,7 @@ public class TillVisionReader extends FormatReader {
 
         if (i < types.size()) {
           store.setExperimentID(MetadataTools.createLSID("Experiment", i), i);
-          store.setExperimentType(getExperimentType(types.get(i)), i);
+          store.setExperimentType(MetadataTools.getExperimentType(types.get(i)), i);
         }
       }
     }

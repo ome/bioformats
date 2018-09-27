@@ -71,6 +71,7 @@ import ome.units.UNITS;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -175,6 +176,8 @@ public class FormatReaderTest {
       BufferedImage b = null;
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
+
+        Assert.assertEquals(reader.getSeries(), i);
 
         int x = reader.getSizeX();
         int y = reader.getSizeY();
@@ -508,29 +511,34 @@ public class FormatReaderTest {
         String type = FormatTools.getPixelTypeString(reader.getPixelType());
 
         if (reader.getSizeX() !=
-          retrieve.getPixelsSizeX(i).getValue().intValue())
-        {
-          msg = "SizeX";
+          retrieve.getPixelsSizeX(i).getValue().intValue()) {
+          msg = String.format("SizeX (expected %d, actually %d)",
+            reader.getSizeX(),
+            retrieve.getPixelsSizeX(i).getValue().intValue());
         }
         if (reader.getSizeY() !=
-          retrieve.getPixelsSizeY(i).getValue().intValue())
-        {
-          msg = "SizeY";
+          retrieve.getPixelsSizeY(i).getValue().intValue()) {
+          msg = String.format("SizeY (expected %d, actually %d)",
+            reader.getSizeY(),
+            retrieve.getPixelsSizeY(i).getValue().intValue());
         }
         if (reader.getSizeZ() !=
-          retrieve.getPixelsSizeZ(i).getValue().intValue())
-        {
-          msg = "SizeZ";
+          retrieve.getPixelsSizeZ(i).getValue().intValue()) {
+          msg = String.format("SizeZ (expected %d, actually %d)",
+            reader.getSizeZ(),
+            retrieve.getPixelsSizeZ(i).getValue().intValue());
         }
         if (reader.getSizeC() !=
-          retrieve.getPixelsSizeC(i).getValue().intValue())
-        {
-          msg = "SizeC";
+          retrieve.getPixelsSizeC(i).getValue().intValue()) {
+          msg = String.format("SizeC (expected %d, actually %d)",
+            reader.getSizeC(),
+            retrieve.getPixelsSizeC(i).getValue().intValue());
         }
         if (reader.getSizeT() !=
-          retrieve.getPixelsSizeT(i).getValue().intValue())
-        {
-          msg = "SizeT";
+          retrieve.getPixelsSizeT(i).getValue().intValue()) {
+          msg = String.format("SizeT (expected %d, actually %d)",
+            reader.getSizeT(),
+            retrieve.getPixelsSizeT(i).getValue().intValue());
         }
 
         // NB: OME-TIFF files do not have a BinData element under Pixels
@@ -602,66 +610,39 @@ public class FormatReaderTest {
       result(testName, true);
       return;
     }
+    String msg = checkOMEXML(reader);
+    result(testName, msg == null, msg);
+  }
+
+  @Test(groups = {"all", "xml", "automated"})
+  public void testUnflattenedSaneOMEXML() {
+    String testName = "testUnflattenedSaneOMEXML";
+    if (!initFile()) result(testName, false, "initFile");
+    if (!config.hasValidXML()) {
+      LOGGER.debug("Skipping valid XML test");
+      result(testName, true);
+      return;
+    }
+
     String msg = null;
+    IFormatReader unflattenedReader = null;
     try {
-
-      MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
-      boolean success = omexmlService.isOMEXMLMetadata(retrieve);
-      if (!success) msg = TestTools.shortClassName(retrieve);
-
-      for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
-        // total number of ChannelComponents should match SizeC
-        int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
-        int nChannelComponents = retrieve.getChannelCount(i);
-        int samplesPerPixel =
-          retrieve.getChannelSamplesPerPixel(i, 0).getValue();
-
-        if (sizeC != nChannelComponents * samplesPerPixel) {
-          msg = "ChannelComponent";
-        }
-
-        // Z, C and T indices should be populated if PlaneTiming is present
-
-        Time deltaT = null;
-        Time exposure = null;
-        Integer z = null, c = null, t = null;
-
-        if (retrieve.getPlaneCount(i) > 0) {
-          deltaT = retrieve.getPlaneDeltaT(i, 0);
-          exposure = retrieve.getPlaneExposureTime(i, 0);
-          z = retrieve.getPlaneTheZ(i, 0).getValue();
-          c = retrieve.getPlaneTheC(i, 0).getValue();
-          t = retrieve.getPlaneTheT(i, 0).getValue();
-        }
-
-        if ((deltaT != null || exposure != null) &&
-          (z == null || c == null || t == null))
-        {
-          msg = "PlaneTiming";
-        }
-
-        // if CreationDate is before 1990, it's probably invalid
-        String date = null;
-        if (retrieve.getImageAcquisitionDate(i) != null) {
-          date = retrieve.getImageAcquisitionDate(i).getValue();
-        }
-        config.setSeries(i);
-        String configDate = config.getDate();
-        if (date != null && !date.equals(configDate)) {
-          date = date.trim();
-          long acquiredDate = new Timestamp(date).asInstant().getMillis();
-          long saneDate = new Timestamp("1990-01-01T00:00:00").asInstant().getMillis();
-          long fileDate = new Location(
-            reader.getCurrentFile()).getAbsoluteFile().lastModified();
-          if (acquiredDate < saneDate && fileDate >= saneDate) {
-            msg = "CreationDate (date=" + date + " acquiredDate=" + acquiredDate + " fileDate=" + fileDate + " saneDate=" + saneDate + ")";
-          }
+      unflattenedReader = setupReader(false, true);
+      msg = checkOMEXML(unflattenedReader);
+    }
+    catch (Exception e) {
+      msg = e.getMessage();
+      LOGGER.debug(testName, e);
+    }
+    finally {
+      try {
+        if (unflattenedReader != null) {
+          unflattenedReader.close();
         }
       }
-    }
-    catch (Throwable t) {
-      LOGGER.info("", t);
-      msg = t.getMessage();
+      catch (IOException e) {
+        LOGGER.debug("Could not close reader", e);
+      }
     }
     result(testName, msg == null, msg);
   }
@@ -674,7 +655,9 @@ public class FormatReaderTest {
     String testName = "SeriesCount";
     if (!initFile()) result(testName, false, "initFile");
 
-    result(testName, reader.getSeriesCount() == config.getSeriesCount());
+    result(testName, reader.getSeriesCount() == config.getSeriesCount(),
+      "got " + reader.getSeriesCount() +
+      ", expected " + config.getSeriesCount());
   }
 
   @Test(groups = {"all", "fast", "automated"})
@@ -1911,21 +1894,30 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher());
-      resolutionReader.setFlattenedResolutions(false);
-      resolutionReader.setNormalized(true);
-      resolutionReader.setOriginalMetadataPopulated(false);
-      resolutionReader.setMetadataFiltered(true);
-      resolutionReader.setId(id);
+      IFormatReader resolutionReader = setupReader(false, true);
+
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
 
       // check the MD5 of the first plane in each resolution
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
+        Assert.assertEquals(resolutionReader.getSeries(), i);
+
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
-          config.setSeries(resolutionReader.getCoreIndex());
+
+          Assert.assertEquals(resolutionReader.getResolution(), r);
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(resolutionReader.getCoreIndex());
+          }
 
           long planeSize = -1;
           try {
@@ -2005,7 +1997,9 @@ public class FormatReaderTest {
         }
         if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = "series " + i + " (" + md5 + ")";
+          msg = "series " + i +
+            ", md5 " + md5 +
+            ", expected " + expected1 + " or " + expected2;
         }
       }
     }
@@ -2066,21 +2060,30 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher());
-      resolutionReader.setFlattenedResolutions(false);
-      resolutionReader.setNormalized(true);
-      resolutionReader.setOriginalMetadataPopulated(false);
-      resolutionReader.setMetadataFiltered(true);
-      resolutionReader.setId(id);
+      IFormatReader resolutionReader = setupReader(false, true);
+
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
 
       // check the MD5 of the first plane in each resolution
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
+        Assert.assertEquals(resolutionReader.getSeries(), i);
+
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
-          config.setSeries(resolutionReader.getCoreIndex());
+
+          Assert.assertEquals(resolutionReader.getResolution(), r);
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(resolutionReader.getCoreIndex());
+          }
 
           int w = (int) Math.min(Configuration.TILE_SIZE,
             resolutionReader.getSizeX());
@@ -2110,7 +2113,9 @@ public class FormatReaderTest {
             (expected1 != null || expected2 != null))
           {
             success = false;
-            msg = "series " + i + ", resolution " + r;
+            msg = "series " + i + ", resolution " + r +
+              ", md5 " + md5 +
+              ", expected " + expected1 + " or " + expected2;
           }
         }
       }
@@ -2163,7 +2168,9 @@ public class FormatReaderTest {
           (expected1 != null || expected2 != null))
         {
           success = false;
-          msg = "series " + i + " (" + md5 + ")";
+          msg = "series " + i +
+            ", md5 " + md5 +
+            ", expected " + expected1 + " or " + expected2;
         }
       }
     }
@@ -2660,12 +2667,28 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    ImageReader ir = new ImageReader();
-    reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
-    reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
-    reader.setNormalized(true);
-    reader.setOriginalMetadataPopulated(false);
-    reader.setMetadataFiltered(true);
+    setupReader(true, false);
+  }
+
+  /**
+   * Set up an IFormatReader for either flattened or unflattened testing.
+   *
+   * @param flattened the value to pass to IFormatReader.setFlattenedResolutions
+   * @param initialize true if setId should be called on the current file
+   * @return the configured reader
+   */
+  private IFormatReader setupReader(boolean flattened, boolean initialize) {
+    IFormatReader ir = null;
+    if (flattened) {
+      ir = new ImageReader();
+      ir = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
+      ir.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+    }
+    else {
+      ir = new BufferedImageReader(new FileStitcher());
+      ir.setFlattenedResolutions(false);
+    }
+
     MetadataStore store = null;
     try {
       store = omexmlService.createOMEXMLMetadata();
@@ -2673,7 +2696,23 @@ public class FormatReaderTest {
     catch (ServiceException e) {
       LOGGER.warn("Could not parse OME-XML", e);
     }
-    reader.setMetadataStore(store);
+    ir.setMetadataStore(store);
+    ir.setNormalized(true);
+    ir.setOriginalMetadataPopulated(false);
+    ir.setMetadataFiltered(true);
+
+    if (initialize) {
+      try {
+        ir.setId(id);
+      }
+      catch (FormatException | IOException e) {
+        LOGGER.error("Could not initialize " + id, e);
+      }
+    }
+    if (flattened) {
+      reader = (BufferedImageReader) ir;
+    }
+    return ir;
   }
 
   /** Initializes the reader and configuration tree. */
@@ -2784,6 +2823,75 @@ public class FormatReaderTest {
 
     if (msg == null) assert success;
     else assert success : msg;
+  }
+
+  private String checkOMEXML(IFormatReader reader) {
+    String msg = null;
+    try {
+      MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
+      boolean success = omexmlService.isOMEXMLMetadata(retrieve);
+      if (!success) msg = TestTools.shortClassName(retrieve);
+
+      if (reader.getSeriesCount() != retrieve.getImageCount()) {
+        msg = "ImageCount (series=" + reader.getSeriesCount() +
+          ", image=" + retrieve.getImageCount() + ")";
+      }
+
+      for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
+        // total number of ChannelComponents should match SizeC
+        int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
+        int nChannelComponents = retrieve.getChannelCount(i);
+        int samplesPerPixel =
+          retrieve.getChannelSamplesPerPixel(i, 0).getValue();
+
+        if (sizeC != nChannelComponents * samplesPerPixel) {
+          msg = "ChannelComponent";
+        }
+
+        // Z, C and T indices should be populated if PlaneTiming is present
+
+        Time deltaT = null;
+        Time exposure = null;
+        Integer z = null, c = null, t = null;
+
+        if (retrieve.getPlaneCount(i) > 0) {
+          deltaT = retrieve.getPlaneDeltaT(i, 0);
+          exposure = retrieve.getPlaneExposureTime(i, 0);
+          z = retrieve.getPlaneTheZ(i, 0).getValue();
+          c = retrieve.getPlaneTheC(i, 0).getValue();
+          t = retrieve.getPlaneTheT(i, 0).getValue();
+        }
+
+        if ((deltaT != null || exposure != null) &&
+          (z == null || c == null || t == null))
+        {
+          msg = "PlaneTiming";
+        }
+
+        // if CreationDate is before 1990, it's probably invalid
+        String date = null;
+        if (retrieve.getImageAcquisitionDate(i) != null) {
+          date = retrieve.getImageAcquisitionDate(i).getValue();
+        }
+        config.setSeries(i);
+        String configDate = config.getDate();
+        if (date != null && !date.equals(configDate)) {
+          date = date.trim();
+          long acquiredDate = new Timestamp(date).asInstant().getMillis();
+          long saneDate = new Timestamp("1990-01-01T00:00:00").asInstant().getMillis();
+          long fileDate = new Location(
+            reader.getCurrentFile()).getAbsoluteFile().lastModified();
+          if (acquiredDate < saneDate && fileDate >= saneDate) {
+            msg = "CreationDate (date=" + date + " acquiredDate=" + acquiredDate + " fileDate=" + fileDate + " saneDate=" + saneDate + ")";
+          }
+        }
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      msg = t.getMessage();
+    }
+    return msg;
   }
 
 }

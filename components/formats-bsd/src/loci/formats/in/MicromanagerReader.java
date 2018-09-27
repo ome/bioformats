@@ -384,7 +384,7 @@ public class MicromanagerReader extends FormatReader {
         p.detectorID = MetadataTools.createLSID("Detector", 0, i);
 
         for (int c=0; c<p.channels.length; c++) {
-          store.setDetectorSettingsBinning(getBinning(p.binning), i, c);
+          store.setDetectorSettingsBinning(MetadataTools.getBinning(p.binning), i, c);
           store.setDetectorSettingsGain(new Double(p.gain), i, c);
           if (c < p.voltage.size()) {
             store.setDetectorSettingsVoltage(
@@ -407,7 +407,7 @@ public class MicromanagerReader extends FormatReader {
         }
 
         if (p.cameraMode == null) p.cameraMode = "Other";
-        store.setDetectorType(getDetectorType(p.cameraMode), 0, i);
+        store.setDetectorType(MetadataTools.getDetectorType(p.cameraMode), 0, i);
         store.setImagingEnvironmentTemperature(
                 new Temperature(p.temperature, UNITS.CELSIUS), i);
       }

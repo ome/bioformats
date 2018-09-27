@@ -191,7 +191,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     final List<Length> stageX = new ArrayList<Length>();
     final List<Length> stageY = new ArrayList<Length>();
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     String filename = id.substring(id.lastIndexOf(File.separator) + 1);
     filename = filename.substring(0, filename.indexOf('.'));

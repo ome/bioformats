@@ -249,9 +249,9 @@ public class HISReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
         store.setDetectorOffset(offset[i], 0, i);
-        store.setDetectorType(getDetectorType("Other"), 0, i);
+        store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, i);
         store.setDetectorSettingsID(detectorID, i, 0);
-        store.setDetectorSettingsBinning(getBinning(binning[i]), i, 0);
+        store.setDetectorSettingsBinning(MetadataTools.getBinning(binning[i]), i, 0);
       }
     }
   }

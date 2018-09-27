@@ -60,8 +60,8 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.meta.ModuloAnnotation;
 import loci.formats.meta.OriginalMetadataAnnotation;
+import loci.formats.ome.OMEPyramidStore;
 import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.ome.OMEXMLMetadataImpl;
 
 import ome.units.quantity.Length;
 
@@ -372,7 +372,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     OMEXMLMetadataRoot ome =
       xml == null ? null : createRoot(transformToLatestVersion(xml));
 
-    OMEXMLMetadata meta = new OMEXMLMetadataImpl();
+    OMEXMLMetadata meta = new OMEPyramidStore();
     if (ome != null) meta.setRoot(ome);
     return meta;
   }

@@ -156,8 +156,8 @@ public class LEOReader extends BaseTiffReader {
 
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
       store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROMETER), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
     }
   }
 

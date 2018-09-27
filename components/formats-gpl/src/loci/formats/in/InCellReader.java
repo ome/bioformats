@@ -551,8 +551,8 @@ public class InCellReader extends FormatReader {
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateName(plateName, 0);
-    store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
-    store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
+    store.setPlateRowNamingConvention(MetadataTools.getNamingConvention(rowNaming), 0);
+    store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention(colNaming), 0);
     store.setPlateRows(new PositiveInteger(wellRows), 0);
     store.setPlateColumns(new PositiveInteger(wellCols), 0);
 
@@ -975,7 +975,7 @@ public class InCellReader extends FormatReader {
         store.setExperimentID(experimentID, 0);
         try {
           store.setExperimentType(
-            getExperimentType(attributes.getValue("type")), 0);
+            MetadataTools.getExperimentType(attributes.getValue("type")), 0);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1016,7 +1016,7 @@ public class InCellReader extends FormatReader {
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         try {
-         store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+         store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1028,7 +1028,7 @@ public class InCellReader extends FormatReader {
         store.setObjectiveManufacturer(tokens[0], 0, 0);
         String correction = tokens.length > 2 ? tokens[2] : "Other";
         try {
-          store.setObjectiveCorrection(getCorrection(correction), 0, 0);
+          store.setObjectiveCorrection(MetadataTools.getCorrection(correction), 0, 0);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1053,7 +1053,7 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("Camera")) {
         store.setDetectorModel(attributes.getValue("name"), 0, 0);
         try {
-          store.setDetectorType(getDetectorType("Other"), 0, 0);
+          store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1062,7 +1062,7 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("Binning")) {
         String binning = attributes.getValue("value");
         try {
-          bin = getBinning(binning);
+          bin = MetadataTools.getBinning(binning);
         }
         catch (FormatException e) { }
       }

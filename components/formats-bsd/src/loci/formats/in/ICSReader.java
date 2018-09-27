@@ -1500,7 +1500,7 @@ public class ICSReader extends FormatReader {
       store.setImageInstrumentRef(instrumentID, 0);
 
       store.setExperimentID(MetadataTools.createLSID("Experiment", 0), 0);
-      store.setExperimentType(getExperimentType(experimentType), 0);
+      store.setExperimentType(MetadataTools.getExperimentType(experimentType), 0);
 
       // populate Dimensions data
 
@@ -1633,8 +1633,8 @@ public class ICSReader extends FormatReader {
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);
         }
-        store.setLaserType(getLaserType("Other"), 0, i);
-        store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
+        store.setLaserType(MetadataTools.getLaserType("Other"), 0, i);
+        store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, i);
 
         store.setLaserManufacturer(laserManufacturer, 0, i);
         store.setLaserModel(laserModel, 0, i);
@@ -1650,8 +1650,8 @@ public class ICSReader extends FormatReader {
 
       if (lasers.length == 0 && laserManufacturer != null) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, 0), 0, 0);
-        store.setLaserType(getLaserType("Other"), 0, 0);
-        store.setLaserLaserMedium(getLaserMedium("Other"), 0, 0);
+        store.setLaserType(MetadataTools.getLaserType("Other"), 0, 0);
+        store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, 0);
         store.setLaserManufacturer(laserManufacturer, 0, 0);
         store.setLaserModel(laserModel, 0, 0);
         Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MILLIWATT);
@@ -1691,7 +1691,7 @@ public class ICSReader extends FormatReader {
 
       if (objectiveModel != null) store.setObjectiveModel(objectiveModel, 0, 0);
       if (immersion == null) immersion = "Other";
-      store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), 0, 0);
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (workingDistance != null) {
         store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROMETER), 0, 0);
@@ -1699,7 +1699,7 @@ public class ICSReader extends FormatReader {
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(magnification, 0, 0);
       }
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
 
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -1712,7 +1712,7 @@ public class ICSReader extends FormatReader {
       store.setDetectorID(detectorID, 0, 0);
       store.setDetectorManufacturer(detectorManufacturer, 0, 0);
       store.setDetectorModel(detectorModel, 0, 0);
-      store.setDetectorType(getDetectorType("Other"), 0, 0);
+      store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
 
       for (Integer key : gains.keySet()) {
         int index = key.intValue();

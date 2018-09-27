@@ -192,7 +192,7 @@ public class SEQReader extends BaseTiffReader {
     currentId = ips;
     files = pixelsFiles;
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
     m.sizeT = tCount;
     m.sizeZ = zCount;
     m.sizeC *= channelCount;
@@ -218,7 +218,7 @@ public class SEQReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     m.sizeZ = 0;
     m.sizeT = 0;

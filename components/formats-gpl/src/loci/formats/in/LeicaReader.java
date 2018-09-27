@@ -1403,10 +1403,10 @@ public class LeicaReader extends FormatReader {
           if (immersion != null) immersion = immersion.trim();
           if (correction != null) correction = correction.trim();
 
-          Correction realCorrection = getCorrection(correction);
-          Correction testCorrection = getCorrection(immersion);
-          Immersion realImmersion = getImmersion(immersion);
-          Immersion testImmersion = getImmersion(correction);
+          Correction realCorrection = MetadataTools.getCorrection(correction);
+          Correction testCorrection = MetadataTools.getCorrection(immersion);
+          Immersion realImmersion = MetadataTools.getImmersion(immersion);
+          Immersion testImmersion = MetadataTools.getImmersion(correction);
 
           // Correction and Immersion are reversed
           if ((testCorrection != Correction.OTHER &&
@@ -1420,9 +1420,9 @@ public class LeicaReader extends FormatReader {
           }
 
           store.setObjectiveImmersion(
-            getImmersion(immersion), series, objective);
+            MetadataTools.getImmersion(immersion), series, objective);
           store.setObjectiveCorrection(
-            getCorrection(correction), series, objective);
+            MetadataTools.getCorrection(correction), series, objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
 
@@ -1564,7 +1564,7 @@ public class LeicaReader extends FormatReader {
         store.setDetectorVoltage(
                 new ElectricPotential(detector.voltage, UNITS.VOLT), series,
                 nextDetector);
-        store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
+        store.setDetectorType(MetadataTools.getDetectorType("PMT"), series, nextDetector);
 
         String detectorID =
           MetadataTools.createLSID("Detector", series, nextDetector);
