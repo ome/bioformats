@@ -1328,32 +1328,47 @@ public class ZeissCZIReader extends FormatReader {
           startTime = p.timestamp;
         }
 
+        Length x = null;
         if (positionsX != null && i < positionsX.length &&
           positionsX[i] != null)
         {
-          store.setPlanePositionX(positionsX[i], i, plane);
+          x = positionsX[i];
         }
         else if (p.stageX != null) {
-          store.setPlanePositionX(p.stageX, i, plane);
+          x = p.stageX;
         }
         else {
-          store.setPlanePositionX(new Length(p.col, UNITS.REFERENCEFRAME), i, plane);
+          x = new Length(p.col, UNITS.REFERENCEFRAME);
+        }
+        if (x != null) {
+          store.setPlanePositionX(x, i, plane);
+          if (plane == 0) {
+            store.setStageLabelX(x, i);
+          }
         }
 
+        Length y = null;
         if (positionsY != null && i < positionsY.length &&
           positionsY[i] != null)
         {
-          store.setPlanePositionY(positionsY[i], i, plane);
+          y = positionsY[i];
         }
         else if (p.stageY != null) {
-          store.setPlanePositionY(p.stageY, i, plane);
+          y = p.stageY;
         }
         else {
-          store.setPlanePositionY(new Length(p.row, UNITS.REFERENCEFRAME), i, plane);
+          y = new Length(p.row, UNITS.REFERENCEFRAME);
+        }
+        if (y != null) {
+          store.setPlanePositionY(y, i, plane);
+          if (plane == 0) {
+            store.setStageLabelY(y, i);
+          }
         }
 
+        Length z = null;
         if (p.stageZ != null) {
-          store.setPlanePositionZ(p.stageZ, i, plane);
+          z = p.stageZ;
         }
         else if (positionsZ != null && i < positionsZ.length) {
           int zIndex = getZCTCoords(plane)[0];
@@ -1363,13 +1378,21 @@ public class ZeissCZIReader extends FormatReader {
               if (zStep != null) {
                 value += zIndex * zStep.value().doubleValue();
               }
-              Length pos = new Length(value, zStep.unit());
-              store.setPlanePositionZ(pos, i, plane);
+              z = new Length(value, zStep.unit());
             }
             else {
-              store.setPlanePositionZ(positionsZ[i], i, plane);
+              z = positionsZ[i];
             }
           }
+        }
+        if (z != null) {
+          store.setPlanePositionZ(z, i, plane);
+          if (plane == 0) {
+            store.setStageLabelZ(z, i);
+          }
+        }
+        if (plane == 0 && (x != null || y != null || z != null)) {
+          store.setStageLabelName("Scene position #" + i, i);
         }
 
         if (p.timestamp != null) {
