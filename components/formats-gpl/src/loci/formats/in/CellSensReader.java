@@ -638,7 +638,7 @@ public class CellSensReader extends FormatReader {
     }
 
     parser = new TiffParser(id);
-    ifds = parser.getIFDs();
+    ifds = parser.getMainIFDs();
 
     RandomAccessInputStream vsi = new RandomAccessInputStream(id);
     vsi.order(parser.getStream().isLittleEndian());
@@ -789,7 +789,7 @@ public class CellSensReader extends FormatReader {
           if (q < pyramid.deviceManufacturers.size()) {
             store.setDetectorManufacturer(pyramid.deviceManufacturers.get(q), 0, i);
           }
-          store.setDetectorType(getDetectorType("CCD"), 0, i);
+          store.setDetectorType(MetadataTools.getDetectorType("CCD"), 0, i);
           break;
         }
       }
@@ -811,7 +811,7 @@ public class CellSensReader extends FormatReader {
           store.setDetectorSettingsID(
             MetadataTools.createLSID("Detector", 0, nextPyramid - 1), ii, c);
           store.setDetectorSettingsBinning(
-            getBinning(pyramid.binningX + "x" + pyramid.binningY), ii, c);
+            MetadataTools.getBinning(pyramid.binningX + "x" + pyramid.binningY), ii, c);
 
           if (c == 0) {
             store.setDetectorSettingsGain(pyramid.redGain, ii, c);

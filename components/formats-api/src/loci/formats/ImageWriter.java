@@ -207,6 +207,18 @@ public class ImageWriter implements IFormatWriter {
     return getWriter().setTileSizeY(tileSize);
   }
 
+  @Override
+  public void setResolutions(List<Resolution> resolutions) {
+    for (IFormatWriter w : writers) {
+      w.setResolutions(resolutions);
+    }
+  }
+
+  @Override
+  public List<Resolution> getResolutions() {
+    return getWriter().getResolutions();
+  }
+
   // -- IMetadataConfigurable API methods --
 
   /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */
@@ -485,6 +497,26 @@ public class ImageWriter implements IFormatWriter {
   @Override
   public void close() throws IOException {
     getWriter().close();
+  }
+
+  // -- IPyramidHandler API methods --
+
+  /* @see IPyramidHandler#getResolutionCount() */
+  @Override
+  public int getResolutionCount() {
+    return getWriter().getResolutionCount();
+  }
+
+  /* @see IPyramidHandler#getResolution() */
+  @Override
+  public int getResolution() {
+    return getWriter().getResolution();
+  }
+
+  /* @see IPyramidHandler#setResolution(int) */
+  @Override
+  public void setResolution(int resolution) {
+    getWriter().setResolution(resolution);
   }
 
 }

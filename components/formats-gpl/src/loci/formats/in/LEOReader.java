@@ -88,25 +88,38 @@ public class LEOReader extends BaseTiffReader {
 
     String tag = ifds.get(0).getIFDTextValue(LEO_TAG);
     String[] lines = tag.split("\n");
-
     date = "";
 
-    for (int line=10; line<lines.length; line++) {
-      if (lines[line].equals("clock")) {
-        date += lines[++line];
-      }
-      else if (lines[line].equals("date")) {
-        date += " " + lines[++line];
-      }
-    }
+    double filament = 0;
+    double eht = 0;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // physical sizes stored in meters
       xSize = Double.parseDouble(lines[3]) * 1000000;
+      for (int line=36; line<lines.length; line++) {
+        if (lines[line].equals("AP_IMAGE_PIXEL_SIZE")) {
+          // if Image Pixel Size is present it is used to override Pixel Size
+          // pixel size is stored in nm, converted now to micrometers
+          xSize = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" nm","e-03"));
+        }
+        else if (lines[line].equals("AP_WD")) {
+          //working distance stored in mm, converting now to micrometers
+          workingDistance = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" mm","e+03"));
+        }
+        else if (lines[line].equals("AP_ACTUALCURRENT")) {
+          filament = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" A",""));
+        }
+        else if (lines[line].equals("AP_ACTUALKV")) {
+          eht = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" kV","e+03").replace(" V",""));
+        }
+        else if (lines[line].equals("AP_TIME")) {
+          date += lines[++line].split(" :")[1];
+        }
+        else if (lines[line].equals("AP_DATE")) {
+          date += " " + lines[++line].split(" :")[1];
+        }
+      }
 
-      double eht = Double.parseDouble(lines[6]);
-      double filament = Double.parseDouble(lines[7]);
-      workingDistance = Double.parseDouble(lines[9]);
       addGlobalMeta("EHT", eht);
       addGlobalMeta("Filament", filament);
       addGlobalMeta("Working Distance", workingDistance);
@@ -143,8 +156,8 @@ public class LEOReader extends BaseTiffReader {
 
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
       store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROMETER), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
     }
   }
 

@@ -320,8 +320,8 @@ public abstract class BaseZeissReader extends FormatReader {
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
 
       Integer[] channelKeys = channelName.keySet().toArray(
           new Integer[channelName.size()]);
@@ -331,7 +331,7 @@ public abstract class BaseZeissReader extends FormatReader {
       for (int i=0; i<getEffectiveSizeC(); i++) {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
-        store.setDetectorType(getDetectorType("Other"), 0, i);
+        store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, i);
 
         for (int s=0; s<getSeriesCount(); s++) {
           int c = i;
@@ -956,8 +956,8 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
-          store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-          store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+          store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+          store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
         }
         else if (key.startsWith("Objective N.A.")) {
           store.setObjectiveLensNA(new Double(value), 0, 0);
@@ -972,7 +972,7 @@ public abstract class BaseZeissReader extends FormatReader {
               String na = tokens[q].substring(slash + 1);
               store.setObjectiveNominalMagnification(mag, 0, 0);
               store.setObjectiveLensNA(new Double(na), 0, 0);
-              store.setObjectiveCorrection(getCorrection(tokens[q - 1]), 0, 0);
+              store.setObjectiveCorrection(MetadataTools.getCorrection(tokens[q - 1]), 0, 0);
               break;
             }
           }
@@ -991,7 +991,7 @@ public abstract class BaseZeissReader extends FormatReader {
               immersion = "Water";
               break;
           }
-          store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+          store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), 0, 0);
         }
         else if (key.startsWith("Stage Position X")) {
           final Double number = Double.valueOf(value);

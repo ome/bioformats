@@ -83,6 +83,8 @@ public class DNGReader extends BaseTiffReader {
       new String[] {"cr2", "crw", "jpg", "thm", "wav", "tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    mergeSubIFDs = true;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --
@@ -247,7 +249,7 @@ public class DNGReader extends BaseTiffReader {
     // reset image dimensions
     // the actual image data is stored in IFDs referenced by the SubIFD tag
     // in the 'real' IFD
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     m.imageCount = ifds.size();
 
@@ -346,7 +348,7 @@ public class DNGReader extends BaseTiffReader {
     }
     ifds.set(0, original);
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
     m.imageCount = 1;
     m.sizeT = 1;
     if (ifds.get(0).getSamplesPerPixel() == 1) {

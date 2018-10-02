@@ -22,13 +22,6 @@ antbuild()
 {
     (
       ant clean compile
-      ant clean compile-formats-api
-      ant clean compile-bio-formats-plugins
-      ant clean compile-formats-bsd
-      ant clean compile-formats-gpl
-      ant clean compile-bio-formats-tools
-      ant clean compile-tests
-      ant clean compile-turbojpeg
       ant clean utils
       # Do not clean here so that we can potentially archive the
       # java archives.

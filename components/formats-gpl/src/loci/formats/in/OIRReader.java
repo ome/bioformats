@@ -310,9 +310,21 @@ public class OIRReader extends FormatReader {
           catch (NumberFormatException e) {
           }
         }
-        else if (file.startsWith(prefix) && checkSuffix(file, "oir")) {
-          current = new Location(parent, file);
-          currentId = current.getAbsolutePath();
+      }
+
+      // tried to initialize using one of the companion files
+      // reset the current file to the main .oir file
+      // current file should not be overridden if a file with .oir extension
+      // was originally passed to setId
+      if (extraFiles.contains(current.getAbsolutePath())) {
+        for (String file : fileList) {
+          // the prefix case needs to match, but the case of ".oir" doesn't matter
+          // this should mean that xyz_00001 matches xyz.oir but not xyz_test.oir
+          if (file.startsWith(prefix) && file.equalsIgnoreCase(prefix + ".oir")) {
+            current = new Location(parent, file);
+            currentId = current.getAbsolutePath();
+            break;
+          }
         }
       }
     }
@@ -616,7 +628,7 @@ public class OIRReader extends FormatReader {
       s.findString("<?xml");
       s.seek(s.getFilePointer() - 9);
       int length = s.readInt();
-      if (length < 0 || length + s.getFilePointer() > s.length()) {
+      if (length <= 0 || length + s.getFilePointer() > s.length()) {
         break;
       }
       long fp = s.getFilePointer();
@@ -1011,7 +1023,7 @@ public class OIRReader extends FormatReader {
               objective.ri = DataTools.parseDouble(refraction.getTextContent());
             }
             if (immersion != null) {
-              objective.immersion = getImmersion(immersion.getTextContent());
+              objective.immersion = MetadataTools.getImmersion(immersion.getTextContent());
             }
 
             objectives.add(objective);

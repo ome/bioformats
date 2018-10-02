@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 import loci.common.DataTools;
@@ -264,7 +265,21 @@ public class InveonReader extends FormatReader {
           value = value.substring(value.lastIndexOf(File.separator) + 1);
 
           Location header = new Location(currentId).getAbsoluteFile();
-          datFile = new Location(header.getParent(), value).getAbsolutePath();
+          Location dat = new Location(header.getParent(), value);
+          if (dat.exists()) {
+            datFile = dat.getAbsolutePath();
+          }
+          else {
+            // usually this means that the files were renamed
+            String[] allFiles = header.getParentFile().list(true);
+            Arrays.sort(allFiles);
+            String headerName = header.getName();
+            for (String file : allFiles) {
+              if (!headerName.equals(file) && headerName.startsWith(file)) {
+                datFile = new Location(header.getParent(), file).getAbsolutePath();
+              }
+            }
+          }
         }
         else if (key.equals("time_frames")) {
           int sizeT = Integer.parseInt(value);

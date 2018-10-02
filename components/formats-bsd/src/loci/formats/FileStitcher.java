@@ -33,6 +33,7 @@
 package loci.formats;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -969,10 +970,28 @@ public class FileStitcher extends ReaderWrapper {
 
     String[] patterns = findPatterns(id);
     if (patterns.length == 0) patterns = new String[] {id};
-    externals = new ExternalSeries[patterns.length];
 
-    for (int i=0; i<externals.length; i++) {
-      externals[i] = new ExternalSeries(new FilePattern(patterns[i]));
+    // catching FileNotFoundException here and during setId below
+    // allows us to filter out patterns that include missing files
+    // the exception is caught instead of proactively checking for
+    // new Location(...).exists() so that patterns consisting of
+    // .fake files that do not exist on disk continue to be supported
+    List<ExternalSeries> validExternals = new ArrayList<ExternalSeries>();
+    for (int i=0; i<patterns.length; i++) {
+      try {
+        ExternalSeries e = new ExternalSeries(new FilePattern(patterns[i]));
+        validExternals.add(e);
+      }
+      catch (FileNotFoundException e) {
+        LOGGER.trace("Could not use pattern " + patterns[i], e);
+      }
+    }
+    if (validExternals.size() == 0) {
+      patterns = new String[] {id};
+      externals = new ExternalSeries[] {new ExternalSeries(new FilePattern(id))};
+    }
+    else {
+      externals = validExternals.toArray(new ExternalSeries[validExternals.size()]);
     }
     fp = new FilePattern(patterns[0]);
 
@@ -982,7 +1001,16 @@ public class FileStitcher extends ReaderWrapper {
     if (!fp.isValid()) {
       throw new FormatException("Invalid file pattern: " + fp.getPattern());
     }
-    reader.setId(fp.getFiles()[0]);
+    try {
+      reader.setId(fp.getFiles()[0]);
+    }
+    catch (FileNotFoundException e) {
+      LOGGER.trace("Could not use pattern " + patterns[0], e);
+      patterns = new String[] {id};
+      fp = new FilePattern(id);
+      externals = new ExternalSeries[] {new ExternalSeries(fp)};
+      reader.setId(fp.getFiles()[0]);
+    }
 
     String msg = " Please rename your files or disable file stitching.";
     if (reader.getCoreMetadataList().size() > 1 && externals.length > 1) {

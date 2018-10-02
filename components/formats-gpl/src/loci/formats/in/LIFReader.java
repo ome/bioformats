@@ -664,7 +664,7 @@ public class LIFReader extends FormatReader {
       int index = getTileIndex(i);
 
       store.setMicroscopeModel(microscopeModels[index], i);
-      store.setMicroscopeType(getMicroscopeType("Other"), i);
+      store.setMicroscopeType(MetadataTools.getMicroscopeType("Other"), i);
 
       String objectiveID = MetadataTools.createLSID("Objective", i, 0);
       store.setObjectiveID(objectiveID, i, 0);
@@ -673,8 +673,8 @@ public class LIFReader extends FormatReader {
       if (magnification[index] != null) {
         store.setObjectiveNominalMagnification(magnification[index], i, 0);
       }
-      store.setObjectiveImmersion(getImmersion(immersions[index]), i, 0);
-      store.setObjectiveCorrection(getCorrection(corrections[index]), i, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion(immersions[index]), i, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection(corrections[index]), i, 0);
       store.setObjectiveModel(objectiveModels[index], i, 0);
 
       if (cutIns[index] != null && filterModels[index] != null) {
@@ -2159,7 +2159,7 @@ public class LIFReader extends FormatReader {
     Arrays.sort(bytes);
     ms.dimensionOrder = "XY";
     if (getRGBChannelCount() == 1 || getRGBChannelCount() == getSizeC()) {
-      if (getSizeC() > 1 && getSizeT() > 1) {
+      if (getRGBChannelCount() > 1) {
         ms.dimensionOrder += 'C';
       }
       for (Long nBytes : bytes) {

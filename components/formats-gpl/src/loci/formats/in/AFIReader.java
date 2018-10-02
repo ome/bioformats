@@ -66,7 +66,7 @@ public class AFIReader extends FormatReader {
 
   // -- Fields --
 
-  private ArrayList<String> pixels = new ArrayList<String>();
+  private ArrayList<String> pixels = new ArrayList<>();
   private ChannelSeparator[] reader;
 
   // -- Constructor --

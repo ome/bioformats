@@ -845,12 +845,12 @@ public class MIASReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       String experimentID = MetadataTools.createLSID("Experiment", 0);
       store.setExperimentID(experimentID, 0);
-      store.setExperimentType(getExperimentType("Other"), 0);
+      store.setExperimentType(MetadataTools.getExperimentType("Other"), 0);
       store.setExperimentDescription(experiment.getName(), 0);
 
       // populate SPW metadata
-      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
-      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention("Number"), 0);
+      store.setPlateRowNamingConvention(MetadataTools.getNamingConvention("Letter"), 0);
 
       parseTemplateFile(store);
 

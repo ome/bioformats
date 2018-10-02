@@ -323,42 +323,42 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, boolean value) {
-    addGlobalMeta(key, new Boolean(value));
+    addGlobalMeta(key, Boolean.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, byte value) {
-    addGlobalMeta(key, new Byte(value));
+    addGlobalMeta(key, Byte.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, short value) {
-    addGlobalMeta(key, new Short(value));
+    addGlobalMeta(key, Short.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, int value) {
-    addGlobalMeta(key, new Integer(value));
+    addGlobalMeta(key, Integer.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, long value) {
-    addGlobalMeta(key, new Long(value));
+    addGlobalMeta(key, Long.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, float value) {
-    addGlobalMeta(key, new Float(value));
+    addGlobalMeta(key, Float.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, double value) {
-    addGlobalMeta(key, new Double(value));
+    addGlobalMeta(key, Double.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, char value) {
-    addGlobalMeta(key, new Character(value));
+    addGlobalMeta(key, Character.valueOf(value));
   }
 
   /** Gets a value from the global metadata table. */
@@ -377,11 +377,9 @@ public abstract class FormatReader extends FormatHandler
   protected void addMetaList(String key, Object value,
     Hashtable<String, Object> meta)
   {
-    Vector list = (Vector) meta.get(key);
-    meta.remove(key);
+    Vector list = (Vector) meta.remove(key);
     addMeta(key, value, meta);
-    Object newValue = meta.get(key);
-    meta.remove(key);
+    Object newValue = meta.remove(key);
     if (newValue != null) {
       if (list == null) {
         list = new Vector();
@@ -463,42 +461,42 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, boolean value) {
-    addSeriesMeta(key, new Boolean(value));
+    addSeriesMeta(key, Boolean.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, byte value) {
-    addSeriesMeta(key, new Byte(value));
+    addSeriesMeta(key, Byte.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, short value) {
-    addSeriesMeta(key, new Short(value));
+    addSeriesMeta(key, Short.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, int value) {
-    addSeriesMeta(key, new Integer(value));
+    addSeriesMeta(key, Integer.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, long value) {
-    addSeriesMeta(key, new Long(value));
+    addSeriesMeta(key, Long.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, float value) {
-    addSeriesMeta(key, new Float(value));
+    addSeriesMeta(key, Float.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, double value) {
-    addSeriesMeta(key, new Double(value));
+    addSeriesMeta(key, Double.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, char value) {
-    addSeriesMeta(key, new Character(value));
+    addSeriesMeta(key, Character.valueOf(value));
   }
 
   /** Gets an entry from the metadata table for the current series. */
@@ -878,7 +876,7 @@ public abstract class FormatReader extends FormatHandler
     }
     catch (IllegalArgumentException e) {
       throw new FormatException("Image plane too large. Only 2GB of data can " +
-        "be extracted at one time. You can workaround the problem by opening " +
+        "be extracted at one time. You can work around the problem by opening " +
         "the plane in tiles; for further details, see: " +
         "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
         "/about/bug-reporting.html#common-issues-to-check", e);
@@ -1378,10 +1376,10 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /**
-   * Initializes a reader from the input file name.
+   * Initialize a reader from the input file name.
    *
-   * Calls {@link #initFile(String id)} to initializes the input file, reads
-   * all of the metadata and sets the reader up for reading planes.
+   * Call {@link #initFile(String id)} to initialize the input file, read
+   * all of the metadata and set the reader up for reading planes.
    * The performance of this method depends on the format and can be up to
    * several minutes for large file sets.
    *
@@ -1401,8 +1399,7 @@ public abstract class FormatReader extends FormatHandler
         if (store instanceof OMEXMLMetadata) {
           setupService();
           Hashtable<String, Object> allMetadata =
-            new Hashtable<String, Object>();
-          allMetadata.putAll(metadata);
+            new Hashtable<>(metadata);
 
           for (int series=0; series<getSeriesCount(); series++) {
             String name = "Series " + series;
@@ -1477,17 +1474,12 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getAcquisitionMode(String)}.
    */
+  @Deprecated
   protected AcquisitionMode getAcquisitionMode(String value)
-    throws FormatException
-  {
-    AcquisitionModeEnumHandler handler = new AcquisitionModeEnumHandler();
-    try {
-      return (AcquisitionMode) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("AcquisitionMode creation failed", e);
-    }
+    throws FormatException {
+    return MetadataTools.getAcquisitionMode(value);
   }
 
   /**
@@ -1496,15 +1488,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getArcType(String)}.
    */
+  @Deprecated
   protected ArcType getArcType(String value) throws FormatException {
-    ArcTypeEnumHandler handler = new ArcTypeEnumHandler();
-    try {
-      return (ArcType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("ArcType creation failed", e);
-    }
+    return MetadataTools.getArcType(value);
   }
 
   /**
@@ -1513,15 +1501,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getBinning(String)}.
    */
+  @Deprecated
   protected Binning getBinning(String value) throws FormatException {
-    BinningEnumHandler handler = new BinningEnumHandler();
-    try {
-      return (Binning) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("Binning creation failed", e);
-    }
+    return MetadataTools.getBinning(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.Compression} enumeration
@@ -1529,15 +1513,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getCompression(String)}.
    */
+  @Deprecated
   protected Compression getCompression(String value) throws FormatException {
-    CompressionEnumHandler handler = new CompressionEnumHandler();
-    try {
-      return (Compression) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("Compression creation failed", e);
-    }
+    return MetadataTools.getCompression(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.ContrastMethod} enumeration
@@ -1545,17 +1525,12 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getContrastMethod(String)}.
    */
+  @Deprecated
   protected ContrastMethod getContrastMethod(String value)
-    throws FormatException
-  {
-    ContrastMethodEnumHandler handler = new ContrastMethodEnumHandler();
-    try {
-      return (ContrastMethod) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("ContrastMethod creation failed", e);
-    }
+    throws FormatException {
+    return MetadataTools.getContrastMethod(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.Correction} enumeration
@@ -1563,15 +1538,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getCorrection(String)}.
    */
+  @Deprecated
   protected Correction getCorrection(String value) throws FormatException {
-    CorrectionEnumHandler handler = new CorrectionEnumHandler();
-    try {
-      return (Correction) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("Correction creation failed", e);
-    }
+    return MetadataTools.getCorrection(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.DetectorType} enumeration
@@ -1579,15 +1550,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getDetectorType(String)}.
    */
+  @Deprecated
   protected DetectorType getDetectorType(String value) throws FormatException {
-    DetectorTypeEnumHandler handler = new DetectorTypeEnumHandler();
-    try {
-      return (DetectorType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("DetectorType creation failed", e);
-    }
+    return MetadataTools.getDetectorType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.DimensionOrder} enumeration
@@ -1595,17 +1562,12 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getDimensionOrder(String)}.
    */
+  @Deprecated
   protected DimensionOrder getDimensionOrder(String value)
-    throws FormatException
-  {
-    DimensionOrderEnumHandler handler = new DimensionOrderEnumHandler();
-    try {
-      return (DimensionOrder) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("DimensionOrder creation failed", e);
-    }
+    throws FormatException {
+    return MetadataTools.getDimensionOrder(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.ExperimentType} enumeration
@@ -1613,17 +1575,12 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getExperimentType(String)}.
    */
+  @Deprecated
   protected ExperimentType getExperimentType(String value)
-    throws FormatException
-  {
-    ExperimentTypeEnumHandler handler = new ExperimentTypeEnumHandler();
-    try {
-      return (ExperimentType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("ExperimentType creation failed", e);
-    }
+    throws FormatException {
+    return MetadataTools.getExperimentType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.FilamentType} enumeration
@@ -1631,15 +1588,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getFilamentType(String)}.
    */
+  @Deprecated
   protected FilamentType getFilamentType(String value) throws FormatException {
-    FilamentTypeEnumHandler handler = new FilamentTypeEnumHandler();
-    try {
-      return (FilamentType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("FilamentType creation failed", e);
-    }
+    return MetadataTools.getFilamentType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.FillRule} enumeration
@@ -1647,15 +1600,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getFillRule(String)}.
    */
+  @Deprecated
   protected FillRule getFillRule(String value) throws FormatException {
-    FillRuleEnumHandler handler = new FillRuleEnumHandler();
-    try {
-      return (FillRule) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("FillRule creation failed", e);
-    }
+    return MetadataTools.getFillRule(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.FilterType} enumeration
@@ -1663,15 +1612,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getFilterType(String)}.
    */
+  @Deprecated
   protected FilterType getFilterType(String value) throws FormatException {
-    FilterTypeEnumHandler handler = new FilterTypeEnumHandler();
-    try {
-      return (FilterType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("FilterType creation failed", e);
-    }
+    return MetadataTools.getFilterType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.FontFamily} enumeration
@@ -1679,15 +1624,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getFontFamily(String)}.
    */
+  @Deprecated
   protected FontFamily getFontFamily(String value) throws FormatException {
-    FontFamilyEnumHandler handler = new FontFamilyEnumHandler();
-    try {
-      return (FontFamily) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("FontFamily creation failed", e);
-    }
+    return MetadataTools.getFontFamily(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.FontStyle} enumeration
@@ -1695,15 +1636,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getFontStyle(String)}.
    */
+  @Deprecated
   protected FontStyle getFontStyle(String value) throws FormatException {
-    FontStyleEnumHandler handler = new FontStyleEnumHandler();
-    try {
-      return (FontStyle) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("FontStyle creation failed", e);
-    }
+    return MetadataTools.getFontStyle(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.IlluminationType} enumeration
@@ -1711,17 +1648,12 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getIlluminationType(String)}.
    */
+  @Deprecated
   protected IlluminationType getIlluminationType(String value)
-    throws FormatException
-  {
-    IlluminationTypeEnumHandler handler = new IlluminationTypeEnumHandler();
-    try {
-      return (IlluminationType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("IlluminationType creation failed", e);
-    }
+    throws FormatException {
+    return MetadataTools.getIlluminationType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.Immersion} enumeration
@@ -1729,15 +1661,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getImmersion(String)}.
    */
+  @Deprecated
   protected Immersion getImmersion(String value) throws FormatException {
-    ImmersionEnumHandler handler = new ImmersionEnumHandler();
-    try {
-      return (Immersion) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("Immersion creation failed", e);
-    }
+    return MetadataTools.getImmersion(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.LaserMedium} enumeration
@@ -1745,15 +1673,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getLaserMedium(String)}.
    */
+  @Deprecated
   protected LaserMedium getLaserMedium(String value) throws FormatException {
-    LaserMediumEnumHandler handler = new LaserMediumEnumHandler();
-    try {
-      return (LaserMedium) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("LaserMedium creation failed", e);
-    }
+    return MetadataTools.getLaserMedium(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.LaserType} enumeration
@@ -1761,15 +1685,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getLaserType(String)}.
    */
+  @Deprecated
   protected LaserType getLaserType(String value) throws FormatException {
-    LaserTypeEnumHandler handler = new LaserTypeEnumHandler();
-    try {
-      return (LaserType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("LaserType creation failed", e);
-    }
+    return MetadataTools.getLaserType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.Marker} enumeration
@@ -1777,15 +1697,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getMarker(String)}.
    */
+  @Deprecated
   protected Marker getMarker(String value) throws FormatException {
-    MarkerEnumHandler handler = new MarkerEnumHandler();
-    try {
-      return (Marker) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("Marker creation failed", e);
-    }
+    return MetadataTools.getMarker(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.Medium} enumeration
@@ -1793,15 +1709,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getMedium(String)}.
    */
+  @Deprecated
   protected Medium getMedium(String value) throws FormatException {
-    MediumEnumHandler handler = new MediumEnumHandler();
-    try {
-      return (Medium) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("Medium creation failed", e);
-    }
+    return MetadataTools.getMedium(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.MicrobeamManipulationType}
@@ -1809,18 +1721,12 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getMicrobeamManipulationType(String)}.
    */
+  @Deprecated
   protected MicrobeamManipulationType getMicrobeamManipulationType(String value)
-    throws FormatException
-  {
-    MicrobeamManipulationTypeEnumHandler handler =
-      new MicrobeamManipulationTypeEnumHandler();
-    try {
-      return (MicrobeamManipulationType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("MicrobeamManipulationType creation failed", e);
-    }
+    throws FormatException {
+    return MetadataTools.getMicrobeamManipulationType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.MicroscopeType} enumeration
@@ -1828,17 +1734,12 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getMicroscopeType(String)}.
    */
+  @Deprecated
   protected MicroscopeType getMicroscopeType(String value)
-    throws FormatException
-  {
-    MicroscopeTypeEnumHandler handler = new MicroscopeTypeEnumHandler();
-    try {
-      return (MicroscopeType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("MicroscopeType creation failed", e);
-    }
+    throws FormatException {
+    return MetadataTools.getMicroscopeType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.NamingConvention} enumeration
@@ -1846,17 +1747,12 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getNamingConvention(String)}.
    */
+  @Deprecated
   protected NamingConvention getNamingConvention(String value)
-    throws FormatException
-  {
-    NamingConventionEnumHandler handler = new NamingConventionEnumHandler();
-    try {
-      return (NamingConvention) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("NamingConvention creation failed", e);
-    }
+    throws FormatException {
+    return MetadataTools.getNamingConvention(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.PixelType} enumeration
@@ -1864,15 +1760,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getPixelType(String)}.
    */
+  @Deprecated
   protected PixelType getPixelType(String value) throws FormatException {
-    PixelTypeEnumHandler handler = new PixelTypeEnumHandler();
-    try {
-      return (PixelType) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("PixelType creation failed", e);
-    }
+    return MetadataTools.getPixelType(value);
   }
   /**
    * Retrieves an {@link ome.xml.model.enums.Pulse} enumeration
@@ -1880,15 +1772,11 @@ public abstract class FormatReader extends FormatHandler
    *
    * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
+   * @deprecated Use {@link MetadataTools#getPulse(String)}.
    */
+  @Deprecated
   protected Pulse getPulse(String value) throws FormatException {
-    PulseEnumHandler handler = new PulseEnumHandler();
-    try {
-      return (Pulse) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("Pulse creation failed", e);
-    }
+    return MetadataTools.getPulse(value);
   }
 
   /**

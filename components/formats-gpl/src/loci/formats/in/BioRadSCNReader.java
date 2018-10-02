@@ -205,7 +205,7 @@ public class BioRadSCNReader extends FormatReader {
       store.setDetectorSettingsGain(gain, 0, 0);
     }
     if (binning != null) {
-      store.setDetectorSettingsBinning(getBinning(binning), 0, 0);
+      store.setDetectorSettingsBinning(MetadataTools.getBinning(binning), 0, 0);
     }
 
     if (exposureTime != null) {

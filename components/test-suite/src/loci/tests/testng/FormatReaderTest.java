@@ -71,6 +71,7 @@ import ome.units.UNITS;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -113,6 +114,8 @@ public class FormatReaderTest {
   private boolean skip = false;
   private Configuration config;
   private String omexmlDir = System.getProperty("testng.omexmlDirectory");
+  private String cacheDir  = System.getProperty("testng.cacheDirectory");
+  private String fileList = System.getProperty("testng.file-list");
 
   /**
    * Multiplier for use adjusting timing values. Slower machines take longer to
@@ -173,6 +176,8 @@ public class FormatReaderTest {
       BufferedImage b = null;
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
+
+        Assert.assertEquals(reader.getSeries(), i);
 
         int x = reader.getSizeX();
         int y = reader.getSizeY();
@@ -506,29 +511,34 @@ public class FormatReaderTest {
         String type = FormatTools.getPixelTypeString(reader.getPixelType());
 
         if (reader.getSizeX() !=
-          retrieve.getPixelsSizeX(i).getValue().intValue())
-        {
-          msg = "SizeX";
+          retrieve.getPixelsSizeX(i).getValue().intValue()) {
+          msg = String.format("SizeX (expected %d, actually %d)",
+            reader.getSizeX(),
+            retrieve.getPixelsSizeX(i).getValue().intValue());
         }
         if (reader.getSizeY() !=
-          retrieve.getPixelsSizeY(i).getValue().intValue())
-        {
-          msg = "SizeY";
+          retrieve.getPixelsSizeY(i).getValue().intValue()) {
+          msg = String.format("SizeY (expected %d, actually %d)",
+            reader.getSizeY(),
+            retrieve.getPixelsSizeY(i).getValue().intValue());
         }
         if (reader.getSizeZ() !=
-          retrieve.getPixelsSizeZ(i).getValue().intValue())
-        {
-          msg = "SizeZ";
+          retrieve.getPixelsSizeZ(i).getValue().intValue()) {
+          msg = String.format("SizeZ (expected %d, actually %d)",
+            reader.getSizeZ(),
+            retrieve.getPixelsSizeZ(i).getValue().intValue());
         }
         if (reader.getSizeC() !=
-          retrieve.getPixelsSizeC(i).getValue().intValue())
-        {
-          msg = "SizeC";
+          retrieve.getPixelsSizeC(i).getValue().intValue()) {
+          msg = String.format("SizeC (expected %d, actually %d)",
+            reader.getSizeC(),
+            retrieve.getPixelsSizeC(i).getValue().intValue());
         }
         if (reader.getSizeT() !=
-          retrieve.getPixelsSizeT(i).getValue().intValue())
-        {
-          msg = "SizeT";
+          retrieve.getPixelsSizeT(i).getValue().intValue()) {
+          msg = String.format("SizeT (expected %d, actually %d)",
+            reader.getSizeT(),
+            retrieve.getPixelsSizeT(i).getValue().intValue());
         }
 
         // NB: OME-TIFF files do not have a BinData element under Pixels
@@ -600,66 +610,39 @@ public class FormatReaderTest {
       result(testName, true);
       return;
     }
+    String msg = checkOMEXML(reader);
+    result(testName, msg == null, msg);
+  }
+
+  @Test(groups = {"all", "xml", "automated"})
+  public void testUnflattenedSaneOMEXML() {
+    String testName = "testUnflattenedSaneOMEXML";
+    if (!initFile()) result(testName, false, "initFile");
+    if (!config.hasValidXML()) {
+      LOGGER.debug("Skipping valid XML test");
+      result(testName, true);
+      return;
+    }
+
     String msg = null;
+    IFormatReader unflattenedReader = null;
     try {
-
-      MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
-      boolean success = omexmlService.isOMEXMLMetadata(retrieve);
-      if (!success) msg = TestTools.shortClassName(retrieve);
-
-      for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
-        // total number of ChannelComponents should match SizeC
-        int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
-        int nChannelComponents = retrieve.getChannelCount(i);
-        int samplesPerPixel =
-          retrieve.getChannelSamplesPerPixel(i, 0).getValue();
-
-        if (sizeC != nChannelComponents * samplesPerPixel) {
-          msg = "ChannelComponent";
-        }
-
-        // Z, C and T indices should be populated if PlaneTiming is present
-
-        Time deltaT = null;
-        Time exposure = null;
-        Integer z = null, c = null, t = null;
-
-        if (retrieve.getPlaneCount(i) > 0) {
-          deltaT = retrieve.getPlaneDeltaT(i, 0);
-          exposure = retrieve.getPlaneExposureTime(i, 0);
-          z = retrieve.getPlaneTheZ(i, 0).getValue();
-          c = retrieve.getPlaneTheC(i, 0).getValue();
-          t = retrieve.getPlaneTheT(i, 0).getValue();
-        }
-
-        if ((deltaT != null || exposure != null) &&
-          (z == null || c == null || t == null))
-        {
-          msg = "PlaneTiming";
-        }
-
-        // if CreationDate is before 1990, it's probably invalid
-        String date = null;
-        if (retrieve.getImageAcquisitionDate(i) != null) {
-          date = retrieve.getImageAcquisitionDate(i).getValue();
-        }
-        config.setSeries(i);
-        String configDate = config.getDate();
-        if (date != null && !date.equals(configDate)) {
-          date = date.trim();
-          long acquiredDate = new Timestamp(date).asInstant().getMillis();
-          long saneDate = new Timestamp("1990-01-01T00:00:00").asInstant().getMillis();
-          long fileDate = new Location(
-            reader.getCurrentFile()).getAbsoluteFile().lastModified();
-          if (acquiredDate < saneDate && fileDate >= saneDate) {
-            msg = "CreationDate (date=" + date + " acquiredDate=" + acquiredDate + " fileDate=" + fileDate + " saneDate=" + saneDate + ")";
-          }
+      unflattenedReader = setupReader(false, true);
+      msg = checkOMEXML(unflattenedReader);
+    }
+    catch (Exception e) {
+      msg = e.getMessage();
+      LOGGER.debug(testName, e);
+    }
+    finally {
+      try {
+        if (unflattenedReader != null) {
+          unflattenedReader.close();
         }
       }
-    }
-    catch (Throwable t) {
-      LOGGER.info("", t);
-      msg = t.getMessage();
+      catch (IOException e) {
+        LOGGER.debug("Could not close reader", e);
+      }
     }
     result(testName, msg == null, msg);
   }
@@ -672,7 +655,9 @@ public class FormatReaderTest {
     String testName = "SeriesCount";
     if (!initFile()) result(testName, false, "initFile");
 
-    result(testName, reader.getSeriesCount() == config.getSeriesCount());
+    result(testName, reader.getSeriesCount() == config.getSeriesCount(),
+      "got " + reader.getSeriesCount() +
+      ", expected " + config.getSeriesCount());
   }
 
   @Test(groups = {"all", "fast", "automated"})
@@ -1733,8 +1718,19 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Inveon only reliably detected from header file
+          if (reader.getFormat().equals("Inveon")) {
+            continue;
+          }
+
           // pattern datasets can only be detected with the pattern file
           if (reader.getFormat().equals("File pattern")) {
+            continue;
+          }
+
+          if (reader.getFormat().equals("Image-Pro Sequence") &&
+            file.toLowerCase().endsWith(".ips"))
+          {
             continue;
           }
 
@@ -1898,21 +1894,30 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher());
-      resolutionReader.setFlattenedResolutions(false);
-      resolutionReader.setNormalized(true);
-      resolutionReader.setOriginalMetadataPopulated(false);
-      resolutionReader.setMetadataFiltered(true);
-      resolutionReader.setId(id);
+      IFormatReader resolutionReader = setupReader(false, true);
+
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
 
       // check the MD5 of the first plane in each resolution
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
+        Assert.assertEquals(resolutionReader.getSeries(), i);
+
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
-          config.setSeries(resolutionReader.getCoreIndex());
+
+          Assert.assertEquals(resolutionReader.getResolution(), r);
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(resolutionReader.getCoreIndex());
+          }
 
           long planeSize = -1;
           try {
@@ -1971,14 +1976,15 @@ public class FormatReaderTest {
         long planeSize = -1;
         try {
           planeSize = DataTools.safeMultiply32(reader.getSizeX(),
-            reader.getSizeY(), reader.getRGBChannelCount(),
+            reader.getSizeY(), reader.getEffectiveSizeC(),
+            reader.getRGBChannelCount(),
             FormatTools.getBytesPerPixel(reader.getPixelType()));
         }
         catch (IllegalArgumentException e) {
           continue;
         }
 
-        if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
+        if (planeSize <= 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
 
@@ -1991,7 +1997,9 @@ public class FormatReaderTest {
         }
         if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = "series " + i + " (" + md5 + ")";
+          msg = "series " + i +
+            ", md5 " + md5 +
+            ", expected " + expected1 + " or " + expected2;
         }
       }
     }
@@ -2052,21 +2060,30 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher());
-      resolutionReader.setFlattenedResolutions(false);
-      resolutionReader.setNormalized(true);
-      resolutionReader.setOriginalMetadataPopulated(false);
-      resolutionReader.setMetadataFiltered(true);
-      resolutionReader.setId(id);
+      IFormatReader resolutionReader = setupReader(false, true);
+
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
 
       // check the MD5 of the first plane in each resolution
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
+        Assert.assertEquals(resolutionReader.getSeries(), i);
+
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
-          config.setSeries(resolutionReader.getCoreIndex());
+
+          Assert.assertEquals(resolutionReader.getResolution(), r);
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(resolutionReader.getCoreIndex());
+          }
 
           int w = (int) Math.min(Configuration.TILE_SIZE,
             resolutionReader.getSizeX());
@@ -2096,7 +2113,9 @@ public class FormatReaderTest {
             (expected1 != null || expected2 != null))
           {
             success = false;
-            msg = "series " + i + ", resolution " + r;
+            msg = "series " + i + ", resolution " + r +
+              ", md5 " + md5 +
+              ", expected " + expected1 + " or " + expected2;
           }
         }
       }
@@ -2149,7 +2168,9 @@ public class FormatReaderTest {
           (expected1 != null || expected2 != null))
         {
           success = false;
-          msg = "series " + i + " (" + md5 + ")";
+          msg = "series " + i +
+            ", md5 " + md5 +
+            ", expected " + expected1 + " or " + expected2;
         }
       }
     }
@@ -2412,6 +2433,11 @@ public class FormatReaderTest {
               continue;
             }
 
+            // Inveon only reliably detected from header file
+            if (!result && r instanceof InveonReader) {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
@@ -2440,7 +2466,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  @Test(groups = {"all",  "automated"})
+  @Test(groups = {"all",  "automated", "memoizer"})
   public void testMemoFileUsage() {
     String testName = "testMemoFileUsage";
     if (!initFile()) result(testName, false, "initFile");
@@ -2459,12 +2485,48 @@ public class FormatReaderTest {
       if (!memo.isSavedToMemo()) {
         result(testName, false, "Memo file not saved");
       }
+
+      // first test memo file generated with current build
+
       memo.setId(reader.getCurrentFile());
       if (!memo.isLoadedFromMemo()) {
         result(testName, false, "Memo file could not be loaded");
       }
       memo.openBytes(0, 0, 0, 1, 1);
       memo.close();
+
+      // now test pre-generated memo file in the cache directory
+
+      String cacheDir = configTree.getCacheDirectory();
+      if (cacheDir != null) {
+        LOGGER.debug("Loading memo from populated cache");
+        File dir = new File(cacheDir);
+
+        if (!dir.exists() || !dir.isDirectory() || !dir.canRead()) {
+          result(testName, false, "Cached memo directory does not exist");
+        }
+
+        File currentFile = new File(reader.getCurrentFile());
+        String relativeName = "." + currentFile.getName() + ".bfmemo";
+        File expectedMemo = new File(cacheDir, currentFile.getParent());
+        expectedMemo = new File(expectedMemo, relativeName);
+
+        if (expectedMemo.exists()) {
+          memo = new Memoizer(0, dir);
+          // do not allow an existing memo file to be overwritten
+          memo.skipSave(true);
+          memo.setId(reader.getCurrentFile());
+          if (!memo.isLoadedFromMemo()) {
+            result(testName, false, "Existing memo file could not be loaded");
+          }
+          memo.openBytes(0, 0, 0, 1, 1);
+          memo.close();
+        }
+        else {
+          LOGGER.warn("Missing memo file {}; passing test anyway", expectedMemo);
+        }
+      }
+
       result(testName, true);
     }
     catch (Throwable t) {
@@ -2504,7 +2566,7 @@ public class FormatReaderTest {
   }
 
   @Test(groups = {"config"})
-  public void writeConfigFile() {
+  public void writeConfigFile() throws IOException {
     setupReader();
     if (!initFile(false)) return;
     String file = reader.getCurrentFile();
@@ -2523,11 +2585,35 @@ public class FormatReaderTest {
       LOGGER.info("Generating configuration: {}", f);
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
       newConfig.saveToFile();
-      reader.close();
     }
     catch (Throwable t) {
       LOGGER.info("", t);
       assert false;
+    } finally {
+      reader.close();
+    }
+  }
+
+  @Test(groups = {"cache"})
+  public void writeCacheFile() throws IOException {
+    setupReader();
+    if (!initFile(false)) return;
+    String cacheDir = configTree.getCacheDirectory();
+    if (cacheDir == null) {
+      LOGGER.info("No cache directory specified");
+      return;
+    }
+    try {
+      Memoizer memo = new Memoizer(0, new File(cacheDir));
+      assert memo.generateMemo(reader.getCurrentFile());
+      File memoFile = memo.getMemoFile(reader.getCurrentFile());
+      LOGGER.info("Saved memo file to {}", memoFile);
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      assert false;
+    } finally {
+      reader.close();
     }
   }
 
@@ -2555,17 +2641,54 @@ public class FormatReaderTest {
     }
   }
 
+  @Test(groups = {"file-list"})
+  public void saveFileScanList() {
+    try {
+      File f = new File(fileList);
+      OutputStreamWriter writer =
+        new OutputStreamWriter(new FileOutputStream(f, true),
+        Constants.ENCODING);
+      if (f.length() == 0) {
+        // make sure the first line is the base directory
+        writer.write(System.getProperty("testng.directory"));
+        writer.write("\n");
+      }
+      writer.write(id);
+      writer.write("\n");
+      writer.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      assert false;
+    }
+  }
+
   // -- Helper methods --
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    // Remove external SlideBook6Reader class for testing purposes
-    ImageReader ir = new ImageReader();
-    reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
-    reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
-    reader.setNormalized(true);
-    reader.setOriginalMetadataPopulated(false);
-    reader.setMetadataFiltered(true);
+    setupReader(true, false);
+  }
+
+  /**
+   * Set up an IFormatReader for either flattened or unflattened testing.
+   *
+   * @param flattened the value to pass to IFormatReader.setFlattenedResolutions
+   * @param initialize true if setId should be called on the current file
+   * @return the configured reader
+   */
+  private IFormatReader setupReader(boolean flattened, boolean initialize) {
+    IFormatReader ir = null;
+    if (flattened) {
+      ir = new ImageReader();
+      ir = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
+      ir.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+    }
+    else {
+      ir = new BufferedImageReader(new FileStitcher());
+      ir.setFlattenedResolutions(false);
+    }
+
     MetadataStore store = null;
     try {
       store = omexmlService.createOMEXMLMetadata();
@@ -2573,7 +2696,23 @@ public class FormatReaderTest {
     catch (ServiceException e) {
       LOGGER.warn("Could not parse OME-XML", e);
     }
-    reader.setMetadataStore(store);
+    ir.setMetadataStore(store);
+    ir.setNormalized(true);
+    ir.setOriginalMetadataPopulated(false);
+    ir.setMetadataFiltered(true);
+
+    if (initialize) {
+      try {
+        ir.setId(id);
+      }
+      catch (FormatException | IOException e) {
+        LOGGER.error("Could not initialize " + id, e);
+      }
+    }
+    if (flattened) {
+      reader = (BufferedImageReader) ir;
+    }
+    return ir;
   }
 
   /** Initializes the reader and configuration tree. */
@@ -2684,6 +2823,75 @@ public class FormatReaderTest {
 
     if (msg == null) assert success;
     else assert success : msg;
+  }
+
+  private String checkOMEXML(IFormatReader reader) {
+    String msg = null;
+    try {
+      MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
+      boolean success = omexmlService.isOMEXMLMetadata(retrieve);
+      if (!success) msg = TestTools.shortClassName(retrieve);
+
+      if (reader.getSeriesCount() != retrieve.getImageCount()) {
+        msg = "ImageCount (series=" + reader.getSeriesCount() +
+          ", image=" + retrieve.getImageCount() + ")";
+      }
+
+      for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
+        // total number of ChannelComponents should match SizeC
+        int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
+        int nChannelComponents = retrieve.getChannelCount(i);
+        int samplesPerPixel =
+          retrieve.getChannelSamplesPerPixel(i, 0).getValue();
+
+        if (sizeC != nChannelComponents * samplesPerPixel) {
+          msg = "ChannelComponent";
+        }
+
+        // Z, C and T indices should be populated if PlaneTiming is present
+
+        Time deltaT = null;
+        Time exposure = null;
+        Integer z = null, c = null, t = null;
+
+        if (retrieve.getPlaneCount(i) > 0) {
+          deltaT = retrieve.getPlaneDeltaT(i, 0);
+          exposure = retrieve.getPlaneExposureTime(i, 0);
+          z = retrieve.getPlaneTheZ(i, 0).getValue();
+          c = retrieve.getPlaneTheC(i, 0).getValue();
+          t = retrieve.getPlaneTheT(i, 0).getValue();
+        }
+
+        if ((deltaT != null || exposure != null) &&
+          (z == null || c == null || t == null))
+        {
+          msg = "PlaneTiming";
+        }
+
+        // if CreationDate is before 1990, it's probably invalid
+        String date = null;
+        if (retrieve.getImageAcquisitionDate(i) != null) {
+          date = retrieve.getImageAcquisitionDate(i).getValue();
+        }
+        config.setSeries(i);
+        String configDate = config.getDate();
+        if (date != null && !date.equals(configDate)) {
+          date = date.trim();
+          long acquiredDate = new Timestamp(date).asInstant().getMillis();
+          long saneDate = new Timestamp("1990-01-01T00:00:00").asInstant().getMillis();
+          long fileDate = new Location(
+            reader.getCurrentFile()).getAbsoluteFile().lastModified();
+          if (acquiredDate < saneDate && fileDate >= saneDate) {
+            msg = "CreationDate (date=" + date + " acquiredDate=" + acquiredDate + " fileDate=" + fileDate + " saneDate=" + saneDate + ")";
+          }
+        }
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      msg = t.getMessage();
+    }
+    return msg;
   }
 
 }

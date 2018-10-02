@@ -67,6 +67,8 @@ public class TiffWriter extends FormatWriter {
     CompressionType.J2K_LOSSY.getCompression();
   public static final String COMPRESSION_JPEG =
     CompressionType.JPEG.getCompression();
+  public static final String COMPRESSION_ZLIB =
+    CompressionType.ZLIB.getCompression();
 
   private static final String[] BIG_TIFF_SUFFIXES = {"tf2", "tf8", "btf"};
 
@@ -122,6 +124,9 @@ public class TiffWriter extends FormatWriter {
     else if (compression.equals(COMPRESSION_JPEG)) {
       compressType = TiffCompression.JPEG;
     }
+    else if (compression.equals(COMPRESSION_ZLIB)) {
+      compressType = TiffCompression.DEFLATE;
+    }
     Object v = ifd.get(new Integer(IFD.COMPRESSION));
     if (v == null)
       ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
@@ -141,7 +146,8 @@ public class TiffWriter extends FormatWriter {
       COMPRESSION_LZW,
       COMPRESSION_J2K,
       COMPRESSION_J2K_LOSSY,
-      COMPRESSION_JPEG
+      COMPRESSION_JPEG,
+      COMPRESSION_ZLIB
     };
     isBigTiff = false;
   }
@@ -199,8 +205,8 @@ public class TiffWriter extends FormatWriter {
     throws IOException, FormatException
   {
     MetadataRetrieve r = getMetadataRetrieve();
-    int w = r.getPixelsSizeX(series).getValue().intValue();
-    int h = r.getPixelsSizeY(series).getValue().intValue();
+    int w = getSizeX();
+    int h = getSizeY();
     saveBytes(no, buf, ifd, 0, 0, w, h);
   }
 
@@ -218,8 +224,8 @@ public class TiffWriter extends FormatWriter {
     int type = FormatTools.pixelTypeFromString(
         retrieve.getPixelsType(series).toString());
     int index = no;
-    int imageWidth = retrieve.getPixelsSizeX(series).getValue().intValue();
-    int imageHeight = retrieve.getPixelsSizeY(series).getValue().intValue();
+    int imageWidth = getSizeX();
+    int imageHeight = getSizeY();
     int currentTileSizeX = getTileSizeX();
     int currentTileSizeY = getTileSizeY();
     if (currentTileSizeX != imageWidth || currentTileSizeY != imageHeight) {
@@ -249,8 +255,11 @@ public class TiffWriter extends FormatWriter {
             }
           }
 
+          boolean lastPlane = no == getPlaneCount() - 1;
+          boolean lastSeries = getSeries() == retrieve.getImageCount() - 1;
+          boolean lastResolution = getResolution() == getResolutionCount() - 1;
           tiffSaver.writeImage(tileBuf, ifd, index, type, tileParams.x, tileParams.y, tileParams.width, tileParams.height,
-          no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
+            lastPlane && lastSeries && lastResolution);
         }
       }
     }
@@ -266,8 +275,11 @@ public class TiffWriter extends FormatWriter {
         }
       }
 
+      boolean lastPlane = no == getPlaneCount() - 1;
+      boolean lastSeries = getSeries() == retrieve.getImageCount() - 1;
+      boolean lastResolution = getResolution() == getResolutionCount() - 1;
       tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
-      no == getPlaneCount() -1 && getSeries() == retrieve.getImageCount() - 1);
+        lastPlane && lastSeries && lastResolution);
     }
   }
 
@@ -339,8 +351,8 @@ public class TiffWriter extends FormatWriter {
       }
     }
 
-    int width = retrieve.getPixelsSizeX(series).getValue().intValue();
-    int height = retrieve.getPixelsSizeY(series).getValue().intValue();
+    int width = getSizeX();
+    int height = getSizeY();
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Long(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Long(height));
 
@@ -397,10 +409,15 @@ public class TiffWriter extends FormatWriter {
       "ImageJ=\nhyperstack=true\nimages=" + (channels * z * t) + "\nchannels=" +
       channels + "\nslices=" + z + "\nframes=" + t);
 
-    int index = no;
-    for (int i=0; i<getSeries(); i++) {
-      index += getPlaneCount(i);
+    int index = (no * getResolutionCount()) + getResolution();
+    int currentSeries = getSeries();
+    int currentResolution = getResolution();
+    for (int i=0; i<currentSeries; i++) {
+      setSeries(i);
+      index += (getPlaneCount() * getResolutionCount());
     }
+    setSeries(currentSeries);
+    setResolution(currentResolution);
     return index;
   }
 
@@ -425,7 +442,7 @@ public class TiffWriter extends FormatWriter {
   public int getPlaneCount() {
     return getPlaneCount(series);
   }
-  
+
   // -- IFormatWriter API methods --
 
   /**

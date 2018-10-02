@@ -540,12 +540,17 @@ public class AVIReader extends FormatReader {
   }
 
   private void readChunk() throws FormatException, IOException {
+    long originalOffset = in.getFilePointer();
     readChunkHeader();
     CoreMetadata m = core.get(0);
 
-    if (type.equals("RIFF")) {
+    if (type.equals(AVI_MAGIC_STRING)) {
       if (!fcc.startsWith("AVI")) {
-        throw new FormatException("Sorry, AVI RIFF format not found.");
+        LOGGER.warn("Unrecognized chunk '{}' at offset {}", fcc, originalOffset);
+        if (in.getFilePointer() + size - 4 <= in.length()) {
+          in.skipBytes(size - 4);
+          return;
+        }
       }
     }
     else if (in.getFilePointer() == 12) {
@@ -565,7 +570,7 @@ public class AVIReader extends FormatReader {
 
     while ((in.length() - in.getFilePointer()) > 4) {
       listString = in.readString(4);
-      if (listString.equals("RIFF")) {
+      if (listString.equals(AVI_MAGIC_STRING)) {
         in.seek(in.getFilePointer() - 4);
         return;
       }

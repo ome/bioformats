@@ -601,7 +601,7 @@ public class FV1000Reader extends FormatReader {
         for (String previewName : previewNames) {
           RandomAccessInputStream preview = getFile(previewName);
           TiffParser tp = new TiffParser(preview);
-          ifds = tp.getIFDs();
+          ifds = tp.getMainIFDs();
           preview.close();
           tp = null;
           ms1.imageCount += ifds.size();
@@ -966,7 +966,7 @@ public class FV1000Reader extends FormatReader {
         }
         try {
           TiffParser tp = new TiffParser(plane);
-          IFDList ifd = tp.getIFDs();
+          IFDList ifd = tp.getMainIFDs();
           ifds.add(ifd);
         }
         finally {
@@ -1050,7 +1050,7 @@ public class FV1000Reader extends FormatReader {
       for (int c=0; c<core.get(i).sizeC; c++) {
         if (c < illuminations.size()) {
           store.setChannelIlluminationType(
-            getIlluminationType(illuminations.get(c)), i, c);
+            MetadataTools.getIlluminationType(illuminations.get(c)), i, c);
         }
       }
     }
@@ -1071,7 +1071,7 @@ public class FV1000Reader extends FormatReader {
         store.setDetectorVoltage(
               theVoltage, 0, channelIndex);
       }
-      store.setDetectorType(getDetectorType("PMT"), 0, channelIndex);
+      store.setDetectorType(MetadataTools.getDetectorType("PMT"), 0, channelIndex);
 
       // populate LogicalChannel data
 
@@ -1142,7 +1142,7 @@ public class FV1000Reader extends FormatReader {
 
       // populate Laser data
       store.setLaserID(lightSourceID, 0, channelIndex);
-      store.setLaserLaserMedium(getLaserMedium(channel.dyeName),
+      store.setLaserLaserMedium(MetadataTools.getLaserMedium(channel.dyeName),
         0, channelIndex);
       if (channelIndex < wavelengths.size()) {
           Length wave =
@@ -1151,7 +1151,7 @@ public class FV1000Reader extends FormatReader {
           store.setLaserWavelength(wave, 0, channelIndex);
         }
       }
-      store.setLaserType(getLaserType("Other"), 0, channelIndex);
+      store.setLaserType(MetadataTools.getLaserType("Other"), 0, channelIndex);
 
       channelIndex++;
     }
@@ -1167,8 +1167,8 @@ public class FV1000Reader extends FormatReader {
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
     }
-    store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-    store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+    store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+    store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
 
     // link Objective to Image using ObjectiveSettings
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);

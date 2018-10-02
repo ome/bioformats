@@ -229,7 +229,7 @@ public class PCORAWReader extends FormatReader {
           value = value.charAt(1) + value;
           value = value.substring(0, 3);
 
-          store.setDetectorSettingsBinning(getBinning(value), 0, 0);
+          store.setDetectorSettingsBinning(MetadataTools.getBinning(value), 0, 0);
         }
         else if (key.equals("Comment")) {
           final StringBuilder description = new StringBuilder();

@@ -890,7 +890,7 @@ public class ZeissCZIReader extends FormatReader {
         plane.pixelTypeIndex = pixelTypes.indexOf(plane.directoryEntry.pixelType);
       }
 
-      if (seriesCount * pixelTypes.size() > 1) {
+      if (core.size() * pixelTypes.size() > 1) {
         core.clear();
         for (int j=0; j<pixelTypes.size(); j++) {
           for (int i=0; i<seriesCount; i++) {
@@ -906,6 +906,14 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+    }
+
+    // usually this indicates a big image for which a pyramid is
+    // expected but not present
+    if ((prestitched != null && prestitched) &&
+      seriesCount == mosaics && maxResolution == 0)
+    {
+      seriesCount = 1;
     }
 
     if (seriesCount > 1 || maxResolution > 0) {
@@ -924,7 +932,7 @@ public class ZeissCZIReader extends FormatReader {
 
     assignPlaneIndices();
 
-    if (maxResolution > 0) {
+    if (maxResolution > 0 || (mosaics > 1 && seriesCount == 1)) {
       tileWidth = new int[core.size()];
       tileHeight = new int[core.size()];
       for (int s=0; s<core.size();) {
@@ -1287,7 +1295,7 @@ public class ZeissCZIReader extends FormatReader {
             new Double(correctionCollar), i);
         }
         if (medium != null) {
-          store.setObjectiveSettingsMedium(getMedium(medium), i);
+          store.setObjectiveSettingsMedium(MetadataTools.getMedium(medium), i);
         }
         if (refractiveIndex != null) {
           store.setObjectiveSettingsRefractiveIndex(
@@ -1371,7 +1379,7 @@ public class ZeissCZIReader extends FormatReader {
           // otherwise use the timepoint index, to prevent incorrect timestamping of channels
           int t = getZCTCoords(plane)[2];
           if (timestamps.get(t) != null) {
-            store.setPlaneDeltaT(new Time(timestamps.get(t), UNITS.S), i, plane);
+            store.setPlaneDeltaT(new Time(timestamps.get(t), UNITS.SECOND), i, plane);
           }
         }
         if (p.exposureTime != null) {
@@ -1455,7 +1463,7 @@ public class ZeissCZIReader extends FormatReader {
           store.setDetectorSettingsID(detector, i, c);
 
           if (c < binnings.size()) {
-            store.setDetectorSettingsBinning(getBinning(binnings.get(c)), i, c);
+            store.setDetectorSettingsBinning(MetadataTools.getBinning(binnings.get(c)), i, c);
           }
           if (c < channels.size()) {
             store.setDetectorSettingsGain(channels.get(c).gain, i, c);
@@ -2052,11 +2060,11 @@ public class ZeissCZIReader extends FormatReader {
 
           String illumination = getFirstNodeValue(channel, "IlluminationType");
           if (illumination != null) {
-            channels.get(i).illumination = getIlluminationType(illumination);
+            channels.get(i).illumination = MetadataTools.getIlluminationType(illumination);
           }
           String acquisition = getFirstNodeValue(channel, "AcquisitionMode");
           if (acquisition != null) {
-            channels.get(i).acquisitionMode = getAcquisitionMode(acquisition);
+            channels.get(i).acquisitionMode = MetadataTools.getAcquisitionMode(acquisition);
           }
 
           Element detectorSettings = getFirstNode(channel, "DetectorSettings");
@@ -2131,7 +2139,7 @@ public class ZeissCZIReader extends FormatReader {
 
         String microscopeType = getFirstNodeValue(microscope, "Type");
         if (microscopeType != null) {
-          store.setMicroscopeType(getMicroscopeType(microscopeType), 0);
+          store.setMicroscopeType(MetadataTools.getMicroscopeType(microscopeType), 0);
         }
       }
 
@@ -2253,7 +2261,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String detectorType = getFirstNodeValue(detector, "Type");
           if (detectorType != null && !detectorType.equals("")) {
-            store.setDetectorType(getDetectorType(detectorType), 0, detectorIndex);
+            store.setDetectorType(MetadataTools.getDetectorType(detectorType), 0, detectorIndex);
           }
         }
       }
@@ -2355,7 +2363,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String filterType = getFirstNodeValue(filter, "Type");
           if (filterType != null) {
-            store.setFilterType(getFilterType(filterType), 0, i);
+            store.setFilterType(MetadataTools.getFilterType(filterType), 0, i);
           }
           store.setFilterFilterWheel(
             getFirstNodeValue(filter, "FilterWheel"), 0, i);
@@ -2525,7 +2533,7 @@ public class ZeissCZIReader extends FormatReader {
           String illumination = getFirstNodeValue(channel, "IlluminationType");
 
           if (illumination != null) {
-            channels.get(i).illumination = getIlluminationType(illumination);
+            channels.get(i).illumination = MetadataTools.getIlluminationType(illumination);
           }
         }
       }
@@ -2763,8 +2771,8 @@ public class ZeissCZIReader extends FormatReader {
             objective.getAttribute("UniqueName"), 0, i);
 
           String immersion = getFirstNodeValue(objective, "Immersions");
-          store.setObjectiveImmersion(getImmersion(immersion), 0, i);
-          store.setObjectiveCorrection(getCorrection("Other"), 0, i);
+          store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), 0, i);
+          store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, i);
 
           String magnification = getFirstNodeValue(objective, "Magnification");
           String na = getFirstNodeValue(objective, "NumericalAperture");
@@ -3046,7 +3054,7 @@ public class ZeissCZIReader extends FormatReader {
         String bin = getFirstNodeValue(detector, "Binning");
         if (bin != null) {
           bin = bin.replaceAll(",", "x");
-          Binning binning = getBinning(bin);
+          Binning binning = MetadataTools.getBinning(bin);
 
           if (model != null && model.equals(cameraModel)) {
             for (int image=0; image<getSeriesCount(); image++) {
@@ -3382,10 +3390,10 @@ public class ZeissCZIReader extends FormatReader {
 
         String correction = getFirstNodeValue(objective, "Correction");
         if (correction != null) {
-          store.setObjectiveCorrection(getCorrection(correction), 0, i);
+          store.setObjectiveCorrection(MetadataTools.getCorrection(correction), 0, i);
         }
         store.setObjectiveImmersion(
-          getImmersion(getFirstNodeValue(objective, "Immersion")), 0, i);
+          MetadataTools.getImmersion(getFirstNodeValue(objective, "Immersion")), 0, i);
 
         String lensNA = getFirstNodeValue(objective, "LensNA");
         if (lensNA != null) {

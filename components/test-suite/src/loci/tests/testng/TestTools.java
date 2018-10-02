@@ -361,6 +361,25 @@ public class TestTools {
     }
   }
 
+  public static void parseConfigFiles(String dir, ConfigurationTree config) {
+    Location root = new Location(dir);
+    String[] files = root.list();
+    for (String file : files) {
+      Location check = new Location(root, file);
+      if (check.isDirectory()) {
+        parseConfigFiles(check.getAbsolutePath(), config);
+      }
+      else if (isConfigFile(check, "")) {
+        try {
+          config.parseConfigFile(check.getAbsolutePath());
+        }
+        catch (IOException e) {
+          LOGGER.warn("Failed to parse config {}", check, e);
+        }
+      }
+    }
+  }
+
   /** Determines if the given file should be ignored by the test suite. */
   public static boolean isIgnoredFile(String file, ConfigurationTree config) {
     if (file.indexOf(File.separator + ".") >= 0) return true; // hidden file

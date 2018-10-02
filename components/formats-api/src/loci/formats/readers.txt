@@ -95,6 +95,7 @@ loci.formats.in.IM3Reader             # im3
 loci.formats.in.I2IReader             # i2i
 loci.formats.in.SPEReader             # spe
 loci.formats.in.OIRReader             # oir
+loci.formats.in.KLBReader             # klb
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
@@ -153,7 +154,7 @@ loci.formats.in.LeicaReader           # lei, tif
 loci.formats.in.NikonReader           # nef, tif
 loci.formats.in.FluoviewReader        # tif
 loci.formats.in.PrairieReader         # xml, cfg, tif
-loci.formats.in.MetamorphReader       # stk, tif, nd
+loci.formats.in.MetamorphReader       # stk, tif, nd, scan
 loci.formats.in.MicromanagerReader    # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif

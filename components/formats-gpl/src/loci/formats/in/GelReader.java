@@ -121,7 +121,7 @@ public class GelReader extends BaseTiffReader {
       int originalBytes = ifd.getBitsPerSample()[0] / 8;
 
       for (int i=0; i<tmp.length/4; i++) {
-        long value = DataTools.bytesToShort(tmp, i*originalBytes,
+        long value = DataTools.bytesToInt(tmp, i*originalBytes,
           originalBytes, isLittleEndian());
         long square = value * value;
         float pixel = square * scale;
@@ -139,7 +139,7 @@ public class GelReader extends BaseTiffReader {
   /* @see BaseTiffReader#initMetadata() */
   @Override
   protected void initMetadata() throws FormatException, IOException {
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
     if (ifds.size() > 1) {
       IFDList tmpIFDs = ifds;
       ifds = new IFDList();
@@ -158,13 +158,13 @@ public class GelReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     fmt = firstIFD.getIFDLongValue(MD_FILETAG, LINEAR);
-    if (fmt == SQUARE_ROOT) core.get(0).pixelType = FormatTools.FLOAT;
+    if (fmt == SQUARE_ROOT) core.get(0, 0).pixelType = FormatTools.FLOAT;
 
     TiffRational scale = (TiffRational) firstIFD.getIFDValue(MD_SCALE_PIXEL);
     if (scale == null) scale = new TiffRational(1, 1);
 
-    core.get(0).imageCount = ifds.size();
-    core.get(0).sizeT = getImageCount();
+    core.get(0, 0).imageCount = ifds.size();
+    core.get(0, 0).sizeT = getImageCount();
 
     // ignore MD_COLOR_TABLE
 
