@@ -307,7 +307,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     ms.littleEndian = ifd.isLittleEndian();
     ms.indexed = pi == PhotoInterp.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
-    ms.imageCount = getSizeZ() * (ms.rgb ? 1 : getSizeC());
+    ms.imageCount = ms.sizeZ * (ms.rgb ? 1 : ms.sizeC);
     ms.pixelType = ifd.getPixelType();
     ms.metadataComplete = true;
     ms.interleaved = false;
