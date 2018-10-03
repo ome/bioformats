@@ -87,6 +87,12 @@ end
 writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 if ~isempty(ip.Results.Compression)
+    compressionTypes = getCompressionTypes(writer);
+    if ~ismember(ip.Results.Compression, compressionTypes)
+        e = MException('bfsave:unsupportedCompression', ...
+            'Unsupported compression: %s.', ip.Results.Compression);
+        throw(e);
+    end
     writer.setCompression(ip.Results.Compression);
 end
 if ip.Results.BigTiff
