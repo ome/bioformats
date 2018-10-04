@@ -34,11 +34,12 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -100,6 +101,9 @@ public class MicromanagerReader extends FormatReader {
   private MinimalTiffReader tiffReader;
 
   private Vector<Position> positions;
+  private int start = 0;
+
+  private boolean spim = false;
 
   // -- Constructor --
 
@@ -227,6 +231,8 @@ public class MicromanagerReader extends FormatReader {
     if (tiffReader != null) tiffReader.close(fileOnly);
     if (!fileOnly) {
       positions = null;
+      start = 0;
+      spim = false;
     }
   }
 
@@ -304,7 +310,29 @@ public class MicromanagerReader extends FormatReader {
       setSeries(i);
       parsePosition(i);
     }
+
     setSeries(0);
+
+    // collapse original metadata so that keys with the same
+    // per-plane value are stored only once
+
+    for (int i=0; i<seriesCount; i++) {
+      for (String key : core.get(i).seriesMetadata.keySet()) {
+        if (core.get(i).seriesMetadata.get(key) instanceof Vector) {
+          Vector v = (Vector) core.get(i).seriesMetadata.get(key);
+          boolean collapse = true;
+          for (Object o : v) {
+            if (!o.equals(v.get(0))) {
+              collapse = false;
+              break;
+            }
+          }
+          if (collapse) {
+            core.get(i).seriesMetadata.put(key, v.get(0));
+          }
+        }
+      }
+    }
 
     populateMetadata();
   }
@@ -437,8 +465,8 @@ public class MicromanagerReader extends FormatReader {
 
   private void parsePosition(int posIndex) throws IOException, FormatException {
     Position p = positions.get(posIndex);
-    String s = DataTools.readFile(p.metadataFile);
-    parsePosition(s, posIndex);
+
+    parsePosition(p.metadataFile, posIndex);
 
     buildTIFFList(posIndex);
 
@@ -446,7 +474,10 @@ public class MicromanagerReader extends FormatReader {
     p.positions = new Double[p.tiffs.size()][3];
     int digits = String.valueOf(p.tiffs.size() - 1).length();
 
-    boolean parseMMJSONTag = true;
+    // safe to assume that no extra data (i.e. not already in _metadata.txt)
+    // will be included in the MM_JSON tags for SPIM data
+    boolean parseMMJSONTag = !spim;
+
     for (int plane=0; plane<p.tiffs.size(); ) {
       String path = p.tiffs.get(plane);
       // use getFile(...) lookup if possible, to make sure that
@@ -510,6 +541,7 @@ public class MicromanagerReader extends FormatReader {
           String[] tokens = json.split("[\\{\\}:,\"]");
           String key = null, value = null, propType = null;
           int nEmptyTokens = 0;
+
           for (int q=0; q<tokens.length; q++) {
             String token = tokens[q];
             if (token.length() == 0) {
@@ -571,26 +603,28 @@ public class MicromanagerReader extends FormatReader {
     }
   }
 
-  private void parseKeyAndValue(String key, String value, int digits, int plane, int nPlanes) {
-    Position p = positions.get(getCoreIndex());
 
+  private void parseKeyAndValue(String key, String value, int digits, int plane, int nPlanes) {
     // using key alone will result in conflicts with metadata.txt values
     for (int i=plane; i<plane+nPlanes; i++) {
       addSeriesMeta(String.format("Plane #%0" + digits + "d %s", i, key), value);
       if (key.equals("XPositionUm")) {
         try {
+          Position p = positions.get(getCoreIndex());
           p.positions[i][0] = new Double(value);
         }
         catch (NumberFormatException e) { }
       }
       else if (key.equals("YPositionUm")) {
         try {
+          Position p = positions.get(getCoreIndex());
           p.positions[i][1] = new Double(value);
         }
         catch (NumberFormatException e) { }
       }
       else if (key.equals("ZPositionUm")) {
         try {
+          Position p = positions.get(getCoreIndex());
           p.positions[i][2] = new Double(value);
         }
         catch (NumberFormatException e) { }
@@ -675,10 +709,24 @@ public class MicromanagerReader extends FormatReader {
     Vector<Double> stamps = new Vector<Double>();
     p.voltage = new Vector<Double>();
 
-    StringTokenizer st = new StringTokenizer(jsonData, "\n");
+    RandomAccessInputStream s = new RandomAccessInputStream(jsonData);
+
+    if (s.length() > Integer.MAX_VALUE) {
+      LOGGER.warn(jsonData + " exceeds 2GB; metadata parsing is likely to fail");
+    }
+    else if (s.length() > 100 * 1024 * 1024) {
+      LOGGER.warn(jsonData + " is larger than 100MB and may require additional memory to parse. " +
+        "A minimum of 1024MB is suggested.");
+    }
+
+    byte[] b = new byte[(int) s.length()];
+    s.readFully(b);
+    s.close();
+
     int[] slice = new int[3];
-    while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
+    start = 0;
+    while (start < b.length) {
+      String token = getNextLine(b).trim();
       boolean open = token.indexOf('[') != -1;
       boolean closed = token.indexOf(']') != -1;
       if (open || (!open && !closed && !token.equals("{") &&
@@ -694,7 +742,7 @@ public class MicromanagerReader extends FormatReader {
         else if (!closed) {
           final StringBuilder valueBuffer = new StringBuilder();
           while (!closed) {
-            token = st.nextToken();
+            token = getNextLine(b);
             closed = token.indexOf(']') != -1;
             valueBuffer.append(token);
           }
@@ -775,6 +823,9 @@ public class MicromanagerReader extends FormatReader {
               throw new FormatException("Unknown type: " + type);
           }
         }
+        else if (key.equals("SPIMmode")) {
+          spim = true;
+        }
       }
 
       if (token.startsWith("\"FrameKey")) {
@@ -788,7 +839,7 @@ public class MicromanagerReader extends FormatReader {
         slice[0] = Integer.parseInt(token.substring(dash,
           token.indexOf("\"", dash)));
 
-        token = st.nextToken().trim();
+        token = getNextLine(b).trim();
         String key = "";
         StringBuilder valueBuffer = new StringBuilder();
         boolean valueArray = false;
@@ -798,12 +849,12 @@ public class MicromanagerReader extends FormatReader {
 
           if (token.trim().endsWith("{")) {
             nestedCount++;
-            token = st.nextToken().trim();
+            token = getNextLine(b).trim();
             continue;
           }
           else if (token.trim().startsWith("}")) {
             nestedCount--;
-            token = st.nextToken().trim();
+            token = getNextLine(b).trim();
             continue;
           }
 
@@ -813,12 +864,12 @@ public class MicromanagerReader extends FormatReader {
             }
             else {
               valueBuffer.append(token.trim().replaceAll("\"", ""));
-              token = st.nextToken().trim();
+              token = getNextLine(b).trim();
               continue;
             }
           }
           else {
-            int colon = token.indexOf(':');
+            int colon = token.indexOf(":");
             key = token.substring(1, colon).trim();
             valueBuffer.setLength(0);
             valueBuffer.append(token.substring(colon + 1, token.length() - 1).trim().replaceAll("\"", ""));
@@ -827,7 +878,7 @@ public class MicromanagerReader extends FormatReader {
 
             if (token.trim().endsWith("[")) {
               valueArray = true;
-              token = st.nextToken().trim();
+              token = getNextLine(b).trim();
               continue;
             }
           }
@@ -882,7 +933,7 @@ public class MicromanagerReader extends FormatReader {
             }
           }
 
-          token = st.nextToken().trim();
+          token = getNextLine(b).trim();
         }
       }
       else if (token.startsWith("\"Coords-")) {
@@ -912,7 +963,7 @@ public class MicromanagerReader extends FormatReader {
             }
           }
 
-          token = st.nextToken().trim();
+          token = getNextLine(b).trim();
         }
         Index idx = new Index(zct);
         idx.position = position;
@@ -1070,12 +1121,18 @@ public class MicromanagerReader extends FormatReader {
     XMLTools.parseXML(xmlData, handler);
   }
 
-  /** Initialize the TIFF reader with the first file in the current series. */
+  /** Initialize the TIFF reader with the first non-null file in the current series. */
   private void setupReader() {
     try {
+      int plane = 0;
       String file = positions.get(getSeries()).getFile(
         getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
-        getImageCount(), 0);
+        getImageCount(), plane++);
+      while (file == null && plane < getImageCount()) {
+        file = positions.get(getSeries()).getFile(
+          getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+          getImageCount(), plane++);
+      }
       tiffReader.setId(file);
     }
     catch (Exception e) {
@@ -1101,7 +1158,7 @@ public class MicromanagerReader extends FormatReader {
     if (key == null || value == null) {
       return;
     }
-    addSeriesMeta(key, value);
+    addSeriesMetaList(key, value);
 
     if (key.equals("MicroManagerVersion")) {
       String[] version = value.split("\\.");
@@ -1119,6 +1176,19 @@ public class MicromanagerReader extends FormatReader {
           "versions greater than {} are not officially supported", value, MAX_VERSION);
       }
     }
+  }
+
+  private String getNextLine(byte[] buf) throws UnsupportedEncodingException {
+    for (int i=start; i<buf.length; i++) {
+      if (buf[i] == '\n') {
+        String line = new String(buf, start, (i - start) + 1, Constants.ENCODING);
+        start = i + 1;
+        return line;
+      }
+    }
+    String line = new String(buf, start, buf.length - start, Constants.ENCODING);
+    start = buf.length;
+    return line;
   }
 
   // -- Helper classes --
