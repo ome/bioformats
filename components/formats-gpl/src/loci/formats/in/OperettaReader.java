@@ -412,6 +412,8 @@ public class OperettaReader extends FormatReader {
 
           if (planes[imageIndex][0] != null && planes[imageIndex][0].absoluteTime != null) {
             store.setImageAcquisitionDate(planes[imageIndex][0].absoluteTime, imageIndex);
+            store.setWellSamplePositionX(planes[imageIndex][0].positionX, 0, well, field);
+            store.setWellSamplePositionX(planes[imageIndex][0].positionY, 0, well, field);
           }
         }
       }
