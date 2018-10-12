@@ -6,7 +6,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2017 Open Microscopy Environment:
+% Copyright (C) 2012 - 2018 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -190,35 +190,49 @@ classdef TestBfsave < ReaderTest
         end
         
         % Compression type tests
-        function checkCompression(self, type, nonlossy)
+        function checkCompression(self, type)
             self.reader = bfGetReader('plane.fake');
+            self.path = fullfile(self.tmpdir, 'test.ome.tiff');
             self.I = bfGetPlane(self.reader, 1);
             bfsave(self.I, self.path, 'Compression', type);
-            if nonlossy
+            if ~ismember(type, {'JPEG-2000' ,'JPEG-2000 Lossy'})
                 assertEqual(imread(self.path), self.I);
+                inf = imfinfo(self.path);
+                if strcmp(type, 'zlib')
+                    assertEqual(inf.Compression, 'Deflate');
+                else
+                    assertEqual(inf.Compression, type);
+                end
+                assertEqual(imread(self.path), self.I)
             end
         end
-        
-        function testJPEG(self)
-            self.checkCompression('JPEG', false);
-        end
-        
+
         function testJPEG2000(self)
-            self.checkCompression('JPEG-2000', false);
+            self.checkCompression('JPEG-2000');
         end
         
         function testJPEG2000Lossy(self)
-            self.checkCompression('JPEG-2000 Lossy', false);
+            self.checkCompression('JPEG-2000 Lossy');
         end
         
         function testUncompressed(self)
-            self.checkCompression('Uncompressed', true);
+            self.checkCompression('Uncompressed');
         end
         
         function testLZW(self)
-            self.checkCompression('LZW', true);
+            self.checkCompression('LZW');
+        end
+
+        function testZlib(self)
+            self.checkCompression('zlib');
         end
         
+        function testInvalidCompressionType(self)
+            self.I = 1;
+            self.path = fullfile(self.tmpdir, 'test.ome.xml');
+            assertExceptionThrown(@() bfsave(self.I, self.path, 'Compression', 'JPEG'),...
+                'bfsave:unsupportedCompression');
+        end
         % Big-tiff test
         function testBigTiff(self)
             self.I = zeros(100, 100);
