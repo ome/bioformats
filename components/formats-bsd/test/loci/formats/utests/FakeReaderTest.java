@@ -170,7 +170,7 @@ public class FakeReaderTest {
   }
 
   /** Recursively set delete-on-exit for a directory tree. */
-  private void deleteTemporaryDirectoryOnExit(Location directoryRoot) {
+  private void deleteTemporaryDirectoryOnExit(Location directoryRoot) throws Exception {
     directoryRoot.deleteOnExit();
     Location[] children = directoryRoot.listFiles();
     if (children != null) {

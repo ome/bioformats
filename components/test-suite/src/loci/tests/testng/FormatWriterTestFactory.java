@@ -26,6 +26,7 @@
 package loci.tests.testng;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class FormatWriterTestFactory {
   // -- TestNG factory methods --
 
   @Factory
-  public Object[] createInstances() {
+  public Object[] createInstances() throws IOException {
     List files = new ArrayList();
 
     // parse explicit filename, if any

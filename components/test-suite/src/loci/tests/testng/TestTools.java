@@ -195,6 +195,7 @@ public class TestTools {
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig)
+    throws IOException
   {
     getFiles(root, files, config, toplevelConfig, null);
   }
@@ -202,6 +203,7 @@ public class TestTools {
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig, String[] subdirs)
+    throws IOException
   {
     getFiles(root, files, config, toplevelConfig, subdirs, "");
   }
@@ -251,7 +253,7 @@ public class TestTools {
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig, String[] subdirs,
-    String configFileSuffix)
+    String configFileSuffix) throws IOException
   {
     Location f = new Location(root);
     String[] subs = f.list();
@@ -366,25 +368,23 @@ public class TestTools {
     String[] files = root.list();
     for (String file : files) {
       Location check = new Location(root, file);
-      if (check.isDirectory()) {
-        parseConfigFiles(check.getAbsolutePath(), config);
-      }
-      else if (isConfigFile(check, "")) {
-        try {
+      try {
+        if (check.isDirectory()) {
+          parseConfigFiles(check.getAbsolutePath(), config);
+        } else if (isConfigFile(check, "")) {
           config.parseConfigFile(check.getAbsolutePath());
         }
-        catch (IOException e) {
-          LOGGER.warn("Failed to parse config {}", check, e);
-        }
+      }
+      catch (IOException e) {
+        LOGGER.warn("Failed to parse config {}", check, e);
       }
     }
   }
 
   /** Determines if the given file should be ignored by the test suite. */
   public static boolean isIgnoredFile(String file, ConfigurationTree config) {
-    if (file.indexOf(File.separator + ".") >= 0) return true; // hidden file
-
     try {
+      if (file.indexOf(File.separator + ".") >= 0) return true; // hidden file
       Configuration c = config.get(file);
       if (c == null) return false;
       if (!c.doTest()) return true;
