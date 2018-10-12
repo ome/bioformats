@@ -34,6 +34,7 @@ package loci.formats;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -204,7 +205,14 @@ public class FilePattern {
 
     // build file listing
     List<String> fileList = new ArrayList<String>();
-    buildFiles("", num, fileList);
+    try {
+      buildFiles("", num, fileList);
+    }
+    catch (IOException e) {
+      msg = "Error whilst listing files.";
+      return;
+    }
+
     files = fileList.toArray(new String[0]);
 
     if (files.length == 0) {
@@ -755,7 +763,7 @@ public class FilePattern {
   // -- Helper methods --
 
   // recursive method for building the list of matching filenames
-  private void buildFiles(String prefix, int ndx, List<String> fileList) {
+  private void buildFiles(String prefix, int ndx, List<String> fileList) throws IOException {
     if (blocks.length == 0) {
       // regex pattern
 
@@ -831,7 +839,7 @@ public class FilePattern {
     }
   }
 
-  private String[] getAllFiles(String dir) {
+  private String[] getAllFiles(String dir) throws IOException {
     ArrayList<String> files = new ArrayList<String>();
 
     Location root = new Location(dir);
