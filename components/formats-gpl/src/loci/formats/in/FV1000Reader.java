@@ -232,6 +232,7 @@ public class FV1000Reader extends FormatReader {
         checkSuffix(oif.getAbsolutePath(), "oif") && !checkSuffix(name, "bmp");
     }
     catch (IndexOutOfBoundsException e) { }
+    catch (IOException e) { }
     catch (NullPointerException e) { }
     catch (FormatException e) { }
     return false;

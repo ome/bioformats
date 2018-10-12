@@ -116,7 +116,13 @@ public class BDReader extends FormatReader {
     
     Location location = new Location(name);
     String id = location.getAbsolutePath();
-    boolean dirCheck = location.isDirectory();
+    boolean dirCheck;
+    try {
+      dirCheck = location.isDirectory();
+    }
+    catch (IOException e) {
+      dirCheck = false;
+    }
     if (dirCheck) return false;
     if (name.endsWith(EXPERIMENT_FILE)) return true;
     if (!open) return false;
@@ -712,7 +718,7 @@ public class BDReader extends FormatReader {
     }
   }
 
-  private String[][] getTiffs() {
+  private String[][] getTiffs() throws IOException {
     final List<List<String>> files = new ArrayList<List<String>>();
 
     Pattern p = Pattern.compile(".* - n\\d\\d\\d\\d\\d\\d\\.tif");

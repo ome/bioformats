@@ -376,7 +376,7 @@ public class L2DReader extends FormatReader {
    * Recursively add all of the files in the given directory to the
    * used file list.
    */
-  private void addDirectory(String path, int series) {
+  private void addDirectory(String path, int series) throws IOException {
     Location dir = new Location(path);
     String[] files = dir.list();
     if (files == null) return;

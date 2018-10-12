@@ -117,8 +117,15 @@ public class APLReader extends FormatReader {
 
     if (getSeries() < xmlFiles.length) {
       Location xmlFile = new Location(xmlFiles[getSeries()]);
-      if (xmlFile.exists() && !xmlFile.isDirectory()) {
-        files.add(xmlFiles[getSeries()]);
+      if (xmlFile.exists()) {
+        try {
+          if (!xmlFile.isDirectory()) {
+            files.add(xmlFiles[getSeries()]);
+          }
+        }
+        catch (IOException e) {
+          files.add(xmlFiles[getSeries()]);
+        }
       }
     }
     if (!noPixels && getSeries() < tiffFiles.length &&
