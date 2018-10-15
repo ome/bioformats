@@ -486,7 +486,7 @@ public class CV7000Reader extends FormatReader {
 
             if (c == 0) {
               store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(channel.xSize), i);
-              store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(channel.xSize), i);
+              store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(channel.ySize), i);
             }
 
             int objective = -1;
