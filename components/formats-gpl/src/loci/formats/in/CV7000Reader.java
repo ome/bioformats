@@ -667,9 +667,9 @@ public class CV7000Reader extends FormatReader {
           p.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
           p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
           p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
-          p.xpos = Double.parseDouble(attributes.getValue("bts:X"));
-          p.ypos = Double.parseDouble(attributes.getValue("bts:Y"));
-          p.zpos = Double.parseDouble(attributes.getValue("bts:Z"));
+          p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
+          p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
+          p.zpos = DataTools.parseDouble(attributes.getValue("bts:Z"));
           p.timestamp = attributes.getValue("bts:Time");
           planes.add(p);
         }
@@ -718,8 +718,8 @@ public class CV7000Reader extends FormatReader {
       else if (qName.equals("bts:MeasurementChannel")) {
         Channel c = new Channel();
         c.index = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
-        c.xSize = Double.parseDouble(attributes.getValue("bts:HorizontalPixelDimension"));
-        c.ySize = Double.parseDouble(attributes.getValue("bts:VerticalPixelDimension"));
+        c.xSize = DataTools.parseDouble(attributes.getValue("bts:HorizontalPixelDimension"));
+        c.ySize = DataTools.parseDouble(attributes.getValue("bts:VerticalPixelDimension"));
         c.cameraNumber = Integer.parseInt(attributes.getValue("bts:CameraNumber"));
         c.correctionFile = attributes.getValue("bts:ShadingCorrectionSource");
         if (c.correctionFile != null && c.correctionFile.trim().length() == 0) {
@@ -761,20 +761,8 @@ public class CV7000Reader extends FormatReader {
         String wavelength = attributes.getValue("bts:WaveLength");
         String power = attributes.getValue("bts:Power");
 
-        if (wavelength != null) {
-          try {
-            l.wavelength = new Double(wavelength);
-          }
-          catch (NumberFormatException e) {
-          }
-        }
-        if (power != null) {
-          try {
-            l.power = new Double(power);
-          }
-          catch (NumberFormatException e) {
-          }
-        }
+        l.wavelength = DataTools.parseDouble(wavelength);
+        l.power = DataTools.parseDouble(power);
 
         lightSources.add(l);
       }
@@ -790,20 +778,10 @@ public class CV7000Reader extends FormatReader {
             currentChannel.binning = attributes.getValue("bts:Binning");
 
             String mag = attributes.getValue("bts:Magnification");
-            if (mag != null) {
-              try {
-                currentChannel.magnification = new Double(mag);
-              }
-              catch (NumberFormatException e) { }
-            }
+            currentChannel.magnification = DataTools.parseDouble(mag);
 
             String exposure = attributes.getValue("bts:ExposureTime");
-            if (exposure != null) {
-              try {
-                currentChannel.exposureTime = new Double(exposure);
-              }
-              catch (NumberFormatException e) { }
-            }
+            currentChannel.exposureTime = DataTools.parseDouble(exposure);
 
             String color = attributes.getValue("bts:Color");
             if (color != null) {
@@ -827,10 +805,7 @@ public class CV7000Reader extends FormatReader {
               if (acquisition.indexOf("/") > 0) {
                 acquisition = acquisition.replaceAll("BP", "");
                 String wave = acquisition.substring(0, acquisition.indexOf("/"));
-                try {
-                  currentChannel.excitation = new Double(wave);
-                }
-                catch (NumberFormatException e) { }
+                currentChannel.excitation = DataTools.parseDouble(wave);
               }
             }
           }
