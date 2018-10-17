@@ -855,6 +855,16 @@ public class CellSensReader extends FormatReader {
                 FormatTools.createLength(pyramid.originX, UNITS.MICROMETER), ii, nextPlane);
               store.setPlanePositionY(
                 FormatTools.createLength(pyramid.originY, UNITS.MICROMETER), ii, nextPlane);
+              if (z < pyramid.zValues.size()) {
+                store.setPlanePositionZ(
+                  FormatTools.createLength(pyramid.zValues.get(z),
+                  UNITS.MICROMETER), ii, nextPlane);
+              }
+              else if (pyramid.zStart != null && pyramid.zIncrement != null) {
+                store.setPlanePositionZ(
+                  FormatTools.createLength(pyramid.zStart + (z * pyramid.zIncrement),
+                  UNITS.MICROMETER), ii, nextPlane);
+              }
             }
           }
         }
@@ -1372,12 +1382,18 @@ public class CellSensReader extends FormatReader {
       if (fp + 24 >= vsi.length()) {
         return;
       }
+      LOGGER.debug("reading tag container data from {}", vsi.getFilePointer());
       int headerSize = vsi.readShort(); // should always be 24
       int version = vsi.readShort(); // always 21321
       int volumeVersion = vsi.readInt();
       long dataFieldOffset = vsi.readLong();
       int flags = vsi.readInt();
       vsi.skipBytes(4);
+      LOGGER.debug("  headerSize = {}", headerSize);
+      LOGGER.debug("  version = {}", version);
+      LOGGER.debug("  volumeVersion = {}", volumeVersion);
+      LOGGER.debug("  dataFieldOffset = {}", dataFieldOffset);
+      LOGGER.debug("  flags = {}", flags);
 
       int tagCount = flags & 0xfffffff;
 
@@ -1474,19 +1490,23 @@ public class CellSensReader extends FormatReader {
         else if (extendedField && (realType == PROPERTY_SET_VOLUME ||
           realType == NEW_MDIM_VOLUME_HEADER))
         {
-          long endPointer = vsi.getFilePointer() + nextField;
-          while (vsi.getFilePointer() < endPointer &&
-            vsi.getFilePointer() < vsi.length())
-          {
-            long start = vsi.getFilePointer();
-            String tagName = realType == NEW_MDIM_VOLUME_HEADER ?
-              getVolumeName(tag) : tagPrefix;
-            readTags(vsi, tag != 2037, tagName);
-            long end = vsi.getFilePointer();
-            if (start == end) {
-              break;
+          long start = vsi.getFilePointer();
+          String tagName = realType == NEW_MDIM_VOLUME_HEADER ?
+            getVolumeName(tag) : tagPrefix;
+          if (tagName.isEmpty() && realType == NEW_MDIM_VOLUME_HEADER) {
+            switch (tag) {
+              case Z_START:
+                tagName = "Z start position";
+                break;
+              case Z_INCREMENT:
+                tagName = "Z increment";
+                break;
+              case Z_VALUE:
+                tagName = "Z value";
+                break;
             }
           }
+          readTags(vsi, tag != 2037, tagName);
         }
         else {
           String tagName = getTagName(tag);
@@ -1726,6 +1746,15 @@ public class CellSensReader extends FormatReader {
                 else if (tagPrefix.startsWith("Objective Working Distance")) {
                   pyramid.workingDistance = new Double(value);
                 }
+                else if (tagPrefix.equals("Z start position")) {
+                  pyramid.zStart = DataTools.parseDouble(value);
+                }
+                else if (tagPrefix.equals("Z increment")) {
+                  pyramid.zIncrement = DataTools.parseDouble(value);
+                }
+                else if (tagPrefix.equals("Z value")) {
+                  pyramid.zValues.add(DataTools.parseDouble(value));
+                }
               }
             }
             catch (NumberFormatException e) {
@@ -1805,6 +1834,9 @@ public class CellSensReader extends FormatReader {
         }
 
         if (nextField == 0 || tag == -494804095) {
+          if (fp + dataSize < vsi.length() && fp + dataSize >= 0) {
+            vsi.seek(fp + dataSize + 32);
+          }
           return;
         }
 
@@ -2411,6 +2443,10 @@ public class CellSensReader extends FormatReader {
 
     public HashMap<String, Integer> dimensionOrdering =
       new HashMap<String, Integer>();
+
+    public transient Double zStart;
+    public transient Double zIncrement;
+    public transient ArrayList<Double> zValues = new ArrayList<Double>();
   }
 
 }
