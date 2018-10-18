@@ -327,6 +327,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     handler = new LeicaSCNHandler();
     if (imageDescription != null) {
       try {
+        LOGGER.trace("Image description XML = {}", imageDescription);
         // parse the XML description
         XMLTools.parseXML(imageDescription, handler);
       }
@@ -456,7 +457,12 @@ public class LeicaSCNReader extends BaseTiffReader {
           store.setImageName(i.name + " (R" + subresolution + ")", pos);
         }
         else {
-          if (ms.resolutionCount > 1) {
+          if (pos == 0) {
+            // assume first image (usually a pyramid) is the macro image
+            // the value of i.name will not reliably identify a macro
+            store.setImageName("macro", pos);
+          }
+          else if (ms.resolutionCount > 1) {
             store.setImageName("", pos);
           }
           else {
