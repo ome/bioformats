@@ -456,12 +456,11 @@ public class CellSensReader extends FormatReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    if (getCoreIndex() < core.size() - 1) {
+    if (getCoreIndex() < core.size() - 1 && getCoreIndex() < tileX.size()) {
       return tileX.get(getCoreIndex());
     }
-    int ifdIndex = 1 - (core.size() - getCoreIndex());
     try {
-      return (int) ifds.get(ifdIndex).getTileWidth();
+      return (int) ifds.get(getIFDIndex()).getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("Could not retrieve tile width", e);
@@ -473,12 +472,11 @@ public class CellSensReader extends FormatReader {
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    if (getCoreIndex() < core.size() - 1) {
+    if (getCoreIndex() < core.size() - 1 && getCoreIndex() < tileY.size()) {
       return tileY.get(getCoreIndex());
     }
-    int ifdIndex = 1 - (core.size() - getCoreIndex());
     try {
-      return (int) ifds.get(ifdIndex).getTileLength();
+      return (int) ifds.get(getIFDIndex()).getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("Could not retrieve tile height", e);
@@ -517,7 +515,7 @@ public class CellSensReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (getCoreIndex() < core.size() - 1) {
+    if (getCoreIndex() < core.size() - 1 && getCoreIndex() < rows.size()) {
       int tileRows = rows.get(getCoreIndex());
       int tileCols = cols.get(getCoreIndex());
 
@@ -570,8 +568,7 @@ public class CellSensReader extends FormatReader {
       return buf;
     }
     else {
-      int ifdIndex = 1 - (core.size() - getCoreIndex());
-      return parser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
+      return parser.getSamples(ifds.get(getIFDIndex()), buf, x, y, w, h);
     }
   }
 
@@ -689,6 +686,18 @@ public class CellSensReader extends FormatReader {
 
     int seriesCount = files.size();
     core.clear();
+    int ignoredPyramids = 0;
+    if (files.size() == 1) {
+      for (Pyramid pyramid : pyramids) {
+        if (!pyramid.name.equalsIgnoreCase("Overview")) {
+          ignoredPyramids++;
+        }
+      }
+      seriesCount = ifds.size();
+      if (ignoredPyramids * 2 < ifds.size()) {
+        seriesCount -= ignoredPyramids * 2;
+      }
+    }
 
     IFDList exifs = parser.getExifIFDs();
 
@@ -802,7 +811,10 @@ public class CellSensReader extends FormatReader {
     for (int i=0; i<core.size();) {
       setCoreIndex(i);
       Pyramid pyramid = null;
-      if (nextPyramid < pyramids.size()) {
+      if (!(ignoredPyramids > 0 &&
+        i < (core.size() - (pyramids.size() - ignoredPyramids))) &&
+        nextPyramid < pyramids.size())
+      {
         pyramid = pyramids.get(nextPyramid++);
       }
       int ii = coreIndexToSeries(i);
@@ -2353,6 +2365,13 @@ public class CellSensReader extends FormatReader {
         return "Macro image";
     }
     return type;
+  }
+
+  private int getIFDIndex() {
+    if (usedFiles.length == 1) {
+      return getCoreIndex();
+    }
+    return 1 - (core.size() - getCoreIndex());
   }
 
   // -- Helper class --
