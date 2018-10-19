@@ -3,6 +3,7 @@
 # Please do not edit unless you know what you are doing (see reader-guide.txt).
 
 loci.formats.in.FilePatternReader     # pattern
+loci.formats.in.URLPatternReader      # urlpattern
 
 # readers for compressed/archive files
 loci.formats.in.ZipReader             # zip
