@@ -63,20 +63,33 @@ public class FilePatternReader extends FormatReader {
 
   /** Constructs a new pattern reader. */
   public FilePatternReader() {
-    super("File pattern", new String[] {"pattern"});
+    this("File pattern", new String[] {"pattern"}, true);
+  }
 
-    ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
-    Class<? extends IFormatReader>[] classArray = classes.getClasses();
-    ClassList<IFormatReader> newClasses =
-      new ClassList<IFormatReader>(IFormatReader.class);
-    for (Class<? extends IFormatReader> c : classArray) {
-      if (!c.equals(FilePatternReader.class)) {
-        newClasses.addClass(c);
+  /**
+   * Constructs a new pattern reader
+   * @param useDefaultClasses If true initialise with a default list of readers
+   */
+  protected FilePatternReader(String format, String[] suffixes, boolean useDefaultClasses) {
+    super(format, suffixes);
+    if (useDefaultClasses) {
+      ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
+      Class<? extends IFormatReader>[] classArray = classes.getClasses();
+      ClassList<IFormatReader> newClasses = new ClassList<IFormatReader>(IFormatReader.class);
+      for (Class<? extends IFormatReader> c : classArray) {
+        if (!c.equals(FilePatternReader.class)) {
+          newClasses.addClass(c);
+        }
       }
+      initHelper(newClasses);
     }
-    helper = new FileStitcher(new ImageReader(newClasses));
-
     suffixSufficient = true;
+    //suffixNecessary defaults to true
+  }
+
+  /** Initialise the helper with a list of readers */
+  protected void initHelper(ClassList<IFormatReader> newClasses) {
+    helper = new FileStitcher(new ImageReader(newClasses));
   }
 
   // -- IFormatReader methods --
