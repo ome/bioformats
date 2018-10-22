@@ -32,11 +32,11 @@
 
 package loci.formats.services;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 
+import loci.common.RandomAccessInputStream;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
 
@@ -59,20 +59,19 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
     checkClassDependency(ImageMetadataReader.class);
     // check for xmpcore.jar
     checkClassDependency(com.adobe.xmp.XMPMeta.class);
-    // check for xercesImpl.jar
-    checkClassDependency(org.apache.xerces.dom.NodeImpl.class);
   }
 
   // -- EXIFService API methods --
 
   @Override
   public void initialize(String file) throws ServiceException, IOException {
+    RandomAccessInputStream jpegFile = new RandomAccessInputStream(file);
     try {
-      File jpegFile = new File(file);
       Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
-      directory = metadata.getDirectory(ExifSubIFDDirectory.class);
+      directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
     }
     catch (Throwable e) {
+      jpegFile.close();
       throw new ServiceException("Could not read EXIF data", e);
     }
   }
