@@ -43,12 +43,12 @@ series1_label3 = series1{3, 2};
 
 %Displaying images
 % displaying-images-start
-series1_colorMaps = data{1, 3};
+series1_colorMap = data{1, 3}{1, 1};
 figure('Name', series1_label1);
-if (isempty(series1_colorMaps{1}))
+if isempty(series1_colorMap)
   colormap(gray);
 else
-  colormap(series1_colorMaps{1}(1,:));
+  colormap(series1_colorMap);
 end
 imagesc(series1_plane1);
 % displaying-images-end
