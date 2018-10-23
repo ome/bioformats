@@ -365,7 +365,7 @@ public class KLBReader extends FormatReader {
                     core.add(new CoreMetadata(this, 0));
                   }
                   filelist.get(projection)[currentTimepoint][channelIndex] = innerFileList[j].getAbsolutePath();
-                  if (currentTimepoint == 0 && currentChannelNum == 0) {
+                  if (currentTimepoint == 0 && channelIndex == 0) {
                     in.close();
                     in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
                     List<String> stringsList = new ArrayList<>(filelist.keySet());
@@ -375,7 +375,7 @@ public class KLBReader extends FormatReader {
               }
               else {
                 filelist.get(DEFAULT_SERIES)[currentTimepoint][channelIndex] = innerFileList[j].getAbsolutePath();
-                if (currentTimepoint == 0 && currentChannelNum == 0) {
+                if (currentTimepoint == 0 && channelIndex == 0) {
                   in.close();
                   in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
                   readHeader(core.get(0));
