@@ -578,6 +578,10 @@ public class OperettaReader extends FormatReader {
 
     private boolean isHarmony = false;
 
+    private Double xPositionMeters = null;
+    private Double yPositionMeters = null;
+    private Double zPositionMeters = null;
+
     // -- OperettaHandler API methods --
 
     public ArrayList<Plane> getPlanes() {
@@ -717,19 +721,22 @@ public class OperettaReader extends FormatReader {
         else if ("PositionX".equals(currentName)) {
           // position stored in meters
           final double meters = Double.parseDouble(value);
-          activePlane.positionX = new Length(meters, UNITS.METRE);
+          // see "OrientationMatrix" below
+          xPositionMeters = xPositionMeters == null ? meters : xPositionMeters * meters;
         }
         else if ("PositionY".equals(currentName)) {
           // position stored in meters
           final double meters = Double.parseDouble(value);
-          activePlane.positionY = new Length(meters, UNITS.METRE);
+          // see "OrientationMatrix" below
+          yPositionMeters = yPositionMeters == null ? meters : yPositionMeters * meters;
         }
         else if (("AbsPositionZ".equals(currentName) && !isHarmony) ||
           ("PositionZ".equals(currentName) && isHarmony))
         {
           // position stored in meters
           final double meters = Double.parseDouble(value);
-          activePlane.positionZ = new Length(meters, UNITS.METRE);
+          // see "OrientationMatrix" below
+          zPositionMeters = zPositionMeters == null ? meters : zPositionMeters * meters;
         }
         else if ("ObjectiveMagnification".equals(currentName)) {
           activePlane.magnification = Double.parseDouble(value);
@@ -758,11 +765,34 @@ public class OperettaReader extends FormatReader {
         else if ("ChannelType".equals(currentName)) {
           activePlane.channelType = value;
         }
+        else if ("OrientationMatrix".equals(currentName)) {
+          // 3x3 matrix that indicates how to interpret plane position values
+          String[] values = value.replaceAll("[\\[\\]]", "").split(",");
+          boolean invertX = Integer.parseInt(values[0]) < 0;
+          boolean invertY = Integer.parseInt(values[4]) < 0;
+          boolean invertZ = Integer.parseInt(values[8]) < 0;
+          if (invertX) {
+            xPositionMeters = xPositionMeters == null ? -1 : -xPositionMeters;
+          }
+          if (invertY) {
+            yPositionMeters = yPositionMeters == null ? -1 : -yPositionMeters;
+          }
+          if (invertZ) {
+            zPositionMeters = zPositionMeters == null ? -1 : -zPositionMeters;
+          }
+
+        }
       }
 
       currentName = null;
 
       if (qName.equals("Image") && activePlane != null) {
+        activePlane.positionX = new Length(xPositionMeters, UNITS.METRE);
+        activePlane.positionY = new Length(yPositionMeters, UNITS.METRE);
+        activePlane.positionZ = new Length(zPositionMeters, UNITS.METRE);
+        xPositionMeters = null;
+        yPositionMeters = null;
+        zPositionMeters = null;
         planes.add(activePlane);
       }
     }
