@@ -619,7 +619,7 @@ public class OperettaReader extends FormatReader {
         else if ("PositionY".equals(currentName)) {
           // position stored in meters
           final double meters = Double.parseDouble(value);
-          activePlane.positionY = new Length(meters, UNITS.METRE);
+          activePlane.positionY = new Length(-meters, UNITS.METRE);
         }
         else if ("AbsPositionZ".equals(currentName)) {
           // position stored in meters
