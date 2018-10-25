@@ -1740,6 +1740,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // CV7000 datasets can only be reliably detected with the .wpi file
+          if (reader.getFormat().equals("Yokogawa CV7000")) {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2446,6 +2451,13 @@ public class FormatReaderTest {
 
             // Operetta only reliably detects from Index.*.xml
             if (!result && r instanceof OperettaReader) {
+              continue;
+            }
+
+            // ignore anything other than .wpi for CV7000
+            if (!used[i].toLowerCase().endsWith(".wpi") &&
+              r instanceof CV7000Reader)
+            {
               continue;
             }
 

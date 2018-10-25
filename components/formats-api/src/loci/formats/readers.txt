@@ -1,6 +1,7 @@
 # This document is a configuration file identifying all file format readers
 # available to Bio-Formats, and the order in which they should be used.
-# Please do not edit unless you know what you are doing (see reader-guide.txt).
+# Please do not edit unless you know what you are doing, see
+# https://docs.openmicroscopy.org/latest/bio-formats/developers/reader-guide.html
 
 loci.formats.in.FilePatternReader     # pattern
 
@@ -115,6 +116,7 @@ loci.formats.in.OperettaReader        # xml, tif, tiff
 loci.formats.in.InveonReader          # hdr, ct.img, cat, ...
 loci.formats.in.CellVoyagerReader     # xml, tif
 loci.formats.in.ColumbusReader        # xml, tif
+loci.formats.in.CV7000Reader          # wpi
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic
