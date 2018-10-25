@@ -609,25 +609,16 @@ public class MicromanagerReader extends FormatReader {
     for (int i=plane; i<plane+nPlanes; i++) {
       addSeriesMeta(String.format("Plane #%0" + digits + "d %s", i, key), value);
       if (key.equals("XPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][0] = DataTools.parseDouble(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][0] = DataTools.parseDouble(value);
       }
       else if (key.equals("YPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][1] = DataTools.parseDouble(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][1] = DataTools.parseDouble(value);
       }
       else if (key.equals("ZPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][2] = DataTools.parseDouble(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][2] = DataTools.parseDouble(value);
       }
     }
   }
