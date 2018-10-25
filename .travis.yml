@@ -27,7 +27,7 @@ env:
 matrix:
   fast_finish: true
   exclude:
-  - jdk: oraclejdk10
+  - jdk: oraclejdk11
     env: BUILD=ant
   - jdk: openjdk7
     env: BUILD=ant
