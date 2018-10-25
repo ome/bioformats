@@ -768,9 +768,9 @@ public class OperettaReader extends FormatReader {
         else if ("OrientationMatrix".equals(currentName)) {
           // 3x3 matrix that indicates how to interpret plane position values
           String[] values = value.replaceAll("[\\[\\]]", "").split(",");
-          boolean invertX = Integer.parseInt(values[0]) < 0;
-          boolean invertY = Integer.parseInt(values[4]) < 0;
-          boolean invertZ = Integer.parseInt(values[8]) < 0;
+          boolean invertX = DataTools.parseDouble(values[0]) < 0;
+          boolean invertY = DataTools.parseDouble(values[4]) < 0;
+          boolean invertZ = DataTools.parseDouble(values[8]) < 0;
           if (invertX) {
             xPositionMeters = xPositionMeters == null ? -1 : -xPositionMeters;
           }
