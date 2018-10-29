@@ -65,6 +65,8 @@ public class ZeissZVIReader extends BaseZeissReader {
 
   protected transient POIService poi;
   protected String[] files;
+  protected transient RandomAccessInputStream currentPlane;
+  protected transient int currentPlaneIndex = -1;
 
   // -- Constructor --
 
@@ -123,21 +125,27 @@ public class ZeissZVIReader extends BaseZeissReader {
       return buf;
     }
 
-    RandomAccessInputStream s = poi.getDocumentStream(imageFiles[index]);
-    s.seek(offsets[index]);
+    if (currentPlane == null || currentPlaneIndex != index) {
+      if (currentPlane != null) {
+        currentPlane.close();
+      }
+      currentPlane = poi.getDocumentStream(imageFiles[index]);
+      currentPlaneIndex = index;
+    }
+    currentPlane.seek(offsets[index]);
 
     int len = w * pixel;
     int row = getSizeX() * pixel;
 
     if (isJPEG) {
-      byte[] t = new JPEGCodec().decompress(s, options);
+      byte[] t = new JPEGCodec().decompress(currentPlane, options);
 
       for (int yy=0; yy<h; yy++) {
         System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
       }
     }
     else if (isZlib) {
-      byte[] t = new ZlibCodec().decompress(s, options);
+      byte[] t = new ZlibCodec().decompress(currentPlane, options);
       for (int yy=0; yy<h; yy++) {
         int src = (yy + y) * row + x * pixel;
         int dest = yy * len;
@@ -148,9 +156,8 @@ public class ZeissZVIReader extends BaseZeissReader {
       }
     }
     else {
-      readPlane(s, x, y, w, h, buf);
+      readPlane(currentPlane, x, y, w, h, buf);
     }
-    s.close();
 
     if (isRGB() && !isJPEG) {
       // reverse bytes in groups of 3 to account for BGR storage
@@ -169,8 +176,11 @@ public class ZeissZVIReader extends BaseZeissReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (poi != null) poi.close();
+    if (currentPlane != null) currentPlane.close();
     poi = null;
     files = null;
+    currentPlane = null;
+    currentPlaneIndex = -1;
   }
 
   // -- Internal FormatReader API methods --
