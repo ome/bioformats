@@ -362,6 +362,7 @@ public class TestTools {
   }
 
   public static void parseConfigFiles(String dir, ConfigurationTree config) {
+    LOGGER.info("looking for configuration files in {}", dir);
     Location root = new Location(dir);
     String[] files = root.list();
     for (String file : files) {
@@ -376,6 +377,9 @@ public class TestTools {
         catch (IOException e) {
           LOGGER.warn("Failed to parse config {}", check, e);
         }
+      }
+      else {
+        LOGGER.info("  {} not a configuration file");
       }
     }
   }

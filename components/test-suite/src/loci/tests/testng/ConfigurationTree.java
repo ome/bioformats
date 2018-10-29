@@ -184,8 +184,10 @@ public class ConfigurationTree {
   }
 
   public void parseConfigFile(String configFile) throws IOException {
+    LOGGER.info("ConfigurationTree parsing {}", configFile);
     File file = new File(configFile);
     if (file.isDirectory()) {
+      LOGGER.info("  * found directory");
       return;
     }
     String parent = file.getParent();
@@ -203,6 +205,7 @@ public class ConfigurationTree {
       new InputStreamReader(stream, Constants.ENCODING)));
     for (IniTable table : iniList) {
       String id = table.get(IniTable.HEADER_KEY);
+      LOGGER.info("  table header: {}", id);
       id = id.substring(0, id.lastIndexOf(" "));
 
       id = new File(parent, id).getAbsolutePath();
@@ -213,6 +216,7 @@ public class ConfigurationTree {
           configFile, id);
         continue;
       }
+      LOGGER.info("    added configuration for path {}", id);
     }
   }
 
