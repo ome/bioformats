@@ -578,10 +578,6 @@ public class OperettaReader extends FormatReader {
 
     private boolean isHarmony = false;
 
-    private Double xPositionMeters = null;
-    private Double yPositionMeters = null;
-    private Double zPositionMeters = null;
-
     // -- OperettaHandler API methods --
 
     public ArrayList<Plane> getPlanes() {
@@ -722,13 +718,13 @@ public class OperettaReader extends FormatReader {
           // position stored in meters
           final double meters = Double.parseDouble(value);
           // see "OrientationMatrix" below
-          xPositionMeters = xPositionMeters == null ? meters : xPositionMeters * meters;
+          activePlane.positionX = new Length(meters, UNITS.METRE);
         }
         else if ("PositionY".equals(currentName)) {
           // position stored in meters
           final double meters = Double.parseDouble(value);
           // see "OrientationMatrix" below
-          yPositionMeters = yPositionMeters == null ? meters : yPositionMeters * meters;
+          activePlane.positionY = new Length(meters, UNITS.METRE);
         }
         else if (("AbsPositionZ".equals(currentName) && !isHarmony) ||
           ("PositionZ".equals(currentName) && isHarmony))
@@ -736,7 +732,7 @@ public class OperettaReader extends FormatReader {
           // position stored in meters
           final double meters = Double.parseDouble(value);
           // see "OrientationMatrix" below
-          zPositionMeters = zPositionMeters == null ? meters : zPositionMeters * meters;
+          activePlane.positionZ = new Length(meters, UNITS.METRE);
         }
         else if ("ObjectiveMagnification".equals(currentName)) {
           activePlane.magnification = Double.parseDouble(value);
@@ -780,18 +776,7 @@ public class OperettaReader extends FormatReader {
           if (matrix.length > 2 && matrix[0].length > 0 &&
             matrix[1].length > 1 && matrix[2].length > 2)
           {
-            boolean invertX = matrix[0][0] != null && matrix[0][0] < 0;
-            boolean invertY = matrix[1][1] != null && matrix[1][1] < 0;
-            boolean invertZ = matrix[2][2] != null && matrix[2][2] < 0;
-            if (invertX) {
-              xPositionMeters = xPositionMeters == null ? -1 : -xPositionMeters;
-            }
-            if (invertY) {
-              yPositionMeters = yPositionMeters == null ? -1 : -yPositionMeters;
-            }
-            if (invertZ) {
-              zPositionMeters = zPositionMeters == null ? -1 : -zPositionMeters;
-            }
+            activePlane.orientationMatrix = matrix;
           }
         }
       }
@@ -799,12 +784,7 @@ public class OperettaReader extends FormatReader {
       currentName = null;
 
       if (qName.equals("Image") && activePlane != null) {
-        activePlane.positionX = new Length(xPositionMeters, UNITS.METRE);
-        activePlane.positionY = new Length(yPositionMeters, UNITS.METRE);
-        activePlane.positionZ = new Length(zPositionMeters, UNITS.METRE);
-        xPositionMeters = null;
-        yPositionMeters = null;
-        zPositionMeters = null;
+        activePlane.applyMatrix();
         planes.add(activePlane);
       }
     }
@@ -836,6 +816,34 @@ public class OperettaReader extends FormatReader {
     public Timestamp absoluteTime;
     public String acqType;
     public String channelType;
+    public Double[][] orientationMatrix;
+
+    /**
+     * Applies the orientationMatrix to positionX, positionY, and positionZ.
+     */
+    public void applyMatrix() {
+      if (positionX == null || positionY == null ||
+        positionZ == null || orientationMatrix == null)
+      {
+        return;
+      }
+      double[] v = new double[] {positionX.value().doubleValue(),
+        positionY.value().doubleValue(), positionZ.value().doubleValue()};
+      double[] newValues = new double[] {0, 0, 0};
+      for (int row=0; row<orientationMatrix.length; row++) {
+        for (int col=0; col<orientationMatrix[row].length; col++) {
+          if (col < v.length) {
+            newValues[row] += orientationMatrix[row][col] * v[col];
+          }
+          else {
+            newValues[row] += orientationMatrix[row][col];
+          }
+        }
+      }
+      positionX = new Length(newValues[0], positionX.unit());
+      positionY = new Length(newValues[1], positionY.unit());
+      positionZ = new Length(newValues[2], positionZ.unit());
+    }
   }
 
   @Override
