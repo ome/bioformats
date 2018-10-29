@@ -766,21 +766,33 @@ public class OperettaReader extends FormatReader {
           activePlane.channelType = value;
         }
         else if ("OrientationMatrix".equals(currentName)) {
-          // 3x3 matrix that indicates how to interpret plane position values
-          String[] values = value.replaceAll("[\\[\\]]", "").split(",");
-          boolean invertX = DataTools.parseDouble(values[0]) < 0;
-          boolean invertY = DataTools.parseDouble(values[4]) < 0;
-          boolean invertZ = DataTools.parseDouble(values[8]) < 0;
-          if (invertX) {
-            xPositionMeters = xPositionMeters == null ? -1 : -xPositionMeters;
+          // matrix that indicates how to interpret plane position values
+          String[] rows = value.split("]");
+          Double[][] matrix = new Double[rows.length][];
+          for (int i=0; i<rows.length; i++) {
+            rows[i] = rows[i].replaceAll("\\[", "").replaceAll(",", " ");
+            String[] values = rows[i].trim().split(" ");
+            matrix[i] = new Double[values.length];
+            for (int j=0; j<matrix[i].length; j++) {
+              matrix[i][j] = DataTools.parseDouble(values[j]);
+            }
           }
-          if (invertY) {
-            yPositionMeters = yPositionMeters == null ? -1 : -yPositionMeters;
+          if (matrix.length > 2 && matrix[0].length > 0 &&
+            matrix[1].length > 1 && matrix[2].length > 2)
+          {
+            boolean invertX = matrix[0][0] != null && matrix[0][0] < 0;
+            boolean invertY = matrix[1][1] != null && matrix[1][1] < 0;
+            boolean invertZ = matrix[2][2] != null && matrix[2][2] < 0;
+            if (invertX) {
+              xPositionMeters = xPositionMeters == null ? -1 : -xPositionMeters;
+            }
+            if (invertY) {
+              yPositionMeters = yPositionMeters == null ? -1 : -yPositionMeters;
+            }
+            if (invertZ) {
+              zPositionMeters = zPositionMeters == null ? -1 : -zPositionMeters;
+            }
           }
-          if (invertZ) {
-            zPositionMeters = zPositionMeters == null ? -1 : -zPositionMeters;
-          }
-
         }
       }
 
