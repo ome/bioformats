@@ -609,25 +609,16 @@ public class MicromanagerReader extends FormatReader {
     for (int i=plane; i<plane+nPlanes; i++) {
       addSeriesMeta(String.format("Plane #%0" + digits + "d %s", i, key), value);
       if (key.equals("XPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][0] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][0] = DataTools.parseDouble(value);
       }
       else if (key.equals("YPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][1] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][1] = DataTools.parseDouble(value);
       }
       else if (key.equals("ZPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][2] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][2] = DataTools.parseDouble(value);
       }
     }
   }
@@ -786,10 +777,10 @@ public class MicromanagerReader extends FormatReader {
           }
         }
         else if (key.equals("PixelSize_um")) {
-          p.pixelSize = new Double(value);
+          p.pixelSize = DataTools.parseDouble(value);
         }
         else if (key.equals("z-step_um")) {
-          p.sliceThickness = new Double(value);
+          p.sliceThickness = DataTools.parseDouble(value);
         }
         else if (key.equals("Time")) {
           p.time = value;
@@ -902,19 +893,25 @@ public class MicromanagerReader extends FormatReader {
             p.detectorModel = value;
           }
           else if (key.equals(p.cameraRef + "-Gain")) {
-            p.gain = (int) Double.parseDouble(value);
+            Double gain = DataTools.parseDouble(value);
+            if (gain != null) {
+              p.gain = gain.intValue();
+            }
           }
           else if (key.equals(p.cameraRef + "-Name")) {
             p.detectorManufacturer = value;
           }
           else if (key.equals(p.cameraRef + "-Temperature")) {
-            p.temperature = Double.parseDouble(value);
+            Double temperature = DataTools.parseDouble(value);
+            if (temperature != null) {
+              p.temperature = temperature;
+            }
           }
           else if (key.equals(p.cameraRef + "-CCDMode")) {
             p.cameraMode = value;
           }
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
-            p.voltage.add(new Double(value));
+            p.voltage.add(DataTools.parseDouble(value));
           }
           else if (key.equals("PositionName") && !value.equals("null")) {
             p.name = value;
