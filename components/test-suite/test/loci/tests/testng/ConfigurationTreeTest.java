@@ -40,6 +40,10 @@ public class ConfigurationTreeTest {
       {"/config/", "/data"},
       {"/config/test", "/data/test"},
       {"/config/test/test2/test3/", "/data/test/test2/test3"},
+      {"/data", "/data"},
+      {"/data/test", "/data/test"},
+      {"/data2", "/data2"},
+      {"/data2/test", "/data2/test"},
     };
   }
 
@@ -50,6 +54,10 @@ public class ConfigurationTreeTest {
       {"/data/", "/config"},
       {"/data/test", "/config/test"},
       {"/data/test/test2/test3/", "/config/test/test2/test3"},
+      {"/config", "/config"},
+      {"/config/test", "/config/test"},
+      {"/config2", "/config2"},
+      {"/config2/test", "/config2/test"},
     };
   }
 
