@@ -323,7 +323,7 @@ public class KLBReader extends FormatReader {
       }
 
       if (channels.size() > 0) {
-        sizeC =channels.size();
+        sizeC = channels.size();
         Collections.sort(channels);
       }
 
