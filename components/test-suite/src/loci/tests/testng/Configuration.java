@@ -38,6 +38,7 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.IniWriter;
 import loci.common.Location;
+import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -521,6 +522,16 @@ public class Configuration {
     putTableName(globalTable, reader, " global");
 
     int seriesCount = reader.getSeriesCount();
+    IFormatReader unflattenedReader = reader;
+    if (seriesCount > 1) {
+      unflattenedReader = new FileStitcher();
+      unflattenedReader.setFlattenedResolutions(false);
+      try {
+        unflattenedReader.setId(reader.getCurrentFile());
+      }
+      catch (FormatException | IOException e) { }
+      seriesCount = unflattenedReader.getSeriesCount();
+    }
 
     globalTable.put(SERIES_COUNT, String.valueOf(seriesCount));
 
@@ -559,13 +570,15 @@ public class Configuration {
     ini.add(globalTable);
 
     for (int series=0; series<seriesCount; series++) {
-      reader.setSeries(series);
-      int resolutionCount = reader.getResolutionCount();
+      unflattenedReader.setSeries(series);
+      int resolutionCount = unflattenedReader.getResolutionCount();
       for (int resolution = 0; resolution < resolutionCount; resolution++) {
-        reader.setResolution(resolution);
+        unflattenedReader.setResolution(resolution);
+        int index = unflattenedReader.getCoreIndex();
+        reader.setCoreIndex(index);
 
         IniTable seriesTable = new IniTable();
-        putTableName(seriesTable, reader, SERIES + series + " " + RESOLUTION + resolution);
+        putTableName(seriesTable, unflattenedReader, SERIES + series + " " + RESOLUTION + resolution);
 
         if (resolution == 0) {
           seriesTable.put(RESOLUTION_COUNT, String.valueOf(resolutionCount));
@@ -588,7 +601,7 @@ public class Configuration {
           String.valueOf(reader.isLittleEndian()));
 
         seriesTable.put(CHANNEL_COUNT,
-          String.valueOf(retrieve.getChannelCount(series)));
+          String.valueOf(retrieve.getChannelCount(index)));
 
         try {
           planeSize = DataTools.safeMultiply32(reader.getSizeX(),
@@ -623,31 +636,31 @@ public class Configuration {
           // TODO
         }
 
-        seriesTable.put(NAME, retrieve.getImageName(series));
-        seriesTable.put(DESCRIPTION, retrieve.getImageDescription(series));
+        seriesTable.put(NAME, retrieve.getImageName(index));
+        seriesTable.put(DESCRIPTION, retrieve.getImageDescription(index));
 
-        Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
+        Length physicalX = retrieve.getPixelsPhysicalSizeX(index);
         if (physicalX != null) {
           seriesTable.put(PHYSICAL_SIZE_X, physicalX.value().toString());
           seriesTable.put(PHYSICAL_SIZE_X_UNIT, physicalX.unit().getSymbol());
         }
-        Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
+        Length physicalY = retrieve.getPixelsPhysicalSizeY(index);
         if (physicalY != null) {
           seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value().toString());
           seriesTable.put(PHYSICAL_SIZE_Y_UNIT, physicalY.unit().getSymbol());
         }
-        Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
+        Length physicalZ = retrieve.getPixelsPhysicalSizeZ(index);
         if (physicalZ != null) {
           seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value().toString());
           seriesTable.put(PHYSICAL_SIZE_Z_UNIT, physicalZ.unit().getSymbol());
         }
-        Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
+        Time timeIncrement = retrieve.getPixelsTimeIncrement(index);
         if (timeIncrement != null) {
           seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
           seriesTable.put(TIME_INCREMENT_UNIT, timeIncrement.unit().getSymbol());
         }
 
-        Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
+        Timestamp acquisition = retrieve.getImageAcquisitionDate(index);
         if (acquisition != null) {
           String date = acquisition.getValue();
           if (date != null) {
@@ -655,60 +668,60 @@ public class Configuration {
           }
         }
 
-        for (int c = 0; c < retrieve.getChannelCount(series); c++) {
-          seriesTable.put(CHANNEL_NAME + c, retrieve.getChannelName(series, c));
+        for (int c = 0; c < retrieve.getChannelCount(index); c++) {
+          seriesTable.put(CHANNEL_NAME + c, retrieve.getChannelName(index, c));
           try {
             seriesTable.put(LIGHT_SOURCE + c,
-              retrieve.getChannelLightSourceSettingsID(series, c));
+              retrieve.getChannelLightSourceSettingsID(index, c));
           } catch (NullPointerException e) {
           }
 
           try {
             int plane = reader.getIndex(0, c, 0);
-            if (plane < retrieve.getPlaneCount(series)) {
+            if (plane < retrieve.getPlaneCount(index)) {
               seriesTable.put(EXPOSURE_TIME + c,
-                retrieve.getPlaneExposureTime(series, plane).value().toString());
+                retrieve.getPlaneExposureTime(index, plane).value().toString());
               seriesTable.put(EXPOSURE_TIME_UNIT + c,
-                retrieve.getPlaneExposureTime(series, plane).unit().getSymbol());
+                retrieve.getPlaneExposureTime(index, plane).unit().getSymbol());
             }
           } catch (NullPointerException e) {
           }
 
-          Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
+          Length emWavelength = retrieve.getChannelEmissionWavelength(index, c);
           if (emWavelength != null) {
             seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value().toString());
             seriesTable.put(EMISSION_WAVELENGTH_UNIT + c, emWavelength.unit().getSymbol());
           }
           Length exWavelength =
-            retrieve.getChannelExcitationWavelength(series, c);
+            retrieve.getChannelExcitationWavelength(index, c);
           if (exWavelength != null) {
             seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value().toString());
             seriesTable.put(EXCITATION_WAVELENGTH_UNIT + c, exWavelength.unit().getSymbol());
           }
           try {
             seriesTable.put(DETECTOR + c,
-              retrieve.getDetectorSettingsID(series, c));
+              retrieve.getDetectorSettingsID(index, c));
           } catch (NullPointerException e) {
           }
         }
 
         for (int p = 0; p < reader.getImageCount(); p++) {
           try {
-            Time deltaT = retrieve.getPlaneDeltaT(series, p);
+            Time deltaT = retrieve.getPlaneDeltaT(index, p);
             if (deltaT != null) {
               seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
             }
-            Length xPos = retrieve.getPlanePositionX(series, p);
+            Length xPos = retrieve.getPlanePositionX(index, p);
             if (xPos != null) {
               seriesTable.put(X_POSITION + p, String.valueOf(xPos.value().doubleValue()));
               seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
             }
-            Length yPos = retrieve.getPlanePositionY(series, p);
+            Length yPos = retrieve.getPlanePositionY(index, p);
             if (yPos != null) {
               seriesTable.put(Y_POSITION + p, String.valueOf(yPos.value().doubleValue()));
               seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
             }
-            Length zPos = retrieve.getPlanePositionZ(series, p);
+            Length zPos = retrieve.getPlanePositionZ(index, p);
             if (zPos != null) {
               seriesTable.put(Z_POSITION + p, String.valueOf(zPos.value().doubleValue()));
               seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
