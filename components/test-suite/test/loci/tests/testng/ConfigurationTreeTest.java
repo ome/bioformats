@@ -25,39 +25,42 @@
 
 package loci.tests.testng;
 
+import java.nio.file.Paths;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 public class ConfigurationTreeTest {
 
-  ConfigurationTree configTree = new ConfigurationTree("/data", "/config");
+  ConfigurationTree configTree =
+    new ConfigurationTree(path("/data"), path("/config"));
 
   @DataProvider(name = "configList")
   public Object[][] createConfigList() {
     return new Object[][]{
-      {"/config", "/data"},
-      {"/config/", "/data"},
-      {"/config/test", "/data/test"},
-      {"/config/test/test2/test3/", "/data/test/test2/test3"},
-      {"/data", "/data"},
-      {"/data/test", "/data/test"},
-      {"/data2", "/data2"},
-      {"/data2/test", "/data2/test"},
+      {path("/config"), path("/data")},
+      {path("/config/"), path("/data")},
+      {path("/config/test"), path("/data/test")},
+      {path("/config/test/test2/test3/"), path("/data/test/test2/test3")},
+      {path("/data"), path("/data")},
+      {path("/data/test"), path("/data/test")},
+      {path("/data2"), path("/data2")},
+      {path("/data2/test"), path("/data2/test")},
     };
   }
 
   @DataProvider(name = "rootList")
   public Object[][] createRootList() {
     return new Object[][]{
-      {"/data", "/config"},
-      {"/data/", "/config"},
-      {"/data/test", "/config/test"},
-      {"/data/test/test2/test3/", "/config/test/test2/test3"},
-      {"/config", "/config"},
-      {"/config/test", "/config/test"},
-      {"/config2", "/config2"},
-      {"/config2/test", "/config2/test"},
+      {path("/data"), path("/config")},
+      {path("/data/"), path("/config")},
+      {path("/data/test"), path("/config/test")},
+      {path("/data/test/test2/test3/"), path("/config/test/test2/test3")},
+      {path("/config"), path("/config")},
+      {path("/config/test"), path("/config/test")},
+      {path("/config2"), path("/config2")},
+      {path("/config2/test"), path("/config2/test")},
     };
   }
 
@@ -69,5 +72,15 @@ public class ConfigurationTreeTest {
   @Test(dataProvider = "rootList")
   public void testRelocateToConfig(String path, String expected) {
     assertEquals(configTree.relocateToConfig(path), expected);
+  }
+
+  /**
+   * Turn the specified path into a system-specific absolute path.
+   * On UNIX-based systems, this should return the original path.
+   * On Windows systems, the drive letter of the working directory
+   * will be prepended.
+   */
+  private String path(String path) {
+    return Paths.get(path).toAbsolutePath().toString();
   }
 }
