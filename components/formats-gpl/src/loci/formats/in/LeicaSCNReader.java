@@ -84,6 +84,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     suffixNecessary = false;
     suffixSufficient = false;
     canSeparateSeries = false;
+    noSubresolutions = true;
   }
 
   // -- IFormatReader API methods --
@@ -234,6 +235,17 @@ public class LeicaSCNReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
+  @Override
+  protected void initTiffParser() {
+    super.initTiffParser();
+    // older .scn files require color correction
+    // newer files from Versa systems do not
+    if (handler != null) {
+      Image i = handler.imageMap.get(0);
+      tiffParser.setYCbCrCorrection(!"versa".equalsIgnoreCase(i.devModel));
+    }
+  }
+
   protected void initCoreMetadata(int series, int resolution) throws FormatException, IOException {
     int pos = core.flattenedIndex(series, resolution);
     ImageCollection c = handler.collection;
@@ -249,6 +261,9 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     if (resolution == 0) {
       ms.resolutionCount = i.pixels.sizeR;
+      if (ms.resolutionCount == 0) {
+        ms.resolutionCount = 1;
+      }
     }
 
     Dimension dimension = i.pixels.lookupDimension(0, 0, resolution);
@@ -268,6 +283,19 @@ public class LeicaSCNReader extends BaseTiffReader {
     ms.sizeT = 1;
     ms.sizeC = ms.rgb ? samples : i.pixels.sizeC;
 
+    if (ms.sizeX == 0) {
+      ms.sizeX = (int) ifd.getImageWidth();
+    }
+    if (ms.sizeY == 0) {
+      ms.sizeY = (int) ifd.getImageLength();
+    }
+    if (ms.sizeZ == 0) {
+      ms.sizeZ = 1;
+    }
+    if (ms.sizeC == 0) {
+      ms.sizeC = 1;
+    }
+
     if ((ifd.getImageWidth() != ms.sizeX) || (ifd.getImageLength() != ms.sizeY))
     {
       throw new FormatException("IFD dimensions do not match XML dimensions for image " +
@@ -279,7 +307,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     ms.littleEndian = ifd.isLittleEndian();
     ms.indexed = pi == PhotoInterp.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
-    ms.imageCount = i.pixels.sizeZ * i.pixels.sizeC;
+    ms.imageCount = ms.sizeZ * (ms.rgb ? 1 : ms.sizeC);
     ms.pixelType = ifd.getPixelType();
     ms.metadataComplete = true;
     ms.interleaved = false;
@@ -299,6 +327,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     handler = new LeicaSCNHandler();
     if (imageDescription != null) {
       try {
+        LOGGER.trace("Image description XML = {}", imageDescription);
         // parse the XML description
         XMLTools.parseXML(imageDescription, handler);
       }
@@ -306,6 +335,8 @@ public class LeicaSCNReader extends BaseTiffReader {
         throw new FormatException("Failed to parse XML", se);
       }
     }
+    initTiffParser();
+    tiffParser.setDoCaching(true);
 
     int count = handler.count();
 
@@ -390,7 +421,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
         int inst = instrumentIDs.get(i.devModel);
         String objectiveName = i.devModel + ":" + i.objMag;
-        if (objectives.get(objectiveName) == null) {
+        if (objectives.get(objectiveName) == null && i.objMag != null) {
           String objectiveID = MetadataTools.createLSID("Objective", inst, objectiveidno);
           objectives.put(objectiveName, objectiveID);
           store.setObjectiveID(objectiveID, inst, objectiveidno);
@@ -404,9 +435,11 @@ public class LeicaSCNReader extends BaseTiffReader {
 
         store.setImageInstrumentRef(
           MetadataTools.createLSID("Instrument", inst), pos);
-        store.setObjectiveSettingsID(objectives.get(objectiveName), pos);
+        if (objectives.containsKey(objectiveName)) {
+          store.setObjectiveSettingsID(objectives.get(objectiveName), pos);
+        }
         // TODO: Only "brightfield" has been seen in example files
-        if (i.illumSource.equals("brightfield")) {
+        if (i.illumSource != null && i.illumSource.equals("brightfield")) {
           store.setChannelIlluminationType(IlluminationType.TRANSMITTED, pos, 0);
         } else {
           store.setChannelIlluminationType(IlluminationType.OTHER, pos, 0);
@@ -420,10 +453,27 @@ public class LeicaSCNReader extends BaseTiffReader {
           store.setPlanePositionY(offsetY, pos, q);
         }
 
-        store.setImageName(i.name + " (R" + subresolution + ")", pos);
+        if (hasFlattenedResolutions()) {
+          store.setImageName(i.name + " (R" + subresolution + ")", pos);
+        }
+        else {
+          if (pos == 0) {
+            // assume first image (usually a pyramid) is the macro image
+            // the value of i.name will not reliably identify a macro
+            store.setImageName("macro", pos);
+          }
+          else if (ms.resolutionCount > 1) {
+            store.setImageName("", pos);
+          }
+          else {
+            store.setImageName(i.name, pos);
+          }
+        }
         store.setImageDescription("Collection " + c.name, pos);
 
-        store.setImageAcquisitionDate(new Timestamp(i.creationDate), pos);
+        if (i.creationDate != null) {
+          store.setImageAcquisitionDate(new Timestamp(i.creationDate), pos);
+        }
 
         // Original metadata...
         addSeriesMeta("collection.name", c.name);
@@ -611,6 +661,25 @@ public class LeicaSCNReader extends BaseTiffReader {
       }
       else if (qName.equals("view")) {
         currentImage.setView(attributes);
+      }
+      else if (qName.equals("supplementalImage")) {
+        // supplemental images (barcodes etc.) only have
+        // a type (name) and IFD index
+
+        String type = attributes.getValue("type");
+        String ifd = attributes.getValue("ifd");
+
+        if (ifd != null) {
+          currentImage = new Image(attributes);
+          currentImage.pixels = new Pixels(attributes);
+          Dimension dim = new Dimension(attributes);
+          currentImage.pixels.dims.add(dim);
+          currentImage.name = type;
+          collection.images.add(currentImage);
+          imageMap.add(currentImage);
+          IFDMap.add(Integer.parseInt(ifd));
+          resolutionCount++;
+        }
       }
 
       nameStack.push(qName);
