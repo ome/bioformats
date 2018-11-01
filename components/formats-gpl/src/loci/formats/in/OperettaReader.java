@@ -167,7 +167,9 @@ public class OperettaReader extends FormatReader {
     if (!noPixels) {
       for (Plane[] well : planes) {
         for (Plane p : well) {
-          if (p != null && p.filename != null) {
+          if (p != null && p.filename != null &&
+            new Location(p.filename).exists())
+          {
             files.add(p.filename);
           }
         }
@@ -268,7 +270,13 @@ public class OperettaReader extends FormatReader {
         Arrays.sort(companionFolders);
         for (String folder : companionFolders) {
           LOGGER.trace("Found folder {}", folder);
-          if (!f.equals("Images") || !checkSuffix(folder, "tiff")) {
+          // the current file's parent directory will usually be "Images",
+          // but may have been renamed especially if there are no
+          // analysis results
+          if ((!f.equals("Images") &&
+            !f.equals(currentFile.getParentFile().getName())) ||
+            !checkSuffix(folder, "tiff"))
+          {
             String metadataFile = new Location(path, folder).getAbsolutePath();
             if (!metadataFile.equals(currentFile.getAbsolutePath())) {
               metadataFiles.add(metadataFile);
