@@ -1658,6 +1658,12 @@ public class FormatReaderTest {
             }
           }
 
+          // extra metadata files in Harmony/Operetta datasets
+          // cannot be used for type detection
+          if (reader.getFormat().equals("PerkinElmer Operetta")) {
+            continue;
+          }
+
           // Volocity datasets can only be detected with the .mvd2 file
           if (file.toLowerCase().endsWith(".mvd2") &&
             !base[i].toLowerCase().endsWith(".mvd2"))
@@ -2452,6 +2458,11 @@ public class FormatReaderTest {
 
             // Inveon only reliably detected from header file
             if (!result && r instanceof InveonReader) {
+              continue;
+            }
+
+            // Operetta only reliably detects from Index.*.xml
+            if (!result && r instanceof OperettaReader) {
               continue;
             }
 
