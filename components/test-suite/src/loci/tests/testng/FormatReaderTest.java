@@ -32,7 +32,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -1618,10 +1620,20 @@ public class FormatReaderTest {
     String msg = null;
     try {
       String[] base = reader.getUsedFiles();
+
+      // make sure that there are no duplicate files in the list
+
+      HashSet<String> uniqueFiles = new HashSet<String>();
+      Collections.addAll(uniqueFiles, base);
+      if (uniqueFiles.size() < base.length) {
+        success = false;
+        msg = "Used files list contains duplicates";
+      }
+
       if (base.length == 1) {
         if (!base[0].equals(file)) success = false;
       }
-      else {
+      else if (success) {
         Arrays.sort(base);
         IFormatReader r =
           /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
