@@ -937,7 +937,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
           planes[no].ifd = ifd + q;
           planes[no].certain = true;
           planes[no].exists = exists;
-          LOGGER.debug("      Plane[{}]: file={}, IFD={}",
+          LOGGER.trace("      Plane[{}]: file={}, IFD={}",
             new Object[] {no, planes[no].id, planes[no].ifd});
         }
         if (numPlanes == null) {
@@ -948,7 +948,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
             planes[no].id = filename;
             planes[no].ifd = planes[no - 1].ifd + 1;
             planes[no].exists = exists;
-            LOGGER.debug("      Plane[{}]: FILLED", no);
+            LOGGER.trace("      Plane[{}]: FILLED", no);
           }
         }
         else {
@@ -958,7 +958,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
             planes[no].reader = null;
             planes[no].id = null;
             planes[no].ifd = -1;
-            LOGGER.debug("      Plane[{}]: CLEARED", no);
+            LOGGER.trace("      Plane[{}]: CLEARED", no);
           }
         }
         LOGGER.debug("    }");
