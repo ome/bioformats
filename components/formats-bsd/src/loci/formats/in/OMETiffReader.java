@@ -317,7 +317,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
     lastPlane = no;
     int i = info[series][no].ifd;
 
-    if (!info[series][no].exists) {
+    if (!info[series][no].exists ||
+      info[series][no].reader == null ||
+      info[series][no].id == null)
+    {
       Arrays.fill(buf, (byte) 0);
       return buf;
     }
@@ -363,6 +366,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     if (info != null && info[series] != null) {
       for (int i=0; i<info[series].length; i++) {
         if (info[series] != null && info[series][i] != null &&
+          info[series][i].id != null &&
           !usedFiles.contains(info[series][i].id))
         {
           usedFiles.add(info[series][i].id);
@@ -964,28 +968,34 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
       // verify that all planes are available
       LOGGER.debug("    --------------------------------");
+      int validPlanes = num;
       for (int no=0; no<num; no++) {
         LOGGER.debug("    Plane[{}]: file={}, IFD={}",
           new Object[] {no, planes[no].id, planes[no].ifd});
         if (planes[no].reader == null) {
-          LOGGER.warn("Image ID '{}': missing plane #{}.  " +
-            "Using TiffReader to determine the number of planes.",
+          validPlanes--;
+          LOGGER.warn("Image ID '{}': missing plane #{}",
             meta.getImageID(i), no);
-          TiffReader r = new TiffReader();
-          r.setId(currentId);
-          try {
-            planes = new OMETiffPlane[r.getImageCount()];
-            for (int plane=0; plane<planes.length; plane++) {
-              planes[plane] = new OMETiffPlane();
-              planes[plane].id = currentId;
-              planes[plane].reader = r;
-              planes[plane].ifd = plane;
-            }
-            num = planes.length;
+        }
+      }
+      // only use the current file's IFD count if this is a single file set
+      // otherwise, we risk pulling in IFDs from a different Image
+      if (validPlanes < num && files.size() == 1) {
+        LOGGER.warn("Using TiffReader to determine the number of planes.");
+        TiffReader r = new TiffReader();
+        r.setId(currentId);
+        try {
+          planes = new OMETiffPlane[r.getImageCount()];
+          for (int plane=0; plane<planes.length; plane++) {
+            planes[plane] = new OMETiffPlane();
+            planes[plane].id = currentId;
+            planes[plane].reader = r;
+            planes[plane].ifd = plane;
           }
-          finally {
-            r.close();
-          }
+          num = planes.length;
+        }
+        finally {
+          r.close();
         }
       }
       LOGGER.debug("  }");
@@ -1003,6 +1013,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         testFile.close();
         for (int plane=1; plane<info[s].length; plane++) {
+          if (info[s][plane].id == null || info[s][plane].reader == null) {
+            continue;
+          }
           if (info[s][plane].id.equals(firstFile)) {
             // don't repeat slow type checking if the files are the same
             if (!info[s][0].exists) {
