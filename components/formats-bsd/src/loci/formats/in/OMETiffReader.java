@@ -980,7 +980,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
       // only use the current file's IFD count if this is a single file set
       // otherwise, we risk pulling in IFDs from a different Image
-      if (validPlanes < num && files.size() == 1) {
+      if (validPlanes < num && files.size() <= 1) {
         LOGGER.warn("Using TiffReader to determine the number of planes.");
         TiffReader r = new TiffReader();
         r.setId(currentId);
