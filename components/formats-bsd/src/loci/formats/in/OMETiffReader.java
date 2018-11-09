@@ -1321,6 +1321,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         core.add(s, c);
       }
+      rs.close();
     }
     core.reorder();
 
