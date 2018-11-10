@@ -307,6 +307,7 @@ public class TiffWriter extends FormatWriter {
         initialized[series][no] = true;
 
         RandomAccessInputStream tmp = createInputStream();
+        tmp.order(littleEndian);
         if (tmp.length() == 0) {
           synchronized (this) {
             // write TIFF header
