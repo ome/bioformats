@@ -81,8 +81,6 @@ public class GenerateCache {
   }
 
   public static void main(String[] args) {
-    CommandLineTools.runUpgradeCheck(args);
-
     if (args.length < 2) {
       System.out.println("Usage:");
       System.out.println(
@@ -91,6 +89,8 @@ public class GenerateCache {
       System.out.println("If '-list' is specified, then 'fileOrDir' is a text file with one file per line.");
       return;
     }
+
+    CommandLineTools.runUpgradeCheck(args);
 
     boolean fileList = args.length >= 3 && args[0].equals("-list");
     String input = args[args.length - 2];

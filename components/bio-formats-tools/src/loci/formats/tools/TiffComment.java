@@ -52,8 +52,6 @@ import loci.formats.tiff.TiffSaver;
 public class TiffComment {
 
   public static void main(String[] args) throws FormatException, IOException {
-    CommandLineTools.runUpgradeCheck(args);
-
     if (args.length == 0) {
       System.out.println("Usage:");
       System.out.println(
@@ -74,6 +72,8 @@ public class TiffComment {
       System.out.println("    terminate reading from stdin.");
       return;
     }
+
+    CommandLineTools.runUpgradeCheck(args);
 
     // parse flags
     boolean edit = false;
