@@ -339,7 +339,7 @@ public final class ImageConverter {
       "",
       "Each file would have a single image plane."
     };
-    for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
+    for (int i=0; i<s.length; i++) System.out.println(s[i]);
   }
 
   // -- Utility methods --
