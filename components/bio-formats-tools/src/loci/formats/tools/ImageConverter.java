@@ -362,12 +362,12 @@ public final class ImageConverter {
       return true;
     }
 
-    CommandLineTools.runUpgradeCheck(args);
-
     if (in == null || out == null) {
       printUsage();
       return false;
     }
+
+    CommandLineTools.runUpgradeCheck(args);
 
     if (new Location(out).exists()) {
       if (overwrite == null) {
