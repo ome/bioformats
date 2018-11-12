@@ -221,6 +221,42 @@ public final class ImageConverter {
     return true;
   }
 
+  /* Create a table of the extensions per output file format */
+  private String listExtensions() {
+      IFormatWriter[] writers = new ImageWriter().getWriters();
+      String[] suffixes;
+      String s = "";
+      for (int i=0; i<writers.length; i++) {
+        s += " * "  + writers[i].getFormat() + ": ";
+        suffixes = writers[i].getSuffixes();
+        s += "." + suffixes[0];
+        for (int j=1; j<suffixes.length; j++) {
+            s += ", ." + suffixes[j];
+        }
+        s += "\n";
+      }
+      return s;
+  }
+
+  /* Create a table of the compression tables per output file format */
+  private String listCompressions() {
+      IFormatWriter[] writers = new ImageWriter().getWriters();
+      String[] compressionTypes;
+      String s = "";
+      for (int i=0; i<writers.length; i++) {
+        compressionTypes = writers[i].getCompressionTypes();
+        if (compressionTypes != null) {
+          s += " * "  + writers[i].getFormat() + ": ";
+          s += compressionTypes[0];
+          for (int j=1; j<compressionTypes.length; j++) {
+              s += ", " + compressionTypes[j];
+          }
+          s += "\n";
+        }
+      }
+      return s;
+  }
+
   /**
    * Output usage information, using log4j.
    */
@@ -261,6 +297,16 @@ public final class ImageConverter {
       "  -timepoint: only convert the specified timepoint (indexed from 0)",
       "     -padded: filename indexes for series, z, c and t will be zero padded",
       "     -option: add the specified key/value pair to the options list",
+      "",
+      "The extension of the output file specifies the file format to use",
+      "for the conversion. The list of available formats and extensions is:",
+      "",
+      listExtensions(),
+      "",
+      "Some file formats offer multiple compression schemes that can be set",
+      "using the -compression option. The list of available compressions is:",
+      "",
+      listCompressions(),
       "",
       "If any of the following patterns are present in out_file, they will",
       "be replaced with the indicated metadata value from the input file.",
