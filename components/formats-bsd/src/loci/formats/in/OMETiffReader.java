@@ -1004,14 +1004,27 @@ public class OMETiffReader extends SubResolutionFormatReader {
       OMETiffCoreMetadata m = (OMETiffCoreMetadata) core.get(s, 0);
       info[s] = planes;
       try {
-        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16);
+        RandomAccessInputStream testFile = null;
+        if (info[s][0].id != null) {
+          testFile = new RandomAccessInputStream(info[s][0].id, 16);
+        }
+        if (info[s][0].reader == null) {
+          info[s][0].reader = new MinimalTiffReader();
+        }
         String firstFile = info[s][0].id;
-        if (!info[s][0].reader.isThisType(testFile)) {
+        if (firstFile == null ||
+          (testFile != null && !info[s][0].reader.isThisType(testFile)))
+        {
           LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
           info[s][0].id = currentId;
           info[s][0].exists = false;
+          if (info[s][0].ifd < 0) {
+            info[s][0].ifd = 0;
+          }
         }
-        testFile.close();
+        if (testFile != null) {
+          testFile.close();
+        }
         for (int plane=1; plane<info[s].length; plane++) {
           if (info[s][plane].id == null || info[s][plane].reader == null) {
             continue;
