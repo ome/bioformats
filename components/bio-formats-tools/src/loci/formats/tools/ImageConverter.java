@@ -208,12 +208,21 @@ public final class ImageConverter {
         else if (args[i].equals("-pyramid-scale")) {
           try {
             pyramidScale = Integer.parseInt(args[++i]);
+            if (pyramidScale <= 0) {
+              LOGGER.error("Invalid pyramid scale: {}", pyramidScale);
+              return false;
+            }
           }
           catch (NumberFormatException e) { }
         }
         else if (args[i].equals("-pyramid-resolutions")) {
           try {
             pyramidResolutions = Integer.parseInt(args[++i]);
+            if (pyramidResolutions <= 0) {
+              LOGGER.error("Invalid pyramid resolution count: {}",
+                pyramidResolutions);
+              return false;
+            }
           }
           catch (NumberFormatException e) { }
         }
