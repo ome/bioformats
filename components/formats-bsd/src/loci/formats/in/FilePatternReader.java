@@ -57,7 +57,8 @@ public class FilePatternReader extends FormatReader {
 
   // -- Fields --
 
-  private FileStitcher helper;
+  /** Helper class that reads images */
+  protected FileStitcher helper;
 
   // -- Constructor --
 
