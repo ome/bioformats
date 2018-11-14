@@ -225,36 +225,36 @@ public final class ImageConverter {
   private String listExtensions() {
       IFormatWriter[] writers = new ImageWriter().getWriters();
       String[] suffixes;
-      String s = "";
+      StringBuilder sb = new StringBuilder();
       for (int i=0; i<writers.length; i++) {
-        s += " * "  + writers[i].getFormat() + ": ";
+        sb.append(" * "  + writers[i].getFormat() + ": ");
         suffixes = writers[i].getSuffixes();
-        s += "." + suffixes[0];
+        sb.append("." + suffixes[0]);
         for (int j=1; j<suffixes.length; j++) {
-            s += ", ." + suffixes[j];
+            sb.append(", ." + suffixes[j]);
         }
-        s += "\n";
+        sb.append("\n");
       }
-      return s;
+      return sb.toString();
   }
 
   /* Create a table of the compression tables per output file format */
   private String listCompressions() {
       IFormatWriter[] writers = new ImageWriter().getWriters();
       String[] compressionTypes;
-      String s = "";
+      StringBuilder sb = new StringBuilder();
       for (int i=0; i<writers.length; i++) {
         compressionTypes = writers[i].getCompressionTypes();
         if (compressionTypes != null) {
-          s += " * "  + writers[i].getFormat() + ": ";
-          s += compressionTypes[0];
+          sb.append(" * "  + writers[i].getFormat() + ": ");
+          sb.append(compressionTypes[0]);
           for (int j=1; j<compressionTypes.length; j++) {
-              s += ", " + compressionTypes[j];
+              sb.append(", " + compressionTypes[j]);
           }
-          s += "\n";
+          sb.append("\n");
         }
       }
-      return s;
+      return sb.toString();
   }
 
   /**
