@@ -32,15 +32,25 @@
 
 package loci.formats.in;
 
+import loci.common.DataTools;
+import loci.common.Location;
 import loci.formats.ClassList;
+import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * A Pattern reader designed for use with opaque remote resources that should not be permanently fetched
  * The urlpattern file represents all images in the fileset, individual files are not available to clients
  */
 public class URLPatternReader extends FilePatternReader {
+
+  // -- Fields --
+
+  protected final static Pattern IS_ABSOLUTE_URL = Pattern.compile("([\\p{Alnum}\\+]+)://[^/].*");
 
   // -- Constructor --
 
@@ -63,6 +73,44 @@ public class URLPatternReader extends FilePatternReader {
   @Override
   public String[] getUsedFiles(boolean noPixels) {
     return new String[] {currentId};
+  }
+
+  // -- Internal FormatReader methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
+  protected void initFile(String id) throws FormatException, IOException {
+    // read the pattern from the file
+    // the file should just contain:
+    // - a single line with the absolute URL file pattern
+    // - optionally the reader name on the second line
+
+    currentId = new Location(id).getAbsolutePath();
+    LOGGER.trace("urlpattern input file: {}", currentId);
+    String[] input = DataTools.readFile(id).trim().split("\\R");
+    String pattern = input[0];
+    LOGGER.trace("urlpattern pattern: {}", pattern);
+
+    if (!IS_ABSOLUTE_URL.matcher(pattern).matches()) {
+      throw new FormatException("Expected absolute URL:" + pattern);
+    }
+    if (input.length > 2) {
+
+      throw new FormatException("Expected maximum of two lines:" + input);
+    }
+
+    if (input.length > 1) {
+      String reader = input[1];
+      LOGGER.trace("urlpattern reader: {}", reader);
+      ClassList readerClasses = new ClassList<>(IFormatReader.class);
+      readerClasses.parseLine(reader);
+      initHelper(readerClasses);
+    }
+
+    helper.setUsingPatternIds(true);
+    helper.setCanChangePattern(false);
+    helper.setId(pattern);
+    core = helper.getCoreMetadataList();
   }
 
 }
