@@ -36,7 +36,10 @@ import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.SortedMap;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -221,40 +224,40 @@ public final class ImageConverter {
     return true;
   }
 
-  /* Create a table of the extensions per output file format */
-  private static String listExtensions() {
-      IFormatWriter[] writers = new ImageWriter().getWriters();
-      String[] suffixes;
-      StringBuilder sb = new StringBuilder();
-      for (int i=0; i<writers.length; i++) {
-        sb.append(" * "  + writers[i].getFormat() + ": ");
-        suffixes = writers[i].getSuffixes();
-        sb.append("." + suffixes[0]);
-        for (int j=1; j<suffixes.length; j++) {
-            sb.append(", ." + suffixes[j]);
-        }
-        sb.append('\n');
-      }
-      return sb.toString();
+  /* Return a sorted map of the available extensions per writer */
+  private static SortedMap<String,String> getExtensions() {
+    IFormatWriter[] writers = new ImageWriter().getWriters();
+    SortedMap<String, String> extensions = new TreeMap<String, String>();
+    for (int i=0; i<writers.length; i++) {
+      extensions.put(writers[i].getFormat(),
+        String.join(", ", writers[i].getSuffixes()));
+    }
+    return extensions;
   }
 
-  /* Create a table of the compression tables per output file format */
-  private static String listCompressions() {
-      IFormatWriter[] writers = new ImageWriter().getWriters();
-      String[] compressionTypes;
-      StringBuilder sb = new StringBuilder();
-      for (int i=0; i<writers.length; i++) {
-        compressionTypes = writers[i].getCompressionTypes();
-        if (compressionTypes != null) {
-          sb.append(" * "  + writers[i].getFormat() + ": ");
-          sb.append(compressionTypes[0]);
-          for (int j=1; j<compressionTypes.length; j++) {
-              sb.append(", " + compressionTypes[j]);
-          }
-          sb.append('\n');
-        }
+  /* Return a sorted map of the available compressions per writer */
+  private static SortedMap<String,String> getCompressions() {
+    IFormatWriter[] writers = new ImageWriter().getWriters();
+    SortedMap<String, String> compressions = new TreeMap<String, String>();
+    for (int i=0; i<writers.length; i++) {
+      String[] compressionTypes = writers[i].getCompressionTypes();
+      if (compressionTypes != null) {
+        compressions.put(writers[i].getFormat(),
+          String.join(", ", compressionTypes));
       }
-      return sb.toString();
+    }
+    return compressions;
+  }
+
+  /* Formats a sorted map into a string for the utility usage */
+  private static String printList(SortedMap<String,String> map) {
+    StringBuilder sb = new StringBuilder();
+    Iterator it = map.entrySet().iterator();
+    while (it.hasNext()) {
+      SortedMap.Entry pair = (SortedMap.Entry) it.next();
+      sb.append(" * " + pair.getKey() + ": " + pair.getValue() + '\n');
+    }
+    return sb.toString();
   }
 
   /**
@@ -301,11 +304,11 @@ public final class ImageConverter {
       "The extension of the output file specifies the file format to use",
       "for the conversion. The list of available formats and extensions is:",
       "",
-      listExtensions(),
+      printList(getExtensions()),
       "Some file formats offer multiple compression schemes that can be set",
       "using the -compression option. The list of available compressions is:",
       "",
-      listCompressions(),
+      printList(getCompressions()),
       "If any of the following patterns are present in out_file, they will",
       "be replaced with the indicated metadata value from the input file.",
       "",
