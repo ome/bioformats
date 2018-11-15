@@ -48,6 +48,7 @@ import loci.formats.FormatReader;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Modulo;
+import loci.formats.ReaderWrapper;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -58,7 +59,7 @@ public class FilePatternReader extends FormatReader {
   // -- Fields --
 
   /** Helper class that reads images */
-  protected FileStitcher helper;
+  protected ReaderWrapper helper;
 
   // -- Constructor --
 
@@ -536,10 +537,11 @@ public class FilePatternReader extends FormatReader {
       pattern = dir + File.separator + pattern;
     }
 
-    helper.setUsingPatternIds(true);
-    helper.setCanChangePattern(false);
-    helper.setId(pattern);
-    core = helper.getCoreMetadataList();
+    FileStitcher stitcher = (FileStitcher)helper;
+    stitcher.setUsingPatternIds(true);
+    stitcher.setCanChangePattern(false);
+    stitcher.setId(pattern);
+    core = stitcher.getCoreMetadataList();
   }
 
 }
