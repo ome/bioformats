@@ -222,7 +222,7 @@ public final class ImageConverter {
   }
 
   /* Create a table of the extensions per output file format */
-  private String listExtensions() {
+  private static String listExtensions() {
       IFormatWriter[] writers = new ImageWriter().getWriters();
       String[] suffixes;
       StringBuilder sb = new StringBuilder();
@@ -239,7 +239,7 @@ public final class ImageConverter {
   }
 
   /* Create a table of the compression tables per output file format */
-  private String listCompressions() {
+  private static String listCompressions() {
       IFormatWriter[] writers = new ImageWriter().getWriters();
       String[] compressionTypes;
       StringBuilder sb = new StringBuilder();
