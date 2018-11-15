@@ -175,12 +175,17 @@ public class VentanaReader extends BaseTiffReader {
     if (interleaved) {
       outputRowLen *= getRGBChannelCount();
     }
-    byte[] tilePixels = new byte[tileWidth * tileHeight * pixel];
+
+    int scale = (int) Math.round((double) core.get(0).sizeX / getSizeX());
+    int thisTileWidth = tileWidth / scale;
+    int thisTileHeight = tileHeight / scale;
+
+    byte[] tilePixels = new byte[thisTileWidth * thisTileHeight * pixel];
     for (TIFFTile tile : tiles) {
-      Region tileBox = new Region(tile.realX, tile.realY, tileWidth, tileHeight);
+      Region tileBox = new Region(tile.realX / scale, tile.realY / scale, thisTileWidth, thisTileHeight);
 
       if (tileBox.intersects(imageBox)) {
-        tiffParser.getSamples(ifd, tilePixels, tile.baseX, tile.baseY, tileWidth, tileHeight);
+        tiffParser.getSamples(ifd, tilePixels, tile.baseX / scale, tile.baseY / scale, thisTileWidth, thisTileHeight);
 
         Region intersection = tileBox.intersection(imageBox);
         int intersectionX = 0;
@@ -189,7 +194,7 @@ public class VentanaReader extends BaseTiffReader {
           intersectionX = imageBox.x - tileBox.x;
         }
 
-        int rowLen = (int) Math.min(intersection.width, tileWidth) * bpp;
+        int rowLen = (int) Math.min(intersection.width, thisTileWidth) * bpp;
         if (interleaved) {
           rowLen *= getRGBChannelCount();
         }
@@ -198,12 +203,12 @@ public class VentanaReader extends BaseTiffReader {
         for (int c=0; c<count; c++) {
           for (int row=0; row<intersection.height; row++) {
             int realRow = row + intersection.y - tileBox.y;
-            int inputOffset = bpp * (realRow * tileWidth + intersection.x - tileBox.x);
+            int inputOffset = bpp * (realRow * thisTileWidth + intersection.x - tileBox.x);
             if (interleaved) {
               inputOffset *= getRGBChannelCount();
             }
             else {
-              inputOffset += (c * tileWidth * tileHeight * bpp);
+              inputOffset += (c * thisTileWidth * thisTileHeight * bpp);
             }
             int outputOffset = bpp * (intersection.x - x) + outputRowLen * (row + intersection.y - y);
             if (interleaved) {
@@ -225,6 +230,13 @@ public class VentanaReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    if (getCoreIndex() < core.get(0).resolutionCount) {
+      int currentCore = getCoreIndex();
+      setCoreIndex(core.get(0).resolutionCount - 1);
+      byte[] thumb = super.openThumbBytes(no);
+      setCoreIndex(currentCore);
+      return thumb;
+    }
     return super.openThumbBytes(no);
   }
 
