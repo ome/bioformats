@@ -678,7 +678,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               }
 
               if(!entry.name.startsWith("ImageDataSeq")) {
-                break;
+                continue;
               }
 
               if(lastImage!=null) {
