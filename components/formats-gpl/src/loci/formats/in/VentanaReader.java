@@ -380,6 +380,8 @@ public class VentanaReader extends BaseTiffReader {
     }
 
     // now process TIFF tiles and overlap data to get the real coordinates for each tile
+    // largest tile index is in upper right corner
+    // smallest tile index is in lower left corner (snake ordering)
     int tileCols = core.get(0).sizeX / tileWidth;
     for (AreaOfInterest area : areas) {
       int tileRow = area.yOrigin / tileHeight;
@@ -393,30 +395,51 @@ public class VentanaReader extends BaseTiffReader {
         }
       }
 
-      // largest tile index is in upper right corner
-      // smallest tile index is in lower left corner (snake ordering)
+      // list of overlaps is not authoritative
+      // some values will be wrong, and some overlaps will be missing
+      // average the RIGHT values and apply the average to all tiles
+      // then average the UP values and apply to all tiles
 
+      HashMap<Integer, Integer> columnYAdjust = new HashMap<Integer, Integer>();
+      double rightSum = 0.0;
+      double upSum = 0.0;
+      int rightCount = 0;
+      int upCount = 0;
       for (Overlap overlap : area.overlaps) {
-        int thisRow = getTileRow(overlap.a, area.tileRows, area.tileColumns);
-        int thisCol = getTileColumn(overlap.a, area.tileRows, area.tileColumns);
+        if (overlap.confidence < 98) {
+          continue;
+        }
         if (overlap.direction.equals("RIGHT")) {
-          for (int col=0; col<=thisCol; col++) {
-            int currentIndex = (tileRow + thisRow) * tileCols + (tileCol + col);
-            tiles[currentIndex].realX += overlap.x;
-          }
-          int currentIndex = (tileRow + thisRow) * tileCols + (tileCol + thisCol);
-          tiles[currentIndex].realY += overlap.y;
+          rightSum += overlap.x;
+          rightCount++;
+          columnYAdjust.put(getTileColumn(overlap.a, area.tileRows, area.tileColumns), overlap.y);
         }
         else if (overlap.direction.equals("UP")) {
-          for (int row=thisRow; row<area.tileRows; row++) {
-            int currentIndex = (tileRow + row) * tileCols + (tileCol + thisCol);
-            tiles[currentIndex].realY -= overlap.y;
-          }
+          upSum += overlap.y;
+          upCount++;
         }
         else {
           throw new FormatException("Unsupported overlap direction: " + overlap.direction);
         }
       }
+      if (rightCount > 0) {
+        rightSum /= rightCount;
+      }
+      if (upCount > 0) {
+        upSum /= upCount;
+      }
+
+      for (int row=0; row<area.tileRows; row++) {
+        for (int col=0; col<area.tileColumns; col++) {
+          int index = (tileRow + row) * tileCols + (tileCol + col);
+          tiles[index].realX -= (rightSum * col);
+          tiles[index].realY -= (upSum * row);
+          if (columnYAdjust.containsKey(col) && columnYAdjust.get(col) > 0) {
+            tiles[index].realY += columnYAdjust.get(col);
+          }
+        }
+      }
+
     }
   }
 
@@ -499,6 +522,7 @@ public class VentanaReader extends BaseTiffReader {
           overlap.x = DataTools.parseDouble(joint.getAttribute("OverlapX")).intValue();
           overlap.y = DataTools.parseDouble(joint.getAttribute("OverlapY")).intValue();
           overlap.direction = joint.getAttribute("Direction");
+          overlap.confidence = Integer.parseInt(joint.getAttribute("Confidence"));
           aoi.overlaps.add(overlap);
         }
       }
@@ -545,6 +569,7 @@ public class VentanaReader extends BaseTiffReader {
     public int b;
     public int x;
     public int y;
+    public int confidence;
     public String direction;
 
     public int compareTo(Overlap o) {
