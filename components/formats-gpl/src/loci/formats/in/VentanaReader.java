@@ -70,6 +70,9 @@ public class VentanaReader extends BaseTiffReader {
 
   // -- Constants --
 
+  public static final String SPLIT_TILES_KEY = "ventana.split_tiles";
+  public static final boolean SPLIT_TILES_DEFAULT = false;
+
   /** Logger for this class. */
   private static final Logger LOGGER =
     LoggerFactory.getLogger(VentanaReader.class);
@@ -90,6 +93,7 @@ public class VentanaReader extends BaseTiffReader {
   private List<AreaOfInterest> areas = new ArrayList<AreaOfInterest>();
   private int tileWidth, tileHeight;
   private TIFFTile[] tiles;
+  private int resolutions = 0;
 
   // -- Constructor --
 
@@ -99,6 +103,21 @@ public class VentanaReader extends BaseTiffReader {
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixNecessary = true;
     noSubresolutions = true;
+  }
+
+  // -- VentanaReader API methods --
+
+  /**
+   * @return true if MetadataOptions are set so that each tile
+   *  in the full resolution image will be returned as a separate series
+   */
+  public boolean splitTiles() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        SPLIT_TILES_KEY, SPLIT_TILES_DEFAULT);
+    }
+    return SPLIT_TILES_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -148,6 +167,22 @@ public class VentanaReader extends BaseTiffReader {
     return isThisType;
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    lastPlane = getIFDIndex(getCoreIndex(), 0);
+    return super.get8BitLookupTable();
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    lastPlane = getIFDIndex(getCoreIndex(), 0);
+    return super.get16BitLookupTable();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -161,6 +196,13 @@ public class VentanaReader extends BaseTiffReader {
     }
     Arrays.fill(buf, (byte) 0);
     IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
+
+    if (splitTiles()) {
+      TIFFTile tile = tiles[getCoreIndex()];
+      tiffParser.getSamples(ifd, buf, tile.baseX + x, tile.baseY + y, w, h);
+      return buf;
+    }
+
     if (getCoreIndex() >= core.get(0).resolutionCount) {
       tiffParser.getSamples(ifd, buf, x, y, w, h);
       return buf;
@@ -176,7 +218,7 @@ public class VentanaReader extends BaseTiffReader {
       outputRowLen *= getRGBChannelCount();
     }
 
-    int scale = (int) Math.round((double) core.get(0).sizeX / getSizeX());
+    int scale = getScale(getCoreIndex());
     int thisTileWidth = tileWidth / scale;
     int thisTileHeight = tileHeight / scale;
 
@@ -250,6 +292,7 @@ public class VentanaReader extends BaseTiffReader {
       tileWidth = 0;
       tileHeight = 0;
       tiles = null;
+      resolutions = 0;
     }
   }
 
@@ -328,11 +371,12 @@ public class VentanaReader extends BaseTiffReader {
       }
     }
     setSeries(0);
+    resolutions = resolutionCount;
 
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = core.get(s);
-      if (s == 0) {
-        ms.resolutionCount = resolutionCount;
+      if (s == 0 && resolutions > 0) {
+        ms.resolutionCount = resolutions;
       }
       ms.sizeZ = 1;
       ms.sizeT = 1;
@@ -377,6 +421,19 @@ public class VentanaReader extends BaseTiffReader {
           }
         }
       }
+    }
+
+    if (splitTiles()) {
+      CoreMetadata first = core.get(0);
+      core.clear();
+      for (TIFFTile tile : tiles) {
+        CoreMetadata m = new CoreMetadata(first);
+        m.sizeX = tileWidth;
+        m.sizeY = tileHeight;
+        m.thumbnail = false;
+        core.add(m);
+      }
+      return;
     }
 
     // now process TIFF tiles and overlap data to get the real coordinates for each tile
@@ -439,8 +496,11 @@ public class VentanaReader extends BaseTiffReader {
           }
         }
       }
-
     }
+  }
+
+  private int getScale(int coreIndex) {
+    return (int) Math.round((double) core.get(0).sizeX / core.get(coreIndex).sizeX);
   }
 
   private int getTileRow(int index, int rows, int cols) {
@@ -465,7 +525,7 @@ public class VentanaReader extends BaseTiffReader {
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, getImageCount() > 1);
+    MetadataTools.populatePixels(store, this, splitTiles() || getImageCount() > 1);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     String objective = MetadataTools.createLSID("Objective", 0, 0);
@@ -477,16 +537,26 @@ public class VentanaReader extends BaseTiffReader {
       setSeries(i);
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
+
+      if (splitTiles()) {
+        for (int p=0; p<getImageCount(); p++) {
+          store.setPlanePositionX(new Length(tiles[i].baseX, UNITS.REFERENCEFRAME), i, p);
+          store.setPlanePositionY(new Length(tiles[i].baseY, UNITS.REFERENCEFRAME), i, p);
+        }
+      }
     }
     setSeries(0);
   }
 
   private int getIFDIndex(int coreIndex, int no) {
-    int extra = ifds.size() - (core.get(0).resolutionCount * core.get(0).imageCount);
-    if (coreIndex < core.size() - extra) {
+    if (splitTiles() && coreIndex > 0 && resolutions > 0) {
+      return getIFDIndex(0, no);
+    }
+    int extra = ifds.size() - (resolutions * core.get(0).imageCount);
+    if (coreIndex < ifds.size() - extra) {
       return extra + (coreIndex * core.get(0).imageCount) + no;
     }
-    return coreIndex - (core.size() - extra);
+    return coreIndex - (ifds.size() - extra);
   }
 
   private void parseXML(String xml) throws IOException {
