@@ -233,7 +233,7 @@ public final class ImageConverter {
         for (int j=1; j<suffixes.length; j++) {
             sb.append(", ." + suffixes[j]);
         }
-        sb.append("\n");
+        sb.append('\n');
       }
       return sb.toString();
   }
@@ -251,7 +251,7 @@ public final class ImageConverter {
           for (int j=1; j<compressionTypes.length; j++) {
               sb.append(", " + compressionTypes[j]);
           }
-          sb.append("\n");
+          sb.append('\n');
         }
       }
       return sb.toString();
@@ -302,12 +302,10 @@ public final class ImageConverter {
       "for the conversion. The list of available formats and extensions is:",
       "",
       listExtensions(),
-      "",
       "Some file formats offer multiple compression schemes that can be set",
       "using the -compression option. The list of available compressions is:",
       "",
       listCompressions(),
-      "",
       "If any of the following patterns are present in out_file, they will",
       "be replaced with the indicated metadata value from the input file.",
       "",
