@@ -127,10 +127,7 @@ public class ImageConverterTest {
     r.close();
   }
 
-  @Test(dataProvider = "suffixes")
-  public void testDefault(String suffix) throws FormatException, IOException {
-    outFile = tempDir.resolve("test" + suffix).toFile();
-    String[] args = {"test.fake", outFile.getAbsolutePath()};
+  public void assertConversion(String[] args) throws FormatException, IOException {
     try {
       ImageConverter.main(args);
     } catch (ExitException e) {
@@ -138,6 +135,13 @@ public class ImageConverterTest {
       assertEquals(e.status, 0);
       checkImage();
     }
+  }
+
+  @Test(dataProvider = "suffixes")
+  public void testDefault(String suffix) throws FormatException, IOException {
+    outFile = tempDir.resolve("test" + suffix).toFile();
+    String[] args = {"test.fake", outFile.getAbsolutePath()};
+    assertConversion(args);
   }
 
   @Test(dataProvider = "options")
@@ -145,30 +149,18 @@ public class ImageConverterTest {
     outFile = tempDir.resolve("test.ome.tiff").toFile();
     String[] optionsArgs = options.split(" ");
     ArrayList<String> argsList = new ArrayList<String>();
-    argsList.add("test&sizeZ=3&sizeC=2&sizeT=4.fake"); 
+    argsList.add("test&sizeZ=3&sizeC=2&sizeT=4.fake");
     argsList.addAll(Arrays.asList(optionsArgs));
     argsList.add(outFile.getAbsolutePath());
     String [] args = new String[argsList.size()];
-    try {
-      ImageConverter.main(argsList.toArray(args));
-    } catch (ExitException e) {
-      outFile.deleteOnExit();
-      assertEquals(e.status, 0);
-      checkImage();
-    }
+    assertConversion(argsList.toArray(args));
   }
 
   @Test(dataProvider = "suffixes")
   public void testOverwrite(String suffix) throws FormatException, IOException {
     outFile = Files.createTempFile(tempDir, "test", suffix).toFile();
     String[] args = {"-overwrite", "test.fake", outFile.getAbsolutePath()};
-    try {
-      ImageConverter.main(args);
-    } catch (ExitException e) {
-      outFile.deleteOnExit();
-      assertEquals(e.status, 0);
-      checkImage();
-    }
+    assertConversion(args);
   }
 
   @Test
@@ -204,5 +196,15 @@ public class ImageConverterTest {
       assertTrue(compFile.exists());
       checkImage();
     }
+  }
+
+  @Test
+  public void testSPWSeries() throws FormatException, IOException {
+    outFile = tempDir.resolve("plate.ome.tiff").toFile();
+    String[] args = {
+            "-series", "0",
+            "plate&plates=1&fields=2.fake", outFile.getAbsolutePath()
+    };
+    assertConversion(args);
   }
 }

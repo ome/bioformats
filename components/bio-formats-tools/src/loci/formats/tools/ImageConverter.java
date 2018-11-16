@@ -430,6 +430,9 @@ public final class ImageConverter {
           while (newRoot.sizeOfImageList() > 0) {
             newRoot.removeImage(newRoot.getImage(0));
           }
+          while (newRoot.sizeOfPlateList() > 0) {
+            newRoot.removePlate(newRoot.getPlate(0));
+          }
           newRoot.addImage(exportImage);
           meta.setRoot(newRoot);
           meta.setPixelsSizeX(new PositiveInteger(width), 0);
