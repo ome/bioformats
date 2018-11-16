@@ -38,7 +38,6 @@ import loci.formats.ClassList;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.ReaderWrapper;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -67,17 +66,6 @@ public class URLPatternReader extends FilePatternReader {
       }
     }
     initHelper(newClasses);
-  }
-
-  /** Initialise the helper with a list of readers */
-  @Override
-  protected void initHelper(ClassList<IFormatReader> newClasses) {
-    class RemoteReader extends ReaderWrapper {
-      public RemoteReader(IFormatReader r) {
-        super(r);
-      }
-    };
-    helper = new RemoteReader(new ImageReader(newClasses));
   }
 
   // -- IFormatReader methods --
@@ -119,6 +107,8 @@ public class URLPatternReader extends FilePatternReader {
       initHelper(readerClasses);
     }
 
+    helper.setUsingPatternIds(true);
+    helper.setCanChangePattern(false);
     helper.setId(pattern);
     core = helper.getCoreMetadataList();
   }
