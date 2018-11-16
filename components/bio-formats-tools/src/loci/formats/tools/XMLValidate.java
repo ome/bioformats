@@ -35,8 +35,11 @@ package loci.formats.tools;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import loci.common.Constants;
 import loci.common.xml.XMLTools;
@@ -46,6 +49,26 @@ import loci.formats.tiff.TiffParser;
  * Attempts to validate the given XML files.
  */
 public class XMLValidate {
+
+  /* The pattern of system ID URLs for OME-XML schema definitions. */
+  private static final Pattern SCHEMA_URL_PATTERN = Pattern.compile(
+    "http://www.openmicroscopy.org/Schemas/" +
+    "\\p{Alpha}+/(\\w+-\\w+)/(\\p{Alpha}+)\\.xsd");
+
+  private static final XMLTools.SchemaReader SCHEMA_CLASSPATH_READER =
+    new XMLTools.SchemaReader() {
+    @Override
+    public InputStream getSchemaAsStream(String url) {
+      final Matcher matcher = SCHEMA_URL_PATTERN.matcher(url);
+      if (matcher.matches()) {
+        /* from specification.jar */
+        return getClass().getResourceAsStream("/released-schema/" +
+          matcher.group(1) + "/" + matcher.group(2) + ".xsd");
+      } else {
+        return null;
+      }
+    }
+  };
 
   public static void process(String label, BufferedReader in)
     throws IOException
@@ -57,7 +80,7 @@ public class XMLValidate {
       sb.append(line);
     }
     in.close();
-    XMLTools.validateXML(sb.toString(), label);
+    XMLTools.validateXML(sb.toString(), label, SCHEMA_CLASSPATH_READER);
   }
 
   public static void main(String[] args) throws Exception {
