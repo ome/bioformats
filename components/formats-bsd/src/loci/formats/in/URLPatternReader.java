@@ -37,10 +37,12 @@ import loci.common.Location;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ReaderWrapper;
 import loci.formats.WrappedReader;
+import loci.formats.meta.MetadataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,24 @@ import java.util.regex.Pattern;
 /**
  * A reader designed for use with opaque remote resources that should not be permanently fetched
  * The urlpattern file represents the fileset, individual files are not available to clients
+ *
+ * The helper is not created until setId is called as the list of helper
+ * readers is obtained from the file.
+ * However some set methods on the helper may be called before setId.
+ * To get around this we save the set values and call the appropriate
+ * helper methods after the helper is initialised
+ *
+ * The following FormatReader methods may be called before setId(),
+ * other methods will throw.
+ * - setGroupFiles
+ * - setNormalized
+ * - setOriginalMetadataPopulated
+ * - setMetadataFiltered
+ * - setMetadataStore
+ * - setFlattenedResolutions
+ *
+ * Developer note: the list of FormatReader methods are those containing
+ * `FormatTools.assertId(currentId, false, 1);`
  */
 public class URLPatternReader extends WrappedReader {
 
@@ -61,12 +81,28 @@ public class URLPatternReader extends WrappedReader {
 
   protected final static Pattern IS_ABSOLUTE_URL = Pattern.compile("([\\p{Alnum}\\+]+)://[^/].*");
 
+  // These fields need to be set in the helper, but this can only be done
+  // after we've opened the urlpattern file and obtained the list of readers
+  private Boolean delayedGroup = null;
+  private Boolean delayedNormalize = null;
+  private Boolean delayedPopulate = null;
+  private Boolean delayedFilter = null;
+  private MetadataStore delayedStore = null;
+  private Boolean delayedFlattened = null;
+
   // -- Constructor --
+
+  /**
+   * Partially constructs a new pattern reader.
+   * Subclasses must call initHelper() in their constructor
+   */
+  protected URLPatternReader(String format, String[] suffixes) {
+    super(format, suffixes);
+  }
 
   /** Constructs a new pattern reader. */
   public URLPatternReader() {
     super("URL File pattern", new String[]{"urlpattern"});
-    this.initHelper(new ClassList<>(IFormatReader.class));
   }
 
   /** Initialise the helper with a list of readers */
@@ -77,19 +113,102 @@ public class URLPatternReader extends WrappedReader {
       }
     };
 
+    if (newClasses == null) {
+      newClasses = new ClassList<>(IFormatReader.class);
+      ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
+      for (Class<? extends IFormatReader> c : classes.getClasses()) {
+        if (!WrappedReader.class.isAssignableFrom(c)) {
+          newClasses.addClass(c);
+        }
+      }
+    }
+
     for (Class<? extends IFormatReader> c : newClasses.getClasses()) {
-      LOGGER.error("urlpattern helper: {}", c);
+      LOGGER.trace("urlpattern helper: {}", c);
     }
     helper = new RemoteReader(new ImageReader(newClasses));
+
+    if (delayedGroup != null) {
+      helper.setGroupFiles(delayedGroup);
+    }
+    if (delayedNormalize != null) {
+      helper.setNormalized(delayedNormalize);
+    }
+    if (delayedPopulate != null) {
+      helper.setOriginalMetadataPopulated(delayedPopulate);
+    }
+    if (delayedFilter != null) {
+      helper.setMetadataFiltered(delayedFilter);
+    }
+    if (delayedStore != null) {
+      helper.setMetadataStore(delayedStore);
+    }
+    if (delayedFlattened != null) {
+      helper.setFlattenedResolutions(delayedFlattened);
+    }
   }
 
   // -- WrappedReader methods --
 
+  @Override
   protected ReaderWrapper getHelper() {
+    FormatTools.assertId(currentId, true, 1);
     return helper;
   }
 
+  // Delayed FormatReader methods
+
+  @Override
+  public void setGroupFiles(boolean group) {
+    FormatTools.assertId(currentId, false, 1);
+    delayedGroup = group;
+  }
+
+  @Override
+  public void setNormalized(boolean normalize) {
+    FormatTools.assertId(currentId, false, 1);
+    delayedNormalize = normalize;
+  }
+
+  @Override
+  public void setOriginalMetadataPopulated(boolean populate) {
+    FormatTools.assertId(currentId, false, 1);
+    delayedPopulate = populate;
+  }
+
+  @Override
+  public void setMetadataFiltered(boolean filter) {
+    FormatTools.assertId(currentId, false, 1);
+    delayedFilter = filter;
+  }
+
+  @Override
+  public void setMetadataStore(MetadataStore store) {
+    FormatTools.assertId(currentId, false, 1);
+    delayedStore = store;
+  }
+
+  @Override
+  public void setFlattenedResolutions(boolean flattened) {
+    FormatTools.assertId(currentId, false, 1);
+    delayedFlattened = flattened;
+  }
+
   // -- IFormatReader methods --
+
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    if (helper != null) {
+      helper.close(fileOnly);
+    }
+  }
+
+  @Override
+  public void close() throws IOException {
+    if (helper != null) {
+      helper.close();
+    }
+  }
 
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
@@ -168,23 +287,14 @@ public class URLPatternReader extends WrappedReader {
     if (!IS_ABSOLUTE_URL.matcher(pattern).matches()) {
       throw new FormatException("Expected absolute URL:" + pattern);
     }
-//    if (input.length > 2) {
-//      throw new FormatException("Expected maximum of two lines:" + input);
-//    }
 
-    ClassList newClasses = new ClassList<>(IFormatReader.class);
+    ClassList newClasses = null;
     if (input.length > 1) {
+      newClasses = new ClassList<>(IFormatReader.class);
       for (int i = 1; i < input.length; ++i) {
-        String reader = input[1];
+        String reader = input[i];
         LOGGER.trace("urlpattern reader: {}", reader);
         newClasses.parseLine(reader);
-      }
-    } else {
-      ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
-      for (Class<? extends IFormatReader> c : classes.getClasses()) {
-        if(!WrappedReader.class.isAssignableFrom(c)) {
-          newClasses.addClass(c);
-        }
       }
     }
     initHelper(newClasses);
