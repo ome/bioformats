@@ -94,6 +94,7 @@ public class VentanaReader extends BaseTiffReader {
   private int tileWidth, tileHeight;
   private TIFFTile[] tiles;
   private int resolutions = 0;
+  private Double physicalPixelSize = null;
 
   // -- Constructor --
 
@@ -293,6 +294,7 @@ public class VentanaReader extends BaseTiffReader {
       tileHeight = 0;
       tiles = null;
       resolutions = 0;
+      physicalPixelSize = null;
     }
   }
 
@@ -538,6 +540,10 @@ public class VentanaReader extends BaseTiffReader {
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
 
+      if (physicalPixelSize != null) {
+        store.setPixelsPhysicalSizeX(new Length(physicalPixelSize, UNITS.MICROM), i);
+        store.setPixelsPhysicalSizeY(new Length(physicalPixelSize, UNITS.MICROM), i);
+      }
       if (splitTiles()) {
         for (int p=0; p<getImageCount(); p++) {
           store.setPlanePositionX(new Length(tiles[i].baseX, UNITS.REFERENCEFRAME), i, p);
@@ -567,6 +573,13 @@ public class VentanaReader extends BaseTiffReader {
     catch (ParserConfigurationException | SAXException e) {
       throw new IOException(e);
     }
+
+    Element iScan = (Element) root.getElementsByTagName("iScan").item(0);
+    String physicalSize = iScan.getAttribute("ScanRes");
+    if (physicalSize != null) {
+      physicalPixelSize = DataTools.parseDouble(physicalSize);
+    }
+
     Element slideStitchInfo = (Element) root.getElementsByTagName("SlideStitchInfo").item(0);
     Element aoiOrigins = (Element) root.getElementsByTagName("AoiOrigin").item(0);
 
