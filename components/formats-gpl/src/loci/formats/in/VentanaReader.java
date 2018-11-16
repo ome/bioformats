@@ -211,24 +211,60 @@ public class VentanaReader extends BaseTiffReader {
 
     Region imageBox = new Region(x, y, w, h);
 
+    boolean interleaved = isInterleaved();
+    int count = interleaved ? 1 : getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
-    int outputRowLen = w * bpp;
-    boolean interleaved = isInterleaved();
-    if (interleaved) {
-      outputRowLen *= getRGBChannelCount();
-    }
+    int tilePixel = bpp * (getRGBChannelCount() / count);
+    int outputRowLen = w * tilePixel;
 
     int scale = getScale(getCoreIndex());
     int thisTileWidth = tileWidth / scale;
     int thisTileHeight = tileHeight / scale;
+
+    byte[] subResTile = null;
+    int subResX = -1, subResY = -1;
 
     byte[] tilePixels = new byte[thisTileWidth * thisTileHeight * pixel];
     for (TIFFTile tile : tiles) {
       Region tileBox = new Region(tile.realX / scale, tile.realY / scale, thisTileWidth, thisTileHeight);
 
       if (tileBox.intersects(imageBox)) {
-        tiffParser.getSamples(ifd, tilePixels, tile.baseX / scale, tile.baseY / scale, thisTileWidth, thisTileHeight);
+        if (scale == 1) {
+          tiffParser.getSamples(ifd, tilePixels, tile.baseX, tile.baseY, thisTileWidth, thisTileHeight);
+        }
+        else {
+          // load a whole tile from the subresolution IFD for reuse
+          // it's less complicated to just call tiffParser.setSamples(...)
+          // each time, but also an order of magnitude slower
+          int resX = tile.baseX / scale;
+          int offsetX = resX % tileWidth;
+          resX -= offsetX;
+          int resY = tile.baseY / scale;
+          int offsetY = resY % tileHeight;
+          resY -= offsetY;
+          if (resX != subResX || resY != subResY || subResTile == null) {
+            if (subResTile == null) {
+              subResTile = new byte[tileWidth * tileHeight * pixel];
+            }
+            tiffParser.getSamples(ifd, subResTile, resX, resY, tileWidth, tileHeight);
+            subResX = resX;
+            subResY = resY;
+          }
+          int inRow = tileWidth * tilePixel;
+          int outRow = thisTileWidth * tilePixel;
+          int input = 0;
+          int output = 0;
+          for (int c=0; c<count; c++) {
+            input = (c * tileHeight * inRow) + (offsetY * inRow) + offsetX * tilePixel;
+            output = c * thisTileHeight * outRow;
+            for (int row=0; row<thisTileHeight; row++) {
+              System.arraycopy(subResTile, input, tilePixels, output, outRow);
+              input += inRow;
+              output += outRow;
+            }
+          }
+        }
 
         Region intersection = tileBox.intersection(imageBox);
         int intersectionX = 0;
@@ -237,28 +273,18 @@ public class VentanaReader extends BaseTiffReader {
           intersectionX = imageBox.x - tileBox.x;
         }
 
-        int rowLen = (int) Math.min(intersection.width, thisTileWidth) * bpp;
-        if (interleaved) {
-          rowLen *= getRGBChannelCount();
-        }
+        int rowLen = (int) Math.min(intersection.width, thisTileWidth) * tilePixel;
 
-        int count = interleaved ? 1 : getRGBChannelCount();
         for (int c=0; c<count; c++) {
           for (int row=0; row<intersection.height; row++) {
             int realRow = row + intersection.y - tileBox.y;
-            int inputOffset = bpp * (realRow * thisTileWidth + intersection.x - tileBox.x);
-            if (interleaved) {
-              inputOffset *= getRGBChannelCount();
+            int inputOffset = tilePixel * (realRow * thisTileWidth + intersection.x - tileBox.x);
+            if (!interleaved) {
+              inputOffset += (c * thisTileWidth * thisTileHeight * tilePixel);
             }
-            else {
-              inputOffset += (c * thisTileWidth * thisTileHeight * bpp);
-            }
-            int outputOffset = bpp * (intersection.x - x) + outputRowLen * (row + intersection.y - y);
-            if (interleaved) {
-              outputOffset *= getRGBChannelCount();
-            }
-            else {
-              outputOffset += (c * w * h * bpp);
+            int outputOffset = tilePixel * (intersection.x - x) + outputRowLen * (row + intersection.y - y);
+            if (!interleaved) {
+              outputOffset += (c * w * h * tilePixel);
             }
             int copy = (int) Math.min(rowLen, buf.length - outputOffset);
             System.arraycopy(tilePixels, inputOffset, buf, outputOffset, copy);
