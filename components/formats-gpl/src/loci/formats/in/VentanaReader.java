@@ -70,7 +70,15 @@ public class VentanaReader extends BaseTiffReader {
 
   // -- Constants --
 
+  /**
+   * MetadataOptions key for determining whether to report
+   * each tile as a separate series.
+   */
   public static final String SPLIT_TILES_KEY = "ventana.split_tiles";
+
+  /**
+   * Default value of {@link #SPLIT_TILES_KEY}
+   */
   public static final boolean SPLIT_TILES_DEFAULT = false;
 
   /** Logger for this class. */
@@ -227,11 +235,13 @@ public class VentanaReader extends BaseTiffReader {
 
     byte[] tilePixels = new byte[thisTileWidth * thisTileHeight * pixel];
     for (TIFFTile tile : tiles) {
-      Region tileBox = new Region(tile.realX / scale, tile.realY / scale, thisTileWidth, thisTileHeight);
+      Region tileBox = new Region(
+        tile.realX / scale, tile.realY / scale, thisTileWidth, thisTileHeight);
 
       if (tileBox.intersects(imageBox)) {
         if (scale == 1) {
-          tiffParser.getSamples(ifd, tilePixels, tile.baseX, tile.baseY, thisTileWidth, thisTileHeight);
+          tiffParser.getSamples(ifd, tilePixels,
+            tile.baseX, tile.baseY, thisTileWidth, thisTileHeight);
         }
         else {
           // load a whole tile from the subresolution IFD for reuse
@@ -247,7 +257,8 @@ public class VentanaReader extends BaseTiffReader {
             if (subResTile == null) {
               subResTile = new byte[tileWidth * tileHeight * pixel];
             }
-            tiffParser.getSamples(ifd, subResTile, resX, resY, tileWidth, tileHeight);
+            tiffParser.getSamples(
+              ifd, subResTile, resX, resY, tileWidth, tileHeight);
             subResX = resX;
             subResY = resY;
           }
@@ -256,7 +267,7 @@ public class VentanaReader extends BaseTiffReader {
           int input = 0;
           int output = 0;
           for (int c=0; c<count; c++) {
-            input = (c * tileHeight * inRow) + (offsetY * inRow) + offsetX * tilePixel;
+            input = inRow * (c * tileHeight + offsetY) + offsetX * tilePixel;
             output = c * thisTileHeight * outRow;
             for (int row=0; row<thisTileHeight; row++) {
               System.arraycopy(subResTile, input, tilePixels, output, outRow);
@@ -273,16 +284,19 @@ public class VentanaReader extends BaseTiffReader {
           intersectionX = imageBox.x - tileBox.x;
         }
 
-        int rowLen = (int) Math.min(intersection.width, thisTileWidth) * tilePixel;
+        int rowLen =
+          (int) Math.min(intersection.width, thisTileWidth) * tilePixel;
 
         for (int c=0; c<count; c++) {
           for (int row=0; row<intersection.height; row++) {
             int realRow = row + intersection.y - tileBox.y;
-            int inputOffset = tilePixel * (realRow * thisTileWidth + intersection.x - tileBox.x);
+            int inputOffset = tilePixel *
+              (realRow * thisTileWidth + intersection.x - tileBox.x);
             if (!interleaved) {
               inputOffset += (c * thisTileWidth * thisTileHeight * tilePixel);
             }
-            int outputOffset = tilePixel * (intersection.x - x) + outputRowLen * (row + intersection.y - y);
+            int outputOffset = tilePixel * (intersection.x - x) +
+              outputRowLen * (row + intersection.y - y);
             if (!interleaved) {
               outputOffset += (c * w * h * tilePixel);
             }
@@ -464,7 +478,7 @@ public class VentanaReader extends BaseTiffReader {
       return;
     }
 
-    // now process TIFF tiles and overlap data to get the real coordinates for each tile
+    // process TIFF tiles and overlap data to get the real coordinates
     // largest tile index is in upper right corner
     // smallest tile index is in lower left corner (snake ordering)
     int tileCols = core.get(0).sizeX / tileWidth;
@@ -501,7 +515,8 @@ public class VentanaReader extends BaseTiffReader {
           rightSum += overlap.x;
           rightCount++;
           if (overlap.y > 0) {
-            columnYAdjust.put(getTileColumn(overlap.a, area.tileRows, area.tileColumns), overlap.y);
+            columnYAdjust.put(getTileColumn(
+              overlap.a, area.tileRows, area.tileColumns), overlap.y);
           }
         }
         else if (overlap.direction.equals("UP")) {
@@ -509,7 +524,8 @@ public class VentanaReader extends BaseTiffReader {
           upCount++;
         }
         else {
-          throw new FormatException("Unsupported overlap direction: " + overlap.direction);
+          throw new FormatException(
+            "Unsupported overlap direction: " + overlap.direction);
         }
       }
       if (rightCount > 0) {
@@ -577,15 +593,22 @@ public class VentanaReader extends BaseTiffReader {
     core.get(0).sizeY -= minRemoveY;
   }
 
+  /**
+   * @param coreIndex the resolution for which to calculate a scale factor
+   * @return the scale factor between the full resolution image
+   *  and the specified resolution
+   */
   private int getScale(int coreIndex) {
-    return (int) Math.round((double) core.get(0).sizeX / core.get(coreIndex).sizeX);
+    return (int) Math.round(
+      (double) core.get(0).sizeX / core.get(coreIndex).sizeX);
   }
 
-  private int getTileRow(int index, int rows, int cols) {
-    int row = (int) Math.floor((double) index / cols);
-    return rows - row - 1;
-  }
-
+  /**
+   * @param index the tile index as stored in TileJointInfo nodes
+   * @param rows the number of tile rows in an area of interest
+   * @param cols the number of tile columns in an area of interest
+   * @return the tile column in grid order (corrects for snake ordering)
+   */
   private int getTileColumn(int index, int rows, int cols) {
     int row = (int) Math.floor((double) index / cols);
     // even numbered rows increase from left to right
@@ -603,7 +626,8 @@ public class VentanaReader extends BaseTiffReader {
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, splitTiles() || getImageCount() > 1);
+    MetadataTools.populatePixels(store, this,
+      splitTiles() || getImageCount() > 1);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     String objective = MetadataTools.createLSID("Objective", 0, 0);
@@ -611,19 +635,26 @@ public class VentanaReader extends BaseTiffReader {
     store.setObjectiveID(objective, 0, 0);
     store.setObjectiveNominalMagnification(magnification, 0, 0);
 
+    Length pixelSize = null;
+    if (physicalPixelSize != null) {
+      pixelSize = new Length(physicalPixelSize, UNITS.MICROM);
+    }
+
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
 
-      if (physicalPixelSize != null) {
-        store.setPixelsPhysicalSizeX(new Length(physicalPixelSize, UNITS.MICROM), i);
-        store.setPixelsPhysicalSizeY(new Length(physicalPixelSize, UNITS.MICROM), i);
+      if (pixelSize != null) {
+        store.setPixelsPhysicalSizeX(pixelSize, i);
+        store.setPixelsPhysicalSizeY(pixelSize, i);
       }
       if (splitTiles()) {
         for (int p=0; p<getImageCount(); p++) {
-          store.setPlanePositionX(new Length(tiles[i].baseX, UNITS.REFERENCEFRAME), i, p);
-          store.setPlanePositionY(new Length(tiles[i].baseY, UNITS.REFERENCEFRAME), i, p);
+          store.setPlanePositionX(
+            new Length(tiles[i].baseX, UNITS.REFERENCEFRAME), i, p);
+          store.setPlanePositionY(
+            new Length(tiles[i].baseY, UNITS.REFERENCEFRAME), i, p);
         }
       }
 
@@ -645,7 +676,16 @@ public class VentanaReader extends BaseTiffReader {
     setSeries(0);
   }
 
+  /**
+   * @param coreIndex the series or resolution for which to find an IFD
+   * @param no the plane index for which to find an IFD
+   * @return the index into {@link ifds} for the given series and plane
+   */
   private int getIFDIndex(int coreIndex, int no) {
+    // natural IFD ordering:
+    //  - overview/label image
+    //  - mask image
+    //  - resolutions from largest to smallest XY size
     if (splitTiles() && coreIndex > 0 && resolutions > 0) {
       return getIFDIndex(0, no);
     }
@@ -671,8 +711,10 @@ public class VentanaReader extends BaseTiffReader {
       physicalPixelSize = DataTools.parseDouble(physicalSize);
     }
 
-    Element slideStitchInfo = (Element) root.getElementsByTagName("SlideStitchInfo").item(0);
-    Element aoiOrigins = (Element) root.getElementsByTagName("AoiOrigin").item(0);
+    Element slideStitchInfo =
+      (Element) root.getElementsByTagName("SlideStitchInfo").item(0);
+    Element aoiOrigins =
+      (Element) root.getElementsByTagName("AoiOrigin").item(0);
 
     NodeList imageInfos = slideStitchInfo.getElementsByTagName("ImageInfo");
     for (int i=0; i<imageInfos.getLength(); i++) {
@@ -693,10 +735,13 @@ public class VentanaReader extends BaseTiffReader {
           Overlap overlap = new Overlap();
           overlap.a = Integer.parseInt(joint.getAttribute("Tile1")) - 1;
           overlap.b = Integer.parseInt(joint.getAttribute("Tile2")) - 1;
-          overlap.x = DataTools.parseDouble(joint.getAttribute("OverlapX")).intValue();
-          overlap.y = DataTools.parseDouble(joint.getAttribute("OverlapY")).intValue();
+          overlap.x = DataTools.parseDouble(
+            joint.getAttribute("OverlapX")).intValue();
+          overlap.y = DataTools.parseDouble(
+            joint.getAttribute("OverlapY")).intValue();
           overlap.direction = joint.getAttribute("Direction");
-          overlap.confidence = Integer.parseInt(joint.getAttribute("Confidence"));
+          overlap.confidence =
+            Integer.parseInt(joint.getAttribute("Confidence"));
           aoi.overlaps.add(overlap);
         }
       }
@@ -719,7 +764,6 @@ public class VentanaReader extends BaseTiffReader {
       }
     }
   }
-
 
   class AreaOfInterest {
     // origin in pixels
