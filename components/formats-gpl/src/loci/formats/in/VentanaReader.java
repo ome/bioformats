@@ -626,6 +626,21 @@ public class VentanaReader extends BaseTiffReader {
           store.setPlanePositionY(new Length(tiles[i].baseY, UNITS.REFERENCEFRAME), i, p);
         }
       }
+
+      if (!hasFlattenedResolutions() && !splitTiles()) {
+        switch (i) {
+          case 0:
+            store.setImageName("", i);
+            break;
+          case 1:
+            // both label and overview are usually in the same image
+            store.setImageName("overview image", i);
+            break;
+          case 2:
+            store.setImageName("mask image", i);
+            break;
+        }
+      }
     }
     setSeries(0);
   }
