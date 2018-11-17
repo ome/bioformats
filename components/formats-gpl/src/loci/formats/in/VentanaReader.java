@@ -524,6 +524,19 @@ public class VentanaReader extends BaseTiffReader {
           }
         }
       }
+
+      // remove total overlap pixels from image dimensions
+      // otherwise there will be a black band along the bottom and right side
+      int removeX = (int) Math.floor((area.tileColumns - 1) * rightSum);
+      int removeY = (int) Math.floor((area.tileRows - 1) * upSum);
+      for (int s=1; s<core.get(0).resolutionCount; s++) {
+        int scale = getScale(s);
+        core.get(s).sizeX -= (removeX / scale);
+        core.get(s).sizeY -= (removeY / scale);
+      }
+      // reset full resolution last so that getScale is not affected
+      core.get(0).sizeX -= removeX;
+      core.get(0).sizeY -= removeY;
     }
   }
 
