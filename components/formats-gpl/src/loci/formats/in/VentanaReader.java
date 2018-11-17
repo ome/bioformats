@@ -500,7 +500,9 @@ public class VentanaReader extends BaseTiffReader {
         if (overlap.direction.equals("RIGHT")) {
           rightSum += overlap.x;
           rightCount++;
-          columnYAdjust.put(getTileColumn(overlap.a, area.tileRows, area.tileColumns), overlap.y);
+          if (overlap.y > 0) {
+            columnYAdjust.put(getTileColumn(overlap.a, area.tileRows, area.tileColumns), overlap.y);
+          }
         }
         else if (overlap.direction.equals("UP")) {
           upSum += overlap.y;
@@ -517,12 +519,38 @@ public class VentanaReader extends BaseTiffReader {
         upSum /= upCount;
       }
 
+      // make sure there aren't any missing column Y adjustments
+      boolean allEven = true;
+      boolean allOdd = true;
+      Integer firstValue = null;
+      for (Integer column : columnYAdjust.keySet()) {
+        firstValue = columnYAdjust.get(column);
+        if (column % 2 == 0) {
+          allOdd = false;
+        }
+        else {
+          allEven = false;
+        }
+      }
+      if (allOdd || allEven) {
+        for (int i=0; i<area.tileColumns; i++) {
+          if ((i % 2 == 0 && allOdd) ||
+            (i % 2 == 1 && allEven))
+          {
+            continue;
+          }
+          if (columnYAdjust.get(i) == null) {
+            columnYAdjust.put(i, firstValue);
+          }
+        }
+      }
+
       for (int row=0; row<area.tileRows; row++) {
         for (int col=0; col<area.tileColumns; col++) {
           int index = (tileRow + row) * tileCols + (tileCol + col);
           tiles[index].realX -= (rightSum * col);
           tiles[index].realY -= (upSum * row);
-          if (columnYAdjust.containsKey(col) && columnYAdjust.get(col) > 0) {
+          if (columnYAdjust.containsKey(col)) {
             tiles[index].realY += columnYAdjust.get(col);
           }
         }
