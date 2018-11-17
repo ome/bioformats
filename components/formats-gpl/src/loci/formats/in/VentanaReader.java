@@ -468,6 +468,9 @@ public class VentanaReader extends BaseTiffReader {
     // largest tile index is in upper right corner
     // smallest tile index is in lower left corner (snake ordering)
     int tileCols = core.get(0).sizeX / tileWidth;
+    LOGGER.debug("number of valid areas of interest = {}", areas.size());
+    int minRemoveX = Integer.MAX_VALUE;
+    int minRemoveY = Integer.MAX_VALUE;
     for (AreaOfInterest area : areas) {
       int tileRow = area.yOrigin / tileHeight;
       int tileCol = area.xOrigin / tileWidth;
@@ -524,20 +527,26 @@ public class VentanaReader extends BaseTiffReader {
           }
         }
       }
-
-      // remove total overlap pixels from image dimensions
-      // otherwise there will be a black band along the bottom and right side
       int removeX = (int) Math.floor((area.tileColumns - 1) * rightSum);
       int removeY = (int) Math.floor((area.tileRows - 1) * upSum);
-      for (int s=1; s<core.get(0).resolutionCount; s++) {
-        int scale = getScale(s);
-        core.get(s).sizeX -= (removeX / scale);
-        core.get(s).sizeY -= (removeY / scale);
+      if (removeX < minRemoveX) {
+        minRemoveX = removeX;
       }
-      // reset full resolution last so that getScale is not affected
-      core.get(0).sizeX -= removeX;
-      core.get(0).sizeY -= removeY;
+      if (removeY < minRemoveY) {
+        minRemoveY = removeY;
+      }
     }
+
+    // remove total overlap pixels from image dimensions
+    // otherwise there will be a black band along the bottom and right side
+    for (int s=1; s<core.get(0).resolutionCount; s++) {
+      int scale = getScale(s);
+      core.get(s).sizeX -= (minRemoveX / scale);
+      core.get(s).sizeY -= (minRemoveY / scale);
+    }
+    // reset full resolution last so that getScale is not affected
+    core.get(0).sizeX -= minRemoveX;
+    core.get(0).sizeY -= minRemoveY;
   }
 
   private int getScale(int coreIndex) {
