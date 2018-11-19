@@ -651,10 +651,14 @@ public class VentanaReader extends BaseTiffReader {
       }
       if (splitTiles()) {
         for (int p=0; p<getImageCount(); p++) {
-          store.setPlanePositionX(
-            new Length(tiles[i].baseX, UNITS.REFERENCEFRAME), i, p);
-          store.setPlanePositionY(
-            new Length(tiles[i].baseY, UNITS.REFERENCEFRAME), i, p);
+          double x = tiles[i].baseX;
+          double y = tiles[i].baseY;
+          if (physicalPixelSize != null) {
+            x *= physicalPixelSize;
+            y *= physicalPixelSize;
+          }
+          store.setPlanePositionX(new Length(x, UNITS.MICROM), i, p);
+          store.setPlanePositionY(new Length(y, UNITS.MICROM), i, p);
         }
       }
 
