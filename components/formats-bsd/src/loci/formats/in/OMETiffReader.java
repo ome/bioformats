@@ -1003,8 +1003,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
       // populate core metadata
       OMETiffCoreMetadata m = (OMETiffCoreMetadata) core.get(s, 0);
       info[s] = planes;
+      RandomAccessInputStream testFile = null;
       try {
-        RandomAccessInputStream testFile = null;
         if (info[s][0].id != null) {
           testFile = new RandomAccessInputStream(info[s][0].id, 16);
         }
@@ -1139,6 +1139,11 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
       catch (NullPointerException exc) {
         throw new FormatException("Incomplete Pixels metadata", exc);
+      }
+      finally {
+        if (testFile != null) {
+          testFile.close();
+        }
       }
     }
 
