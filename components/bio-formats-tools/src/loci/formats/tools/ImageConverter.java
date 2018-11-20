@@ -47,6 +47,8 @@ import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DebugTools;
 import loci.common.Location;
+import loci.common.image.IImageScaler;
+import loci.common.image.SimpleImageScaler;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -70,6 +72,7 @@ import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEPyramidStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
@@ -114,6 +117,7 @@ public final class ImageConverter {
   private boolean validate = false;
   private boolean zeroPadding = false;
   private boolean flat = true;
+  private int pyramidScale = 1, pyramidResolutions = 1;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -203,6 +207,27 @@ public final class ImageConverter {
         else if (args[i].equals("-tiley")) {
           try {
             saveTileHeight = Integer.parseInt(args[++i]);
+          }
+          catch (NumberFormatException e) { }
+        }
+        else if (args[i].equals("-pyramid-scale")) {
+          try {
+            pyramidScale = Integer.parseInt(args[++i]);
+            if (pyramidScale <= 0) {
+              LOGGER.error("Invalid pyramid scale: {}", pyramidScale);
+              return false;
+            }
+          }
+          catch (NumberFormatException e) { }
+        }
+        else if (args[i].equals("-pyramid-resolutions")) {
+          try {
+            pyramidResolutions = Integer.parseInt(args[++i]);
+            if (pyramidResolutions <= 0) {
+              LOGGER.error("Invalid pyramid resolution count: {}",
+                pyramidResolutions);
+              return false;
+            }
           }
           catch (NumberFormatException e) { }
         }
@@ -501,6 +526,7 @@ public final class ImageConverter {
             meta.setPixelsSizeT(new PositiveInteger(1), 0);
           }
 
+          setupResolutions(meta);
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         else {
@@ -523,6 +549,7 @@ public final class ImageConverter {
             }
           }
 
+          setupResolutions(meta);
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
       }
@@ -555,13 +582,23 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
-      for (int res=0; res<reader.getResolutionCount(); res++) {
-        reader.setResolution(res);
+      boolean generatePyramid = pyramidResolutions > reader.getResolutionCount();
+      int resolutionCount = generatePyramid ? pyramidResolutions : reader.getResolutionCount();
+      for (int res=0; res<resolutionCount; res++) {
+        if (!generatePyramid) {
+          reader.setResolution(res);
+        }
         firstTile = true;
 
         if (!dimensionsSet) {
           width = reader.getSizeX();
           height = reader.getSizeY();
+
+          if (generatePyramid && res > 0) {
+            int scale = (int) Math.pow(pyramidScale, res);
+            width /= scale;
+            height /= scale;
+          }
         }
 
         int writerSeries = series == -1 ? q : 0;
@@ -695,8 +732,8 @@ public final class ImageConverter {
       }
     }
 
-    byte[] buf =
-      reader.openBytes(index, xCoordinate, yCoordinate, width, height);
+    byte[] buf = getTile(reader, writer.getResolution(), index,
+      xCoordinate, yCoordinate, width, height);
 
     autoscalePlane(buf, index);
     applyLUT(writer);
@@ -754,8 +791,8 @@ public final class ImageConverter {
         int tileY = yCoordinate + y * h;
         int tileWidth = x < nXTiles - 1 ? w : width - (w * x);
         int tileHeight = y < nYTiles - 1 ? h : height - (h * y);
-        byte[] buf =
-          reader.openBytes(index, tileX, tileY, tileWidth, tileHeight);
+        byte[] buf = getTile(reader, writer.getResolution(),
+          index, tileX, tileY, tileWidth, tileHeight);
 
         String tileName =
           FormatTools.getTileFilename(x, y, y * nXTiles + x, currentFile);
@@ -771,6 +808,7 @@ public final class ImageConverter {
               new PositiveInteger(sizeX), reader.getSeries());
             ((MetadataStore) retrieve).setPixelsSizeY(
               new PositiveInteger(sizeY), reader.getSeries());
+            setupResolutions((IMetadata) retrieve);
           }
 
           writer.close();
@@ -934,6 +972,43 @@ public final class ImageConverter {
         }
       }
     }
+  }
+
+  private void setupResolutions(IMetadata meta) {
+    if (!(meta instanceof OMEPyramidStore)) {
+      return;
+    }
+    for (int series=0; series<meta.getImageCount(); series++) {
+      int width = meta.getPixelsSizeX(series).getValue();
+      int height = meta.getPixelsSizeY(series).getValue();
+      for (int i=1; i<pyramidResolutions; i++) {
+        int scale = (int) Math.pow(pyramidScale, i);
+        ((OMEPyramidStore) meta).setResolutionSizeX(
+          new PositiveInteger(width / scale), series, i);
+        ((OMEPyramidStore) meta).setResolutionSizeY(
+          new PositiveInteger(height / scale), series, i);
+      }
+    }
+  }
+
+  private byte[] getTile(IFormatReader reader, int resolution,
+    int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    if (resolution < reader.getResolutionCount()) {
+      reader.setResolution(resolution);
+      return reader.openBytes(no, x, y, w, h);
+    }
+    reader.setResolution(0);
+    IImageScaler scaler = new SimpleImageScaler();
+    int scale = (int) Math.pow(pyramidScale, resolution);
+    byte[] tile =
+      reader.openBytes(no, x * scale, y * scale, w * scale, h * scale);
+    int type = reader.getPixelType();
+    return scaler.downsample(tile, w * scale, h * scale, scale,
+      FormatTools.getBytesPerPixel(type), reader.isLittleEndian(),
+      FormatTools.isFloatingPoint(type), reader.getRGBChannelCount(),
+      reader.isInterleaved());
   }
 
   // -- Main method --
