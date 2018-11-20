@@ -32,11 +32,16 @@
 
 package loci.formats.tools;
 
+import com.google.common.base.Joiner;
+
 import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.SortedMap;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -221,6 +226,42 @@ public final class ImageConverter {
     return true;
   }
 
+  /* Return a sorted map of the available extensions per writer */
+  private static SortedMap<String,String> getExtensions() {
+    IFormatWriter[] writers = new ImageWriter().getWriters();
+    SortedMap<String, String> extensions = new TreeMap<String, String>();
+    for (int i=0; i<writers.length; i++) {
+      extensions.put(writers[i].getFormat(),
+        '.' + Joiner.on(", .").join(writers[i].getSuffixes()));
+    }
+    return extensions;
+  }
+
+  /* Return a sorted map of the available compressions per writer */
+  private static SortedMap<String,String> getCompressions() {
+    IFormatWriter[] writers = new ImageWriter().getWriters();
+    SortedMap<String, String> compressions = new TreeMap<String, String>();
+    for (int i=0; i<writers.length; i++) {
+      String[] compressionTypes = writers[i].getCompressionTypes();
+      if (compressionTypes != null) {
+        compressions.put(writers[i].getFormat(),
+          Joiner.on(", ").join(compressionTypes));
+      }
+    }
+    return compressions;
+  }
+
+  /* Formats a sorted map into a string for the utility usage */
+  private static String printList(SortedMap<String,String> map) {
+    StringBuilder sb = new StringBuilder();
+    Iterator it = map.entrySet().iterator();
+    while (it.hasNext()) {
+      SortedMap.Entry pair = (SortedMap.Entry) it.next();
+      sb.append(" * " + pair.getKey() + ": " + pair.getValue() + '\n');
+    }
+    return sb.toString();
+  }
+
   /**
    * Output usage information, using log4j.
    */
@@ -262,6 +303,14 @@ public final class ImageConverter {
       "     -padded: filename indexes for series, z, c and t will be zero padded",
       "     -option: add the specified key/value pair to the options list",
       "",
+      "The extension of the output file specifies the file format to use",
+      "for the conversion. The list of available formats and extensions is:",
+      "",
+      printList(getExtensions()),
+      "Some file formats offer multiple compression schemes that can be set",
+      "using the -compression option. The list of available compressions is:",
+      "",
+      printList(getCompressions()),
       "If any of the following patterns are present in out_file, they will",
       "be replaced with the indicated metadata value from the input file.",
       "",
@@ -293,7 +342,7 @@ public final class ImageConverter {
       "",
       "Each file would have a single image plane."
     };
-    for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
+    for (int i=0; i<s.length; i++) System.out.println(s[i]);
   }
 
   // -- Utility methods --
@@ -316,12 +365,12 @@ public final class ImageConverter {
       return true;
     }
 
-    CommandLineTools.runUpgradeCheck(args);
-
     if (in == null || out == null) {
       printUsage();
       return false;
     }
+
+    CommandLineTools.runUpgradeCheck(args);
 
     if (new Location(out).exists()) {
       if (overwrite == null) {
