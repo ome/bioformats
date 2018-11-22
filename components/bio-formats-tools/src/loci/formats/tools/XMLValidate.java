@@ -81,7 +81,7 @@ public class XMLValidate {
     throws IOException
   {
     if (files == null || files.length == 0) {
-        throw new IllegalArgumentException("No files to parse");
+        throw new IllegalArgumentException("No files to validate");
     }
     boolean[] results = new boolean[files.length];
     for (int i = 0; i < files.length; i++) {
