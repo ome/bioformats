@@ -32,6 +32,7 @@
 
 package loci.formats.tiff;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffParser {
+public class TiffParser implements Closeable {
 
   // -- Constants --
 
@@ -1336,5 +1337,10 @@ public class TiffParser {
       getNextOffset(0) : in.getFilePointer();
 
     return new TiffIFDEntry(entryTag, entryType, valueCount, offset);
+  }
+
+  @Override
+  public void close() throws IOException {
+    in.close();
   }
 }
