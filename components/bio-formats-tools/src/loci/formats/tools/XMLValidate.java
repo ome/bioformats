@@ -47,17 +47,56 @@ import loci.formats.tiff.TiffParser;
  */
 public class XMLValidate {
 
-  public static void process(String label, BufferedReader in)
+  public static boolean process(String label, BufferedReader in)
     throws IOException
   {
     StringBuffer sb = new StringBuffer();
-    while (true) {
-      String line = in.readLine();
-      if (line == null) break;
-      sb.append(line);
+    try {
+      while (true) {
+        String line = in.readLine();
+        if (line == null) break;
+        sb.append(line);
+      }
+    } finally {
+      in.close();
     }
-    in.close();
-    XMLTools.validateXML(sb.toString(), label);
+    return XMLTools.validateXML(sb.toString(), label);
+  }
+
+  public static boolean validate(String file)
+    throws IOException
+  {
+    String[] files = new String[1];
+    files[0] = file;
+    return validate(files)[0];
+  }
+
+  public static boolean[] validate(String[] files)
+    throws IOException
+  {
+    if (files == null || files.length == 0) {
+        throw new IllegalArgumentException("No files to parse");
+    }
+    boolean[] results = new boolean[files.length];
+    for (int i = 0; i < files.length; i++) {
+        String file = files[i];
+        if (file == null || file.trim().length() == 0) {
+          results[i] = false;
+        } else{
+          String f = file.toLowerCase();
+          boolean b;
+          if (f.endsWith("tif") || f.endsWith("tiff")) {
+            String comment = new TiffParser(file).getComment();
+            //Close TiffParser when close method is added
+            b = process(f, new BufferedReader(new StringReader(comment)));
+          } else {
+            b = process(f, new BufferedReader(new InputStreamReader(
+                      new FileInputStream(f), Constants.ENCODING)));
+          }
+          results[i] = b;
+        }
+    }
+    return results;
   }
 
   public static void main(String[] args) throws Exception {
@@ -70,18 +109,7 @@ public class XMLValidate {
     }
     else {
       // read from file(s)
-      for (int i=0; i<args.length; i++) {
-        if (args[i].toLowerCase().endsWith("tif") ||
-          args[i].toLowerCase().endsWith("tiff"))
-        {
-          String comment = new TiffParser(args[i]).getComment();
-          process(args[i], new BufferedReader(new StringReader(comment)));
-        }
-        else {
-          process(args[i], new BufferedReader(new InputStreamReader(
-            new FileInputStream(args[i]), Constants.ENCODING)));
-        }
-      }
+      validate(args);
     }
   }
 
