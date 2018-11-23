@@ -48,7 +48,7 @@ import loci.formats.tiff.TiffParser;
  */
 public class XMLValidate {
 
-  public static boolean processData(String label, BufferedReader in)
+  public static boolean validate(String label, BufferedReader in)
     throws IOException
   {
     StringBuffer sb = new StringBuffer();
@@ -68,7 +68,7 @@ public class XMLValidate {
   public static void process(String label, BufferedReader in)
     throws IOException
   {
-      processData(label, in);
+      validate(label, in);
   }
 
   public static boolean validate(String file)
@@ -99,9 +99,9 @@ public class XMLValidate {
               comment = new TiffParser(stream).getComment();
             }
             //Close TiffParser when close method is added
-            b = processData(f, new BufferedReader(new StringReader(comment)));
+            b = validate(f, new BufferedReader(new StringReader(comment)));
           } else {
-            b = processData(f, new BufferedReader(new InputStreamReader(
+            b = validate(f, new BufferedReader(new InputStreamReader(
                       new FileInputStream(f), Constants.ENCODING)));
           }
           results[i] = b;
