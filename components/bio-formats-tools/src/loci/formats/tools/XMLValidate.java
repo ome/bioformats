@@ -39,6 +39,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import loci.common.Constants;
+import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.tiff.TiffParser;
 
@@ -92,7 +93,10 @@ public class XMLValidate {
           String f = file.toLowerCase();
           boolean b;
           if (f.endsWith("tif") || f.endsWith("tiff")) {
-            String comment = new TiffParser(file).getComment();
+            String comment = "";
+            try(RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
+              comment = new TiffParser(stream).getComment();
+            }
             //Close TiffParser when close method is added
             b = processData(f, new BufferedReader(new StringReader(comment)));
           } else {
