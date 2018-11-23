@@ -64,6 +64,7 @@ public class XMLValidate {
     return XMLTools.validateXML(sb.toString(), label);
   }
 
+  @Deprecated
   public static void process(String label, BufferedReader in)
     throws IOException
   {
