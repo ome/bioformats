@@ -112,16 +112,16 @@ public class TiffComment {
     // process files
     for (String file : files) {
       if (edit) {
-          try (RandomAccessInputStream in = EditTiffG.open(file)) {}
+        try (RandomAccessInputStream in = EditTiffG.open(file)) {}
       }
       else if (newComment != null) {
-          overwriteComment(file, newComment);
+        overwriteComment(file, newComment);
       }
       else {
         try (RandomAccessInputStream in = new RandomAccessInputStream(file)) {
           TiffParser parser = new TiffParser(in);
           String comment = parser.getComment();
-          System.out.println(comment == null ? 
+          System.out.println(comment == null ?
                 file + ": no TIFF comment found." : comment);
         }
       }

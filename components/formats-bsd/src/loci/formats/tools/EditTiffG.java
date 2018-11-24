@@ -197,11 +197,9 @@ public class EditTiffG extends JFrame implements ActionListener {
     catch (UnsupportedEncodingException e) {
       LOGGER.warn("Failed to show error", e);
     } finally {
-        try {
-            out.close();
-        } catch (Exception ex) {
-            
-        }
+      try {
+        out.close();
+      } catch (Exception ex) {}
     }
     JOptionPane.showMessageDialog(this, "Sorry, there was an error: " + error,
       TITLE, JOptionPane.ERROR_MESSAGE);
@@ -219,9 +217,9 @@ public class EditTiffG extends JFrame implements ActionListener {
     EditTiffG etg = new EditTiffG();
     File f = new File(filename);
     if (f.exists()) {
-        RandomAccessInputStream in = new RandomAccessInputStream(filename);
-        etg.openFile(f, in);
-        return in;
+      RandomAccessInputStream in = new RandomAccessInputStream(filename);
+      etg.openFile(f, in);
+      return in;
     }
     return null;
   }
