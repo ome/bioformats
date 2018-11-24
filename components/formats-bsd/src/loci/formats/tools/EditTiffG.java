@@ -196,6 +196,12 @@ public class EditTiffG extends JFrame implements ActionListener {
     }
     catch (UnsupportedEncodingException e) {
       LOGGER.warn("Failed to show error", e);
+    } finally {
+        try {
+            out.close();
+        } catch (Exception ex) {
+            
+        }
     }
     JOptionPane.showMessageDialog(this, "Sorry, there was an error: " + error,
       TITLE, JOptionPane.ERROR_MESSAGE);
