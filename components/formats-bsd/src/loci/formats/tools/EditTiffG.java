@@ -157,6 +157,19 @@ public class EditTiffG extends JFrame implements ActionListener {
     }
   }
 
+  public void openFile(File f, RandomAccessInputStream in) {
+    try {
+      String id = f.getAbsolutePath();
+      String xml = new TiffParser(in).getComment();
+      setXML(xml);
+      file = f;
+      setTitle(TITLE + " - " + id);
+    }
+    catch (IOException exc) {
+      showError(exc);
+    }
+  }
+ 
   public void saveFile(File f) {
     RandomAccessInputStream in = null;
     RandomAccessOutputStream out = null;
@@ -204,6 +217,17 @@ public class EditTiffG extends JFrame implements ActionListener {
     if (f.exists()) etg.openFile(f);
   }
 
+  public static RandomAccessInputStream open(String filename)
+    throws IOException {
+    EditTiffG etg = new EditTiffG();
+    File f = new File(filename);
+    if (f.exists()) {
+        RandomAccessInputStream in = new RandomAccessInputStream(filename);
+        etg.openFile(f, in);
+        return in;
+    }
+    return null;
+  }
   // -- ActionListener methods --
 
   @Override
@@ -217,7 +241,8 @@ public class EditTiffG extends JFrame implements ActionListener {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    EditTiffG.openFile(args[0]);
+    try (RandomAccessInputStream in = EditTiffG.open(args[0])) {
+    }
   }
 
 }
