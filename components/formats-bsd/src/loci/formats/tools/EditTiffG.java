@@ -211,6 +211,7 @@ public class EditTiffG extends JFrame implements ActionListener {
       TITLE, JOptionPane.ERROR_MESSAGE);
   }
 
+  @Deprecated
   public static void openFile(String filename) {
     EditTiffG etg = new EditTiffG();
     File f = new File(filename);
