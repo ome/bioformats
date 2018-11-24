@@ -333,15 +333,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
       return buf;
     }
     IFD ifd = ifdList.get(i);
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(info[series][no].id, 16);
-    TiffParser p = new TiffParser(s);
-    if(resolution > 0) {
-      IFDList subifds = p.getSubIFDs(ifd);
-      ifd = subifds.get(((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset);
+    try (RandomAccessInputStream s = new RandomAccessInputStream(info[series][no].id, 16)) {
+      TiffParser p = new TiffParser(s);
+      if(resolution > 0) {
+        IFDList subifds = p.getSubIFDs(ifd);
+        ifd = subifds.get(((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset);
+      }
+      p.getSamples(ifd, buf, x, y, w, h);
     }
-    p.getSamples(ifd, buf, x, y, w, h);
-    s.close();
 
     // reasonably safe to close the reader if the entire plane or
     // lower-right-most tile from a single plane file has been read
@@ -1326,7 +1325,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
         checkSuffix(metadataFile, "ome.tf8") ||
         checkSuffix(metadataFile, "ome.btf")) {
       // metadata file is an OME-TIFF file; extract OME-XML comment
-      return new TiffParser(metadataFile).getComment();
+      try (RandomAccessInputStream in = new RandomAccessInputStream(metadataFile)){
+        TiffParser parser = new TiffParser(in);
+        return parser.getComment();
+      }
     }
     // assume metadata file is an XML file
     return DataTools.readFile(metadataFile);

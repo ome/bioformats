@@ -147,9 +147,11 @@ public class SEQReader extends BaseTiffReader {
     int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(), core.size(), getSizeT()};
     int index = FormatTools.positionToRaster(lengths, coords);
 
-    TiffParser p = new TiffParser(files[index]);
-    IFD ifd = p.getFirstIFD();
-    p.getSamples(ifd, buf, x, y, w, h);
+    try (RandomAccessInputStream in = new RandomAccessInputStream(files[index])) {
+      TiffParser p = new TiffParser(in);
+      IFD ifd = p.getFirstIFD();
+      p.getSamples(ifd, buf, x, y, w, h);
+    }
     return buf;
   }
 
