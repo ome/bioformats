@@ -454,19 +454,13 @@ public class TiffWriter extends FormatWriter {
   {
     IFD ifd = new IFD();
     if (!sequential) {
-      TiffParser parser = new TiffParser(currentId);
-      try {
+      try (RandomAccessInputStream in = new RandomAccessInputStream(currentId)) {
+        TiffParser parser = new TiffParser(in);
         long[] ifdOffsets = parser.getIFDOffsets();
         if (no < ifdOffsets.length) {
           ifd = parser.getIFD(ifdOffsets[no]);
         }
         saveBytes(no, buf, ifd, x, y, w, h);
-      }
-      finally {
-        RandomAccessInputStream tiffParserStream = parser.getStream();
-        if (tiffParserStream != null) {
-          tiffParserStream.close();
-        }
       }
     }
     else {
