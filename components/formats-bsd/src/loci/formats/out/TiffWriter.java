@@ -204,7 +204,6 @@ public class TiffWriter extends FormatWriter {
   public void saveBytes(int no, byte[] buf, IFD ifd)
     throws IOException, FormatException
   {
-    MetadataRetrieve r = getMetadataRetrieve();
     int w = getSizeX();
     int h = getSizeY();
     saveBytes(no, buf, ifd, 0, 0, w, h);
