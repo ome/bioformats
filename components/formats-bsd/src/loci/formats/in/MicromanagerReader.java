@@ -489,9 +489,8 @@ public class MicromanagerReader extends FormatReader {
         plane++;
         continue;
       }
-      TiffParser parser = null;
-      try {
-        parser = new TiffParser(path);
+      try (RandomAccessInputStream in = new RandomAccessInputStream(path)) {
+        TiffParser parser = new TiffParser(in);
         int nIFDs = parser.getMainIFDs().size();
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
@@ -599,10 +598,6 @@ public class MicromanagerReader extends FormatReader {
       }
       catch (IOException e) {
         LOGGER.debug("Failed to read metadata from " + path, e);
-      } finally {
-        if (parser != null) {
-          parser.getStream().close();
-        }
       }
     }
   }
@@ -715,8 +710,11 @@ public class MicromanagerReader extends FormatReader {
     }
 
     byte[] b = new byte[(int) s.length()];
-    s.readFully(b);
-    s.close();
+    try {
+      s.readFully(b);
+    } finally {
+      s.close();
+    }
 
     int[] slice = new int[3];
     start = 0;
