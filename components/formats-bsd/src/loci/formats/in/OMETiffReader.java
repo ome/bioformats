@@ -1266,10 +1266,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
         continue;
       }
       IFD ifd = ifdList.get(i);
-      RandomAccessInputStream rs =
-        new RandomAccessInputStream(info[s][0].id, 16);
-      TiffParser p = new TiffParser(rs);
-      IFDList subifds = p.getSubIFDs(ifd);
+      IFDList subifds = null;
+      try (RandomAccessInputStream rs =
+        new RandomAccessInputStream(info[s][0].id, 16)) {
+        TiffParser p = new TiffParser(rs);
+        subifds = p.getSubIFDs(ifd);
+      }
       c0.resolutionCount = subifds.size() + 1;
 
       if (c0.resolutionCount > 1 && hasFlattenedResolutions()) {
@@ -1325,7 +1327,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
         checkSuffix(metadataFile, "ome.tf8") ||
         checkSuffix(metadataFile, "ome.btf")) {
       // metadata file is an OME-TIFF file; extract OME-XML comment
-      try (RandomAccessInputStream in = new RandomAccessInputStream(metadataFile)){
+      try (RandomAccessInputStream in = new RandomAccessInputStream(metadataFile)) {
         TiffParser parser = new TiffParser(in);
         return parser.getComment();
       }
@@ -1336,13 +1338,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
   private static IFD getFirstIFD(String fname) throws IOException {
     IFD firstIFD = null;
-    RandomAccessInputStream ras = new RandomAccessInputStream(fname, 16);
-    try {
+    try (RandomAccessInputStream ras = new RandomAccessInputStream(fname, 16)) {
       TiffParser tp = new TiffParser(ras);
       firstIFD = tp.getFirstIFD();
-    }
-    finally {
-      ras.close();
     }
     return firstIFD;
   }
