@@ -993,14 +993,15 @@ public class OMETiffReader extends SubResolutionFormatReader {
       OMETiffCoreMetadata m = (OMETiffCoreMetadata) core.get(s, 0);
       info[s] = planes;
       try {
-        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16);
         String firstFile = info[s][0].id;
-        if (!info[s][0].reader.isThisType(testFile)) {
-          LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
-          info[s][0].id = currentId;
-          info[s][0].exists = false;
+        try (RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16)) {
+          if (!info[s][0].reader.isThisType(testFile)) {
+            LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
+            info[s][0].id = currentId;
+            info[s][0].exists = false;
+          }
         }
-        testFile.close();
+        
         for (int plane=1; plane<info[s].length; plane++) {
           if (info[s][plane].id.equals(firstFile)) {
             // don't repeat slow type checking if the files are the same
@@ -1011,13 +1012,13 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
             continue;
           }
-          testFile = new RandomAccessInputStream(info[s][plane].id, 16);
-          if (!info[s][plane].reader.isThisType(testFile)) {
-            LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
-            info[s][plane].id = info[s][0].id;
-            info[s][plane].exists = false;
+          try (RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][plane].id, 16)) {
+            if (!info[s][plane].reader.isThisType(testFile)) {
+              LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
+              info[s][plane].id = info[s][0].id;
+              info[s][plane].exists = false;
+            }
           }
-          testFile.close();
         }
 
         info[s][0].reader.setId(info[s][0].id);
