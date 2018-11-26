@@ -313,11 +313,11 @@ public class CV7000Reader extends FormatReader {
         if (p.z < minSizeZ) {
           minSizeZ = p.z;
         }
-        if (p.channel > maxSizeC) {
-          maxSizeC = p.channel;
+        if (p.channelIndex > maxSizeC) {
+          maxSizeC = p.channelIndex;
         }
-        if (p.channel < minSizeC) {
-          minSizeC = p.channel;
+        if (p.channelIndex < minSizeC) {
+          minSizeC = p.channelIndex;
         }
 
         if (p.field >= fields) {
@@ -360,7 +360,7 @@ public class CV7000Reader extends FormatReader {
       p.series = FormatTools.positionToRaster(seriesLengths,
         new int[] {p.field, wellIndex});
       p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {p.channel - minSizeC, p.z - minSizeZ, p.timepoint - minSizeT});
+        new int[] {p.channelIndex - minSizeC, p.z - minSizeZ, p.timepoint - minSizeT});
       if (reversePlaneLookup[p.series][p.no] < 0) {
         reversePlaneLookup[p.series][p.no] = i;
       }
@@ -475,7 +475,7 @@ public class CV7000Reader extends FormatReader {
             }
             Channel channel = null;
             for (Channel ch : channels) {
-              if (ch.index == p.channel) {
+              if (ch.index == p.channelIndex) {
                 channel = ch;
                 break;
               }
@@ -632,6 +632,9 @@ public class CV7000Reader extends FormatReader {
     private ArrayList<Plane> planes = new ArrayList<Plane>();
     private String parentDir;
 
+    private int currentField = -1;
+    private HashMap<Integer, Integer> channelMap = new HashMap<Integer, Integer>();
+
     public MeasurementDataHandler(String parentDir) {
       super();
       this.parentDir = parentDir;
@@ -667,6 +670,18 @@ public class CV7000Reader extends FormatReader {
           p.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
           p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
           p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
+
+          if (p.field != currentField) {
+            currentField = p.field;
+            channelMap.clear();
+          }
+
+          if (!channelMap.containsKey(p.channel)) {
+            channelMap.put(p.channel, channelMap.size());
+          }
+
+          p.channelIndex = channelMap.get(p.channel);
+
           p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
           p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
           p.zpos = DataTools.parseDouble(attributes.getValue("bts:Z"));
@@ -864,7 +879,10 @@ public class CV7000Reader extends FormatReader {
     public int timepoint;
     public int field;
     public int z;
+    // this is the original channel value stored in the XML
     public int channel;
+    // this is the calculated index from 0 to getSizeC() - 1
+    public int channelIndex;
     public double xpos;
     public double ypos;
     public double zpos;
