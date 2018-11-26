@@ -423,6 +423,22 @@ public class CV7000Reader extends FormatReader {
           String name = "Well " + ((char) ('A' + row)) + (col + 1) + ", Field " + (field + 1);
           store.setImageName(name, nextImage);
           store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
+
+          // find the first valid plane to set WellSample positions
+          int no = 0;
+          Plane p = lookupPlane(nextImage, no);
+          while (p == null && no < getImageCount()) {
+            p = lookupPlane(nextImage, no++);
+          }
+          if (p != null) {
+            store.setWellSamplePositionX(
+              FormatTools.createLength(p.xpos, UNITS.REFERENCEFRAME),
+              0, nextWell, field);
+            store.setWellSamplePositionY(
+              FormatTools.createLength(p.ypos, UNITS.REFERENCEFRAME),
+              0, nextWell, field);
+          }
+
           nextImage++;
         }
         nextWell++;
