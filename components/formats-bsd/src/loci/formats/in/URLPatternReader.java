@@ -48,7 +48,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -83,6 +85,7 @@ public class URLPatternReader extends WrappedReader {
 
   // These fields need to be set in the helper, but this can only be done
   // after we've opened the urlpattern file and obtained the list of readers
+  private MetadataOptions delayedOptions = null;
   private Boolean delayedGroup = null;
   private Boolean delayedNormalize = null;
   private Boolean delayedPopulate = null;
@@ -128,6 +131,9 @@ public class URLPatternReader extends WrappedReader {
     }
     helper = new RemoteReader(new ImageReader(newClasses));
 
+    if (delayedOptions != null) {
+      helper.setMetadataOptions(delayedOptions);
+    }
     if (delayedGroup != null) {
       helper.setGroupFiles(delayedGroup);
     }
@@ -154,6 +160,27 @@ public class URLPatternReader extends WrappedReader {
   protected ReaderWrapper getHelper() {
     FormatTools.assertId(currentId, true, 1);
     return helper;
+  }
+
+  // -- IMetadataConfigurable methods --
+
+  // This getter may be called before setId, which means the helper doesn't exist.
+  // We can't call super().super().getSupportedMetadataLevels()
+  @Override
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
+    supportedLevels.add(MetadataLevel.ALL);
+    supportedLevels.add(MetadataLevel.NO_OVERLAYS);
+    supportedLevels.add(MetadataLevel.MINIMUM);
+    return supportedLevels;
+  }
+
+  // Delayed IMetadataConfigurable methods
+
+  @Override
+  public void setMetadataOptions(MetadataOptions options) {
+    FormatTools.assertId(currentId, false, 1);
+    delayedOptions = options;
   }
 
   // Delayed FormatReader methods
