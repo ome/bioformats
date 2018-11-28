@@ -140,6 +140,7 @@ public class Exporter {
         Boolean padded = null;
         Boolean saveRoi = null;
         String compression = null;
+        Boolean noLookupTables = null;
 
         Boolean windowless = Boolean.FALSE;
         if (plugin.arg != null) {
@@ -170,6 +171,8 @@ public class Exporter {
             if (w != null) {
                 windowless = Boolean.valueOf(w);
             }
+            String lut = Macro.getValue(plugin.arg, "skip_luts", "false");
+            noLookupTables = Boolean.valueOf(lut);
             plugin.arg = null;
         }
         if (outfile == null) {
@@ -301,6 +304,7 @@ public class Exporter {
             if (splitC == null) splitC = Boolean.FALSE;
             if (splitT == null) splitT = Boolean.FALSE;
             if (padded == null) padded = Boolean.FALSE;
+            if (noLookupTables == null) noLookupTables = false;
         }
         if (splitZ == null || splitC == null || splitT == null) {
             // ask if we want to export multiple files
@@ -311,12 +315,22 @@ public class Exporter {
             multiFile.addCheckbox("Write_each_timepoint to a separate file", false);
             multiFile.addCheckbox("Write_each_channel to a separate file", false);
             multiFile.addCheckbox("Use zero padding for filename indexes", false);
+            // prompt for lookup tables here instead of in compression options window,
+            // since the compression window won't be shown for formats with
+            // only one compression type
+            //
+            // checkbox is "Do not save..." instead of "Save..." because macro
+            // recording/parsing only looks for checkboxes that are enabled
+            // this preserves backwards compatibility with existing macros,
+            // so that non-default lookup tables do not suddenly disappear
+            multiFile.addCheckbox("Do_not_save_lookup_tables", false);
             multiFile.showDialog();
 
             splitZ = multiFile.getNextBoolean();
             splitT = multiFile.getNextBoolean();
             splitC = multiFile.getNextBoolean();
             padded = multiFile.getNextBoolean();
+            noLookupTables = multiFile.getNextBoolean();
             if (multiFile.wasCanceled()) return;
         }
 
@@ -792,7 +806,7 @@ public class Exporter {
                     // saving a LUT for every plane can cause performance issues,
                     // especially for 16 bit data
                     // see https://trello.com/c/Qk6NBnPs/92-imagej-ome-tiff-writing-performance
-                    if (!proc.isDefaultLut()) {
+                    if (!proc.isDefaultLut() && (noLookupTables == null || !noLookupTables)) {
                         if (luts[currentChannel] != null) {
                             // expand to 16-bit LUT if necessary
 
