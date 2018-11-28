@@ -47,6 +47,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ReaderWrapper;
 import loci.formats.WrappedReader;
+import loci.formats.meta.MetadataStore;
 
 /**
  *
@@ -81,6 +82,64 @@ public class FilePatternReader extends WrappedReader {
 
   protected ReaderWrapper getHelper() {
     return helper;
+  }
+
+  // -- FormatReader methods that are not overridden by WrappedReader --
+
+  @Override
+  public void setGroupFiles(boolean group) {
+    getHelper().setGroupFiles(group);
+  }
+
+  @Override
+  public boolean isGroupFiles() {
+    return getHelper().isGroupFiles();
+  }
+
+  @Override
+  public void setNormalized(boolean normalize) {
+    getHelper().setNormalized(normalize);
+  }
+
+  @Override
+  public boolean isNormalized() { return getHelper().isNormalized(); }
+
+  @Override
+  public void setOriginalMetadataPopulated(boolean populate) {
+    getHelper().setOriginalMetadataPopulated(populate);
+  }
+
+  @Override
+  public boolean isOriginalMetadataPopulated() {
+    return getHelper().isOriginalMetadataPopulated();
+  }
+
+  @Override
+  public void setMetadataFiltered(boolean filter) {
+    getHelper().setMetadataFiltered(filter);
+  }
+
+  @Override
+  public boolean isMetadataFiltered() { return getHelper().isMetadataFiltered(); }
+
+  @Override
+  public void setMetadataStore(MetadataStore store) {
+    getHelper().setMetadataStore(store);
+  }
+
+  @Override
+  public MetadataStore getMetadataStore() {
+    return getHelper().getMetadataStore();
+  }
+
+  @Override
+  public boolean hasFlattenedResolutions() {
+    return getHelper().hasFlattenedResolutions();
+  }
+
+  @Override
+  public void setFlattenedResolutions(boolean flattened) {
+    getHelper().setFlattenedResolutions(flattened);
   }
 
   // -- IFormatReader methods --

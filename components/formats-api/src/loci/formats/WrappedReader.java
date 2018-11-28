@@ -32,20 +32,35 @@
 
 package loci.formats;
 
-import loci.formats.in.MetadataLevel;
-import loci.formats.in.MetadataOptions;
-import loci.formats.meta.MetadataStore;
-
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Helper class for readers which wrap other readers.
  *
- * getHelper() must return a valid object once the constructor has completed unless the reader is
- * closed. returning null will cause strange errors.
+ * Some methods can only be called before initFile/setId, others can only be called after.
+ * This class assumes the helper object is only available after initFile() has been called.
+ *
+ * Instead the inherited FormatReader and IMetadataConfigurable methods are kept since the properties
+ * they set are inherited. These properties can be set on the helper class in initFile() by calling
+ * callDeferredSetters().
+ *
+ * The following setters and corresponding getters are not passed to the helper.
+ * If you initialise the helper in the constructor instead of at runtime during initFile()
+ * you may wish to override them.
+ *
+ * - getSupportedMetadataLevels
+ * - setMetadataOptions, getMetadataOptions
+ * - setGroupFiles, isGroupFiles
+ * - setNormalized, isNormalized
+ * - setOriginalMetadataPopulated, isOriginalMetadataPopulated
+ * - setMetadataFiltered, isMetadataFiltered
+ * - setMetadataStore, getMetadataStore
+ * - setFlattenedResolutions, hasFlattenedResolutions
+ *
+ * Developer note: the list of methods are those in IMetadataConfigurable plus FormatReader methods
+ * which contain `FormatTools.assertId(currentId, false, 1)`
  */
 public abstract class WrappedReader extends FormatReader {
 
@@ -63,20 +78,11 @@ public abstract class WrappedReader extends FormatReader {
 
   // -- IMetadataConfigurable methods --
 
-  @Override
-  public Set<MetadataLevel> getSupportedMetadataLevels() {
-    return getHelper().getSupportedMetadataLevels();
-  }
+  // Not overridden: getSupportedMetadataLevels()
 
-  @Override
-  public void setMetadataOptions(MetadataOptions options) {
-    getHelper().setMetadataOptions(options);
-  }
+  // Not overridden: setMetadataOptions(MetadataOptions options)
 
-  @Override
-  public MetadataOptions getMetadataOptions() {
-    return getHelper().getMetadataOptions();
-  }
+  // Not overridden: getMetadataOptions()
 
   // -- IFormatReader methods --
 
@@ -276,38 +282,22 @@ public abstract class WrappedReader extends FormatReader {
     return getHelper().getSeries();
   }
 
-  @Override
-  public void setGroupFiles(boolean group) {
-    getHelper().setGroupFiles(group);
-  }
+  // Not overridden: setGroupFiles()
 
-  @Override
-  public boolean isGroupFiles() {
-    return getHelper().isGroupFiles();
-  }
+  // Not overridden: isGroupFiles()
 
   @Override
   public boolean isMetadataComplete() {
     return getHelper().isMetadataComplete();
   }
 
-  @Override
-  public void setNormalized(boolean normalize) {
-    getHelper().setNormalized(normalize);
-  }
+  // Not overridden: setNormalized(boolean normalize)
 
-  @Override
-  public boolean isNormalized() { return getHelper().isNormalized(); }
+  // Not overridden: isNormalized()
 
-  @Override
-  public void setOriginalMetadataPopulated(boolean populate) {
-    getHelper().setOriginalMetadataPopulated(populate);
-  }
+  // Not overridden: setOriginalMetadataPopulated(boolean populate)
 
-  @Override
-  public boolean isOriginalMetadataPopulated() {
-    return getHelper().isOriginalMetadataPopulated();
-  }
+  // Not overridden: isOriginalMetadataPopulated()
 
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
@@ -354,23 +344,13 @@ public abstract class WrappedReader extends FormatReader {
     return getHelper().getCoreMetadataList();
   }
 
-  @Override
-  public void setMetadataFiltered(boolean filter) {
-    getHelper().setMetadataFiltered(filter);
-  }
+  // Not overridden: setMetadataFiltered(boolean filter)
 
-  @Override
-  public boolean isMetadataFiltered() { return getHelper().isMetadataFiltered(); }
+  // Not overridden: isMetadataFiltered()
 
-  @Override
-  public void setMetadataStore(MetadataStore store) {
-    getHelper().setMetadataStore(store);
-  }
+  // Not overridden: setMetadataStore(MetadataStore store)
 
-  @Override
-  public MetadataStore getMetadataStore() {
-    return getHelper().getMetadataStore();
-  }
+  // Not overridden: getMetadataStore()
 
   @Override
   public Object getMetadataStoreRoot() {
@@ -454,15 +434,9 @@ public abstract class WrappedReader extends FormatReader {
     return getHelper().getResolution();
   }
 
-  @Override
-  public boolean hasFlattenedResolutions() {
-    return getHelper().hasFlattenedResolutions();
-  }
+  // Not overridden: hasFlattenedResolutions()
 
-  @Override
-  public void setFlattenedResolutions(boolean flattened) {
-    getHelper().setFlattenedResolutions(flattened);
-  }
+  // Not overridden: setFlattenedResolutions(boolean flattened)
 
   // -- IFormatHandler API methods --
 
@@ -477,5 +451,23 @@ public abstract class WrappedReader extends FormatReader {
     if (helper != null) {
       helper.close();
     }
+  }
+
+  /**
+   * A helper may not exist before initFile() is called. This mean setters that would otherwise be
+   * called on the helper are instead called on this wrapper, and can be passed to the helper by
+   * calling this method
+   * @param helper The wrapped helper
+   */
+  protected void callDeferredSetters(ReaderWrapper helper) {
+    // FormatHandler vars
+    helper.setMetadataOptions(metadataOptions);
+    // FormatReader vars
+    helper.setGroupFiles(group);
+    helper.setNormalized(normalizeData);
+    helper.setOriginalMetadataPopulated(saveOriginalMetadata);
+    helper.setMetadataFiltered(filterMetadata);
+    helper.setMetadataStore(metadataStore);
+    helper.setFlattenedResolutions(flattenedResolutions);
   }
 }
