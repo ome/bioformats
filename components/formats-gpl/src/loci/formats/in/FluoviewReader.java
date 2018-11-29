@@ -212,77 +212,75 @@ public class FluoviewReader extends BaseTiffReader {
       return;
     }
     byte[] mmheader = shortArrayToBytes(s);
-
-    RandomAccessInputStream ras = new RandomAccessInputStream(mmheader);
-    ras.order(isLittleEndian());
-
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      put("Header Flag", ras.readShort());
-      put("Image Type", ras.read());
-
-      String name = ras.readString(257);
-      name = name.substring(0, name.indexOf("\0"));
-      put("Image name", name);
-
-      ras.skipBytes(4); // skip pointer to data field
-
-      put("Number of colors", ras.readInt());
-      ras.skipBytes(4); // skip pointer to palette field
-      ras.skipBytes(4); // skip pointer to other palette field
-
-      put("Comment size", ras.readInt());
-      ras.skipBytes(4); // skip pointer to comment field
-    }
-    else ras.skipBytes(284);
-
     // read dimension information
     String[] names = new String[10];
     int[] sizes = new int[10];
     double[] resolutions = new double[10];
-    for (int i=0; i<10; i++) {
-      names[i] = ras.readString(16);
-      sizes[i] = ras.readInt();
-      double origin = ras.readDouble();
-      resolutions[i] = ras.readDouble();
+    try (RandomAccessInputStream ras = new RandomAccessInputStream(mmheader)) {
+      ras.order(isLittleEndian());
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+        put("Header Flag", ras.readShort());
+        put("Image Type", ras.read());
 
-      put("Dimension " + (i + 1) + " Name", names[i]);
-      put("Dimension " + (i + 1) + " Size", sizes[i]);
-      put("Dimension " + (i + 1) + " Origin", origin);
-      put("Dimension " + (i + 1) + " Resolution", resolutions[i]);
-      put("Dimension " + (i + 1) + " Units", ras.readString(64));
+        String name = ras.readString(257);
+        name = name.substring(0, name.indexOf("\0"));
+        put("Image name", name);
+
+        ras.skipBytes(4); // skip pointer to data field
+
+        put("Number of colors", ras.readInt());
+        ras.skipBytes(4); // skip pointer to palette field
+        ras.skipBytes(4); // skip pointer to other palette field
+
+        put("Comment size", ras.readInt());
+        ras.skipBytes(4); // skip pointer to comment field
+      }
+      else ras.skipBytes(284);
+
+      for (int i=0; i<10; i++) {
+        names[i] = ras.readString(16);
+        sizes[i] = ras.readInt();
+        double origin = ras.readDouble();
+        resolutions[i] = ras.readDouble();
+
+        put("Dimension " + (i + 1) + " Name", names[i]);
+        put("Dimension " + (i + 1) + " Size", sizes[i]);
+        put("Dimension " + (i + 1) + " Origin", origin);
+        put("Dimension " + (i + 1) + " Resolution", resolutions[i]);
+        put("Dimension " + (i + 1) + " Units", ras.readString(64));
+      }
+
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+        ras.skipBytes(4); // skip pointer to spatial position data
+
+        put("Map type", ras.readShort());
+        put("Map min", ras.readDouble());
+        put("Map max", ras.readDouble());
+        put("Min value", ras.readDouble());
+        put("Max value", ras.readDouble());
+
+        ras.skipBytes(4); // skip pointer to map data
+
+        put("Gamma", ras.readDouble());
+        put("Offset", ras.readDouble());
+
+        // read gray channel data
+        put("Gray Channel Name", ras.readString(16));
+        put("Gray Channel Size", ras.readInt());
+        put("Gray Channel Origin", ras.readDouble());
+        put("Gray Channel Resolution", ras.readDouble());
+        put("Gray Channel Units", ras.readString(64));
+
+        ras.skipBytes(4); // skip pointer to thumbnail data
+
+        put("Voice field", ras.readInt());
+        ras.skipBytes(4); // skip pointer to voice field
+
+        // now we need to read the MMSTAMP data to determine dimension order
+
+        readStamps();
+      }
     }
-
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      ras.skipBytes(4); // skip pointer to spatial position data
-
-      put("Map type", ras.readShort());
-      put("Map min", ras.readDouble());
-      put("Map max", ras.readDouble());
-      put("Min value", ras.readDouble());
-      put("Max value", ras.readDouble());
-
-      ras.skipBytes(4); // skip pointer to map data
-
-      put("Gamma", ras.readDouble());
-      put("Offset", ras.readDouble());
-
-      // read gray channel data
-      put("Gray Channel Name", ras.readString(16));
-      put("Gray Channel Size", ras.readInt());
-      put("Gray Channel Origin", ras.readDouble());
-      put("Gray Channel Resolution", ras.readDouble());
-      put("Gray Channel Units", ras.readString(64));
-
-      ras.skipBytes(4); // skip pointer to thumbnail data
-
-      put("Voice field", ras.readInt());
-      ras.skipBytes(4); // skip pointer to voice field
-
-      // now we need to read the MMSTAMP data to determine dimension order
-
-      readStamps();
-    }
-    ras.close();
 
     // calculate the dimension order and axis sizes
 
@@ -708,14 +706,14 @@ public class FluoviewReader extends BaseTiffReader {
     stamps = new double[8][ifds.size()];
     for (int i=0; i<ifds.size(); i++) {
       byte[] stamp = shortArrayToBytes(ifds.get(i).getIFDShortArray(MMSTAMP));
-      RandomAccessInputStream ras = new RandomAccessInputStream(stamp);
-      ras.order(isLittleEndian());
+      try (RandomAccessInputStream ras = new RandomAccessInputStream(stamp)) {
+        ras.order(isLittleEndian());
 
-      // each stamp is 8 doubles, representing the position on dimensions 3-10
-      for (int j=0; j<8; j++) {
-        stamps[j][i] = ras.readDouble() / 1000;
+        // each stamp is 8 doubles, representing the position on dimensions 3-10
+        for (int j=0; j<8; j++) {
+          stamps[j][i] = ras.readDouble() / 1000;
+        }
       }
-      ras.close();
     }
   }
 
