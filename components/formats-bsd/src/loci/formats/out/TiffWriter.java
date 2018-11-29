@@ -224,15 +224,14 @@ public class TiffWriter extends FormatWriter {
     int type = FormatTools.pixelTypeFromString(
         retrieve.getPixelsType(series).toString());
     int index = no;
-    int imageWidth = getSizeX();
-    int imageHeight = getSizeY();
     int currentTileSizeX = getTileSizeX();
     int currentTileSizeY = getTileSizeY();
-    if (currentTileSizeX > 0 || currentTileSizeY > 0) {
+    boolean usingTiling = currentTileSizeX > 0 && currentTileSizeY > 0;
+    if (usingTiling) {
       ifd.put(new Integer(IFD.TILE_WIDTH), new Long(currentTileSizeX));
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(currentTileSizeY));
     }
-    if (currentTileSizeX < w || currentTileSizeY < h) {
+    if (usingTiling && (currentTileSizeX < w || currentTileSizeY < h)) {
       int numTilesX = (w + (x % currentTileSizeX) + currentTileSizeX - 1) / currentTileSizeX;
       int numTilesY = (h + (y % currentTileSizeY) + currentTileSizeY - 1) / currentTileSizeY;
       for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
