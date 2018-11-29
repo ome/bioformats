@@ -87,11 +87,10 @@ public class VolocityClippingReader extends FormatReader {
 
     byte[] b = new LZOCodec().decompress(in, null);
 
-    RandomAccessInputStream s = new RandomAccessInputStream(b);
-    s.seek(0);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
-
+    try (RandomAccessInputStream s = new RandomAccessInputStream(b)) {
+      s.seek(0);
+      readPlane(s, x, y, w, h, buf); 
+    }
     return buf;
   }
 
