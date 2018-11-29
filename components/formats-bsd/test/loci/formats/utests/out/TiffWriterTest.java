@@ -220,7 +220,7 @@ public class TiffWriterTest {
   @Test
   public void testGetTileSizeX() throws IOException, FormatException {
     writer.setMetadataRetrieve(metadata);
-    assertEquals(WriterUtilities.SIZE_X, writer.getTileSizeX());
+    assertEquals(WriterUtilities.SIZE_X, 0);
     writer.close();
     writer = new TiffWriter();
     metadata.setPixelsSizeX(new PositiveInteger(100), 0);
@@ -255,7 +255,7 @@ public class TiffWriterTest {
   @Test
   public void testGetTileSizeY() throws IOException, FormatException {
     writer.setMetadataRetrieve(metadata);
-    assertEquals(WriterUtilities.SIZE_Y, writer.getTileSizeY());
+    assertEquals(WriterUtilities.SIZE_Y, 0);
     writer.close();
     writer = new TiffWriter();
     metadata.setPixelsSizeY(new PositiveInteger(100), 0);
@@ -305,21 +305,17 @@ public class TiffWriterTest {
       writer.setTileSizeX(tile_size);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Size X must not be null")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     thrown = false;
     try {
       writer.getTileSizeX();
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Size X must not be null")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     thrown = false;
     try {
       writer.getTileSizeY();
