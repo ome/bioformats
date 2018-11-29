@@ -249,166 +249,165 @@ public class TillVisionReader extends FormatReader {
       LOGGER.debug("Reading {}", name);
 
       if (name.equals("Root Entry" + File.separator + "Contents")) {
-        RandomAccessInputStream s = poi.getDocumentStream(name);
-        s.order(true);
+        try (RandomAccessInputStream s = poi.getDocumentStream(name)) {
+          s.order(true);
 
-        boolean specialCImage = false;
-        int nFound = 0;
-        Long[] cimages = null;
+          boolean specialCImage = false;
+          int nFound = 0;
+          Long[] cimages = null;
 
-        Location dir = new Location(id).getAbsoluteFile().getParentFile();
-        String[] list = dir.list(true);
-        boolean hasPST = false;
-        for (String f : list) {
-          if (checkSuffix(f, "pst")) {
-            hasPST = true;
+          Location dir = new Location(id).getAbsoluteFile().getParentFile();
+          String[] list = dir.list(true);
+          boolean hasPST = false;
+          for (String f : list) {
+            if (checkSuffix(f, "pst")) {
+              hasPST = true;
+              break;
+            }
+          }
+
+          if (!hasPST) {
+            cimages = findImages(s);
+            nFound = cimages.length;
+
+            if (nFound == 0) {
+              s.seek(13);
+              int len = s.readShort();
+              String type = s.readString(len);
+              if (type.equals("CImage")) {
+                nFound = 1;
+
+                cimages = new Long[] {s.getFilePointer() + 6};
+                specialCImage = true;
+              }
+            }
+
+            embeddedImages = nFound > 0;
+          }
+          LOGGER.debug("Images are {}embedded", embeddedImages ? "" : "not ");
+
+          if (embeddedImages) {
+            core.clear();
+            embeddedOffset = new long[nFound];
+
+            for (int i=0; i<nFound; i++) {
+              CoreMetadata ms = new CoreMetadata();
+              core.add(ms);
+
+              s.seek(cimages[i]);
+
+              int len = s.read();
+              String imageName = s.readString(len);
+              imageNames.add(imageName);
+
+              if (specialCImage) {
+                s.seek(1280);
+              }
+              else {
+                while (true) {
+                  if (s.readString(2).equals("sB")) {
+                    break;
+                  }
+                  else s.seek(s.getFilePointer() - 1);
+                }
+              }
+
+              s.skipBytes(20);
+
+              ms.sizeX = s.readInt();
+              ms.sizeY = s.readInt();
+              ms.sizeZ = s.readInt();
+              ms.sizeC = s.readInt();
+              ms.sizeT = s.readInt();
+
+              ms.pixelType = convertPixelType(s.readInt());
+              if (specialCImage) {
+                embeddedOffset[i] = s.getFilePointer() + 27;
+              }
+              else {
+                embeddedOffset[i] = s.getFilePointer() + 31;
+              }
+            }
+
+            if (in != null) in.close();
+            in = poi.getDocumentStream(name);
             break;
           }
-        }
 
-        if (!hasPST) {
-          cimages = findImages(s);
-          nFound = cimages.length;
+          s.seek(0);
 
-          if (nFound == 0) {
-            s.seek(13);
+          int lowerBound = 0;
+          int upperBound = 0x1000;
+
+          while (s.getFilePointer() < s.length() - 2) {
+            LOGGER.debug("  Looking for image at {}", s.getFilePointer());
+            s.order(false);
+            int nextOffset = findNextOffset(s);
+            if (nextOffset < 0 || nextOffset >= s.length()) break;
+            s.seek(nextOffset);
+            s.skipBytes(3);
             int len = s.readShort();
-            String type = s.readString(len);
-            if (type.equals("CImage")) {
-              nFound = 1;
-
-              cimages = new Long[] {s.getFilePointer() + 6};
-              specialCImage = true;
+            if (len <= 0) continue;
+            imageNames.add(s.readString(len));
+            if (s.getFilePointer() + 8 >= s.length()) break;
+            s.skipBytes(6);
+            s.order(true);
+            len = s.readShort();
+            if (nImages == 0 && len > upperBound * 2 && len < upperBound * 4) {
+              lowerBound = 512;
+              upperBound = 0x4000;
             }
-          }
+            if (len < lowerBound || len > upperBound) continue;
+            String description = s.readString(len);
+            LOGGER.debug("Description: {}", description);
 
-          embeddedImages = nFound > 0;
-        }
-        LOGGER.debug("Images are {}embedded", embeddedImages ? "" : "not ");
+            // parse key/value pairs from description
 
-        if (embeddedImages) {
-          core.clear();
-          embeddedOffset = new long[nFound];
+            String dateTime = "";
 
-          for (int i=0; i<nFound; i++) {
-            CoreMetadata ms = new CoreMetadata();
-            core.add(ms);
+            String[] lines = description.split("[\r\n]");
+            for (String line : lines) {
+              line = line.trim();
+              int colon = line.indexOf(':');
+              if (colon != -1 && !line.startsWith(";")) {
+                String key = line.substring(0, colon).trim();
+                String value = line.substring(colon + 1).trim();
+                String metaKey = "Series " + nImages + " " + key;
+                addMeta(metaKey, value, tmpSeriesMetadata);
 
-            s.seek(cimages[i]);
-
-            int len = s.read();
-            String imageName = s.readString(len);
-            imageNames.add(imageName);
-
-            if (specialCImage) {
-              s.seek(1280);
-            }
-            else {
-              while (true) {
-                if (s.readString(2).equals("sB")) {
-                  break;
+                if (key.equals("Start time of experiment")) {
+                  // HH:mm:ss aa OR HH:mm:ss.sss aa
+                  dateTime += " " + value;
                 }
-                else s.seek(s.getFilePointer() - 1);
+                else if (key.equals("Date")) {
+                  // mm/dd/yy ?
+                  dateTime = value + " " + dateTime;
+                }
+                else if (key.equals("Exposure time [ms]")) {
+                  double exp = Double.parseDouble(value) / 1000;
+                  exposureTimes.put(nImages, exp);
+                }
+                else if (key.equals("Image type")) {
+                  types.add(value);
+                }
               }
             }
 
-            s.skipBytes(20);
-
-            ms.sizeX = s.readInt();
-            ms.sizeY = s.readInt();
-            ms.sizeZ = s.readInt();
-            ms.sizeC = s.readInt();
-            ms.sizeT = s.readInt();
-
-            ms.pixelType = convertPixelType(s.readInt());
-            if (specialCImage) {
-              embeddedOffset[i] = s.getFilePointer() + 27;
+            dateTime = dateTime.trim();
+            if (!dateTime.equals("")) {
+              boolean success = false;
+              for (String format : DATE_FORMATS) {
+                try {
+                  dateTime = DateTools.formatDate(dateTime, format, ".");
+                  success = true;
+                }
+                catch (NullPointerException e) { }
+              }
+              dates.add(success ? dateTime : "");
             }
-            else {
-              embeddedOffset[i] = s.getFilePointer() + 31;
-            }
+            nImages++;
           }
-
-          if (in != null) in.close();
-          in = poi.getDocumentStream(name);
-          s.close();
-          break;
         }
-
-        s.seek(0);
-
-        int lowerBound = 0;
-        int upperBound = 0x1000;
-
-        while (s.getFilePointer() < s.length() - 2) {
-          LOGGER.debug("  Looking for image at {}", s.getFilePointer());
-          s.order(false);
-          int nextOffset = findNextOffset(s);
-          if (nextOffset < 0 || nextOffset >= s.length()) break;
-          s.seek(nextOffset);
-          s.skipBytes(3);
-          int len = s.readShort();
-          if (len <= 0) continue;
-          imageNames.add(s.readString(len));
-          if (s.getFilePointer() + 8 >= s.length()) break;
-          s.skipBytes(6);
-          s.order(true);
-          len = s.readShort();
-          if (nImages == 0 && len > upperBound * 2 && len < upperBound * 4) {
-            lowerBound = 512;
-            upperBound = 0x4000;
-          }
-          if (len < lowerBound || len > upperBound) continue;
-          String description = s.readString(len);
-          LOGGER.debug("Description: {}", description);
-
-          // parse key/value pairs from description
-
-          String dateTime = "";
-
-          String[] lines = description.split("[\r\n]");
-          for (String line : lines) {
-            line = line.trim();
-            int colon = line.indexOf(':');
-            if (colon != -1 && !line.startsWith(";")) {
-              String key = line.substring(0, colon).trim();
-              String value = line.substring(colon + 1).trim();
-              String metaKey = "Series " + nImages + " " + key;
-              addMeta(metaKey, value, tmpSeriesMetadata);
-
-              if (key.equals("Start time of experiment")) {
-                // HH:mm:ss aa OR HH:mm:ss.sss aa
-                dateTime += " " + value;
-              }
-              else if (key.equals("Date")) {
-                // mm/dd/yy ?
-                dateTime = value + " " + dateTime;
-              }
-              else if (key.equals("Exposure time [ms]")) {
-                double exp = Double.parseDouble(value) / 1000;
-                exposureTimes.put(nImages, exp);
-              }
-              else if (key.equals("Image type")) {
-                types.add(value);
-              }
-            }
-          }
-
-          dateTime = dateTime.trim();
-          if (!dateTime.equals("")) {
-            boolean success = false;
-            for (String format : DATE_FORMATS) {
-              try {
-                dateTime = DateTools.formatDate(dateTime, format, ".");
-                success = true;
-              }
-              catch (NullPointerException e) { }
-            }
-            dates.add(success ? dateTime : "");
-          }
-          nImages++;
-        }
-        s.close();
       }
     }
 
