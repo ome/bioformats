@@ -118,10 +118,10 @@ public class PGMReader extends FormatReader {
       }
 
       out.close();
-      RandomAccessInputStream s = new RandomAccessInputStream(handle);
-      s.seek(0);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
+      try (RandomAccessInputStream s = new RandomAccessInputStream(handle)) {
+        s.seek(0);
+        readPlane(s, x, y, w, h, buf);
+      }
     }
 
     return buf;
