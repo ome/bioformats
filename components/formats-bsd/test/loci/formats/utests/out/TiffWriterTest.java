@@ -336,21 +336,17 @@ public class TiffWriterTest {
       writer.setTileSizeX(0);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Tile size must be > 0")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     thrown = false;
     try {
       writer.setTileSizeY(0);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Tile size must be > 0")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     thrown = false;
     try {
       writer.setTileSizeX(WriterUtilities.SIZE_X);
