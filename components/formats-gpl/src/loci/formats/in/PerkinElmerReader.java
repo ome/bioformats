@@ -207,12 +207,12 @@ public class PerkinElmerReader extends FormatReader {
       return tiff.openBytes(index, buf, x, y, w, h);
     }
 
-    RandomAccessInputStream ras = new RandomAccessInputStream(file);
-    if (6 + index * FormatTools.getPlaneSize(this) < ras.length()) {
-      ras.seek(6 + index * FormatTools.getPlaneSize(this));
-      readPlane(ras, x, y, w, h, buf);
+    try (RandomAccessInputStream ras = new RandomAccessInputStream(file)) {
+      if (6 + index * FormatTools.getPlaneSize(this) < ras.length()) {
+        ras.seek(6 + index * FormatTools.getPlaneSize(this));
+        readPlane(ras, x, y, w, h, buf);
+      }
     }
-    ras.close();
     return buf;
   }
 
@@ -558,9 +558,10 @@ public class PerkinElmerReader extends FormatReader {
       ms0.pixelType = tiff.getPixelType();
     }
     else {
-      RandomAccessInputStream tmp = new RandomAccessInputStream(getFile(0));
-      int bpp = (int) (tmp.length() - 6) / (getSizeX() * getSizeY());
-      tmp.close();
+      int bpp = 0;
+      try (RandomAccessInputStream tmp = new RandomAccessInputStream(getFile(0))) {
+        bpp = (int) (tmp.length() - 6) / (getSizeX() * getSizeY());
+      }
       if (bpp % 3 == 0) bpp /= 3;
       ms0.pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
     }
