@@ -177,10 +177,9 @@ public class FV1000Reader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream plane = getPlane(getSeries(), 0);
     if (plane == null) return super.getOptimalTileWidth();
-    try {
+    try (RandomAccessInputStream p = plane) {
       TiffParser tp = new TiffParser(plane);
       IFD ifd = tp.getFirstIFD();
-      plane.close();
       return (int) ifd.getTileWidth();
     }
     catch (FormatException e) {
@@ -198,10 +197,9 @@ public class FV1000Reader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream plane = getPlane(getSeries(), 0);
     if (plane == null) return super.getOptimalTileHeight();
-    try {
+    try (RandomAccessInputStream p = plane) {
       TiffParser tp = new TiffParser(plane);
       IFD ifd = tp.getFirstIFD();
-      plane.close();
       return (int) ifd.getTileLength();
     }
     catch (FormatException e) {
@@ -282,21 +280,19 @@ public class FV1000Reader extends FormatReader {
     RandomAccessInputStream plane = getPlane(getSeries(), no);
 
     if (plane == null) return buf;
-    TiffParser tp = new TiffParser(plane);
-    int index = getSeries() == 0 ? file : tiffs.size() + file;
-    IFDList ifdList = ifds.get(index);
-    if (image >= ifdList.size()) return buf;
+    try (RandomAccessInputStream p = plane) {
+      TiffParser tp = new TiffParser(plane);
+      int index = getSeries() == 0 ? file : tiffs.size() + file;
+      IFDList ifdList = ifds.get(index);
+      if (image >= ifdList.size()) return buf;
 
-    IFD ifd = ifdList.get(image);
-    if (getSizeY() != ifd.getImageLength()) {
-      tp.getSamples(ifd, buf, x,
-        getIndex(coords[0], 0, coords[2]), w, 1);
+      IFD ifd = ifdList.get(image);
+      if (getSizeY() != ifd.getImageLength()) {
+        tp.getSamples(ifd, buf, x, getIndex(coords[0], 0, coords[2]), w, 1);
+      } else {
+        tp.getSamples(ifd, buf, x, y, w, h);
+      }
     }
-    else tp.getSamples(ifd, buf, x, y, w, h);
-
-    plane.close();
-    plane = null;
-    tp = null;
     return buf;
   }
 
@@ -599,11 +595,10 @@ public class FV1000Reader extends FormatReader {
         IFDList ifds = null;
         CoreMetadata ms1 = core.get(1);
         for (String previewName : previewNames) {
-          RandomAccessInputStream preview = getFile(previewName);
-          TiffParser tp = new TiffParser(preview);
-          ifds = tp.getMainIFDs();
-          preview.close();
-          tp = null;
+          try (RandomAccessInputStream preview = getFile(previewName)) {
+            TiffParser tp = new TiffParser(preview);
+            ifds = tp.getMainIFDs();
+          }
           ms1.imageCount += ifds.size();
         }
         ms1.sizeX = (int) ifds.get(0).getImageWidth();
