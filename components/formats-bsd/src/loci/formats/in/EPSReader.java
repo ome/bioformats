@@ -231,6 +231,8 @@ public class EPSReader extends FormatReader {
       in.seek(offset);
       in.read(b);
 
+      //close the first stream
+      in.close();
       in = new RandomAccessInputStream(b);
       TiffParser tp = new TiffParser(in);
       ifds = tp.getMainIFDs();
