@@ -640,11 +640,11 @@ public class CellSensReader extends FormatReader {
     parser = new TiffParser(id);
     ifds = parser.getMainIFDs();
 
-    RandomAccessInputStream vsi = new RandomAccessInputStream(id);
-    vsi.order(parser.getStream().isLittleEndian());
-    vsi.seek(8);
-    readTags(vsi, false, "");
-    vsi.close();
+    try (RandomAccessInputStream vsi = new RandomAccessInputStream(id)) {
+      vsi.order(parser.getStream().isLittleEndian());
+      vsi.seek(8);
+      readTags(vsi, false, "");
+    }
 
     ArrayList<String> files = new ArrayList<String>();
     Location file = new Location(id).getAbsoluteFile();
@@ -699,7 +699,10 @@ public class CellSensReader extends FormatReader {
 
       if (s < files.size() - 1) {
         setCoreIndex(index);
-        parseETSFile(files.get(s), s);
+        String ff = files.get(s);
+        try (RandomAccessInputStream stream = new RandomAccessInputStream(ff)) {
+            parseETSFile(stream, ff, s);
+        }
 
         ms.littleEndian = compressionType.get(index) == RAW;
         ms.interleaved = ms.rgb;
@@ -979,75 +982,73 @@ public class CellSensReader extends FormatReader {
     }
 
     Long offset = tileOffsets.get(getCoreIndex())[index];
-    RandomAccessInputStream ets =
-      new RandomAccessInputStream(fileMap.get(getCoreIndex()));
-    ets.seek(offset);
-
-    CodecOptions options = new CodecOptions();
-    options.interleaved = isInterleaved();
-    options.littleEndian = isLittleEndian();
-    int tileSize = getTileSize();
-    if (tileSize == 0) {
-      tileSize = tileX.get(getCoreIndex()) * tileY.get(getCoreIndex()) * 10;
-    }
-    options.maxBytes = (int) (offset + tileSize);
-
     byte[] buf = null;
-    long end = index < tileOffsets.get(getCoreIndex()).length - 1 ?
-      tileOffsets.get(getCoreIndex())[index + 1] : ets.length();
-
     IFormatReader reader = null;
-    String file = null;
+    try (RandomAccessInputStream ets =
+      new RandomAccessInputStream(fileMap.get(getCoreIndex()))) {
+      ets.seek(offset);
+      CodecOptions options = new CodecOptions();
+      options.interleaved = isInterleaved();
+      options.littleEndian = isLittleEndian();
+      int tileSize = getTileSize();
+      if (tileSize == 0) {
+        tileSize = tileX.get(getCoreIndex()) * tileY.get(getCoreIndex()) * 10;
+      }
+      options.maxBytes = (int) (offset + tileSize);
 
-    switch (compressionType.get(getCoreIndex())) {
-      case RAW:
-        buf = new byte[tileSize];
-        ets.read(buf);
-        break;
-      case JPEG:
-        Codec codec = new JPEGCodec();
-        buf = codec.decompress(ets, options);
-        break;
-      case JPEG_2000:
-        codec = new JPEG2000Codec();
-        buf = codec.decompress(ets, options);
-        break;
-      case JPEG_LOSSLESS:
-        codec = new LosslessJPEGCodec();
-        buf = codec.decompress(ets, options);
-        break;
-      case PNG:
-        file = "tile.png";
-        reader = new APNGReader();
-      case BMP:
-        if (reader == null) {
-          file = "tile.bmp";
-          reader = new BMPReader();
-        }
+      
+      long end = index < tileOffsets.get(getCoreIndex()).length - 1 ?
+        tileOffsets.get(getCoreIndex())[index + 1] : ets.length();
 
-        byte[] b = new byte[(int) (end - offset)];
-        ets.read(b);
-        Location.mapFile(file, new ByteArrayHandle(b));
-        reader.setId(file);
-        buf = reader.openBytes(0);
-        Location.mapFile(file, null);
-        break;
+      String file = null;
+
+      switch (compressionType.get(getCoreIndex())) {
+        case RAW:
+          buf = new byte[tileSize];
+          ets.read(buf);
+          break;
+        case JPEG:
+          Codec codec = new JPEGCodec();
+          buf = codec.decompress(ets, options);
+          break;
+        case JPEG_2000:
+          codec = new JPEG2000Codec();
+          buf = codec.decompress(ets, options);
+          break;
+        case JPEG_LOSSLESS:
+          codec = new LosslessJPEGCodec();
+          buf = codec.decompress(ets, options);
+          break;
+        case PNG:
+          file = "tile.png";
+          reader = new APNGReader();
+        case BMP:
+          if (reader == null) {
+            file = "tile.bmp";
+            reader = new BMPReader();
+          }
+
+          byte[] b = new byte[(int) (end - offset)];
+          ets.read(b);
+          Location.mapFile(file, new ByteArrayHandle(b));
+          reader.setId(file);
+          buf = reader.openBytes(0);
+          Location.mapFile(file, null);
+          break;
+      }
+    } finally {
+      if (reader != null) {
+        reader.close();
+      }
     }
-
-    if (reader != null) {
-      reader.close();
-    }
-
-    ets.close();
     return buf;
   }
 
-  private void parseETSFile(String file, int s)
+  private void parseETSFile(RandomAccessInputStream etsFile, String file, int s)
     throws FormatException, IOException
   {
     fileMap.put(core.size() - 1, file);
 
-    RandomAccessInputStream etsFile = new RandomAccessInputStream(file);
     etsFile.order(true);
 
     CoreMetadata ms = core.get(getCoreIndex());
@@ -1335,7 +1336,6 @@ public class CellSensReader extends FormatReader {
 
       ms.resolutionCount = finalResolution;
     }
-    etsFile.close();
   }
 
   private int convertPixelType(int pixelType) throws FormatException {
