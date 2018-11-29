@@ -307,11 +307,11 @@ public class QTWriter extends FormatWriter {
     else {
       out.seek(BYTE_COUNT_OFFSET);
 
-      RandomAccessInputStream in = new RandomAccessInputStream(currentId);
-      in.seek(BYTE_COUNT_OFFSET);
-      numBytes = in.readInt() - 8;
-      numWritten = numBytes / (planeSize + pad * height);
-      in.close();
+      try (RandomAccessInputStream in = new RandomAccessInputStream(currentId)) {
+        in.seek(BYTE_COUNT_OFFSET);
+        numBytes = in.readInt() - 8;
+        numWritten = numBytes / (planeSize + pad * height);
+      }
     }
 
     for (int i=0; i<getPlaneCount(); i++) {
