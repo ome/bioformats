@@ -244,52 +244,53 @@ public class FlexReader extends FormatReader {
 
     int imageNumber = file.offsets == null ? getImageCount() * pos[0] + no : 0;
 
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(getFileHandle(file.file));
+    int nBytes = 0;
+    int bpp = 0;
+    double factor = 0;
+    try (RandomAccessInputStream s =
+      new RandomAccessInputStream(getFileHandle(file.file))) {
+        IFD ifd;
+        if (file.offsets == null) {
+          ifd = file.ifds.get(imageNumber);
+          factor = 1d;
+        }
+        else {
+          // Only the first IFD was read. Hack the IFD to adjust the offset.
+          final IFD firstIFD = firstFile.ifds.get(0);
+          ifd = new IFD(firstIFD);
+          int tag = IFD.STRIP_OFFSETS;
+          if (firstIFD.isTiled() &&
+            firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
+          {
+            tag = IFD.TILE_OFFSETS;
+          }
+          long [] offsets = ifd.getIFDLongArray(tag);
 
-    IFD ifd;
-    double factor;
-    if (file.offsets == null) {
-      ifd = file.ifds.get(imageNumber);
-      factor = 1d;
+          final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+          ifd.getBitsPerSample()[0] / 8;
+          final int index = getImageCount() * pos[0] + no;
+          long offset = (index == file.offsets.length - 1 ?
+              s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
+
+          for (int i = 0; i < offsets.length; i++) {
+            offsets[i] += offset;
+          }
+          ifd.putIFDValue(tag, offsets);
+        }
+        nBytes = ifd.getBitsPerSample()[0] / 8;
+        bpp = FormatTools.getBytesPerPixel(getPixelType());
+
+        // read pixels from the file
+        TiffParser tp = new TiffParser(s);
+        tp.fillInIFD(ifd);
+
+        // log the first offset used
+        LOGGER.trace("first offset for series={} no={}: {}", getCoreIndex(), no, ifd.getStripOffsets()[0]);
+
+        tp.getSamples(ifd, buf, x, y, w, h);
+        factor = file.factors == null ? 1d : file.factors[imageNumber];
+        LOGGER.trace("  using factor = {}", factor);
     }
-    else {
-      // Only the first IFD was read. Hack the IFD to adjust the offset.
-      final IFD firstIFD = firstFile.ifds.get(0);
-      ifd = new IFD(firstIFD);
-      int tag = IFD.STRIP_OFFSETS;
-      if (firstIFD.isTiled() &&
-        firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
-      {
-        tag = IFD.TILE_OFFSETS;
-      }
-      long [] offsets = ifd.getIFDLongArray(tag);
-
-      final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
-      ifd.getBitsPerSample()[0] / 8;
-      final int index = getImageCount() * pos[0] + no;
-      long offset = (index == file.offsets.length - 1 ?
-          s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
-
-      for (int i = 0; i < offsets.length; i++) {
-        offsets[i] += offset;
-      }
-      ifd.putIFDValue(tag, offsets);
-    }
-    int nBytes = ifd.getBitsPerSample()[0] / 8;
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-
-    // read pixels from the file
-    TiffParser tp = new TiffParser(s);
-    tp.fillInIFD(ifd);
-
-    // log the first offset used
-    LOGGER.trace("first offset for series={} no={}: {}", getCoreIndex(), no, ifd.getStripOffsets()[0]);
-
-    tp.getSamples(ifd, buf, x, y, w, h);
-    factor = file.factors == null ? 1d : file.factors[imageNumber];
-    LOGGER.trace("  using factor = {}", factor);
-    tp.getStream().close();
 
     // expand pixel values with multiplication by factor[no]
     int num = buf.length / bpp;
@@ -302,8 +303,6 @@ public class FlexReader extends FormatReader {
         DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
       }
     }
-
-    s.close();
 
     return buf;
   }
@@ -821,12 +820,9 @@ public class FlexReader extends FormatReader {
       ifd = file.ifds.get(0);
     }
     else {
-      RandomAccessInputStream ras = new RandomAccessInputStream(file.file);
-      try {
+      try (RandomAccessInputStream ras = new RandomAccessInputStream(file.file)) {
         TiffParser parser = new TiffParser(ras);
         ifd = parser.getFirstIFD();
-      } finally {
-        ras.close();
       }
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
@@ -1217,11 +1213,13 @@ public class FlexReader extends FormatReader {
     int firstIFDCount = 0;
     for (String file : fileList) {
       LOGGER.warn("parsing {}", file);
-      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
-      TiffParser parser = new TiffParser(s);
-      IFD firstIFD = parser.getFirstIFD();
-      int ifdCount = parser.getIFDOffsets().length;
-      s.close();
+      IFD firstIFD = null;
+      int ifdCount = 0;
+      try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
+        TiffParser parser = new TiffParser(s);
+        firstIFD = parser.getFirstIFD();
+        ifdCount = parser.getIFDOffsets().length;
+      }
       boolean compressed =
         firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
       if (firstCompressed == null) {
