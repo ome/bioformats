@@ -131,12 +131,10 @@ public class MicromanagerReader extends FormatReader {
       name.equals(XML) || name.endsWith(File.separator + XML) || name.endsWith("_" + METADATA))
     {
       final int blockSize = 1048576;
-      try {
-        RandomAccessInputStream stream = new RandomAccessInputStream(name);
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
         long length = stream.length();
         String data = stream.readString((int) Math.min(blockSize, length));
         data = data.toLowerCase();
-        stream.close();
         return length > 0 && (data.indexOf("micro-manager") >= 0 ||
           data.indexOf("micromanager") >= 0);
       }
@@ -150,16 +148,14 @@ public class MicromanagerReader extends FormatReader {
       // is chosen
       return false;
     }
-    try {
+    try (RandomAccessInputStream s = new RandomAccessInputStream(name)) {
       Location thisFile = new Location(name).getAbsoluteFile();
       Location parent = thisFile.getParentFile();
       Location metaFile = new Location(parent, METADATA);
       if (!metaFile.exists()) {
         metaFile = new Location(parent, getPrefixMetadataName(thisFile.getName()));
       }
-      RandomAccessInputStream s = new RandomAccessInputStream(name);
       boolean validTIFF = isThisType(s);
-      s.close();
       return validTIFF && isThisType(metaFile.getAbsolutePath(), open);
     }
     catch (NullPointerException e) { }
@@ -489,8 +485,8 @@ public class MicromanagerReader extends FormatReader {
         plane++;
         continue;
       }
-      try {
-        TiffParser parser = new TiffParser(path);
+      try (RandomAccessInputStream in = new RandomAccessInputStream(path)) {
+        TiffParser parser = new TiffParser(in);
         int nIFDs = parser.getMainIFDs().size();
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
@@ -595,7 +591,6 @@ public class MicromanagerReader extends FormatReader {
           }
         }
         plane += ifds.size();
-        parser.getStream().close();
       }
       catch (IOException e) {
         LOGGER.debug("Failed to read metadata from " + path, e);
@@ -699,21 +694,19 @@ public class MicromanagerReader extends FormatReader {
 
     Vector<Double> stamps = new Vector<Double>();
     p.voltage = new Vector<Double>();
+    byte[] b = null;
+    try (RandomAccessInputStream s = new RandomAccessInputStream(jsonData)) {
+      if (s.length() > Integer.MAX_VALUE) {
+        LOGGER.warn(jsonData + " exceeds 2GB; metadata parsing is likely to fail");
+      }
+      else if (s.length() > 100 * 1024 * 1024) {
+        LOGGER.warn(jsonData + " is larger than 100MB and may require additional memory to parse. " +
+          "A minimum of 1024MB is suggested.");
+      }
 
-    RandomAccessInputStream s = new RandomAccessInputStream(jsonData);
-
-    if (s.length() > Integer.MAX_VALUE) {
-      LOGGER.warn(jsonData + " exceeds 2GB; metadata parsing is likely to fail");
+      b = new byte[(int) s.length()];
+      s.readFully(b);
     }
-    else if (s.length() > 100 * 1024 * 1024) {
-      LOGGER.warn(jsonData + " is larger than 100MB and may require additional memory to parse. " +
-        "A minimum of 1024MB is suggested.");
-    }
-
-    byte[] b = new byte[(int) s.length()];
-    s.readFully(b);
-    s.close();
-
     int[] slice = new int[3];
     start = 0;
     while (start < b.length) {
