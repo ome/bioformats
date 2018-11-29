@@ -291,10 +291,10 @@ public class ICSWriter extends FormatWriter {
       pixelOffset = out.getFilePointer();
     }
     else if (checkSuffix(currentId, "ics")) {
-      RandomAccessInputStream in = new RandomAccessInputStream(currentId);
-      in.findString("\nend\n");
-      pixelOffset = in.getFilePointer();
-      in.close();
+      try (RandomAccessInputStream in = new RandomAccessInputStream(currentId)) {
+        in.findString("\nend\n");
+        pixelOffset = in.getFilePointer(); 
+      }
     }
 
     if (checkSuffix(currentId, "ids")) {
