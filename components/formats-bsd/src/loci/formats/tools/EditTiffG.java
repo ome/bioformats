@@ -157,14 +157,24 @@ public class EditTiffG extends JFrame implements ActionListener {
     }
   }
 
-  public void saveFile(File f) {
-    RandomAccessInputStream in = null;
-    RandomAccessOutputStream out = null;
+  public void openFile(File f, RandomAccessInputStream in) {
     try {
-      String xml = getXML();
+      String id = f.getAbsolutePath();
+      String xml = new TiffParser(in).getComment();
+      setXML(xml);
+      file = f;
+      setTitle(TITLE + " - " + id);
+    }
+    catch (IOException exc) {
+      showError(exc);
+    }
+  }
+ 
+  public void saveFile(File f) {
       String path = f.getAbsolutePath();
-      in = new RandomAccessInputStream(path);
-      out = new RandomAccessOutputStream(path);
+    try (RandomAccessInputStream in = new RandomAccessInputStream(path);
+         RandomAccessOutputStream out = new RandomAccessOutputStream(path)){
+      String xml = getXML();
       TiffSaver saver = new TiffSaver(out, path);
       saver.overwriteComment(in, xml);
     }
@@ -173,13 +183,6 @@ public class EditTiffG extends JFrame implements ActionListener {
     }
     catch (IOException exc) {
       showError(exc);
-    } finally {
-      try {
-        if (in != null) in.close();
-      } catch (Exception e) {}
-      try {
-        if (out != null) out.close();
-      } catch (Exception e) {}
     }
   }
 
@@ -193,17 +196,33 @@ public class EditTiffG extends JFrame implements ActionListener {
     }
     catch (UnsupportedEncodingException e) {
       LOGGER.warn("Failed to show error", e);
+    } finally {
+      try {
+        out.close();
+      } catch (Exception ex) {}
     }
     JOptionPane.showMessageDialog(this, "Sorry, there was an error: " + error,
       TITLE, JOptionPane.ERROR_MESSAGE);
   }
 
+  @Deprecated
   public static void openFile(String filename) {
     EditTiffG etg = new EditTiffG();
     File f = new File(filename);
     if (f.exists()) etg.openFile(f);
   }
 
+  public static RandomAccessInputStream open(String filename)
+    throws IOException {
+    EditTiffG etg = new EditTiffG();
+    File f = new File(filename);
+    if (f.exists()) {
+      RandomAccessInputStream in = new RandomAccessInputStream(filename);
+      etg.openFile(f, in);
+      return in;
+    }
+    return null;
+  }
   // -- ActionListener methods --
 
   @Override
@@ -217,7 +236,8 @@ public class EditTiffG extends JFrame implements ActionListener {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    EditTiffG.openFile(args[0]);
+    try (RandomAccessInputStream in = EditTiffG.open(args[0])) {
+    }
   }
 
 }

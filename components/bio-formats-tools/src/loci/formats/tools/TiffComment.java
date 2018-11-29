@@ -93,15 +93,16 @@ public class TiffComment {
         }
         else if (newComment.equals("-")) {
           newComment = null;
-          BufferedReader reader = new BufferedReader(
-            new InputStreamReader(System.in, Constants.ENCODING));
-          String line = reader.readLine();
-          while (line != null && line.length() > 0) {
-            if (newComment == null) newComment = line;
-            else {
-              newComment += "\n" + line;
+          try (BufferedReader reader = new BufferedReader(
+                      new InputStreamReader(System.in, Constants.ENCODING))) {
+            String line = reader.readLine();
+            while (line != null && line.length() > 0) {
+              if (newComment == null) newComment = line;
+              else {
+                newComment += "\n" + line;
+              }
+              line = reader.readLine();
             }
-            line = reader.readLine();
           }
         }
       }
@@ -110,14 +111,19 @@ public class TiffComment {
 
     // process files
     for (String file : files) {
-      if (edit) EditTiffG.openFile(file);
+      if (edit) {
+        try (RandomAccessInputStream in = EditTiffG.open(file)) {}
+      }
       else if (newComment != null) {
-          overwriteComment(file, newComment);
+        overwriteComment(file, newComment);
       }
       else {
-        String comment = new TiffParser(file).getComment();
-        System.out.println(comment == null ?
-          file + ": no TIFF comment found." : comment);
+        try (RandomAccessInputStream in = new RandomAccessInputStream(file)) {
+          TiffParser parser = new TiffParser(in);
+          String comment = parser.getComment();
+          System.out.println(comment == null ?
+                file + ": no TIFF comment found." : comment);
+        }
       }
     }
   }
@@ -130,22 +136,12 @@ public class TiffComment {
    */
   private static void overwriteComment(String file, String comment)
   {
-    RandomAccessInputStream in = null;
-    RandomAccessOutputStream out = null;
-    try {
-      in = new RandomAccessInputStream(file);
-      out = new RandomAccessOutputStream(file);
+    try (RandomAccessInputStream in = new RandomAccessInputStream(file);
+         RandomAccessOutputStream out = new RandomAccessOutputStream(file)) {
       TiffSaver saver = new TiffSaver(out, file);
       saver.overwriteComment(in, comment);
     } catch (Exception e) {
       System.out.println(e.toString());
-    } finally {
-      try {
-        if (in != null) in.close();
-      } catch (Exception e) {}
-      try {
-        if (out != null) out.close();
-      } catch (Exception e) {}
     }
   }
 }
