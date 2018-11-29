@@ -142,16 +142,10 @@ public abstract class ImageIOReader extends BIFormatReader {
   }
 
   protected void initImage() throws IOException, FormatException {
-      RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
-      try {
-        DataInputStream dis = new DataInputStream(ras);
-        try {
-          img = ImageIO.read(dis);
-        } finally {
-            dis.close();
-        }
-      } finally {
-          ras.close();
+      ;
+      try (RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
+            DataInputStream dis = new DataInputStream(ras)) {
+        img = ImageIO.read(dis);
       }
       if (img == null) throw new FormatException("Invalid image stream");
 
