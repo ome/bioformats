@@ -95,9 +95,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   @Override
   public boolean isThisType(String name, boolean open) {
     if (super.isThisType(name, open) && open) {
-      RandomAccessInputStream stream = null;
-      try {
-        stream = new RandomAccessInputStream(name);
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
         TiffParser tiffParser = new TiffParser(stream);
         if (!tiffParser.isValidHeader()) {
           return false;
@@ -118,16 +116,6 @@ public class LeicaSCNReader extends BaseTiffReader {
       }
       catch (IOException e) {
         LOGGER.debug("I/O exception during isThisType() evaluation.", e);
-      }
-      finally {
-        try {
-          if (stream != null) {
-            stream.close();
-          }
-        }
-        catch (IOException e) {
-          LOGGER.debug("I/O exception during stream closure.", e);
-        }
       }
     }
     return false;
