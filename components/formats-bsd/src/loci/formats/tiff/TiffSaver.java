@@ -424,7 +424,7 @@ public class TiffSaver {
 
     RandomAccessInputStream in = null;
     try {
-      if (!sequentialWrite) {   
+      if (!sequentialWrite) {
         if (filename != null) {
           in = new RandomAccessInputStream(filename);
         }
@@ -443,6 +443,11 @@ public class TiffSaver {
           LOGGER.debug("Reading IFD from {} in non-sequential write.",
               ifdOffsets[no]);
           ifd = parser.getIFD(ifdOffsets[no]);
+        }
+        else if (no > 0 && no - 1 < ifdOffsets.length) {
+          ifd = parser.getIFD(ifdOffsets[no - 1]);
+          long next = parser.getNextOffset(ifdOffsets[no - 1]);
+          out.seek(next);
         }
       }
       else if (isTiled) {

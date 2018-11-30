@@ -35,7 +35,10 @@ package loci.formats.utests.out;
 import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import org.junit.Assert;
+import loci.common.ByteArrayHandle;
+import loci.common.Location;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.in.TiffReader;
@@ -431,6 +434,33 @@ public class TiffWriterTest {
 
     tmp.delete();
     reader.close();
+  }
+
+  @Test(dataProvider = "nonTiling")
+  public void testSaveBytesInMemory(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels,
+    int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception
+  {
+    if (percentageOfSaveBytesTests == 0) return;
+
+    ByteArrayHandle handle = new ByteArrayHandle();
+    String id = Math.random() + "-" + System.currentTimeMillis() + ".tif";
+    Location.mapFile(id, handle);
+    Plane originalPlane = WriterUtilities.writeImage(id, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType, bigTiff);
+
+    ByteBuffer bytes = handle.getByteBuffer();
+    byte[] file = new byte[(int) handle.length()];
+    bytes.position(0);
+    bytes.get(file);
+    handle = new ByteArrayHandle(file);
+    Location.mapFile(id, handle);
+
+    TiffReader reader = new TiffReader();
+    reader.setId(id);
+
+    WriterUtilities.checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
+
+    reader.close();
+    Location.mapFile(id, null);
   }
 
 }
