@@ -98,8 +98,14 @@ public final class WriterUtilities {
 
     return metadata;
   }
-  
-  public static Plane writeImage(File file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
+
+  public static Plane writeImage(File file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels,
+      int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
+    return writeImage(file.getAbsolutePath(), tileSize, littleEndian, interleaved, rgbChannels,
+      seriesCount, sizeT, compression, pixelType, bigTiff);
+  }
+
+  public static Plane writeImage(String file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels,
       int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     TiffWriter writer = new TiffWriter();
     String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
@@ -111,7 +117,7 @@ public final class WriterUtilities {
       writer.setTileSizeX(tileSize);
       writer.setTileSizeY(tileSize);
     }
-    writer.setId(file.getAbsolutePath());
+    writer.setId(file);
 
     int bytes = FormatTools.getBytesPerPixel(pixelType);
     byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);

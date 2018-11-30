@@ -1310,10 +1310,10 @@ public class LIFReader extends FormatReader {
 
         String v = detector.getAttribute("Gain");
         Double gain =
-          v == null || v.trim().isEmpty() ? null : new Double(v.trim());
+          v == null || v.trim().isEmpty() ? null : DataTools.parseDouble(v.trim());
         v = detector.getAttribute("Offset");
         Double offset =
-          v == null || v.trim().isEmpty() ? null : new Double(v.trim());
+          v == null || v.trim().isEmpty() ? null : DataTools.parseDouble(v.trim());
 
         boolean active = "1".equals(detector.getAttribute("IsActive"));
         String c = detector.getAttribute("Channel");
@@ -1341,9 +1341,9 @@ public class LIFReader extends FormatReader {
               channels.add(dye);
             }
 
-            double cutIn = new Double(multiband.getAttribute("LeftWorld"));
-            double cutOut = new Double(multiband.getAttribute("RightWorld"));
-            if ((int) cutIn > 0) {
+            Double cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
+            Double cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
+            if (cutIn != null && cutIn.intValue() > 0) {
               if (cutIns[image] == null) {
                 cutIns[image] = new ArrayList<PositiveFloat>();
               }
@@ -1353,7 +1353,7 @@ public class LIFReader extends FormatReader {
                 cutIns[image].add(in);
               }
             }
-            if ((int) cutOut > 0) {
+            if (cutOut != null && cutOut.intValue() > 0) {
               if (cutOuts[image] == null) {
                 cutOuts[image] = new ArrayList<PositiveFloat>();
               }
@@ -1435,11 +1435,27 @@ public class LIFReader extends FormatReader {
       roi.name = roiNode.getAttribute("name");
       roi.fontName = roiNode.getAttribute("fontName");
       roi.fontSize = roiNode.getAttribute("fontSize");
-      roi.transX = parseDouble(roiNode.getAttribute("transTransX"));
-      roi.transY = parseDouble(roiNode.getAttribute("transTransY"));
-      roi.scaleX = parseDouble(roiNode.getAttribute("transScalingX"));
-      roi.scaleY = parseDouble(roiNode.getAttribute("transScalingY"));
-      roi.rotation = parseDouble(roiNode.getAttribute("transRotation"));
+
+      Double transX = DataTools.parseDouble(roiNode.getAttribute("transTransX"));
+      if (transX != null) {
+        roi.transX = transX;
+      }
+      Double transY = DataTools.parseDouble(roiNode.getAttribute("transTransY"));
+      if (transY != null) {
+        roi.transY = transY;
+      }
+      transX = DataTools.parseDouble(roiNode.getAttribute("transScalingX"));
+      if (transX != null) {
+        roi.scaleX = transX;
+      }
+      transY = DataTools.parseDouble(roiNode.getAttribute("transScalingY"));
+      if (transY != null) {
+        roi.scaleY = transY;
+      }
+      Double rotation = DataTools.parseDouble(roiNode.getAttribute("transRotation"));
+      if (rotation != null) {
+        roi.rotation = rotation;
+      }
       String linewidth = roiNode.getAttribute("linewidth");
       try {
         if (linewidth != null && !linewidth.trim().isEmpty()) {
@@ -1461,10 +1477,10 @@ public class LIFReader extends FormatReader {
         String yy = vertex.getAttribute("y");
 
         if (xx != null && !xx.trim().isEmpty()) {
-          roi.x.add(parseDouble(xx.trim()));
+          roi.x.add(DataTools.parseDouble(xx.trim()));
         }
         if (yy != null && !yy.trim().isEmpty()) {
-          roi.y.add(parseDouble(yy.trim()));
+          roi.y.add(DataTools.parseDouble(yy.trim()));
         }
       }
       imageROIs[image][r] = roi;
@@ -1516,25 +1532,46 @@ public class LIFReader extends FormatReader {
         String yy = vertex.getAttribute("Y");
 
         if (xx != null && !xx.trim().isEmpty()) {
-          roi.x.add(parseDouble(xx.trim()) / sizeX);
+          Double x = DataTools.parseDouble(xx.trim());
+          if (x != null) {
+            roi.x.add(x / sizeX);
+          }
         }
         if (yy != null && !yy.trim().isEmpty()) {
-          roi.y.add(parseDouble(yy.trim()) / sizeY);
+          Double y = DataTools.parseDouble(yy.trim());
+          if (y != null) {
+            roi.y.add(y / sizeY);
+          }
         }
       }
 
       Element transform = (Element) getNodes(roiNode, "Transformation").item(0);
 
-      roi.rotation = parseDouble(transform.getAttribute("Rotation"));
+      Double rotation = DataTools.parseDouble(transform.getAttribute("Rotation"));
+      if (rotation != null) {
+        roi.rotation = rotation;
+      }
 
       Element scaling = (Element) getNodes(transform, "Scaling").item(0);
-      roi.scaleX = parseDouble(scaling.getAttribute("XScale"));
-      roi.scaleY = parseDouble(scaling.getAttribute("YScale"));
+      Double scaleX = DataTools.parseDouble(scaling.getAttribute("XScale"));
+      Double scaleY = DataTools.parseDouble(scaling.getAttribute("YScale"));
+      if (scaleX != null) {
+        roi.scaleX = scaleX;
+      }
+      if (scaleY != null) {
+        roi.scaleY = scaleY;
+      }
 
       Element translation =
         (Element) getNodes(transform, "Translation").item(0);
-      roi.transX = parseDouble(translation.getAttribute("X")) / sizeX;
-      roi.transY = parseDouble(translation.getAttribute("Y")) / sizeY;
+      Double transX = DataTools.parseDouble(translation.getAttribute("X"));
+      Double transY = DataTools.parseDouble(translation.getAttribute("Y"));
+      if (transX != null) {
+        roi.transX = transX / sizeX;
+      }
+      if (transY != null) {
+        roi.transY = transY / sizeY;
+      }
 
       imageROIs[image][r] = roi;
     }
@@ -1585,7 +1622,7 @@ public class LIFReader extends FormatReader {
         String v = laserLine.getAttribute("LaserLine");
         Double wavelength = 0d;
         if (v != null && !v.trim().isEmpty()) {
-            wavelength = new Double(v.trim());
+            wavelength = DataTools.parseDouble(v.trim());
         }
         if (index < laserWavelength[image].size()) {
           laserWavelength[image].set(index, wavelength);
@@ -1598,9 +1635,13 @@ public class LIFReader extends FormatReader {
         }
 
         String intensity = laserLine.getAttribute("IntensityDev");
-        double realIntensity =
-          intensity == null || intensity.trim().isEmpty() ? 0d :
-          new Double(intensity.trim());
+        Double realIntensity = 0d;
+        if (intensity != null && !intensity.trim().isEmpty()) {
+          realIntensity = DataTools.parseDouble(intensity.trim());
+          if (realIntensity == null) {
+            realIntensity = 0d;
+          }
+        }
         realIntensity = 100d - realIntensity;
 
         int realIndex = baseIntensityIndex + index;
@@ -1719,7 +1760,7 @@ public class LIFReader extends FormatReader {
 
       if (attribute.equals("NumericalAperture")) {
         if (variant != null && !variant.trim().isEmpty()) {
-          lensNA[image] = new Double(variant.trim());
+          lensNA[image] = DataTools.parseDouble(variant.trim());
         }
       }
       else if (attribute.equals("OrderNumber")) {
@@ -1749,11 +1790,11 @@ public class LIFReader extends FormatReader {
             String na = token.substring(x + 1);
 
             if (na != null && !na.trim().isEmpty()) {
-              lensNA[image] = new Double(na.trim());
+              lensNA[image] = DataTools.parseDouble(na.trim());
             }
             na = token.substring(0, x);
             if (na != null && !na.trim().isEmpty()) {
-              magnification[image] = new Double(na.trim());
+              magnification[image] = DataTools.parseDouble(na.trim());
             }
           }
           else {
@@ -1784,33 +1825,29 @@ public class LIFReader extends FormatReader {
       }
       else if (attribute.equals("RefractionIndex")) {
         if (variant != null && !variant.trim().isEmpty()) {
-          refractiveIndex[image] = new Double(variant.trim());
+          refractiveIndex[image] = DataTools.parseDouble(variant.trim());
         }
       }
       else if (attribute.equals("XPos")) {
         if (variant != null && !variant.trim().isEmpty()) {
-          final Double number = Double.valueOf(variant.trim());
+          final Double number = DataTools.parseDouble(variant.trim());
           posX[image] = new Length(number, UNITS.REFERENCEFRAME);
         }
       }
       else if (attribute.equals("YPos")) {
         if (variant != null && !variant.trim().isEmpty()) {
-          final Double number = Double.valueOf(variant.trim());
+          final Double number = DataTools.parseDouble(variant.trim());
           posY[image] = new Length(number, UNITS.REFERENCEFRAME);
         }
       }
       else if (attribute.equals("ZPos")) {
         if (variant != null && !variant.trim().isEmpty()) {
-          final Double number = Double.valueOf(variant.trim());
+          final Double number = DataTools.parseDouble(variant.trim());
           posZ[image] = new Length(number, UNITS.REFERENCEFRAME);
         }
       }
       else if (objectClass.equals("CSpectrophotometerUnit")) {
-        Double v = null;
-        try {
-          v = Double.parseDouble(variant);
-        }
-        catch (NumberFormatException e) { }
+        Double v = DataTools.parseDouble(variant);
         String description = filterSetting.getAttribute("Description");
         if (description.endsWith("(left)")) {
           filterModels[image].add(object);
@@ -1863,22 +1900,22 @@ public class LIFReader extends FormatReader {
       }
       else if (id.equals("dblPinhole")) {
         if (value != null && !value.trim().isEmpty()) {
-          pinholes[image] = Double.parseDouble(value.trim()) * 1000000;
+          pinholes[image] = DataTools.parseDouble(value.trim()) * 1000000;
         }
       }
       else if (id.equals("dblZoom")) {
         if (value != null && !value.trim().isEmpty()) {
-          zooms[image] = new Double(value.trim());
+          zooms[image] = DataTools.parseDouble(value.trim());
         }
       }
       else if (id.equals("dblStepSize")) {
         if (value != null && !value.trim().isEmpty()) {
-          zSteps[image] = Double.parseDouble(value.trim()) * 1000000;
+          zSteps[image] = DataTools.parseDouble(value.trim()) * 1000000;
         }
       }
       else if (id.equals("nDelayTime_s")) {
         if (value != null && !value.trim().isEmpty()) {
-          tSteps[image] = new Double(value.trim());
+          tSteps[image] = DataTools.parseDouble(value.trim());
         }
       }
       else if (id.equals("CameraName")) {
@@ -1902,18 +1939,18 @@ public class LIFReader extends FormatReader {
 
         if (id.endsWith("ExposureTime")) {
           if (value != null && !value.trim().isEmpty()) {
-            expTimes[image][c] = new Double(value.trim());
+            expTimes[image][c] = DataTools.parseDouble(value.trim());
           }
         }
         else if (id.endsWith("Gain")) {
           if (value != null && !value.trim().isEmpty()) {
-            gains[image][c] = new Double(value.trim());
+            gains[image][c] = DataTools.parseDouble(value.trim());
           }
         }
         else if (id.endsWith("WaveLength")) {
           if (value != null && !value.trim().isEmpty()) {
-            Double exWave = new Double(value.trim());
-            if (exWave > 0) {
+            Double exWave = DataTools.parseDouble(value.trim());
+            if (exWave != null && exWave > 0) {
               exWaves[image][c] = exWave;
             }
           }
@@ -1955,7 +1992,7 @@ public class LIFReader extends FormatReader {
 
           if (posX != null) {
             try {
-              final Double number = Double.valueOf(posX);
+              final Double number = DataTools.parseDouble(posX);
               fieldPosX.add(new Length(number, UNITS.REFERENCEFRAME));
             }
             catch (NumberFormatException e) {
@@ -1965,7 +2002,7 @@ public class LIFReader extends FormatReader {
           }
           if (posY != null) {
             try {
-              final Double number = Double.valueOf(posY);
+              final Double number = DataTools.parseDouble(posY);
               fieldPosY.add(new Length(number, UNITS.REFERENCEFRAME));
             }
             catch (NumberFormatException e) {
@@ -2040,7 +2077,7 @@ public class LIFReader extends FormatReader {
       if (StringUtils.isBlank(v)) {
         physicalLen = 0d;
       } else {
-        physicalLen = new Double(v.trim());
+        physicalLen = DataTools.parseDouble(v.trim());
       }
       String unit = dimension.getAttribute("Unit");
 
@@ -2285,14 +2322,13 @@ public class LIFReader extends FormatReader {
       }
       store.setLabelText(text, roi, 0);
       if (fontSize != null) {
-        try {
-          int size = (int) Double.parseDouble(fontSize);
-          Length fontSize = FormatTools.getFontSize(size);
+        Double size = DataTools.parseDouble(fontSize);
+        if (size != null) {
+          Length fontSize = FormatTools.getFontSize(size.intValue());
           if (fontSize != null) {
             store.setLabelFontSize(fontSize, roi, 0);
           }
         }
-        catch (NumberFormatException e) { }
       }
       Length l = new Length((double) linewidth, UNITS.PIXEL);
       store.setLabelStrokeWidth(l, roi, 0);
@@ -2386,17 +2422,6 @@ public class LIFReader extends FormatReader {
 
       normalized = true;
     }
-  }
-
-  private double parseDouble(String number) {
-    if (number != null) {
-      number = number.replaceAll(",", ".");
-      try {
-        return Double.parseDouble(number);
-      }
-      catch (NumberFormatException e) { }
-    }
-    return 0;
   }
 
   private Color getChannelColor(int colorCode) {
