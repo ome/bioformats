@@ -28,11 +28,6 @@ matrix:
   exclude:
   - jdk: oraclejdk11
     env: BUILD=ant
-  - jdk: openjdk7
-    env: BUILD=ant
-
-before_install:
-  - if [[ $BUILD == 'ant' ]]; then pip install --user flake8 Sphinx; fi
 
 script:
   - ./tools/test-build $BUILD
