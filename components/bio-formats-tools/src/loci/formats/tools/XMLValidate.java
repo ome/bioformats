@@ -40,8 +40,6 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
-
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
@@ -99,7 +97,7 @@ public class XMLValidate {
         } else{
           String f = file.toLowerCase();
           boolean b;
-          String extension = FilenameUtils.getExtension(f);
+          String extension = f.substring(f.lastIndexOf(".")+1);
           if (extensions.contains(extension)) {
             String comment = "";
             try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
