@@ -115,8 +115,8 @@ public class XMLValidate {
 
     if (args.length == 0) {
       // read from stdin
-      process("<stdin>", new BufferedReader(
-        new InputStreamReader(System.in, Constants.ENCODING)));
+      validate(new BufferedReader(
+        new InputStreamReader(System.in, Constants.ENCODING)), "<stdin>");
     }
     else {
       // read from file(s)
