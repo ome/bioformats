@@ -37,10 +37,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.io.FilenameUtils;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.in.TiffReader;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -86,6 +91,7 @@ public class XMLValidate {
         throw new IllegalArgumentException("No files to validate");
     }
     boolean[] results = new boolean[files.length];
+    List<String> extensions = Arrays.asList(TiffReader.TIFF_SUFFIXES);
     for (int i = 0; i < files.length; i++) {
         String file = files[i];
         if (file == null || file.trim().length() == 0) {
@@ -93,7 +99,8 @@ public class XMLValidate {
         } else{
           String f = file.toLowerCase();
           boolean b;
-          if (f.endsWith("tif") || f.endsWith("tiff")) {
+          String extension = FilenameUtils.getExtension(f);
+          if (extensions.contains(extension)) {
             String comment = "";
             try(RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
               comment = new TiffParser(stream).getComment();
