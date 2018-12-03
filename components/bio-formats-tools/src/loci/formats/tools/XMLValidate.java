@@ -102,10 +102,9 @@ public class XMLValidate {
           String extension = FilenameUtils.getExtension(f);
           if (extensions.contains(extension)) {
             String comment = "";
-            try(RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
+            try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
               comment = new TiffParser(stream).getComment();
             }
-            //Close TiffParser when close method is added
             b = validate(new BufferedReader(new StringReader(comment)), f);
           } else {
             b = validate(new BufferedReader(new InputStreamReader(
