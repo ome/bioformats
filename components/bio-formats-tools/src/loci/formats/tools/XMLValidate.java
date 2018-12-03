@@ -126,7 +126,21 @@ public class XMLValidate {
     }
     else {
       // read from file(s)
-      validate(args);
+      boolean[] results = validate(args);
+      int count = 0;
+      for (int i = 0; i < results.length; i++) {
+        if (results[i]) {
+          count++;
+        }
+      }
+      //all files are valid
+      if (count == results.length) {
+        System.out.println("All files are valid");
+        System.exit(0);
+      } else {
+        System.out.println((results.length-count)+" files are not valid");
+        System.exit(1);
+      }
     }
   }
 
