@@ -33,36 +33,15 @@
 package loci.formats.out;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import ome.xml.meta.OMEXMLMetadataRoot;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
-
-import loci.common.Location;
-import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.meta.IPyramidStore;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
-import loci.formats.in.MetadataOptions;
-import loci.formats.in.DynamicMetadataOptions;
 
 /**
  * PyramidOMETiffWriter is the file format writer for pyramid OME-TIFF files.
