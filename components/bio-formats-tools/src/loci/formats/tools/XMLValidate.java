@@ -117,10 +117,11 @@ public class XMLValidate {
   public static void main(String[] args) throws Exception {
     CommandLineTools.runUpgradeCheck(args);
 
+    boolean result = true;
     if (args.length == 0) {
       // read from stdin
-      validate(new BufferedReader(
-        new InputStreamReader(System.in, Constants.ENCODING)), "<stdin>");
+      result = validate(new BufferedReader(
+                new InputStreamReader(System.in, Constants.ENCODING)), "<stdin>");
     }
     else {
       // read from file(s)
@@ -131,14 +132,15 @@ public class XMLValidate {
           count++;
         }
       }
-      //all files are valid
-      if (count == results.length) {
-        System.out.println("All files are valid");
-        System.exit(0);
-      } else {
-        System.out.println((results.length-count)+" files are not valid");
-        System.exit(1);
-      }
+      //Check if all files are valid
+      result = (count == results.length);
+    }
+    if (result) {
+      System.out.println("success");
+      System.exit(0);
+    } else {
+      System.out.println("failure");
+      System.exit(1); 
     }
   }
 
