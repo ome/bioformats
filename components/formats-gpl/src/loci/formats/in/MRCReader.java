@@ -85,8 +85,7 @@ public class MRCReader extends FormatReader {
     if (!FormatTools.validStream(stream, HEADER_SIZE, false)) {
       return false;
     }
-    stream.seek(ENDIANNESS_OFFSET);
-    stream.order(stream.read() == 68);
+    setLittleEndian(stream);
     stream.seek(0);
 
     int x = stream.readInt();
@@ -159,13 +158,12 @@ public class MRCReader extends FormatReader {
 
     // check endianness
 
-    in.seek(ENDIANNESS_OFFSET);
-    m.littleEndian = in.read() == 68;
+    setLittleEndian(in);
+    m.littleEndian = in.isLittleEndian();
 
     // read dimension information from 1024 byte header
 
     in.seek(0);
-    in.order(isLittleEndian());
 
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
@@ -369,6 +367,24 @@ public class MRCReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
     }
+  }
+
+  /**
+   * Detect the correct endianness and set the stream accordingly.
+   * New-style headers have a value that can be checked, but older
+   * headers do not (and are assumed to be little endian).
+   * See the definition of offsets 196-216 in:
+   * https://bio3d.colorado.edu/imod/doc/mrc_format.txt
+   */
+  private void setLittleEndian(RandomAccessInputStream s) throws IOException {
+    s.seek(ENDIANNESS_OFFSET);
+    int check = s.read();
+    boolean little = check == 68;
+    boolean big = check == 17;
+    if (little == big) {
+      little = true;
+    }
+    s.order(little);
   }
 
 }
