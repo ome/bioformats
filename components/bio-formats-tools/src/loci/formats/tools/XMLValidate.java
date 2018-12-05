@@ -136,10 +136,8 @@ public class XMLValidate {
       result = (count == results.length);
     }
     if (result) {
-      System.out.println("success");
       System.exit(0);
     } else {
-      System.out.println("failure");
       System.exit(1); 
     }
   }
