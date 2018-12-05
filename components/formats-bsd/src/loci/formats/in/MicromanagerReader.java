@@ -372,8 +372,10 @@ public class MicromanagerReader extends FormatReader {
         for (int c=0; c<p.channels.length; c++) {
           store.setChannelName(p.channels[c], i, c);
         }
-        for (int c=0; c<p.channelColors.length; c++) {
-          store.setChannelColor(Color.valueOf(p.channelColors[c]), i, c);
+        if (p.channelColors != null) {
+          for (int c=0; c<p.channelColors.length; c++) {
+            store.setChannelColor(Color.valueOf(p.channelColors[c]), i, c);
+          }
         }
 
         Length sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
