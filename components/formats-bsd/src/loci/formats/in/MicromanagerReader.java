@@ -55,6 +55,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -370,6 +371,11 @@ public class MicromanagerReader extends FormatReader {
 
         for (int c=0; c<p.channels.length; c++) {
           store.setChannelName(p.channels[c], i, c);
+        }
+        if (p.channelColors != null) {
+          for (int c=0; c<p.channelColors.length; c++) {
+            store.setChannelColor(Color.valueOf(p.channelColors[c]), i, c);
+          }
         }
 
         Length sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
@@ -750,7 +756,6 @@ public class MicromanagerReader extends FormatReader {
         if (value.length() == 0) {
           continue;
         }
-        value = value.substring(0, value.length() - 1);
         value = value.replaceAll("\"", "");
         if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
         handleKeyValue(key, value);
@@ -761,6 +766,12 @@ public class MicromanagerReader extends FormatReader {
           p.channels = value.split(",");
           for (int q=0; q<p.channels.length; q++) {
             p.channels[q] = p.channels[q].replaceAll("\"", "").trim();
+          }
+        }
+        else if (key.equals("ChColors")) {
+          p.channelColors = value.split(",");
+          for (int q=0; q<p.channelColors.length; q++) {
+            p.channelColors[q] = p.channelColors[q].trim();
           }
         }
         else if (key.equals("Frames")) {
@@ -1215,6 +1226,7 @@ public class MicromanagerReader extends FormatReader {
     public transient String name;
 
     public String[] channels;
+    public String[] channelColors;
 
     public String comment, time;
     public Time exposureTime;
