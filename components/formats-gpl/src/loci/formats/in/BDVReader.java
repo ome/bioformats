@@ -281,7 +281,7 @@ public class BDVReader extends FormatReader {
   @Override
   public void reopenFile() throws IOException {
     try {
-      initializeJHDFService(currentId);
+      initializeJHDFService(h5Id);
     }
     catch (MissingLibraryException e) {
       throw new IOException(e);
