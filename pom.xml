@@ -53,6 +53,7 @@
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
     <ome-common.version>6.0.0-m2</ome-common.version>
+    <ome-model.group>org.openmicroscopy</ome-model.group>
     <ome-model.version>5.6.3</ome-model.version>
     <ome-poi.version>5.3.3</ome-poi.version>
     <ome-mdbtools.version>5.3.2</ome-mdbtools.version>
