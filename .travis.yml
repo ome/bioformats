@@ -16,7 +16,9 @@ addons:
     - git
 
 jdk:
+  - openjdk11
   - oraclejdk11
+  - openjdk8
   - oraclejdk8
 
 env:
@@ -28,6 +30,12 @@ matrix:
   exclude:
   - jdk: oraclejdk11
     env: BUILD=ant
+  - jdk: openjdk11
+    env: BUILD=ant
+  - jdk: oraclejdk8
+    env: BUILD=ant
+  - jdk: openjdk8
+    env: BUILD=maven
 
 script:
   - ./tools/test-build $BUILD
