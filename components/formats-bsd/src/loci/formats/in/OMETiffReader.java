@@ -722,7 +722,11 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         else {
           filename = meta.getUUIDFileName(i, td);
-          if (!new Location(dir, filename).exists()) filename = null;
+          if (!new Location(dir, filename).exists()) {
+            LOGGER.error("Missing file {} for UUID {} (planes will be black)",
+              filename, uuid);
+            filename = null;
+          }
           if (filename == null) {
             if (uuid.equals(currentUUID) || currentUUID == null) {
               // UUID references this file
@@ -754,7 +758,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
           // TODO search...
           // should scan only other .ome.tif files
           // to make this work with OME server may be a little tricky?
-          throw new FormatException("Unmatched UUID: " + uuid);
+          LOGGER.error("Unmatched UUID: {} " +
+            "(all corresponding planes will be black)", uuid);
         }
       }
     }
