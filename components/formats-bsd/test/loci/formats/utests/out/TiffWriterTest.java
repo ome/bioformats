@@ -286,7 +286,21 @@ public class TiffWriterTest {
       assert(false);
     }
   }
-  
+
+  @Test
+  public void testExplicitlyDisableTiling() {
+    try {
+      writer.setMetadataRetrieve(metadata);
+      writer.setTileSizeX(0);
+      assertEquals(0, writer.getTileSizeX());
+      writer.setTileSizeY(0);
+      assertEquals(0, writer.getTileSizeY());
+    }
+    catch (FormatException e) {
+      assert(false);
+    }
+  }
+
   @Test
   public void testTileFormatExceptions() {
     boolean thrown = false;
