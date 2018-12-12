@@ -118,12 +118,11 @@ public class CellomicsReader extends FormatReader {
     int[] zct = getZCTCoords(no);
 
     String file = files[getSeries() * getSizeC() + zct[1]];
-    RandomAccessInputStream s = getDecompressedStream(file);
-
-    int planeSize = FormatTools.getPlaneSize(this);
-    s.seek(52 + zct[0] * planeSize);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
+    try (RandomAccessInputStream s = getDecompressedStream(file)) {
+      int planeSize = FormatTools.getPlaneSize(this);
+      s.seek(52 + zct[0] * planeSize);
+      readPlane(s, x, y, w, h, buf);
+    }
 
     return buf;
   }
@@ -497,13 +496,14 @@ public class CellomicsReader extends FormatReader {
     RandomAccessInputStream s = new RandomAccessInputStream(filename);
     if (checkSuffix(filename, "c01")) {
       LOGGER.info("Decompressing file");
-
-      s.seek(4);
-      ZlibCodec codec = new ZlibCodec();
-      byte[] file = codec.decompress(s, null);
-      s.close();
-
-      return new RandomAccessInputStream(file);
+      try {
+        s.seek(4);
+        ZlibCodec codec = new ZlibCodec();
+        byte[] file = codec.decompress(s, null);
+        return new RandomAccessInputStream(file);
+      } finally {
+        s.close();
+      }
     }
     return s;
   }

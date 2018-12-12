@@ -178,21 +178,21 @@ public class APNGWriter extends FormatWriter {
     }
     else {
       numFramesPointer = PNG_SIG.length + 33;
-      RandomAccessInputStream in = new RandomAccessInputStream(id);
-      in.order(littleEndian);
-      in.seek(8);
-      while (in.getFilePointer() < in.length()) {
-        int length = in.readInt();
-        String type = in.readString(4);
-        if (type.equals("fcTL") || type.equals("fdAT")) {
-          nextSequenceNumber = in.readInt() + 1;
-          length -= 4;
+      try (RandomAccessInputStream in = new RandomAccessInputStream(id)) {
+        in.order(littleEndian);
+        in.seek(8);
+        while (in.getFilePointer() < in.length()) {
+          int length = in.readInt();
+          String type = in.readString(4);
+          if (type.equals("fcTL") || type.equals("fdAT")) {
+            nextSequenceNumber = in.readInt() + 1;
+            length -= 4;
+          }
+          in.skipBytes(length + 4);
         }
-        in.skipBytes(length + 4);
+        in.seek(numFramesPointer);
+        numFrames = in.readInt();
       }
-      in.seek(numFramesPointer);
-      numFrames = in.readInt();
-      in.close();
       footerPointer = out.length() - 12;
     }
     if (numFrames == 0) {

@@ -241,9 +241,9 @@ public class BMPReader extends FormatReader {
           }
         }
       }
-      RandomAccessInputStream s = new RandomAccessInputStream(plane);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
+      try (RandomAccessInputStream s = new RandomAccessInputStream(plane)) {
+        readPlane(s, x, y, w, h, buf);
+      }
     }
 
     if (getRGBChannelCount() > 1) {

@@ -105,10 +105,9 @@ public class FujiReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    RandomAccessInputStream s = new RandomAccessInputStream(pixelsFile);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
-
+    try (RandomAccessInputStream s = new RandomAccessInputStream(pixelsFile)) {
+      readPlane(s, x, y, w, h, buf);
+    }
     return buf;
   }
 

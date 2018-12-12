@@ -127,11 +127,8 @@ public class TCSReader extends FormatReader {
       }
     }
     if (lei.exists()) return false;
-    try {
-      RandomAccessInputStream s = new RandomAccessInputStream(name);
-      boolean isThisType = isThisType(s);
-      s.close();
-      return isThisType;
+    try (RandomAccessInputStream s = new RandomAccessInputStream(name)) {
+      return isThisType(s);
     }
     catch (IOException e) {
       LOGGER.debug("", e);
@@ -534,13 +531,15 @@ public class TCSReader extends FormatReader {
 
     HashMap<String, Long> timestamps = new HashMap<String, Long>();
 
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(current.getAbsolutePath(), 16);
-    TiffParser p = new TiffParser(s);
-    IFD ifd = p.getMainIFDs().get(0);
-    s.close();
+    IFD ifd = null;
+    int expectedIFDCount = 0;
+    try (RandomAccessInputStream s =
+      new RandomAccessInputStream(current.getAbsolutePath(), 16)) {
+        TiffParser p = new TiffParser(s);
+        ifd = p.getMainIFDs().get(0);
+        expectedIFDCount = p.getMainIFDs().size();
+    }
 
-    int expectedIFDCount = p.getMainIFDs().size();
     long width = ifd.getImageWidth();
     long height = ifd.getImageLength();
     int samples = ifd.getSamplesPerPixel();
@@ -549,30 +548,30 @@ public class TCSReader extends FormatReader {
       file = new Location(parent, file).getAbsolutePath();
       if (file.length() != current.getAbsolutePath().length()) continue;
 
-      RandomAccessInputStream rais = new RandomAccessInputStream(file, 16);
-      TiffParser tp = new TiffParser(rais);
-      if (!tp.isValidHeader()) {
-        continue;
-      }
-      ifd = tp.getMainIFDs().get(0);
+      try (RandomAccessInputStream rais = new RandomAccessInputStream(file, 16)) {
+        TiffParser tp = new TiffParser(rais);
+        if (!tp.isValidHeader()) {
+          continue;
+        }
+        ifd = tp.getMainIFDs().get(0);
 
-      if (tp.getMainIFDs().size() != expectedIFDCount ||
-        ifd.getImageWidth() != width || ifd.getImageLength() != height ||
-        ifd.getSamplesPerPixel() != samples)
-      {
-        continue;
-      }
+        if (tp.getMainIFDs().size() != expectedIFDCount ||
+          ifd.getImageWidth() != width || ifd.getImageLength() != height ||
+          ifd.getSamplesPerPixel() != samples)
+        {
+          continue;
+        }
 
-      String date = ifd.getIFDStringValue(IFD.DATE_TIME);
-      if (date != null) {
-        long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
+        String date = ifd.getIFDStringValue(IFD.DATE_TIME);
+        if (date != null) {
+          long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
 
-        String software = ifd.getIFDStringValue(IFD.SOFTWARE);
-        if (software != null && software.trim().startsWith("TCS")) {
-          timestamps.put(file, new Long(stamp));
+          String software = ifd.getIFDStringValue(IFD.SOFTWARE);
+          if (software != null && software.trim().startsWith("TCS")) {
+            timestamps.put(file, new Long(stamp));
+          }
         }
       }
-      rais.close();
     }
 
     String[] files = timestamps.keySet().toArray(new String[timestamps.size()]);
@@ -582,11 +581,10 @@ public class TCSReader extends FormatReader {
       long thisStamp = timestamps.get(file).longValue();
       boolean match = false;
       for (String tiff : tiffs) {
-        s = new RandomAccessInputStream(tiff, 16);
-        TiffParser parser = new TiffParser(s);
-        ifd = parser.getMainIFDs().get(0);
-        s.close();
-
+        try (RandomAccessInputStream s = new RandomAccessInputStream(tiff, 16)){
+          TiffParser parser = new TiffParser(s);
+          ifd = parser.getMainIFDs().get(0);
+        }
         String date = ifd.getIFDStringValue(IFD.DATE_TIME);
         long nextStamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
         if (Math.abs(thisStamp - nextStamp) < 600000) {

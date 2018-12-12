@@ -33,36 +33,15 @@
 package loci.formats.out;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import ome.xml.meta.OMEXMLMetadataRoot;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
-
-import loci.common.Location;
-import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.meta.IPyramidStore;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
-import loci.formats.in.MetadataOptions;
-import loci.formats.in.DynamicMetadataOptions;
 
 /**
  * PyramidOMETiffWriter is the file format writer for pyramid OME-TIFF files.
@@ -129,15 +108,14 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
     super.close();
 
     // post-processing step to fill in all SubIFD arrays
-
-    RandomAccessInputStream in = null;
-    RandomAccessOutputStream out = null;
     try {
-      in = new RandomAccessInputStream(id);
-      TiffParser parser = new TiffParser(in);
-      boolean littleEndian = parser.checkHeader();
-      long[] allOffsets = parser.getIFDOffsets();
-      in.close();
+      boolean littleEndian = false;
+      long[] allOffsets = null;
+      try (RandomAccessInputStream in = new RandomAccessInputStream(id)) {
+        TiffParser parser = new TiffParser(in);
+        littleEndian = parser.checkHeader();
+        allOffsets = parser.getIFDOffsets();
+      }
 
       int mainIFDIndex = 0;
       int currentFullResolution = 0;
@@ -150,25 +128,22 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
             subIFDOffsets[res] = allOffsets[mainIFDIndex + (res + 1) * planeCounts[i]];
           }
 
-          out = new RandomAccessOutputStream(id);
-          out.order(littleEndian);
-          TiffSaver saver = new TiffSaver(out, id);
-          saver.setBigTiff(isBigTiff);
-          saver.setLittleEndian(littleEndian);
-          in = new RandomAccessInputStream(id);
-          in.order(littleEndian);
+          try (RandomAccessOutputStream out = new RandomAccessOutputStream(id);
+               RandomAccessInputStream in = new RandomAccessInputStream(id)) {
+            out.order(littleEndian);
+            in.order(littleEndian);
+            TiffSaver saver = new TiffSaver(out, id);
+            saver.setBigTiff(isBigTiff);
+            saver.setLittleEndian(littleEndian);
+            int index = mainIFDIndex + 1;
+            if (p == planeCounts[i] - 1) {
+              index += (planeCounts[i] * (resCount - 1));
+            }
+            long nextPointer = index < allOffsets.length ? allOffsets[index] : 0;
 
-          int index = mainIFDIndex + 1;
-          if (p == planeCounts[i] - 1) {
-            index += (planeCounts[i] * (resCount - 1));
+            saver.overwriteIFDOffset(in, allOffsets[mainIFDIndex], nextPointer);
+            saver.overwriteIFDValue(in, currentFullResolution, IFD.SUB_IFD, subIFDOffsets);
           }
-          long nextPointer = index < allOffsets.length ? allOffsets[index] : 0;
-
-          saver.overwriteIFDOffset(in, allOffsets[mainIFDIndex], nextPointer);
-          saver.overwriteIFDValue(in, currentFullResolution, IFD.SUB_IFD, subIFDOffsets);
-          saver.close();
-          out.close();
-          in.close();
 
           mainIFDIndex++;
           currentFullResolution++;
@@ -179,14 +154,6 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
     }
     catch (FormatException e) {
       throw new IOException("Failed to assemble SubIFD offsets", e);
-    }
-    finally {
-      if (in != null) {
-        in.close();
-      }
-      if (out != null) {
-        out.close();
-      }
     }
   }
 

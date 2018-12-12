@@ -774,7 +774,14 @@ public class DeltavisionReader extends FormatReader {
 
     // if matching log file exists, extract key/value pairs from it
     boolean logFound = isGroupFiles() ? parseLogFile(store) : false;
-    if (isGroupFiles()) parseDeconvolutionLog(store);
+    if (isGroupFiles()) {
+        if (deconvolutionLogFile != null &&
+                new Location(deconvolutionLogFile).exists()) {
+            try (RandomAccessInputStream s = new RandomAccessInputStream(deconvolutionLogFile)) {
+              parseDeconvolutionLog(s, store);
+            }
+        }
+    }
 
     if (getSeriesCount() == 1) {
       xTiles = 1;
@@ -1294,17 +1301,9 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /** Parse deconvolution output, if it exists. */
-  private void parseDeconvolutionLog(MetadataStore store) throws IOException {
-    if (deconvolutionLogFile == null ||
-      !new Location(deconvolutionLogFile).exists())
-    {
-      return;
-    }
+  private void parseDeconvolutionLog(RandomAccessInputStream s, MetadataStore store) throws IOException {
 
     LOGGER.info("Parsing deconvolution log file");
-
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(deconvolutionLogFile);
 
     boolean doStatistics = false;
     int cc = 0, tt = 0;
@@ -1401,7 +1400,6 @@ public class DeltavisionReader extends FormatReader {
 
       doStatistics = line.endsWith("- reading image data...");
     }
-    s.close();
   }
 
   private void readWavelength(int channel, MetadataStore store)

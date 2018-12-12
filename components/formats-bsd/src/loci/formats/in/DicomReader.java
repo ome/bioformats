@@ -1359,55 +1359,55 @@ public class DicomReader extends FormatReader {
   private void addFileToList(String file, boolean checkSeries)
     throws FormatException, IOException
   {
-    RandomAccessInputStream stream = new RandomAccessInputStream(file);
-    if (!isThisType(stream)) {
-      stream.close();
-      return;
-    }
-    stream.order(true);
-
-    stream.seek(128);
-    if (!stream.readString(4).equals("DICM")) stream.seek(0);
-
+    int currentX = 0, currentY = 0;
     int fileSeries = -1;
 
     String date = null, time = null, instance = null;
-    int currentX = 0, currentY = 0;
-    while (date == null || time == null || instance == null ||
-      (checkSeries && fileSeries < 0) || currentX == 0 || currentY == 0)
-    {
-      long fp = stream.getFilePointer();
-      if (fp + 4 >= stream.length() || fp < 0) break;
-      int tag = getNextTag(stream);
-      final String key = TYPES.get(tag);
-      if ("Instance Number".equals(key)) {
-        instance = stream.readString(elementLength).trim();
-        if (instance.length() == 0) instance = null;
+    try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
+      if (!isThisType(stream)) {
+        return;
       }
-      else if ("Acquisition Time".equals(key)) {
-        time = stream.readString(elementLength);
+      stream.order(true);
+      stream.seek(128);
+      if (!stream.readString(4).equals("DICM")) {
+        stream.seek(0);
       }
-      else if ("Acquisition Date".equals(key)) {
-        date = stream.readString(elementLength);
-      }
-      else if ("Series Number".equals(key)) {
-        fileSeries = Integer.parseInt(stream.readString(elementLength).trim());
-      }
-      else if (tag == ROWS) {
-        int y = stream.readShort();
-        if (y > currentY) {
-          currentY = y;
+
+      while (date == null || time == null || instance == null ||
+        (checkSeries && fileSeries < 0) || currentX == 0 || currentY == 0)
+      {
+        long fp = stream.getFilePointer();
+        if (fp + 4 >= stream.length() || fp < 0) break;
+        int tag = getNextTag(stream);
+        final String key = TYPES.get(tag);
+        if ("Instance Number".equals(key)) {
+          instance = stream.readString(elementLength).trim();
+          if (instance.length() == 0) instance = null;
         }
-      }
-      else if (tag == COLUMNS) {
-        int x = stream.readShort();
-        if (x > currentX) {
-          currentX = x;
+        else if ("Acquisition Time".equals(key)) {
+          time = stream.readString(elementLength);
         }
+        else if ("Acquisition Date".equals(key)) {
+          date = stream.readString(elementLength);
+        }
+        else if ("Series Number".equals(key)) {
+          fileSeries = Integer.parseInt(stream.readString(elementLength).trim());
+        }
+        else if (tag == ROWS) {
+          int y = stream.readShort();
+          if (y > currentY) {
+            currentY = y;
+          }
+        }
+        else if (tag == COLUMNS) {
+          int x = stream.readShort();
+          if (x > currentX) {
+            currentX = x;
+          }
+        }
+        else stream.skipBytes(elementLength);
       }
-      else stream.skipBytes(elementLength);
     }
-    stream.close();
 
     LOGGER.trace("  date = {}, originalDate = {}", date, originalDate);
     LOGGER.trace("  time = {}, originalTime = {}", time, originalTime);

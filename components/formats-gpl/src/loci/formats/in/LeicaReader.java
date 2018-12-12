@@ -277,10 +277,10 @@ public class LeicaReader extends FormatReader {
         return tiff.openBytes(planeIndex, buf, x, y, w, h);
       }
       else {
-        RandomAccessInputStream s = new RandomAccessInputStream(filename);
-        s.seek(planeIndex * FormatTools.getPlaneSize(this));
-        readPlane(s, x, y, w, h, buf);
-        s.close();
+        try (RandomAccessInputStream s = new RandomAccessInputStream(filename)) {
+          s.seek(planeIndex * FormatTools.getPlaneSize(this));
+          readPlane(s, x, y, w, h, buf);
+        }
       }
     }
 
@@ -601,8 +601,7 @@ public class LeicaReader extends FormatReader {
       String filename = (String) files[i].get(0);
 
       if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {
-        RandomAccessInputStream s = new RandomAccessInputStream(filename, 16);
-        try {
+        try (RandomAccessInputStream s = new RandomAccessInputStream(filename, 16)) {
           TiffParser parser = new TiffParser(s);
           parser.setDoCaching(false);
           IFD firstIFD = parser.getFirstIFD();
@@ -625,9 +624,6 @@ public class LeicaReader extends FormatReader {
 
           tileWidth[i] = (int) firstIFD.getTileWidth();
           tileHeight[i] = (int) firstIFD.getTileLength();
-        }
-        finally {
-          s.close();
         }
       }
       else {
