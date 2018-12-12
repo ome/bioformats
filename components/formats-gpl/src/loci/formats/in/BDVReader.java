@@ -114,10 +114,8 @@ public class BDVReader extends FormatReader {
     in = new RandomAccessInputStream(xmlId);
     in.setEncoding("ASCII");
     DefaultHandler handler = new BDVXMLHandler();
-    try {
-      RandomAccessInputStream s = new RandomAccessInputStream(id);
+    try (RandomAccessInputStream s = new RandomAccessInputStream(id)) {
       XMLTools.parseXML(s, handler);
-      s.close();
     }
     catch (IOException e) {
       throw new FormatException("Malformed XML", e);
