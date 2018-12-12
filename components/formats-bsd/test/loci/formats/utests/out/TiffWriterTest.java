@@ -255,7 +255,7 @@ public class TiffWriterTest {
   @Test
   public void testGetTileSizeY() throws IOException, FormatException {
     writer.setMetadataRetrieve(metadata);
-    assertEquals(0, writer.getTileSizeX());
+    assertEquals(0, writer.getTileSizeY());
     writer.close();
     writer = new TiffWriter();
     metadata.setPixelsSizeY(new PositiveInteger(100), 0);
