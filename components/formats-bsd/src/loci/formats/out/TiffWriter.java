@@ -538,7 +538,10 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
     tileSizeX = super.setTileSizeX(tileSize);
-    if (tileSize < TILE_GRANULARITY) {
+    if (tileSize == 0) {
+      tileSizeX = 0;
+    }
+    else if (tileSize < TILE_GRANULARITY) {
       tileSizeX = TILE_GRANULARITY;
     }
     else {
@@ -558,7 +561,10 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     tileSizeY = super.setTileSizeY(tileSize);
-    if (tileSize < TILE_GRANULARITY) {
+    if (tileSize == 0) {
+      tileSizeY = 0;
+    }
+    else if (tileSize < TILE_GRANULARITY) {
       tileSizeY = TILE_GRANULARITY;
     }
     else {
