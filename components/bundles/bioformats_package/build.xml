@@ -30,7 +30,7 @@ Type "ant -p" for a list of targets.
       <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/8/docs/api/"/>
       <link href="https://imagej.net/developer/api/"
             offline="true" packagelistLoc="${root.dir}/ant/package-list"/>
     </javadoc>
