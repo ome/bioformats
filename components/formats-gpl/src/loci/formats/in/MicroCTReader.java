@@ -145,8 +145,7 @@ public class MicroCTReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int vffIndex = no % vffs.length;
-    RandomAccessInputStream vff = new RandomAccessInputStream(vffs[vffIndex]);
-    try {
+    try (RandomAccessInputStream vff = new RandomAccessInputStream(vffs[vffIndex])) {
       if (headerSize[vffIndex] == 0) {
         skipHeader(vff);
         headerSize[vffIndex] = vff.getFilePointer();
@@ -169,9 +168,6 @@ public class MicroCTReader extends FormatReader {
       }
 
       return buf;
-    }
-    finally {
-      vff.close();
     }
   }
 
@@ -201,51 +197,55 @@ public class MicroCTReader extends FormatReader {
       }
     }
 
-    in = new RandomAccessInputStream(id);
-
     CoreMetadata ms = core.get(0);
     ms.sizeZ = vffs.length;
-
-    String line = in.readLine().trim();
-    int dimCount = 0;
     PositiveFloat physicalSize = null;
-    while (line.length() > 0) {
-      int eq = line.indexOf("=");
-      if (eq >= 0) {
-        String key = line.substring(0, eq);
-        String value = line.substring(eq + 1, line.length() - 1);
+    in = new RandomAccessInputStream(id);
 
-        processKey(key, value);
+    try {
+      String line = in.readLine().trim();
+      int dimCount = 0;
+      while (line.length() > 0) {
+        int eq = line.indexOf("=");
+        if (eq >= 0) {
+          String key = line.substring(0, eq);
+          String value = line.substring(eq + 1, line.length() - 1);
 
-        if (key.equals("rank")) {
-          // determines the number of dimensions stored within the file
-          // a Z stack can either be stored internally, or across multiple
-          // files as separate slices
-          dimCount = Integer.parseInt(value);
-        }
-        else if (key.equals("size")) {
-          String[] dims = value.split(" ");
-          if (dimCount > 0) {
-            ms.sizeX = Integer.parseInt(dims[0]);
+          processKey(key, value);
+
+          if (key.equals("rank")) {
+            // determines the number of dimensions stored within the file
+            // a Z stack can either be stored internally, or across multiple
+            // files as separate slices
+            dimCount = Integer.parseInt(value);
           }
-          if (dimCount > 1) {
-            ms.sizeY = Integer.parseInt(dims[1]);
+          else if (key.equals("size")) {
+            String[] dims = value.split(" ");
+            if (dimCount > 0) {
+              ms.sizeX = Integer.parseInt(dims[0]);
+            }
+            if (dimCount > 1) {
+              ms.sizeY = Integer.parseInt(dims[1]);
+            }
+            if (dimCount > 2) {
+              ms.sizeZ *= Integer.parseInt(dims[2]);
+            }
           }
-          if (dimCount > 2) {
-            ms.sizeZ *= Integer.parseInt(dims[2]);
+          else if (key.equals("bits")) {
+            int bits = Integer.parseInt(value);
+            ms.pixelType = FormatTools.pixelTypeFromBytes(bits / 8, true, false);
+          }
+          else if (key.equals("elementsize")) {
+            Double size = new Double(value);
+            // physical size is stored in mm, not um
+            physicalSize = new PositiveFloat(size * 1000);
           }
         }
-        else if (key.equals("bits")) {
-          int bits = Integer.parseInt(value);
-          ms.pixelType = FormatTools.pixelTypeFromBytes(bits / 8, true, false);
-        }
-        else if (key.equals("elementsize")) {
-          Double size = new Double(value);
-          // physical size is stored in mm, not um
-          physicalSize = new PositiveFloat(size * 1000);
-        }
+        line = in.readLine().trim();
       }
-      line = in.readLine().trim();
+    }
+    finally {
+      in.close();
     }
 
     ms.sizeT = 1;
