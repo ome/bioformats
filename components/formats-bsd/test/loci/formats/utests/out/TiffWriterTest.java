@@ -111,8 +111,8 @@ public class TiffWriterTest {
 
   @BeforeClass
   public void readProperty() throws Exception {
-    percentageOfTilingTests = 10;//WriterUtilities.getPropValue("testng.runWriterTilingTests");
-    percentageOfSaveBytesTests = 10;//WriterUtilities.getPropValue("testng.runWriterSaveBytesTests");
+    percentageOfTilingTests = WriterUtilities.getPropValue("testng.runWriterTilingTests");
+    percentageOfSaveBytesTests = WriterUtilities.getPropValue("testng.runWriterSaveBytesTests");
   }
 
   @BeforeMethod
