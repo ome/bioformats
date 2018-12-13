@@ -86,7 +86,7 @@ public class TiffWriterTest {
       return new Object[][] {{0, false, false, 0, 0, 0, null, 0, false}};
     }
 
-    int[] tileSizes = {1, 32, 43, 64};
+    int[] tileSizes = {1, 32, 43, 64, WriterUtilities.PLANE_WIDTH};
     int[] channelCounts = {1, 3};
     int[] seriesCounts = {1, 5};
     int[] timeCounts = {1};
@@ -100,7 +100,7 @@ public class TiffWriterTest {
     if (percentageOfSaveBytesTests == 0) {
       return new Object[][] {{0, false, false, 0, 0, 0, null, 0, false}};
     }
-    int[] tileSizes = {WriterUtilities.PLANE_WIDTH};
+    int[] tileSizes = {0};
     int[] channelCounts = {1, 3};
     int[] seriesCounts = {1};
     int[] timeCounts = {1, 5};
@@ -111,8 +111,8 @@ public class TiffWriterTest {
 
   @BeforeClass
   public void readProperty() throws Exception {
-    percentageOfTilingTests = WriterUtilities.getPropValue("testng.runWriterTilingTests");
-    percentageOfSaveBytesTests = WriterUtilities.getPropValue("testng.runWriterSaveBytesTests");
+    percentageOfTilingTests = 10;//WriterUtilities.getPropValue("testng.runWriterTilingTests");
+    percentageOfSaveBytesTests = 10;//WriterUtilities.getPropValue("testng.runWriterSaveBytesTests");
   }
 
   @BeforeMethod
