@@ -707,7 +707,10 @@ public class GatanReader extends FormatReader {
         return in.readByte();
       case UNKNOWN:
       case UNKNOWN2:
-        return in.readLong();
+        if (adjustEndianness) in.order(!in.isLittleEndian());
+        long l = in.readLong();
+        if (adjustEndianness) in.order(!in.isLittleEndian());
+        return l;
     }
     return 0;
   }
@@ -727,6 +730,9 @@ public class GatanReader extends FormatReader {
       case UBYTE:
       case CHAR:
         return 1;
+      case UNKNOWN:
+      case UNKNOWN2:
+        return 8;
     }
     return 0;
   }
