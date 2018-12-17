@@ -994,8 +994,21 @@ public class TiffSaver {
     //      * tileCount is 2
 
     int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
+
+    long stripStartPos = out.length();
+    long totalStripSize = 0;
     for (int i=0; i<strips.length; i++) {
-      out.seek(out.length());
+      totalStripSize += strips[i].length;
+    }
+    // sets the output file size without having to allocate for each strip iteration
+    out.seek(stripStartPos + totalStripSize);
+    // return to original position
+    out.seek(stripStartPos);
+
+    long stripOffset = 0;
+    for (int i=0; i<strips.length; i++) {
+      out.seek(stripStartPos + stripOffset);
+      stripOffset += strips[i].length;
       int index = interleaved ? i : (i / nChannels) * nChannels;
       int c = interleaved ? 0 : i % nChannels;
       int thisOffset = firstOffset + index + (c * tileCount);
