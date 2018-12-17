@@ -97,6 +97,7 @@ loci.formats.in.I2IReader             # i2i
 loci.formats.in.SPEReader             # spe
 loci.formats.in.OIRReader             # oir
 loci.formats.in.KLBReader             # klb
+loci.formats.in.MicroCTReader         # vff
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
