@@ -27,6 +27,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +53,7 @@ import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 class SVSCoreMetadata extends CoreMetadata {
-  int ifdIndex;
+  int[] ifdIndex;
   String comment;
   Length pixelSize;
 
@@ -77,6 +79,9 @@ public class SVSReader extends BaseTiffReader {
   private static final String DATE_FORMAT = "MM/dd/yy HH:mm:ss";
 
   // -- Fields --
+
+  private Double[] zPosition;
+  private String[] comments;
 
   private Double emissionWavelength, excitationWavelength;
   private Double exposureTime, exposureScale;
@@ -164,7 +169,7 @@ public class SVSReader extends BaseTiffReader {
     if (tiffParser == null) {
       initTiffParser();
     }
-    int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
+    int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex[no];
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
@@ -197,6 +202,9 @@ public class SVSReader extends BaseTiffReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      zPosition = null;
+      comments = null;
+
       emissionWavelength = null;
       excitationWavelength = null;
       exposureTime = null;
@@ -214,7 +222,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
+      int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex[0];
       return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
@@ -228,7 +236,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
+      int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex[0];
       return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
@@ -246,14 +254,57 @@ public class SVSReader extends BaseTiffReader {
 
     ifds = tiffParser.getMainIFDs();
 
-
     int seriesCount = ifds.size();
 
+    core.clear();
+    for (int i=0; i<seriesCount; i++) {
+      core.add(new SVSCoreMetadata());
+    }
+
+    zPosition = new Double[seriesCount];
+    comments = new String[seriesCount];
+
+    HashSet<Double> uniqueZ = new HashSet<Double>();
+
+    for (int i=0; i<seriesCount; i++) {
+      setSeries(i);
+      int index = getIFDIndex(i, 0);
+      tiffParser.fillInIFD(ifds.get(index));
+
+      String comment = ifds.get(index).getComment();
+      if (comment == null) {
+        continue;
+      }
+      String[] lines = comment.split("\n");
+      String[] tokens;
+      String key, value;
+      for (String line : lines) {
+        tokens = line.split("[|]");
+        for (String t : tokens) {
+          if (t.indexOf('=') >= 0) {
+            key = t.substring(0, t.indexOf('=')).trim();
+            value = t.substring(t.indexOf('=') + 1).trim();
+            if (key.equals("TotalDepth")) {
+              zPosition[index] = new Double(0);
+            }
+            else if (key.equals("OffsetZ")) {
+              zPosition[index] = DataTools.parseDouble(value);
+            }
+          }
+        }
+      }
+      if (zPosition[index] != null) {
+        uniqueZ.add(zPosition[index]);
+      }
+    }
+    setSeries(0);
+
+    // repopulate core metadata
+
     // remove any invalid pyramid resolutions
-    IFD firstIFD = ifds.get(getIFDIndex(0));
-    tiffParser.fillInIFD(firstIFD);
-    for (int s=1; s<seriesCount - 2; s++) {
-      int index = getIFDIndex(s);
+    IFD firstIFD = ifds.get(getIFDIndex(0, 0));
+    for (int s=1; s<getSeriesCount() - 2; s++) {
+      int index = getIFDIndex(s, 0);
       IFD ifd = ifds.get(index);
       tiffParser.fillInIFD(ifd);
       if (ifd.getPixelType() != firstIFD.getPixelType()) {
@@ -268,7 +319,12 @@ public class SVSReader extends BaseTiffReader {
         ifds.remove(s);
       }
     }
-    seriesCount = ifds.size();
+    if (uniqueZ.size() == 0) {
+      uniqueZ.add(0d);
+    }
+    zPosition = uniqueZ.toArray(new Double[uniqueZ.size()]);
+    Arrays.sort(zPosition);
+    seriesCount = ((ifds.size() - 2) / uniqueZ.size()) + 2;
 
     core.clear();
     if (seriesCount > 2) {
@@ -291,28 +347,35 @@ public class SVSReader extends BaseTiffReader {
       setCoreIndex(s);
 
       SVSCoreMetadata ms = (SVSCoreMetadata) core.get(pos[0], pos[1]);
-      ms.ifdIndex = getIFDIndex(s);
 
       if (s == 0 && seriesCount > 2) {
         ms.resolutionCount = seriesCount - 2;
       }
 
-      IFD ifd = ifds.get(ms.ifdIndex);
-      tiffParser.fillInIFD(ifds.get(ms.ifdIndex));
-
+      IFD ifd = ifds.get(getIFDIndex(s, 0));
+      tiffParser.fillInIFD(ifd);
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
       ms.sizeX = (int) ifd.getImageWidth();
       ms.sizeY = (int) ifd.getImageLength();
-      ms.sizeZ = 1;
+      if (s < seriesCount - 2) {
+        ms.sizeZ = uniqueZ.size();
+      }
+      else {
+        ms.sizeZ = 1;
+      }
+      ms.ifdIndex = new int[ms.sizeZ];
+      for (int z=0; z<ms.sizeZ; z++) {
+        ms.ifdIndex[z] = getIFDIndex(s, z);
+      }
       ms.sizeT = 1;
       ms.sizeC = ms.rgb ? samples : 1;
       ms.littleEndian = ifd.isLittleEndian();
       ms.indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      ms.imageCount = 1;
+      ms.imageCount = ms.sizeZ * ms.sizeT;
       ms.pixelType = ifd.getPixelType();
       ms.metadataComplete = true;
       ms.interleaved = false;
@@ -321,7 +384,7 @@ public class SVSReader extends BaseTiffReader {
       ms.thumbnail = s != 0;
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        String comment = ifds.get(ms.ifdIndex).getComment();
+        String comment = ifds.get(ms.ifdIndex[0]).getComment();
         if (comment == null) {
           continue;
         }
@@ -390,6 +453,7 @@ public class SVSReader extends BaseTiffReader {
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this, getImageCount() > 1);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     String objective = MetadataTools.createLSID("Objective", 0, 0);
@@ -451,18 +515,47 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
+      if (getImageCount() > 1) {
+        for (int p=0; p<getImageCount(); p++) {
+          if (p < zPosition.length && zPosition[p] != null) {
+            store.setPlanePositionZ(FormatTools.createLength(zPosition[p], UNITS.REFERENCEFRAME), i, p);
+          }
+        }
+      }
+
       Length pixelSize = ((SVSCoreMetadata) currentCore()).pixelSize;
       if (pixelSize != null && pixelSize.value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0) {
         store.setPixelsPhysicalSizeX(pixelSize, i);
         store.setPixelsPhysicalSizeY(pixelSize, i);
       }
     }
+    setSeries(0);
   }
 
-  private int getIFDIndex(int coreIndex) {
+  private int getIFDIndex(int coreIndex, int no) {
     int index = coreIndex;
-    if (coreIndex > 0 && coreIndex < core.size() - 2) {
-      index = core.size() - 2 - coreIndex;
+    int coreCount = core.flattenedSize() - 2;
+    if (coreIndex > 0 && coreIndex < coreCount) {
+      if (core.get(0, 0).imageCount > 1) {
+        index++;
+      }
+      else {
+        index = coreCount - coreIndex;
+      }
+    }
+    if ((coreIndex > 0 && coreIndex < coreCount) || no > 0) {
+      for (int i=0; i<no; i++) {
+        index += coreCount;
+      }
+      if (coreIndex == 0) {
+        index++;
+      }
+    }
+    else if (coreIndex >= coreCount && core.get(0, 0).imageCount > 1) {
+      for (int i=0; i<coreCount; i++) {
+        index += core.get(0, i).imageCount;
+      }
+      index -= (coreCount - 1);
     }
     return index;
   }
