@@ -89,7 +89,7 @@ public class TiffWriterTest {
       return new Object[][] {{0, false, false, 0, 0, 0, null, 0, false}};
     }
 
-    int[] tileSizes = {1, 32, 43, 64};
+    int[] tileSizes = {1, 32, 43, 64, WriterUtilities.PLANE_WIDTH};
     int[] channelCounts = {1, 3};
     int[] seriesCounts = {1, 5};
     int[] timeCounts = {1};
@@ -103,7 +103,7 @@ public class TiffWriterTest {
     if (percentageOfSaveBytesTests == 0) {
       return new Object[][] {{0, false, false, 0, 0, 0, null, 0, false}};
     }
-    int[] tileSizes = {WriterUtilities.PLANE_WIDTH};
+    int[] tileSizes = {0};
     int[] channelCounts = {1, 3};
     int[] seriesCounts = {1};
     int[] timeCounts = {1, 5};
@@ -223,12 +223,12 @@ public class TiffWriterTest {
   @Test
   public void testGetTileSizeX() throws IOException, FormatException {
     writer.setMetadataRetrieve(metadata);
-    assertEquals(WriterUtilities.SIZE_X, writer.getTileSizeX());
+    assertEquals(0, writer.getTileSizeX());
     writer.close();
     writer = new TiffWriter();
     metadata.setPixelsSizeX(new PositiveInteger(100), 0);
     writer.setMetadataRetrieve(metadata);
-    assertEquals(100, writer.getTileSizeX());
+    assertEquals(0, writer.getTileSizeX());
   }
 
   @Test
@@ -258,12 +258,12 @@ public class TiffWriterTest {
   @Test
   public void testGetTileSizeY() throws IOException, FormatException {
     writer.setMetadataRetrieve(metadata);
-    assertEquals(WriterUtilities.SIZE_Y, writer.getTileSizeY());
+    assertEquals(0, writer.getTileSizeY());
     writer.close();
     writer = new TiffWriter();
     metadata.setPixelsSizeY(new PositiveInteger(100), 0);
     writer.setMetadataRetrieve(metadata);
-    assertEquals(100, writer.getTileSizeY());
+    assertEquals(0, writer.getTileSizeY());
   }
 
   @Test
@@ -289,7 +289,21 @@ public class TiffWriterTest {
       assert(false);
     }
   }
-  
+
+  @Test
+  public void testExplicitlyDisableTiling() {
+    try {
+      writer.setMetadataRetrieve(metadata);
+      writer.setTileSizeX(0);
+      assertEquals(0, writer.getTileSizeX());
+      writer.setTileSizeY(0);
+      assertEquals(0, writer.getTileSizeY());
+    }
+    catch (FormatException e) {
+      assert(false);
+    }
+  }
+
   @Test
   public void testTileFormatExceptions() {
     boolean thrown = false;
@@ -318,42 +332,34 @@ public class TiffWriterTest {
       writer.getTileSizeX();
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Size X must not be null")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     thrown = false;
     try {
       writer.getTileSizeY();
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Size Y must not be null")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     writer.setMetadataRetrieve(metadata);
     thrown = false;
     try {
       writer.setTileSizeX(0);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Tile size must be > 0")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     thrown = false;
     try {
       writer.setTileSizeY(0);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Tile size must be > 0")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     thrown = false;
     try {
       writer.setTileSizeX(WriterUtilities.SIZE_X);

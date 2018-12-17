@@ -113,7 +113,7 @@ public final class WriterUtilities {
     writer.setCompression(compression);
     writer.setInterleaved(interleaved);
     writer.setBigTiff(bigTiff);
-    if (tileSize != PLANE_WIDTH) {
+    if (tileSize != 0) {
       writer.setTileSizeX(tileSize);
       writer.setTileSizeY(tileSize);
     }

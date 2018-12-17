@@ -223,15 +223,14 @@ public class TiffWriter extends FormatWriter {
     int type = FormatTools.pixelTypeFromString(
         retrieve.getPixelsType(series).toString());
     int index = no;
-    int imageWidth = getSizeX();
-    int imageHeight = getSizeY();
     int currentTileSizeX = getTileSizeX();
     int currentTileSizeY = getTileSizeY();
-    if (currentTileSizeX != imageWidth || currentTileSizeY != imageHeight) {
+    boolean usingTiling = currentTileSizeX > 0 && currentTileSizeY > 0;
+    if (usingTiling) {
       ifd.put(new Integer(IFD.TILE_WIDTH), new Long(currentTileSizeX));
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(currentTileSizeY));
     }
-    if (currentTileSizeX < w || currentTileSizeY < h) {
+    if (usingTiling && (currentTileSizeX < w || currentTileSizeY < h)) {
       int numTilesX = (w + (x % currentTileSizeX) + currentTileSizeX - 1) / currentTileSizeX;
       int numTilesY = (h + (y % currentTileSizeY) + currentTileSizeY - 1) / currentTileSizeY;
       for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
@@ -533,7 +532,10 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
     tileSizeX = super.setTileSizeX(tileSize);
-    if (tileSize < TILE_GRANULARITY) {
+    if (tileSize == 0) {
+      tileSizeX = 0;
+    }
+    else if (tileSize < TILE_GRANULARITY) {
       tileSizeX = TILE_GRANULARITY;
     }
     else {
@@ -553,7 +555,10 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     tileSizeY = super.setTileSizeY(tileSize);
-    if (tileSize < TILE_GRANULARITY) {
+    if (tileSize == 0) {
+      tileSizeY = 0;
+    }
+    else if (tileSize < TILE_GRANULARITY) {
       tileSizeY = TILE_GRANULARITY;
     }
     else {
