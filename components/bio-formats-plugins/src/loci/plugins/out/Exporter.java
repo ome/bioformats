@@ -46,12 +46,14 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import ij.process.ShortProcessor;
 
+import java.awt.Checkbox;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -324,6 +326,10 @@ public class Exporter {
             // this preserves backwards compatibility with existing macros,
             // so that non-default lookup tables do not suddenly disappear
             multiFile.addCheckbox("Do_not_save_lookup_tables", false);
+
+            // only allow LUTs to be turned off via macro for now
+            Vector checkboxes = multiFile.getCheckboxes();
+            ((Checkbox) checkboxes.get(checkboxes.size() - 1)).setVisible(false);
             multiFile.showDialog();
 
             splitZ = multiFile.getNextBoolean();
