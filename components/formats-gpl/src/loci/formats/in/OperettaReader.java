@@ -415,15 +415,15 @@ public class OperettaReader extends FormatReader {
         }
 
         if (filename != null && new Location(filename).exists()) {
-          RandomAccessInputStream s =
-            new RandomAccessInputStream(filename, 16);
-          TiffParser parser = new TiffParser(s);
-          parser.setDoCaching(false);
+          try (RandomAccessInputStream s =
+            new RandomAccessInputStream(filename, 16)) {
+              TiffParser parser = new TiffParser(s);
+              parser.setDoCaching(false);
 
-          IFD firstIFD = parser.getFirstIFD();
-          ms.littleEndian = firstIFD.isLittleEndian();
-          ms.pixelType = firstIFD.getPixelType();
-          s.close();
+              IFD firstIFD = parser.getFirstIFD();
+              ms.littleEndian = firstIFD.isLittleEndian();
+              ms.pixelType = firstIFD.getPixelType();
+          }
         }
         else if (i > 0) {
           LOGGER.warn("Could not find valid TIFF file for series {}", i);

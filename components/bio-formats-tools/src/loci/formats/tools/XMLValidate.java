@@ -37,9 +37,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.List;
 
 import loci.common.Constants;
+import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.in.TiffReader;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -47,41 +51,94 @@ import loci.formats.tiff.TiffParser;
  */
 public class XMLValidate {
 
-  public static void process(String label, BufferedReader in)
+  public static boolean validate(BufferedReader in, String label)
     throws IOException
   {
     StringBuffer sb = new StringBuffer();
-    while (true) {
-      String line = in.readLine();
-      if (line == null) break;
-      sb.append(line);
+    try {
+       while (true) {
+        String line = in.readLine();
+        if (line == null) break;
+        sb.append(line);
+      }
+    } finally {
+      in.close();
     }
-    in.close();
-    XMLTools.validateXML(sb.toString(), label);
+    return XMLTools.validateXML(sb.toString(), label);
+  }
+
+  @Deprecated
+  public static void process(String label, BufferedReader in)
+    throws IOException
+  {
+      validate(in, label);
+  }
+
+  public static boolean validate(String file)
+    throws IOException
+  {
+    String[] files = new String[1];
+    files[0] = file;
+    return validate(files)[0];
+  }
+
+  public static boolean[] validate(String[] files)
+    throws IOException
+  {
+    if (files == null || files.length == 0) {
+        throw new IllegalArgumentException("No files to validate");
+    }
+    boolean[] results = new boolean[files.length];
+    List<String> extensions = Arrays.asList(TiffReader.TIFF_SUFFIXES);
+    for (int i = 0; i < files.length; i++) {
+        String file = files[i];
+        if (file == null || file.trim().length() == 0) {
+          results[i] = false;
+        } else{
+          String f = file.toLowerCase();
+          boolean b;
+          String extension = f.substring(f.lastIndexOf(".")+1);
+          if (extensions.contains(extension)) {
+            String comment = "";
+            try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
+              comment = new TiffParser(stream).getComment();
+            }
+            b = validate(new BufferedReader(new StringReader(comment)), f);
+          } else {
+            b = validate(new BufferedReader(new InputStreamReader(
+                      new FileInputStream(f), Constants.ENCODING)), f);
+          }
+          results[i] = b;
+        }
+    }
+    return results;
   }
 
   public static void main(String[] args) throws Exception {
     CommandLineTools.runUpgradeCheck(args);
 
+    boolean result = true;
     if (args.length == 0) {
       // read from stdin
-      process("<stdin>", new BufferedReader(
-        new InputStreamReader(System.in, Constants.ENCODING)));
+      result = validate(new BufferedReader(
+                new InputStreamReader(System.in, Constants.ENCODING)), "<stdin>");
     }
     else {
       // read from file(s)
-      for (int i=0; i<args.length; i++) {
-        if (args[i].toLowerCase().endsWith("tif") ||
-          args[i].toLowerCase().endsWith("tiff"))
-        {
-          String comment = new TiffParser(args[i]).getComment();
-          process(args[i], new BufferedReader(new StringReader(comment)));
-        }
-        else {
-          process(args[i], new BufferedReader(new InputStreamReader(
-            new FileInputStream(args[i]), Constants.ENCODING)));
+      boolean[] results = validate(args);
+      int count = 0;
+      for (int i = 0; i < results.length; i++) {
+        if (results[i]) {
+          count++;
         }
       }
+      //Check if all files are valid
+      result = (count == results.length);
+    }
+    if (result) {
+      System.exit(0);
+    } else {
+      System.exit(1); 
     }
   }
 

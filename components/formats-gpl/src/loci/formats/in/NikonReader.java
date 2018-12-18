@@ -355,11 +355,10 @@ public class NikonReader extends BaseTiffReader {
               b, 0, 10, Constants.ENCODING).startsWith("Nikon") ? 10 : 0;
             byte[] buf = new byte[b.length];
             System.arraycopy(b, extra, buf, 0, buf.length - extra);
-            RandomAccessInputStream makerNote =
-              new RandomAccessInputStream(buf);
-            TiffParser tp = new TiffParser(makerNote);
             IFD note = null;
-            try {
+            try (RandomAccessInputStream makerNote =
+                  new RandomAccessInputStream(buf)) {
+              TiffParser tp = new TiffParser(makerNote);
               note = tp.getFirstIFD();
             }
             catch (Exception e) {
@@ -427,7 +426,6 @@ public class NikonReader extends BaseTiffReader {
                 }
               }
             }
-            makerNote.close();
           }
         }
       }

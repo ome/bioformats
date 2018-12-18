@@ -90,11 +90,8 @@ public class NDPIReader extends BaseTiffReader {
   public boolean isThisType(String name, boolean open) {
     boolean isThisType = super.isThisType(name, open);
     if (isThisType && open) {
-      RandomAccessInputStream stream = null;
-      TiffParser parser = null;
-      try {
-        stream = new RandomAccessInputStream(name);
-        parser = new TiffParser(stream);
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
+        TiffParser parser = new TiffParser(stream);
         parser.setDoCaching(false);
         parser.setUse64BitOffsets(stream.length() >= Math.pow(2, 32));
         if (!parser.isValidHeader()) {
@@ -109,19 +106,6 @@ public class NDPIReader extends BaseTiffReader {
       catch (IOException e) {
         LOGGER.debug("I/O exception during isThisType() evaluation.", e);
         return false;
-      }
-      finally {
-        try {
-          if (stream != null) {
-            stream.close();
-          }
-          if (parser != null) {
-            parser.getStream().close();
-          }
-        }
-        catch (IOException e) {
-          LOGGER.debug("I/O exception during stream closure.", e);
-        }
       }
     }
     return isThisType;

@@ -391,6 +391,7 @@ public class KLBReader extends FormatReader {
       filelist.put(DEFAULT_SERIES, new String[1][1]);
       String absolutePath = new Location(id).getAbsolutePath();
       filelist.get(DEFAULT_SERIES)[0][0] = absolutePath;
+      in.close();
       in = new RandomAccessInputStream(absolutePath);
       readHeader(core.get(0));
     }

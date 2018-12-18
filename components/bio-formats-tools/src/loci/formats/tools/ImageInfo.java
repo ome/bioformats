@@ -347,7 +347,7 @@ public class ImageInfo {
       "* = may result in loss of precision",
       ""
     };
-    for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
+    for (int i=0; i<s.length; i++) System.out.println(s[i]);
   }
 
   public void setReader(IFormatReader reader) {
@@ -1016,7 +1016,6 @@ public class ImageInfo {
       CommandLineTools.printVersion();
       return true;
     }
-    CommandLineTools.runUpgradeCheck(args);
 
     createReader();
 
@@ -1024,6 +1023,8 @@ public class ImageInfo {
       printUsage();
       return false;
     }
+
+    CommandLineTools.runUpgradeCheck(args);
 
     mapLocation();
     configureReaderPreInit();

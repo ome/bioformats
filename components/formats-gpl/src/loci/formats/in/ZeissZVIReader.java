@@ -253,8 +253,8 @@ public class ZeissZVIReader extends BaseZeissReader {
       else if (dirName.equals("Shapes") && name.indexOf("Item") != -1) {
         int imageNum = getImageNumber(name, -1);
         if (imageNum != -1) {
-          try {
-            parseROIs(imageNum, name, store);
+          try (RandomAccessInputStream s = poi.getDocumentStream(name)) {
+            parseROIs(s, imageNum, name, store);
           }
           catch (IOException e) {
             LOGGER.debug("Could not parse all ROIs.", e);
@@ -268,68 +268,66 @@ public class ZeissZVIReader extends BaseZeissReader {
         if (imageNum == -1) continue;
 
         // found a valid image stream
-        RandomAccessInputStream s = poi.getDocumentStream(name);
-        s.order(true);
+        try (RandomAccessInputStream s = poi.getDocumentStream(name)) {
+          s.order(true);
 
-        if (s.length() <= 1024) {
-          s.close();
-          continue;
+          if (s.length() <= 1024) {
+            continue;
+          }
+          for (int q=0; q<11; q++) {
+            getNextTag(s);
+          }
+
+          s.skipBytes(2);
+          int len = s.readInt() - 20;
+          s.skipBytes(8);
+
+          int zidx = s.readInt();
+          int cidx = s.readInt();
+          int tidx = s.readInt();
+          s.skipBytes(4);
+          int tileIndex = s.readInt();
+
+          zIndices.add(zidx);
+          timepointIndices.add(tidx);
+          channelIndices.add(cidx);
+          tileIndices.add(tileIndex);
+
+          s.skipBytes(len - 8);
+
+          for (int q=0; q<5; q++) {
+            getNextTag(s);
+          }
+
+          s.skipBytes(4);
+          core.get(0).sizeX = s.readInt();
+          core.get(0).sizeY = s.readInt();
+          s.skipBytes(4);
+
+          if (bpp == 0) {
+            bpp = s.readInt();
+          }
+          else s.skipBytes(4);
+          s.skipBytes(4);
+
+          int valid = s.readInt();
+
+          String check = s.readString(4).trim();
+          isZlib = (valid == 0 || valid == 1) && check.equals("WZL");
+          isJPEG = (valid == 0 || valid == 1) && !isZlib;
+
+          // save the offset to the pixel data
+
+          offsets[imageNum] = (int) s.getFilePointer() - 4;
+
+          if (isZlib) offsets[imageNum] += 8;
+          coordinates[imageNum][0] = zidx;
+          coordinates[imageNum][1] = cidx;
+          coordinates[imageNum][2] = tidx;
+          coordinates[imageNum][3] = tileIndex;
+          LOGGER.trace("imageNum = {}, coordinate = {}", imageNum, coordinates[imageNum]);
+          imageFiles[imageNum] = name;
         }
-
-        for (int q=0; q<11; q++) {
-          getNextTag(s);
-        }
-
-        s.skipBytes(2);
-        int len = s.readInt() - 20;
-        s.skipBytes(8);
-
-        int zidx = s.readInt();
-        int cidx = s.readInt();
-        int tidx = s.readInt();
-        s.skipBytes(4);
-        int tileIndex = s.readInt();
-
-        zIndices.add(zidx);
-        timepointIndices.add(tidx);
-        channelIndices.add(cidx);
-        tileIndices.add(tileIndex);
-
-        s.skipBytes(len - 8);
-
-        for (int q=0; q<5; q++) {
-          getNextTag(s);
-        }
-
-        s.skipBytes(4);
-        core.get(0).sizeX = s.readInt();
-        core.get(0).sizeY = s.readInt();
-        s.skipBytes(4);
-
-        if (bpp == 0) {
-          bpp = s.readInt();
-        }
-        else s.skipBytes(4);
-        s.skipBytes(4);
-
-        int valid = s.readInt();
-
-        String check = s.readString(4).trim();
-        isZlib = (valid == 0 || valid == 1) && check.equals("WZL");
-        isJPEG = (valid == 0 || valid == 1) && !isZlib;
-
-        // save the offset to the pixel data
-
-        offsets[imageNum] = (int) s.getFilePointer() - 4;
-
-        if (isZlib) offsets[imageNum] += 8;
-        coordinates[imageNum][0] = zidx;
-        coordinates[imageNum][1] = cidx;
-        coordinates[imageNum][2] = tidx;
-        coordinates[imageNum][3] = tileIndex;
-        LOGGER.trace("imageNum = {}, coordinate = {}", imageNum, coordinates[imageNum]);
-        imageFiles[imageNum] = name;
-        s.close();
       }
     }
   }
@@ -489,44 +487,44 @@ public class ZeissZVIReader extends BaseZeissReader {
   private void parseTags(int image, String file, MetadataStore store)
     throws FormatException, IOException {
     ArrayList<Tag> tags = new ArrayList<Tag>();
-    RandomAccessInputStream s = poi.getDocumentStream(file);
-    s.order(true);
+    try (RandomAccessInputStream s = poi.getDocumentStream(file)) {
+      s.order(true);
 
-    s.seek(8);
+      s.seek(8);
 
-    int count = s.readInt();
+      int count = s.readInt();
 
 
-    for (int i=0; i<count; i++) {
-      if (s.getFilePointer() + 2 >= s.length()) break;
-      String value = DataTools.stripString(getNextTag(s));
+      for (int i=0; i<count; i++) {
+        if (s.getFilePointer() + 2 >= s.length()) break;
+        String value = DataTools.stripString(getNextTag(s));
 
-      s.skipBytes(2);
-      int tagID = s.readInt();
+        s.skipBytes(2);
+        int tagID = s.readInt();
 
-      s.skipBytes(6);
+        s.skipBytes(6);
 
-      if (tagID != 1047) // Use 1025 only for ZVI.
-        tags.add(new Tag(tagID, value, Context.MAIN));
+        if (tagID != 1047) {
+          // Use 1025 only for ZVI.
+          tags.add(new Tag(tagID, value, Context.MAIN));
+        }
+      }
+
+      parseMainTags(image, store, tags);
     }
-
-    parseMainTags(image, store, tags);
-
-    s.close();
   }
 
   /**
    * Parse ROI data from the given RandomAccessInputStream and store it in the
    * given MetadataStore.
    */
-  private void parseROIs(int imageNum, String name, MetadataStore store)
+  private void parseROIs(RandomAccessInputStream s, int imageNum, String name, MetadataStore store)
     throws IOException {
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
     if (level == MetadataLevel.MINIMUM || level == MetadataLevel.NO_OVERLAYS) {
       return;
     }
 
-    RandomAccessInputStream s = poi.getDocumentStream(name);
     s.setEncoding("UTF-16LE");
     s.order(true);
 
@@ -725,7 +723,6 @@ public class ZeissZVIReader extends BaseZeissReader {
         LOGGER.warn("Found {} ROIs, but {} ROIs expected", roiFound, roiCount);
     }
 
-    s.close();
   }
 
   protected String parseROIString(RandomAccessInputStream s)

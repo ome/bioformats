@@ -4,6 +4,7 @@
 # https://docs.openmicroscopy.org/latest/bio-formats/developers/reader-guide.html
 
 loci.formats.in.FilePatternReader     # pattern
+loci.formats.in.URLReader[type=external] # urlreader
 
 # readers for compressed/archive files
 loci.formats.in.ZipReader             # zip
@@ -97,6 +98,7 @@ loci.formats.in.I2IReader             # i2i
 loci.formats.in.SPEReader             # spe
 loci.formats.in.OIRReader             # oir
 loci.formats.in.KLBReader             # klb
+loci.formats.in.MicroCTReader         # vff
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par

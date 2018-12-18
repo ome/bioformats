@@ -108,11 +108,8 @@ public class NiftiReader extends FormatReader {
     if (dot < 0) return false;
     if (!open) return false;
     String headerFile = name.substring(0, dot) + ".hdr";
-    try {
-      RandomAccessInputStream header = new RandomAccessInputStream(headerFile);
-      boolean isValid = isThisType(header);
-      header.close();
-      return isValid;
+    try (RandomAccessInputStream header = new RandomAccessInputStream(headerFile)) {
+      return isThisType(header);
     }
     catch (FileNotFoundException e) { } // NB: No output for missing header.
     catch (IOException e) { LOGGER.debug("", e); }

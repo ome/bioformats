@@ -274,11 +274,12 @@ public class SlidebookTiffReader extends BaseTiffReader {
   // -- Helper methods --
 
   private String getTimestamp(String path) throws FormatException, IOException {
-    RandomAccessInputStream s = new RandomAccessInputStream(path);
-    TiffParser parser = new TiffParser(s);
-    IFD ifd = parser.getFirstIFD();
-    Object date = ifd.getIFDValue(IFD.DATE_TIME);
-    s.close();
+    Object date = null;
+    try (RandomAccessInputStream s = new RandomAccessInputStream(path)) {
+        TiffParser parser = new TiffParser(s);
+        IFD ifd = parser.getFirstIFD();
+        date = ifd.getIFDValue(IFD.DATE_TIME);
+    }
 
     return date == null ? null : date.toString();
   }
@@ -286,12 +287,12 @@ public class SlidebookTiffReader extends BaseTiffReader {
   private String getFirstChannel(String path)
     throws FormatException, IOException
   {
-    RandomAccessInputStream s = new RandomAccessInputStream(path);
-    TiffParser parser = new TiffParser(s);
-    IFD ifd = parser.getFirstIFD();
-    Object channel = ifd.getIFDValue(CHANNEL_TAG);
-    s.close();
-    parser.getStream().close();
+    Object channel = null;
+    try (RandomAccessInputStream s = new RandomAccessInputStream(path)) {
+      TiffParser parser = new TiffParser(s);
+      IFD ifd = parser.getFirstIFD();
+      channel = ifd.getIFDValue(CHANNEL_TAG);
+    }
 
     return channel == null ? null : channel.toString();
   }

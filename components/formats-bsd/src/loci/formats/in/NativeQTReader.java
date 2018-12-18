@@ -391,6 +391,7 @@ public class NativeQTReader extends FormatReader {
       }
       // reset the stream, otherwise openBytes will try to read pixels
       // from the resource fork
+      if (in != null) in.close();
       in = new RandomAccessInputStream(currentId);
     }
 
@@ -488,9 +489,12 @@ public class NativeQTReader extends FormatReader {
             byte[] output = new ZlibCodec().decompress(b, null);
 
             RandomAccessInputStream oldIn = in;
-            in = new RandomAccessInputStream(output);
-            parse(0, 0, output.length);
-            in.close();
+            try {
+              in = new RandomAccessInputStream(output);
+              parse(0, 0, output.length);
+            } finally {
+              in.close();
+            }
             in = oldIn;
           }
           else {

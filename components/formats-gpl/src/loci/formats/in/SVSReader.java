@@ -26,6 +26,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -80,6 +82,9 @@ public class SVSReader extends BaseTiffReader {
   private Double exposureTime, exposureScale;
   private Double magnification;
   private String date, time;
+  private ArrayList<String> dyeNames = new ArrayList<String>();
+
+  private transient Color displayColor = null;
 
   // -- Constructor --
 
@@ -107,9 +112,7 @@ public class SVSReader extends BaseTiffReader {
   public boolean isThisType(String name, boolean open) {
     boolean isThisType = super.isThisType(name, open);
     if (!isThisType && open) {
-      RandomAccessInputStream stream = null;
-      try {
-        stream = new RandomAccessInputStream(name);
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
         TiffParser tiffParser = new TiffParser(stream);
         tiffParser.setDoCaching(false);
         if (!tiffParser.isValidHeader()) {
@@ -142,16 +145,6 @@ public class SVSReader extends BaseTiffReader {
       catch (IOException e) {
         LOGGER.debug("I/O exception during isThisType() evaluation.", e);
         return false;
-      }
-      finally {
-        try {
-          if (stream != null) {
-            stream.close();
-          }
-        }
-        catch (IOException e) {
-          LOGGER.debug("I/O exception during stream closure.", e);
-        }
       }
     }
     return isThisType;
@@ -211,6 +204,8 @@ public class SVSReader extends BaseTiffReader {
       magnification = null;
       date = null;
       time = null;
+      dyeNames.clear();
+      displayColor = null;
     }
   }
 
@@ -254,6 +249,27 @@ public class SVSReader extends BaseTiffReader {
 
     int seriesCount = ifds.size();
 
+    // remove any invalid pyramid resolutions
+    IFD firstIFD = ifds.get(getIFDIndex(0));
+    tiffParser.fillInIFD(firstIFD);
+    for (int s=1; s<seriesCount - 2; s++) {
+      int index = getIFDIndex(s);
+      IFD ifd = ifds.get(index);
+      tiffParser.fillInIFD(ifd);
+      if (ifd.getPixelType() != firstIFD.getPixelType()) {
+        ifds.set(index, null);
+      }
+    }
+    for (int s=0; s<ifds.size(); ) {
+      if (ifds.get(s) != null) {
+        s++;
+      }
+      else {
+        ifds.remove(s);
+      }
+    }
+    seriesCount = ifds.size();
+
     core.clear();
     if (seriesCount > 2) {
       core.add();
@@ -269,12 +285,12 @@ public class SVSReader extends BaseTiffReader {
         core.add(new SVSCoreMetadata());
       }
     }
+
     for (int s=0; s<seriesCount; s++) {
       int[] pos = core.flattenedIndexes(s);
       setCoreIndex(s);
 
       SVSCoreMetadata ms = (SVSCoreMetadata) core.get(pos[0], pos[1]);
-
       ms.ifdIndex = getIFDIndex(s);
 
       if (s == 0 && seriesCount > 2) {
@@ -349,6 +365,14 @@ public class SVSReader extends BaseTiffReader {
                 case "AppMag":
                   magnification = DataTools.parseDouble(value);
                   break;
+                case "Dye":
+                  dyeNames.add(value);
+                  break;
+                case "DisplayColor":
+                  // stored color is RGB, Color expects RGBA
+                  int color = Integer.parseInt(value);
+                  displayColor = new Color((color << 8) | 0xff);
+                  break;
               }
             }
           }
@@ -373,13 +397,35 @@ public class SVSReader extends BaseTiffReader {
     store.setObjectiveID(objective, 0, 0);
     store.setObjectiveNominalMagnification(magnification, 0, 0);
 
+    int lastImage = core.size() - 1;
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
 
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
 
-      store.setImageName("Series " + (i + 1), i);
+      if (hasFlattenedResolutions() || i > 2) {
+        store.setImageName("Series " + (i + 1), i);
+      }
+      else {
+        switch (i) {
+          case 0:
+            store.setImageName("", i);
+            break;
+          case 1:
+            // if there are only two images, assume that there is no label
+            if (lastImage == 1) {
+              store.setImageName("macro image", i);
+            }
+            else {
+              store.setImageName("label image", i);
+            }
+            break;
+          case 2:
+            store.setImageName("macro image", i);
+            break;
+        }
+      }
       String comment = ((SVSCoreMetadata) currentCore()).comment;
       store.setImageDescription(comment, i);
 
@@ -394,6 +440,14 @@ public class SVSReader extends BaseTiffReader {
 
         if (getExcitation() != null) {
           store.setChannelExcitationWavelength(getExcitation(), i, c);
+        }
+
+        // display color not set here as investigation with Aperio ImageScope
+        // indicates that the display color is only used when there is an
+        // .afi file (see AFIReader)
+
+        if (c < dyeNames.size()) {
+          store.setChannelName(dyeNames.get(c), i, c);
         }
       }
 
@@ -428,7 +482,7 @@ public class SVSReader extends BaseTiffReader {
   }
 
   protected Double getExposureTime() {
-    return exposureTime;
+    return exposureTime * exposureScale * 1000;
   }
 
   protected Timestamp getDatestamp() {
@@ -456,6 +510,14 @@ public class SVSReader extends BaseTiffReader {
 
   protected double getMagnification() {
     return magnification;
+  }
+
+  protected ArrayList<String> getDyeNames() {
+    return dyeNames;
+  }
+
+  protected Color getDisplayColor() {
+    return displayColor;
   }
 
 }

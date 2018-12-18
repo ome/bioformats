@@ -46,6 +46,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -78,6 +79,12 @@ public class TiffSaverTest {
     ifd = new IFD();
     ifd.putIFDValue(IFD.IMAGE_WIDTH, 512);
     ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, "comment");
+  }
+
+  @AfterMethod
+  public void tearDown() throws IOException {
+      in.close();
+      out.close();
   }
 
   @Test(expectedExceptions={ IllegalArgumentException.class })

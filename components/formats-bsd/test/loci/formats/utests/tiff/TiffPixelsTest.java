@@ -157,16 +157,16 @@ public class TiffPixelsTest {
 
   private byte[] readSavedPlane() throws FormatException, IOException {
     ByteArrayHandle savedData = new ByteArrayHandle();
-    RandomAccessOutputStream out = new RandomAccessOutputStream(savedData);
-    RandomAccessInputStream in = new RandomAccessInputStream(savedData);
-    TiffSaver saver = new TiffSaver(out, savedData);
-    //saver.setInputStream(in);
-    saver.writeImage(data, ifd, 0, FormatTools.UINT16, false);
-    out.close();
-    TiffParser parser = new TiffParser(in);
-    byte[] plane = new byte[data.length];
-    parser.getSamples(ifd, plane);
-    in.close();
+    byte[] plane = null;
+    try (RandomAccessOutputStream out = new RandomAccessOutputStream(savedData);
+          RandomAccessInputStream in = new RandomAccessInputStream(savedData)) {
+        TiffSaver saver = new TiffSaver(out, savedData);
+        //saver.setInputStream(in);
+        TiffParser parser = new TiffParser(in);
+        saver.writeImage(data, ifd, 0, FormatTools.UINT16, false);
+        plane = new byte[data.length];
+        parser.getSamples(ifd, plane);
+    }
     return plane;
   }
 

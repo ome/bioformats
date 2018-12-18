@@ -183,9 +183,9 @@ public class LiFlimReader extends FormatReader {
         LOGGER.debug("Could not read full plane", e);
       }
 
-      RandomAccessInputStream s = new RandomAccessInputStream(bytes);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
+      try (RandomAccessInputStream s = new RandomAccessInputStream(bytes)) {
+        readPlane(s, x, y, w, h, buf);
+      }
     }
     else {
       in.seek(dataOffset + bytesPerPlane * no);
