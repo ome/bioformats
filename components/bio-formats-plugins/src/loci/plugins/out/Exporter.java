@@ -46,12 +46,14 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import ij.process.ShortProcessor;
 
+import java.awt.Checkbox;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -140,6 +142,7 @@ public class Exporter {
         Boolean padded = null;
         Boolean saveRoi = null;
         String compression = null;
+        Boolean noLookupTables = null;
 
         Boolean windowless = Boolean.FALSE;
         if (plugin.arg != null) {
@@ -170,6 +173,8 @@ public class Exporter {
             if (w != null) {
                 windowless = Boolean.valueOf(w);
             }
+            String lut = Macro.getValue(plugin.arg, "skip_luts", "false");
+            noLookupTables = Boolean.valueOf(lut);
             plugin.arg = null;
         }
         if (outfile == null) {
@@ -301,6 +306,7 @@ public class Exporter {
             if (splitC == null) splitC = Boolean.FALSE;
             if (splitT == null) splitT = Boolean.FALSE;
             if (padded == null) padded = Boolean.FALSE;
+            if (noLookupTables == null) noLookupTables = false;
         }
         if (splitZ == null || splitC == null || splitT == null) {
             // ask if we want to export multiple files
@@ -311,12 +317,26 @@ public class Exporter {
             multiFile.addCheckbox("Write_each_timepoint to a separate file", false);
             multiFile.addCheckbox("Write_each_channel to a separate file", false);
             multiFile.addCheckbox("Use zero padding for filename indexes", false);
+            // prompt for lookup tables here instead of in compression options window,
+            // since the compression window won't be shown for formats with
+            // only one compression type
+            //
+            // checkbox is "Do not save..." instead of "Save..." because macro
+            // recording/parsing only looks for checkboxes that are enabled
+            // this preserves backwards compatibility with existing macros,
+            // so that non-default lookup tables do not suddenly disappear
+            multiFile.addCheckbox("Do_not_save_lookup_tables", false);
+
+            // only allow LUTs to be turned off via macro for now
+            Vector checkboxes = multiFile.getCheckboxes();
+            ((Checkbox) checkboxes.get(checkboxes.size() - 1)).setVisible(false);
             multiFile.showDialog();
 
             splitZ = multiFile.getNextBoolean();
             splitT = multiFile.getNextBoolean();
             splitC = multiFile.getNextBoolean();
             padded = multiFile.getNextBoolean();
+            noLookupTables = multiFile.getNextBoolean();
             if (multiFile.wasCanceled()) return;
         }
 
@@ -788,35 +808,41 @@ public class Exporter {
                     int currentChannel = FormatTools.getZCTCoords(
                             ORDER, sizeZ, sizeC, sizeT, imp.getStackSize(), i)[1];
 
-                    if (luts[currentChannel] != null) {
-                        // expand to 16-bit LUT if necessary
+                    // only save the lookup table if it is not the default grayscale LUT
+                    // saving a LUT for every plane can cause performance issues,
+                    // especially for 16 bit data
+                    // see https://trello.com/c/Qk6NBnPs/92-imagej-ome-tiff-writing-performance
+                    if (!proc.isDefaultLut() && (noLookupTables == null || !noLookupTables)) {
+                        if (luts[currentChannel] != null) {
+                            // expand to 16-bit LUT if necessary
 
-                        int bpp = FormatTools.getBytesPerPixel(thisType);
-                        if (bpp == 1) {
-                            w.setColorModel(luts[currentChannel]);
-                        }
-                        else if (bpp == 2) {
-                            int lutSize = luts[currentChannel].getMapSize();
-                            byte[][] lut = new byte[3][lutSize];
-                            luts[currentChannel].getReds(lut[0]);
-                            luts[currentChannel].getGreens(lut[1]);
-                            luts[currentChannel].getBlues(lut[2]);
-
-                            short[][] newLut = new short[3][65536];
-                            int bins = newLut[0].length / lut[0].length;
-                            for (int c=0; c<newLut.length; c++) {
-                                for (int q=0; q<newLut[c].length; q++) {
-                                    int index = q / bins;
-                                    newLut[c][q] = (short) ((lut[c][index] * lut[0].length) + (q % bins));
-                                }
+                            int bpp = FormatTools.getBytesPerPixel(thisType);
+                            if (bpp == 1) {
+                                w.setColorModel(luts[currentChannel]);
                             }
+                            else if (bpp == 2) {
+                                int lutSize = luts[currentChannel].getMapSize();
+                                byte[][] lut = new byte[3][lutSize];
+                                luts[currentChannel].getReds(lut[0]);
+                                luts[currentChannel].getGreens(lut[1]);
+                                luts[currentChannel].getBlues(lut[2]);
 
-                            w.setColorModel(new Index16ColorModel(16, newLut[0].length,
+                                short[][] newLut = new short[3][65536];
+                                int bins = newLut[0].length / lut[0].length;
+                                for (int c=0; c<newLut.length; c++) {
+                                    for (int q=0; q<newLut[c].length; q++) {
+                                        int index = q / bins;
+                                        newLut[c][q] = (short) ((lut[c][index] * lut[0].length) + (q % bins));
+                                    }
+                                }
+
+                                w.setColorModel(new Index16ColorModel(16, newLut[0].length,
                                     newLut, littleEndian));
+                            }
                         }
-                    }
-                    else if (!proc.isDefaultLut()) {
-                        w.setColorModel(proc.getColorModel());
+                        else {
+                            w.setColorModel(proc.getColorModel());
+                        }
                     }
                     w.saveBytes(no[fileIndex]++, plane);
                 }
