@@ -2138,7 +2138,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           }
 
           int index = i * getSizeC() + coords[1];
-          if (exposureTime.size() == getSizeC()) {
+          if (exposureTime.size() >= getSizeC() && exposureTime.size() < getSizeC() * getSeriesCount()) {
             index = coords[1];
           }
           if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {

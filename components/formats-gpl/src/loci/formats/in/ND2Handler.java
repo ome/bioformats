@@ -845,7 +845,9 @@ public class ND2Handler extends BaseHandler {
         String temp = value.replaceAll("[\\D&&[^-.]]", "");
         temperature.add(DataTools.parseDouble(temp));
       }
-      else if (key.equals("Exposure")) {
+      // exposure times are often defined once in a PropertiesFast block,
+      // and again in a PropertiesQuality block
+      else if (key.equals("Exposure") && "PropertiesQuality".equals(prevElement)) {
         String[] s = value.trim().split(" ");
         Double time = DataTools.parseDouble(s[0]);
         if (time != null) {
