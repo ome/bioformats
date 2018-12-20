@@ -50,9 +50,15 @@ public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService 
    */
   public byte[] decompress(byte[] compressed) throws FormatException {
       LOGGER.trace("begin tile decode; compressed size = {}", compressed.length);
-      byte[] raw = Decode.decodeFirstFrame(compressed, 0, compressed.length);
-      LOGGER.trace("retrieved decompressed bytes size = {}", raw.length);
-      return raw;
+      try {
+        byte[] raw = Decode.decodeFirstFrame(compressed, 0, compressed.length);
+        LOGGER.trace("retrieved decompressed bytes size = {}", raw.length);
+        return raw;
+      }
+      // really only want to catch ome.jxrlib.FormatError, but that doesn't compile
+      catch (Exception e) {
+        throw new FormatException(e);
+      }
   }
 
 }
