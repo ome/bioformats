@@ -3709,7 +3709,13 @@ public class ZeissCZIReader extends FormatReader {
           options.height = directoryEntry.dimensionEntries[1].storedSize;
           options.maxBytes = options.width * options.height *
             getRGBChannelCount() * bytesPerPixel;
-          data = new JPEGXRCodec().decompress(data, options);
+          try {
+            data = new JPEGXRCodec().decompress(data, options);
+          }
+          catch (FormatException e) {
+            LOGGER.warn("Could not decompress block; some pixels may be 0", e);
+            data = new byte[options.maxBytes];
+          }
           break;
         case 104: // camera-specific packed pixels
           data = decode12BitCamera(data, options.maxBytes);
