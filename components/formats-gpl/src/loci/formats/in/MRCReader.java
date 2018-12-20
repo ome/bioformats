@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -89,15 +90,21 @@ public class MRCReader extends FormatReader {
     stream.seek(0);
 
     int x = stream.readInt();
-    if (x <= 0 || x >= stream.length()) {
+    if ((x <= 0 || x >= stream.length()) &&
+      (DataTools.swap(x) <= 0 || DataTools.swap(x) >= stream.length()))
+    {
       return false;
     }
     int y = stream.readInt();
-    if (y <= 0 || y >= stream.length()) {
+    if ((y <= 0 || y >= stream.length()) &&
+      (DataTools.swap(y) <= 0 || DataTools.swap(y) >= stream.length()))
+    {
       return false;
     }
     int z = stream.readInt();
-    if (z <= 0 || z >= stream.length()) {
+    if ((z <= 0 || z >= stream.length()) &&
+      (DataTools.swap(z) <= 0 || DataTools.swap(z) >= stream.length()))
+    {
       return false;
     }
     return true;
