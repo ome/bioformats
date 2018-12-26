@@ -2141,6 +2141,11 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           if (exposureTime.size() >= getSizeC() && exposureTime.size() < getSizeC() * getSeriesCount()) {
             index = coords[1];
           }
+          else if (exposureTime.size() == 1) {
+            // if exposure times are the same for all channels,
+            // then sometimes only one value is stored
+            index = 0;
+          }
           if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
             store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.SECOND), i, n);
           }
