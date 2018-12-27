@@ -1974,7 +1974,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           currentColor = (Integer) value;
         }
         else if (name.equals("dExposureTime")) {
-          exposureTime.add((Double) value);
+          if ((Double) value > 0) {
+            exposureTime.add(((Double) value) / 1000);
+          }
         }
         else if (name.equals("EmWavelength")) {
           Double wave = Double.parseDouble(value.toString());
@@ -2117,7 +2119,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     }
 
     // populate PlaneTiming and StagePosition data
-    if (handler != null && handler.getExposureTimes().size() > 0) {
+    if (handler != null && handler.getExposureTimes().size() > 0 &&
+      (exposureTime.size() == 0 || exposureTime.size() % getSizeC() != 0))
+    {
       exposureTime = handler.getExposureTimes();
     }
     int zcPlanes = getImageCount() / ((split ? getSizeC() : 1) * getSizeT());
