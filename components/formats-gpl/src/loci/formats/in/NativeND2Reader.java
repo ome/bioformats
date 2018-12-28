@@ -2119,10 +2119,16 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     }
 
     // populate PlaneTiming and StagePosition data
-    if (handler != null && handler.getExposureTimes().size() > 0 &&
-      (exposureTime.size() == 0 || exposureTime.size() % getSizeC() != 0))
-    {
-      exposureTime = handler.getExposureTimes();
+    if (handler != null && handler.getExposureTimes().size() > 0) {
+      if (exposureTime.size() == 0 || handler.getExposureTimes().size() == 1 || exposureTime.size() % getSizeC() != 0) {
+        exposureTime = handler.getExposureTimes();
+        if (backupHandler != null && backupHandler.getExposureTimes().size() > exposureTime.size()) {
+          exposureTime = backupHandler.getExposureTimes();
+        }
+      }
+      else if (backupHandler == null || backupHandler.getExposureTimes().size() == 0) {
+        exposureTime = handler.getExposureTimes();
+      }
     }
     int zcPlanes = getImageCount() / ((split ? getSizeC() : 1) * getSizeT());
     for (int i=0; i<getSeriesCount(); i++) {
