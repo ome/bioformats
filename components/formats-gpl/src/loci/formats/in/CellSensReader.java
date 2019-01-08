@@ -405,6 +405,7 @@ public class CellSensReader extends FormatReader {
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
 
   private transient boolean expectETS = false;
+  private transient int channelCount = 0;
 
   // -- Constructor --
 
@@ -568,7 +569,7 @@ public class CellSensReader extends FormatReader {
       return buf;
     }
     else {
-      return parser.getSamples(ifds.get(getIFDIndex()), buf, x, y, w, h);
+      return parser.getSamples(ifds.get(getIFDIndex() + no), buf, x, y, w, h);
     }
   }
 
@@ -607,6 +608,7 @@ public class CellSensReader extends FormatReader {
       previousTag = 0;
       expectETS = false;
       pyramids.clear();
+      channelCount = 0;
     }
   }
 
@@ -693,9 +695,22 @@ public class CellSensReader extends FormatReader {
           ignoredPyramids++;
         }
       }
+
       seriesCount = ifds.size();
-      if (ignoredPyramids * 2 < ifds.size()) {
-        seriesCount -= ignoredPyramids * 2;
+
+      if (ifds.size() > 1) {
+        if (ifds.get(1).getSamplesPerPixel() == 1) {
+          seriesCount = 2;
+          if (channelCount == 0) {
+            channelCount = ifds.size() - 1;
+          }
+        }
+        else {
+          if (ifds.size() > 2) {
+            ifds.remove(2);
+          }
+          seriesCount = (int) Math.min(3, ifds.size());
+        }
       }
     }
 
@@ -740,6 +755,7 @@ public class CellSensReader extends FormatReader {
         }
 
         setCoreIndex(0);
+        ms.dimensionOrder = "XYCZT";
       }
       else {
         IFD ifd = ifds.get(s - files.size() + 1);
@@ -748,13 +764,24 @@ public class CellSensReader extends FormatReader {
         ms.rgb = samples > 1 || p == PhotoInterp.RGB;
         ms.sizeX = (int) ifd.getImageWidth();
         ms.sizeY = (int) ifd.getImageLength();
-        ms.sizeZ = 1;
         ms.sizeT = 1;
         ms.sizeC = ms.rgb ? samples : 1;
+        if (files.size() == 1 && channelCount > 0 &&
+          channelCount < ifds.size() && s > 0)
+        {
+          ms.sizeC *= channelCount;
+          ms.sizeZ = (ifds.size() - 1) / channelCount;
+          ms.imageCount = ifds.size() - 1;
+          ms.dimensionOrder = "XYZCT";
+        }
+        else {
+          ms.sizeZ = 1;
+          ms.imageCount = 1;
+          ms.dimensionOrder = "XYCZT";
+        }
         ms.littleEndian = ifd.isLittleEndian();
         ms.indexed = p == PhotoInterp.RGB_PALETTE &&
           (get8BitLookupTable() != null || get16BitLookupTable() != null);
-        ms.imageCount = 1;
         ms.pixelType = ifd.getPixelType();
         ms.interleaved = false;
         ms.falseColor = false;
@@ -762,7 +789,6 @@ public class CellSensReader extends FormatReader {
         index++;
       }
       ms.metadataComplete = true;
-      ms.dimensionOrder = "XYCZT";
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -1790,6 +1816,9 @@ public class CellSensReader extends FormatReader {
             }
             else if (tag != VALUE || tagPrefix.length() > 0) {
               addGlobalMetaList(tagPrefix + tagName, value);
+            }
+            if ("Channel Wavelength Value".equals(tagPrefix + tagName)) {
+              channelCount++;
             }
           }
           storedValue = value;
