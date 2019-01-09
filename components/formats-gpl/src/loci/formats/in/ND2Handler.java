@@ -692,7 +692,7 @@ public class ND2Handler extends BaseHandler {
         if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
       }
       else if (key.endsWith("dTimeMSec")) {
-        Long v = DataTools.parseLong(value);
+        Long v = DataTools.parseDouble(value).longValue();
         if (!ts.contains(v)) {
           ts.add(v);
           metadata.put("number of timepoints", ts.size());
@@ -848,7 +848,7 @@ public class ND2Handler extends BaseHandler {
       // exposure times are often defined once in a PropertiesFast block,
       // and again in a PropertiesQuality block
       else if (key.equals("Exposure") &&
-        ("no_name".equals(prevElement) || "PropertiesQuality".equals(prevElement)))
+        (prevElement == null || "no_name".equals(prevElement) || "PropertiesQuality".equals(prevElement)))
       {
         String[] s = value.trim().split(" ");
         Double time = DataTools.parseDouble(s[0]);
@@ -891,7 +891,7 @@ public class ND2Handler extends BaseHandler {
         exWave.add(new Double(v[0]));
       }
       else if (key.equals("Power")) {
-        power.add(DataTools.parseInteger(value));
+        power.add(DataTools.parseDouble(value).intValue());
       }
       else if (key.equals("CameraUniqueName")) {
         cameraModel = value;
