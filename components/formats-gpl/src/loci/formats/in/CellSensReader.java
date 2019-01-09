@@ -406,6 +406,7 @@ public class CellSensReader extends FormatReader {
 
   private transient boolean expectETS = false;
   private transient int channelCount = 0;
+  private transient int zCount = 0;
 
   // -- Constructor --
 
@@ -609,6 +610,7 @@ public class CellSensReader extends FormatReader {
       expectETS = false;
       pyramids.clear();
       channelCount = 0;
+      zCount = 0;
     }
   }
 
@@ -701,8 +703,12 @@ public class CellSensReader extends FormatReader {
       if (ifds.size() > 1) {
         if (ifds.get(1).getSamplesPerPixel() == 1) {
           seriesCount = 2;
-          if (channelCount == 0) {
+          if (channelCount == 0 && zCount == 0) {
             channelCount = ifds.size() - 1;
+          }
+          else if (zCount > 0) {
+            zCount /= 2;
+            channelCount = (ifds.size() - 1) / zCount;
           }
         }
         else {
@@ -1819,6 +1825,9 @@ public class CellSensReader extends FormatReader {
             }
             if ("Channel Wavelength Value".equals(tagPrefix + tagName)) {
               channelCount++;
+            }
+            else if ("Z valueValue".equals(tagPrefix + tagName)) {
+              zCount++;
             }
           }
           storedValue = value;
