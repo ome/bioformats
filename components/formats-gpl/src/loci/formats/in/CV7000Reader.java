@@ -289,41 +289,47 @@ public class CV7000Reader extends FormatReader {
     }
 
     String firstFile = null;
-    int minSizeZ = Integer.MAX_VALUE, maxSizeZ = 0;
-    int minSizeC = Integer.MAX_VALUE, maxSizeC = 0;
-    int minSizeT = Integer.MAX_VALUE, maxSizeT = 0;
+    HashMap<Integer, MinMax> minMax = new HashMap<Integer, MinMax>();
+
     fields = 0;
     HashSet<Integer> uniqueWells = new HashSet<Integer>();
 
     for (Plane p : planeData) {
       if (p != null) {
+        int wellIndex = p.row * plate.getPlateColumns() + p.column;
+        if (!minMax.containsKey(wellIndex)) {
+          minMax.put(wellIndex, new MinMax());
+        }
+        MinMax m = minMax.get(wellIndex);
+
         if (p.file != null && firstFile == null) {
           firstFile = p.file;
         }
 
-        if (p.timepoint > maxSizeT) {
-          maxSizeT = p.timepoint;
+        if (p.timepoint > m.maxT) {
+          m.maxT = p.timepoint;
         }
-        if (p.timepoint < minSizeT) {
-          minSizeT = p.timepoint;
+        if (p.timepoint < m.minT) {
+          m.minT = p.timepoint;
         }
-        if (p.z > maxSizeZ) {
-          maxSizeZ = p.z;
+        if (p.z > m.maxZ) {
+          m.maxZ = p.z;
         }
-        if (p.z < minSizeZ) {
-          minSizeZ = p.z;
+        if (p.z < m.minZ) {
+          m.minZ = p.z;
         }
-        if (p.channel > maxSizeC) {
-          maxSizeC = p.channel;
+        if (p.channelIndex > m.maxC) {
+          m.maxC = p.channelIndex;
         }
-        if (p.channel < minSizeC) {
-          minSizeC = p.channel;
+        if (p.channelIndex < m.minC) {
+          m.minC = p.channelIndex;
         }
 
         if (p.field >= fields) {
           fields = p.field + 1;
         }
-        uniqueWells.add(p.row * plate.getPlateColumns() + p.column);
+
+        uniqueWells.add(wellIndex);
       }
     }
 
@@ -333,34 +339,47 @@ public class CV7000Reader extends FormatReader {
     core.add(new CoreMetadata(reader.getCoreMetadataList().get(0)));
 
     core.get(0).dimensionOrder = "XYCZT";
-    core.get(0).sizeZ = (maxSizeZ - minSizeZ) + 1;
-    core.get(0).sizeT = (maxSizeT - minSizeT) + 1;
-    core.get(0).sizeC *= (maxSizeC - minSizeC) + 1;
-    core.get(0).imageCount = getSizeZ() * getSizeT() * (getSizeC() / reader.getSizeC());
 
     int realWells = uniqueWells.size();
     Integer[] wells = uniqueWells.toArray(new Integer[realWells]);
     Arrays.sort(wells);
+    reversePlaneLookup = new int[realWells * fields][];
 
-    for (int i=1; i<realWells * fields; i++) {
-      core.add(new CoreMetadata(core.get(0)));
+    for (int i=0; i<realWells * fields; i++) {
+      if (i > 0) {
+        core.add(new CoreMetadata(core.get(0)));
+      }
+
+      int wellIndex = wells[i / fields];
+      MinMax m = minMax.get(wellIndex);
+      core.get(i).sizeZ = (m.maxZ - m.minZ) + 1;
+      core.get(i).sizeT = (m.maxT - m.minT) + 1;
+      core.get(i).sizeC = reader.getSizeC() * ((m.maxC - m.minC) + 1);
+      core.get(i).imageCount = core.get(i).sizeZ * core.get(i).sizeT *
+        (core.get(i).sizeC / reader.getSizeC());
+      reversePlaneLookup[i] = new int[core.get(i).imageCount];
+      Arrays.fill(reversePlaneLookup[i], -1);
     }
 
     int[] seriesLengths = new int[] {fields, realWells};
     int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
-    reversePlaneLookup = new int[getSeriesCount()][getImageCount()];
-    for (int i=0; i<reversePlaneLookup.length; i++) {
-      // do this so that the index does not default to 0 for ERR planes
-      Arrays.fill(reversePlaneLookup[i], -1);
-    }
+
+
     extraFiles = new ArrayList<String>();
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
-      int wellIndex = Arrays.binarySearch(wells, p.row * plate.getPlateColumns() + p.column);
+      int wellNumber = p.row * plate.getPlateColumns() + p.column;
+      int wellIndex = Arrays.binarySearch(wells, wellNumber);
       p.series = FormatTools.positionToRaster(seriesLengths,
         new int[] {p.field, wellIndex});
+      MinMax m = minMax.get(wellNumber);
+
+      planeLengths[0] = core.get(p.series).sizeC / reader.getSizeC();
+      planeLengths[1] = core.get(p.series).sizeZ;
+      planeLengths[2] = core.get(p.series).sizeT;
+
       p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {p.channel - minSizeC, p.z - minSizeZ, p.timepoint - minSizeT});
+        new int[] {p.channelIndex - m.minC, p.z - m.minZ, p.timepoint - m.minT});
       if (reversePlaneLookup[p.series][p.no] < 0) {
         reversePlaneLookup[p.series][p.no] = i;
       }
@@ -423,11 +442,30 @@ public class CV7000Reader extends FormatReader {
           String name = "Well " + ((char) ('A' + row)) + (col + 1) + ", Field " + (field + 1);
           store.setImageName(name, nextImage);
           store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
+
+          setSeries(nextImage);
+
+          // find the first valid plane to set WellSample positions
+          int no = 0;
+          Plane p = lookupPlane(nextImage, no);
+          while (p == null && no < getImageCount()) {
+            p = lookupPlane(nextImage, no++);
+          }
+          if (p != null) {
+            store.setWellSamplePositionX(
+              FormatTools.createLength(p.xpos, UNITS.REFERENCEFRAME),
+              0, nextWell, field);
+            store.setWellSamplePositionY(
+              FormatTools.createLength(p.ypos, UNITS.REFERENCEFRAME),
+              0, nextWell, field);
+          }
+
           nextImage++;
         }
         nextWell++;
       }
     }
+    setSeries(0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPlateName(plate.getPlateName(), 0);
@@ -465,6 +503,7 @@ public class CV7000Reader extends FormatReader {
       }
 
       for (int i=0; i<getSeriesCount(); i++) {
+        setSeries(i);
         if (channels != null) {
           for (int c=0; c<getSizeC(); c++) {
             Plane p = lookupPlane(i, c);
@@ -475,7 +514,7 @@ public class CV7000Reader extends FormatReader {
             }
             Channel channel = null;
             for (Channel ch : channels) {
-              if (ch.index == p.channel) {
+              if (ch.index == p.channelIndex) {
                 channel = ch;
                 break;
               }
@@ -548,7 +587,7 @@ public class CV7000Reader extends FormatReader {
           store.setPlanePositionZ(FormatTools.createLength(plane.zpos, UNITS.REFERENCEFRAME), i, p);
         }
       }
-
+      setSeries(0);
     }
   }
 
@@ -632,6 +671,9 @@ public class CV7000Reader extends FormatReader {
     private ArrayList<Plane> planes = new ArrayList<Plane>();
     private String parentDir;
 
+    private int currentField = -1;
+    private HashMap<Integer, Integer> channelMap = new HashMap<Integer, Integer>();
+
     public MeasurementDataHandler(String parentDir) {
       super();
       this.parentDir = parentDir;
@@ -667,6 +709,18 @@ public class CV7000Reader extends FormatReader {
           p.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
           p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
           p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
+
+          if (p.field != currentField) {
+            currentField = p.field;
+            channelMap.clear();
+          }
+
+          if (!channelMap.containsKey(p.channel)) {
+            channelMap.put(p.channel, channelMap.size());
+          }
+
+          p.channelIndex = channelMap.get(p.channel);
+
           p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
           p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
           p.zpos = DataTools.parseDouble(attributes.getValue("bts:Z"));
@@ -864,12 +918,24 @@ public class CV7000Reader extends FormatReader {
     public int timepoint;
     public int field;
     public int z;
+    // this is the original channel value stored in the XML
     public int channel;
+    // this is the calculated index from 0 to getSizeC() - 1
+    public int channelIndex;
     public double xpos;
     public double ypos;
     public double zpos;
     public int series;
     public int no;
+  }
+
+  class MinMax {
+    public int minZ = Integer.MAX_VALUE;
+    public int maxZ = 0;
+    public int minC = Integer.MAX_VALUE;
+    public int maxC = 0;
+    public int minT = Integer.MAX_VALUE;
+    public int maxT = 0;
   }
 
 }
