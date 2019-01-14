@@ -188,7 +188,7 @@ public class LiFlimReader extends FormatReader {
       }
     }
     else {
-      in.seek(dataOffset + bytesPerPlane * no);
+      in.seek(dataOffset + (long) bytesPerPlane * (long) no);
 
       int thisSeries = getSeries();
       for (int i=0; i<thisSeries; i++) {
