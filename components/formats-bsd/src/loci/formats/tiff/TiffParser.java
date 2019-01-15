@@ -779,7 +779,9 @@ public class TiffParser {
 
     // reverse bits in each byte if FillOrder == 2
 
-    if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2) {
+    if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2 &&
+      compression.getCode() <= TiffCompression.GROUP_4_FAX.getCode())
+    {
       for (int i=0; i<tile.length; i++) {
         tile[i] = (byte) (Integer.reverse(tile[i]) >> 24);
       }
