@@ -321,7 +321,7 @@ public class ChannelSeparator extends ReaderWrapper {
             pixelsPopulated = true;
           }
           for (int i=1; i<rgbChannels; i++) {
-            MetadataConverter.convertChannelMetadata(retrieve, s, cIndex,
+            MetadataConverter.convertChannels(retrieve, s, cIndex,
               store, s, cIndex + i, false);
           }
         }
