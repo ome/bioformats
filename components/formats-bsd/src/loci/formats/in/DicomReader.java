@@ -874,7 +874,7 @@ public class DicomReader extends FormatReader {
         for (int p=0; p<getImageCount(); p++) {
           if (p < positionX.size()) {
             if (positionX.get(p) != null) {
-              Length x = new Length(positionX.get(p), UNITS.MM);
+              Length x = new Length(positionX.get(p), UNITS.MILLIMETER);
               if (x != null) {
                 store.setPlanePositionX(x, 0, p);
               }
@@ -882,7 +882,7 @@ public class DicomReader extends FormatReader {
           }
           if (p < positionY.size()) {
             if (positionY.get(p) != null) {
-              Length y = new Length(positionY.get(p), UNITS.MM);
+              Length y = new Length(positionY.get(p), UNITS.MILLIMETER);
               if (y != null) {
                 store.setPlanePositionY(y, 0, p);
               }
@@ -890,7 +890,7 @@ public class DicomReader extends FormatReader {
           }
           if (p < positionZ.size()) {
             if (positionZ.get(p) != null) {
-              Length z = new Length(positionZ.get(p), UNITS.MM);
+              Length z = new Length(positionZ.get(p), UNITS.MILLIMETER);
               if (z != null) {
                 store.setPlanePositionZ(z, 0, p);
               }

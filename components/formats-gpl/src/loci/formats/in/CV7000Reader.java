@@ -485,8 +485,8 @@ public class CV7000Reader extends FormatReader {
             String laserID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
             store.setLaserID(laserID, 0, nextLightSource);
             store.setLaserWavelength(
-              new Length(l.wavelength, UNITS.NM), 0, nextLightSource);
-            store.setLaserPower(new Power(l.power, UNITS.MW), 0, nextLightSource);
+              new Length(l.wavelength, UNITS.NANOMETER), 0, nextLightSource);
+            store.setLaserPower(new Power(l.power, UNITS.MILLIWATT), 0, nextLightSource);
             nextLightSource++;
           }
         }
@@ -561,12 +561,12 @@ public class CV7000Reader extends FormatReader {
                 store.setChannelLightSourceSettingsID(
                   MetadataTools.createLSID("LightSource", 0, index), i, c);
                 store.setChannelExcitationWavelength(
-                  new Length(channel.excitation, UNITS.NM), i, c);
+                  new Length(channel.excitation, UNITS.NANOMETER), i, c);
               }
             }
 
             if (channel.exposureTime != null) {
-              Time exposure = new Time(channel.exposureTime, UNITS.MS);
+              Time exposure = new Time(channel.exposureTime, UNITS.MILLISECOND);
               for (int z=0; z<getSizeZ(); z++) {
                 for (int t=0; t<getSizeT(); t++) {
                   int plane = getIndex(z, c, t);

@@ -1071,7 +1071,8 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse N.A. '{}'", na);
             }
             if (tokens.length >= 2) {
-              store.setObjectiveCorrection(getCorrection(tokens[1]), 0, 0);
+              store.setObjectiveCorrection(
+                MetadataTools.getCorrection(tokens[1]), 0, 0);
             }
             // TODO:  Token #2 is the microscope model name.
             if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
@@ -1090,8 +1091,10 @@ public class DeltavisionReader extends FormatReader {
             for (int series=0; series<getSeriesCount(); series++) {
               store.setObjectiveSettingsID(objectiveID, series);
             }
-            store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-            store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+            store.setObjectiveCorrection(
+              MetadataTools.getCorrection("Other"), 0, 0);
+            store.setObjectiveImmersion(
+              MetadataTools.getImmersion("Other"), 0, 0);
           }
         }
         // Image properties
@@ -1134,12 +1137,13 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         else if (key.equals("Binning")) {
-          store.setDetectorType(getDetectorType("Other"), 0, 0);
+          store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
           String detectorID = MetadataTools.createLSID("Detector", 0, 0);
           store.setDetectorID(detectorID, 0, 0);
           for (int series=0; series<getSeriesCount(); series++) {
             for (int c=0; c<getSizeC(); c++) {
-              store.setDetectorSettingsBinning(getBinning(value), series, c);
+              store.setDetectorSettingsBinning(
+                MetadataTools.getBinning(value), series, c);
               // link DetectorSettings to an actual Detector
               store.setDetectorSettingsID(detectorID, series, c);
             }
@@ -1423,8 +1427,8 @@ public class DeltavisionReader extends FormatReader {
   {
     Double lensNA = null;
     Double workingDistance = null;
-    Immersion immersion = getImmersion("Other");
-    Correction correction = getCorrection("Other");
+    Immersion immersion = MetadataTools.getImmersion("Other");
+    Correction correction = MetadataTools.getCorrection("Other");
     String manufacturer = null;
     String model = null;
     double magnification = 0;
@@ -1455,1318 +1459,1318 @@ public class DeltavisionReader extends FormatReader {
     switch (lensID) {
       case 2001: // test
         lensNA = 1.15;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         break;
       case 10100: // Olympus 10X/0.30, S Plan Achromat, phase, IMT2
         lensNA = 0.30;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP134";
-        correction = getCorrection("Achromat");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 10101: // Olympus 10X/0.40, DApo/340, IMT2
         lensNA = 0.40;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LB331";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10102: // Olympus 10X/0.30, SPlan 10, Positive Low, phase, IMT2
         lensNA = 0.30;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP134";
         break;
       case 10103: // Olympus 4X/0.13, SPlan 4, Positive Low, phase, IMT2
         lensNA = 0.13;
         magnification = 4.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP124";
         break;
       case 10104: // Olympus 10X/0.40, D Plan Apo UV, IMT2
         lensNA = 0.40;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LB331";
-        correction = getCorrection("UV");
+        correction = MetadataTools.getCorrection("UV");
         break;
       case 10105: // Olympus 10X/0.40, D Plan Apo UV, phase, fluor free, IMT2
         lensNA = 0.40;
         magnification = 10.0;
         workingDistance = 3.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP331";
-        correction = getCorrection("UV");
+        correction = MetadataTools.getCorrection("UV");
         break;
       case 10106: // Olympus 4X/0.16, U Plan Apo, Infinity/-, IX70
         lensNA = 0.16;
         magnification = 4.0;
         workingDistance = 13.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB822";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10107: // Olympus 10X/0.40, U Plan Apo, IX70
         lensNA = 0.40;
         magnification = 10.0;
         workingDistance = 3.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB823";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10108: // Olympus 10X/0.25,C Plan Achromat, phase, IX70
         lensNA = 0.25;
         magnification = 10.0;
         workingDistance = 9.8;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC243";
-        correction = getCorrection("Achromat");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 10109: // Olympus 10X/0.30, UPlanFl, IX70
         lensNA = 0.30;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB532";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 10110: // Olympus 4X/0.13
         lensNA = 0.13;
         magnification = 4.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10111: // Olympus 2X/0.08, SPlan FL 2
         lensNA = 0.08;
         magnification = 2.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10112: // Olympus 4X/0.13, UPlanFL, Infinity/170, IX70
         lensNA = 0.13;
         magnification = 4.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB522";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 10113: // Olympus 1.25X/0.04, PlanApo, IX70
         lensNA = 0.04;
         magnification = 1.25;
         workingDistance = 5.1;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB920";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10114: // Olympus 2X/0.08, PlanApo, IX70
         lensNA = 0.08;
         magnification = 2.0;
         workingDistance = 6.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB921";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10115: // Olympus U-Plan S-Apo 10X/0.4
         lensNA = 0.40;
         magnification = 10.0;
         workingDistance = 3.1;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-U2B823";
         break;
       case 10116: // Olympus 4X/0.16, U-Plan S-Apo, UIS2, 1-U2B822
         lensNA = 0.16;
         magnification = 4.0;
         workingDistance = 13.;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-U2B822";
         break;
       case 10117: // Olympus 10X/0.40, U-Plan S-Apo, UIS2, 1-U2B824
         lensNA = 0.40;
         magnification = 10.0;
         workingDistance = 3.1;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-U2B824";
         break;
       case 10200: // Olympus 20X/0.40, LWD, CD Plan Achromat, phase, IMT2
         lensNA = 0.40;
         magnification = 20.0;
         workingDistance = 3.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("Achromat");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 10201: // Olympus 20X/0.65, DApo/340, IMT2, 1-LB343
         lensNA = 0.65;
         magnification = 20.0;
         workingDistance = 1.03;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LB343";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10202: // Olympus 20X/0.40, ULWD, CDPlan 20PL, phase, IMT2, 1-LP146
         lensNA = 0.40;
         magnification = 20.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP146";
         break;
       case 10203: // Olympus 20X/0.80, D Plan Apo/340, IMT2, 1-LB342
         lensNA = 0.80;
         magnification = 20.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB342";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10204: // Olympus 20X/0.70, D Plan Apo UV, IMT2, 1-LB341
         lensNA = 0.70;
         magnification = 20.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LB341";
-        correction = getCorrection("UV");
+        correction = MetadataTools.getCorrection("UV");
         break;
       case 10205: // Olympus 20X/0.75, U Apo 340, IX70, 1-UB765
         lensNA = 0.75;
         magnification = 20.0;
         workingDistance = 0.55;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB765";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10206: // Olympus 20X/0.50, Phase, UPLFL, IX70, 1-UC525
         lensNA = 0.50;
         magnification = 20.0;
         workingDistance = 0.55;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC525";
         break;
       case 10207: // Olympus 20X/0.40, LWD, C Achromat, phase, IX70
         lensNA = 0.40;
         magnification = 20.0;
         workingDistance = 3.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC145";
-        correction = getCorrection("Achromat");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 10208: // Olympus 20X/0.50, Phase, UPLFL, IX70, 1-UB525
         lensNA = 0.50;
         magnification = 20.0;
         workingDistance = 0.55;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB525";
         break;
       case 10209: // Olympus 20X/0.40, LCPLFL, Phase, IX70
         lensNA = 0.40;
         magnification = 20.0;
         workingDistance = 6.9;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC345";
         break;
       case 10210: // Olympus 20X/0.40, LCPLFL, IX70
         lensNA = 0.40;
         magnification = 20.0;
         workingDistance = 6.9;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB345";
         break;
       case 10211: // Olympus U-Plan S-Apo 20X/0.75
         lensNA = 0.75;
         magnification = 20.0;
         workingDistance = 0.65;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-U2B825";
         break;
       case 10212: // Olympus U-Plan Fluorite PH1 20X/0.45 w/Corr. Collar
         lensNA = 0.45;
         magnification = 20.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-U2C375";
         break;
       case 10213: // Olympus U-Plan Fluorite PH1 20X/0.50
         lensNA = 0.50;
         magnification = 20.0;
         workingDistance = 2.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-U2C525";
         break;
       case 10214: // Olympus U-Apo 340nm 20X/0.75
         lensNA = 0.75;
         magnification = 20.0;
         workingDistance = 0.55;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB765R";
         break;
       case 10215: // Olympus 20X/0.45, LWD U-Plan FL, w/Corr. Collar, UIS2, 1-U2B375
         lensNA = 0.45;
         magnification = 20.0;
         workingDistance = 6.6;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-U2B375";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 10400: // Olympus 40X/0.55, LWD, CDPlan Achromat, phase, IMT2
         lensNA = 0.55;
         magnification = 40.0;
         workingDistance = 2.04;
-        immersion = getImmersion("Air");
-        correction = getCorrection("Achromat");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 10401: // Olympus 40X/0.85, IMT2
         lensNA = 0.85;
         magnification = 40.0;
         workingDistance = 0.25;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10402: // Olympus 40X/1.30, DApo/340, IMT2, 1-LB356
         lensNA = 1.30;
         magnification = 40.0;
         workingDistance = 0.12;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB356";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10403: // Olympus 40X/1.35, UApo/340, IX70, 1-UB768
         lensNA = 1.35;
         magnification = 40.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB768";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10404: // Olympus 40X/0.85, U Plan Apo, IX70, 1-UB827
         lensNA = 0.85;
         magnification = 40.0;
         workingDistance = 0.20;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB827";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10405: // Olympus 40X/0.95, Plan Apo, IX70
         lensNA = 0.95;
         magnification = 40.0;
         workingDistance = 0.14;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB927";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10406: // Olympus 40X/1.0, U Plan Apo, Iris
         lensNA = 1.0;
         magnification = 40.;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB828";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10407: // Olympus 40X/0.75, UPlanFl, IX70, 1-UB527
         lensNA = 0.75;
         magnification = 40;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB527";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 10408: // Olympus 40X/0.60, LCPLFL, IX70
         lensNA = 0.60;
         magnification = 40.0;
         workingDistance = 2.15;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB347";
         break;
       case 10409: // Olympus 40X/0.60, LCPLFL, Phase, IX70
         lensNA = 0.60;
         magnification = 40.0;
         workingDistance = 2.15;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC347";
         break;
       case 10410: // Olympus 40X/1.15, UApo340, IX70
         lensNA = 1.15;
         magnification = 40.0;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "1-UB769";
         break;
       case 10411: // Olympus 40X/0.75, UPlanFl, IX70, Ph2
         lensNA = 0.75;
         magnification = 40;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC527";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 10412: // Olympus 40X/1.35, UApo/340, PSF, IX70
         lensNA = 1.35;
         magnification = 40.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("Apo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10413: // Olympus U-Apo 340nm 40X/1.15 Water w/Corr. Collar
         lensNA = 1.15;
         magnification = 40.0;
         workingDistance = 0.26;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "1-UB769R";
         break;
       case 10414: // Olympus 40X/0.60, LWD U-Plan FL, w/Corr. Collar, UIS2, 1-U2B377
         lensNA = 0.60;
         magnification = 40.0;
         workingDistance = 2.7;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-U2B377";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 10415: // Olympus 40X/1.35, U-Apo O340, UIS2, 1-U2B768
         lensNA = 1.35;
         magnification = 40.0;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B768";
         break;
       case 10416: // Olympus 40X/1.30, UPLFLN 40XO, U PLAN Fluorite 40X Oil, 1-U2B530
         lensNA = 1.30;
         magnification = 40.0;
         workingDistance = 0.2;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B530";
         break;
       case 10000: // Olympus 100X/1.30, DApo/340, IMT2
         lensNA = 1.30;
         magnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB393";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10001: // Olympus 100X/1.30, D Plan Apo UV, IMT2
         lensNA = 1.30;
         magnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB392";
-        correction = getCorrection("UV");
+        correction = MetadataTools.getCorrection("UV");
         break;
       case 10002: // Olympus 100X/1.40, Plan Apo, IX70
         lensNA = 1.40;
         magnification = 100.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB935";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10003: // Olympus 100X/1.35, U Plan Apo, IX70
         lensNA = 1.35;
         magnification = 100.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB836";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10004: // Olympus 100X/1.30, UPLFL
         lensNA = 1.30;
         magnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB535";
         break;
       case 10005: // Olympus 100X/1.35, U Plan Apo, PSF, IX70
         lensNA = 1.35;
         magnification = 100.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10006: // Olympus 100X/1.40, Plan Apo, PSF, IX70
         lensNA = 1.40;
         magnification = 100.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10007: // Olympus 100X/1.40, UPLS Apo, UIS2, 1-U2B836
         lensNA = 1.40;
         magnification = 100.0;
         workingDistance = 0.13;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B836";
         break;
       case 10008: // Olympus U-Plan Fluorite 100X/1.30
         lensNA = 1.30;
         magnification = 100.0;
         workingDistance = 0.20;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B5352";
         break;
       case 10009: // Olympus U-Plan Fluorite 100X/0.55-1.30 w/Corr. Collar
         lensNA = 1.30;
         magnification = 100.0;
         workingDistance = 0.20;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B5362";
         break;
       case 10010: // Olympus PlanApo TIRFM 100X/1.45
         lensNA = 1.45;
         magnification = 100.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB617R";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10011: // Olympus U-Apo N TIRF 100X/1.49 w/Corr. Collar
         lensNA = 1.49;
         magnification = 100.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B725";
         break;
       case 10012: // Olympus 100X/0.95, PLFL, Corr Collar 0.14-0.20, Iris
         lensNA = 0.95;
         magnification = 100.0;
         workingDistance = 0.20;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "XXXXXXXX";
         break;
       case 11500: // Olympus U-Apo TIRFM 150X/1.45 w/Corr. Collar
         lensNA = 1.45;
         magnification = 150.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B618";
         break;
       case 10600: // Olympus 60X/1.40, DApo/340, IMT2
         lensNA = 1.40;
         magnification = 60.0;
         workingDistance = 0.30;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("Apo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10601: // Olympus 60X/1.40, S Plan Apo, UV/340, IMT2
         lensNA = 1.40;
         magnification = 60.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB751";
-        correction = getCorrection("UV");
+        correction = MetadataTools.getCorrection("UV");
         break;
       case 10602: // Olympus 60X/1.40, Plan Apo, IX70
         lensNA = 1.40;
         magnification = 60.0;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB932";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10603: // Olympus 60X/1.20, U Plan Apo, IX70
         lensNA = 1.20;
         magnification = 60.0;
         workingDistance = 0.25;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "1-UB891";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10604: // Olympus 60X/1.20, IMT2
         lensNA = 1.20;
         magnification = 60.0;
         workingDistance = 0.25;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         break;
       case 10605: // Olympus 60X/0.70, LCPLPL, IX70
         lensNA = 0.70;
         magnification = 60.0;
         workingDistance = 1.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB351";
         break;
       case 10606: // Olympus 60X/0.70, LCPLPL, Phase, IX70
         lensNA = 0.70;
         magnification = 60.0;
         workingDistance = 1.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC351";
         break;
       case 10607: // Olympus 60X/1.40, Plan Apo, Ph3
         lensNA = 1.40;
         magnification = 60.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UC932";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10608: // Olympus 60X/1.25, UPLFL
         lensNA = 1.25;
         magnification = 60.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB532";
         break;
       case 10609: // Olympus 60X/1.40, Plan Apo, BFP-1, IX70
         lensNA = 1.40;
         magnification = 60.0;
         workingDistance = 0.15;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB933";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10610: // Olympus 60X/1.40, Plan Apo, PSF, IX70
         lensNA = 1.40;
         magnification = 60.0;
         workingDistance = 0.15;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10611: // Olympus 60X/1.20, U Plan Apo, Water, PSF, IX70
         lensNA = 1.20;
         magnification = 60.0;
         workingDistance = 0.25;
-        immersion = getImmersion("Water");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Water");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10612: // Olympus 60X/1.42, Plan Apo N, UIS2, 1-U2B933
         lensNA = 1.42;
         magnification = 60.0;
         workingDistance = 0.15;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B933";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10613: // Olympus PlanApo TIRFM 60X/1.45 w/Corr. Collar
         lensNA = 1.45;
         magnification = 60.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B616";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10614: // Olympus Apo TIRFM 60X/1.49 w/Corr. Collar
         lensNA = 1.49;
         magnification = 60.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B617";
         break;
       case 10615: // Olympus 60X/1.30, U-Apo N, Sil FV UIS2, PSF, w/Corr. Collar
         lensNA = 1.30;
         magnification = 60.0;
         workingDistance = 0.30;
-        immersion = getImmersion("Other");
+        immersion = MetadataTools.getImmersion("Other");
         break;
       case 10616: // Olympus 60X/1.20, U-Plan S-Apo PSF, UIS2, 1-U2B893S
         lensNA = 1.20;
         magnification = 60.0;
         workingDistance = 0.28;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "1-U2B893S";
         break;
       case 10617: // Olympus 60X/1.49, APON 60XOTIRF, UIS2, 1-U2B720
         lensNA = 1.49;
         magnification = 60.0;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B720";
         break;
       case 12201: // Nikon 20X/0.75, Plan Apo, CFI/60
         lensNA = 0.75;
         magnification = 20.;
         workingDistance = 1.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93104";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12202: // Nikon 20X/0.75, Plan Fluor, DIC M, CFI/60
         lensNA = 0.75;
         magnification = 20.;
-        immersion = getImmersion("Multi");
+        immersion = MetadataTools.getImmersion("Multi");
         model = "93146";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12203: // Nikon 20X/0.45, Plan Fluor ELWD, CFI/60
         lensNA = 0.45;
         magnification = 20.;
         workingDistance = 7.4;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93150";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12204: // Nikon 20X/0.45, LU Plan EPI P, CFI/60
         lensNA = 0.45;
         magnification = 20.;
         workingDistance = 4.50;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MUE01200/92777";
         break;
       case 12205: // Nikon 20X/0.50, Plan Fluor, CFI/60
         lensNA = 0.50;
         magnification = 20.;
         workingDistance = 2.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRH00200/93135";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12206: // Nikon 20X/0.45, Plan Fluor, ELWD, Corr Collar 0-2.0, CFI/60
         lensNA = 0.45;
         magnification = 20.;
         workingDistance = 7.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRH08230";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12207: // Nikon 20X/0.75, Plan Apo, CFI/60
         lensNA = 0.75;
         magnification = 20.;
         workingDistance = 1.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRD00201, MRD00205";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12208: // Nikon 20X/0.75, Super Fluor, CFI/60
         lensNA = 0.75;
         magnification = 20.;
         workingDistance = 1.00;
-        immersion = getImmersion("Air");
-        correction = getCorrection("SuperFluor");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("SuperFluor");
         break;
       case 12401: // Nikon 40X/1.30, PlanFluar, 160mm tube length
         lensNA = 1.30;
         magnification = 40.0;
         workingDistance = 0.16;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85028";
         break;
       case 12402: // Nikon 40X/1.30, CF Fluor, 160mm tube length
         lensNA = 1.30;
         magnification = 40.0;
         workingDistance = 0.22;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85004";
         break;
       case 12403: // Nikon 40X/0.75, CF Fluor, 160mm tube length
         lensNA = 0.75;
         magnification = 40.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "140508";
         break;
       case 12404: // Nikon 40X/1.30, S Fluor, CFI/60
         lensNA = 1.30;
         magnification = 40.;
         workingDistance = 0.22;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 12405: // Nikon 40X/0.95, Plan Apo, DIC M, CFI/60
         lensNA = 0.95;
         magnification = 40.;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12406: // Nikon 40X/1.00, DIC H, CFI/60
         lensNA = 1.00;
         magnification = 40.;
         workingDistance = 0.16;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 12407: // Nikon 40X/0.60, Plan Fluor, ELWD, Corr Collar, CFI/60
         lensNA = 0.60;
         magnification = 40.0;
         workingDistance = 3.2;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanFluor");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12408: // Nikon 40X/0.60, Plan Fluor, ELWD, Corr Collar 0-2.0, CFI/60
         lensNA = 0.60;
         magnification = 40.0;
         workingDistance = 2.7;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRH08430";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12409: // Nikon 40X/0.95, Plan Apo, Corr Collar 0.11-0.23, CFI/60
         lensNA = 0.95;
         magnification = 40.0;
         workingDistance = 0.14;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRD00400";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12410: // Nikon 40X/0.65, Plan Apo, NCG, CFI/60
         lensNA = 0.65;
         magnification = 40.0;
         workingDistance = 0.48;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12411: // Nikon 40X/0.95, Plan Apo, Corr Collar 0.11-0.23, CFI/60 Lambda
         lensNA = 0.95;
         magnification = 40.0;
         workingDistance = 0.14;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRD00405";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12412: // Nikon 40X/0.90, S Fluor, Corr Collar 0.11-0.23, CFI/60 Lambda
         lensNA = 0.90;
         magnification = 40.0;
         workingDistance = 0.30;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRF00400";
         break;
       case 12413: // Nikon 40X/0.75, Plan Fluor, CFI/60 Lambda
         lensNA = 0.75;
         magnification = 40.0;
         workingDistance = 0.66;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanFluor");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12600: // Nikon 60X/1.40, CF N Plan Apochromat, 160mm tube length
         lensNA = 1.40;
         magnification = 60.0;
         workingDistance = 0.17;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85020";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12601: // Nikon 60X/1.40, Plan Apo, DIC H
         lensNA = 1.40;
         magnification = 60.;
         workingDistance = 0.21;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "93108";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12602: // Nikon 60X/1.20, Plan Apo, WI (Water), DIC H, CFI/60
         lensNA = 1.20;
         magnification = 60.;
         workingDistance = 0.22;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "93109";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12603: // Nikon 60X/0.95, Plan Apo, Corr Collar 0.11-0.23, CFI/60
         lensNA = 0.95;
         magnification = 60.;
         workingDistance = 0.15;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRD00600";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12604: // Nikon 60X/0.70, Plan Fluor, ELWD, Corr Collar 0.5-1.5, CFI/60
         lensNA = 0.70;
         magnification = 60.;
         workingDistance = 1.5;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRH08630";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12605: // Nikon 60X/0.95, Plan Apo, Corr Collar 0.11-0.23, CFI/60 Lambda
         lensNA = 0.95;
         magnification = 60.;
         workingDistance = 0.15;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRD00605";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12606: // Nikon 60X/0.85, Plan Fluor, Corr Collar 0.11-0.23, CFI/60 Lambda
         lensNA = 0.85;
         magnification = 60.;
         workingDistance = 0.30;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRH00602";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12000: // Nikon 100X/1.40, CF N Plan Apochromat, 160mm tube length
         lensNA = 1.40;
         magnification = 100.0;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85025";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12001: // Nikon 100X/1.30, CF Fluor, 160mm tube length
         lensNA = 1.30;
         magnification = 100.0;
         workingDistance = 0.14;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85005";
         break;
       case 12002: // Nikon 100X/1.30, CF UV F, 160mm tube length
         lensNA = 1.30;
         magnification = 100.0;
         workingDistance = 0.13;
-        immersion = getImmersion("Glycerol");
+        immersion = MetadataTools.getImmersion("Glycerol");
         model = "78821";
-        correction = getCorrection("UV");
+        correction = MetadataTools.getCorrection("UV");
         break;
       case 12003: // Nikon 100X/1.40, Plan Apo, DIC H, CFI/60
         lensNA = 1.40;
         magnification = 100.;
         workingDistance = 0.13;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "93110";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12004: // Nikon 100X/0.5-1.30, S Fluor, Oil Iris, CFI 60
         lensNA = 1.30;
         magnification = 100.;
         workingDistance = 0.20;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "93129";
         break;
       case 12005: // Nikon 100X/0.90, Plan Fluor, Corr Collar 0.14-0.20, CFI 60
         lensNA = 0.90;
         magnification = 100.;
         workingDistance = 0.30;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRH00900";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12101: // Nikon 2X/0.10, Plan Apo, 160mm tube length
         lensNA = 0.10;
         magnification = 2.;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "202294";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12102: // Nikon 4X/0.20, Plan Apo, 160mm tube length
         lensNA = 0.20;
         magnification = 4.;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "108388";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12103: // Nikon 4X/0.20, Plan Apo, CFI/60
         lensNA = 0.2;
         magnification = 4.;
         workingDistance = 15.7;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93102";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12104: // Nikon 10X/0.45, Plan Apo, CFI/60
         lensNA = 0.45;
         magnification = 10.;
         workingDistance = 4.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93103";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12105: // Nikon 10X/0.30, Plan Fluor, CFI/60
         lensNA = 0.30;
         magnification = 10.;
         workingDistance = 16.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93134";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 12106: // Nikon 10X/0.50, Super Fluor, CFI/60
         lensNA = 0.50;
         magnification = 10.;
         workingDistance = 1.20;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRF00100/93126";
-        correction = getCorrection("SuperFluor");
+        correction = MetadataTools.getCorrection("SuperFluor");
         break;
       case 12107: // Nikon 10X/0.25, Plan Achromat, CFI/60
         lensNA = 0.25;
         magnification = 10.;
         workingDistance = 10.5;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93183";
-        correction = getCorrection("Achromat");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 12108: // Nikon 10X/0.25, Achromat Flatfield, CFI/60
         lensNA = 0.25;
         magnification = 10.;
         workingDistance = 6.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93161";
-        correction = getCorrection("Achromat");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 12109: // Nikon 2X/0.10, Plan Apo, CFI/60
         lensNA = 0.1;
         magnification = 2.;
         workingDistance = 8.50;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRD00020, MRD00025";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12110: // Nikon 4X/0.20, Plan Apo, CFI/60
         lensNA = 0.2;
         magnification = 4.;
         workingDistance = 20.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRD00041, MRD00045";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12111: // Nikon 10X/0.45, Plan Apo, CFI/60
         lensNA = 0.45;
         magnification = 10.;
         workingDistance = 4.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRD00101, MRD00105";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14001: // Zeiss 100X/1.40, Plan - APOCHROMAT
         lensNA = 1.40;
         magnification = 100.0;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 08 (02)";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14002: // Zeiss 100X/1.30, Oil Iris (0.8 - 1.30)
         lensNA = 1.30;
         magnification = 100.0;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 86";
         break;
       case 14003: // Zeiss 100X/1.40, Plan - APOCHROMAT
         lensNA = 1.40;
         magnification = 100;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 80 (02)";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14004: // Zeiss 100X/1.30, Planapo, 160mm tube length
         lensNA = 1.30;
         magnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "46 19 46 - 9903";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14005: // Zeiss 100X/1.40, Oil Iris (0.7 - 1.40)
         lensNA = 1.40;
         magnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 86 (02)";
         break;
       case 14006: // Zeiss 100X/1.30
         lensNA = 1.30;
         magnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 14601: // Zeiss 63X/1.40, Plan - APOCHROMAT
         lensNA = 1.40;
         magnification = 63.0;
         workingDistance = 0.09;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 60 (03)";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14602: // Zeiss 63X/1.40, Plan - APOCHROMAT, DIC
         lensNA = 1.40;
         magnification = 63.0;
         workingDistance = 0.09;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 62 (02)";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14603: // Zeiss 63X/0.90, Achroplan, W, Ph3
         lensNA = 0.90;
         magnification = 63.0;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "44 00 69";
         break;
       case 14604: // Zeiss 63X/1.20, C - APOCHROMAT, Water
         lensNA = 1.20;
         magnification = 63.0;
         workingDistance = 0.09;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "44 06 68";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 14401: // Zeiss 40X/1.30, FLUAR
         lensNA = 1.30;
         magnification = 40.0;
         workingDistance = 0.14;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 02 55 (01)";
-        correction = getCorrection("Fluar");
+        correction = MetadataTools.getCorrection("Fluar");
         break;
       case 14402: // Zeiss 40X/1.00, Plan - APOCHROMAT, Phase3
         lensNA = 1.00;
         magnification = 40.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 51";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14403: // Zeiss 40X/1.20, Water Immersion, Corr Collar, C - APOCHROMAT
         lensNA = 1.20;
         magnification = 40.;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "44 00 52";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 14404: // Zeiss 40X/0.75, Plan - NEOFLUAR, Phase2
         lensNA = 0.75;
         magnification = 40.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 03 51";
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14405: // Zeiss 40X/1.30, Plan - NEOFLUAR
         lensNA = 1.30;
         magnification = 40.0;
         workingDistance = 0.15;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 04 50";
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14406: // Zeiss 40X/0.60, LD ACHROPLAN, Phase2
         lensNA = 0.60;
         magnification = 40.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 08 65";
         break;
       case 14407: // Zeiss 40X/1.30, Plan - NEOFLUAR, DIC, Strainfree
         lensNA = 1.30;
         magnification = 40.0;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanNeofluar");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14301: // Zeiss 25X/0.80, Plan - NEOFLUAR
         lensNA = 0.80;
         magnification = 25.0;
         workingDistance = 0.80;
-        immersion = getImmersion("Multi");
+        immersion = MetadataTools.getImmersion("Multi");
         model = "44 05 44";
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14302: // Zeiss 25X/0.80, Plan - NEOFLUAR, DIC
         lensNA = 0.80;
         magnification = 25.0;
         workingDistance = 0.80;
-        immersion = getImmersion("Multi");
+        immersion = MetadataTools.getImmersion("Multi");
         model = "44 05 42";
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14303: // Zeiss 25X/0.80, Plan - NEOFLUAR, Phase2
         lensNA = 0.80;
         magnification = 25.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 05 45";
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14201: // Zeiss 20X/0.50, Plan - NEOFLUAR, Phase2
         lensNA = 0.50;
         magnification = 20.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 03 41 (01)";
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14202: // Zeiss 20X/0.60, Plan - APOCHROMAT
         lensNA = 0.60;
         magnification = 20.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 06 40";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14203: // Zeiss 20X/0.75, PLAN APO
         lensNA = 0.75;
         magnification = 20.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 06 49";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14204: // Zeiss 20X/0.75, Fluar
         lensNA = 0.75;
         magnification = 20.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 01 45";
-        correction = getCorrection("Fluar");
+        correction = MetadataTools.getCorrection("Fluar");
         break;
       case 14101: // Zeiss 10X/0.30, Plan - NEOFLUAR
         lensNA = 0.30;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 03 30";
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14102: // Zeiss 10X/0.25, Acrostigmat
         lensNA = 0.25;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 01 31";
         break;
       case 14103: // Zeiss 10X/0.25, Achroplan, Phase1
         lensNA = 0.25;
         magnification = 10.;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 00 31";
         break;
       case 14104: // Zeiss 10X/0.45, Plan - ApoChromat
         lensNA = 0.45;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 06 39";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 14105: // Zeiss 5X/0.16, Plan - ApoChromat
         lensNA = 0.16;
         magnification = 5.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 06 20";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18101: // API 4X, Plan Apo, AWCE
         lensNA = 0.20;
         magnification = 4.;
         workingDistance = 3.33;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18102: // API 2.5X, Plan Apo, AWe
         lensNA = 0.20;
         magnification = 2.46;
         workingDistance = 2.883;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18103: // API 4X, Plan Apo, AWe
         lensNA = 0.20;
         magnification = 4.;
         workingDistance = 2.883;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18104: // API 6X, Plan Apo, AWe
         lensNA = 0.45;
         magnification = 6.15;
         workingDistance = 2.883;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18105: // API 10X, Plan Apo, AWe, CW
         lensNA = 0.45;
         magnification = 10.;
         workingDistance = 2.883;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18106: // API 1X, DIGE
         lensNA = 0.1;
         magnification = 1.0;
         workingDistance = 24.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18107: // API 10X, BH
         lensNA = 0.15;
         magnification = 10.0;
         workingDistance = 15.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18201: // API 20X, HiRes A, CW
         lensNA = 0.55;
         magnification = 20.;
         workingDistance = 13.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18202: // API 20X, HiRes B, CW
         lensNA = 0.50;
         magnification = 20.;
         workingDistance = 13.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18204: // API 20X, HiRes C, CW
         lensNA = 0.45;
         magnification = 20.;
         workingDistance = 4.50;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MUE01200/92777";
         break;
       case 18205: // API 20X, HiRes D, CW
         lensNA = 0.50;
         magnification = 20.;
         workingDistance = 2.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRH00200/93135";
         break;
       case 18206: // API 20X, HiRes, MF
         lensNA = 0.55;
         magnification = 20.;
         workingDistance = 2.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18207: // API 20X, DF
         lensNA = 0.45;
         magnification = 20.;
         workingDistance = 7.40;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18208: // API 20X
         lensNA = 0.75;
         magnification = 20.;
         workingDistance = 1.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18401: // API 40X, NCG
         lensNA = 0.65;
         magnification = 40.0;
         workingDistance = 0.48;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 1: // Zeiss 10X/.25
         lensNA = 0.25;
         magnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         manufacturer = "Zeiss";
         break;
       case 2: // Zeiss 25X/.50
         lensNA = 0.50;
         magnification = 25.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         manufacturer = "Zeiss";
         break;
       case 3: // Zeiss 50X/1.00
         lensNA = 1.00;
         magnification = 50.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         manufacturer = "Zeiss";
         break;
       case 4: // Zeiss 63X/1.25
         lensNA = 1.25;
         magnification = 63.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         manufacturer = "Zeiss";
         break;
       case 5: // Zeiss 100X/1.30
         lensNA = 1.30;
         magnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         manufacturer = "Zeiss";
         break;
       case 6: // Neofluor 100X/1.30
         lensNA = 1.30;
         magnification = 100.0;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("Neofluor");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("Neofluor");
         break;
       case 7: // Leitz Plan Apo Brightfield
         lensNA = 1.40;
         magnification = 63.0;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         manufacturer = "Leitz";
         break;
       case 8: // Coverslip-less water immersion
         lensNA = 1.20;
         magnification = 63.0;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         break;
       case 9: // Olympus 10X/0.40
         lensNA = 0.40;
         magnification = 10.0;
         workingDistance = 0.30;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         manufacturer = "Olympus";
         break;
       case 10: // Olympus 20X/0.80
         lensNA = 0.80;
         magnification = 20.0;
         workingDistance = 0.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         manufacturer = "Olympus";
         break;
       case 11: // Olympus 40X/1.30
         lensNA = 1.30;
         magnification = 40.0;
         workingDistance = 0.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         manufacturer = "Olympus";
         break;
       case 12: // Olympus 60X/1.40
         lensNA = 1.40;
         magnification = 60.0;
         workingDistance = 0.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         manufacturer = "Olympus";
         break;
       case 13: // Nikon 100X/1.40
         lensNA = 1.40;
         magnification = 100.0;
         workingDistance = 0.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         manufacturer = "Nikon";
         break;
     }

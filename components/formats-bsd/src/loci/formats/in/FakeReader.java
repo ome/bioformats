@@ -1367,7 +1367,7 @@ public class FakeReader extends FormatReader {
     if (position != null) {
       try {
         Double v = Double.valueOf(position);
-        Length size = new Length(v, UNITS.MICROM);
+        Length size = new Length(v, UNITS.MICROMETER);
         if (positionUnit != null) {
           try {
             UnitsLength ul = UnitsLength.fromString(positionUnit);
