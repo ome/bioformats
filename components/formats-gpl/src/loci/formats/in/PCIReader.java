@@ -102,14 +102,13 @@ public class PCIReader extends FormatReader {
        initPOIService();
       }
 
-      RandomAccessInputStream s = poi.getDocumentStream(file);
-      TiffParser tp = new TiffParser(s);
-      if (tp.isValidHeader()) {
-        IFD ifd = tp.getFirstIFD();
-        s.close();
-        return (int) ifd.getTileWidth();
+      try (RandomAccessInputStream s = poi.getDocumentStream(file)) {
+        TiffParser tp = new TiffParser(s);
+        if (tp.isValidHeader()) {
+          IFD ifd = tp.getFirstIFD();
+          return (int) ifd.getTileWidth();
+        }
       }
-      s.close();
     }
     catch (FormatException e) {
       LOGGER.debug("Could not retrieve tile width", e);
@@ -131,14 +130,13 @@ public class PCIReader extends FormatReader {
         initPOIService();
       }
 
-      RandomAccessInputStream s = poi.getDocumentStream(file);
-      TiffParser tp = new TiffParser(s);
-      if (tp.isValidHeader()) {
-        IFD ifd = tp.getFirstIFD();
-        s.close();
-        return (int) ifd.getTileLength();
+      try (RandomAccessInputStream s = poi.getDocumentStream(file)) {
+        TiffParser tp = new TiffParser(s);
+        if (tp.isValidHeader()) {
+          IFD ifd = tp.getFirstIFD();
+          return (int) ifd.getTileLength();
+        }
       }
-      s.close();
     }
     catch (FormatException e) {
       LOGGER.debug("Could not retrieve tile height", e);
@@ -163,20 +161,18 @@ public class PCIReader extends FormatReader {
     }
 
     String file = imageFiles.get(no);
-    RandomAccessInputStream s = poi.getDocumentStream(file);
-    TiffParser tp = new TiffParser(s);
-
-    // can be raw pixel data or an embedded TIFF file
-
-    if (tp.isValidHeader()) {
-      IFD ifd = tp.getFirstIFD();
-      tp.getSamples(ifd, buf, x, y, w, h);
+    try (RandomAccessInputStream s = poi.getDocumentStream(file) ){
+      TiffParser tp = new TiffParser(s);
+      // can be raw pixel data or an embedded TIFF file
+      if (tp.isValidHeader()) {
+        IFD ifd = tp.getFirstIFD();
+        tp.getSamples(ifd, buf, x, y, w, h);
+      }
+      else {
+        s.seek(0);
+        readPlane(s, x, y, w, h, buf);
+      } 
     }
-    else {
-      s.seek(0);
-      readPlane(s, x, y, w, h, buf);
-    }
-    s.close();
 
     return buf;
   }
@@ -235,110 +231,112 @@ public class PCIReader extends FormatReader {
         stream.order(true);
       }
 
-      if (stream != null && stream.length() == 8) {
-        double value = stream.readDouble();
-        stream.seek(0);
+      try {
+        if (stream != null && stream.length() == 8) {
+          double value = stream.readDouble();
+          stream.seek(0);
 
-        String key = name.replace(File.separatorChar, ' ');
-        key = key.replaceAll("Root Entry ", "");
-        key = key.replaceAll("Field Data ", "");
-        key = key.replaceAll("Details ", "");
+          String key = name.replace(File.separatorChar, ' ');
+          key = key.replaceAll("Root Entry ", "");
+          key = key.replaceAll("Field Data ", "");
+          key = key.replaceAll("Details ", "");
 
-        addGlobalMeta(key, value);
-      }
-
-      if (relativePath.equals("Field Count")) {
-        m.imageCount = stream.readInt();
-      }
-      else if (relativePath.equals("File Has Image")) {
-        if (stream.readShort() == 0) {
-          throw new FormatException("This file does not contain image data.");
+          addGlobalMeta(key, value);
         }
-      }
-      else if (relativePath.startsWith("Bitmap") ||
-        (relativePath.equals("Data") && parent.indexOf("Image") != -1))
-      {
-        imageFiles.put(imageFiles.size(), name);
-
-        if (getSizeX() != 0 && getSizeY() != 0) {
-          int bpp = FormatTools.getBytesPerPixel(getPixelType());
-          int plane = getSizeX() * getSizeY() * bpp;
-          if (getSizeC() == 0 || getSizeC() * plane > poi.getFileSize(name)) {
-            m.sizeC = poi.getFileSize(name) / plane;
+        if (relativePath.equals("Field Count")) {
+          m.imageCount = stream.readInt();
+        }
+        else if (relativePath.equals("File Has Image")) {
+          if (stream.readShort() == 0) {
+            throw new FormatException("This file does not contain image data.");
           }
         }
-      }
-      else if (relativePath.indexOf("Image_Depth") != -1) {
-        boolean firstBits = m.bitsPerPixel == 0;
-        int bits = (int) stream.readDouble();
-        m.bitsPerPixel = bits;
-        while (bits % 8 != 0 || bits == 0) bits++;
-        if (bits % 3 == 0) {
-          m.sizeC = 3;
-          bits /= 3;
-          m.bitsPerPixel /= 3;
-        }
-        bits /= 8;
-        m.pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
-        if (getSizeC() > 1 && firstBits) {
-          m.sizeC /= bits;
-        }
-      }
-      else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
-        m.sizeY = (int) stream.readDouble();
-      }
-      else if (relativePath.indexOf("Image_Width") != -1 && getSizeX() == 0) {
-        m.sizeX = (int) stream.readDouble();
-      }
-      else if (relativePath.indexOf("Time_From_Start") != -1) {
-        timestamps.put(getTimestampIndex(parent), stream.readDouble());
-      }
-      else if (relativePath.indexOf("Position_Z") != -1) {
-        double zPos = stream.readDouble();
-        if (!uniqueZ.contains(zPos) && getSizeZ() <= 1)
+        else if (relativePath.startsWith("Bitmap") ||
+          (relativePath.equals("Data") && parent.indexOf("Image") != -1))
         {
-          uniqueZ.add(zPos);
-        }
-        if (name.indexOf("Field 1" + File.separator) != -1) firstZ = zPos;
-        else if (name.indexOf("Field 2" + File.separator) != -1) secondZ = zPos;
-      }
-      else if (relativePath.equals("First Field Date & Time")) {
-        long date = (long) stream.readDouble() * 1000;
-        creationDate = DateTools.convertDate(date, DateTools.COBOL);
-      }
-      else if (relativePath.equals("GroupMode")) {
-        mode = stream.readInt();
-      }
-      else if (relativePath.equals("GroupSelectedFields")) {
-        m.sizeZ = (int) (stream.length() / 8);
-      }
-      else if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
-      {
-        if (relativePath.equals("Binning")) {
-          binning = (int) stream.readDouble();
-        }
-        else if (relativePath.equals("Comments")) {
-          String comments = stream.readString((int) stream.length());
-          String[] lines = comments.split("\n");
-          for (String line : lines) {
-            int eq = line.indexOf('=');
-            if (eq != -1) {
-              String key = line.substring(0, eq).trim();
-              String value = line.substring(eq + 1).trim();
-              addGlobalMeta(key, value);
+          imageFiles.put(imageFiles.size(), name);
 
-              if (key.equals("factor")) {
-                if (value.indexOf(';') != -1) {
-                  value = value.substring(0, value.indexOf(';'));
-                }
-                scaleFactor = Double.parseDouble(value.trim());
-              }
+          if (getSizeX() != 0 && getSizeY() != 0) {
+            int bpp = FormatTools.getBytesPerPixel(getPixelType());
+            int plane = getSizeX() * getSizeY() * bpp;
+            if (getSizeC() == 0 || getSizeC() * plane > poi.getFileSize(name)) {
+              m.sizeC = poi.getFileSize(name) / plane;
             }
           }
         }
-      }
-      if (stream != null) {
-        stream.close();
+        else if (relativePath.indexOf("Image_Depth") != -1) {
+          boolean firstBits = m.bitsPerPixel == 0;
+          int bits = (int) stream.readDouble();
+          m.bitsPerPixel = bits;
+          while (bits % 8 != 0 || bits == 0) bits++;
+            if (bits % 3 == 0) {
+              m.sizeC = 3;
+              bits /= 3;
+              m.bitsPerPixel /= 3;
+            }
+            bits /= 8;
+            m.pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
+            if (getSizeC() > 1 && firstBits) {
+              m.sizeC /= bits;
+            }
+          }
+          else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
+            m.sizeY = (int) stream.readDouble();
+          }
+          else if (relativePath.indexOf("Image_Width") != -1 && getSizeX() == 0) {
+            m.sizeX = (int) stream.readDouble();
+          }
+          else if (relativePath.indexOf("Time_From_Start") != -1) {
+            timestamps.put(getTimestampIndex(parent), stream.readDouble());
+          }
+          else if (relativePath.indexOf("Position_Z") != -1) {
+            double zPos = stream.readDouble();
+            if (!uniqueZ.contains(zPos) && getSizeZ() <= 1)
+            {
+              uniqueZ.add(zPos);
+            }
+            if (name.indexOf("Field 1" + File.separator) != -1) firstZ = zPos;
+            else if (name.indexOf("Field 2" + File.separator) != -1) secondZ = zPos;
+          }
+          else if (relativePath.equals("First Field Date & Time")) {
+            long date = (long) stream.readDouble() * 1000;
+            creationDate = DateTools.convertDate(date, DateTools.COBOL);
+          }
+          else if (relativePath.equals("GroupMode")) {
+            mode = stream.readInt();
+          }
+          else if (relativePath.equals("GroupSelectedFields")) {
+            m.sizeZ = (int) (stream.length() / 8);
+          }
+          else if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
+          {
+            if (relativePath.equals("Binning")) {
+              binning = (int) stream.readDouble();
+            }
+            else if (relativePath.equals("Comments")) {
+              String comments = stream.readString((int) stream.length());
+              String[] lines = comments.split("\n");
+              for (String line : lines) {
+                int eq = line.indexOf('=');
+                if (eq != -1) {
+                  String key = line.substring(0, eq).trim();
+                  String value = line.substring(eq + 1).trim();
+                  addGlobalMeta(key, value);
+
+                  if (key.equals("factor")) {
+                    if (value.indexOf(';') != -1) {
+                      value = value.substring(0, value.indexOf(';'));
+                    }
+                    scaleFactor = Double.parseDouble(value.trim());
+                  }
+                }
+              }
+            }
+          }
+      } finally {
+        if (stream != null) {
+          stream.close();
+        }
       }
     }
 
@@ -385,13 +383,13 @@ public class PCIReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(m.pixelType);
     int expectedPlaneSize = m.sizeX * m.sizeY * bpp * m.sizeC;
     String file = imageFiles.get(0);
-    RandomAccessInputStream s = poi.getDocumentStream(file);
-    TiffParser tp = new TiffParser(s);
-    // don't correct the image width if it's stored as a TIFF
-    if (!tp.isValidHeader() && s.length() > expectedPlaneSize) {
-      m.sizeX += (s.length() - expectedPlaneSize) / (m.sizeY * bpp * m.sizeC);
+    try (RandomAccessInputStream s = poi.getDocumentStream(file)) {
+      TiffParser tp = new TiffParser(s);
+      // don't correct the image width if it's stored as a TIFF
+      if (!tp.isValidHeader() && s.length() > expectedPlaneSize) {
+        m.sizeX += (s.length() - expectedPlaneSize) / (m.sizeY * bpp * m.sizeC);
+      }
     }
-    s.close();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);

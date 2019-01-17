@@ -55,6 +55,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -131,12 +132,10 @@ public class MicromanagerReader extends FormatReader {
       name.equals(XML) || name.endsWith(File.separator + XML) || name.endsWith("_" + METADATA))
     {
       final int blockSize = 1048576;
-      try {
-        RandomAccessInputStream stream = new RandomAccessInputStream(name);
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
         long length = stream.length();
         String data = stream.readString((int) Math.min(blockSize, length));
         data = data.toLowerCase();
-        stream.close();
         return length > 0 && (data.indexOf("micro-manager") >= 0 ||
           data.indexOf("micromanager") >= 0);
       }
@@ -150,16 +149,14 @@ public class MicromanagerReader extends FormatReader {
       // is chosen
       return false;
     }
-    try {
+    try (RandomAccessInputStream s = new RandomAccessInputStream(name)) {
       Location thisFile = new Location(name).getAbsoluteFile();
       Location parent = thisFile.getParentFile();
       Location metaFile = new Location(parent, METADATA);
       if (!metaFile.exists()) {
         metaFile = new Location(parent, getPrefixMetadataName(thisFile.getName()));
       }
-      RandomAccessInputStream s = new RandomAccessInputStream(name);
       boolean validTIFF = isThisType(s);
-      s.close();
       return validTIFF && isThisType(metaFile.getAbsolutePath(), open);
     }
     catch (NullPointerException e) { }
@@ -371,6 +368,11 @@ public class MicromanagerReader extends FormatReader {
         for (int c=0; c<p.channels.length; c++) {
           store.setChannelName(p.channels[c], i, c);
         }
+        if (p.channelColors != null) {
+          for (int c=0; c<p.channelColors.length; c++) {
+            store.setChannelColor(Color.valueOf(p.channelColors[c]), i, c);
+          }
+        }
 
         Length sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
         Length sizeY = FormatTools.getPhysicalSizeY(p.pixelSize);
@@ -489,8 +491,8 @@ public class MicromanagerReader extends FormatReader {
         plane++;
         continue;
       }
-      try {
-        TiffParser parser = new TiffParser(path);
+      try (RandomAccessInputStream in = new RandomAccessInputStream(path)) {
+        TiffParser parser = new TiffParser(in);
         int nIFDs = parser.getMainIFDs().size();
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
@@ -595,7 +597,6 @@ public class MicromanagerReader extends FormatReader {
           }
         }
         plane += ifds.size();
-        parser.getStream().close();
       }
       catch (IOException e) {
         LOGGER.debug("Failed to read metadata from " + path, e);
@@ -609,25 +610,16 @@ public class MicromanagerReader extends FormatReader {
     for (int i=plane; i<plane+nPlanes; i++) {
       addSeriesMeta(String.format("Plane #%0" + digits + "d %s", i, key), value);
       if (key.equals("XPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][0] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][0] = DataTools.parseDouble(value);
       }
       else if (key.equals("YPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][1] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][1] = DataTools.parseDouble(value);
       }
       else if (key.equals("ZPositionUm")) {
-        try {
-          Position p = positions.get(getCoreIndex());
-          p.positions[i][2] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][2] = DataTools.parseDouble(value);
       }
     }
   }
@@ -708,21 +700,19 @@ public class MicromanagerReader extends FormatReader {
 
     Vector<Double> stamps = new Vector<Double>();
     p.voltage = new Vector<Double>();
+    byte[] b = null;
+    try (RandomAccessInputStream s = new RandomAccessInputStream(jsonData)) {
+      if (s.length() > Integer.MAX_VALUE) {
+        LOGGER.warn(jsonData + " exceeds 2GB; metadata parsing is likely to fail");
+      }
+      else if (s.length() > 100 * 1024 * 1024) {
+        LOGGER.warn(jsonData + " is larger than 100MB and may require additional memory to parse. " +
+          "A minimum of 1024MB is suggested.");
+      }
 
-    RandomAccessInputStream s = new RandomAccessInputStream(jsonData);
-
-    if (s.length() > Integer.MAX_VALUE) {
-      LOGGER.warn(jsonData + " exceeds 2GB; metadata parsing is likely to fail");
+      b = new byte[(int) s.length()];
+      s.readFully(b);
     }
-    else if (s.length() > 100 * 1024 * 1024) {
-      LOGGER.warn(jsonData + " is larger than 100MB and may require additional memory to parse. " +
-        "A minimum of 1024MB is suggested.");
-    }
-
-    byte[] b = new byte[(int) s.length()];
-    s.readFully(b);
-    s.close();
-
     int[] slice = new int[3];
     start = 0;
     while (start < b.length) {
@@ -759,7 +749,6 @@ public class MicromanagerReader extends FormatReader {
         if (value.length() == 0) {
           continue;
         }
-        value = value.substring(0, value.length() - 1);
         value = value.replaceAll("\"", "");
         if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
         handleKeyValue(key, value);
@@ -770,6 +759,12 @@ public class MicromanagerReader extends FormatReader {
           p.channels = value.split(",");
           for (int q=0; q<p.channels.length; q++) {
             p.channels[q] = p.channels[q].replaceAll("\"", "").trim();
+          }
+        }
+        else if (key.equals("ChColors")) {
+          p.channelColors = value.split(",");
+          for (int q=0; q<p.channelColors.length; q++) {
+            p.channelColors[q] = p.channelColors[q].trim();
           }
         }
         else if (key.equals("Frames")) {
@@ -786,10 +781,10 @@ public class MicromanagerReader extends FormatReader {
           }
         }
         else if (key.equals("PixelSize_um")) {
-          p.pixelSize = new Double(value);
+          p.pixelSize = DataTools.parseDouble(value);
         }
         else if (key.equals("z-step_um")) {
-          p.sliceThickness = new Double(value);
+          p.sliceThickness = DataTools.parseDouble(value);
         }
         else if (key.equals("Time")) {
           p.time = value;
@@ -902,19 +897,25 @@ public class MicromanagerReader extends FormatReader {
             p.detectorModel = value;
           }
           else if (key.equals(p.cameraRef + "-Gain")) {
-            p.gain = (int) Double.parseDouble(value);
+            Double gain = DataTools.parseDouble(value);
+            if (gain != null) {
+              p.gain = gain.intValue();
+            }
           }
           else if (key.equals(p.cameraRef + "-Name")) {
             p.detectorManufacturer = value;
           }
           else if (key.equals(p.cameraRef + "-Temperature")) {
-            p.temperature = Double.parseDouble(value);
+            Double temperature = DataTools.parseDouble(value);
+            if (temperature != null) {
+              p.temperature = temperature;
+            }
           }
           else if (key.equals(p.cameraRef + "-CCDMode")) {
             p.cameraMode = value;
           }
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
-            p.voltage.add(new Double(value));
+            p.voltage.add(DataTools.parseDouble(value));
           }
           else if (key.equals("PositionName") && !value.equals("null")) {
             p.name = value;
@@ -1218,6 +1219,7 @@ public class MicromanagerReader extends FormatReader {
     public transient String name;
 
     public String[] channels;
+    public String[] channelColors;
 
     public String comment, time;
     public Time exposureTime;

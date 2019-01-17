@@ -84,9 +84,7 @@ public class TargaReader extends FormatReader {
     CodecOptions options = new CodecOptions();
     options.maxBytes = planeSize;
     options.bitsPerSample = bits;
-
     RandomAccessInputStream s = in;
-
     if (compressed) {
       byte[] b = codec.decompress(in, options);
       s = new RandomAccessInputStream(b);
@@ -100,36 +98,41 @@ public class TargaReader extends FormatReader {
     int rowSkip = orientation < 2 ? (getSizeY() - h - y) : y;
     int colSkip = (orientation % 2) == 1 ? (getSizeX() - w - x) : x;
 
-    s.skipBytes(rowSkip * getSizeX() * bpp);
-    for (int row=0; row<h; row++) {
-      if (s.getFilePointer() >= s.length()) break;
-      s.skipBytes(colSkip * bpp);
-      for (int col=0; col<w; col++) {
+    try {
+      s.skipBytes(rowSkip * getSizeX() * bpp);
+      for (int row=0; row<h; row++) {
         if (s.getFilePointer() >= s.length()) break;
-        int rowIndex = orientation < 2 ? h - row - 1 : row;
-        int colIndex = (orientation % 2) == 1 ? w - col - 1 : col;
-        int index = getSizeC() * (rowIndex * w + colIndex);
-        if (bpp == 2) {
-          int v = s.readShort();
-          buf[index] = (byte) ((v & 0x7c00) >> 10);
-          buf[index + 1] = (byte) ((v & 0x3e0) >> 5);
-          buf[index + 2] = (byte) (v & 0x1f);
-        }
-        else if (bpp == 4) {
-          buf[index + 2] = s.readByte();
-          buf[index + 1] = s.readByte();
-          buf[index] = s.readByte();
-          s.skipBytes(1);
-        }
-        else {
-          for (int c=getSizeC() - 1; c>=0; c--) {
-            buf[index + c] = s.readByte();
+        s.skipBytes(colSkip * bpp);
+        for (int col=0; col<w; col++) {
+          if (s.getFilePointer() >= s.length()) break;
+          int rowIndex = orientation < 2 ? h - row - 1 : row;
+          int colIndex = (orientation % 2) == 1 ? w - col - 1 : col;
+          int index = getSizeC() * (rowIndex * w + colIndex);
+          if (bpp == 2) {
+            int v = s.readShort();
+            buf[index] = (byte) ((v & 0x7c00) >> 10);
+            buf[index + 1] = (byte) ((v & 0x3e0) >> 5);
+            buf[index + 2] = (byte) (v & 0x1f);
+          }
+          else if (bpp == 4) {
+            buf[index + 2] = s.readByte();
+            buf[index + 1] = s.readByte();
+            buf[index] = s.readByte();
+            s.skipBytes(1);
+          }
+          else {
+            for (int c=getSizeC() - 1; c>=0; c--) {
+              buf[index + c] = s.readByte();
+            }
           }
         }
+        s.skipBytes(bpp * (getSizeX() - w - colSkip));
       }
-      s.skipBytes(bpp * (getSizeX() - w - colSkip));
+    } finally {
+      if (compressed) {
+          s.close();
+      }
     }
-
     return buf;
   }
 

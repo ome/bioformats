@@ -125,18 +125,18 @@ public class VisitechReader extends FormatReader {
     }
 
     String file = files.get(fileIndex);
-    RandomAccessInputStream s = new RandomAccessInputStream(file);
-    s.order(isLittleEndian());
-    s.seek(pixelOffsets[fileIndex]);
+    try (RandomAccessInputStream s = new RandomAccessInputStream(file)) {
+      s.order(isLittleEndian());
+      s.seek(pixelOffsets[fileIndex]);
 
-    int paddingBytes =
-      (int) (s.length() - s.getFilePointer() - div * plane) / (div - 1);
-    if (planeIndex > 0) {
-      s.skipBytes((plane + paddingBytes) * planeIndex);
+      int paddingBytes =
+          (int) (s.length() - s.getFilePointer() - div * plane) / (div - 1);
+      if (planeIndex > 0) {
+        s.skipBytes((plane + paddingBytes) * planeIndex);
+      }
+
+      readPlane(s, x, y, w, h, buf);
     }
-
-    readPlane(s, x, y, w, h, buf);
-    s.close();
     return buf;
   }
 
@@ -348,21 +348,23 @@ public class VisitechReader extends FormatReader {
 
   private long findPixelsOffset(int fileIndex) throws IOException {
     String file = files.get(fileIndex);
-    RandomAccessInputStream s = new RandomAccessInputStream(file);
-    s.order(isLittleEndian());
-    s.findString(false, HEADER_MARKER);
+    long fp = 0;
+    try (RandomAccessInputStream s = new RandomAccessInputStream(file)) {
+      s.order(isLittleEndian());
+      s.findString(false, HEADER_MARKER);
 
-    int plane = FormatTools.getPlaneSize(this);
-    int planeCount = getSizeZ() * getSizeT();
+      int plane = FormatTools.getPlaneSize(this);
+      int planeCount = getSizeZ() * getSizeT();
 
-    long skip =
-      (s.length() - s.getFilePointer() - (planeCount * plane)) / planeCount;
-    long fp = s.getFilePointer() + skip - HEADER_MARKER.length();
-    s.seek(fp);
-    if (s.readByte() == PIXELS_MARKER[PIXELS_MARKER.length - 1]) {
-      fp++;
+      long skip =
+        (s.length() - s.getFilePointer() - (planeCount * plane)) / planeCount;
+      fp = s.getFilePointer() + skip - HEADER_MARKER.length();
+      s.seek(fp);
+      if (s.readByte() == PIXELS_MARKER[PIXELS_MARKER.length - 1]) {
+        fp++;
+      }
     }
-    s.close();
+
     return fp;
   }
 

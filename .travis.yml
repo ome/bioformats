@@ -16,9 +16,10 @@ addons:
     - git
 
 jdk:
-  - oraclejdk10
+  - openjdk11
+  - oraclejdk11
+  - openjdk8
   - oraclejdk8
-  - openjdk7
 
 env:
   - BUILD=maven
@@ -27,13 +28,14 @@ env:
 matrix:
   fast_finish: true
   exclude:
-  - jdk: oraclejdk10
+  - jdk: oraclejdk11
     env: BUILD=ant
-  - jdk: openjdk7
+  - jdk: openjdk11
     env: BUILD=ant
-
-before_install:
-  - if [[ $BUILD == 'ant' ]]; then pip install --user flake8 Sphinx; fi
+  - jdk: oraclejdk8
+    env: BUILD=ant
+  - jdk: openjdk8
+    env: BUILD=maven
 
 script:
   - ./tools/test-build $BUILD

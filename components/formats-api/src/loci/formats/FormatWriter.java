@@ -304,28 +304,28 @@ public abstract class FormatWriter extends FormatHandler
   /* @see IFormatWriter#getTileSizeX() */
   @Override
   public int getTileSizeX() throws FormatException {
-    return getSizeX();
+    return 0;
   }
 
   /* @see IFormatWriter#setTileSizeX(int) */
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
     int width = getSizeX();
-    if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
+    if (tileSize < 0) throw new FormatException("Tile size must be >= 0. Setting a tile size of 0 will disable tiling");
     return width;
   }
 
   /* @see IFormatWriter#getTileSizeY() */
   @Override
   public int getTileSizeY() throws FormatException {
-    return getSizeY();
+    return 0;
   }
 
   /* @see IFormatWriter#setTileSizeY(int) */
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     int height = getSizeY();
-    if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
+    if (tileSize < 0) throw new FormatException("Tile size must be >= 0. Setting a tile size of 0 will disable tiling");
     return height;
   }
 

@@ -232,10 +232,8 @@ public class OMEXMLReader extends FormatReader {
     compression = new ArrayList<String>();
 
     DefaultHandler handler = new OMEXMLHandler();
-    try {
-      RandomAccessInputStream s = new RandomAccessInputStream(id);
+    try (RandomAccessInputStream s = new RandomAccessInputStream(id)) {
       XMLTools.parseXML(s, handler);
-      s.close();
     }
     catch (IOException e) {
       throw new FormatException("Malformed OME-XML", e);

@@ -125,11 +125,13 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
-    RandomAccessInputStream ras = new RandomAccessInputStream(fileName, 16);
-    TiffParser tp = new TiffParser(ras);
-    IFD ifd = tp.getFirstIFD();
-    long[] ifdOffsets = tp.getIFDOffsets();
-    ras.close();
+    IFD ifd = null;
+    long[] ifdOffsets = null;
+    try (RandomAccessInputStream ras = new RandomAccessInputStream(fileName, 16)) {
+        TiffParser tp = new TiffParser(ras);
+        ifd = tp.getFirstIFD();
+        ifdOffsets = tp.getIFDOffsets();
+    }
     String xml = ifd.getComment();
 
     if (service == null) setupService();
@@ -333,15 +335,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
       return buf;
     }
     IFD ifd = ifdList.get(i);
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(info[series][no].id, 16);
-    TiffParser p = new TiffParser(s);
-    if(resolution > 0) {
-      IFDList subifds = p.getSubIFDs(ifd);
-      ifd = subifds.get(((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset);
+    try (RandomAccessInputStream s = new RandomAccessInputStream(info[series][no].id, 16)) {
+      TiffParser p = new TiffParser(s);
+      if (resolution > 0) {
+        IFDList subifds = p.getSubIFDs(ifd);
+        ifd = subifds.get(((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset);
+      }
+      p.getSamples(ifd, buf, x, y, w, h);
     }
-    p.getSamples(ifd, buf, x, y, w, h);
-    s.close();
 
     // reasonably safe to close the reader if the entire plane or
     // lower-right-most tile from a single plane file has been read
@@ -450,15 +451,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
       companion = true;
     }
     else {
-      RandomAccessInputStream ras = new RandomAccessInputStream(fileName, 16);
-      try {
-        TiffParser tp = new TiffParser(ras);
-        firstIFD = tp.getFirstIFD();
-        xml = firstIFD.getComment();
-      }
-      finally {
-        ras.close();
-      }
+      firstIFD = getFirstIFD(fileName);
+      xml = firstIFD.getComment();
     }
 
     if (service == null) setupService();
@@ -469,8 +463,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
       if (companion) {
         String firstTIFF = meta.getUUIDFileName(0, 0);
-        initFile(new Location(dir, firstTIFF).getAbsolutePath());
-        return;
+        firstIFD = getFirstIFD(new Location(dir, firstTIFF).getAbsolutePath());
+        metadataFile = fileName;
       }
     }
     catch (ServiceException se) {
@@ -478,10 +472,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
     }
 
     String metadataPath = null;
-    try {
-      metadataPath = meta.getBinaryOnlyMetadataFile();
-    }
-    catch (NullPointerException e) {
+    if (metadataFile == null) {
+      try {
+        metadataPath = meta.getBinaryOnlyMetadataFile();
+      }
+      catch (NullPointerException e) {
+      }
     }
 
     if (metadataPath != null) {
@@ -999,14 +995,15 @@ public class OMETiffReader extends SubResolutionFormatReader {
       OMETiffCoreMetadata m = (OMETiffCoreMetadata) core.get(s, 0);
       info[s] = planes;
       try {
-        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16);
-        String firstFile = info[s][0].id;
-        if (!info[s][0].reader.isThisType(testFile)) {
-          LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
-          info[s][0].id = currentId;
-          info[s][0].exists = false;
+        String firstFile = null;
+        try (RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16)) {
+          firstFile = info[s][0].id;
+          if (!info[s][0].reader.isThisType(testFile)) {
+            LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
+            info[s][0].id = currentId;
+            info[s][0].exists = false;
+          }
         }
-        testFile.close();
         for (int plane=1; plane<info[s].length; plane++) {
           if (info[s][plane].id.equals(firstFile)) {
             // don't repeat slow type checking if the files are the same
@@ -1017,13 +1014,13 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
             continue;
           }
-          testFile = new RandomAccessInputStream(info[s][plane].id, 16);
-          if (!info[s][plane].reader.isThisType(testFile)) {
-            LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
-            info[s][plane].id = info[s][0].id;
-            info[s][plane].exists = false;
+          try (RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][plane].id, 16)) {
+            if (!info[s][plane].reader.isThisType(testFile)) {
+              LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
+              info[s][plane].id = info[s][0].id;
+              info[s][plane].exists = false;
+            }
           }
-          testFile.close();
         }
 
         info[s][0].reader.setId(info[s][0].id);
@@ -1272,10 +1269,11 @@ public class OMETiffReader extends SubResolutionFormatReader {
         continue;
       }
       IFD ifd = ifdList.get(i);
-      RandomAccessInputStream rs =
-        new RandomAccessInputStream(info[s][0].id, 16);
-      TiffParser p = new TiffParser(rs);
-      IFDList subifds = p.getSubIFDs(ifd);
+      IFDList subifds = null;
+      try (RandomAccessInputStream rs = new RandomAccessInputStream(info[s][0].id, 16)) {
+        TiffParser p = new TiffParser(rs);
+        subifds = p.getSubIFDs(ifd);
+      }
       c0.resolutionCount = subifds.size() + 1;
 
       if (c0.resolutionCount > 1 && hasFlattenedResolutions()) {
@@ -1331,10 +1329,22 @@ public class OMETiffReader extends SubResolutionFormatReader {
         checkSuffix(metadataFile, "ome.tf8") ||
         checkSuffix(metadataFile, "ome.btf")) {
       // metadata file is an OME-TIFF file; extract OME-XML comment
-      return new TiffParser(metadataFile).getComment();
+      try (RandomAccessInputStream in = new RandomAccessInputStream(metadataFile)) {
+        TiffParser parser = new TiffParser(in);
+        return parser.getComment();
+      }
     }
     // assume metadata file is an XML file
     return DataTools.readFile(metadataFile);
+  }
+
+  private static IFD getFirstIFD(String fname) throws IOException {
+    IFD firstIFD = null;
+    try (RandomAccessInputStream ras = new RandomAccessInputStream(fname, 16)) {
+      TiffParser tp = new TiffParser(ras);
+      firstIFD = tp.getFirstIFD();
+    }
+    return firstIFD;
   }
 
   // -- Helper classes --

@@ -345,7 +345,12 @@ public class TiffParser {
       in.seek(offset);
       offsets.add(offset);
       int nEntries = bigTiff ? (int) in.readLong() : in.readUnsignedShort();
-      in.skipBytes(nEntries * bytesPerEntry);
+      int entryBytes = nEntries * bytesPerEntry;
+      if (in.getFilePointer() + entryBytes + (bigTiff ? 8 : 4) > in.length()) {
+        // this can easily happen when writing multiple planes to a file
+        break;
+      }
+      in.skipBytes(entryBytes);
       offset = getNextOffset(offset);
     }
 

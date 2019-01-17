@@ -168,11 +168,9 @@ public class PrairieReader extends FormatReader {
     }
 
     boolean validXML = false;
-    try {
-      RandomAccessInputStream xmlStream =
-        new RandomAccessInputStream(xml.getAbsolutePath());
+    try (RandomAccessInputStream xmlStream =
+        new RandomAccessInputStream(xml.getAbsolutePath())) {
       validXML = isThisType(xmlStream);
-      xmlStream.close();
     }
     catch (IOException e) {
       LOGGER.trace("Failed to check XML file's type", e);
@@ -692,10 +690,10 @@ public class PrairieReader extends FormatReader {
 
     // read entire XML document into a giant byte array
     final byte[] buf = new byte[(int) file.length()];
-    final RandomAccessInputStream is =
-      new RandomAccessInputStream(file.getAbsolutePath());
-    is.readFully(buf);
-    is.close();
+    try(RandomAccessInputStream is =
+      new RandomAccessInputStream(file.getAbsolutePath())) {
+      is.readFully(buf);
+    }
 
     // filter out invalid characters from the XML
     final String xml =

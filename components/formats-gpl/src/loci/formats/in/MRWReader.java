@@ -145,9 +145,9 @@ public class MRWReader extends FormatReader {
       fullImage = ImageTools.interpolate(s, fullImage, colorMap,
         getSizeX(), getSizeY(), isLittleEndian());
     }
-    RandomAccessInputStream stream = new RandomAccessInputStream(fullImage);
-    readPlane(stream, x, y, w, h, buf);
-    stream.close();
+    try (RandomAccessInputStream stream = new RandomAccessInputStream(fullImage)) {
+      readPlane(stream, x, y, w, h, buf);
+    }
     return buf;
   }
 
@@ -209,26 +209,26 @@ public class MRWReader extends FormatReader {
       {
         byte[] b = new byte[len];
         in.read(b);
-        RandomAccessInputStream ras = new RandomAccessInputStream(b);
-        TiffParser tp = new TiffParser(ras);
-        IFDList ifds = tp.getMainIFDs();
+        try (RandomAccessInputStream ras = new RandomAccessInputStream(b)) {
+          TiffParser tp = new TiffParser(ras);
+          IFDList ifds = tp.getMainIFDs();
 
-        for (IFD ifd : ifds) {
-          Integer[] keys = (Integer[]) ifd.keySet().toArray(new Integer[0]);
-          // CTR FIXME - getIFDTagName is for debugging only!
-          for (int q=0; q<keys.length; q++) {
-            addGlobalMeta(IFD.getIFDTagName(keys[q].intValue()),
-              ifd.get(keys[q]));
+          for (IFD ifd : ifds) {
+            Integer[] keys = (Integer[]) ifd.keySet().toArray(new Integer[0]);
+            // CTR FIXME - getIFDTagName is for debugging only!
+            for (int q=0; q<keys.length; q++) {
+              addGlobalMeta(IFD.getIFDTagName(keys[q].intValue()),
+                ifd.get(keys[q]));
+            }
+          }
+
+          IFDList exifIFDs = tp.getExifIFDs();
+          for (IFD exif : exifIFDs) {
+            for (Integer key : exif.keySet()) {
+              addGlobalMeta(IFD.getIFDTagName(key.intValue()), exif.get(key));
+            }
           }
         }
-
-        IFDList exifIFDs = tp.getExifIFDs();
-        for (IFD exif : exifIFDs) {
-          for (Integer key : exif.keySet()) {
-            addGlobalMeta(IFD.getIFDTagName(key.intValue()), exif.get(key));
-          }
-        }
-        ras.close();
       }
 
       in.seek(fp + len);

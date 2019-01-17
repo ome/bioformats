@@ -151,9 +151,9 @@ public class JPXReader extends FormatReader {
 
     if (lastSeries == getSeries() && lastPlane == no && lastSeriesPlane != null)
     {
-      RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
+      try (RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane)) {
+        readPlane(s, x, y, w, h, buf);
+      }
       return buf;
     }
 
@@ -169,9 +169,9 @@ public class JPXReader extends FormatReader {
 
     in.seek(pixelOffsets.get(no));
     lastSeriesPlane = new JPEG2000Codec().decompress(in, options);
-    RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
+    try (RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane)) {
+      readPlane(s, x, y, w, h, buf);
+    }
     lastSeries = getSeries();
     lastPlane = no;
     return buf;

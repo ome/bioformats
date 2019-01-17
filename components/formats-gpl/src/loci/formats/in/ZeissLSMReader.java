@@ -474,9 +474,7 @@ public class ZeissLSMReader extends FormatReader {
 
     int realSeries = 0;
     for (int i=0; i<lsmFilenames.length; i++) {
-      RandomAccessInputStream stream = null;
-      try {
-        stream = new RandomAccessInputStream(lsmFilenames[i], 16);
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(lsmFilenames[i], 16)){
         int count = seriesCounts.get(lsmFilenames[i]);
         TiffParser tp = new TiffParser(stream);
         Boolean littleEndian = tp.checkHeader();
@@ -510,8 +508,6 @@ public class ZeissLSMReader extends FormatReader {
         }
       } catch (IOException e) {
           throw e;
-      } finally {
-        if (stream != null) stream.close();
       }
     }
 

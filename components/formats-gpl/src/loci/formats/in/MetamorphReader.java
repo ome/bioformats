@@ -672,12 +672,12 @@ public class MetamorphReader extends BaseTiffReader {
         throw new FormatException(
             "Unable to locate at least one valid STK file!");
       }
-
-      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
-      TiffParser tp = new TiffParser(s);
-      IFD ifd = tp.getFirstIFD();
+      IFD ifd = null;
+      try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
+          TiffParser tp = new TiffParser(s);
+          ifd = tp.getFirstIFD();
+      }
       CoreMetadata ms0 = core.get(0, 0);
-      s.close();
       ms0.sizeX = (int) ifd.getImageWidth();
       ms0.sizeY = (int) ifd.getImageLength();
 
@@ -1523,11 +1523,10 @@ public class MetamorphReader extends BaseTiffReader {
 
   private String getComment(int i, int no) throws IOException {
     if (stks != null && stks[i][no] != null) {
-      RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][no], 16);
-      TiffParser tp = new TiffParser(stream);
-      String comment = tp.getComment();
-      stream.close();
-      return comment;
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][no], 16)) {
+        TiffParser tp = new TiffParser(stream);
+        return tp.getComment();
+      }
     }
     return ifds.get(0).getComment();
   }

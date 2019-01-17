@@ -151,6 +151,9 @@ public class ConfigurationTree {
    *  Relocate a path from an base directory into a target directory
    */
   public String relocate(String path, String oldRoot, String newRoot) {
+    if (!path.startsWith(oldRoot)) {
+      return path;
+    }
     String subPath = path.substring((int) Math.min(
       oldRoot.length() + 1, path.length()));
     if (subPath.length() == 0) {

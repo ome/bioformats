@@ -33,6 +33,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -99,6 +100,7 @@ public class KLBReader extends FormatReader {
   private int headerVersion;
 
   private LinkedHashMap<String, String[][]> filelist = new LinkedHashMap<String, String[][]>();
+  private ArrayList<Integer> channels = new ArrayList<Integer>();
   private static final String DEFAULT_SERIES = "Default";
 
   /** Prefixes indicating dimensions and projections */
@@ -314,10 +316,15 @@ public class KLBReader extends FormatReader {
         String fileName = listOfFiles[i].getName();
         if (fileName.contains(basePrefix)) {
           int channelNum = DataTools.parseInteger(fileName.substring(fileName.indexOf(CHANNEL_PREFIX)+CHANNEL_PREFIX.length(), fileName.indexOf('.')));
-          if (channelNum == sizeC) {
-            sizeC = channelNum + 1;
+          if (!channels.contains(channelNum)) {
+            channels.add(channelNum);
           }
         }
+      }
+
+      if (channels.size() > 0) {
+        sizeC = channels.size();
+        Collections.sort(channels);
       }
 
       String topLevelFolder = new Location(parent).getAbsoluteFile().getParent();
@@ -349,6 +356,7 @@ public class KLBReader extends FormatReader {
             if (innerFileName.contains(PROJECTION_PREFIX.substring(0, PROJECTION_PREFIX.length()-1))) {
               String channelNumString = innerFileName.substring(innerFileName.indexOf(CHANNEL_PREFIX)+CHANNEL_PREFIX.length(), innerFileName.indexOf('.'));
               int currentChannelNum = DataTools.parseInteger(channelNumString);
+              int channelIndex = channels.indexOf(currentChannelNum);
               if (innerFileName.indexOf(PROJECTION_PREFIX) >= 0) {
                 String projection = innerFileName.substring(innerFileName.indexOf(PROJECTION_PREFIX)+PROJECTION_PREFIX.length(), innerFileName.indexOf(PROJECTION_SUFFIX));
                 if (SERIES_PREFIXES.contains(projection)) {
@@ -356,8 +364,8 @@ public class KLBReader extends FormatReader {
                     filelist.put(projection, new String[sizeT][sizeC]);
                     core.add(new CoreMetadata(this, 0));
                   }
-                  filelist.get(projection)[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
-                  if (currentTimepoint == 0 && currentChannelNum == 0) {
+                  filelist.get(projection)[currentTimepoint][channelIndex] = innerFileList[j].getAbsolutePath();
+                  if (currentTimepoint == 0 && channelIndex == 0) {
                     in.close();
                     in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
                     List<String> stringsList = new ArrayList<>(filelist.keySet());
@@ -366,8 +374,8 @@ public class KLBReader extends FormatReader {
                 }
               }
               else {
-                filelist.get(DEFAULT_SERIES)[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
-                if (currentTimepoint == 0 && currentChannelNum == 0) {
+                filelist.get(DEFAULT_SERIES)[currentTimepoint][channelIndex] = innerFileList[j].getAbsolutePath();
+                if (currentTimepoint == 0 && channelIndex == 0) {
                   in.close();
                   in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
                   readHeader(core.get(0));
@@ -383,6 +391,7 @@ public class KLBReader extends FormatReader {
       filelist.put(DEFAULT_SERIES, new String[1][1]);
       String absolutePath = new Location(id).getAbsolutePath();
       filelist.get(DEFAULT_SERIES)[0][0] = absolutePath;
+      in.close();
       in = new RandomAccessInputStream(absolutePath);
       readHeader(core.get(0));
     }

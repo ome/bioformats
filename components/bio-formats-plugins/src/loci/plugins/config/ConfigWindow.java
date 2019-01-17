@@ -437,64 +437,58 @@ public class ConfigWindow extends JFrame
     String propKey = null;
     StringBuffer propValue = new StringBuffer();
     String resource = "libraries.txt";
-    BufferedReader in = null;
-    try {
-      in = new BufferedReader(new InputStreamReader(
-        ConfigWindow.class.getResourceAsStream(resource), Constants.ENCODING));
+    try (BufferedReader in = new BufferedReader(new InputStreamReader(
+        ConfigWindow.class.getResourceAsStream(resource), Constants.ENCODING))) {
+      while (true) {
+        String line = null;
+        try {
+          line = in.readLine();
+        }
+        catch (IOException exc) {
+          log.println("Error parsing " + resource + ":");
+          exc.printStackTrace(log);
+          break;
+        }
+        if (line == null) break;
+
+        // ignore characters following # sign (comments)
+        int ndx = line.indexOf('#');
+        if (ndx >= 0) line = line.substring(0, ndx);
+        boolean space = line.startsWith(" ");
+        line = line.trim();
+        if (line.equals("")) continue;
+
+        // parse key/value pairs
+        int equals = line.indexOf('=');
+        if (line.startsWith("[")) {
+          // new entry
+          if (props == null) props = new HashMap<String, String>();
+          else {
+             addProp(props, propKey, propValue.toString(), versions);
+             LibraryEntry entry = new LibraryEntry(log, props);
+             addEntry(entry, libsListModel);
+          }
+          props.clear();
+          props.put("name", line.substring(1, line.length() - 1));
+          propKey = null;
+        }
+        else if (space) {
+          // append to previous property value
+          propValue.append(" ");
+          propValue.append(line);
+        }
+        else if (equals >= 0) {
+          addProp(props, propKey, propValue.toString(), versions);
+          propKey = line.substring(0, equals - 1).trim();
+          propValue.setLength(0);
+          propValue.append(line.substring(equals + 1).trim());
+        }
+      }
     }
     catch (UnsupportedEncodingException e) {
       log.println("UTF-8 encoding is not supported.  Something is very wrong.");
       e.printStackTrace(log);
-    }
-    while (true) {
-      String line = null;
-      try {
-        line = in.readLine();
-      }
-      catch (IOException exc) {
-        log.println("Error parsing " + resource + ":");
-        exc.printStackTrace(log);
-        break;
-      }
-      if (line == null) break;
-
-      // ignore characters following # sign (comments)
-      int ndx = line.indexOf('#');
-      if (ndx >= 0) line = line.substring(0, ndx);
-      boolean space = line.startsWith(" ");
-      line = line.trim();
-      if (line.equals("")) continue;
-
-      // parse key/value pairs
-      int equals = line.indexOf('=');
-      if (line.startsWith("[")) {
-        // new entry
-        if (props == null) props = new HashMap<String, String>();
-        else {
-          addProp(props, propKey, propValue.toString(), versions);
-          LibraryEntry entry = new LibraryEntry(log, props);
-          addEntry(entry, libsListModel);
-        }
-        props.clear();
-        props.put("name", line.substring(1, line.length() - 1));
-        propKey = null;
-      }
-      else if (space) {
-        // append to previous property value
-        propValue.append(" ");
-        propValue.append(line);
-      }
-      else if (equals >= 0) {
-        addProp(props, propKey, propValue.toString(), versions);
-        propKey = line.substring(0, equals - 1).trim();
-        propValue.setLength(0);
-        propValue.append(line.substring(equals + 1).trim());
-      }
-    }
-    try {
-      in.close();
-    }
-    catch (IOException exc) {
+    } catch (IOException exc) {
       log.println("Error closing " + resource + ":");
       exc.printStackTrace(log);
     }

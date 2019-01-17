@@ -204,7 +204,6 @@ public class TiffWriter extends FormatWriter {
   public void saveBytes(int no, byte[] buf, IFD ifd)
     throws IOException, FormatException
   {
-    MetadataRetrieve r = getMetadataRetrieve();
     int w = getSizeX();
     int h = getSizeY();
     saveBytes(no, buf, ifd, 0, 0, w, h);
@@ -224,15 +223,14 @@ public class TiffWriter extends FormatWriter {
     int type = FormatTools.pixelTypeFromString(
         retrieve.getPixelsType(series).toString());
     int index = no;
-    int imageWidth = getSizeX();
-    int imageHeight = getSizeY();
     int currentTileSizeX = getTileSizeX();
     int currentTileSizeY = getTileSizeY();
-    if (currentTileSizeX != imageWidth || currentTileSizeY != imageHeight) {
+    boolean usingTiling = currentTileSizeX > 0 && currentTileSizeY > 0;
+    if (usingTiling) {
       ifd.put(new Integer(IFD.TILE_WIDTH), new Long(currentTileSizeX));
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(currentTileSizeY));
     }
-    if (currentTileSizeX < w || currentTileSizeY < h) {
+    if (usingTiling && (currentTileSizeX < w || currentTileSizeY < h)) {
       int numTilesX = (w + (x % currentTileSizeX) + currentTileSizeX - 1) / currentTileSizeX;
       int numTilesY = (h + (y % currentTileSizeY) + currentTileSizeY - 1) / currentTileSizeY;
       for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
@@ -306,14 +304,15 @@ public class TiffWriter extends FormatWriter {
       if (!initialized[series][no]) {
         initialized[series][no] = true;
 
-        RandomAccessInputStream tmp = createInputStream();
-        if (tmp.length() == 0) {
-          synchronized (this) {
-            // write TIFF header
-            tiffSaver.writeHeader();
+        try (RandomAccessInputStream tmp = createInputStream()) {
+          tmp.order(littleEndian);
+          if (tmp.length() == 0) {
+            synchronized (this) {
+              // write TIFF header
+              tiffSaver.writeHeader();
+            }
           }
         }
-        tmp.close();
       }
     }
 
@@ -454,19 +453,13 @@ public class TiffWriter extends FormatWriter {
   {
     IFD ifd = new IFD();
     if (!sequential) {
-      TiffParser parser = new TiffParser(currentId);
-      try {
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(currentId)) {
+        TiffParser parser = new TiffParser(stream);
         long[] ifdOffsets = parser.getIFDOffsets();
         if (no < ifdOffsets.length) {
           ifd = parser.getIFD(ifdOffsets[no]);
         }
         saveBytes(no, buf, ifd, x, y, w, h);
-      }
-      finally {
-        RandomAccessInputStream tiffParserStream = parser.getStream();
-        if (tiffParserStream != null) {
-          tiffParserStream.close();
-        }
       }
     }
     else {
@@ -539,7 +532,10 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
     tileSizeX = super.setTileSizeX(tileSize);
-    if (tileSize < TILE_GRANULARITY) {
+    if (tileSize == 0) {
+      tileSizeX = 0;
+    }
+    else if (tileSize < TILE_GRANULARITY) {
       tileSizeX = TILE_GRANULARITY;
     }
     else {
@@ -559,7 +555,10 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     tileSizeY = super.setTileSizeY(tileSize);
-    if (tileSize < TILE_GRANULARITY) {
+    if (tileSize == 0) {
+      tileSizeY = 0;
+    }
+    else if (tileSize < TILE_GRANULARITY) {
       tileSizeY = TILE_GRANULARITY;
     }
     else {

@@ -52,7 +52,8 @@
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
-    <ome-common.version>5.3.6</ome-common.version>
+    <ome-common.version>6.0.0-m2</ome-common.version>
+    <ome-model.group>org.openmicroscopy</ome-model.group>
     <ome-model.version>6.0.0-m1</ome-model.version>
     <ome-poi.version>5.3.3</ome-poi.version>
     <ome-mdbtools.version>5.3.2</ome-mdbtools.version>
@@ -213,10 +214,10 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.7.0</version>
-          <!-- Require the Java 7 platform. -->
+          <!-- Require the Java 8 platform. -->
           <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
+            <source>1.8</source>
+            <target>1.8</target>
           </configuration>
         </plugin>
 
@@ -279,8 +280,8 @@
                  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101868 -->
             <use>false</use>
             <links>
-              <!-- Java 7 -->
-              <link>http://docs.oracle.com/javase/7/docs/api/</link>
+              <!-- Java 8 -->
+              <link>http://docs.oracle.com/javase/8/docs/api/</link>
 
               <!-- ImageJ1 -->
               <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>

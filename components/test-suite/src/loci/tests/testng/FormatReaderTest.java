@@ -32,7 +32,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -1618,10 +1620,20 @@ public class FormatReaderTest {
     String msg = null;
     try {
       String[] base = reader.getUsedFiles();
+
+      // make sure that there are no duplicate files in the list
+
+      HashSet<String> uniqueFiles = new HashSet<String>();
+      Collections.addAll(uniqueFiles, base);
+      if (uniqueFiles.size() < base.length) {
+        success = false;
+        msg = "Used files list contains duplicates";
+      }
+
       if (base.length == 1) {
         if (!base[0].equals(file)) success = false;
       }
-      else {
+      else if (success) {
         Arrays.sort(base);
         IFormatReader r =
           /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
@@ -1644,6 +1656,12 @@ public class FormatReaderTest {
             {
               continue;
             }
+          }
+
+          // extra metadata files in Harmony/Operetta datasets
+          // cannot be used for type detection
+          if (reader.getFormat().equals("PerkinElmer Operetta")) {
+            continue;
           }
 
           // Volocity datasets can only be detected with the .mvd2 file
@@ -1728,9 +1746,20 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("MicroCT") &&
+            !base[i].toLowerCase().endsWith(".vff"))
+          {
+            continue;
+          }
+
           if (reader.getFormat().equals("Image-Pro Sequence") &&
             file.toLowerCase().endsWith(".ips"))
           {
+            continue;
+          }
+
+          // CV7000 datasets can only be reliably detected with the .wpi file
+          if (reader.getFormat().equals("Yokogawa CV7000")) {
             continue;
           }
 
@@ -2226,14 +2255,12 @@ public class FormatReaderTest {
             // TIFF reader is allowed to redundantly green-light files
             if (result && readers[j] instanceof TiffDelegateReader) continue;
 
-            // Bio-Rad reader is allowed to redundantly
-            // green-light PIC files from NRRD datasets
-            if (result && r instanceof NRRDReader &&
-              readers[j] instanceof BioRadReader)
+            // expect NRRD to pick up .nhdr files, and a non-NRRD reader
+            // to pick up any other file in the same set as an .nhdr
+            if (result && (r instanceof NRRDReader ||
+              readers[j] instanceof NRRDReader))
             {
-              String low = used[i].toLowerCase();
-              boolean isPic = low.endsWith(".pic") || low.endsWith(".pic.gz");
-              if (isPic) continue;
+              continue;
             }
 
             // Analyze reader is allowed to redundantly accept NIfTI files
@@ -2433,8 +2460,26 @@ public class FormatReaderTest {
               continue;
             }
 
+            if (!used[i].toLowerCase().endsWith(".vff") &&
+              r instanceof MicroCTReader)
+            {
+              continue;
+            }
+
             // Inveon only reliably detected from header file
             if (!result && r instanceof InveonReader) {
+              continue;
+            }
+
+            // Operetta only reliably detects from Index.*.xml
+            if (!result && r instanceof OperettaReader) {
+              continue;
+            }
+
+            // ignore anything other than .wpi for CV7000
+            if (!used[i].toLowerCase().endsWith(".wpi") &&
+              r instanceof CV7000Reader)
+            {
               continue;
             }
 
