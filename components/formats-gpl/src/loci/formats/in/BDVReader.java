@@ -78,8 +78,10 @@ public class BDVReader extends FormatReader {
   private String bdvxml;
   private String h5Id;
   private int sizeC = 0;
+  private boolean timepointUsePattern = false;
   private Integer firstTimepoint = 0;
   private Integer lastTimepoint = 0;
+  private Integer timepointIncrement = 0;
   private int seriesCount;
   private transient JHDFService jhdf;
   private int lastChannel = 0;
@@ -409,7 +411,20 @@ public class BDVReader extends FormatReader {
         LOGGER.debug(coord.pathToImageData);
         int[] ctzyx = jhdf.getShape(coord.pathToImageData);
         m.sizeC = sizeC;
-        m.sizeT = lastTimepoint - firstTimepoint + 1;
+        if (timepointUsePattern) {
+          if (lastTimepoint > 0) {
+            m.sizeT = lastTimepoint - firstTimepoint + 1;
+            if (timepointIncrement > 0) {
+              m.sizeT /= timepointIncrement;
+            }
+          }
+          else {
+            m.sizeT = firstTimepoint;
+          }
+        }
+        else {
+          m.sizeT = lastTimepoint - firstTimepoint + 1;
+        }
         m.sizeZ = ctzyx[0];
         m.sizeY = ctzyx[1];
         m.sizeX = ctzyx[2];
@@ -645,11 +660,26 @@ public class BDVReader extends FormatReader {
     private String currentQName;
     private boolean inPixels;
     private boolean parsingTimepoints;
-    private boolean timepointUsePattern = false;
 
     public BDVXMLHandler() {
       xmlBuffer = new StringBuilder();
       inPixels = false;
+    }
+    
+    private void parseIntegerString(String timepontPattern) {
+      String[] parts = timepontPattern.split("-");
+      if (DataTools.parseInteger(parts[0]) != null) {
+        firstTimepoint = DataTools.parseInteger(parts[0]);
+      }
+      if (parts.length > 1 && DataTools.parseInteger(parts[1]) != null) {
+        String[] parts2 = parts[1].split(":");
+        if (DataTools.parseInteger(parts2[0]) != null) {
+          lastTimepoint = DataTools.parseInteger(parts2[0]);
+        }
+        if (parts2.length > 1 && DataTools.parseInteger(parts2[1]) != null) {
+          timepointIncrement = DataTools.parseInteger(parts2[1]);
+        }
+      }
     }
 
     @Override
@@ -675,11 +705,8 @@ public class BDVReader extends FormatReader {
           }
         }
         else if (parsingTimepoints && currentQName.equals("integerpattern")) {
-          String timepoint = new String(ch, start, length);
-          if (DataTools.parseInteger(timepoint) != null) {
-            lastTimepoint = DataTools.parseInteger(timepoint);
-            firstTimepoint = DataTools.parseInteger(timepoint);
-          }
+          String timepointPattern = new String(ch, start, length);
+          if (timepointUsePattern) parseIntegerString(timepointPattern);
         }
         xmlBuffer.append(new String(ch, start, length));
       }
