@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -75,8 +76,7 @@ public class BDVReader extends FormatReader {
 
   private MetadataStore store;
   private String bdvxml;
-  String xmlId;
-  String h5Id;
+  private String h5Id;
   private int sizeC = 0;
   private Integer firstTimepoint = 0;
   private Integer lastTimepoint = 0;
@@ -109,9 +109,8 @@ public class BDVReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    xmlId = id;
     store = makeFilterMetadata();
-    in = new RandomAccessInputStream(xmlId);
+    in = new RandomAccessInputStream(id);
     in.setEncoding("ASCII");
     DefaultHandler handler = new BDVXMLHandler();
     try (RandomAccessInputStream s = new RandomAccessInputStream(id)) {
@@ -119,6 +118,9 @@ public class BDVReader extends FormatReader {
     }
     catch (IOException e) {
       throw new FormatException("Malformed XML", e);
+    }
+    if (StringUtils.isEmpty(h5Id)) {
+      throw new FormatException("Could not find H5 file location in XML");
     }
     store.setXMLAnnotationValue(bdvxml, 0);
     String xml_id = MetadataTools.createLSID("XMLAnnotation", 0); 
@@ -261,17 +263,21 @@ public class BDVReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {
-    super.close(fileOnly);
-    if (!fileOnly) {
-      seriesCount = 0;
-      H5PositionList.clear();
-      H5PathsToImageData.clear();
-      cellObjectNames.clear();
-      if (jhdf != null) {
-        jhdf.close();
+    try {
+      super.close(fileOnly);
+    }
+    finally {
+      if (!fileOnly) {
+        seriesCount = 0;
+        H5PositionList.clear();
+        H5PathsToImageData.clear();
+        cellObjectNames.clear();
+        if (jhdf != null) {
+          jhdf.close();
+        }
+        jhdf = null;
+        lastChannel = 0;
       }
-      jhdf = null;
-      lastChannel = 0;
     }
   }
 
@@ -359,9 +365,10 @@ public class BDVReader extends FormatReader {
     core.clear();
     // read experiment structure and collect coordinates
 
-    String path_to_plate = "t00000";
+    String path_to_plate = String.format("t%05d", firstTimepoint);
     LOGGER.info("Plate :" + path_to_plate );
     int resolutionCount = 0;
+
     for (String plate : jhdf.getMember(path_to_plate)) {
       String path_to_well = path_to_plate + "/" + plate;
       LOGGER.info("Well :" + path_to_well );
@@ -372,7 +379,7 @@ public class BDVReader extends FormatReader {
         String path_to_site = path_to_well + "/" + well;
         LOGGER.info("Site :" + path_to_site );
         for (String site : jhdf.getMember(path_to_site)) {    
-          H5PositionList.add(new H5Coordinate("t00000", plate, well));
+          H5PositionList.add(new H5Coordinate(String.format("t%05d", firstTimepoint), plate, well));
         }
       }
     }
@@ -638,6 +645,7 @@ public class BDVReader extends FormatReader {
     private String currentQName;
     private boolean inPixels;
     private boolean parsingTimepoints;
+    private boolean timepointUsePattern = false;
 
     public BDVXMLHandler() {
       xmlBuffer = new StringBuilder();
@@ -666,6 +674,13 @@ public class BDVReader extends FormatReader {
             lastTimepoint = DataTools.parseInteger(timepoint);
           }
         }
+        else if (parsingTimepoints && currentQName.equals("integerpattern")) {
+          String timepoint = new String(ch, start, length);
+          if (DataTools.parseInteger(timepoint) != null) {
+            lastTimepoint = DataTools.parseInteger(timepoint);
+            firstTimepoint = DataTools.parseInteger(timepoint);
+          }
+        }
         xmlBuffer.append(new String(ch, start, length));
       }
     }
@@ -688,6 +703,11 @@ public class BDVReader extends FormatReader {
       }
       if (qName.equals("Timepoints")) {
         parsingTimepoints = true;
+        int typeIndex = attributes.getIndex(qName);
+        if (typeIndex != -1) {
+          String timepointType = attributes.getValue(typeIndex);
+          timepointUsePattern  = timepointType != null && timepointType.toLowerCase().equals("pattern");
+        }
       }
       xmlBuffer.append("<");
       xmlBuffer.append(qName);
