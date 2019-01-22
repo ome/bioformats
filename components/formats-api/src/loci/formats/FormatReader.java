@@ -608,11 +608,8 @@ public abstract class FormatReader extends FormatHandler
 
     // suffix matching was inconclusive; we need to analyze the file contents
     if (!open) return false; // not allowed to open any files
-    try {
-      RandomAccessInputStream stream = new RandomAccessInputStream(name);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
+    try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
+      return isThisType(stream);
     }
     catch (IOException exc) {
       LOGGER.debug("", exc);
@@ -623,11 +620,8 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isThisType(byte[]) */
   @Override
   public boolean isThisType(byte[] block) {
-    try {
-      RandomAccessInputStream stream = new RandomAccessInputStream(block);
-      boolean isThisType = isThisType(stream);
-      stream.close();
-      return isThisType;
+    try (RandomAccessInputStream stream = new RandomAccessInputStream(block)) {
+      return isThisType(stream);
     }
     catch (IOException e) {
       LOGGER.debug("", e);
