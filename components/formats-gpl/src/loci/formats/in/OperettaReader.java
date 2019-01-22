@@ -228,7 +228,12 @@ public class OperettaReader extends FormatReader {
           reader = new MinimalTiffReader();
         }
         reader.setId(p.filename);
-        reader.openBytes(0, buf, x, y, w, h);
+        if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
+          reader.openBytes(0, buf, x, y, w, h);
+        }
+        else {
+          LOGGER.warn("Image dimension mismatch in {}", p.filename);
+        }
         reader.close();
       }
     }
