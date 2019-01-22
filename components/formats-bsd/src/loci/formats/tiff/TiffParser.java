@@ -1081,10 +1081,13 @@ public class TiffParser {
             outputRowLen * (tileY - y);
           if (planarConfig == 2) dest += (planeSize * (row / nrows));
 
-          // copying the tile directly will only work if there is no overlap;
+          // copying the tile directly will only work if there is no overlap
+          // and only one tile needs to be read
           // otherwise, we may be overwriting a previous tile
           // (or the current tile may be overwritten by a subsequent tile)
-          if (rowLen == outputRowLen && overlapX == 0 && overlapY == 0) {
+          if (rowLen == outputRowLen && overlapX == 0 && overlapY == 0 &&
+            rowLen == pixel * imageBounds.intersection(tileBounds).width)
+          {
             System.arraycopy(cachedTileBuffer, src, buf, dest, copy * theight);
           }
           else {
