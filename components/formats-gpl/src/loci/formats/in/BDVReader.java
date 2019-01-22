@@ -730,7 +730,7 @@ public class BDVReader extends FormatReader {
       }
       if (qName.equals("Timepoints")) {
         parsingTimepoints = true;
-        int typeIndex = attributes.getIndex(qName);
+        int typeIndex = attributes.getIndex("type");
         if (typeIndex != -1) {
           String timepointType = attributes.getValue(typeIndex);
           timepointUsePattern  = timepointType != null && timepointType.toLowerCase().equals("pattern");
