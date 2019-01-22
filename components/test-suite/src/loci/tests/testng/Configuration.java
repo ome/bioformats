@@ -139,12 +139,14 @@ public class Configuration {
     this.dataFile = dataFile;
     this.configFile = configFile;
 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(
-      new FileInputStream(this.configFile), Constants.ENCODING));
-    IniParser parser = new IniParser();
-    parser.setCommentDelimiter(null);
-    ini = parser.parseINI(reader);
-    pruneINI();
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+      new FileInputStream(this.configFile), Constants.ENCODING)))
+    {
+      IniParser parser = new IniParser();
+      parser.setCommentDelimiter(null);
+      ini = parser.parseINI(reader);
+      pruneINI();
+    }
   }
 
   public Configuration(IFormatReader reader, String configFile) {
@@ -735,6 +737,13 @@ public class Configuration {
       }
     }
 
+    if (!unflattenedReader.equals(reader)) {
+      try {
+        unflattenedReader.close();
+      }
+      catch (IOException e) {
+      }
+    }
   }
 
   private void putTableName(IniTable table, IFormatReader reader, String suffix)

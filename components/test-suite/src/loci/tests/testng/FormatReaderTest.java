@@ -2604,12 +2604,10 @@ public class FormatReaderTest {
     finally {
       if (memoFile != null) {
         // log the memo file's size
-        try {
-          RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath());
+        try (RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath())) {
           LOGGER.debug("memo file size for {} = {} bytes",
                       new Location(reader.getCurrentFile()).getAbsolutePath(),
                       s.length());
-          s.close();
         }
         catch (IOException e) {
           LOGGER.warn("memo file size not available");
