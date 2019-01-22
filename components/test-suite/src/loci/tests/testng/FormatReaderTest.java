@@ -76,7 +76,9 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /**
@@ -106,6 +108,8 @@ public class FormatReaderTest {
 
   /** List of files to skip. */
   private static List<String> skipFiles = new LinkedList<String>();
+
+  private static long initialFileDescriptorCount;
 
   /** Global shared jeader for use in all tests. */
   private BufferedImageReader reader;
@@ -164,6 +168,21 @@ public class FormatReaderTest {
     HashMap<String, Object> idMap = Location.getIdMap();
     idMap.clear();
     Location.setIdMap(idMap);
+  }
+
+  @BeforeSuite(alwaysRun = true)
+  public void saveFileDescriptorCount() {
+    initialFileDescriptorCount = TestTools.getFileDescriptorCount();
+  }
+
+  @AfterSuite(alwaysRun = true)
+  public void checkFileDescriptorCount() {
+    long leakedDescriptors =
+      TestTools.getFileDescriptorCount() - initialFileDescriptorCount;
+    // subtract the number of threads, since log files are not closed yet
+    leakedDescriptors -= TestTools.getThreadCount();
+    result("File handle", leakedDescriptors <= 0,
+      leakedDescriptors + " leaked file handles");
   }
 
   // -- Tests --
