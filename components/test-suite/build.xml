@@ -267,6 +267,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="testng.threadCount" value="${testng.threadCount}"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -308,6 +309,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="testng.threadCount" value="${testng.threadCount}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>

@@ -152,6 +152,21 @@ public class TestTools {
     return null;
   }
 
+  /**
+   * Get the configured number of threads.
+   * Defaults to 1 if the testng.threadCount is not set or unparseable.
+   *
+   * @return the number of threads used in the test suite
+   */
+  public static int getThreadCount() {
+    int threadCount = 1;
+    try {
+      threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
+    }
+    catch (NumberFormatException e) { }
+    return threadCount;
+  }
+
   /** Returns true if a byte buffer of the given size will fit in memory. */
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
@@ -160,12 +175,7 @@ public class TestTools {
     long mem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
 
     mem /= 2;
-    int threadCount = 1;
-    try {
-      threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
-    }
-    catch (NumberFormatException e) { }
-    mem /= threadCount;
+    mem /= getThreadCount();
     return bufferSize < mem && bufferSize <= Integer.MAX_VALUE;
   }
 
