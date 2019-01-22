@@ -25,10 +25,14 @@
 
 package loci.tests.testng;
 
+import com.sun.management.UnixOperatingSystemMXBean;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
@@ -520,5 +524,22 @@ public class TestTools {
     }
     return false;
   }
+
+  /**
+   * Get the number of open file descriptors.
+   * Requires UnixOperatingSystemMXBean, so does not work on Windows.
+   *
+   * @return the number of open file descriptors
+   */
+  public static long getFileDescriptorCount() {
+    OperatingSystemMXBean operatingSystemBean =
+      ManagementFactory.getOperatingSystemMXBean();
+    if (operatingSystemBean instanceof UnixOperatingSystemMXBean) {
+      return ((UnixOperatingSystemMXBean)
+        operatingSystemBean).getOpenFileDescriptorCount();
+    }
+    return 0;
+  }
+
 
 }
