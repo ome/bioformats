@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -109,7 +110,7 @@ public class FormatReaderTest {
   /** List of files to skip. */
   private static List<String> skipFiles = new LinkedList<String>();
 
-  private static long initialFileDescriptorCount;
+  private static ArrayList<String> initialDescriptors;
 
   /** Global shared jeader for use in all tests. */
   private BufferedImageReader reader;
@@ -171,16 +172,24 @@ public class FormatReaderTest {
   }
 
   @BeforeSuite(alwaysRun = true)
-  public void saveFileDescriptorCount() {
-    initialFileDescriptorCount = TestTools.getFileDescriptorCount();
+  public void saveFileDescriptorCount() throws IOException {
+    initialDescriptors = TestTools.getHandles(true);
   }
 
   @AfterSuite(alwaysRun = true)
-  public void checkFileDescriptorCount() {
+  public void checkFileDescriptorCount() throws IOException {
+    ArrayList<String> currentDescriptors = TestTools.getHandles(true);
     long leakedDescriptors =
-      TestTools.getFileDescriptorCount() - initialFileDescriptorCount;
+      currentDescriptors.size() - initialDescriptors.size();
     // subtract the number of threads, since log files are not closed yet
     leakedDescriptors -= TestTools.getThreadCount();
+    if (leakedDescriptors > 0) {
+      currentDescriptors.removeAll(initialDescriptors);
+      LOGGER.warn("Open file handles:");
+      for (String f : currentDescriptors) {
+        LOGGER.warn("  {}", f);
+      }
+    }
     result("File handle", leakedDescriptors <= 0,
       leakedDescriptors + " leaked file handles");
   }

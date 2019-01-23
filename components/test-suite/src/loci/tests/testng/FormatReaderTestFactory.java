@@ -242,8 +242,9 @@ public class FormatReaderTestFactory {
     Set<String> failingIds = new LinkedHashSet<String>();
     while (!fileSet.isEmpty()) {
       String file = fileSet.iterator().next();
-      long fileDescriptorCount = TestTools.getFileDescriptorCount();
+      ArrayList<String> originalHandles = null;
       try {
+        originalHandles = TestTools.getHandles(true);
         reader.setId(file);
       } catch (Exception e) {
         LOGGER.error("setId(\"{}\") failed", file, e);
@@ -273,14 +274,16 @@ public class FormatReaderTestFactory {
           reader.close();
         }
         catch (IOException e) { }
-        long leakedDescriptors =
-          TestTools.getFileDescriptorCount() - fileDescriptorCount;
-        if (leakedDescriptors > 0) {
-          String msg = String.format("setId on %s failed to close %s files",
-            file, leakedDescriptors);
-          LOGGER.error(msg);
-          throw new RuntimeException(msg);
+        try {
+          ArrayList<String> handles = TestTools.getHandles(true);
+          if (originalHandles != null && handles.size() > originalHandles.size()) {
+            String msg = String.format("setId on %s failed to close %s files",
+              file, handles.size() - originalHandles.size());
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+          }
         }
+        catch (IOException e) { }
       }
     }
     if (!failingIds.isEmpty()) {
