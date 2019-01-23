@@ -272,6 +272,7 @@ Type "ant -p" for a list of targets.
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
       <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
+      <jvmarg value="-javaagent:${root.dir}/jar/file-leak-detector-1.13.jar=strong"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -315,6 +316,7 @@ Type "ant -p" for a list of targets.
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
       <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
+      <jvmarg value="-javaagent:${root.dir}/jar/file-leak-detector-1.13.jar=strong"/>
     </testng>
     <fail if="failedTest"/>
   </target>

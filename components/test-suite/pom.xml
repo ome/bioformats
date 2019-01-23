@@ -88,6 +88,11 @@
       <artifactId>assumeng</artifactId>
       <version>1.2.4</version>
     </dependency>
+    <dependency>
+      <groupId>org.kohsuke</groupId>
+      <artifactId>file-leak-detector</artifactId>
+      <version>1.13</version>
+    </dependency>
   </dependencies>
 
   <properties>

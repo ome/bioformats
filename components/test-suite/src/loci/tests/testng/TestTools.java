@@ -25,34 +25,25 @@
 
 package loci.tests.testng;
 
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.management.ManagementFactory;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.FieldPosition;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import loci.common.ByteArrayHandle;
-import loci.common.Constants;
 import loci.common.DataTools;
-import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.formats.IFormatReader;
-import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 
+import org.kohsuke.file_leak_detector.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -548,36 +539,13 @@ public class TestTools {
    * @param filter if true, removes any native libraries or JRE/JDK files
    */
   public static ArrayList<String> getHandles(boolean filter) throws IOException {
+    List<Listener.Record> openHandles = Listener.getCurrentOpenFiles();
     ArrayList<String> names = new ArrayList<String>();
-    String pid = ManagementFactory.getRuntimeMXBean().getName();
-    pid = pid.substring(0, pid.indexOf("@"));
-
-    Runtime rt = Runtime.getRuntime();
-    Process p = rt.exec("lsof -Ftn -p " + pid);
-    BufferedReader s = new BufferedReader(
-      new InputStreamReader(p.getInputStream(), Constants.ENCODING));
-    String line = s.readLine();
-    boolean valid = false;
-    while (true) {
-      try {
-        p.exitValue();
-        if (line == null) {
-          break;
-        }
-      }
-      catch (IllegalThreadStateException e) {
-        LOGGER.trace("", e);
-      }
-      catch (Exception e) {
-        LOGGER.warn("", e);
-      }
-      if (line != null && line.endsWith("REG")) {
-        valid = true;
-      }
-      else if (line != null && line.startsWith("n") && valid) {
-        String path = line.substring(1, line.length());
+    for (Listener.Record f : openHandles) {
+      if (f instanceof Listener.FileRecord) {
+        String path = ((Listener.FileRecord) f).file.getAbsolutePath();
         if (!filter || !(path.endsWith("libnio.so") ||
-          path.endsWith("resources.jar") || path.startsWith("/usr/lib") ||
+          path.endsWith(".jar") || path.startsWith("/usr/lib") ||
           path.startsWith("/opt/") || path.startsWith("/usr/share/locale") ||
           path.startsWith("/lib") || path.indexOf("turbojpeg") > 0 ||
           path.indexOf("/jre/") > 0 || path.indexOf("nativedata") > 0 ||
@@ -585,14 +553,8 @@ public class TestTools {
         {
           names.add(path);
         }
-        valid = false;
       }
-      line = s.readLine();
     }
-    s.close();
-    p.getInputStream().close();
-    p.getOutputStream().close();
-    p.getErrorStream().close();
     return names;
   }
 
