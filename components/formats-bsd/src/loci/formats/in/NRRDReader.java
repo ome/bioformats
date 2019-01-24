@@ -49,6 +49,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
+import loci.formats.UnknownFormatException;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
@@ -166,7 +167,14 @@ public class NRRDReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (initializeHelper && dataFile != null && helper.getCurrentFile() == null) {
-      helper.setId(dataFile);
+      try {
+        helper.setId(dataFile);
+      }
+      catch (UnknownFormatException e) {
+        // we don't have any real way to know in advance if the data file
+        // after decompression is raw bytes or some other format
+        initializeHelper = false;
+      }
     }
 
     // TODO : add support for additional encoding types
@@ -177,28 +185,7 @@ public class NRRDReader extends FormatReader {
         readPlane(in, x, y, w, h, buf);
       }
       else if (encoding.equals("gzip")) {
-        if (gzip == null || no <= lastPlane) {
-          FileInputStream fis = new FileInputStream(getCurrentFile());
-          safeSkip(fis, offset);
-          gzip = new GZIPInputStream(fis);
-          lastPlane = -1;
-        }
-
-        int bpp = getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
-        int rowLen = getSizeX() * bpp;
-        int diff = no - (lastPlane + 1);
-        safeSkip(gzip, (planeSize * diff) + (y * rowLen));
-        int readLen = w * bpp;
-        for (int row=0; row<h; row++) {
-          safeSkip(gzip, x * bpp);
-
-          int toRead = readLen;
-          while (toRead > 0) {
-            toRead -= gzip.read(buf, ((row + y) * readLen) + (readLen - toRead), toRead);
-          }
-          safeSkip(gzip, (getSizeX() - w - x) * bpp);
-        }
-        lastPlane = no;
+        readGZIPPlane(getCurrentFile(), no, buf, x, y, w, h);
       }
       else {
         throw new UnsupportedCompressionException(
@@ -206,10 +193,15 @@ public class NRRDReader extends FormatReader {
       }
       return buf;
     }
-    else if (encoding.equals("raw")) {
-      try (RandomAccessInputStream s = new RandomAccessInputStream(dataFile)) {
-        s.seek(offset + no * FormatTools.getPlaneSize(this));
-        readPlane(s, x, y, w, h, buf);
+    else if (!initializeHelper) {
+      if (encoding.equals("raw")) {
+        try (RandomAccessInputStream s = new RandomAccessInputStream(dataFile)) {
+          s.seek(offset + no * FormatTools.getPlaneSize(this));
+          readPlane(s, x, y, w, h, buf);
+        }
+      }
+      else if (encoding.equals("gzip")) {
+        readGZIPPlane(dataFile, no, buf, x, y, w, h);
       }
       return buf;
     }
@@ -348,7 +340,7 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("space units")) {
           pixelSizeUnits = v.split(" ");
         }
-        else if (key.equals("byte skip")) {
+        else if (key.equals("byte skip") || key.equals("byteskip")) {
           offset = Long.parseLong(v);
         }
       }
@@ -369,7 +361,8 @@ public class NRRDReader extends FormatReader {
         dataFile = dataFile.substring(dataFile.indexOf(File.separator) + 1);
         dataFile = new Location(parent, dataFile).getAbsolutePath();
       }
-      initializeHelper = !encoding.equals("raw");
+      initializeHelper = !encoding.equals("raw") &&
+        offset >= 0 && helper.isThisType(dataFile);
     }
 
     m.rgb = getSizeC() > 1;
@@ -415,10 +408,61 @@ public class NRRDReader extends FormatReader {
     }
   }
 
+  /**
+   * Skip a specified number of bytes in a stream.
+   * This can be used to skip more than {@link Integer#MAX_VALUE}
+   * bytes at once.
+   *
+   * @param stream the InputStream in which to skip bytes
+   * @param skip the number of bytes to skip, which may be greater than
+   *             {@link Integer#MAX_VALUE}. Non-positive values will
+   *             not throw an exception, but will also not skip any bytes.
+   * @throws IOException
+   */
   private void safeSkip(InputStream stream, long skip) throws IOException {
     while (skip > 0) {
       skip -= stream.skip((int) Math.min(skip, Integer.MAX_VALUE));
     }
+  }
+
+  /**
+   * Read a tile in the specified plane from a GZIP-compressed file.
+   *
+   * @param file the path to the GZIP-compressed file
+   * @param no the plane index
+   * @param buf the byte array used for storing the pixels
+   * @param x the X coordinate of the upper-left pixel in the tile
+   * @param y the Y coordinate of the upper-left pixel in the tile
+   * @param w the tile width
+   * @param h the tile height
+   * @throws IOException
+   */
+  private void readGZIPPlane(String file, int no, byte[] buf,
+    int x, int y, int w, int h) throws IOException
+  {
+    if (gzip == null || no <= lastPlane) {
+      FileInputStream fis = new FileInputStream(file);
+      safeSkip(fis, offset);
+      gzip = new GZIPInputStream(fis);
+      lastPlane = -1;
+    }
+
+    int bpp = getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+    int rowLen = getSizeX() * bpp;
+    int diff = no - (lastPlane + 1);
+    long planeSize = FormatTools.getPlaneSize(this);
+    safeSkip(gzip, (planeSize * diff) + (y * rowLen));
+    int readLen = w * bpp;
+    for (int row=0; row<h; row++) {
+      safeSkip(gzip, x * bpp);
+
+      int toRead = readLen;
+      while (toRead > 0) {
+        toRead -= gzip.read(buf, ((row + y) * readLen) + (readLen - toRead), toRead);
+      }
+      safeSkip(gzip, (getSizeX() - w - x) * bpp);
+    }
+    lastPlane = no;
   }
 
   private Double parsePixelSize(int index) {
