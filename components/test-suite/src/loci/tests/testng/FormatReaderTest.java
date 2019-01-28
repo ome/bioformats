@@ -2256,9 +2256,10 @@ public class FormatReaderTest {
 
             // expect NRRD to pick up .nhdr files, and a non-NRRD reader
             // to pick up any other file in the same set as an .nhdr
-            if (r instanceof NRRDReader &&
+            if ((r instanceof NRRDReader &&
               !used[i].toLowerCase().endsWith(".nhdr") &&
-              !used[i].toLowerCase().endsWith(".nrrd"))
+              !used[i].toLowerCase().endsWith(".nrrd")) ||
+              (result && readers[j] instanceof NRRDReader))
             {
               continue;
             }
