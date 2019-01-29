@@ -61,6 +61,8 @@ public class PyramidTiffReader extends BaseTiffReader {
     suffixSufficient = false;
     suffixNecessary = false;
     equalStrips = true;
+    noSubresolutions = true;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --
@@ -126,9 +128,10 @@ public class PyramidTiffReader extends BaseTiffReader {
 
     // repopulate core metadata
     core.clear();
+    core.add();
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
-      core.add(ms);
+      core.add(0, ms);
 
       if (s == 0) {
         ms.resolutionCount = seriesCount;
