@@ -34,6 +34,7 @@ package loci.formats.tiff;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -769,6 +770,9 @@ public class TiffParser {
 
     if (buf == null) buf = new byte[size];
     if (stripByteCounts[countIndex] == 0 || stripOffset >= in.length()) {
+      // make sure that the buffer is cleared before returning
+      // the caller may be reusing the same buffer for multiple calls to getTile
+      Arrays.fill(buf, (byte) 0);
       return buf;
     }
     byte[] tile = new byte[(int) stripByteCounts[countIndex]];
