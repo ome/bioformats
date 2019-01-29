@@ -410,7 +410,7 @@ public abstract class FormatReader extends FormatHandler
    * and the value will be appended to the list.
    */
   protected void addSeriesMetaList(String key, Object value) {
-    addMetaList(key, value, currentCore().seriesMetadata);
+    addMetaList(key, value, getCurrentCore().seriesMetadata);
   }
 
   /**
@@ -456,7 +456,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, Object value) {
-    addMeta(key, value, currentCore().seriesMetadata);
+    addMeta(key, value, getCurrentCore().seriesMetadata);
   }
 
   /** Adds an entry to the metadata table for the current series. */
@@ -501,7 +501,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Gets an entry from the metadata table for the current series. */
   protected Object getSeriesMeta(String key) {
-    return currentCore().seriesMetadata.get(key);
+    return getCurrentCore().seriesMetadata.get(key);
   }
 
   /** Reads a raw plane from disk. */
@@ -645,67 +645,67 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public int getImageCount() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().imageCount;
+    return getCurrentCore().imageCount;
   }
 
   /* @see IFormatReader#isRGB() */
   @Override
   public boolean isRGB() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().rgb;
+    return getCurrentCore().rgb;
   }
 
   /* @see IFormatReader#getSizeX() */
   @Override
   public int getSizeX() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().sizeX;
+    return getCurrentCore().sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
   @Override
   public int getSizeY() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().sizeY;
+    return getCurrentCore().sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
   @Override
   public int getSizeZ() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().sizeZ;
+    return getCurrentCore().sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
   @Override
   public int getSizeC() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().sizeC;
+    return getCurrentCore().sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
   @Override
   public int getSizeT() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().sizeT;
+    return getCurrentCore().sizeT;
   }
 
   /* @see IFormatReader#getPixelType() */
   @Override
   public int getPixelType() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().pixelType;
+    return getCurrentCore().pixelType;
   }
 
   /* @see IFormatReader#getBitsPerPixel() */
   @Override
   public int getBitsPerPixel() {
     FormatTools.assertId(currentId, true, 1);
-    if (currentCore().bitsPerPixel == 0) {
-      currentCore().bitsPerPixel =
+    if (getCurrentCore().bitsPerPixel == 0) {
+      getCurrentCore().bitsPerPixel =
         FormatTools.getBytesPerPixel(getPixelType()) * 8;
     }
-    return currentCore().bitsPerPixel;
+    return getCurrentCore().bitsPerPixel;
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
@@ -729,14 +729,14 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().indexed;
+    return getCurrentCore().indexed;
   }
 
   /* @see IFormatReader#isFalseColor() */
   @Override
   public boolean isFalseColor() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().falseColor;
+    return getCurrentCore().falseColor;
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
@@ -755,28 +755,28 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public Modulo getModuloZ() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().moduloZ;
+    return getCurrentCore().moduloZ;
   }
 
   /* @see IFormatReader#getModuloC() */
   @Override
   public Modulo getModuloC() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().moduloC;
+    return getCurrentCore().moduloC;
   }
 
   /* @see IFormatReader#getModuloT() */
   @Override
   public Modulo getModuloT() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().moduloT;
+    return getCurrentCore().moduloT;
   }
 
   /* @see IFormatReader#getThumbSizeX() */
   @Override
   public int getThumbSizeX() {
     FormatTools.assertId(currentId, true, 1);
-    if (currentCore().thumbSizeX == 0) {
+    if (getCurrentCore().thumbSizeX == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeX = 0;
@@ -787,14 +787,14 @@ public abstract class FormatReader extends FormatHandler
       if (thumbSizeX == 0) thumbSizeX = 1;
       return thumbSizeX;
     }
-    return currentCore().thumbSizeX;
+    return getCurrentCore().thumbSizeX;
   }
 
   /* @see IFormatReader#getThumbSizeY() */
   @Override
   public int getThumbSizeY() {
     FormatTools.assertId(currentId, true, 1);
-    if (currentCore().thumbSizeY == 0) {
+    if (getCurrentCore().thumbSizeY == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeY = 1;
@@ -805,35 +805,35 @@ public abstract class FormatReader extends FormatHandler
       if (thumbSizeY == 0) thumbSizeY = 1;
       return thumbSizeY;
     }
-    return currentCore().thumbSizeY;
+    return getCurrentCore().thumbSizeY;
   }
 
   /* @see IFormatReader.isLittleEndian() */
   @Override
   public boolean isLittleEndian() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().littleEndian;
+    return getCurrentCore().littleEndian;
   }
 
   /* @see IFormatReader#getDimensionOrder() */
   @Override
   public String getDimensionOrder() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().dimensionOrder;
+    return getCurrentCore().dimensionOrder;
   }
 
   /* @see IFormatReader#isOrderCertain() */
   @Override
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().orderCertain;
+    return getCurrentCore().orderCertain;
   }
 
   /* @see IFormatReader#isThumbnailSeries() */
   @Override
   public boolean isThumbnailSeries() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().thumbnail;
+    return getCurrentCore().thumbnail;
   }
 
   /* @see IFormatReader#isInterleaved() */
@@ -846,7 +846,7 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().interleaved;
+    return getCurrentCore().interleaved;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -967,7 +967,7 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public boolean isMetadataComplete() {
     FormatTools.assertId(currentId, true, 1);
-    return currentCore().metadataComplete;
+    return getCurrentCore().metadataComplete;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
@@ -1129,10 +1129,10 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 1);
-    if (currentCore().seriesMetadata.size() > 0) {
+    if (getCurrentCore().seriesMetadata.size() > 0) {
       flattenHashtables();
     }
-    return currentCore().seriesMetadata;
+    return getCurrentCore().seriesMetadata;
   }
 
   /* @see IFormatReader#getCoreMetadataList() */
@@ -1439,7 +1439,7 @@ public abstract class FormatReader extends FormatHandler
             getModuloT().length() > 1)
           {
             service.addModuloAlong(
-              (OMEXMLMetadata) store, currentCore(), series);
+              (OMEXMLMetadata) store, getCurrentCore(), series);
           }
         }
         setSeries(0);
@@ -1471,7 +1471,7 @@ public abstract class FormatReader extends FormatHandler
    *
    * @return the CoreMetadata
    */
-  protected CoreMetadata currentCore() {
+  protected CoreMetadata getCurrentCore() {
     return core.get(getCoreIndex());
   }
 

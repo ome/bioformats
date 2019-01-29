@@ -234,7 +234,7 @@ public abstract class SubResolutionFormatReader extends FormatReader {
    *
    * @return the CoreMetadata
    */
-  protected CoreMetadata currentCore() {
+  protected CoreMetadata getCurrentCore() {
     return core.get(series, resolution);
   }
 }

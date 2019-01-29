@@ -164,7 +164,7 @@ public class SVSReader extends BaseTiffReader {
     if (tiffParser == null) {
       initTiffParser();
     }
-    int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
+    int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex;
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
@@ -214,7 +214,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
+      int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex;
       return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
@@ -228,7 +228,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
+      int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex;
       return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
@@ -333,7 +333,7 @@ public class SVSReader extends BaseTiffReader {
           for (String t : tokens) {
             if (t.indexOf('=') == -1) {
               addGlobalMeta("Comment", t);
-              ((SVSCoreMetadata) currentCore()).comment = t;
+              ((SVSCoreMetadata) getCurrentCore()).comment = t;
             }
             else {
               key = t.substring(0, t.indexOf('=')).trim();
@@ -341,7 +341,7 @@ public class SVSReader extends BaseTiffReader {
               addSeriesMeta(key, value);
               switch (key) {
                 case "MPP":
-                  ((SVSCoreMetadata) currentCore()).pixelSize =
+                  ((SVSCoreMetadata) getCurrentCore()).pixelSize =
                     FormatTools.getPhysicalSizeX(DataTools.parseDouble(value));
                   break;
                 case "Date":
@@ -426,7 +426,7 @@ public class SVSReader extends BaseTiffReader {
             break;
         }
       }
-      String comment = ((SVSCoreMetadata) currentCore()).comment;
+      String comment = ((SVSCoreMetadata) getCurrentCore()).comment;
       store.setImageDescription(comment, i);
 
       if (getDatestamp() != null) {
@@ -451,7 +451,7 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
-      Length pixelSize = ((SVSCoreMetadata) currentCore()).pixelSize;
+      Length pixelSize = ((SVSCoreMetadata) getCurrentCore()).pixelSize;
       if (pixelSize != null && pixelSize.value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0) {
         store.setPixelsPhysicalSizeX(pixelSize, i);
         store.setPixelsPhysicalSizeY(pixelSize, i);
