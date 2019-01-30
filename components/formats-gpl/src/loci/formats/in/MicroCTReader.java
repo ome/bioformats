@@ -296,14 +296,14 @@ public class MicroCTReader extends FormatReader {
     }
 
     if (physicalSize != null) {
-      Length size = FormatTools.createLength(physicalSize, UNITS.MICROM);
+      Length size = FormatTools.createLength(physicalSize, UNITS.MICROMETER);
       store.setPixelsPhysicalSizeX(size, 0);
       store.setPixelsPhysicalSizeY(size, 0);
       store.setPixelsPhysicalSizeZ(size, 0);
     }
 
     if (exposureTime != null) {
-      Time exposureSeconds = new Time(exposureTime, UNITS.S);
+      Time exposureSeconds = new Time(exposureTime, UNITS.SECOND);
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(exposureSeconds, 0, i);
       }

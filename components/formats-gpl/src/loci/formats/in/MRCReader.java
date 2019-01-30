@@ -353,7 +353,7 @@ public class MRCReader extends FormatReader {
       Unit sizeUnit = UNITS.ANGSTROM;
       if (extType.equals("AGAR")) {
         // FEI software typically writes physical sizes in micrometers
-        sizeUnit = UNITS.MICROM;
+        sizeUnit = UNITS.MICROMETER;
       }
       Length sizeX = FormatTools.getPhysicalSizeX(xSize, sizeUnit);
       Length sizeY = FormatTools.getPhysicalSizeY(ySize, sizeUnit);
