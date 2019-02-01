@@ -566,7 +566,10 @@ public class GatanReader extends FormatReader {
       if (value != null) {
         addGlobalMeta(labelString, value);
 
-        if (parent != null && parent.equals("AnnotationGroupList")) {
+        if (parent != null &&
+          (parent.equals("AnnotationGroupList") ||
+          parent.equals("DocumentObjectList")))
+        {
           // ROI found
           ROIShape shape = new ROIShape();
           if (labelString.equals("AnnotationType")) {
