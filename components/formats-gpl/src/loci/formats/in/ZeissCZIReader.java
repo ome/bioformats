@@ -1186,7 +1186,13 @@ public class ZeissCZIReader extends FormatReader {
             int seriesId = p.coreIndex + 1;
             //add padding to make sure the original metadata table is organized properly in ImageJ
             String sIndex = String.format("Positions|Series %0" + nameWidth + "d|", seriesId);
-            addSeriesMetaList(sIndex, dimension.start);
+            if (maxResolution == 0) {
+              addSeriesMetaList(sIndex, dimension.start);
+            }
+            else {
+              // don't store the start value for every tile in a pyramid
+              addSeriesMeta(sIndex, dimension.start);
+            }
             break;
         }
       }

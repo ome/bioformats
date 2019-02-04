@@ -168,7 +168,8 @@ public class CoreMetadata implements Cloneable {
     indexed = r.isIndexed();
     falseColor = r.isFalseColor();
     metadataComplete = r.isMetadataComplete();
-    seriesMetadata = r.getSeriesMetadata();
+    seriesMetadata = new Hashtable<String, Object>();
+    seriesMetadata.putAll(r.getSeriesMetadata());
     thumbnail = r.isThumbnailSeries();
     resolutionCount = r.getResolutionCount();
     moduloZ = r.getModuloZ();
@@ -197,7 +198,8 @@ public class CoreMetadata implements Cloneable {
     indexed = c.indexed;
     falseColor = c.falseColor;
     metadataComplete = c.metadataComplete;
-    seriesMetadata = c.seriesMetadata;
+    seriesMetadata = new Hashtable<String, Object>();
+    seriesMetadata.putAll(c.seriesMetadata);
     thumbnail = c.thumbnail;
     resolutionCount = c.resolutionCount;
     moduloZ = new Modulo(c.moduloZ);
