@@ -37,6 +37,7 @@ import java.util.HashMap;
 
 import loci.common.DataTools;
 import loci.formats.FileStitcher;
+import loci.formats.UnknownFormatException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,7 +245,24 @@ public class FormatReaderTestFactory {
       String file = fileSet.iterator().next();
       try {
         reader.setId(file);
-      } catch (Exception e) {
+      }
+      catch (UnknownFormatException u) {
+        boolean validConfig = false;
+        try {
+          validConfig = FormatReaderTest.configTree.get(file) != null;
+        }
+        catch (IOException e) { }
+        if (validConfig) {
+          LOGGER.error("setId(\"{}\") failed", file, u);
+          failingIds.add(file);
+        }
+        else {
+          LOGGER.debug("Skipping file {} with unknown type", file);
+        }
+        fileSet.remove(file);
+        continue;
+      }
+      catch (Exception e) {
         LOGGER.error("setId(\"{}\") failed", file, e);
         failingIds.add(file);
         fileSet.remove(file);
