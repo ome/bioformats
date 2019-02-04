@@ -173,6 +173,7 @@ public class DeltavisionReader extends FormatReader {
     final int blockLen = 212;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     stream.seek(96);
+    stream.order(true);
     int magic = stream.readShort() & 0xffff;
     boolean valid = magic == DV_MAGIC_BYTES_1 || magic == DV_MAGIC_BYTES_2;
     if (!valid) {
@@ -188,8 +189,12 @@ public class DeltavisionReader extends FormatReader {
     int x = stream.readInt();
     int y = stream.readInt();
     int count = stream.readInt();
+    // don't compare x * y * count to stream length,
+    // as that will reject any truncated files
+    // instead just check that at least one plane plus a header
+    // could be read
     return x > 0 && y > 0 && count > 0 &&
-      ((long) x * (long) y * (long) count < stream.length());
+      (HEADER_LENGTH + ((long) x * (long) y) <= stream.length());
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
