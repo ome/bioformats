@@ -58,6 +58,7 @@ import ome.units.quantity.Time;
 import ome.units.unit.Unit;
 import ome.units.UNITS;
 
+
 /**
  * LiFlimReader is the file format reader for LI-FLIM files.
  */
@@ -84,7 +85,7 @@ public class LiFlimReader extends FormatReader {
   public static final String F_KEY = "frequencies";
   public static final String T_KEY = "timestamps";
   
-  // DarkImages is different w.r.t. background table,
+  // New Metadatakey for cameras that have a dark image.
   public static final String DarkImage_KEY = "hasDarkImage";
 
   // relevant keys in timestamp table
@@ -106,7 +107,6 @@ public class LiFlimReader extends FormatReader {
   public static final String DATATYPE_INT32 = "INT32";
   public static final String DATATYPE_REAL32 = "REAL32";
   public static final String DATATYPE_REAL64 = "REAL64";
-  // added new datatype 22-01-2019
   public static final String DATATYPE_UINT12 = "UINT12";
   
   // -- Fields --
@@ -158,8 +158,8 @@ public class LiFlimReader extends FormatReader {
   private int gzSeries;
   
   /** if DataType is UINT12, data is compressed in 12 bits.
-   * Similar to Gzipstream make use of a DataInputStream 
-   * to blow up the compressed UINT12 pixel data. */
+  *   Similar to Gzipstream make use of a DataInputStream 
+  *   to unpack the compressed UINT12 pixel data into 16 bits. */
   private boolean TypeUINT12;
   private DataInputStream UINT12stream;
   private int UINT12streamPos;
@@ -202,8 +202,8 @@ public class LiFlimReader extends FormatReader {
       readPlane(s, x, y, w, h, buf);
       s.close();
     }
-	  
-    /** Added for unpacking the UINT12 datatype to real UINT16 data  */
+    
+    // Added for unpacking the UINT12 datatype to UINT16 data
     else if (TypeUINT12) {
     	prepareUINT12Stream(no);
     	
@@ -215,9 +215,10 @@ public class LiFlimReader extends FormatReader {
           UINT12stream.readFully(bytes);
         }
         catch (EOFException e) {
-          LOGGER.debug("Could not read full plane", e);
+          LOGGER.debug("Could not read full 12-bitt plane", e);
         }
 
+        //Covert 12bit data to 16bit data, maintaining 12bit depth.
         byte[] returnArray = new byte[0];
         returnArray = convert12to16(bytes); 
         RandomAccessInputStream s = new RandomAccessInputStream(returnArray);
@@ -414,12 +415,6 @@ public class LiFlimReader extends FormatReader {
     ms.sizeZ = Integer.parseInt(zLen) * sizeF;
     ms.sizeC = Integer.parseInt(channels);
     ms.sizeT = Integer.parseInt(timestamps) * sizeP;
-   
-    /** Check for DarkImage, if "1" increment Timestamps with 1 such that DarkImage is appended to the stream  */
-    if (DarkImage != null && DarkImage.equals(new String("1"))) {
-    	ms.sizeT = ms.sizeT + 1;
-      }
-   
     ms.imageCount = getSizeZ() * getSizeT();
     ms.rgb = getSizeC() > 1;
     ms.indexed = false;
@@ -428,6 +423,10 @@ public class LiFlimReader extends FormatReader {
     ms.littleEndian = true;
     ms.interleaved = true;
     ms.falseColor = false;
+    // if datatype is uint12, set bitsperpixel to 12.
+    if (TypeUINT12) {
+    	ms.bitsPerPixel = 12;
+    }
     
     ms.moduloZ.type = FormatTools.FREQUENCY;
     ms.moduloZ.step = ms.sizeZ / sizeF;
@@ -464,13 +463,37 @@ public class LiFlimReader extends FormatReader {
       ms.moduloT.end = ms.sizeT - 1;
       core.add(ms);
     }
+    
+    // Check for DarkImage, if "1" add CoreMetadata 
+    if (DarkImage != null && DarkImage.equals(new String("1"))) {
+    	// There is only 1 dark image.
+    	ms = new CoreMetadata();
+	    ms.sizeX = Integer.parseInt(xLen);
+	    ms.sizeY = Integer.parseInt(yLen);
+	    ms.sizeZ = 1;
+	    ms.sizeC = 1;
+	    ms.sizeT = 1;
+	    ms.imageCount = 1;
+	    ms.rgb = getSizeC() > 1;
+	    ms.indexed = false;
+	    ms.dimensionOrder = "XYCZT";
+	    ms.pixelType = getPixelTypeFromString(datatype);
+	    ms.littleEndian = true;
+	    ms.interleaved = true;
+	    ms.falseColor = false;
+	    // if datatype is uint12, set bits per pixel to 12.
+	    if (TypeUINT12) {
+	    	ms.bitsPerPixel = 12;
+	    }
+	   	core.add(ms);
+   	 }
   }
 
   private void initOMEMetadata() {
     int times = timestamps == null ? 0 : Integer.parseInt(timestamps);
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, times > 0);
+    MetadataTools.populatePixels(store, this, times > 0); /// error?
 
     String path = new Location(getCurrentFile()).getName();
 
@@ -629,6 +652,13 @@ public class LiFlimReader extends FormatReader {
 	      setSeries(originalSeries);
 	      UINT12streamSeries = getSeries();
 	    }
+	    // For UINT12 and HasDarkImage, the background image is the last time frame.
+	    // For UINT12 data we assume only 2 series, first is the data, 2nd is the background image
+	    else if (UINT12streamSeries == 1 && DarkImage != null && DarkImage.equals(new String("1"))) { 
+	    	long nBytes = (((long)(FormatTools.getPlaneSize(this)) * (getSizeT()))*3)/4;
+	        skip(UINT12stream, nBytes);
+	        UINT12streamPos = 0;
+	    }
 	    else 
 	    	{
 	    	skip(UINT12stream, ((long)bytesPerPlane * (long)(no - UINT12streamPos)));
@@ -637,7 +667,7 @@ public class LiFlimReader extends FormatReader {
 	    
 	  }
 	  
-  /** Added a Function to blow up the packed 12bit data to 16bit data   */
+  // Added a Function to unpack 12bit data to 16bit data maintaining 12bits depth.
   private static byte[] convert12to16(byte[] image) {
 	   	byte[] image16 = new byte[image.length * 4 / 3];
 
@@ -647,10 +677,10 @@ public class LiFlimReader extends FormatReader {
 
 		for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) 
 		{
-	  		image16[idx16] = (byte)((image[idx] & 0x0f) << 4);
-	  		image16[idx16 + 1] = (byte)(((image[idx] & 0xf0) >> 4) + ((image[idx + 1] & 0x0f) << 4));
-	  		image16[idx16 + 2] = (byte)(image[idx + 1] & 0xf0);
-	  		image16[idx16 + 3] = (byte)(image[idx + 2] & 0xff);
+	  		image16[idx16] = (byte)(image[idx] & 0xff);
+	  		image16[idx16 + 1] = (byte)((image[idx + 1] & 0x0f));
+	  		image16[idx16 + 2] = (byte)(((image[idx + 1] & 0xf0) >> 4) + ((image[idx + 2] & 0x0f) << 4));
+	  		image16[idx16 + 3] = (byte)((image[idx + 2] & 0xf0) >> 4);
 		}
 		
 		return image16;
