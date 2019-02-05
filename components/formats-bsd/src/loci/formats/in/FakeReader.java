@@ -206,6 +206,13 @@ public class FakeReader extends FormatReader {
 
   private OMEXMLService omeXmlService;
 
+  private transient int screens = 0;
+  private transient int plates = 0;
+  private transient int plateRows = 0;
+  private transient int plateCols = 0;
+  private transient int fields = 0;
+  private transient int plateAcqs = 0;
+
   /**
    * Read byte-encoded metadata from the given plane.
    * @see FakeReader#readSpecialPixels(byte[], int, boolean, int, boolean)
@@ -479,6 +486,12 @@ public class FakeReader extends FormatReader {
     scaleFactor = 1;
     lut8 = null;
     lut16 = null;
+    screens = 0;
+    plates = 0;
+    plateRows = 0;
+    plateCols = 0;
+    fields = 0;
+    plateAcqs = 0;
     super.close(fileOnly);
   }
 
@@ -584,13 +597,6 @@ public class FakeReader extends FormatReader {
     int lutLength = 3;
 
     String acquisitionDate = null;
-
-    int screens = 0;
-    int plates = 0;
-    int plateRows = 0;
-    int plateCols = 0;
-    int fields = 0;
-    int plateAcqs = 0;
 
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
@@ -1171,15 +1177,25 @@ public class FakeReader extends FormatReader {
         }
       }
 
+      int[] spwCoordinate = toSPWCoordinates(newSeries);
+
       // TODO: could be cleaned up further when Java 8 is the minimum version
       Length x = parsePosition("X", s, i, table);
       if (x != null) {
         store.setPlanePositionX(x, newSeries, i);
+        if (spwCoordinate != null) {
+          store.setWellSamplePositionX(x,
+            spwCoordinate[2], spwCoordinate[1], spwCoordinate[0]);
+        }
       }
 
       Length y = parsePosition("Y", s, i, table);
       if (y != null) {
         store.setPlanePositionY(y, newSeries, i);
+        if (spwCoordinate != null) {
+          store.setWellSamplePositionY(y,
+            spwCoordinate[2], spwCoordinate[1], spwCoordinate[0]);
+        }
       }
 
       Length z = parsePosition("Z", s, i, table);
@@ -1192,6 +1208,26 @@ public class FakeReader extends FormatReader {
   }
 
 // -- Helper methods --
+
+  /**
+   * Convert the given series (Image) index to a
+   * WellSample, Well, and Plate index.
+   * This should match the ordering used by XMLMockObjects.
+   *
+   * @param seriesIndex the index of the series/Image
+   * @return an array of length 3 containing the
+   *  WellSample, Well, and Plate indices (in order),
+   *  or null if SPW metadata was not defined
+   */
+  private int[] toSPWCoordinates(int seriesIndex) {
+    if (plates < 1) {
+      return null;
+    }
+    int screenCount = (int) Math.max(screens, 1);
+    return FormatTools.rasterToPosition(
+      new int[] {plateAcqs * fields, plateRows * plateCols,
+        screenCount * plates}, seriesIndex);
+  }
 
   private String[] extractTokensFromFakeSeries(String path) {
     List<String> tokens = new ArrayList<String>();
