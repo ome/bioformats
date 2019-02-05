@@ -2063,7 +2063,7 @@ public class ZeissCZIReader extends FormatReader {
               nextPosition++;
             }
           }
-          if (positions.getLength() == 0) {
+          if (positions.getLength() == 0 && (mosaics <= 1 || (prestitched != null && prestitched))) {
             positions = scene.getElementsByTagName("CenterPosition");
             if (positions.getLength() > 0) {
               Element position = (Element) positions.item(0);
