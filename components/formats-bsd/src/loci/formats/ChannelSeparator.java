@@ -38,6 +38,8 @@ import loci.common.DataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.meta.MetadataConverter;
+
 /**
  * Logic to automatically separate the channels in a file.
  */
@@ -310,19 +312,17 @@ public class ChannelSeparator extends ReaderWrapper {
           continue;
         }
         for (int c=0; c<reader.getEffectiveSizeC(); c++) {
-          if (c * rgbChannels >= retrieve.getChannelCount(s)) {
+          int cIndex = c * rgbChannels;
+          if (cIndex >= retrieve.getChannelCount(s)) {
             break;
-          }
-          String originalChannelName = retrieve.getChannelName(s, c * rgbChannels);
-          if (originalChannelName == null) {
-            continue;
           }
           if (!pixelsPopulated) {
             MetadataTools.populatePixelsOnly(store, this);
             pixelsPopulated = true;
           }
           for (int i=1; i<rgbChannels; i++) {
-            store.setChannelName(originalChannelName, s, c * rgbChannels + i);
+            MetadataConverter.convertChannels(retrieve, s, cIndex,
+              store, s, cIndex + i, false);
           }
         }
       }
