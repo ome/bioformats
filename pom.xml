@@ -52,7 +52,7 @@
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
-    <ome-common.version>6.0.0-m2</ome-common.version>
+    <ome-common.version>6.0.0</ome-common.version>
     <ome-model.group>org.openmicroscopy</ome-model.group>
     <ome-model.version>6.0.0-m1</ome-model.version>
     <ome-poi.version>5.3.3</ome-poi.version>
