@@ -3834,15 +3834,15 @@ public class ZeissCZIReader extends FormatReader {
               if (text != null) {
                 if (tagNode.getNodeName().equals("StageXPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageX = new Length(number, UNITS.REFERENCEFRAME);
+                  stageX = new Length(number, UNITS.MICROM);
                 }
                 else if (tagNode.getNodeName().equals("StageYPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageY = new Length(number, UNITS.REFERENCEFRAME);
+                  stageY = new Length(number, UNITS.MICROM);
                 }
                 else if (tagNode.getNodeName().equals("FocusPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageZ = new Length(number, UNITS.REFERENCEFRAME);
+                  stageZ = new Length(number, UNITS.MICROM);
                 }
                 else if (tagNode.getNodeName().equals("AcquisitionTime")) {
                   Timestamp t = Timestamp.valueOf(text);
