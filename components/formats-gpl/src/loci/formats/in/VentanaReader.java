@@ -401,7 +401,7 @@ public class VentanaReader extends BaseTiffReader {
           if (v[0].equals("level")) {
             resolutionCount++;
           }
-          else if (v[0].equals("mag")) {
+          else if (magnification == null && v[0].equals("mag")) {
             magnification = DataTools.parseDouble(v[1]);
           }
         }
