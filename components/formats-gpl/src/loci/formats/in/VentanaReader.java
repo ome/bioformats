@@ -492,8 +492,6 @@ public class VentanaReader extends BaseTiffReader {
     // smallest tile index is in lower left corner (snake ordering)
     int tileCols = core.get(0, 0).sizeX / tileWidth;
     LOGGER.debug("number of valid areas of interest = {}", areas.size());
-    int minRemoveX = Integer.MAX_VALUE;
-    int minRemoveY = Integer.MAX_VALUE;
     for (AreaOfInterest area : areas) {
       int tileRow = area.yOrigin / tileHeight;
       int tileCol = area.xOrigin / tileWidth;
@@ -580,26 +578,50 @@ public class VentanaReader extends BaseTiffReader {
           }
         }
       }
-      int removeX = (int) Math.floor((area.tileColumns - 1) * rightSum);
-      int removeY = (int) Math.floor((area.tileRows - 1) * upSum);
-      if (removeX < minRemoveX) {
-        minRemoveX = removeX;
-      }
-      if (removeY < minRemoveY) {
-        minRemoveY = removeY;
-      }
     }
 
-    // remove total overlap pixels from image dimensions
-    // otherwise there will be a black band along the bottom and right side
+    // reset XY dimensions to match minimal bounding box for all AOIs
+    int minX = Integer.MAX_VALUE;
+    int minY = Integer.MAX_VALUE;
+    int maxX = 0;
+    int maxY = 0;
+    for (AreaOfInterest area : areas) {
+      int tileRow = area.yOrigin / tileHeight;
+      int tileCol = area.xOrigin / tileWidth;
+      for (int row=0; row<area.tileRows; row++) {
+        for (int col=0; col<area.tileColumns; col++) {
+          int index = (tileRow + row) * tileCols + (tileCol + col);
+          if (tiles[index].realX >= 0 && tiles[index].realY >= 0) {
+            minX = (int) Math.min(minX, tiles[index].realX);
+            maxX = (int) Math.max(maxX, tiles[index].realX + tileWidth);
+            minY = (int) Math.min(minY, tiles[index].realY);
+            maxY = (int) Math.max(maxY, tiles[index].realY + tileHeight);
+          }
+        }
+      }
+    }
+    for (AreaOfInterest area : areas) {
+      int tileRow = area.yOrigin / tileHeight;
+      int tileCol = area.xOrigin / tileWidth;
+      for (int row=0; row<area.tileRows; row++) {
+        for (int col=0; col<area.tileColumns; col++) {
+          int index = (tileRow + row) * tileCols + (tileCol + col);
+          tiles[index].realX -= minX;
+          tiles[index].realY -= minY;
+        }
+      }
+    }
+    int newX = maxX - minX;
+    int newY = maxY - minY;
+
     for (int s=1; s<core.size(0); s++) {
       int scale = getScale(s);
-      core.get(0, s).sizeX -= (minRemoveX / scale);
-      core.get(0, s).sizeY -= (minRemoveY / scale);
+      core.get(0, s).sizeX = newX / scale;
+      core.get(0, s).sizeY = newY / scale;
     }
     // reset full resolution last so that getScale is not affected
-    core.get(0, 0).sizeX -= minRemoveX;
-    core.get(0, 0).sizeY -= minRemoveY;
+    core.get(0, 0).sizeX = newX;
+    core.get(0, 0).sizeY = newY;
   }
 
   /**
