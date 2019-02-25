@@ -236,7 +236,9 @@ public class VentanaReader extends BaseTiffReader {
     byte[] tilePixels = new byte[thisTileWidth * thisTileHeight * pixel];
     for (TIFFTile tile : tiles) {
       Region tileBox = new Region(
-        tile.realX / scale, tile.realY / scale, thisTileWidth, thisTileHeight);
+        scaleCoordinate(tile.realX, getCoreIndex()),
+        scaleCoordinate(tile.realY, getCoreIndex()),
+        thisTileWidth, thisTileHeight);
 
       if (tileBox.intersects(imageBox)) {
         if (scale == 1) {
@@ -247,10 +249,10 @@ public class VentanaReader extends BaseTiffReader {
           // load a whole tile from the subresolution IFD for reuse
           // it's less complicated to just call tiffParser.setSamples(...)
           // each time, but also an order of magnitude slower
-          int resX = tile.baseX / scale;
+          int resX = scaleCoordinate(tile.baseX, getCoreIndex());
           int offsetX = resX % tileWidth;
           resX -= offsetX;
-          int resY = tile.baseY / scale;
+          int resY = scaleCoordinate(tile.baseY, getCoreIndex());
           int offsetY = resY % tileHeight;
           resY -= offsetY;
           if (resX != subResX || resY != subResY || subResTile == null) {
@@ -632,6 +634,15 @@ public class VentanaReader extends BaseTiffReader {
   private int getScale(int resolution) {
     return (int) Math.round(
       (double) core.get(0, 0).sizeX / core.get(0, resolution).sizeX);
+  }
+
+  /**
+   * @param v the coordinate in the full resolution
+   * @param resolution the resolution for which to calculate a scale factor
+   * @return the scaled coordinate for the target resolution
+   */
+  private int scaleCoordinate(int v, int resolution) {
+    return (int) Math.ceil((double) v / getScale(resolution));
   }
 
   /**
