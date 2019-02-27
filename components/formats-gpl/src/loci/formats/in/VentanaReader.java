@@ -212,7 +212,7 @@ public class VentanaReader extends BaseTiffReader {
       return buf;
     }
 
-    if (getCoreIndex() >= core.get(0).resolutionCount) {
+    if (getCoreIndex() >= core.size(0)) {
       tiffParser.getSamples(ifd, buf, x, y, w, h);
       return buf;
     }
@@ -313,9 +313,9 @@ public class VentanaReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    if (getCoreIndex() < core.get(0).resolutionCount) {
+    if (getCoreIndex() < core.size(0)) {
       int currentCore = getCoreIndex();
-      setCoreIndex(core.get(0).resolutionCount - 1);
+      setCoreIndex(core.size(0) - 1);
       byte[] thumb = super.openThumbBytes(no);
       setCoreIndex(currentCore);
       return thumb;
@@ -415,58 +415,67 @@ public class VentanaReader extends BaseTiffReader {
     setSeries(0);
     resolutions = resolutionCount;
 
-    for (int s=0; s<seriesCount; s++) {
-      CoreMetadata ms = core.get(s);
-      if (s == 0 && resolutions > 0) {
-        ms.resolutionCount = resolutions;
-      }
-      ms.sizeZ = 1;
-      ms.sizeT = 1;
-      ms.imageCount = ms.sizeZ * ms.sizeT;
+    core.clear();
+    core.add(new CoreMetadata());
+    for (int i=1; i<resolutions; i++) {
+      core.add(0, new CoreMetadata());
+    }
+    for (int s=0; s<seriesCount-resolutions; s++) {
+      core.add(new CoreMetadata());
+    }
 
-      int ifdIndex = getIFDIndex(s, 0);
-      IFD ifd = ifds.get(ifdIndex);
-      PhotoInterp p = ifd.getPhotometricInterpretation();
-      int samples = ifd.getSamplesPerPixel();
-      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
+    for (int s=0; s<core.size(); s++) {
+      for (int r=0; r<core.size(s); r++) {
+        CoreMetadata ms = core.get(s, r);
+        ms.resolutionCount = core.size(s);
+        ms.sizeZ = 1;
+        ms.sizeT = 1;
+        ms.imageCount = ms.sizeZ * ms.sizeT;
 
-      ms.sizeX = (int) ifd.getImageWidth();
-      ms.sizeY = (int) ifd.getImageLength();
-      ms.sizeC = ms.rgb ? samples : 1;
-      ms.littleEndian = ifd.isLittleEndian();
-      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
-        (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      ms.pixelType = ifd.getPixelType();
-      ms.metadataComplete = true;
-      ms.interleaved = false;
-      ms.falseColor = false;
-      ms.dimensionOrder = "XYCZT";
-      ms.thumbnail = s != 0;
+        int ifdIndex = getIFDIndex(core.flattenedIndex(s, r), 0);
+        IFD ifd = ifds.get(ifdIndex);
+        PhotoInterp p = ifd.getPhotometricInterpretation();
+        int samples = ifd.getSamplesPerPixel();
+        ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      if (s == 0) {
-        tileWidth = (int) ifd.getTileWidth();
-        tileHeight = (int) ifd.getTileLength();
-        long[] offsets = ifd.getStripOffsets();
-        int x = 0, y = 0;
-        tiles = new TIFFTile[offsets.length];
-        for (int i=0; i<offsets.length; i++) {
-          tiles[i] = new TIFFTile();
-          tiles[i].offset = offsets[i];
-          tiles[i].ifd = ifdIndex;
-          tiles[i].realX = -1 * tileWidth;
-          tiles[i].realY = -1 * tileHeight;
-          tiles[i].baseX = tileWidth * (x++);
-          tiles[i].baseY = tileHeight * y;
-          if (x * tileWidth >= ms.sizeX) {
-            y++;
-            x = 0;
+        ms.sizeX = (int) ifd.getImageWidth();
+        ms.sizeY = (int) ifd.getImageLength();
+        ms.sizeC = ms.rgb ? samples : 1;
+        ms.littleEndian = ifd.isLittleEndian();
+        ms.indexed = p == PhotoInterp.RGB_PALETTE &&
+          (get8BitLookupTable() != null || get16BitLookupTable() != null);
+        ms.pixelType = ifd.getPixelType();
+        ms.metadataComplete = true;
+        ms.interleaved = false;
+        ms.falseColor = false;
+        ms.dimensionOrder = "XYCZT";
+        ms.thumbnail = s != 0 || r != 0;
+
+        if (s == 0 && r == 0) {
+          tileWidth = (int) ifd.getTileWidth();
+          tileHeight = (int) ifd.getTileLength();
+          long[] offsets = ifd.getStripOffsets();
+          int x = 0, y = 0;
+          tiles = new TIFFTile[offsets.length];
+          for (int i=0; i<offsets.length; i++) {
+            tiles[i] = new TIFFTile();
+            tiles[i].offset = offsets[i];
+            tiles[i].ifd = ifdIndex;
+            tiles[i].realX = -1 * tileWidth;
+            tiles[i].realY = -1 * tileHeight;
+            tiles[i].baseX = tileWidth * (x++);
+            tiles[i].baseY = tileHeight * y;
+            if (x * tileWidth >= ms.sizeX) {
+              y++;
+              x = 0;
+            }
           }
         }
       }
     }
 
     if (splitTiles()) {
-      CoreMetadata first = core.get(0);
+      CoreMetadata first = core.get(0, 0);
       core.clear();
       for (TIFFTile tile : tiles) {
         CoreMetadata m = new CoreMetadata(first);
@@ -481,7 +490,7 @@ public class VentanaReader extends BaseTiffReader {
     // process TIFF tiles and overlap data to get the real coordinates
     // largest tile index is in upper right corner
     // smallest tile index is in lower left corner (snake ordering)
-    int tileCols = core.get(0).sizeX / tileWidth;
+    int tileCols = core.get(0, 0).sizeX / tileWidth;
     LOGGER.debug("number of valid areas of interest = {}", areas.size());
     int minRemoveX = Integer.MAX_VALUE;
     int minRemoveY = Integer.MAX_VALUE;
@@ -583,24 +592,24 @@ public class VentanaReader extends BaseTiffReader {
 
     // remove total overlap pixels from image dimensions
     // otherwise there will be a black band along the bottom and right side
-    for (int s=1; s<core.get(0).resolutionCount; s++) {
+    for (int s=1; s<core.size(0); s++) {
       int scale = getScale(s);
-      core.get(s).sizeX -= (minRemoveX / scale);
-      core.get(s).sizeY -= (minRemoveY / scale);
+      core.get(0, s).sizeX -= (minRemoveX / scale);
+      core.get(0, s).sizeY -= (minRemoveY / scale);
     }
     // reset full resolution last so that getScale is not affected
-    core.get(0).sizeX -= minRemoveX;
-    core.get(0).sizeY -= minRemoveY;
+    core.get(0, 0).sizeX -= minRemoveX;
+    core.get(0, 0).sizeY -= minRemoveY;
   }
 
   /**
-   * @param coreIndex the resolution for which to calculate a scale factor
+   * @param resolution the resolution for which to calculate a scale factor
    * @return the scale factor between the full resolution image
    *  and the specified resolution
    */
-  private int getScale(int coreIndex) {
+  private int getScale(int resolution) {
     return (int) Math.round(
-      (double) core.get(0).sizeX / core.get(coreIndex).sizeX);
+      (double) core.get(0, 0).sizeX / core.get(0, resolution).sizeX);
   }
 
   /**
@@ -693,9 +702,9 @@ public class VentanaReader extends BaseTiffReader {
     if (splitTiles() && coreIndex > 0 && resolutions > 0) {
       return getIFDIndex(0, no);
     }
-    int extra = ifds.size() - (resolutions * core.get(0).imageCount);
+    int extra = ifds.size() - (resolutions * core.get(0, 0).imageCount);
     if (coreIndex < ifds.size() - extra) {
-      return extra + (coreIndex * core.get(0).imageCount) + no;
+      return extra + (coreIndex * core.get(0, 0).imageCount) + no;
     }
     return coreIndex - (ifds.size() - extra);
   }
