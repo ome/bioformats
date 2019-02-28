@@ -236,9 +236,17 @@ public class VentanaReader extends BaseTiffReader {
     byte[] tilePixels = new byte[thisTileWidth * thisTileHeight * pixel];
     for (TIFFTile tile : tiles) {
       Region tileBox = new Region(
-        scaleCoordinate(tile.realX, getCoreIndex()),
-        scaleCoordinate(tile.realY, getCoreIndex()),
-        thisTileWidth, thisTileHeight);
+        tile.realX, tile.realY, tileWidth, tileHeight);
+      for (AreaOfInterest area : areas) {
+        if (tileBox.intersects(area.boundingBox)) {
+          tileBox = tileBox.intersection(area.boundingBox);
+          break;
+        }
+      }
+      tileBox.x = scaleCoordinate(tileBox.x, getCoreIndex());
+      tileBox.y = scaleCoordinate(tileBox.y, getCoreIndex());
+      tileBox.width /= scale;
+      tileBox.height /= scale;
 
       if (tileBox.intersects(imageBox)) {
         if (scale == 1) {
@@ -494,6 +502,7 @@ public class VentanaReader extends BaseTiffReader {
     // smallest tile index is in lower left corner (snake ordering)
     int tileCols = core.get(0, 0).sizeX / tileWidth;
     LOGGER.debug("number of valid areas of interest = {}", areas.size());
+    int maxYAdjust = Integer.MIN_VALUE;
     for (AreaOfInterest area : areas) {
       int tileRow = area.yOrigin / tileHeight;
       int tileCol = area.xOrigin / tileWidth;
@@ -569,6 +578,11 @@ public class VentanaReader extends BaseTiffReader {
           }
         }
       }
+      for (Integer adjust : columnYAdjust.values()) {
+        if (adjust > maxYAdjust) {
+          maxYAdjust = adjust;
+        }
+      }
 
       for (int row=0; row<area.tileRows; row++) {
         for (int col=0; col<area.tileColumns; col++) {
@@ -590,17 +604,28 @@ public class VentanaReader extends BaseTiffReader {
     for (AreaOfInterest area : areas) {
       int tileRow = area.yOrigin / tileHeight;
       int tileCol = area.xOrigin / tileWidth;
+      int areaMinX = Integer.MAX_VALUE;
+      int areaMinY = Integer.MAX_VALUE;
+      int areaMaxX = 0;
+      int areaMaxY = 0;
       for (int row=0; row<area.tileRows; row++) {
         for (int col=0; col<area.tileColumns; col++) {
           int index = (tileRow + row) * tileCols + (tileCol + col);
           if (tiles[index].realX >= 0 && tiles[index].realY >= 0) {
-            minX = (int) Math.min(minX, tiles[index].realX);
-            maxX = (int) Math.max(maxX, tiles[index].realX + tileWidth);
-            minY = (int) Math.min(minY, tiles[index].realY);
-            maxY = (int) Math.max(maxY, tiles[index].realY + tileHeight);
+            areaMinX = (int) Math.min(areaMinX, tiles[index].realX);
+            areaMaxX = (int) Math.max(areaMaxX, tiles[index].realX + tileWidth);
+            areaMinY = (int) Math.min(areaMinY, tiles[index].realY);
+            areaMaxY = (int) Math.max(areaMaxY, tiles[index].realY + tileHeight);
           }
         }
       }
+      area.boundingBox = new Region(areaMinX, areaMinY + maxYAdjust,
+        areaMaxX - areaMinX, areaMaxY - areaMinY - (3 * maxYAdjust));
+
+      minX = (int) Math.min(areaMinX, minX);
+      maxX = (int) Math.max(areaMaxX, maxX);
+      minY = (int) Math.min(area.boundingBox.y, minY);
+      maxY = (int) Math.max(area.boundingBox.y + area.boundingBox.height, maxY);
     }
     for (AreaOfInterest area : areas) {
       int tileRow = area.yOrigin / tileHeight;
@@ -612,6 +637,8 @@ public class VentanaReader extends BaseTiffReader {
           tiles[index].realY -= minY;
         }
       }
+      area.boundingBox.x -= minX;
+      area.boundingBox.y -= minY;
     }
     int newX = maxX - minX;
     int newY = maxY - minY;
@@ -819,6 +846,7 @@ public class VentanaReader extends BaseTiffReader {
     public int tileRows;
     public int tileColumns;
     public List<Overlap> overlaps = new ArrayList<Overlap>();
+    public Region boundingBox;
 
     @Override
     public String toString() {
