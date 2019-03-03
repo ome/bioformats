@@ -414,12 +414,15 @@ public class ImspectorReader extends FormatReader {
           catch (NumberFormatException e) { }
         }
         else if (key.equals("xyz-Table Z Resolution")) {
-          int z = DataTools.parseDouble(value).intValue();
-          if (z == 1 && getSizeZ() > 1) {
-            originalT = getSizeT();
-            originalZ = getSizeZ();
-            m.sizeT *= getSizeZ();
-            m.sizeZ = 1;
+          Double doubleValue = DataTools.parseDouble(value);
+          if (doubleValue != null) {
+            int z = doubleValue.intValue();
+            if (z == 1 && getSizeZ() > 1) {
+              originalT = getSizeT();
+              originalZ = getSizeZ();
+              m.sizeT *= getSizeZ();
+              m.sizeZ = 1;
+            }
           }
         }
         else if (key.equals("Time Time Resolution")) {
