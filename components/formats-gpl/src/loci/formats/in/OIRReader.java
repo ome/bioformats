@@ -614,7 +614,7 @@ public class OIRReader extends FormatReader {
     // seek past reference image blocks
     while (skipPixelBlock(file, s, false));
 
-    if (s.getFilePointer() == pixelStart && !file.endsWith(currentId)) {
+    if (s.getFilePointer() == pixelStart && !isCurrentFile(file)) {
       while (s.readInt() != 0xffffffff);
       s.skipBytes(4);
     }
@@ -639,7 +639,7 @@ public class OIRReader extends FormatReader {
       }
       LOGGER.trace("xml = {}", xml);
       if (((channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) &&
-        file.endsWith(currentId)) || xml.indexOf("lut:LUT") > 0)
+        isCurrentFile(file)) || xml.indexOf("lut:LUT") > 0)
       {
         parseXML(s, xml, fp);
       }
@@ -706,7 +706,7 @@ public class OIRReader extends FormatReader {
       long fp = s.getFilePointer();
       String xml = s.readString(xmlLength).trim();
       LOGGER.trace("xml = {}", xml);
-      if (file.endsWith(currentId) || xml.indexOf("lut:LUT") > 0) {
+      if (isCurrentFile(file) || xml.indexOf("lut:LUT") > 0) {
         parseXML(s, xml, fp);
       }
     }
@@ -1429,6 +1429,11 @@ public class OIRReader extends FormatReader {
       return 0;
     }
     return Integer.parseInt(uid.substring(index + 1));
+  }
+
+  private boolean isCurrentFile(String file) {
+    String currentPath = new Location(currentId).getAbsolutePath();
+    return currentPath.equals(new Location(file).getAbsolutePath());
   }
 
   // -- Helper classes --
