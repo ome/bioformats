@@ -1763,6 +1763,16 @@ public class FormatReaderTest {
             continue;
           }
 
+          // NRRD datasets are allowed to have differing used files.
+          // One raw file can have multiple header files associated with
+          // it, in which case selecting the raw file will always produce
+          // a test failure (which we can do nothing about).
+          if (file.toLowerCase().endsWith(".nhdr") ||
+            base[i].toLowerCase().endsWith(".nhdr"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -1846,17 +1856,6 @@ public class FormatReaderTest {
               "; expected " + base.length + ")";
           }
           if (success) Arrays.sort(comp);
-
-          // NRRD datasets are allowed to have differing used files.
-          // One raw file can have multiple header files associated with
-          // it, in which case selecting the raw file will always produce
-          // a test failure (which we can do nothing about).
-          if (file.toLowerCase().endsWith(".nhdr") ||
-            base[i].toLowerCase().endsWith(".nhdr"))
-          {
-            r.close();
-            continue;
-          }
 
           for (int j=0; j<comp.length && success; j++) {
             if (!comp[j].equals(base[j])) {
@@ -2257,8 +2256,10 @@ public class FormatReaderTest {
 
             // expect NRRD to pick up .nhdr files, and a non-NRRD reader
             // to pick up any other file in the same set as an .nhdr
-            if (result && (r instanceof NRRDReader ||
-              readers[j] instanceof NRRDReader))
+            if ((r instanceof NRRDReader &&
+              !used[i].toLowerCase().endsWith(".nhdr") &&
+              !used[i].toLowerCase().endsWith(".nrrd")) ||
+              (result && readers[j] instanceof NRRDReader))
             {
               continue;
             }
