@@ -120,7 +120,17 @@ public class Configuration {
   private static final String Y_POSITION_UNIT = "PositionYUnit_";
   private static final String Z_POSITION = "PositionZ_";
   private static final String Z_POSITION_UNIT = "PositionZUnit_";
-  
+
+  private static final String PLATE = "Plate";
+  private static final String PLATE_ACQUISITION = "PlateAcquisition";
+  private static final String WELL_ROW = "WellRow";
+  private static final String WELL_COLUMN = "WellColumn";
+  private static final String WELL_SAMPLE = "WellSample";
+  private static final String WELL_SAMPLE_POSITION_X = "WellSamplePositionX";
+  private static final String WELL_SAMPLE_POSITION_X_UNIT = "WellSamplePositionXUnit";
+  private static final String WELL_SAMPLE_POSITION_Y = "WellSamplePositionY";
+  private static final String WELL_SAMPLE_POSITION_Y_UNIT = "WellSamplePositionYUnit";
+
   // -- Fields --
 
   private String dataFile;
@@ -281,39 +291,15 @@ public class Configuration {
   }
 
   public Length getPhysicalSizeX() {
-    String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
-    String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNIT);
-    try {
-      UnitsLength xUnits = sizeXUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeXUnits);
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), xUnits); 
-    }
-    catch (NumberFormatException e) { }
-    catch (EnumerationException e) { }
-    return null;
+    return getPhysicalSize(PHYSICAL_SIZE_X, PHYSICAL_SIZE_X_UNIT);
   }
 
   public Length getPhysicalSizeY() {
-    String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
-    String sizeYUnits = currentTable.get(PHYSICAL_SIZE_Y_UNIT);
-    try {
-      UnitsLength yUnits = sizeYUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeYUnits);
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), yUnits);
-    }
-    catch (NumberFormatException e) { }
-    catch (EnumerationException e) { }
-    return null;
+    return getPhysicalSize(PHYSICAL_SIZE_Y, PHYSICAL_SIZE_Y_UNIT);
   }
 
   public Length getPhysicalSizeZ() {
-    String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
-    String sizeZUnits = currentTable.get(PHYSICAL_SIZE_Z_UNIT);
-    try {
-      UnitsLength zUnits = sizeZUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeZUnits);
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), zUnits);
-    }
-    catch (NumberFormatException e) { }
-    catch (EnumerationException e) { }
-    return null;
+    return getPhysicalSize(PHYSICAL_SIZE_Z, PHYSICAL_SIZE_Z_UNIT);
   }
 
   public Time getTimeIncrement() {
@@ -429,11 +415,35 @@ public class Configuration {
   }
 
   public int getResolutionCount() {
-    int count = 1;
-    if (currentTable.get(RESOLUTION_COUNT) != null) {
-      count = Integer.parseInt(currentTable.get(RESOLUTION_COUNT));
-    }
-    return count;
+    return getInt(RESOLUTION_COUNT, 1);
+  }
+
+  public int getPlate() {
+    return getInt(PLATE, -1);
+  }
+
+  public int getPlateAcquisition() {
+    return getInt(PLATE_ACQUISITION, -1);
+  }
+
+  public int getWellRow() {
+    return getInt(WELL_ROW, -1);
+  }
+
+  public int getWellColumn() {
+    return getInt(WELL_COLUMN, -1);
+  }
+
+  public int getWellSample() {
+    return getInt(WELL_SAMPLE, -1);
+  }
+
+  public Length getWellSamplePositionX() {
+    return getPhysicalSize(WELL_SAMPLE_POSITION_X, WELL_SAMPLE_POSITION_X_UNIT);
+  }
+
+  public Length getWellSamplePositionY() {
+    return getPhysicalSize(WELL_SAMPLE_POSITION_Y, WELL_SAMPLE_POSITION_Y_UNIT);
   }
 
   public void setSeries(int series) throws IndexOutOfBoundsException {
@@ -640,20 +650,14 @@ public class Configuration {
         seriesTable.put(DESCRIPTION, retrieve.getImageDescription(index));
 
         Length physicalX = retrieve.getPixelsPhysicalSizeX(index);
-        if (physicalX != null) {
-          seriesTable.put(PHYSICAL_SIZE_X, physicalX.value().toString());
-          seriesTable.put(PHYSICAL_SIZE_X_UNIT, physicalX.unit().getSymbol());
-        }
+        putLength(
+          seriesTable, physicalX, PHYSICAL_SIZE_X, PHYSICAL_SIZE_X_UNIT);
         Length physicalY = retrieve.getPixelsPhysicalSizeY(index);
-        if (physicalY != null) {
-          seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value().toString());
-          seriesTable.put(PHYSICAL_SIZE_Y_UNIT, physicalY.unit().getSymbol());
-        }
+        putLength(
+          seriesTable, physicalY, PHYSICAL_SIZE_Y, PHYSICAL_SIZE_Y_UNIT);
         Length physicalZ = retrieve.getPixelsPhysicalSizeZ(index);
-        if (physicalZ != null) {
-          seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value().toString());
-          seriesTable.put(PHYSICAL_SIZE_Z_UNIT, physicalZ.unit().getSymbol());
-        }
+        putLength(
+          seriesTable, physicalZ, PHYSICAL_SIZE_Z, PHYSICAL_SIZE_Z_UNIT);
         Time timeIncrement = retrieve.getPixelsTimeIncrement(index);
         if (timeIncrement != null) {
           seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
@@ -688,16 +692,12 @@ public class Configuration {
           }
 
           Length emWavelength = retrieve.getChannelEmissionWavelength(index, c);
-          if (emWavelength != null) {
-            seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value().toString());
-            seriesTable.put(EMISSION_WAVELENGTH_UNIT + c, emWavelength.unit().getSymbol());
-          }
+          putLength(seriesTable, emWavelength,
+            EMISSION_WAVELENGTH + c, EMISSION_WAVELENGTH_UNIT + c);
           Length exWavelength =
             retrieve.getChannelExcitationWavelength(index, c);
-          if (exWavelength != null) {
-            seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value().toString());
-            seriesTable.put(EXCITATION_WAVELENGTH_UNIT + c, exWavelength.unit().getSymbol());
-          }
+          putLength(seriesTable, exWavelength,
+            EXCITATION_WAVELENGTH + c, EXCITATION_WAVELENGTH_UNIT + c);
           try {
             seriesTable.put(DETECTOR + c,
               retrieve.getDetectorSettingsID(index, c));
@@ -712,22 +712,51 @@ public class Configuration {
               seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
             }
             Length xPos = retrieve.getPlanePositionX(index, p);
-            if (xPos != null) {
-              seriesTable.put(X_POSITION + p, String.valueOf(xPos.value().doubleValue()));
-              seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
-            }
+            putLength(seriesTable, xPos, X_POSITION + p, X_POSITION_UNIT + p);
             Length yPos = retrieve.getPlanePositionY(index, p);
-            if (yPos != null) {
-              seriesTable.put(Y_POSITION + p, String.valueOf(yPos.value().doubleValue()));
-              seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
-            }
+            putLength(seriesTable, yPos, Y_POSITION + p, Y_POSITION_UNIT + p);
             Length zPos = retrieve.getPlanePositionZ(index, p);
-            if (zPos != null) {
-              seriesTable.put(Z_POSITION + p, String.valueOf(zPos.value().doubleValue()));
-              seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
-            }
+            putLength(seriesTable, zPos, Z_POSITION + p, Z_POSITION_UNIT + p);
           } catch (IndexOutOfBoundsException e) {
             // only happens if no Plane elements were populated
+          }
+        }
+
+        // look for HCS metadata
+
+        String imageID = retrieve.getImageID(index);
+        boolean foundWellSample = false;
+        for (int p=0; !foundWellSample && p<retrieve.getPlateCount(); p++) {
+          for (int w=0; !foundWellSample && w<retrieve.getWellCount(p); w++) {
+            for (int ws=0; ws<retrieve.getWellSampleCount(p, w); ws++) {
+              String imageRef = retrieve.getWellSampleImageRef(p, w, ws);
+              if (imageID.equals(imageRef)) {
+                seriesTable.put(PLATE, String.valueOf(p));
+                seriesTable.put(WELL_ROW, retrieve.getWellRow(p, w).toString());
+                seriesTable.put(WELL_COLUMN, retrieve.getWellColumn(p, w).toString());
+                seriesTable.put(WELL_SAMPLE, String.valueOf(ws));
+
+                Length positionX = retrieve.getWellSamplePositionX(p, w, ws);
+                Length positionY = retrieve.getWellSamplePositionY(p, w, ws);
+                putLength(seriesTable, positionX, WELL_SAMPLE_POSITION_X, WELL_SAMPLE_POSITION_X_UNIT);
+                putLength(seriesTable, positionY, WELL_SAMPLE_POSITION_Y, WELL_SAMPLE_POSITION_Y_UNIT);
+
+                String wellSampleID = retrieve.getWellSampleID(p, w, ws);
+                boolean foundPA = false;
+                for (int pa=0; !foundPA && pa<retrieve.getPlateAcquisitionCount(p); pa++) {
+                  for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(p, pa); wsRef++) {
+                    String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(p, pa, wsRef);
+                    if (wellSampleID.equals(wellSampleRef)) {
+                      seriesTable.put(PLATE_ACQUISITION, String.valueOf(pa));
+                      foundPA = true;
+                      break;
+                    }
+                  }
+                }
+
+                break;
+              }
+            }
           }
         }
 
@@ -741,6 +770,13 @@ public class Configuration {
   {
     Location file = new Location(reader.getCurrentFile());
     table.put(IniTable.HEADER_KEY, file.getName() + suffix);
+  }
+
+  private void putLength(IniTable table, Length value, String valueKey, String unitKey) {
+    if (value != null) {
+      table.put(valueKey, String.valueOf(value.value().doubleValue()));
+      table.put(unitKey, value.unit().getSymbol());
+    }
   }
 
   private void pruneINI() {
@@ -757,5 +793,25 @@ public class Configuration {
       }
     }
     ini = newIni;
+  }
+
+  private int getInt(String key, int defaultValue) {
+    int rtn = defaultValue;
+    if (currentTable.get(key) != null) {
+      rtn = Integer.parseInt(currentTable.get(key));
+    }
+    return rtn;
+  }
+
+  private Length getPhysicalSize(String valueKey, String unitKey) {
+    String physicalSize = currentTable.get(valueKey);
+    String units = currentTable.get(unitKey);
+    try {
+      UnitsLength unit = units == null ? UnitsLength.MICROMETER : UnitsLength.fromString(units);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), unit);
+    }
+    catch (NumberFormatException e) { }
+    catch (EnumerationException e) { }
+    return null;
   }
 }

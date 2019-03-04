@@ -1388,6 +1388,89 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
+  @Test(groups = {"all", "fast", "automated"})
+  public void testHCSMetadata() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "HCS";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int s=0; s<reader.getSeriesCount(); s++) {
+      config.setSeries(s);
+      String failureSuffix = " incorrect for series " + s;
+
+      int plate = config.getPlate();
+      if (plate >= retrieve.getPlateCount()) {
+        result(testName, false, "Plate index" + failureSuffix);
+      }
+      else if (plate < 0) {
+        if (retrieve.getPlateCount() > 0) {
+          result(testName, false, "Plate index" + failureSuffix);
+        }
+        continue;
+      }
+      boolean foundWell = false;
+      for (int w=0; w<retrieve.getWellCount(plate); w++) {
+        int row = config.getWellRow();
+        int col = config.getWellColumn();
+        if (row == retrieve.getWellRow(plate, w).getNumberValue().intValue() &&
+          col == retrieve.getWellColumn(plate, w).getNumberValue().intValue())
+        {
+          foundWell = true;
+
+          int wellSample = config.getWellSample();
+          String image = retrieve.getImageID(s);
+          if (wellSample >= retrieve.getWellSampleCount(plate, w) ||
+            wellSample < 0 ||
+            !image.equals(retrieve.getWellSampleImageRef(plate, w, wellSample)))
+          {
+            result(testName, false, "WellSample index" + failureSuffix);
+          }
+
+          Length positionX = retrieve.getWellSamplePositionX(plate, w, wellSample);
+          Length positionY = retrieve.getWellSamplePositionY(plate, w, wellSample);
+          Length configX = config.getWellSamplePositionX();
+          Length configY = config.getWellSamplePositionY();
+          if (positionX != null || configX != null) {
+            if (positionX == null || !positionX.equals(configX)) {
+              result(testName, false, "WellSample position X" + failureSuffix);
+            }
+          }
+          if (positionY != null || configY != null) {
+            if (positionY == null || !positionY.equals(configY)) {
+              result(testName, false, "WellSample position Y" + failureSuffix);
+            }
+          }
+
+          int plateAcq = config.getPlateAcquisition();
+          if (plateAcq >= retrieve.getPlateAcquisitionCount(plate) ||
+            (plateAcq < 0 && retrieve.getPlateAcquisitionCount(plate) > 0))
+          {
+            result(testName, false, "PlateAcquisition index" + failureSuffix);
+          }
+          String wellSampleID = retrieve.getWellSampleID(plate, w, wellSample);
+          boolean foundWellSampleRef = false;
+          for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(plate, plateAcq); wsRef++) {
+            String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
+              plate, plateAcq, wsRef);
+            if (wellSampleID.equals(wellSampleRef)) {
+              foundWellSampleRef = true;
+              break;
+            }
+          }
+          if (!foundWellSampleRef) {
+            result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
+          }
+        }
+      }
+      if (!foundWell) {
+        result(testName, false, "Well indexes" + failureSuffix);
+      }
+    }
+
+    result(testName, true);
+  }
+
   @Test(groups = {"all", "xml", "automated"})
   public void testEqualOMEXML() {
     if (config == null) throw new SkipException("No config tree");
