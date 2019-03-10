@@ -1443,23 +1443,25 @@ public class FormatReaderTest {
           }
 
           int plateAcq = config.getPlateAcquisition();
-          if (plateAcq >= retrieve.getPlateAcquisitionCount(plate) ||
-            (plateAcq < 0 && retrieve.getPlateAcquisitionCount(plate) > 0))
+          int plateAcqCount = retrieve.getPlateAcquisitionCount(plate);
+          if (plateAcq >= plateAcqCount || (plateAcq < 0 && plateAcqCount > 0))
           {
             result(testName, false, "PlateAcquisition index" + failureSuffix);
           }
-          String wellSampleID = retrieve.getWellSampleID(plate, w, wellSample);
-          boolean foundWellSampleRef = false;
-          for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(plate, plateAcq); wsRef++) {
-            String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
-              plate, plateAcq, wsRef);
-            if (wellSampleID.equals(wellSampleRef)) {
-              foundWellSampleRef = true;
-              break;
+          else if (plateAcq >= 0 && plateAcqCount > 0) {
+            String wellSampleID = retrieve.getWellSampleID(plate, w, wellSample);
+            boolean foundWellSampleRef = false;
+            for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(plate, plateAcq); wsRef++) {
+              String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
+                plate, plateAcq, wsRef);
+              if (wellSampleID.equals(wellSampleRef)) {
+                foundWellSampleRef = true;
+                break;
+              }
             }
-          }
-          if (!foundWellSampleRef) {
-            result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
+            if (!foundWellSampleRef) {
+              result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
+            }
           }
         }
       }
