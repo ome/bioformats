@@ -405,6 +405,8 @@ public class CellSensReader extends FormatReader {
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
 
   private transient boolean expectETS = false;
+  private transient int channelCount = 0;
+  private transient int zCount = 0;
 
   // -- Constructor --
 
@@ -456,12 +458,11 @@ public class CellSensReader extends FormatReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    if (getCoreIndex() < core.size() - 1) {
+    if (getCoreIndex() < core.size() - 1 && getCoreIndex() < tileX.size()) {
       return tileX.get(getCoreIndex());
     }
-    int ifdIndex = 1 - (core.size() - getCoreIndex());
     try {
-      return (int) ifds.get(ifdIndex).getTileWidth();
+      return (int) ifds.get(getIFDIndex()).getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("Could not retrieve tile width", e);
@@ -473,12 +474,11 @@ public class CellSensReader extends FormatReader {
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    if (getCoreIndex() < core.size() - 1) {
+    if (getCoreIndex() < core.size() - 1 && getCoreIndex() < tileY.size()) {
       return tileY.get(getCoreIndex());
     }
-    int ifdIndex = 1 - (core.size() - getCoreIndex());
     try {
-      return (int) ifds.get(ifdIndex).getTileLength();
+      return (int) ifds.get(getIFDIndex()).getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("Could not retrieve tile height", e);
@@ -517,7 +517,7 @@ public class CellSensReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (getCoreIndex() < core.size() - 1) {
+    if (getCoreIndex() < core.size() - 1 && getCoreIndex() < rows.size()) {
       int tileRows = rows.get(getCoreIndex());
       int tileCols = cols.get(getCoreIndex());
 
@@ -570,8 +570,7 @@ public class CellSensReader extends FormatReader {
       return buf;
     }
     else {
-      int ifdIndex = 1 - (core.size() - getCoreIndex());
-      return parser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
+      return parser.getSamples(ifds.get(getIFDIndex() + no), buf, x, y, w, h);
     }
   }
 
@@ -610,6 +609,8 @@ public class CellSensReader extends FormatReader {
       previousTag = 0;
       expectETS = false;
       pyramids.clear();
+      channelCount = 0;
+      zCount = 0;
     }
   }
 
@@ -689,6 +690,35 @@ public class CellSensReader extends FormatReader {
 
     int seriesCount = files.size();
     core.clear();
+    int ignoredPyramids = 0;
+    if (files.size() == 1) {
+      for (Pyramid pyramid : pyramids) {
+        if (!pyramid.name.equalsIgnoreCase("Overview")) {
+          ignoredPyramids++;
+        }
+      }
+
+      seriesCount = ifds.size();
+
+      if (ifds.size() > 1) {
+        if (ifds.get(1).getSamplesPerPixel() == 1) {
+          seriesCount = 2;
+          if (channelCount == 0 && zCount == 0) {
+            channelCount = ifds.size() - 1;
+          }
+          else if (zCount > 0) {
+            zCount /= 2;
+            channelCount = (ifds.size() - 1) / zCount;
+          }
+        }
+        else {
+          if (ifds.size() > 2) {
+            ifds.remove(2);
+          }
+          seriesCount = (int) Math.min(3, ifds.size());
+        }
+      }
+    }
 
     IFDList exifs = parser.getExifIFDs();
 
@@ -731,6 +761,7 @@ public class CellSensReader extends FormatReader {
         }
 
         setCoreIndex(0);
+        ms.dimensionOrder = "XYCZT";
       }
       else {
         IFD ifd = ifds.get(s - files.size() + 1);
@@ -739,13 +770,24 @@ public class CellSensReader extends FormatReader {
         ms.rgb = samples > 1 || p == PhotoInterp.RGB;
         ms.sizeX = (int) ifd.getImageWidth();
         ms.sizeY = (int) ifd.getImageLength();
-        ms.sizeZ = 1;
         ms.sizeT = 1;
         ms.sizeC = ms.rgb ? samples : 1;
+        if (files.size() == 1 && channelCount > 0 &&
+          channelCount < ifds.size() && s > 0)
+        {
+          ms.sizeC *= channelCount;
+          ms.sizeZ = (ifds.size() - 1) / channelCount;
+          ms.imageCount = ifds.size() - 1;
+          ms.dimensionOrder = "XYZCT";
+        }
+        else {
+          ms.sizeZ = 1;
+          ms.imageCount = 1;
+          ms.dimensionOrder = "XYCZT";
+        }
         ms.littleEndian = ifd.isLittleEndian();
         ms.indexed = p == PhotoInterp.RGB_PALETTE &&
           (get8BitLookupTable() != null || get16BitLookupTable() != null);
-        ms.imageCount = 1;
         ms.pixelType = ifd.getPixelType();
         ms.interleaved = false;
         ms.falseColor = false;
@@ -753,7 +795,6 @@ public class CellSensReader extends FormatReader {
         index++;
       }
       ms.metadataComplete = true;
-      ms.dimensionOrder = "XYCZT";
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -802,7 +843,10 @@ public class CellSensReader extends FormatReader {
     for (int i=0; i<core.size();) {
       setCoreIndex(i);
       Pyramid pyramid = null;
-      if (nextPyramid < pyramids.size()) {
+      if (!(ignoredPyramids > 0 &&
+        i < (core.size() - (pyramids.size() - ignoredPyramids))) &&
+        nextPyramid < pyramids.size())
+      {
         pyramid = pyramids.get(nextPyramid++);
       }
       int ii = coreIndexToSeries(i);
@@ -855,6 +899,16 @@ public class CellSensReader extends FormatReader {
                 FormatTools.createLength(pyramid.originX, UNITS.MICROMETER), ii, nextPlane);
               store.setPlanePositionY(
                 FormatTools.createLength(pyramid.originY, UNITS.MICROMETER), ii, nextPlane);
+              if (z < pyramid.zValues.size()) {
+                store.setPlanePositionZ(
+                  FormatTools.createLength(pyramid.zValues.get(z),
+                  UNITS.MICROMETER), ii, nextPlane);
+              }
+              else if (pyramid.zStart != null && pyramid.zIncrement != null) {
+                store.setPlanePositionZ(
+                  FormatTools.createLength(pyramid.zStart + (z * pyramid.zIncrement),
+                  UNITS.MICROMETER), ii, nextPlane);
+              }
             }
           }
         }
@@ -1372,12 +1426,18 @@ public class CellSensReader extends FormatReader {
       if (fp + 24 >= vsi.length()) {
         return;
       }
+      LOGGER.debug("reading tag container data from {}", vsi.getFilePointer());
       int headerSize = vsi.readShort(); // should always be 24
       int version = vsi.readShort(); // always 21321
       int volumeVersion = vsi.readInt();
       long dataFieldOffset = vsi.readLong();
       int flags = vsi.readInt();
       vsi.skipBytes(4);
+      LOGGER.debug("  headerSize = {}", headerSize);
+      LOGGER.debug("  version = {}", version);
+      LOGGER.debug("  volumeVersion = {}", volumeVersion);
+      LOGGER.debug("  dataFieldOffset = {}", dataFieldOffset);
+      LOGGER.debug("  flags = {}", flags);
 
       int tagCount = flags & 0xfffffff;
 
@@ -1474,19 +1534,23 @@ public class CellSensReader extends FormatReader {
         else if (extendedField && (realType == PROPERTY_SET_VOLUME ||
           realType == NEW_MDIM_VOLUME_HEADER))
         {
-          long endPointer = vsi.getFilePointer() + nextField;
-          while (vsi.getFilePointer() < endPointer &&
-            vsi.getFilePointer() < vsi.length())
-          {
-            long start = vsi.getFilePointer();
-            String tagName = realType == NEW_MDIM_VOLUME_HEADER ?
-              getVolumeName(tag) : tagPrefix;
-            readTags(vsi, tag != 2037, tagName);
-            long end = vsi.getFilePointer();
-            if (start == end) {
-              break;
+          long start = vsi.getFilePointer();
+          String tagName = realType == NEW_MDIM_VOLUME_HEADER ?
+            getVolumeName(tag) : tagPrefix;
+          if (tagName.isEmpty() && realType == NEW_MDIM_VOLUME_HEADER) {
+            switch (tag) {
+              case Z_START:
+                tagName = "Z start position";
+                break;
+              case Z_INCREMENT:
+                tagName = "Z increment";
+                break;
+              case Z_VALUE:
+                tagName = "Z value";
+                break;
             }
           }
+          readTags(vsi, tag != 2037, tagName);
         }
         else {
           String tagName = getTagName(tag);
@@ -1726,6 +1790,15 @@ public class CellSensReader extends FormatReader {
                 else if (tagPrefix.startsWith("Objective Working Distance")) {
                   pyramid.workingDistance = new Double(value);
                 }
+                else if (tagPrefix.equals("Z start position")) {
+                  pyramid.zStart = DataTools.parseDouble(value);
+                }
+                else if (tagPrefix.equals("Z increment")) {
+                  pyramid.zIncrement = DataTools.parseDouble(value);
+                }
+                else if (tagPrefix.equals("Z value")) {
+                  pyramid.zValues.add(DataTools.parseDouble(value));
+                }
               }
             }
             catch (NumberFormatException e) {
@@ -1749,6 +1822,12 @@ public class CellSensReader extends FormatReader {
             }
             else if (tag != VALUE || tagPrefix.length() > 0) {
               addGlobalMetaList(tagPrefix + tagName, value);
+            }
+            if ("Channel Wavelength Value".equals(tagPrefix + tagName)) {
+              channelCount++;
+            }
+            else if ("Z valueValue".equals(tagPrefix + tagName)) {
+              zCount++;
             }
           }
           storedValue = value;
@@ -1805,6 +1884,9 @@ public class CellSensReader extends FormatReader {
         }
 
         if (nextField == 0 || tag == -494804095) {
+          if (fp + dataSize < vsi.length() && fp + dataSize >= 0) {
+            vsi.seek(fp + dataSize + 32);
+          }
           return;
         }
 
@@ -2323,6 +2405,13 @@ public class CellSensReader extends FormatReader {
     return type;
   }
 
+  private int getIFDIndex() {
+    if (usedFiles.length == 1) {
+      return getCoreIndex();
+    }
+    return 1 - (core.size() - getCoreIndex());
+  }
+
   // -- Helper class --
 
   class TileCoordinate {
@@ -2411,6 +2500,10 @@ public class CellSensReader extends FormatReader {
 
     public HashMap<String, Integer> dimensionOrdering =
       new HashMap<String, Integer>();
+
+    public transient Double zStart;
+    public transient Double zIncrement;
+    public transient ArrayList<Double> zValues = new ArrayList<Double>();
   }
 
 }
