@@ -40,6 +40,8 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import loci.common.Constants;
 import loci.common.DateTools;
@@ -1977,5 +1979,31 @@ public final class FormatTools {
     }
     return new Time(value.getNumberValue(), valueUnit);
   }
+
+  public static Length parseLength(String value, String defaultUnit) {
+      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(value);
+      if (!m.matches()) {
+        throw new RuntimeException(String.format(
+                "%s does not match a physical size!", value));
+      }
+      String number = m.group(1);
+      String unit = m.group(2);
+      if (unit == null || unit.trim().length() == 0) {
+        unit = defaultUnit;
+      }
+
+      double d = Double.valueOf(number);
+      Unit<Length> l = null;
+      try {
+        l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
+      } catch (EnumerationException e) {
+        LOGGER.warn("{} does not match a length unit!", unit);
+      }
+      if (l != null && d > Constants.EPSILON) {
+        return new Length(d, l);
+      }
+      return null;
+  }
+
 
 }
