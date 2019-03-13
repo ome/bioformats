@@ -51,6 +51,8 @@ public class LEOReader extends BaseTiffReader {
   // -- Constants --
 
   public static final int LEO_TAG = 34118;
+  private static final String[] DATE_FORMATS = new String[] {
+      "HH:mm dd-MMM-yyyy", "HH:mm:ss dd MMM yyyy"};
 
   // -- Fields --
 
@@ -131,7 +133,7 @@ public class LEOReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
 
-    date = DateTools.formatDate(time + " " + date, "HH:mm dd-MMM-yyyy");
+    date = DateTools.formatDate(time + " " + date, DATE_FORMATS);
     if (date != null) {
       store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
