@@ -177,6 +177,15 @@ public class FormatToolsTest {
     };
   }
 
+  @DataProvider(name = "lengthStrings")
+  public Object[][] createLengthStrings() {
+    return new Object[][] {
+      {"1.0", "m", new Length(1.0, UNITS.METER)},
+      {"1.0mm", "m", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0 mm", "m", new Length(1.0, UNITS.MILLIMETER)},
+    };
+  }
+
   @Test(dataProvider = "stagePositionStringUnit")
   public void testGetStagePositionStringUnit(Double value, String unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
@@ -186,5 +195,10 @@ public class FormatToolsTest {
   @Test(dataProvider = "stagePositionUnit")
   public void testGetStagePositionUnit(Double value, Unit<Length> unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
+  }
+
+  @Test(dataProvider = "lengthStrings")
+  public void testParseLength(String string, String unit, Length length) {
+    assertEquals(length, FormatTools.parseLength(string, unit));
   }
 }
