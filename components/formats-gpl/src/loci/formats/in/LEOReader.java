@@ -54,9 +54,10 @@ public class LEOReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private double xSize;
+  private Length xSize;
   private String date;
-  private double workingDistance;
+  private String time;
+  private Length workingDistance;
 
   // -- Constructor --
 
@@ -89,41 +90,36 @@ public class LEOReader extends BaseTiffReader {
     String tag = ifds.get(0).getIFDTextValue(LEO_TAG);
     String[] lines = tag.split("\n");
     date = "";
-
-    double filament = 0;
-    double eht = 0;
-
+    String value;
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      // physical sizes stored in meters
-      xSize = Double.parseDouble(lines[3]) * 1000000;
       for (int line=36; line<lines.length; line++) {
         if (lines[line].equals("AP_IMAGE_PIXEL_SIZE")) {
-          // if Image Pixel Size is present it is used to override Pixel Size
-          // pixel size is stored in nm, converted now to micrometers
-          xSize = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" nm","e-03"));
+          value = parseKeyValue(lines[++line], "\\s+=\\s+");
+          xSize = FormatTools.parseLength(value, "mm");
         }
         else if (lines[line].equals("AP_WD")) {
-          //working distance stored in mm, converting now to micrometers
-          workingDistance = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" mm","e+03"));
+          value = parseKeyValue(lines[++line], "\\s+=\\s+");
+          workingDistance = FormatTools.parseLength(value, "mm");
         }
         else if (lines[line].equals("AP_ACTUALCURRENT")) {
-          filament = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" A",""));
+          parseKeyValue(lines[++line], "\\s+=\\s+");
         }
         else if (lines[line].equals("AP_ACTUALKV")) {
-          eht = Double.parseDouble(lines[++line].split("\\s+=\\s+")[1].replace(" kV","e+03").replace(" V",""));
+          parseKeyValue(lines[++line], "\\s+=\\s+");
         }
         else if (lines[line].equals("AP_TIME")) {
-          date += lines[++line].split(" :")[1];
+          time = parseKeyValue(lines[++line], "\\s+:");
         }
         else if (lines[line].equals("AP_DATE")) {
-          date += " " + lines[++line].split(" :")[1];
+          date = parseKeyValue(lines[++line], "\\s+:");
         }
       }
 
-      addGlobalMeta("EHT", eht);
-      addGlobalMeta("Filament", filament);
-      addGlobalMeta("Working Distance", workingDistance);
-      addGlobalMeta("Physical pixel size", xSize + " um");
+      if (xSize == null) {
+        // Legacy physical size parsing if API_IMAGE_PIXEL_SIZE is not found
+        xSize = FormatTools.getPhysicalSizeY(
+          Double.parseDouble(lines[3]) * 1000000);
+      }
       addGlobalMeta("Acquisition date", date);
     }
   }
@@ -135,19 +131,15 @@ public class LEOReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
 
-    date = DateTools.formatDate(date, "HH:mm dd-MMM-yyyy");
+    date = DateTools.formatDate(time + " " + date, "HH:mm dd-MMM-yyyy");
     if (date != null) {
       store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      Length sizeX = FormatTools.getPhysicalSizeX(xSize);
-      Length sizeY = FormatTools.getPhysicalSizeY(xSize);
-      if (sizeX != null) {
-        store.setPixelsPhysicalSizeX(sizeX, 0);
-      }
-      if (sizeY != null) {
-        store.setPixelsPhysicalSizeY(sizeY, 0);
+      if (xSize != null) {
+        store.setPixelsPhysicalSizeX(xSize, 0);
+        store.setPixelsPhysicalSizeY(xSize, 0);
       }
 
       String instrument = MetadataTools.createLSID("Instrument", 0);
@@ -155,10 +147,17 @@ public class LEOReader extends BaseTiffReader {
       store.setImageInstrumentRef(instrument, 0);
 
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
-      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROMETER), 0, 0);
+      if (workingDistance != null) {
+        store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+      }
       store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
       store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
     }
   }
 
+  private String parseKeyValue(String string, String separator) {
+    String[] key_value = string.split(separator);
+    addGlobalMeta(key_value[0], key_value[1]);
+    return key_value[1];
+  }
 }
