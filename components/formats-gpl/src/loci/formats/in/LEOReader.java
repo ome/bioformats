@@ -91,29 +91,30 @@ public class LEOReader extends BaseTiffReader {
 
     String tag = ifds.get(0).getIFDTextValue(LEO_TAG);
     String[] lines = tag.split("\n");
-    date = "";
-    String value;
+
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int line=36; line<lines.length; line++) {
-        if (lines[line].equals("AP_IMAGE_PIXEL_SIZE")) {
-          value = parseKeyValue(lines[++line], "\\s+=\\s+");
-          xSize = FormatTools.parseLength(value, "mm");
-        }
-        else if (lines[line].equals("AP_WD")) {
-          value = parseKeyValue(lines[++line], "\\s+=\\s+");
-          workingDistance = FormatTools.parseLength(value, "mm");
-        }
-        else if (lines[line].equals("AP_ACTUALCURRENT")) {
-          parseKeyValue(lines[++line], "\\s+=\\s+");
-        }
-        else if (lines[line].equals("AP_ACTUALKV")) {
-          parseKeyValue(lines[++line], "\\s+=\\s+");
-        }
-        else if (lines[line].equals("AP_TIME")) {
-          time = parseKeyValue(lines[++line], "\\s+:");
-        }
-        else if (lines[line].equals("AP_DATE")) {
-          date = parseKeyValue(lines[++line], "\\s+:");
+        String t = lines[line];
+        if (t.startsWith("AP_") || t.startsWith("DP_") || t.startsWith("SV_")) {
+          // Parse metadata as key/value pair and add to the global metadata
+          String separator;
+          if (t.equals("AP_TIME") || t.equals("AP_DATE")) {
+            separator = "\\s+:";
+          } else {
+            separator = "\\s+=\\s+";
+          }
+          String value = parseKeyValue(lines[++line], separator);
+
+          // Handle metadata that can be mapped to the OME model
+          if (t.equals("AP_TIME")) {
+            time = value;
+          } else if (t.equals("AP_DATE")) {
+            date = value;
+          } else if (t.equals("AP_IMAGE_PIXEL_SIZE")) {
+            xSize = FormatTools.parseLength(value, "mm");
+          } else if (t.equals("AP_WD")) {
+            workingDistance = FormatTools.parseLength(value, "mm");
+          }
         }
       }
 
@@ -122,7 +123,6 @@ public class LEOReader extends BaseTiffReader {
         xSize = FormatTools.getPhysicalSizeY(
           Double.parseDouble(lines[3]) * 1000000);
       }
-      addGlobalMeta("Acquisition date", date);
     }
   }
 
@@ -133,9 +133,9 @@ public class LEOReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
 
-    date = DateTools.formatDate(time + " " + date, DATE_FORMATS);
-    if (date != null) {
-      store.setImageAcquisitionDate(new Timestamp(date), 0);
+    String acquisitionDate = DateTools.formatDate(time + " " + date, DATE_FORMATS);
+    if (acquisitionDate != null) {
+      store.setImageAcquisitionDate(new Timestamp(acquisitionDate), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -158,8 +158,12 @@ public class LEOReader extends BaseTiffReader {
   }
 
   private String parseKeyValue(String string, String separator) {
-    String[] key_value = string.split(separator);
-    addGlobalMeta(key_value[0], key_value[1]);
-    return key_value[1];
+    String[] values = string.split(separator);
+    if (values.length == 2) {
+      addGlobalMeta(values[0], values[1]);
+      return values[1];
+    } else {
+      return null;
+    }
   }
 }
