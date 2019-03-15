@@ -614,10 +614,10 @@ public class ScanrReader extends FormatReader {
       store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
     }
 
+    int index = 0;
     for (int i=0; i<getSeriesCount(); i++) {
       int field = i % nFields;
       int well = i / nFields;
-      int index = well;
       while (wellNumbers.get(index) == null && index < wellNumbers.size()) {
         index++;
       }
@@ -646,6 +646,7 @@ public class ScanrReader extends FormatReader {
       store.setImageName(name, i);
 
       store.setPlateAcquisitionWellSampleRef(wellSample, 0, 0, i);
+      index++;
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
