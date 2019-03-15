@@ -1405,7 +1405,25 @@ public class FormatReaderTest {
       }
       else if (plate < 0) {
         if (retrieve.getPlateCount() > 0) {
-          result(testName, false, "Plate index" + failureSuffix);
+          boolean allEmpty = true;
+          for (int p=0; p<retrieve.getPlateCount(); p++) {
+            if (retrieve.getWellCount(p) > 0) {
+              boolean emptyWell = true;
+              for (int w=0; w<retrieve.getWellCount(p); w++) {
+                if (retrieve.getWellSampleCount(p, w) > 0) {
+                  emptyWell = false;
+                  break;
+                }
+              }
+              if (!emptyWell) {
+                allEmpty = false;
+              }
+              break;
+            }
+          }
+          if (!allEmpty) {
+            result(testName, false, "Plate index" + failureSuffix);
+          }
         }
         continue;
       }
@@ -1463,6 +1481,9 @@ public class FormatReaderTest {
               result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
             }
           }
+        }
+        if (foundWell) {
+          break;
         }
       }
       if (!foundWell) {
