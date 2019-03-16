@@ -1462,9 +1462,26 @@ public class FormatReaderTest {
 
           int plateAcq = config.getPlateAcquisition();
           int plateAcqCount = retrieve.getPlateAcquisitionCount(plate);
-          if (plateAcq >= plateAcqCount || (plateAcq < 0 && plateAcqCount > 0))
-          {
+          if (plateAcq >= plateAcqCount) {
             result(testName, false, "PlateAcquisition index" + failureSuffix);
+          }
+          else if (plateAcq < 0 && plateAcqCount > 0) {
+            // special case where this WellSample isn't
+            // linked to a PlateAcquisition,
+            // but multiple PlateAcquisitions exist
+            String wellSampleID =
+              retrieve.getWellSampleID(plate, w, wellSample);
+            for (int pa=0; pa<plateAcqCount; pa++) {
+              int wsCount = retrieve.getWellSampleRefCount(plate, pa);
+              for (int wsRef=0; wsRef<wsCount; wsRef++) {
+                String wellSampleRef =
+                  retrieve.getPlateAcquisitionWellSampleRef(plate, pa, wsRef);
+                if (wellSampleID.equals(wellSampleRef)) {
+                  result(testName, false,
+                    "PlateAcquisition-WellSample link" + failureSuffix);
+                }
+              }
+            }
           }
           else if (plateAcq >= 0 && plateAcqCount > 0) {
             String wellSampleID = retrieve.getWellSampleID(plate, w, wellSample);
