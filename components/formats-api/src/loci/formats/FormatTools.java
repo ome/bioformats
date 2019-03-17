@@ -1980,30 +1980,52 @@ public final class FormatTools {
     return new Time(value.getNumberValue(), valueUnit);
   }
 
-  public static Length parseLength(String value, String defaultUnit) {
-      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(value);
+  /**
+   * Parse a length composed of a value and an optional unit
+   *
+   * @param s                a string composed of a positive value and
+   *                         an optional length unit
+   *
+   * @return                 a {@link Length} object or {@code null} if the
+   *                         string cannot be parsed
+   */
+  public static Length parseLength(String s) {
+    return parseLength(s, null);
+  }
+
+  /**
+   * Parse a length composed of a value and an optional unit
+   *
+   * @param s                a string composed of a positive value and
+                             an optional length unit
+   * @param defaultUnit      a default unit to use if not present in the string
+   *
+   * @return                 a {@link Length} object or {@code null} if the
+   *                         string cannot be parsed
+   */
+  public static Length parseLength(String s, String defaultUnit) {
+      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(s);
       if (!m.matches()) {
-        throw new RuntimeException(String.format(
-                "%s does not match a physical size!", value));
+        LOGGER.warn("{} does not match a length", s);
+        return null;
       }
-      String number = m.group(1);
+      Double value = Double.valueOf(m.group(1));
+      if (!isPositiveValue(value)) {
+        LOGGER.warn("{} is not a valid length value", value);
+        return null;
+      }
       String unit = m.group(2);
       if (unit == null || unit.trim().length() == 0) {
         unit = defaultUnit;
       }
 
-      double d = Double.valueOf(number);
       Unit<Length> l = null;
       try {
         l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
       } catch (EnumerationException e) {
         LOGGER.warn("{} does not match a length unit!", unit);
+        return null;
       }
-      if (l != null && d > Constants.EPSILON) {
-        return new Length(d, l);
-      }
-      return null;
+      return createLength(value, l);
   }
-
-
 }

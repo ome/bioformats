@@ -177,12 +177,32 @@ public class FormatToolsTest {
     };
   }
 
+  @DataProvider(name = "lengthStringsWithDefault")
+  public Object[][] createLengthStringsWithDefault() {
+    return new Object[][] {
+      {"invalidvalue", "", "m", null},
+      {"1.0", "", "", null},
+      {"1.0", "", "s", null},
+      {"1.0", "s", "m", null},
+      {"1.0", "invalidunit", "m", null},
+      {"1.0", "m", "", new Length(1.0, UNITS.METER)},
+      {"1.0", "m", "m", new Length(1.0, UNITS.METER)},
+      {"1.0", "m", "mm", new Length(1.0, UNITS.METER)},
+      {"1.0", "mm", "mm", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0", "", "m", new Length(1.0, UNITS.METER)},
+      {"1.0", "", "mm", new Length(1.0, UNITS.MILLIMETER)},
+    };
+  }
+
   @DataProvider(name = "lengthStrings")
   public Object[][] createLengthStrings() {
     return new Object[][] {
+      {"1.0", "", null},
+      {"invalidvalue", "", null},
+      {"1.0", "invalidunit", null},
+      {"1.0", "s", null},
       {"1.0", "m", new Length(1.0, UNITS.METER)},
-      {"1.0mm", "m", new Length(1.0, UNITS.MILLIMETER)},
-      {"1.0 mm", "m", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0", "mm", new Length(1.0, UNITS.MILLIMETER)},
     };
   }
 
@@ -197,8 +217,19 @@ public class FormatToolsTest {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
   }
 
+  @Test(dataProvider = "lengthStringsWithDefault")
+  public void testParseLengthWithDefault(String value, String unit, String defaultUnit, Length length) {
+    assertEquals(length, FormatTools.parseLength(value + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(value + " " + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(" " + value + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(value + unit + " ", defaultUnit));
+  }
+
   @Test(dataProvider = "lengthStrings")
-  public void testParseLength(String string, String unit, Length length) {
-    assertEquals(length, FormatTools.parseLength(string, unit));
+  public void testParseLength(String value, String unit, Length length) {
+    assertEquals(length, FormatTools.parseLength(value + unit));
+    assertEquals(length, FormatTools.parseLength(value + " " + unit));
+    assertEquals(length, FormatTools.parseLength(" " + value + unit));
+    assertEquals(length, FormatTools.parseLength(value + unit + " "));
   }
 }
