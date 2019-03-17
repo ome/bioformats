@@ -111,9 +111,9 @@ public class LEOReader extends BaseTiffReader {
           } else if (t.equals("AP_DATE")) {
             date = value;
           } else if (t.equals("AP_IMAGE_PIXEL_SIZE")) {
-            xSize = FormatTools.parseLength(value, "mm");
+            xSize = FormatTools.parseLength(value);
           } else if (t.equals("AP_WD")) {
-            workingDistance = FormatTools.parseLength(value, "mm");
+            workingDistance = FormatTools.parseLength(value);
           }
         }
       }
