@@ -2004,7 +2004,7 @@ public final class FormatTools {
    *                         string cannot be parsed
    */
   public static Length parseLength(String s, String defaultUnit) {
-      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(s);
+      Matcher m = Pattern.compile("\\s*(-?[\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(s);
       if (!m.matches()) {
         LOGGER.warn("{} does not match a length", s);
         return null;
