@@ -2010,7 +2010,8 @@ public final class FormatTools {
         return null;
       }
       Double value = Double.valueOf(m.group(1));
-      if (!isPositiveValue(value)) {
+      if (value != null && value < Double.POSITIVE_INFINITY &&
+          value > -Double.NEGATIVE_INFINITY) {
         LOGGER.warn("{} is not a valid length value", value);
         return null;
       }
