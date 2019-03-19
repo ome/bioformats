@@ -646,7 +646,9 @@ public class ScanrReader extends FormatReader {
       store.setImageName(name, i);
 
       store.setPlateAcquisitionWellSampleRef(wellSample, 0, 0, i);
-      index++;
+      if (field == nFields - 1) {
+        index++;
+      }
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
