@@ -88,6 +88,11 @@ public class FakeReaderTest {
     };
   }
 
+  @DataProvider(name = "invalid physical sizes")
+  public Object[][] invalidPhysicalSizes() {
+    return new Object[][] {{"0"}, {"0.0"}, {"-0.1"}, {"0mm"}, {"-1m"}};
+  }
+
   @DataProvider(name = "annotations")
   public Object[][] annotations() {
     return new Object[][] {
@@ -427,6 +432,19 @@ public class FakeReaderTest {
       reader.close();
     }
     testDefaultValues();
+  }
+
+  @Test(dataProvider = "invalid physical sizes")
+  public void testInvalidPhysicalSize(String value) throws Exception {
+    File fakeIni = mkIni("foo.fake.ini", "physicalSizeX = " + value);
+    String[] ids = {fakeIni.getAbsolutePath(), "foo&physicalSizeX=" + value + ".fake"};
+    for (String id: ids) {
+      reader.setId(id);
+      m = service.asRetrieve(reader.getMetadataStore());
+      assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+      assertEquals(m.getPixelsPhysicalSizeZ(0), null);
+      reader.close();
+    }
   }
 
   @Test(expectedExceptions={ RuntimeException.class })

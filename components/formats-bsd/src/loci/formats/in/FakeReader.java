@@ -715,22 +715,13 @@ public class FakeReader extends FormatReader {
       else if (key.equals("polylines")) polylines = intValue;
       else if (key.equals("rectangles")) rectangles = intValue;
       else if (key.equals("physicalSizeX")) {
-        physicalSizeX = FormatTools.parseLength(value, getPhysicalSizeXUnitXsdDefault());
-        if (physicalSizeX == null) {
-          throw new RuntimeException("Invalid physicalSizeX: " + value);
-        }
+        physicalSizeX = parsePhysicalSize(value, getPhysicalSizeXUnitXsdDefault());
       }
       else if (key.equals("physicalSizeY")) {
-        physicalSizeY = FormatTools.parseLength(value, getPhysicalSizeYUnitXsdDefault());
-        if (physicalSizeY== null) {
-          throw new RuntimeException("Invalid physicalSizeY: " + value);
-        }
+        physicalSizeY = parsePhysicalSize(value, getPhysicalSizeYUnitXsdDefault());
       }
       else if (key.equals("physicalSizeZ")) {
-        physicalSizeZ = FormatTools.parseLength(value, getPhysicalSizeZUnitXsdDefault());
-        if (physicalSizeZ == null) {
-          throw new RuntimeException("Invalid physicalSizeZ: " + value);
-        }
+        physicalSizeZ = parsePhysicalSize(value, getPhysicalSizeZUnitXsdDefault());
       }
       else if (key.equals("color")) {
         defaultColor = parseColor(value);
@@ -1411,6 +1402,18 @@ public class FakeReader extends FormatReader {
     }
 
     return null;
+  }
+
+  private Length parsePhysicalSize(String s, String defaultUnit) {
+    Length physicalSize = FormatTools.parseLength(s, defaultUnit);
+    if (physicalSize == null) {
+      throw new RuntimeException("Invalid physical size: " + s);
+    }
+    if (!FormatTools.isPositiveValue(physicalSize.value().doubleValue())) {
+      LOGGER.warn("Invalid physical size value: {}", physicalSize.value());
+      return null;
+    }
+    return physicalSize;
   }
 
 }
