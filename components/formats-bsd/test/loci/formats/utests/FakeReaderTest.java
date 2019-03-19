@@ -442,7 +442,7 @@ public class FakeReaderTest {
       reader.setId(id);
       m = service.asRetrieve(reader.getMetadataStore());
       assertTrue(service.validateOMEXML(service.getOMEXML(m)));
-      assertEquals(m.getPixelsPhysicalSizeZ(0), null);
+      assertEquals(m.getPixelsPhysicalSizeX(0), null);
       reader.close();
     }
   }
