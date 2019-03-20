@@ -44,6 +44,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
@@ -2004,15 +2005,15 @@ public final class FormatTools {
    *                         string cannot be parsed
    */
   public static Length parseLength(String s, String defaultUnit) {
-      Matcher m = Pattern.compile("\\s*(-?[\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(s);
+      Matcher m = Pattern.compile("\\s*([-e\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(s);
       if (!m.matches()) {
         LOGGER.warn("{} does not match a length", s);
         return null;
       }
-      Double value = Double.valueOf(m.group(1));
-      if (value != null && value < Double.POSITIVE_INFINITY &&
-          value > -Double.NEGATIVE_INFINITY) {
-        LOGGER.warn("{} is not a valid length value", value);
+      Double value = DataTools.parseDouble(m.group(1));
+      if (value == null || value == Double.POSITIVE_INFINITY ||
+          value == Double.NEGATIVE_INFINITY) {
+        LOGGER.warn("{} is not a valid length value", m.group(1));
         return null;
       }
       String unit = m.group(2);
