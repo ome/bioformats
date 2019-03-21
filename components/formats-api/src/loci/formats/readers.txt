@@ -163,6 +163,7 @@ loci.formats.in.MicromanagerReader    # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
 loci.formats.in.NikonTiffReader       # tif
+loci.formats.in.MikroscanTiffReader   # tif
 loci.formats.in.PhotoshopTiffReader   # tif
 loci.formats.in.FEITiffReader         # tif
 loci.formats.in.SimplePCITiffReader   # tif
