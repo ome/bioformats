@@ -1344,6 +1344,33 @@ public final class FormatTools {
     return rtn;
   }
 
+  /**
+   * Create a simple name for the well at the given row and column.
+   * The row is assigned one or two letters, the column is assigned 2 digits.
+   * For example:
+   *
+   * A01, A02, A03, ...
+   * B01, B02, B03, ...
+   * ...
+   * Z01, Z02, Z03, ...
+   * AA01, AA02, AA03, ...
+   *
+   * @param row the well row index, starting from 0
+   * @param col the well column index, starting from 0
+   * @return a well name of the format described above
+   */
+  public static String getWellName(int row, int col) {
+    String name = String.valueOf(col + 1);
+    if (name.length() == 1) {
+      name = "0" + name;
+    }
+    name = (char) ('A' + (row % 26)) + name;
+    if (row >= 26) {
+      name = (char) ('A' + ((row / 26) - 1)) + name;
+    }
+    return name;
+  }
+
   // -- Conversion convenience methods --
 
   /**
