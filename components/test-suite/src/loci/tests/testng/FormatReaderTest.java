@@ -181,13 +181,27 @@ public class FormatReaderTest {
     ArrayList<String> currentDescriptors = TestTools.getHandles(true);
     long leakedDescriptors =
       currentDescriptors.size() - initialDescriptors.size();
-    // subtract the number of threads, since log files are not closed yet
-    leakedDescriptors -= TestTools.getThreadCount();
     if (leakedDescriptors > 0) {
       currentDescriptors.removeAll(initialDescriptors);
-      LOGGER.warn("Open file handles:");
-      for (String f : currentDescriptors) {
-        LOGGER.warn("  {}", f);
+
+      // remove any log file handles
+      // not all JDK versions will leave these open
+      // so just subtracting the thread count won't work
+
+      for (int i=0; i<currentDescriptors.size(); i++) {
+        String name = new File(currentDescriptors.get(i)).getName();
+        if (name.startsWith("bio-formats-test-") && name.endsWith(".log")) {
+          currentDescriptors.remove(i);
+          i--;
+        }
+      }
+
+      leakedDescriptors = currentDescriptors.size();
+      if (leakedDescriptors > 0) {
+        LOGGER.warn("Open file handles:");
+        for (String f : currentDescriptors) {
+          LOGGER.warn("  {}", f);
+        }
       }
     }
     result("File handle", leakedDescriptors <= 0,
