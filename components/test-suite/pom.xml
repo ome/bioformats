@@ -92,6 +92,12 @@
       <groupId>org.kohsuke</groupId>
       <artifactId>file-leak-detector</artifactId>
       <version>1.13</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
