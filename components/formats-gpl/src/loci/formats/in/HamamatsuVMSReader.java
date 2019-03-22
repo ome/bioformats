@@ -265,7 +265,9 @@ public class HamamatsuVMSReader extends FormatReader {
     Double macroHeight = new Double(slideInfo.get("PhysicalMacroHeight"));
 
     for (String key : slideInfo.keySet()) {
-      addGlobalMeta(key, slideInfo.get(key));
+      if (!IniTable.HEADER_KEY.equals(key)) {
+        addGlobalMeta(key, slideInfo.get(key));
+      }
     }
 
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
