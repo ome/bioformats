@@ -58,21 +58,16 @@ public class MikroscanTiffReader extends BaseTiffReader {
   private static final String DATE_FORMAT = "MM/dd/yy HH:mm:ss";
 
   // -- Fields --
-
-  private Double[] zPosition;
   private String[] comments;
-
   private Double magnification;
   private String date, time;
 
-  private transient Color displayColor = null;
-
   // -- Constructor --
 
-  /** Constructs a new SVS reader. */
+  /** Constructs a new TIF reader. */
   public MikroscanTiffReader() {
     super("Mikroscan TIFF", new String[] {"tif", "tiff"});
-    domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
+    domains = new String[] {FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN};
     suffixNecessary = false;
     noSubresolutions = true;
     canSeparateSeries = false;
@@ -178,13 +173,10 @@ public class MikroscanTiffReader extends BaseTiffReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      zPosition = null;
       comments = null;
-
       magnification = null;
       date = null;
       time = null;
-      displayColor = null;
     }
   }
 
@@ -232,7 +224,6 @@ public class MikroscanTiffReader extends BaseTiffReader {
       core.add(new MikroscanTiffCoreMetadata());
     }
 
-    zPosition = new Double[seriesCount];
     comments = new String[seriesCount];
 
     HashSet<Double> uniqueZ = new HashSet<Double>();
@@ -255,17 +246,8 @@ public class MikroscanTiffReader extends BaseTiffReader {
           if (t.indexOf('=') >= 0) {
             key = t.substring(0, t.indexOf('=')).trim();
             value = t.substring(t.indexOf('=') + 1).trim();
-            if (key.equals("TotalDepth")) {
-              zPosition[index] = new Double(0);
-            }
-            else if (key.equals("OffsetZ")) {
-              zPosition[index] = DataTools.parseDouble(value);
-            }
           }
         }
-      }
-      if (zPosition[index] != null) {
-        uniqueZ.add(zPosition[index]);
       }
     }
     setSeries(0);
@@ -293,8 +275,6 @@ public class MikroscanTiffReader extends BaseTiffReader {
     if (uniqueZ.size() == 0) {
       uniqueZ.add(0d);
     }
-    zPosition = uniqueZ.toArray(new Double[uniqueZ.size()]);
-    Arrays.sort(zPosition);
     seriesCount = ((ifds.size() - 2) / uniqueZ.size()) + 2;
 
     core.clear();
@@ -307,7 +287,7 @@ public class MikroscanTiffReader extends BaseTiffReader {
       core.add(new MikroscanTiffCoreMetadata());
     }
     else {
-      // Should never happen unless the SVS is corrupt?
+      // Should never happen unless the TIF is corrupt?
       for (int s=0; s<seriesCount; s++) {
         core.add(new MikroscanTiffCoreMetadata());
       }
@@ -387,11 +367,6 @@ public class MikroscanTiffReader extends BaseTiffReader {
                 case "AppMag":
                   magnification = DataTools.parseDouble(value);
                   break;
-                case "DisplayColor":
-                  // stored color is RGB, Color expects RGBA
-                  int color = Integer.parseInt(value);
-                  displayColor = new Color((color << 8) | 0xff);
-                  break;
               }
             }
           }
@@ -451,14 +426,6 @@ public class MikroscanTiffReader extends BaseTiffReader {
 
       if (getDatestamp() != null) {
         store.setImageAcquisitionDate(getDatestamp(), i);
-      }
-
-      if (getImageCount() > 1) {
-        for (int p=0; p<getImageCount(); p++) {
-          if (p < zPosition.length && zPosition[p] != null) {
-            store.setPlanePositionZ(FormatTools.createLength(zPosition[p], UNITS.REFERENCEFRAME), i, p);
-          }
-        }
       }
 
       Length pixelSize = ((MikroscanTiffCoreMetadata) getCurrentCore()).pixelSize;
@@ -523,10 +490,6 @@ public class MikroscanTiffReader extends BaseTiffReader {
 
   protected double getMagnification() {
     return magnification;
-  }
-
-  protected Color getDisplayColor() {
-    return displayColor;
-  }  
+  } 
   
 }
