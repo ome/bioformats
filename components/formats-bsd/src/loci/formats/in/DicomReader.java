@@ -483,6 +483,9 @@ public class DicomReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    if (in != null) {
+      in.close();
+    }
     in = new RandomAccessInputStream(id);
     in.order(true);
     CoreMetadata m = core.get(0);

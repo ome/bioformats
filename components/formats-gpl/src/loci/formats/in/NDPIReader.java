@@ -131,14 +131,15 @@ public class NDPIReader extends BaseTiffReader {
     }
     else if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE) {
       int ifdIndex = getIFDIndex(getCoreIndex(), no);
-      in = new RandomAccessInputStream(currentId);
-      tiffParser = new TiffParser(in);
-      tiffParser.setUse64BitOffsets(true);
-      tiffParser.setYCbCrCorrection(false);
-      byte[] b = tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
-      in.close();
-      tiffParser.getStream().close();
-      return b;
+      try (RandomAccessInputStream s = new RandomAccessInputStream(currentId)) {
+        tiffParser = new TiffParser(s);
+        tiffParser.setUse64BitOffsets(true);
+        tiffParser.setYCbCrCorrection(false);
+        return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
+      }
+      finally {
+        tiffParser.getStream().close();
+      }
     }
 
     if (initializedSeries != getCoreIndex() || initializedPlane != no) {
