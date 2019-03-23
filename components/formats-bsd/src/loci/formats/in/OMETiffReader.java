@@ -319,7 +319,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
     lastPlane = no;
     int i = info[series][no].ifd;
 
-    if (!info[series][no].exists) {
+    if (!info[series][no].exists ||
+      info[series][no].reader == null ||
+      info[series][no].id == null)
+    {
       Arrays.fill(buf, (byte) 0);
       return buf;
     }
@@ -364,6 +367,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     if (info != null && info[series] != null) {
       for (int i=0; i<info[series].length; i++) {
         if (info[series] != null && info[series][i] != null &&
+          info[series][i].id != null &&
           !usedFiles.contains(info[series][i].id))
         {
           usedFiles.add(info[series][i].id);
@@ -417,14 +421,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return ((OMETiffCoreMetadata) currentCore()).tileWidth;
+    return ((OMETiffCoreMetadata) getCurrentCore()).tileWidth;
   }
 
   /* @see loci.formats.SubResolutionFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return ((OMETiffCoreMetadata) currentCore()).tileHeight;
+    return ((OMETiffCoreMetadata) getCurrentCore()).tileHeight;
   }
 
   // -- Internal FormatReader API methods --
@@ -934,7 +938,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
           planes[no].ifd = ifd + q;
           planes[no].certain = true;
           planes[no].exists = exists;
-          LOGGER.debug("      Plane[{}]: file={}, IFD={}",
+          LOGGER.trace("      Plane[{}]: file={}, IFD={}",
             new Object[] {no, planes[no].id, planes[no].ifd});
         }
         if (numPlanes == null) {
@@ -945,7 +949,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
             planes[no].id = filename;
             planes[no].ifd = planes[no - 1].ifd + 1;
             planes[no].exists = exists;
-            LOGGER.debug("      Plane[{}]: FILLED", no);
+            LOGGER.trace("      Plane[{}]: FILLED", no);
           }
         }
         else {
@@ -955,7 +959,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
             planes[no].reader = null;
             planes[no].id = null;
             planes[no].ifd = -1;
-            LOGGER.debug("      Plane[{}]: CLEARED", no);
+            LOGGER.trace("      Plane[{}]: CLEARED", no);
           }
         }
         LOGGER.debug("    }");
@@ -965,28 +969,34 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
       // verify that all planes are available
       LOGGER.debug("    --------------------------------");
+      int validPlanes = num;
       for (int no=0; no<num; no++) {
         LOGGER.debug("    Plane[{}]: file={}, IFD={}",
           new Object[] {no, planes[no].id, planes[no].ifd});
         if (planes[no].reader == null) {
-          LOGGER.warn("Image ID '{}': missing plane #{}.  " +
-            "Using TiffReader to determine the number of planes.",
+          validPlanes--;
+          LOGGER.warn("Image ID '{}': missing plane #{}",
             meta.getImageID(i), no);
-          TiffReader r = new TiffReader();
-          r.setId(currentId);
-          try {
-            planes = new OMETiffPlane[r.getImageCount()];
-            for (int plane=0; plane<planes.length; plane++) {
-              planes[plane] = new OMETiffPlane();
-              planes[plane].id = currentId;
-              planes[plane].reader = r;
-              planes[plane].ifd = plane;
-            }
-            num = planes.length;
+        }
+      }
+      // only use the current file's IFD count if this is a single file set
+      // otherwise, we risk pulling in IFDs from a different Image
+      if (validPlanes < num && files.size() <= 1) {
+        LOGGER.warn("Using TiffReader to determine the number of planes.");
+        TiffReader r = new TiffReader();
+        r.setId(currentId);
+        try {
+          planes = new OMETiffPlane[r.getImageCount()];
+          for (int plane=0; plane<planes.length; plane++) {
+            planes[plane] = new OMETiffPlane();
+            planes[plane].id = currentId;
+            planes[plane].reader = r;
+            planes[plane].ifd = plane;
           }
-          finally {
-            r.close();
-          }
+          num = planes.length;
+        }
+        finally {
+          r.close();
         }
       }
       LOGGER.debug("  }");
@@ -994,17 +1004,32 @@ public class OMETiffReader extends SubResolutionFormatReader {
       // populate core metadata
       OMETiffCoreMetadata m = (OMETiffCoreMetadata) core.get(s, 0);
       info[s] = planes;
+      RandomAccessInputStream testFile = null;
       try {
-        String firstFile = null;
-        try (RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16)) {
-          firstFile = info[s][0].id;
-          if (!info[s][0].reader.isThisType(testFile)) {
-            LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
-            info[s][0].id = currentId;
-            info[s][0].exists = false;
+        if (info[s][0].id != null) {
+          testFile = new RandomAccessInputStream(info[s][0].id, 16);
+        }
+        if (info[s][0].reader == null) {
+          info[s][0].reader = new MinimalTiffReader();
+        }
+        String firstFile = info[s][0].id;
+        if (firstFile == null ||
+          (testFile != null && !info[s][0].reader.isThisType(testFile)))
+        {
+          LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
+          info[s][0].id = currentId;
+          info[s][0].exists = false;
+          if (info[s][0].ifd < 0) {
+            info[s][0].ifd = 0;
           }
         }
+        if (testFile != null) {
+          testFile.close();
+        }
         for (int plane=1; plane<info[s].length; plane++) {
+          if (info[s][plane].id == null || info[s][plane].reader == null) {
+            continue;
+          }
           if (info[s][plane].id.equals(firstFile)) {
             // don't repeat slow type checking if the files are the same
             if (!info[s][0].exists) {
@@ -1014,8 +1039,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
             continue;
           }
-          try (RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][plane].id, 16)) {
-            if (!info[s][plane].reader.isThisType(testFile)) {
+          try (RandomAccessInputStream test = new RandomAccessInputStream(info[s][plane].id, 16)) {
+            if (!info[s][plane].reader.isThisType(test)) {
               LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
               info[s][plane].id = info[s][0].id;
               info[s][plane].exists = false;
@@ -1115,6 +1140,11 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
       catch (NullPointerException exc) {
         throw new FormatException("Incomplete Pixels metadata", exc);
+      }
+      finally {
+        if (testFile != null) {
+          testFile.close();
+        }
       }
     }
 

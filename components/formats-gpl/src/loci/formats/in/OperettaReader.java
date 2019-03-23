@@ -527,7 +527,8 @@ public class OperettaReader extends FormatReader {
               store.setChannelAcquisitionMode(getAcquisitionMode(planes[i][c].acqType), i, c);
             }
             if (planes[i][c].channelType != null) {
-              store.setChannelContrastMethod(getContrastMethod(planes[i][c].channelType), i, c);
+              store.setChannelContrastMethod(
+                MetadataTools.getContrastMethod(planes[i][c].channelType), i, c);
             }
             store.setChannelEmissionWavelength(
               FormatTools.getEmissionWavelength(planes[i][c].emWavelength), i, c);
@@ -868,7 +869,7 @@ public class OperettaReader extends FormatReader {
     else if (mode.equalsIgnoreCase("nonconfocal")) {
       return AcquisitionMode.WIDEFIELD;
     }
-    return super.getAcquisitionMode(mode);
+    return MetadataTools.getAcquisitionMode(mode);
   }
 
 }

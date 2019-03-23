@@ -333,56 +333,61 @@ public class GatanReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS &&
       shapes.size() > 0)
     {
+      int nextROI = 0;
       for (int i=0; i<shapes.size(); i++) {
-        String roi = MetadataTools.createLSID("ROI", i);
-        store.setROIID(roi, i);
-        store.setImageROIRef(roi, 0, i);
-
-        String shapeID = MetadataTools.createLSID("Shape", i, 0);
         ROIShape shape = shapes.get(i);
+        String shapeID = null;
 
         switch (shape.type) {
           case LINE:
-            store.setLineID(shapeID, i, 0);
-            store.setLineX1(shape.x1, i, 0);
-            store.setLineY1(shape.y1, i, 0);
-            store.setLineX2(shape.x2, i, 0);
-            store.setLineY2(shape.y2, i, 0);
-            store.setLineText(shape.text, i, 0);
-            store.setLineFontSize(shape.fontSize, i, 0);
-            store.setLineStrokeColor(shape.strokeColor, i, 0);
+            shapeID = createROI(store, nextROI);
+            store.setLineID(shapeID, nextROI, 0);
+            store.setLineX1(shape.x1, nextROI, 0);
+            store.setLineY1(shape.y1, nextROI, 0);
+            store.setLineX2(shape.x2, nextROI, 0);
+            store.setLineY2(shape.y2, nextROI, 0);
+            store.setLineText(shape.text, nextROI, 0);
+            store.setLineFontSize(shape.fontSize, nextROI, 0);
+            store.setLineStrokeColor(shape.strokeColor, nextROI, 0);
+            nextROI++;
             break;
           case TEXT:
-            store.setLabelID(shapeID, i, 0);
-            store.setLabelX(shape.x1, i, 0);
-            store.setLabelY(shape.y1, i, 0);
-            store.setLabelText(shape.text, i, 0);
-            store.setLabelFontSize(shape.fontSize, i, 0);
-            store.setLabelStrokeColor(shape.strokeColor, i, 0);
+            shapeID = createROI(store, nextROI);
+            store.setLabelID(shapeID, nextROI, 0);
+            store.setLabelX(shape.x1, nextROI, 0);
+            store.setLabelY(shape.y1, nextROI, 0);
+            store.setLabelText(shape.text, nextROI, 0);
+            store.setLabelFontSize(shape.fontSize, nextROI, 0);
+            store.setLabelStrokeColor(shape.strokeColor, nextROI, 0);
+            nextROI++;
             break;
           case ELLIPSE:
-            store.setEllipseID(shapeID, i, 0);
+            shapeID = createROI(store, nextROI);
+            store.setEllipseID(shapeID, nextROI, 0);
 
             double radiusX = (shape.x2 - shape.x1) / 2;
             double radiusY = (shape.y2 - shape.y1) / 2;
 
-            store.setEllipseX(shape.x1 + radiusX, i, 0);
-            store.setEllipseY(shape.y1 + radiusY, i, 0);
-            store.setEllipseRadiusX(radiusX, i, 0);
-            store.setEllipseRadiusY(radiusY, i, 0);
-            store.setEllipseText(shape.text, i, 0);
-            store.setEllipseFontSize(shape.fontSize, i, 0);
-            store.setEllipseStrokeColor(shape.strokeColor, i, 0);
+            store.setEllipseX(shape.x1 + radiusX, nextROI, 0);
+            store.setEllipseY(shape.y1 + radiusY, nextROI, 0);
+            store.setEllipseRadiusX(radiusX, nextROI, 0);
+            store.setEllipseRadiusY(radiusY, nextROI, 0);
+            store.setEllipseText(shape.text, nextROI, 0);
+            store.setEllipseFontSize(shape.fontSize, nextROI, 0);
+            store.setEllipseStrokeColor(shape.strokeColor, nextROI, 0);
+            nextROI++;
             break;
           case RECTANGLE:
-            store.setRectangleID(shapeID, i, 0);
-            store.setRectangleX(shape.x1, i, 0);
-            store.setRectangleY(shape.y1, i, 0);
-            store.setRectangleWidth(shape.x2 - shape.x1, i, 0);
-            store.setRectangleHeight(shape.y2 - shape.y1, i, 0);
-            store.setRectangleText(shape.text, i, 0);
-            store.setRectangleFontSize(shape.fontSize, i, 0);
-            store.setRectangleStrokeColor(shape.strokeColor, i, 0);
+            shapeID = createROI(store, nextROI);
+            store.setRectangleID(shapeID, nextROI, 0);
+            store.setRectangleX(shape.x1, nextROI, 0);
+            store.setRectangleY(shape.y1, nextROI, 0);
+            store.setRectangleWidth(shape.x2 - shape.x1, nextROI, 0);
+            store.setRectangleHeight(shape.y2 - shape.y1, nextROI, 0);
+            store.setRectangleText(shape.text, nextROI, 0);
+            store.setRectangleFontSize(shape.fontSize, nextROI, 0);
+            store.setRectangleStrokeColor(shape.strokeColor, nextROI, 0);
+            nextROI++;
             break;
           default:
             LOGGER.warn("Unknown ROI type: {}", shape.type);
@@ -566,7 +571,10 @@ public class GatanReader extends FormatReader {
       if (value != null) {
         addGlobalMeta(labelString, value);
 
-        if (parent != null && parent.equals("AnnotationGroupList")) {
+        if (parent != null &&
+          (parent.equals("AnnotationGroupList") ||
+          parent.equals("DocumentObjectList")))
+        {
           // ROI found
           ROIShape shape = new ROIShape();
           if (labelString.equals("AnnotationType")) {
@@ -753,6 +761,20 @@ public class GatanReader extends FormatReader {
       }
     }
     return UNITS.MICROMETER;
+  }
+
+  /**
+   * Create an empty ROI and link it to the Image.
+   * @param store MetadataStore in which to create the ROI
+   * @param index ROI index
+   * @return corresponding Shape ID to be used with the new ROI
+   */
+  private String createROI(MetadataStore store, int index) {
+    String roi = MetadataTools.createLSID("ROI", index);
+    store.setROIID(roi, index);
+    store.setImageROIRef(roi, 0, index);
+
+    return MetadataTools.createLSID("Shape", index, 0);
   }
 
   class ROIShape {

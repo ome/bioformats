@@ -212,10 +212,13 @@ public class NDPISReader extends FormatReader {
       Float wavelength = (Float) ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
 
       store.setChannelName(channelName, 0, c);
-      store.setChannelEmissionWavelength(new Length(wavelength, UNITS.NANOMETER), 0, c);
+      if (wavelength != null) {
+        store.setChannelEmissionWavelength(FormatTools.getEmissionWavelength(
+          (Double) wavelength.doubleValue()), 0, c);
+      }
 
       bandUsed[c] = 0;
-      if (ifd.getSamplesPerPixel() >= 3) {
+      if (ifd.getSamplesPerPixel() >= 3 && wavelength != null) {
         // define band used based on emission wavelength
         // wavelength = 0  Colour Image
         // 380 =< wavelength <= 490 Blue

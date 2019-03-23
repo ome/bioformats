@@ -678,7 +678,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               }
 
               if(!entry.name.startsWith("ImageDataSeq")) {
-                break;
+                continue;
               }
 
               if(lastImage!=null) {
@@ -1974,7 +1974,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           currentColor = (Integer) value;
         }
         else if (name.equals("dExposureTime")) {
-          exposureTime.add((Double) value);
+          if ((Double) value > 0) {
+            exposureTime.add(((Double) value) / 1000);
+          }
         }
         else if (name.equals("EmWavelength")) {
           Double wave = Double.parseDouble(value.toString());
@@ -2117,8 +2119,36 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     }
 
     // populate PlaneTiming and StagePosition data
+
+    // potentially 3 separate sets of exposure times
+    // attempt to sort out which one is most correct for OME-XML
+    // but also supply all 3 lists via global metadata table
+
+    for (Double time : exposureTime) {
+      addGlobalMetaList("Exposure time (text)", time);
+    }
     if (handler != null && handler.getExposureTimes().size() > 0) {
-      exposureTime = handler.getExposureTimes();
+      for (Double time : handler.getExposureTimes()) {
+        addGlobalMetaList("Exposure time (primary XML)", time);
+      }
+      if (backupHandler != null) {
+        for (Double time : backupHandler.getExposureTimes()) {
+          addGlobalMetaList("Exposure time (secondary XML)", time);
+        }
+      }
+
+      if (exposureTime.size() == 0 || handler.getExposureTimes().size() == 1 || exposureTime.size() % getSizeC() != 0) {
+        exposureTime = handler.getExposureTimes();
+        if (backupHandler != null && backupHandler.getExposureTimes().size() > exposureTime.size()) {
+          exposureTime = backupHandler.getExposureTimes();
+        }
+      }
+      else if (backupHandler == null || backupHandler.getExposureTimes().size() == 0) {
+        exposureTime = handler.getExposureTimes();
+      }
+      else if (backupHandler != null && backupHandler.getExposureTimes().size() == exposureTime.size()) {
+        exposureTime = backupHandler.getExposureTimes();
+      }
     }
     int zcPlanes = getImageCount() / ((split ? getSizeC() : 1) * getSizeT());
     for (int i=0; i<getSeriesCount(); i++) {
@@ -2138,8 +2168,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           }
 
           int index = i * getSizeC() + coords[1];
-          if (exposureTime.size() == getSizeC()) {
+          if (exposureTime.size() >= getSizeC() && exposureTime.size() < getSizeC() * getSeriesCount()) {
             index = coords[1];
+          }
+          else if (exposureTime.size() == 1) {
+            // if exposure times are the same for all channels,
+            // then sometimes only one value is stored
+            index = 0;
           }
           if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
             store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.SECOND), i, n);
@@ -2409,6 +2444,11 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       }
       if (useDimensions) {
         core = handler.getCoreMetadataList();
+        if (backupHandler == null ||
+          backupHandler.getChannelNames().size() == 0)
+        {
+          backupHandler = handler;
+        }
       }
 
       // only accept the Z and T sizes from the text annotations

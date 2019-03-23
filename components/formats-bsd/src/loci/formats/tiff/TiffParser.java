@@ -34,6 +34,7 @@ package loci.formats.tiff;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -769,6 +770,9 @@ public class TiffParser {
 
     if (buf == null) buf = new byte[size];
     if (stripByteCounts[countIndex] == 0 || stripOffset >= in.length()) {
+      // make sure that the buffer is cleared before returning
+      // the caller may be reusing the same buffer for multiple calls to getTile
+      Arrays.fill(buf, (byte) 0);
       return buf;
     }
     byte[] tile = new byte[(int) stripByteCounts[countIndex]];
@@ -779,7 +783,9 @@ public class TiffParser {
 
     // reverse bits in each byte if FillOrder == 2
 
-    if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2) {
+    if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2 &&
+      compression.getCode() <= TiffCompression.GROUP_4_FAX.getCode())
+    {
       for (int i=0; i<tile.length; i++) {
         tile[i] = (byte) (Integer.reverse(tile[i]) >> 24);
       }
@@ -1081,10 +1087,13 @@ public class TiffParser {
             outputRowLen * (tileY - y);
           if (planarConfig == 2) dest += (planeSize * (row / nrows));
 
-          // copying the tile directly will only work if there is no overlap;
+          // copying the tile directly will only work if there is no overlap
+          // and only one tile needs to be read
           // otherwise, we may be overwriting a previous tile
           // (or the current tile may be overwritten by a subsequent tile)
-          if (rowLen == outputRowLen && overlapX == 0 && overlapY == 0) {
+          if (rowLen == outputRowLen && overlapX == 0 && overlapY == 0 &&
+            rowLen == pixel * imageBounds.intersection(tileBounds).width)
+          {
             System.arraycopy(cachedTileBuffer, src, buf, dest, copy * theight);
           }
           else {

@@ -1186,7 +1186,13 @@ public class ZeissCZIReader extends FormatReader {
             int seriesId = p.coreIndex + 1;
             //add padding to make sure the original metadata table is organized properly in ImageJ
             String sIndex = String.format("Positions|Series %0" + nameWidth + "d|", seriesId);
-            addSeriesMetaList(sIndex, dimension.start);
+            if (maxResolution == 0) {
+              addSeriesMetaList(sIndex, dimension.start);
+            }
+            else {
+              // don't store the start value for every tile in a pyramid
+              addSeriesMeta(sIndex, dimension.start);
+            }
             break;
         }
       }
@@ -2028,9 +2034,9 @@ public class ZeissCZIReader extends FormatReader {
             String y = position.getAttribute("Y");
             String z = position.getAttribute("Z");
             if (nextPosition < positionsX.length && positionsX[nextPosition] == null) {
-              positionsX[nextPosition] = new Length(DataTools.parseDouble(x), UNITS.MICROM);
-              positionsY[nextPosition] = new Length(DataTools.parseDouble(y), UNITS.MICROM);
-              positionsZ[nextPosition] = new Length(DataTools.parseDouble(z), UNITS.MICROM);
+              positionsX[nextPosition] = new Length(DataTools.parseDouble(x), UNITS.MICROMETER);
+              positionsY[nextPosition] = new Length(DataTools.parseDouble(y), UNITS.MICROMETER);
+              positionsZ[nextPosition] = new Length(DataTools.parseDouble(z), UNITS.MICROMETER);
               nextPosition++;
             }
           }
@@ -2475,7 +2481,7 @@ public class ZeissCZIReader extends FormatReader {
             }
           }
           else if (id.equals("Z")) {
-            zStep = FormatTools.createLength(size, UNITS.MICROM);
+            zStep = FormatTools.createLength(size, UNITS.MICROMETER);
             for (int series=0; series<getSeriesCount(); series++) {
               store.setPixelsPhysicalSizeZ(zStep, series);
             }
