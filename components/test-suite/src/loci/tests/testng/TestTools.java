@@ -28,6 +28,8 @@ package loci.tests.testng;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
@@ -551,7 +553,12 @@ public class TestTools {
           path.indexOf("/jre/") > 0 || path.indexOf("nativedata") > 0 ||
           path.indexOf("jhdf") > 0))
         {
+          StringWriter sw = new StringWriter();
+          PrintWriter p = new PrintWriter(sw);
           names.add(path);
+          f.dump("", p);
+          LOGGER.debug(sw.toString());
+          p.close();
         }
       }
     }
