@@ -1008,6 +1008,15 @@ public class FileStitcher extends ReaderWrapper {
       LOGGER.trace("Could not use pattern " + patterns[0], e);
       patterns = new String[] {id};
       fp = new FilePattern(id);
+      if (externals != null) {
+        for (ExternalSeries ex : externals) {
+          for (DimensionSwapper r : ex.getReaders()) {
+            if (r != null) {
+              r.close();
+            }
+          }
+        }
+      }
       externals = new ExternalSeries[] {new ExternalSeries(fp)};
       reader.setId(fp.getFiles()[0]);
     }
@@ -1022,6 +1031,13 @@ public class FileStitcher extends ReaderWrapper {
       reader.getUsedFiles().length - reader.getUsedFiles(true).length;
     if (nPixelsFiles > 1 || fp.getFiles().length == 1) {
       noStitch = true;
+      for (ExternalSeries e : externals) {
+        for (DimensionSwapper r : e.getReaders()) {
+          if (r != null) {
+            r.close();
+          }
+        }
+      }
       return;
     }
 
