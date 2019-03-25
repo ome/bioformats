@@ -212,7 +212,7 @@ public class VentanaReader extends BaseTiffReader {
       return buf;
     }
 
-    if (getCoreIndex() >= core.size(0)) {
+    if (getCoreIndex() >= core.size(0) || areas.size() == 0) {
       tiffParser.getSamples(ifd, buf, x, y, w, h);
       return buf;
     }
@@ -643,14 +643,16 @@ public class VentanaReader extends BaseTiffReader {
     int newX = maxX - minX;
     int newY = maxY - minY;
 
-    for (int s=1; s<core.size(0); s++) {
-      int scale = getScale(s);
-      core.get(0, s).sizeX = newX / scale;
-      core.get(0, s).sizeY = newY / scale;
+    if (areas.size() > 0) {
+      for (int s=1; s<core.size(0); s++) {
+        int scale = getScale(s);
+        core.get(0, s).sizeX = newX / scale;
+        core.get(0, s).sizeY = newY / scale;
+      }
+      // reset full resolution last so that getScale is not affected
+      core.get(0, 0).sizeX = newX;
+      core.get(0, 0).sizeY = newY;
     }
-    // reset full resolution last so that getScale is not affected
-    core.get(0, 0).sizeX = newX;
-    core.get(0, 0).sizeY = newY;
   }
 
   /**
