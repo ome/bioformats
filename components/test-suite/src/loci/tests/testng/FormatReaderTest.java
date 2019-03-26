@@ -163,7 +163,7 @@ public class FormatReaderTest {
     initFile();
   }
 
-  @AfterClass
+  @AfterClass(alwaysRun = true)
   public void close() throws IOException {
     reader.close();
     HashMap<String, Object> idMap = Location.getIdMap();
