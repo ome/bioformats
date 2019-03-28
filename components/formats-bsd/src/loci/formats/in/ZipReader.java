@@ -58,6 +58,7 @@ public class ZipReader extends FormatReader {
   private String entryName;
 
   private ArrayList<String> mappedFiles = new ArrayList<String>();
+  private ZipInputStream zip;
 
   // -- Constructor --
 
@@ -114,6 +115,7 @@ public class ZipReader extends FormatReader {
       }
     }
     mappedFiles.clear();
+    if (zip != null) zip.close();
     entryName = null;
   }
 
@@ -147,7 +149,7 @@ public class ZipReader extends FormatReader {
     IRandomAccess rawHandle = Location.getHandle(id, false, false);
     in = new RandomAccessInputStream(rawHandle, id);
 
-    ZipInputStream zip = new ZipInputStream(in);
+    zip = new ZipInputStream(in);
     ZipEntry ze = null;
     entryName = null;
     boolean matchFound = false;
