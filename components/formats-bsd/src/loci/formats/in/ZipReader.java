@@ -94,7 +94,8 @@ public class ZipReader extends FormatReader {
     throws FormatException, IOException
   {
     if (Location.getMappedFile(entryName) == null) {
-      initFile(currentId);
+      reader.close();
+      findZipEntries();
     }
     reader.setId(entryName);
     return reader.openBytes(no, buf, x, y, w, h);
@@ -117,12 +118,26 @@ public class ZipReader extends FormatReader {
     entryName = null;
   }
 
+  @Override
+  public void reopenFile() throws IOException {
+    if (reader != null) {
+      reader.close();
+    }
+    else {
+      reader = new ImageReader();
+    }
+    findZipEntries();
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    if (reader != null) {
+      reader.close();
+    }
     reader = new ImageReader();
 
     reader.setMetadataOptions(getMetadataOptions());
@@ -131,43 +146,7 @@ public class ZipReader extends FormatReader {
     reader.setNormalized(isNormalized());
     reader.setMetadataStore(getMetadataStore());
 
-    String innerFile = id;
-    if (checkSuffix(id, "zip")) {
-      innerFile = id.substring(0, id.length() - 4);
-    }
-    int sep = innerFile.lastIndexOf(File.separator);
-    if (sep < 0) {
-      sep = innerFile.lastIndexOf("/");
-    }
-    if (sep >= 0) {
-      innerFile = innerFile.substring(sep + 1);
-    }
-
-    // NB: We need a raw handle on the ZIP data itself, not a ZipHandle.
-    IRandomAccess rawHandle = Location.getHandle(id, false, false);
-    in = new RandomAccessInputStream(rawHandle, id);
-
-    ZipInputStream zip = new ZipInputStream(in);
-    ZipEntry ze = null;
-    entryName = null;
-    boolean matchFound = false;
-    while (true) {
-      ze = zip.getNextEntry();
-      if (ze == null) break;
-
-      if (entryName == null) {
-        entryName = ze.getName();
-      }
-
-      if (!matchFound && ze.getName().startsWith(innerFile)) {
-        entryName = ze.getName();
-        matchFound = true;
-      }
-
-      ZipHandle handle = new ZipHandle(id, ze);
-      Location.mapFile(ze.getName(), handle);
-      mappedFiles.add(ze.getName());
-    }
+    findZipEntries();
 
     if (entryName == null) {
       throw new FormatException("Zip file does not contain any valid files");
@@ -178,6 +157,49 @@ public class ZipReader extends FormatReader {
     metadataStore = reader.getMetadataStore();
     core = new ArrayList<CoreMetadata>(reader.getCoreMetadataList());
     metadata = reader.getGlobalMetadata();
+  }
+
+  private void findZipEntries() throws IOException {
+    String innerFile = currentId;
+    if (checkSuffix(currentId, "zip")) {
+      innerFile = currentId.substring(0, currentId.length() - 4);
+    }
+    int sep = innerFile.lastIndexOf(File.separator);
+    if (sep < 0) {
+      sep = innerFile.lastIndexOf("/");
+    }
+    if (sep >= 0) {
+      innerFile = innerFile.substring(sep + 1);
+    }
+
+    // NB: We need a raw handle on the ZIP data itself, not a ZipHandle.
+    IRandomAccess rawHandle = Location.getHandle(currentId, false, false);
+    try (RandomAccessInputStream in = new RandomAccessInputStream(rawHandle, currentId)) {
+      ZipInputStream zip = new ZipInputStream(in);
+      ZipEntry ze = null;
+      entryName = null;
+      boolean matchFound = false;
+      while (true) {
+        ze = zip.getNextEntry();
+        if (ze == null) break;
+
+        if (entryName == null) {
+          entryName = ze.getName();
+        }
+
+        if (!matchFound && ze.getName().startsWith(innerFile)) {
+          entryName = ze.getName();
+          matchFound = true;
+        }
+
+        if (Location.getMappedFile(ze.getName()) != null) {
+          Location.getMappedFile(ze.getName()).close();
+        }
+        ZipHandle handle = new ZipHandle(currentId, ze);
+        Location.mapFile(ze.getName(), handle);
+        mappedFiles.add(ze.getName());
+      }
+    }
   }
 
 }
