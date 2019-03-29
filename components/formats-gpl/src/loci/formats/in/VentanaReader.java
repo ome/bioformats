@@ -826,7 +826,11 @@ public class VentanaReader extends BaseTiffReader {
         continue;
       }
       AreaOfInterest aoi = new AreaOfInterest();
-      aoi.index = Integer.parseInt(imageInfo.getAttribute("AOIIndex"));
+      String aoiIndex = imageInfo.getAttribute("AOIIndex");
+      aoi.index = i;
+      if (aoiIndex != null && !aoiIndex.isEmpty()) {
+        aoi.index = Integer.parseInt(aoiIndex);
+      }
       aoi.tileRows = Integer.parseInt(imageInfo.getAttribute("NumRows"));
       aoi.tileColumns = Integer.parseInt(imageInfo.getAttribute("NumCols"));
 
