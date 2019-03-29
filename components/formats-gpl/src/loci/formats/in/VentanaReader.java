@@ -334,6 +334,32 @@ public class VentanaReader extends BaseTiffReader {
     return super.openThumbBytes(no);
   }
 
+  /* @see loci.formats.IFormatReader#getThumbSizeX() */
+  @Override
+  public int getThumbSizeX() {
+    if (getCoreIndex() < core.size(0)) {
+      int currentCore = getCoreIndex();
+      setCoreIndex(core.size(0) - 1);
+      int x = super.getThumbSizeX();
+      setCoreIndex(currentCore);
+      return x;
+    }
+    return super.getThumbSizeX();
+  }
+
+  /* @see loci.formats.IFormatReader#getThumbSizeY() */
+  @Override
+  public int getThumbSizeY() {
+    if (getCoreIndex() < core.size(0)) {
+      int currentCore = getCoreIndex();
+      setCoreIndex(core.size(0) - 1);
+      int y = super.getThumbSizeY();
+      setCoreIndex(currentCore);
+      return y;
+    }
+    return super.getThumbSizeY();
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {
