@@ -112,6 +112,7 @@ public class VentanaReader extends BaseTiffReader {
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixNecessary = true;
     noSubresolutions = true;
+    canSeparateSeries = false;
   }
 
   // -- VentanaReader API methods --
