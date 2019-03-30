@@ -735,7 +735,7 @@ public class VentanaReader extends BaseTiffReader {
 
     Length pixelSize = null;
     if (physicalPixelSize != null) {
-      pixelSize = new Length(physicalPixelSize, UNITS.MICROM);
+      pixelSize = new Length(physicalPixelSize, UNITS.MICROMETER);
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -755,8 +755,8 @@ public class VentanaReader extends BaseTiffReader {
             x *= physicalPixelSize;
             y *= physicalPixelSize;
           }
-          store.setPlanePositionX(new Length(x, UNITS.MICROM), i, p);
-          store.setPlanePositionY(new Length(y, UNITS.MICROM), i, p);
+          store.setPlanePositionX(new Length(x, UNITS.MICROMETER), i, p);
+          store.setPlanePositionY(new Length(y, UNITS.MICROMETER), i, p);
         }
       }
 
@@ -781,7 +781,7 @@ public class VentanaReader extends BaseTiffReader {
   /**
    * @param coreIndex the series or resolution for which to find an IFD
    * @param no the plane index for which to find an IFD
-   * @return the index into {@link ifds} for the given series and plane
+   * @return the index into {@link #ifds} for the given series and plane
    */
   private int getIFDIndex(int coreIndex, int no) {
     // natural IFD ordering:
