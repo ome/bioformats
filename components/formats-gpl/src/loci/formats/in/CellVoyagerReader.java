@@ -565,9 +565,26 @@ public class CellVoyagerReader extends FormatReader
      * back manually. Some are fixed here
      */
 
+
+    final Element containerEl = getChild(msRoot, new String[] {
+      "Attachment", "HolderInfoList", "HolderInfo", "MountedSampleContainer" });
+    final String type = containerEl.getAttribute("xsi:type");
+    boolean plateMetadata = type.equals("WellPlate");
+
+    // fix the Plate and Screen IDs if this is a plate dataset
+    // otherwise remove the extra Plate and Screen to avoid confusion
+    if (plateMetadata) {
+      omeMD.setScreenID(MetadataTools.createLSID("Screen", 0), 0);
+      omeMD.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    }
+    else {
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omeMD.getRoot();
+      root.removeScreen(root.getScreen(0));
+      root.removePlate(root.getPlate(0));
+      omeMD.setRoot(root);
+    }
+
     omeMD.setProjectID( MetadataTools.createLSID( "Project", 0 ), 0 );
-    omeMD.setScreenID( MetadataTools.createLSID( "Screen", 0 ), 0 );
-    omeMD.setPlateID( MetadataTools.createLSID( "Plate", 0 ), 0 );
     omeMD.setInstrumentID( MetadataTools.createLSID( "Instrument", 0 ), 0 );
 
     // Read pixel sizes from OME metadata.
@@ -730,12 +747,7 @@ public class CellVoyagerReader extends FormatReader
      * MicroPlate specific stuff
      */
 
-    final Element containerEl = getChild( msRoot, new String[] { "Attachment", "HolderInfoList", "HolderInfo", "MountedSampleContainer" } );
-    final String type = containerEl.getAttribute( "xsi:type" );
-    boolean plateMetadata = false;
-    if ( type.equals( "WellPlate" ) )
-    {
-      plateMetadata = true;
+    if (plateMetadata) {
 
       final int nrows = Integer.parseInt( getChildText( containerEl, "RowCount" ) );
       final int ncols = Integer.parseInt( getChildText( containerEl, "ColumnCount" ) );
