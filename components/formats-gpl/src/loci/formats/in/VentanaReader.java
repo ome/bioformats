@@ -157,7 +157,9 @@ public class VentanaReader extends BaseTiffReader {
         if (ifd == null) {
           return false;
         }
-        return ifd.get(XML_TAG) != null;
+        tiffParser.fillInIFD(ifd);
+        String xml = ifd.getIFDTextValue(XML_TAG);
+        return xml != null && xml.indexOf("iScan") >= 0;
       }
       catch (IOException e) {
         LOGGER.debug("I/O exception during isThisType() evaluation.", e);
