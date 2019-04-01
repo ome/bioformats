@@ -342,7 +342,7 @@ public class GatanReader extends FormatReader {
 
       int digits = String.valueOf(getSeriesCount() + 1).length();
       for (int i=0; i<getSeriesCount(); i++) {
-        if (foundMontage) {
+        if (foundMontage && getSeriesCount() > 1) {
           store.setImageName(
             String.format("Tile #%0" + digits + "d", i + 1), i);
         }
