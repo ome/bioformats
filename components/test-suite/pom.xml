@@ -92,6 +92,8 @@
       <groupId>org.kohsuke</groupId>
       <artifactId>file-leak-detector</artifactId>
       <version>1.13</version>
+      <!-- the regular jar does not specify a main class -->
+      <classifier>jar-with-dependencies</classifier>
       <exclusions>
         <exclusion>
           <groupId>com.sun</groupId>
