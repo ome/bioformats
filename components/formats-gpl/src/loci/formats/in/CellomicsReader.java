@@ -206,7 +206,7 @@ public class CellomicsReader extends FormatReader {
       for (String f : list) {
         boolean hasPlateName = plateName.equals(getPlateName(f));
         Location loc = new Location(parent, f);
-        if (hasPlateName && checkSuffix(f, "c01") || checkSuffix(f, "dib")) {
+        if (hasPlateName && (checkSuffix(f, "c01") || checkSuffix(f, "dib"))) {
           if ((!f.startsWith(".") || !loc.isHidden()) && getChannel(f) >= 0) {
             pixelFiles.add(loc.getAbsolutePath());
           }
@@ -284,15 +284,16 @@ public class CellomicsReader extends FormatReader {
 
     for (int file=0; file<files.size(); file++) {
       ChannelFile f = files.get(file);
-      int row = uniqueRows.indexOf(f.row);
-      int col = uniqueCols.indexOf(f.col);
-      int field = uniqueFields.indexOf(f.field);
-      f.series = row * wellColumns * fields + col * fields + field;
+      f.series = file / uniqueChannels.size();
+      f.channel = uniqueChannels.indexOf(f.channel);
     }
 
     core.clear();
 
-    int seriesCount = wellRows * wellColumns * fields;
+    int seriesCount = files.size();
+    if (uniqueChannels.size() > 0) {
+      seriesCount /= uniqueChannels.size();
+    }
 
     for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
@@ -368,7 +369,7 @@ public class CellomicsReader extends FormatReader {
     int realRows = wellRows;
     int realCols = wellColumns;
 
-    if (files.size() == 1) {
+    if (getSeriesCount() == 1) {
       realRows = 1;
       realCols = 1;
     }
@@ -385,7 +386,7 @@ public class CellomicsReader extends FormatReader {
       for (int col=0; col<realCols; col++) {
         int well = row * realCols + col;
 
-        if (files.size() == 1) {
+        if (getSeriesCount() == 1) {
           row = files.get(0).row;
           col = files.get(0).col;
         }
@@ -396,35 +397,33 @@ public class CellomicsReader extends FormatReader {
       }
     }
 
-    int image = 0;
-    for (Integer row : uniqueRows) {
-      for (Integer col : uniqueCols) {
-        for (Integer field : uniqueFields) {
-          int fieldIndex = uniqueFields.indexOf(field);
-          store.setImageName(
-            String.format("Well %s%02d, Field #%02d",
-                      new String(Character.toChars(row+'A')),
-                      col + 1, field), image);
+    for (int i=0; i<getSeriesCount(); i++) {
+      ChannelFile f = files.get(i * getSizeC());
+      int row = f.row;
+      int col = f.col;
+      int field = f.field;
+      int fieldIndex = uniqueFields.indexOf(field);
+      store.setImageName(
+        String.format("Well %s%02d, Field #%02d",
+                  new String(Character.toChars(row+'A')),
+                  col + 1, field), i);
 
-          if (files.size() == 1) {
-            row = 0;
-            col = 0;
-          }
+      if (getSeriesCount() == 1) {
+        row = 0;
+        col = 0;
+      }
 
-          String imageID = MetadataTools.createLSID("Image", image);
-          store.setImageID(imageID, image);
-          if (row < realRows && col < realCols) {
-            int wellIndex = row * realCols + col;
+      String imageID = MetadataTools.createLSID("Image", i);
+      store.setImageID(imageID, i);
+      if (row < realRows && col < realCols) {
+        int wellIndex = row * realCols + col;
 
-            String wellSampleID = MetadataTools.createLSID("WellSample",
-              0, wellIndex, fieldIndex);
-            store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
-            store.setWellSampleIndex(
-              new NonNegativeInteger(image), 0, wellIndex, fieldIndex);
-            store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
-          }
-          image++;
-        }
+        String wellSampleID = MetadataTools.createLSID("WellSample",
+          0, wellIndex, fieldIndex);
+        store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
+        store.setWellSampleIndex(
+          new NonNegativeInteger(i), 0, wellIndex, fieldIndex);
+        store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
       }
     }
 
