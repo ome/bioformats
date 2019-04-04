@@ -65,14 +65,14 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
 
   @Override
   public void initialize(String file) throws ServiceException, IOException {
-    RandomAccessInputStream jpegFile = new RandomAccessInputStream(file);
-    try {
-      Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
-      directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-    }
-    catch (Throwable e) {
-      jpegFile.close();
-      throw new ServiceException("Could not read EXIF data", e);
+    try (RandomAccessInputStream jpegFile = new RandomAccessInputStream(file)) {
+      try {
+        Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
+        directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+      }
+      catch (Throwable e) {
+        throw new ServiceException("Could not read EXIF data", e);
+      }
     }
   }
 
