@@ -300,7 +300,7 @@ public class GatanReader extends FormatReader {
         }
         if (sizeY != null) {
           for (int i=0; i<getSeriesCount(); i++) {
-            store.setPixelsPhysicalSizeY(sizeY, 0);
+            store.setPixelsPhysicalSizeY(sizeY, i);
           }
         }
 
