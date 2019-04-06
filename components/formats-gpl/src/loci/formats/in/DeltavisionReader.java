@@ -300,6 +300,9 @@ public class DeltavisionReader extends FormatReader {
     super.initFile(id);
     findLogFiles();
 
+    if (in != null) {
+      in.close();
+    }
     in = new RandomAccessInputStream(currentId);
     initPixels();
 

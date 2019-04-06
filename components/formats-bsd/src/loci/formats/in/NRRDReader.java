@@ -441,6 +441,9 @@ public class NRRDReader extends FormatReader {
     int x, int y, int w, int h) throws IOException
   {
     if (gzip == null || no <= lastPlane) {
+      if (gzip != null) {
+        gzip.close();
+      }
       FileInputStream fis = new FileInputStream(file);
       safeSkip(fis, offset);
       gzip = new GZIPInputStream(fis);

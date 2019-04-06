@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -76,7 +77,9 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /**
@@ -106,6 +109,8 @@ public class FormatReaderTest {
 
   /** List of files to skip. */
   private static List<String> skipFiles = new LinkedList<String>();
+
+  private static ArrayList<String> initialDescriptors;
 
   /** Global shared jeader for use in all tests. */
   private BufferedImageReader reader;
@@ -158,12 +163,49 @@ public class FormatReaderTest {
     initFile();
   }
 
-  @AfterClass
+  @AfterClass(alwaysRun = true)
   public void close() throws IOException {
     reader.close();
     HashMap<String, Object> idMap = Location.getIdMap();
     idMap.clear();
     Location.setIdMap(idMap);
+  }
+
+  @BeforeSuite(alwaysRun = true)
+  public void saveFileDescriptorCount() throws IOException {
+    initialDescriptors = TestTools.getHandles(true);
+  }
+
+  @AfterSuite(alwaysRun = true)
+  public void checkFileDescriptorCount() throws IOException {
+    ArrayList<String> currentDescriptors = TestTools.getHandles(true);
+    long leakedDescriptors =
+      currentDescriptors.size() - initialDescriptors.size();
+    if (leakedDescriptors > 0) {
+      currentDescriptors.removeAll(initialDescriptors);
+
+      // remove any log file handles
+      // not all JDK versions will leave these open
+      // so just subtracting the thread count won't work
+
+      for (int i=0; i<currentDescriptors.size(); i++) {
+        String name = new File(currentDescriptors.get(i)).getName();
+        if (name.startsWith("bio-formats-test-") && name.endsWith(".log")) {
+          currentDescriptors.remove(i);
+          i--;
+        }
+      }
+
+      leakedDescriptors = currentDescriptors.size();
+      if (leakedDescriptors > 0) {
+        LOGGER.warn("Open file handles:");
+        for (String f : currentDescriptors) {
+          LOGGER.warn("  {}", f);
+        }
+      }
+    }
+    result("File handle", leakedDescriptors <= 0,
+      leakedDescriptors + " leaked file handles");
   }
 
   // -- Tests --
@@ -2709,12 +2751,10 @@ public class FormatReaderTest {
     finally {
       if (memoFile != null) {
         // log the memo file's size
-        try {
-          RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath());
+        try (RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath())) {
           LOGGER.debug("memo file size for {} = {} bytes",
                       new Location(reader.getCurrentFile()).getAbsolutePath(),
                       s.length());
-          s.close();
         }
         catch (IOException e) {
           LOGGER.warn("memo file size not available");

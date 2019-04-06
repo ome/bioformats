@@ -532,10 +532,8 @@ public class FileStitcher extends ReaderWrapper {
     super.close(fileOnly);
     if (externals != null) {
       for (ExternalSeries s : externals) {
-        if (s != null && s.getReaders() != null) {
-          for (DimensionSwapper r : s.getReaders()) {
-            if (r != null) r.close(fileOnly);
-          }
+        if (s != null) {
+          s.close(fileOnly);
         }
       }
     }
@@ -1008,6 +1006,11 @@ public class FileStitcher extends ReaderWrapper {
       LOGGER.trace("Could not use pattern " + patterns[0], e);
       patterns = new String[] {id};
       fp = new FilePattern(id);
+      if (externals != null) {
+        for (ExternalSeries ex : externals) {
+          ex.close();
+        }
+      }
       externals = new ExternalSeries[] {new ExternalSeries(fp)};
       reader.setId(fp.getFiles()[0]);
     }
@@ -1022,6 +1025,9 @@ public class FileStitcher extends ReaderWrapper {
       reader.getUsedFiles().length - reader.getUsedFiles(true).length;
     if (nPixelsFiles > 1 || fp.getFiles().length == 1) {
       noStitch = true;
+      for (ExternalSeries e : externals) {
+        e.close();
+      }
       return;
     }
 
@@ -1390,6 +1396,26 @@ public class FileStitcher extends ReaderWrapper {
 
     public int getImagesPerFile() {
       return imagesPerFile;
+    }
+
+    public void close() {
+      close(false);
+    }
+
+    public void close(boolean fileOnly) {
+      if (getReaders() == null) {
+        return;
+      }
+      for (DimensionSwapper r : getReaders()) {
+        if (r != null) {
+          try {
+            r.close(fileOnly);
+          }
+          catch (IOException e) {
+            LOGGER.debug("Close failed", e);
+          }
+        }
+      }
     }
 
   }

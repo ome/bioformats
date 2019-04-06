@@ -29,26 +29,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.FieldPosition;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import loci.common.ByteArrayHandle;
-import loci.common.Constants;
 import loci.common.DataTools;
-import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.formats.IFormatReader;
-import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 
+import org.kohsuke.file_leak_detector.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,6 +145,21 @@ public class TestTools {
     return null;
   }
 
+  /**
+   * Get the configured number of threads.
+   * Defaults to 1 if the testng.threadCount is not set or unparseable.
+   *
+   * @return the number of threads used in the test suite
+   */
+  public static int getThreadCount() {
+    int threadCount = 1;
+    try {
+      threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
+    }
+    catch (NumberFormatException e) { }
+    return threadCount;
+  }
+
   /** Returns true if a byte buffer of the given size will fit in memory. */
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
@@ -156,12 +168,7 @@ public class TestTools {
     long mem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
 
     mem /= 2;
-    int threadCount = 1;
-    try {
-      threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
-    }
-    catch (NumberFormatException e) { }
-    mem /= threadCount;
+    mem /= getThreadCount();
     return bufferSize < mem && bufferSize <= Integer.MAX_VALUE;
   }
 
@@ -520,5 +527,43 @@ public class TestTools {
     }
     return false;
   }
+
+  /**
+   * Retrieve a list of open file handles for the current process.
+   */
+  public static ArrayList<String> getHandles() throws IOException {
+    return getHandles(false);
+  }
+
+  /**
+   * Retrieve a list of open file handles for the current process.
+   *
+   * @param filter if true, removes any native libraries or JRE/JDK files
+   */
+  public static ArrayList<String> getHandles(boolean filter) throws IOException {
+    List<Listener.Record> openHandles = Listener.getCurrentOpenFiles();
+    ArrayList<String> names = new ArrayList<String>();
+    for (Listener.Record f : openHandles) {
+      if (f instanceof Listener.FileRecord) {
+        String path = ((Listener.FileRecord) f).file.getAbsolutePath();
+        if (!filter || !(path.endsWith("libnio.so") ||
+          path.endsWith(".jar") || path.startsWith("/usr/lib") ||
+          path.startsWith("/opt/") || path.startsWith("/usr/share/locale") ||
+          path.startsWith("/lib") || path.indexOf("turbojpeg") > 0 ||
+          path.indexOf("/jre/") > 0 || path.indexOf("nativedata") > 0 ||
+          path.indexOf("jhdf") > 0))
+        {
+          StringWriter sw = new StringWriter();
+          PrintWriter p = new PrintWriter(sw);
+          names.add(path);
+          f.dump("", p);
+          LOGGER.debug(sw.toString());
+          p.close();
+        }
+      }
+    }
+    return names;
+  }
+
 
 }

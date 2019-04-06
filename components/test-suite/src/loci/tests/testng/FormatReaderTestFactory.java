@@ -243,7 +243,9 @@ public class FormatReaderTestFactory {
     Set<String> failingIds = new LinkedHashSet<String>();
     while (!fileSet.isEmpty()) {
       String file = fileSet.iterator().next();
+      ArrayList<String> originalHandles = null;
       try {
+        originalHandles = TestTools.getHandles(true);
         reader.setId(file);
       }
       catch (UnknownFormatException u) {
@@ -288,6 +290,16 @@ public class FormatReaderTestFactory {
         fileSet.remove(file);
         try {
           reader.close();
+        }
+        catch (IOException e) { }
+        try {
+          ArrayList<String> handles = TestTools.getHandles(true);
+          if (originalHandles != null && handles.size() > originalHandles.size()) {
+            String msg = String.format("setId on %s failed to close %s files",
+              file, handles.size() - originalHandles.size());
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+          }
         }
         catch (IOException e) { }
       }

@@ -628,6 +628,9 @@ public class ICSReader extends FormatReader {
           toSkip += offset;
         }
         try {
+          if (gzipStream != null) {
+            gzipStream.close();
+          }
           gzipStream = new GZIPInputStream(fis);
         }
         catch (IOException e) {
