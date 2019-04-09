@@ -236,6 +236,8 @@ public class VentanaReader extends BaseTiffReader {
     byte[] subResTile = null;
     int subResX = -1, subResY = -1;
 
+    HashMap<Region, byte[]> cachedTiles = new HashMap<Region, byte[]>();
+
     byte[] tilePixels = new byte[thisTileWidth * thisTileHeight * pixel];
     for (TIFFTile tile : tiles) {
       Region tileBox = new Region(
@@ -270,8 +272,15 @@ public class VentanaReader extends BaseTiffReader {
             if (subResTile == null) {
               subResTile = new byte[tileWidth * tileHeight * pixel];
             }
-            tiffParser.getSamples(
-              ifd, subResTile, resX, resY, tileWidth, tileHeight);
+            Region key = new Region(resX, resY, tileWidth, tileHeight);
+            if (!cachedTiles.containsKey(key)) {
+              byte[] b = new byte[subResTile.length];
+              tiffParser.getSamples(
+                ifd, b, resX, resY, tileWidth, tileHeight);
+              cachedTiles.put(key, b);
+            }
+            System.arraycopy(cachedTiles.get(key), 0,
+              subResTile, 0, subResTile.length);
             subResX = resX;
             subResY = resY;
           }
