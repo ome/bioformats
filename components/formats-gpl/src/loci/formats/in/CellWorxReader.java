@@ -335,8 +335,7 @@ public class CellWorxReader extends FormatReader {
       for (int col=0; col<wellFiles[row].length; col++) {
         if (wellFiles[row][col] != null) {
           wellCount++;
-          char rowLetter = (char) (row + 'A');
-          String base = plateName + rowLetter + String.format("%02d", col + 1);
+          String base = plateName + FormatTools.getWellName(row, col);
           wellFiles[row][col][0] = base + ".pnl";
           logFiles[row][col] = base + "_scan.log";
 
@@ -344,7 +343,7 @@ public class CellWorxReader extends FormatReader {
             // using TIFF files instead
 
             wellFiles[row][col] = getTiffFiles(
-              plateName, rowLetter, col, wavelengths.length, nTimepoints);
+              plateName, row, col, wavelengths.length, nTimepoints);
           }
         }
       }
@@ -488,7 +487,7 @@ public class CellWorxReader extends FormatReader {
               store.setPlateAcquisitionWellSampleRef(
                 wellSampleID, 0, 0, nextImage);
 
-              String well = (char) (row + 'A') + String.format("%02d", col + 1);
+              String well = FormatTools.getWellName(row, col);
               store.setImageName(
                 "Well " + well + " Field #" + (fieldIndex + 1), nextImage);
               nextImage++;
@@ -735,10 +734,10 @@ public class CellWorxReader extends FormatReader {
     return pnl;
   }
 
-  private String[] getTiffFiles(String plateName, char rowLetter, int col,
+  private String[] getTiffFiles(String plateName, int row, int col,
     int channels, int nTimepoints)
   {
-    String base = plateName + rowLetter + String.format("%02d", col + 1);
+    String base = plateName + FormatTools.getWellName(row, col);
 
     String[] files = new String[fieldCount * channels * nTimepoints];
 

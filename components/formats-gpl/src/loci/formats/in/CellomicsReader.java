@@ -352,9 +352,8 @@ public class CellomicsReader extends FormatReader {
       int col = getWellColumn(file);
 
       store.setImageName(
-        String.format("Well %s%02d, Field #%02d",
-                      new String(Character.toChars(row+'A')),
-                      col + 1, fieldIndex), i);
+        String.format("Well %s, Field #%02d",
+                      FormatTools.getWellName(row, col), fieldIndex), i);
 
       if (files.length == 1) {
         row = 0;
