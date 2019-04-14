@@ -938,7 +938,7 @@ public class TiffParser {
     // if the image is stored as strips (not tiles) and
     // the strips are stored in order with no gaps then we can
     // treat them as a single strip for faster reading
-    boolean contiguousTiles = tileWidth == imageWidth;
+    boolean contiguousTiles = tileWidth == imageWidth && planarConfig == 1;
     if (contiguousTiles) {
       for (int i=1; i<stripOffsets.length; i++) {
         if (stripOffsets[i] != stripOffsets[i - 1] + stripByteCounts[i - 1]) {
