@@ -941,7 +941,9 @@ public class TiffParser {
     boolean contiguousTiles = tileWidth == imageWidth && planarConfig == 1;
     if (contiguousTiles) {
       for (int i=1; i<stripOffsets.length; i++) {
-        if (stripOffsets[i] != stripOffsets[i - 1] + stripByteCounts[i - 1]) {
+        if (stripOffsets[i] != stripOffsets[i - 1] + stripByteCounts[i - 1] ||
+          stripOffsets[i] + stripByteCounts[i] > in.length())
+        {
           contiguousTiles = false;
           break;
         }
