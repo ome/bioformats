@@ -784,7 +784,7 @@ public class CellWorxReader extends FormatReader {
       for (String f : directoryList) {
         if (checkSuffix(f, new String [] {"tif", "tiff", "pnl"})) {
           String path = new Location(parent, f).getAbsolutePath();
-          if (path.startsWith(base) && path.indexOf("_thumb_") < 0) {
+          if (path.startsWith(base) && path.indexOf("_thumb") < 0) {
             files[nextFile++] = path;
           }
         }
