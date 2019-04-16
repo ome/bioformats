@@ -30,6 +30,7 @@ import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -81,7 +82,7 @@ public class BDVReader extends FormatReader {
   private boolean timepointUsePattern = false;
   private Integer firstTimepoint = 0;
   private Integer lastTimepoint = 0;
-  private Integer timepointIncrement = 0;
+  private Integer timepointIncrement = 1;
   private int seriesCount;
   private transient JHDFService jhdf;
   private int lastChannel = 0;
@@ -89,6 +90,7 @@ public class BDVReader extends FormatReader {
   private List<H5Coordinate> H5PositionList = new ArrayList<H5Coordinate>();
   private List<String> H5PathsToImageData = new ArrayList<String>();
   private List<String> cellObjectNames = new ArrayList<String>();
+  private HashMap<Integer, HashMap<String, String>> setupAttributeList = new HashMap<Integer, HashMap<String, String>>();
 
   private HDF5CompoundDataMap[] times = null;
   private HDF5CompoundDataMap[] classes = null;
@@ -314,18 +316,50 @@ public class BDVReader extends FormatReader {
     int time = zct[2];
     int width = getSizeX();
     
-    int imagePathIndex = series;
-    if (!hasFlattenedResolutions()) {
-      imagePathIndex *= getResolutionCount();
-      imagePathIndex += getResolution();
+    int seriesIndex = series;
+    if (hasFlattenedResolutions()) {
+      // Normally for flattened resolutions the getResolutionCount will be 1
+      int numResolutions = core.get(seriesToCoreIndex(getSeries())).resolutionCount;
+      seriesIndex = series/numResolutions;
     }
-    int elementSize = jhdf.getElementSize(H5PathsToImageData.get(imagePathIndex));
+    int currentSetup = (int)setupAttributeList.keySet().toArray()[seriesIndex];
+    if (sizeC > 1) {
+      // Locate the correct setup for the given channel
+      int numChannelSetupFound = 0;
+      for (int index: setupAttributeList.keySet()) {
+        HashMap<String, String> setup = setupAttributeList.get(index);
+        for (String key: setup.keySet()) {
+          if (key.equals("channel")) {
+            String value = setup.get(key);
+            if (Integer.parseInt(value) == channel) {
+              if (numChannelSetupFound == series) {
+                currentSetup = index;
+                break;
+              }
+              numChannelSetupFound++;
+            }
+          }
+        }
+      }
+    }
+    String formattedTimepoint = String.format("t%05d",(firstTimepoint + (timepointIncrement * time)));
+    String formattedSetup = String.format("s%02d", currentSetup);
+    int requiredResolution = getResolution();
+    if (hasFlattenedResolutions()) {
+      int numResolutions = core.get(seriesToCoreIndex(getSeries())).resolutionCount;
+      requiredResolution = series % numResolutions;
+    }
+    H5Coordinate imagePath = new H5Coordinate(formattedTimepoint, formattedSetup, ""+requiredResolution);
+    if (!H5PathsToImageData.contains(imagePath.pathToImageData)) {
+      LOGGER.warn("Attempting to retrieve invalid path: " + imagePath.pathToImageData);
+    }
+
+    int elementSize = jhdf.getElementSize(imagePath.pathToImageData);
 
     int[] arrayOrigin = new int[] {zslice, y, 0};
     int[] arrayDimension = new int[] {1, height, width};
 
-    MDIntArray test = jhdf.readIntBlockArray(H5PathsToImageData.get(imagePathIndex),
-      arrayOrigin, arrayDimension);
+    MDIntArray subBlock = jhdf.readIntBlockArray(imagePath.pathToImageData, arrayOrigin, arrayDimension);
 
     if (elementSize == 1) {
       byte[][] image = new byte[height][width];
@@ -333,7 +367,7 @@ public class BDVReader extends FormatReader {
       // Slice x, y dimension
       for (int yy = 0; yy < height; yy++) {
         for (int xx = 0; xx < width; xx++) {
-          image[yy][xx] = (byte) test.get(0, yy, xx);
+          image[yy][xx] = (byte) subBlock.get(0, yy, xx);
         }
       }
       return image;
@@ -344,7 +378,7 @@ public class BDVReader extends FormatReader {
       // Slice x, y dimension
       for (int yy = 0; yy < height; yy++) {
         for (int xx = 0; xx < width; xx++) {
-          image[yy][xx] = (short) test.get(0, yy, xx);
+          image[yy][xx] = (short) subBlock.get(0, yy, xx);
         }
       }
       return image;
@@ -355,7 +389,7 @@ public class BDVReader extends FormatReader {
       // Slice x, y dimension
       for (int yy = 0; yy < height; yy++) {
         for (int xx = 0; xx < width; xx++) {
-          image[yy][xx] = (int) test.get(0, yy, xx);
+          image[yy][xx] = (int) subBlock.get(0, yy, xx);
         }
       }
       return image;
@@ -367,21 +401,34 @@ public class BDVReader extends FormatReader {
     core.clear();
     // read experiment structure and collect coordinates
 
-    String path_to_plate = String.format("t%05d", firstTimepoint);
-    LOGGER.info("Plate :" + path_to_plate );
+    int numTimepoints = 1;
+    if (timepointUsePattern && lastTimepoint > 0) {
+      numTimepoints = lastTimepoint - firstTimepoint + 1;
+      if (timepointIncrement > 0) {
+        numTimepoints /= timepointIncrement;
+      }
+    }
+    else {
+      if (lastTimepoint == 0) lastTimepoint = firstTimepoint;
+      numTimepoints = lastTimepoint - firstTimepoint + 1;
+    }
+
     int resolutionCount = 0;
 
-    for (String plate : jhdf.getMember(path_to_plate)) {
-      String path_to_well = path_to_plate + "/" + plate;
-      LOGGER.info("Well :" + path_to_well );
-      if (jhdf.getMember(path_to_well).size() > resolutionCount) {
-        resolutionCount = jhdf.getMember(path_to_well).size();
-      }
-      for (String well : jhdf.getMember(path_to_well)) {
-        String path_to_site = path_to_well + "/" + well;
-        LOGGER.info("Site :" + path_to_site );
-        for (String site : jhdf.getMember(path_to_site)) {    
-          H5PositionList.add(new H5Coordinate(String.format("t%05d", firstTimepoint), plate, well));
+    for (int timepoint = firstTimepoint; timepoint <= lastTimepoint; timepoint+=timepointIncrement) {
+      String path_to_plate = String.format("t%05d", timepoint);
+      LOGGER.info("Plate :" + path_to_plate );
+
+      for (String plate : jhdf.getMember(path_to_plate)) {
+        String path_to_well = path_to_plate + "/" + plate;
+        LOGGER.info("Well :" + path_to_well );
+        if (jhdf.getMember(path_to_well).size() > resolutionCount) {
+          resolutionCount = jhdf.getMember(path_to_well).size();
+        }
+        for (String well : jhdf.getMember(path_to_well)) {
+          String path_to_site = path_to_well + "/" + well;
+          LOGGER.info("Site :" + path_to_site );  
+          H5PositionList.add(new H5Coordinate(String.format("t%05d", timepoint), plate, well));
         }
       }
     }
@@ -395,72 +442,69 @@ public class BDVReader extends FormatReader {
     List<String> seriesWell = new ArrayList<String>();
     List<String> seriesSite = new ArrayList<String>();
 
+    String formattedFirstTimepoint = String.format("t%05d", firstTimepoint);
     if (sizeC == 0) sizeC = 1;
     for (H5Coordinate coord : H5PositionList) {
       if (jhdf.exists(coord.pathToImageData)) {
-        CoreMetadata m = new CoreMetadata();
-        core.add(m);
-        if (hasFlattenedResolutions()) {
-          setSeries(seriesCount);
-        }
-        else {
-          setSeries(seriesCount / resolutionCount);
-          setResolution(seriesCount % resolutionCount);
-        }
-
-        LOGGER.debug(coord.pathToImageData);
-        int[] ctzyx = jhdf.getShape(coord.pathToImageData);
-        m.sizeC = sizeC;
-        if (timepointUsePattern) {
-          if (lastTimepoint > 0) {
-            m.sizeT = lastTimepoint - firstTimepoint + 1;
-            if (timepointIncrement > 0) {
-              m.sizeT /= timepointIncrement;
-            }
-          }
-          else {
-            m.sizeT = firstTimepoint;
-          }
-        }
-        else {
-          m.sizeT = lastTimepoint - firstTimepoint + 1;
-        }
-        m.sizeZ = ctzyx[0];
-        m.sizeY = ctzyx[1];
-        m.sizeX = ctzyx[2];
-        m.resolutionCount = resolutionCount;
-        m.thumbnail = false;
-        m.imageCount = getSizeC() * getSizeT() * getSizeZ();
-        m.dimensionOrder = "XYZTC";
-        m.rgb = false;
-        m.thumbSizeX = 128;
-        m.thumbSizeY = 128;
-        m.orderCertain = false;
-        m.littleEndian = true;
-        m.interleaved = false;
-        m.indexed = true;
-        int bpp = jhdf.getElementSize(coord.pathToImageData);
-        if (bpp==1) {
-          m.pixelType = FormatTools.UINT8;
-        }
-        else if (bpp==2) {
-          m.pixelType = FormatTools.UINT16;
-        }
-        else if (bpp==4) {
-          m.pixelType = FormatTools.INT32;
-        }
-        else {
-          throw new FormatException("Pixel type not understood. Only 8, 16 and 32 bit images supported");
-        }
-
-        if (getResolution() == 0) {
-          seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
-          seriesPlate.add(coord.plate);
-          seriesWell.add(coord.well);
-          seriesSite.add(coord.site);
-        }
         H5PathsToImageData.add(coord.pathToImageData);
-        seriesCount++;
+        
+        // Don't create new series for each timepoint
+        if (coord.plate.equals(formattedFirstTimepoint)) {
+          HashMap<String, String> setupAttributes = setupAttributeList.get(Integer.parseInt(coord.well.substring(1)));
+          
+          // Dont create new series for each channel
+          if (sizeC == 1 || (setupAttributes.containsKey("channel") && setupAttributes.get("channel").equals("0"))) {
+            CoreMetadata m = new CoreMetadata();
+            core.add(m);
+            if (hasFlattenedResolutions()) {
+              setSeries(seriesCount);
+            }
+            else {
+              setSeries(seriesCount / resolutionCount);
+              setResolution(seriesCount % resolutionCount);
+            }
+    
+            LOGGER.debug(coord.pathToImageData);
+            int[] ctzyx = jhdf.getShape(coord.pathToImageData);
+            m.sizeC = sizeC;
+            m.sizeT = numTimepoints;
+            m.sizeZ = ctzyx[0];
+            m.sizeY = ctzyx[1];
+            m.sizeX = ctzyx[2];
+            m.resolutionCount = resolutionCount;
+            m.thumbnail = false;
+            m.imageCount = getSizeC() * getSizeT() * getSizeZ();
+            m.dimensionOrder = "XYZTC";
+            m.rgb = false;
+            m.thumbSizeX = 128;
+            m.thumbSizeY = 128;
+            m.orderCertain = false;
+            m.littleEndian = true;
+            m.interleaved = false;
+            m.indexed = true;
+            int bpp = jhdf.getElementSize(coord.pathToImageData);
+            if (bpp==1) {
+              m.pixelType = FormatTools.UINT8;
+            }
+            else if (bpp==2) {
+              m.pixelType = FormatTools.UINT16;
+            }
+            else if (bpp==4) {
+              m.pixelType = FormatTools.INT32;
+            }
+            else {
+              throw new FormatException("Pixel type not understood. Only 8, 16 and 32 bit images supported");
+            }
+    
+            if (getResolution() == 0) {
+              seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
+              seriesPlate.add(coord.plate);
+              seriesWell.add(coord.well);
+              seriesSite.add(coord.site);
+            }
+            seriesCount++;
+          }
+        }
       }
     }
 
@@ -660,6 +704,10 @@ public class BDVReader extends FormatReader {
     private String currentQName;
     private boolean inPixels;
     private boolean parsingTimepoints;
+    private boolean parsingAttributes;
+    private boolean parsingViewSetups;
+    private boolean parsingId;
+    private int currentSetupIndex;
 
     public BDVXMLHandler() {
       xmlBuffer = new StringBuilder();
@@ -685,28 +733,42 @@ public class BDVReader extends FormatReader {
     @Override
     public void characters(char[] ch, int start, int length) {
       if (!inPixels || currentQName.indexOf("BinData") < 0) {
-        if (currentQName.equals("hdf5")) {
+        if (currentQName.toLowerCase().equals("hdf5")) {
           String hdf5Contents = new String(ch, start, length);
           if (checkSuffix(hdf5Contents, "h5")) {
             String parent = new Location(currentId).getAbsoluteFile().getParent();
             h5Id = parent + File.separator + hdf5Contents;
           }
         }
-        if (parsingTimepoints && currentQName.equals("first")) {
+        if (parsingTimepoints && currentQName.toLowerCase().equals("first")) {
           String timepoint = new String(ch, start, length);
           if (DataTools.parseInteger(timepoint) != null) {
             firstTimepoint = DataTools.parseInteger(timepoint);
           }
         }
-        else if (parsingTimepoints && currentQName.equals("last")) {
+        else if (parsingTimepoints && currentQName.toLowerCase().equals("last")) {
           String timepoint = new String(ch, start, length);
           if (DataTools.parseInteger(timepoint) != null) {
             lastTimepoint = DataTools.parseInteger(timepoint);
           }
         }
-        else if (parsingTimepoints && currentQName.equals("integerpattern")) {
+        else if (parsingTimepoints && currentQName.toLowerCase().equals("integerpattern")) {
           String timepointPattern = new String(ch, start, length);
           if (timepointUsePattern) parseIntegerString(timepointPattern);
+        }
+        if (parsingViewSetups && parsingId) {
+          String setupId = new String(ch, start, length);
+          if (DataTools.parseInteger(setupId) >= setupAttributeList.size()) {
+            currentSetupIndex = DataTools.parseInteger(setupId);
+            setupAttributeList.put(DataTools.parseInteger(setupId), new HashMap<String, String>());
+          }
+        }
+        if (parsingViewSetups && parsingAttributes && !currentQName.isEmpty() && !currentQName.toLowerCase().equals("attributes")) {
+          String attributeValue = new String(ch, start, length);
+          setupAttributeList.get(currentSetupIndex).put(currentQName, attributeValue);
+          if (currentQName.toLowerCase().equals("channel") && Integer.parseInt(attributeValue) > sizeC) {
+            sizeC = Integer.parseInt(attributeValue) + 1;
+          }
         }
         xmlBuffer.append(new String(ch, start, length));
       }
@@ -714,8 +776,18 @@ public class BDVReader extends FormatReader {
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-      if (qName.equals("Timepoints")) {
+      currentQName = "";
+      if (qName.toLowerCase().equals("timepoints")) {
         parsingTimepoints = false;
+      }
+      if (qName.toLowerCase().equals("attributes")) {
+        parsingAttributes = false;
+      }
+      if (qName.toLowerCase().equals("viewsetup")) {
+        parsingViewSetups = false;
+      }
+      if (qName.toLowerCase().equals("id")) {
+        parsingId = false;
       }
       xmlBuffer.append("</");
       xmlBuffer.append(qName);
@@ -725,10 +797,17 @@ public class BDVReader extends FormatReader {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
       currentQName = qName;
-      if (qName.equals("Channel")) {
-        sizeC++;
+
+      if (qName.toLowerCase().equals("viewsetup")) {
+        parsingViewSetups = true;
       }
-      if (qName.equals("Timepoints")) {
+      if (qName.toLowerCase().equals("id")) {
+        parsingId = true;
+      }
+      if (qName.toLowerCase().equals("attributes")) {
+        parsingAttributes = true;
+      }
+      if (qName.toLowerCase().equals("timepoints")) {
         parsingTimepoints = true;
         int typeIndex = attributes.getIndex("type");
         if (typeIndex != -1) {
