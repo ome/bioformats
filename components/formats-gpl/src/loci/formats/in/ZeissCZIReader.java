@@ -1222,6 +1222,7 @@ public class ZeissCZIReader extends FormatReader {
     store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
 
     int indexLength = String.valueOf(getSeriesCount()).length();
+    int positionIndex = -1;
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageInstrumentRef(MetadataTools.createLSID("Instrument", 0), i);
       if (acquiredDate != null) {
@@ -1316,6 +1317,7 @@ public class ZeissCZIReader extends FormatReader {
           startTime = t.asInstant().getMillis() / 1000d;
       }
 
+      boolean firstPlane = true;
       for (int plane=0; plane<getImageCount(); plane++) {
         Coordinate coordinate = new Coordinate(i, plane, getImageCount());
         ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
@@ -1328,11 +1330,24 @@ public class ZeissCZIReader extends FormatReader {
           startTime = p.timestamp;
         }
 
+        if (firstPlane) {
+          if (!hasFlattenedResolutions()) {
+            positionIndex = i;
+          }
+          else if (p.resolutionIndex == 0) {
+            positionIndex++;
+          }
+          firstPlane = false;
+        }
+
+        // if the XML-defined positions are used,
+        // assign the same position to each resolution in a pyramid
+
         Length x = null;
-        if (positionsX != null && i < positionsX.length &&
-          positionsX[i] != null)
+        if (positionsX != null && positionIndex < positionsX.length &&
+          positionsX[positionIndex] != null)
         {
-          x = positionsX[i];
+          x = positionsX[positionIndex];
         }
         else if (p.stageX != null) {
           x = p.stageX;
@@ -1348,10 +1363,10 @@ public class ZeissCZIReader extends FormatReader {
         }
 
         Length y = null;
-        if (positionsY != null && i < positionsY.length &&
-          positionsY[i] != null)
+        if (positionsY != null && positionIndex < positionsY.length &&
+          positionsY[positionIndex] != null)
         {
-          y = positionsY[i];
+          y = positionsY[positionIndex];
         }
         else if (p.stageY != null) {
           y = p.stageY;
@@ -1370,18 +1385,18 @@ public class ZeissCZIReader extends FormatReader {
         if (p.stageZ != null) {
           z = p.stageZ;
         }
-        else if (positionsZ != null && i < positionsZ.length) {
+        else if (positionsZ != null && positionIndex < positionsZ.length) {
           int zIndex = getZCTCoords(plane)[0];
-          if (positionsZ[i] != null) {
+          if (positionsZ[positionIndex] != null) {
             if (zStep != null) {
-              double value = positionsZ[i].value(zStep.unit()).doubleValue();
+              double value = positionsZ[positionIndex].value(zStep.unit()).doubleValue();
               if (zStep != null) {
                 value += zIndex * zStep.value().doubleValue();
               }
               z = new Length(value, zStep.unit());
             }
             else {
-              z = positionsZ[i];
+              z = positionsZ[positionIndex];
             }
           }
         }
@@ -1423,6 +1438,12 @@ public class ZeissCZIReader extends FormatReader {
               new Time(channels.get(channel).exposure, UNITS.SECOND), i, plane);
           }
         }
+      }
+
+      if (firstPlane && core.get(i).resolutionCount > 1 &&
+        hasFlattenedResolutions())
+      {
+        positionIndex++;
       }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
