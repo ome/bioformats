@@ -90,7 +90,9 @@ public class BDVReader extends FormatReader {
   private List<H5Coordinate> H5PositionList = new ArrayList<H5Coordinate>();
   private List<String> H5PathsToImageData = new ArrayList<String>();
   private List<String> cellObjectNames = new ArrayList<String>();
+  private List<Integer> channelIndexes = new ArrayList<Integer>();
   private HashMap<Integer, HashMap<String, String>> setupAttributeList = new HashMap<Integer, HashMap<String, String>>();
+  private HashMap<Integer, Integer> setupResolutionCounts = new HashMap<Integer, Integer>();
 
   private HDF5CompoundDataMap[] times = null;
   private HDF5CompoundDataMap[] classes = null;
@@ -317,10 +319,24 @@ public class BDVReader extends FormatReader {
     int width = getSizeX();
     
     int seriesIndex = series;
+    int requiredResolution = getResolution();
     if (hasFlattenedResolutions()) {
-      // Normally for flattened resolutions the getResolutionCount will be 1
-      int numResolutions = core.get(seriesToCoreIndex(getSeries())).resolutionCount;
-      seriesIndex = series/numResolutions;
+      // Number of resolutions can differ between setups
+      int totalSeriesCount = 0;
+      seriesIndex = 0;
+      for (int setup : setupResolutionCounts.keySet()) {
+        totalSeriesCount += setupResolutionCounts.get(setup);
+        
+        if (hasFlattenedResolutions()) {
+          int numResolutions = core.get(seriesToCoreIndex(getSeries())).resolutionCount;
+          requiredResolution = series % numResolutions;
+        }
+        if (totalSeriesCount > series) {
+          requiredResolution = (series - (totalSeriesCount - setupResolutionCounts.get(setup))) % setupResolutionCounts.get(setup);
+          break;
+        }
+        seriesIndex++;
+      }
     }
     int currentSetup = (int)setupAttributeList.keySet().toArray()[seriesIndex];
     if (sizeC > 1) {
@@ -332,7 +348,7 @@ public class BDVReader extends FormatReader {
           if (key.equals("channel")) {
             String value = setup.get(key);
             if (Integer.parseInt(value) == channel) {
-              if (numChannelSetupFound == series) {
+              if (numChannelSetupFound == seriesIndex) {
                 currentSetup = index;
                 break;
               }
@@ -344,11 +360,6 @@ public class BDVReader extends FormatReader {
     }
     String formattedTimepoint = String.format("t%05d",(firstTimepoint + (timepointIncrement * time)));
     String formattedSetup = String.format("s%02d", currentSetup);
-    int requiredResolution = getResolution();
-    if (hasFlattenedResolutions()) {
-      int numResolutions = core.get(seriesToCoreIndex(getSeries())).resolutionCount;
-      requiredResolution = series % numResolutions;
-    }
     H5Coordinate imagePath = new H5Coordinate(formattedTimepoint, formattedSetup, ""+requiredResolution);
     if (!H5PathsToImageData.contains(imagePath.pathToImageData)) {
       LOGGER.warn("Attempting to retrieve invalid path: " + imagePath.pathToImageData);
@@ -413,8 +424,6 @@ public class BDVReader extends FormatReader {
       numTimepoints = lastTimepoint - firstTimepoint + 1;
     }
 
-    int resolutionCount = 0;
-
     for (int timepoint = firstTimepoint; timepoint <= lastTimepoint; timepoint+=timepointIncrement) {
       String path_to_plate = String.format("t%05d", timepoint);
       LOGGER.info("Plate :" + path_to_plate );
@@ -422,8 +431,8 @@ public class BDVReader extends FormatReader {
       for (String plate : jhdf.getMember(path_to_plate)) {
         String path_to_well = path_to_plate + "/" + plate;
         LOGGER.info("Well :" + path_to_well );
-        if (jhdf.getMember(path_to_well).size() > resolutionCount) {
-          resolutionCount = jhdf.getMember(path_to_well).size();
+        if (jhdf.getMember(path_to_well).size() > 0 && timepoint == firstTimepoint) {
+          setupResolutionCounts.put(Integer.parseInt(plate.substring(1)), jhdf.getMember(path_to_well).size());
         }
         for (String well : jhdf.getMember(path_to_well)) {
           String path_to_site = path_to_well + "/" + well;
@@ -450,18 +459,20 @@ public class BDVReader extends FormatReader {
         
         // Don't create new series for each timepoint
         if (coord.plate.equals(formattedFirstTimepoint)) {
-          HashMap<String, String> setupAttributes = setupAttributeList.get(Integer.parseInt(coord.well.substring(1)));
+          int setupIndex = Integer.parseInt(coord.well.substring(1));
+          HashMap<String, String> setupAttributes = setupAttributeList.get(setupIndex);
           
-          // Dont create new series for each channel
-          if (sizeC == 1 || (setupAttributes.containsKey("channel") && setupAttributes.get("channel").equals("0"))) {
+          // Dont create a new series for each channel
+          if (sizeC == 1 || (setupAttributes.containsKey("channel") && setupAttributes.get("channel").equals(channelIndexes.get(0).toString()))) {
             CoreMetadata m = new CoreMetadata();
             core.add(m);
+            int resolutionsInThisSetup = setupResolutionCounts.get(setupIndex);
             if (hasFlattenedResolutions()) {
               setSeries(seriesCount);
             }
             else {
-              setSeries(seriesCount / resolutionCount);
-              setResolution(seriesCount % resolutionCount);
+              setSeries(seriesCount / resolutionsInThisSetup);
+              setResolution(seriesCount % resolutionsInThisSetup);
             }
     
             LOGGER.debug(coord.pathToImageData);
@@ -471,7 +482,7 @@ public class BDVReader extends FormatReader {
             m.sizeZ = ctzyx[0];
             m.sizeY = ctzyx[1];
             m.sizeX = ctzyx[2];
-            m.resolutionCount = resolutionCount;
+            m.resolutionCount = resolutionsInThisSetup;
             m.thumbnail = false;
             m.imageCount = getSizeC() * getSizeT() * getSizeZ();
             m.dimensionOrder = "XYZTC";
@@ -503,6 +514,10 @@ public class BDVReader extends FormatReader {
               seriesSite.add(coord.site);
             }
             seriesCount++;
+          }
+          else {
+            // No need to store resolution counts for additional channel setups
+            setupResolutionCounts.remove(setupIndex);
           }
         }
       }
@@ -766,8 +781,9 @@ public class BDVReader extends FormatReader {
         if (parsingViewSetups && parsingAttributes && !currentQName.isEmpty() && !currentQName.toLowerCase().equals("attributes")) {
           String attributeValue = new String(ch, start, length);
           setupAttributeList.get(currentSetupIndex).put(currentQName, attributeValue);
-          if (currentQName.toLowerCase().equals("channel") && Integer.parseInt(attributeValue) > sizeC) {
-            sizeC = Integer.parseInt(attributeValue) + 1;
+          if (currentQName.toLowerCase().equals("channel") && !channelIndexes.contains(Integer.parseInt(attributeValue))) {
+            channelIndexes.add(Integer.parseInt(attributeValue));
+            sizeC = channelIndexes.size();
           }
         }
         xmlBuffer.append(new String(ch, start, length));
