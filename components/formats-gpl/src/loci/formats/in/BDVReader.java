@@ -90,8 +90,14 @@ public class BDVReader extends FormatReader {
   private List<H5Coordinate> H5PositionList = new ArrayList<H5Coordinate>();
   private List<String> H5PathsToImageData = new ArrayList<String>();
   private List<String> cellObjectNames = new ArrayList<String>();
+
+  // Store indexes of channels, does not have to be 0 indexed or ordered
   private List<Integer> channelIndexes = new ArrayList<Integer>();
+
+  // Store all custom attributes for each setup ID
   private HashMap<Integer, HashMap<String, String>> setupAttributeList = new HashMap<Integer, HashMap<String, String>>();
+
+  // Store the number of mipmap levels for each setup
   private HashMap<Integer, Integer> setupResolutionCounts = new HashMap<Integer, Integer>();
 
   private HDF5CompoundDataMap[] times = null;
@@ -120,6 +126,7 @@ public class BDVReader extends FormatReader {
     in.setEncoding("ASCII");
     DefaultHandler handler = new BDVXMLHandler();
     try (RandomAccessInputStream s = new RandomAccessInputStream(id)) {
+      // Setup details and Id of h5 file are parsed from XML
       XMLTools.parseXML(s, handler);
     }
     catch (IOException e) {
@@ -128,6 +135,7 @@ public class BDVReader extends FormatReader {
     if (StringUtils.isEmpty(h5Id)) {
       throw new FormatException("Could not find H5 file location in XML");
     }
+    // The BDV XML will be available as an annotation
     store.setXMLAnnotationValue(bdvxml, 0);
     String xml_id = MetadataTools.createLSID("XMLAnnotation", 0); 
     store.setXMLAnnotationID(xml_id, 0);
@@ -458,9 +466,10 @@ public class BDVReader extends FormatReader {
         if (coord.timepoint.equals(formattedFirstTimepoint)) {
           int setupIndex = Integer.parseInt(coord.setup.substring(1));
           HashMap<String, String> setupAttributes = setupAttributeList.get(setupIndex);
+          String firstChannelIndex = channelIndexes.get(0).toString();
           
           // Dont create a new series for each channel
-          if (sizeC == 1 || (setupAttributes.containsKey("channel") && setupAttributes.get("channel").equals(channelIndexes.get(0).toString()))) {
+          if (sizeC == 1 || (setupAttributes.containsKey("channel") && setupAttributes.get("channel").equals(firstChannelIndex))) {
             CoreMetadata m = new CoreMetadata();
             core.add(m);
             int resolutionsInThisSetup = setupResolutionCounts.get(setupIndex);
@@ -511,6 +520,7 @@ public class BDVReader extends FormatReader {
           }
           else {
             // No need to store resolution counts for additional channel setups
+            // This makes the assumption that channel setups will all have the same resolution count
             setupResolutionCounts.remove(setupIndex);
           }
         }
