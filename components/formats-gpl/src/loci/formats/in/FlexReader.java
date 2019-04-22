@@ -251,8 +251,14 @@ public class FlexReader extends FormatReader {
       new RandomAccessInputStream(getFileHandle(file.file))) {
         IFD ifd;
         if (file.offsets == null) {
-          ifd = file.ifds.get(imageNumber);
-          factor = 1d;
+          if (imageNumber < file.ifds.size()) {
+            ifd = file.ifds.get(imageNumber);
+            factor = 1d;
+          }
+          else {
+            Arrays.fill(buf, (byte) 0);
+            return buf;
+          }
         }
         else {
           // Only the first IFD was read. Hack the IFD to adjust the offset.
@@ -1211,6 +1217,7 @@ public class FlexReader extends FormatReader {
     HashMap<String, ArrayList<String>> v = new HashMap<String, ArrayList<String>>();
     Boolean firstCompressed = null;
     int firstIFDCount = 0;
+    String firstBarcode = null;
     for (String file : fileList) {
       LOGGER.warn("parsing {}", file);
       IFD firstIFD = null;
@@ -1226,7 +1233,23 @@ public class FlexReader extends FormatReader {
         firstCompressed = compressed;
         firstIFDCount = ifdCount;
       }
-      if (compressed == firstCompressed && ifdCount == firstIFDCount) {
+      String xml = XMLTools.sanitizeXML(firstIFD.getIFDStringValue(FLEX));
+      int barcodeIndex = xml.indexOf("Barcode");
+      String barcode = "";
+      if (barcodeIndex >= 0) {
+        int start = xml.indexOf(">", barcodeIndex) + 1;
+        int end = xml.indexOf("<", barcodeIndex);
+        if (start > 0 && end > 0) {
+          barcode = xml.substring(start, end);
+        }
+      }
+      if (firstBarcode == null) {
+        firstBarcode = barcode;
+      }
+
+      if (compressed == firstCompressed && barcode.equals(firstBarcode) &&
+        ifdCount <= firstIFDCount)
+      {
         int[] well = getWell(file);
         int field = getField(file);
         if (well[0] > nRows) nRows = well[0];
