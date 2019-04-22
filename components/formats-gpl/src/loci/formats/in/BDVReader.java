@@ -425,19 +425,19 @@ public class BDVReader extends FormatReader {
     }
 
     for (int timepoint = firstTimepoint; timepoint <= lastTimepoint; timepoint+=timepointIncrement) {
-      String path_to_plate = String.format("t%05d", timepoint);
-      LOGGER.info("Plate :" + path_to_plate );
+      String path_to_timepoint = String.format("t%05d", timepoint);
+      LOGGER.info("Timepoint :" + path_to_timepoint );
 
-      for (String plate : jhdf.getMember(path_to_plate)) {
-        String path_to_well = path_to_plate + "/" + plate;
-        LOGGER.info("Well :" + path_to_well );
-        if (jhdf.getMember(path_to_well).size() > 0 && timepoint == firstTimepoint) {
-          setupResolutionCounts.put(Integer.parseInt(plate.substring(1)), jhdf.getMember(path_to_well).size());
+      for (String setup : jhdf.getMember(path_to_timepoint)) {
+        String path_to_setup = path_to_timepoint + "/" + setup;
+        LOGGER.info("Setup :" + path_to_setup );
+        if (jhdf.getMember(path_to_setup).size() > 0 && timepoint == firstTimepoint) {
+          setupResolutionCounts.put(Integer.parseInt(setup.substring(1)), jhdf.getMember(path_to_setup).size());
         }
-        for (String well : jhdf.getMember(path_to_well)) {
-          String path_to_site = path_to_well + "/" + well;
+        for (String resolution : jhdf.getMember(path_to_setup)) {
+          String path_to_site = path_to_setup + "/" + resolution;
           LOGGER.info("Site :" + path_to_site );  
-          H5PositionList.add(new H5Coordinate(String.format("t%05d", timepoint), plate, well));
+          H5PositionList.add(new H5Coordinate(String.format("t%05d", timepoint), setup, resolution));
         }
       }
     }
@@ -447,9 +447,6 @@ public class BDVReader extends FormatReader {
     }
 
     List<String> seriesNames = new ArrayList<String>();
-    List<String> seriesPlate = new ArrayList<String>();
-    List<String> seriesWell = new ArrayList<String>();
-    List<String> seriesSite = new ArrayList<String>();
 
     String formattedFirstTimepoint = String.format("t%05d", firstTimepoint);
     if (sizeC == 0) sizeC = 1;
@@ -458,8 +455,8 @@ public class BDVReader extends FormatReader {
         H5PathsToImageData.add(coord.pathToImageData);
         
         // Don't create new series for each timepoint
-        if (coord.plate.equals(formattedFirstTimepoint)) {
-          int setupIndex = Integer.parseInt(coord.well.substring(1));
+        if (coord.timepoint.equals(formattedFirstTimepoint)) {
+          int setupIndex = Integer.parseInt(coord.setup.substring(1));
           HashMap<String, String> setupAttributes = setupAttributeList.get(setupIndex);
           
           // Dont create a new series for each channel
@@ -508,10 +505,7 @@ public class BDVReader extends FormatReader {
             }
     
             if (getResolution() == 0) {
-              seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
-              seriesPlate.add(coord.plate);
-              seriesWell.add(coord.well);
-              seriesSite.add(coord.site);
+              seriesNames.add(String.format("P_%s, W_%s_%s", coord.timepoint, coord.setup, coord.mipmapLevel));
             }
             seriesCount++;
           }
@@ -530,43 +524,7 @@ public class BDVReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int s=0; s<seriesNames.size(); s++) {
-      String image_id = MetadataTools.createLSID("Image", s);  
       store.setImageName(seriesNames.get(s), s);
-
-      String plate_id =  MetadataTools.createLSID("Plate", 0);
-
-      store.setPlateID(plate_id, 0);
-      store.setPlateName(seriesPlate.get(s), 0);
-
-      String well_id =  MetadataTools.createLSID("Well", 0);
-      store.setWellID(well_id, 0, 0);
-
-      String cellh5WellCoord = seriesWell.get(s); 
-      String wellRowLetter = cellh5WellCoord.substring(0, 1);
-      String wellColNumber = cellh5WellCoord.substring(1);
-
-      int wellRowLetterIndex = "ABCDEFGHIJKLMNOP".indexOf(wellRowLetter);
-      int wellColNumberIndex = -1;
-      try {
-        wellColNumberIndex = Integer.parseInt(wellColNumber);
-      } catch (NumberFormatException e){
-        LOGGER.error("Number format exception caught while parsing well column number");
-      }
-
-      if (wellRowLetterIndex > -1 && wellColNumberIndex > 0) {
-        store.setWellRow(new NonNegativeInteger(wellRowLetterIndex), 0, 0);
-        store.setWellColumn(new NonNegativeInteger(wellColNumberIndex - 1), 0, 0);
-      } else {
-        store.setWellRow(new NonNegativeInteger(0), 0, 0);
-        store.setWellColumn(new NonNegativeInteger(0), 0, 0);
-      }
-
-      store.setWellExternalIdentifier(cellh5WellCoord, 0, 0);
-
-      String site_id = MetadataTools.createLSID("WellSample", 0);
-      store.setWellSampleID(site_id, 0, 0, 0);
-      store.setWellSampleIndex(NonNegativeInteger.valueOf(seriesSite.get(s)), 0, 0, 0);
-      store.setWellSampleImageRef(image_id, 0, 0, 0);   
     }
     setSeries(0);
   }
@@ -693,24 +651,24 @@ public class BDVReader extends FormatReader {
   }
 
   private class H5Coordinate {
-    public String plate;
-    public String well;
-    public String site;
+    public String timepoint;
+    public String setup;
+    public String mipmapLevel;
 
     protected String pathToImageData;
     protected String pathToPosition;
 
-    H5Coordinate(String plate, String well, String site) {
-        this.plate = plate;
-        this.well = well;
-        this.site = site;
-        pathToPosition = this.plate + "/" + this.well + "/" + this.site + "/cells/";
+    H5Coordinate(String timepoint, String setup, String mipmapLevel) {
+        this.timepoint = timepoint;
+        this.setup = setup;
+        this.mipmapLevel = mipmapLevel;
+        pathToPosition = this.timepoint + "/" + this.setup + "/" + this.mipmapLevel + "/cells/";
         this.pathToImageData = pathToPosition ;
         LOGGER.trace(pathToImageData);
     }
 
     public String toString() {
-        return String.format("%s %s_%s", plate, well, site);
+        return String.format("%s %s_%s", timepoint, setup, mipmapLevel);
     }
   }
 
