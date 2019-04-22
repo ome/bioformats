@@ -170,9 +170,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>ch.systems.cisd</groupId>
+      <groupId>cisd</groupId>
       <artifactId>jhdf5</artifactId>
-      <version>14.12.0</version>
+      <version>14.12.6</version>
     </dependency>
     <dependency>
     	<groupId>org.json</groupId>
@@ -395,6 +395,11 @@
       <id>ome</id>
       <name>OME Artifactory</name>
       <url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
+    </repository>
+    <repository>
+      <id>imagej.public</id>
+      <name>ImageJ Maven repositrory</name>
+      <url>https://maven.imagej.net/content/groups/public</url>
     </repository>
   </repositories>
 </project>
