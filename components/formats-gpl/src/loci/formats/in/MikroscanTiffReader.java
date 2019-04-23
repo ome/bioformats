@@ -48,7 +48,7 @@ public class MikroscanTiffReader extends SVSReader {
   @Override
   public boolean isThisType(String name, boolean open) {
     boolean isThisType = super.isThisType(name, open);
-    if (!isThisType && open) {
+    if (isThisType && open) {
       try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
         TiffParser tiffParser = new TiffParser(stream);
         tiffParser.setDoCaching(false);
