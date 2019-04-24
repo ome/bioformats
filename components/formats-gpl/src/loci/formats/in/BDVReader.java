@@ -466,7 +466,7 @@ public class BDVReader extends FormatReader {
         if (coord.timepoint.equals(formattedFirstTimepoint)) {
           int setupIndex = Integer.parseInt(coord.setup.substring(1));
           HashMap<String, String> setupAttributes = setupAttributeList.get(setupIndex);
-          String firstChannelIndex = channelIndexes.get(0).toString();
+          String firstChannelIndex = channelIndexes.size() > 0 ? channelIndexes.get(0).toString() : "";
           
           // Dont create a new series for each channel
           if (sizeC == 1 || (setupAttributes.containsKey("channel") && setupAttributes.get("channel").equals(firstChannelIndex))) {
