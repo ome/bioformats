@@ -458,6 +458,7 @@ public class BDVReader extends FormatReader {
 
     String formattedFirstTimepoint = String.format("t%05d", firstTimepoint);
     if (sizeC == 0) sizeC = 1;
+    int sumOfResolutions = 0;
     for (H5Coordinate coord : H5PositionList) {
       if (jhdf.exists(coord.pathToImageData)) {
         H5PathsToImageData.add(coord.pathToImageData);
@@ -477,8 +478,11 @@ public class BDVReader extends FormatReader {
               setSeries(seriesCount);
             }
             else {
-              setSeries(seriesCount / resolutionsInThisSetup);
-              setResolution(seriesCount % resolutionsInThisSetup);
+              setSeries(coreIndexToSeries(seriesCount));
+              setResolution(seriesCount - sumOfResolutions);
+              if (seriesCount == sumOfResolutions + resolutionsInThisSetup - 1) {
+                sumOfResolutions += resolutionsInThisSetup;
+              }
             }
     
             LOGGER.debug(coord.pathToImageData);
