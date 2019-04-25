@@ -1215,7 +1215,7 @@ public class TiffParser {
 
     RandomAccessInputStream bb = null;
     try {
-      if (!noDiv8) {
+      if (noDiv8) {
         bb = new RandomAccessInputStream(new ByteArrayHandle(bytes));
       }
       // unpack pixels
