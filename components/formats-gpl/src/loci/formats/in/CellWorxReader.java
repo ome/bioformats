@@ -157,6 +157,29 @@ public class CellWorxReader extends FormatReader {
     return files.toArray(new String[files.size()]);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  @Override
+  public String[] getUsedFiles(boolean noPixels) {
+    String[] files = super.getUsedFiles(noPixels);
+
+    List<String> allFiles = new ArrayList<String>();
+    for (String f : files) {
+      allFiles.add(f);
+    }
+    if (directoryList != null) {
+      Location root = new Location(currentId).getParentFile();
+      for (String f : directoryList) {
+        if (f.toLowerCase().indexOf("_thumb") > 0) {
+          String path = new Location(root, f).getAbsolutePath();
+          if (!allFiles.contains(path)) {
+            allFiles.add(path);
+          }
+        }
+      }
+    }
+    return allFiles.toArray(new String[allFiles.size()]);
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -252,6 +275,11 @@ public class CellWorxReader extends FormatReader {
     }
 
     super.initFile(id);
+    if (directoryList == null) {
+      Location rootDir = new Location(id).getAbsoluteFile().getParentFile();
+      directoryList = rootDir.list(true);
+      Arrays.sort(directoryList);
+    }
 
     try {
       ServiceFactory factory = new ServiceFactory();
@@ -784,7 +812,8 @@ public class CellWorxReader extends FormatReader {
       for (String f : directoryList) {
         if (checkSuffix(f, new String [] {"tif", "tiff", "pnl"})) {
           String path = new Location(parent, f).getAbsolutePath();
-          if (path.startsWith(base) && path.indexOf("_thumb_") < 0) {
+          if (path.startsWith(base) && path.toLowerCase().indexOf("_thumb") < 0)
+          {
             files[nextFile++] = path;
           }
         }

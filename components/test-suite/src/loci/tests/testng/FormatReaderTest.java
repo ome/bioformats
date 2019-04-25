@@ -1928,6 +1928,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // CellWorx datasets can only be reliably detected with the .HTD file
+          if (reader.getFormat().equals("CellWorx")) {
+            continue;
+          }
+
           // NRRD datasets are allowed to have differing used files.
           // One raw file can have multiple header files associated with
           // it, in which case selecting the raw file will always produce
