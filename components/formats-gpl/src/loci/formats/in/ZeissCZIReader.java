@@ -1319,7 +1319,7 @@ public class ZeissCZIReader extends FormatReader {
 
       boolean firstPlane = true;
       for (int plane=0; plane<getImageCount(); plane++) {
-        Coordinate coordinate = new Coordinate(i, plane, getImageCount());
+        Coordinate coordinate = new Coordinate(seriesToCoreIndex(i), plane, getImageCount());
         ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
         if (index == null) {
           continue;
@@ -1340,11 +1340,51 @@ public class ZeissCZIReader extends FormatReader {
           firstPlane = false;
         }
 
+        Double minStageX = null;
+        Double maxStageX = null;
+        Double minStageY = null;
+        Double maxStageY = null;
+        for (Integer q : index) {
+          SubBlock currentPlane = planes.get(q);
+          if (currentPlane == null) continue;
+          if (currentPlane.stageX != null) {
+            if (minStageX == null ||
+              currentPlane.stageX.value().doubleValue() < minStageX)
+            {
+              minStageX = currentPlane.stageX.value().doubleValue();
+            }
+            if (maxStageX == null ||
+              currentPlane.stageX.value().doubleValue() > maxStageX)
+            {
+              maxStageX = currentPlane.stageX.value().doubleValue();
+            }
+          }
+          if (currentPlane.stageY != null) {
+            if (minStageY == null ||
+              currentPlane.stageY.value().doubleValue() < minStageY)
+            {
+              minStageY = currentPlane.stageY.value().doubleValue();
+            }
+            if (maxStageY == null ||
+              currentPlane.stageY.value().doubleValue() > maxStageY)
+            {
+              maxStageY = currentPlane.stageY.value().doubleValue();
+            }
+          }
+        }
+
         // if the XML-defined positions are used,
         // assign the same position to each resolution in a pyramid
 
         Length x = null;
-        if (positionsX != null && positionIndex < positionsX.length &&
+        if (minStageX != null && maxStageX != null) {
+          double diff = (maxStageX - minStageX) / 2;
+          x = new Length(minStageX + diff, UNITS.MICROMETER);
+          if (positionsX != null) {
+            positionsX[positionIndex] = x;
+          }
+        }
+        else if (positionsX != null && positionIndex < positionsX.length &&
           positionsX[positionIndex] != null)
         {
           x = positionsX[positionIndex];
@@ -1363,7 +1403,14 @@ public class ZeissCZIReader extends FormatReader {
         }
 
         Length y = null;
-        if (positionsY != null && positionIndex < positionsY.length &&
+        if (minStageY != null && maxStageY != null) {
+          double diff = (maxStageY - minStageY) / 2;
+          y = new Length(minStageY + diff, UNITS.MICROMETER);
+          if (positionsY != null) {
+            positionsY[positionIndex] = y;
+          }
+        }
+        else if (positionsY != null && positionIndex < positionsY.length &&
           positionsY[positionIndex] != null)
         {
           y = positionsY[positionIndex];
