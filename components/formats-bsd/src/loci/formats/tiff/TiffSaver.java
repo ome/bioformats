@@ -476,7 +476,12 @@ public class TiffSaver {
           ifd = parser.getIFD(ifdOffsets[no]);
         }
         else if (no > 0 && no - 1 < ifdOffsets.length) {
-          ifd = parser.getIFD(ifdOffsets[no - 1]);
+          IFD copy = parser.getIFD(ifdOffsets[no - 1]);
+          for (Integer tag : copy.keySet()) {
+            if (!ifd.containsKey(tag)) {
+              ifd.put(tag, copy.get(tag));
+            }
+          }
           long next = parser.getNextOffset(ifdOffsets[no - 1]);
           out.seek(next);
         }
