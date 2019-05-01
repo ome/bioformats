@@ -355,7 +355,7 @@ public class BDVReader extends FormatReader {
         for (String key: setup.keySet()) {
           if (key.equals("channel")) {
             String value = setup.get(key);
-            if (Integer.parseInt(value) == channel) {
+            if (Integer.parseInt(value) == channelIndexes.get(channel)) {
               if (numChannelSetupFound == seriesIndex) {
                 currentSetup = index;
                 break;
