@@ -2799,6 +2799,10 @@ public class DeltavisionReader extends FormatReader {
         immersion = MetadataTools.getImmersion("Oil");
         manufacturer = "Nikon";
         break;
+      default:
+        LOGGER.warn(
+          "Unrecognized lens ID {}; objective information may be incorrect",
+          lensID);
     }
 
     String objectiveID = "Objective:" + lensID;
