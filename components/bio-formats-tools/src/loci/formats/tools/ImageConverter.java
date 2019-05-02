@@ -128,7 +128,7 @@ public final class ImageConverter {
 
   // -- Constructor --
 
-  private ImageConverter() { }
+  public ImageConverter() { }
 
   /**
    * Parse the given argument list to determine how to perform file conversion.
