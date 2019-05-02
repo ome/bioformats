@@ -716,9 +716,15 @@ public class FakeReader extends FormatReader {
       else if (key.equals("polygons")) polygons = intValue;
       else if (key.equals("polylines")) polylines = intValue;
       else if (key.equals("rectangles")) rectangles = intValue;
-      else if (key.equals("physicalSizeX")) physicalSizeX = parseLength(value, getPhysicalSizeXUnitXsdDefault());
-      else if (key.equals("physicalSizeY")) physicalSizeY = parseLength(value, getPhysicalSizeYUnitXsdDefault());
-      else if (key.equals("physicalSizeZ")) physicalSizeZ = parseLength(value, getPhysicalSizeZUnitXsdDefault());
+      else if (key.equals("physicalSizeX")) {
+        physicalSizeX = parsePhysicalSize(value, getPhysicalSizeXUnitXsdDefault());
+      }
+      else if (key.equals("physicalSizeY")) {
+        physicalSizeY = parsePhysicalSize(value, getPhysicalSizeYUnitXsdDefault());
+      }
+      else if (key.equals("physicalSizeZ")) {
+        physicalSizeZ = parsePhysicalSize(value, getPhysicalSizeZUnitXsdDefault());
+      }
       else if (key.equals("color")) {
         defaultColor = parseColor(value);
       }
@@ -1373,31 +1379,6 @@ public class FakeReader extends FormatReader {
     return 0;
   }
 
-  private Length parseLength(String value, String defaultUnit) {
-      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(value);
-      if (!m.matches()) {
-        throw new RuntimeException(String.format(
-                "%s does not match a physical size!", value));
-      }
-      String number = m.group(1);
-      String unit = m.group(2);
-      if (unit == null || unit.trim().length() == 0) {
-        unit = defaultUnit;
-      }
-
-      double d = Double.valueOf(number);
-      Unit<Length> l = null;
-      try {
-        l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
-      } catch (EnumerationException e) {
-        LOGGER.warn("{} does not match a length unit!", unit);
-      }
-      if (l != null && d > Constants.EPSILON) {
-        return new Length(d, l);
-      }
-      return null;
-  }
-
   private Length parsePosition(String axis, int s, int index, IniTable table) {
     String position = table.get("Position" + axis + "_" + index);
     String positionUnit = table.get("Position" + axis + "Unit_" + index);
@@ -1423,6 +1404,18 @@ public class FakeReader extends FormatReader {
     }
 
     return null;
+  }
+
+  private Length parsePhysicalSize(String s, String defaultUnit) {
+    Length physicalSize = FormatTools.parseLength(s, defaultUnit);
+    if (physicalSize == null) {
+      throw new RuntimeException("Invalid physical size: " + s);
+    }
+    if (!FormatTools.isPositiveValue(physicalSize.value().doubleValue())) {
+      LOGGER.warn("Invalid physical size value: {}", physicalSize.value());
+      return null;
+    }
+    return physicalSize;
   }
 
 }

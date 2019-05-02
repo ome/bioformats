@@ -177,6 +177,46 @@ public class FormatToolsTest {
     };
   }
 
+  @DataProvider(name = "lengthStringsWithDefault")
+  public Object[][] createLengthStringsWithDefault() {
+    return new Object[][] {
+      {"invalidvalue", "", "m", null},
+      {"1.0", "", "", null},
+      {"1.0", "", "s", null},
+      {"1.0", "s", "m", null},
+      {"1e400", "m", "", null},
+      {"-1e400", "m", "", null},
+      {"e10", "m", "", null},
+      {"1.0", "invalidunit", "m", null},
+      {"-0.1", "m", "", new Length(-0.1, UNITS.METER)},
+      {"0.0", "m", "", new Length(0.0, UNITS.METER)},
+      {"1.0", "m", "", new Length(1.0, UNITS.METER)},
+      {"1.0", "m", "m", new Length(1.0, UNITS.METER)},
+      {"1.0", "m", "mm", new Length(1.0, UNITS.METER)},
+      {"1.0", "mm", "mm", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0", "", "m", new Length(1.0, UNITS.METER)},
+      {"1.0", "", "mm", new Length(1.0, UNITS.MILLIMETER)},
+    };
+  }
+
+  @DataProvider(name = "lengthStrings")
+  public Object[][] createLengthStrings() {
+    return new Object[][] {
+      {"1.0", "", null},
+      {"invalidvalue", "", null},
+      {"1.0", "invalidunit", null},
+      {"1.0", "s", null},
+      {"1e400", "m", null},
+      {"-1e400", "m", null},
+      {"e10", "m", null},
+      {"-1e-3", "mm", new Length(-0.001, UNITS.MILLIMETER)},
+      {"-0.1", "m", new Length(-0.1, UNITS.METER)},
+      {"0.0", "m", new Length(0.0, UNITS.METER)},
+      {"1.0", "m", new Length(1.0, UNITS.METER)},
+      {"1.0", "mm", new Length(1.0, UNITS.MILLIMETER)},
+    };
+  }
+
   @Test(dataProvider = "stagePositionStringUnit")
   public void testGetStagePositionStringUnit(Double value, String unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
@@ -186,5 +226,21 @@ public class FormatToolsTest {
   @Test(dataProvider = "stagePositionUnit")
   public void testGetStagePositionUnit(Double value, Unit<Length> unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
+  }
+
+  @Test(dataProvider = "lengthStringsWithDefault")
+  public void testParseLengthWithDefault(String value, String unit, String defaultUnit, Length length) {
+    assertEquals(length, FormatTools.parseLength(value + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(value + " " + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(" " + value + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(value + unit + " ", defaultUnit));
+  }
+
+  @Test(dataProvider = "lengthStrings")
+  public void testParseLength(String value, String unit, Length length) {
+    assertEquals(length, FormatTools.parseLength(value + unit));
+    assertEquals(length, FormatTools.parseLength(value + " " + unit));
+    assertEquals(length, FormatTools.parseLength(" " + value + unit));
+    assertEquals(length, FormatTools.parseLength(value + unit + " "));
   }
 }
