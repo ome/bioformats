@@ -2663,6 +2663,9 @@ public class DeltavisionReader extends FormatReader {
         workingDistance = 15.00;
         immersion = MetadataTools.getImmersion("Air");
         break;
+      case 18108:
+        magnification = 20.0;
+        break;
       case 18201: // API 20X, HiRes A, CW
         lensNA = 0.55;
         magnification = 20.;
