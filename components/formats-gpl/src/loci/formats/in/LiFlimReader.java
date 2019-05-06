@@ -58,6 +58,7 @@ import ome.units.quantity.Time;
 import ome.units.unit.Unit;
 import ome.units.UNITS;
 
+
 /**
  * LiFlimReader is the file format reader for LI-FLIM files.
  */
@@ -83,6 +84,9 @@ public class LiFlimReader extends FormatReader {
   public static final String P_KEY = "phases";
   public static final String F_KEY = "frequencies";
   public static final String T_KEY = "timestamps";
+  
+  // New Metadatakey for cameras that have a dark image.
+  public static final String DarkImage_KEY = "hasDarkImage";
 
   // relevant keys in timestamp table
   public static final String TIMESTAMP_KEY = "FLIMIMAGE: TIMESTAMPS - t";
@@ -103,7 +107,8 @@ public class LiFlimReader extends FormatReader {
   public static final String DATATYPE_INT32 = "INT32";
   public static final String DATATYPE_REAL32 = "REAL32";
   public static final String DATATYPE_REAL64 = "REAL64";
-
+  public static final String DATATYPE_UINT12 = "UINT12";
+  
   // -- Fields --
 
   /** Offset to start of pixel data. */
@@ -122,6 +127,8 @@ public class LiFlimReader extends FormatReader {
   private String phases;
   private String frequencies;
   private String timestamps;
+  // Checks if data has a DarkImage, this will append the RAW data with Dimensions X and Y
+  private String DarkImage; 
 
   private String backgroundDatatype;
   private String backgroundX;
@@ -140,7 +147,7 @@ public class LiFlimReader extends FormatReader {
 
   /** True if gzip compression was used to deflate the pixels. */
   private boolean gzip;
-
+  
   /** Stream to use for reading gzip-compressed pixel data. */
   private DataInputStream gz;
 
@@ -149,6 +156,14 @@ public class LiFlimReader extends FormatReader {
 
   /** Series number indicating position in gzip stream. */
   private int gzSeries;
+  
+  /** if DataType is UINT12, data is compressed in 12 bits.
+  *   Similar to Gzipstream make use of a DataInputStream 
+  *   to unpack the compressed UINT12 pixel data into 16 bits. */
+  private boolean TypeUINT12;
+  private DataInputStream UINT12stream;
+  private int UINT12streamPos;
+  private int UINT12streamSeries;
 
   // -- Constructor --
 
@@ -183,12 +198,35 @@ public class LiFlimReader extends FormatReader {
         LOGGER.debug("Could not read full plane", e);
       }
 
-      try (RandomAccessInputStream s = new RandomAccessInputStream(bytes)) {
-        readPlane(s, x, y, w, h, buf);
-      }
+      RandomAccessInputStream s = new RandomAccessInputStream(bytes);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
     }
+    
+    // Added for unpacking the UINT12 datatype to UINT16 data
+    else if (TypeUINT12) {
+    	prepareUINT12Stream(no);
+    	
+    	bytesPerPlane = (bytesPerPlane * 3) / 4; //(it assumes pixel size to be 16bitt but the RAW data is packed in 12bitt ) 
+    	
+        // read compressed data
+        byte[] bytes = new byte[bytesPerPlane];
+        try {
+          UINT12stream.readFully(bytes);
+        }
+        catch (EOFException e) {
+          LOGGER.debug("Could not read full 12-bitt plane", e);
+        }
+
+        //Covert 12bit data to 16bit data, maintaining 12bit depth.
+        byte[] returnArray = new byte[0];
+        returnArray = convert12to16(bytes); 
+        RandomAccessInputStream s = new RandomAccessInputStream(returnArray);
+        readPlane(s, x, y, w, h, buf);
+        s.close();
+      }
     else {
-      in.seek(dataOffset + (long) bytesPerPlane * (long) no);
+      in.seek(dataOffset + (long) bytesPerPlane * (long) no); //cast to long to fix for filesizes > 2 GB
 
       int thisSeries = getSeries();
       for (int i=0; i<thisSeries; i++) {
@@ -279,7 +317,8 @@ public class LiFlimReader extends FormatReader {
     phases = layoutTable.get(P_KEY);
     frequencies = layoutTable.get(F_KEY);
     timestamps = layoutTable.get(T_KEY);
-
+    DarkImage = layoutTable.get(DarkImage_KEY);
+    
     IniTable backgroundTable = ini.getTable(BACKGROUND_TABLE);
     if (backgroundTable != null) {
       backgroundDatatype = backgroundTable.get(DATATYPE_KEY);
@@ -384,7 +423,11 @@ public class LiFlimReader extends FormatReader {
     ms.littleEndian = true;
     ms.interleaved = true;
     ms.falseColor = false;
-
+    // if datatype is uint12, set bitsperpixel to 12.
+    if (TypeUINT12) {
+    	ms.bitsPerPixel = 12;
+    }
+    
     ms.moduloZ.type = FormatTools.FREQUENCY;
     ms.moduloZ.step = ms.sizeZ / sizeF;
     ms.moduloZ.start = 0;
@@ -409,7 +452,7 @@ public class LiFlimReader extends FormatReader {
       ms.littleEndian = true;
       ms.interleaved = true;
       ms.falseColor = false;
-
+      
       ms.moduloZ.type = FormatTools.FREQUENCY;
       ms.moduloZ.step = ms.sizeZ / f;
       ms.moduloZ.start = 0;
@@ -420,13 +463,37 @@ public class LiFlimReader extends FormatReader {
       ms.moduloT.end = ms.sizeT - 1;
       core.add(ms);
     }
+    
+    // Check for DarkImage, if "1" add CoreMetadata 
+    if (DarkImage != null && DarkImage.equals(new String("1"))) {
+    	// There is only 1 dark image.
+    	ms = new CoreMetadata();
+	    ms.sizeX = Integer.parseInt(xLen);
+	    ms.sizeY = Integer.parseInt(yLen);
+	    ms.sizeZ = 1;
+	    ms.sizeC = 1;
+	    ms.sizeT = 1;
+	    ms.imageCount = 1;
+	    ms.rgb = getSizeC() > 1;
+	    ms.indexed = false;
+	    ms.dimensionOrder = "XYCZT";
+	    ms.pixelType = getPixelTypeFromString(datatype);
+	    ms.littleEndian = true;
+	    ms.interleaved = true;
+	    ms.falseColor = false;
+	    // if datatype is uint12, set bits per pixel to 12.
+	    if (TypeUINT12) {
+	    	ms.bitsPerPixel = 12;
+	    }
+	   	core.add(ms);
+   	 }
   }
 
   private void initOMEMetadata() {
     int times = timestamps == null ? 0 : Integer.parseInt(timestamps);
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, times > 0);
+    MetadataTools.populatePixels(store, this, times > 0); /// error?
 
     String path = new Location(getCurrentFile()).getName();
 
@@ -503,6 +570,12 @@ public class LiFlimReader extends FormatReader {
     else if (DATATYPE_INT32.equals(type)) return FormatTools.INT32;
     else if (DATATYPE_REAL32.equals(type)) return FormatTools.FLOAT;
     else if (DATATYPE_REAL64.equals(type)) return FormatTools.DOUBLE;
+    /* Check for UINT12, set DataType to UINT16 because core does not support UINT12 */
+    else if (DATATYPE_UINT12.equals(type)) 
+    	{ 
+    	TypeUINT12 = true;
+    	return FormatTools.UINT16;
+    	}
     throw new FormatException("Unknown data type: " + type);
   }
 
@@ -542,6 +615,77 @@ public class LiFlimReader extends FormatReader {
     skip(gz, bytesPerPlane * (no - gzPos));
     gzPos = no + 1;
   }
+  
+  /** Similar to Gzip, make a DataInputstream for UINT12 data  */
+  private void prepareUINT12Stream(int no) throws IOException {
+	    int bytesPerPlane = FormatTools.getPlaneSize(this); 
+	    bytesPerPlane = (bytesPerPlane *3)/4; //it assumes 16bitt, but real data is packed in 12 bit
+
+	    if (UINT12stream == null || (no < UINT12streamPos && getSeries() == UINT12streamSeries) ||
+	    		UINT12streamSeries > getSeries())
+	    {
+	      // reinitialize UINT12stream stream
+	      if (UINT12stream != null) UINT12stream.close();
+
+	      // seek to start of pixel data
+	      String path = Location.getMappedId(currentId);
+	      FileInputStream fis = new FileInputStream(path);
+	      skip(fis, dataOffset);
+
+	      // create UINT12stream stream
+	      UINT12stream = new DataInputStream(fis);
+	      UINT12streamPos = 0;
+	      UINT12streamSeries = 0;
+	    }
+
+	    // seek to correct image number
+	    if (getSeries() >= 1 && UINT12streamSeries < getSeries()) {
+	      int originalSeries = getSeries();
+	      
+	      for (int i=UINT12streamSeries; i<originalSeries; i++) {
+	        setSeries(i);
+	        long nPlanes = getImageCount() - UINT12streamPos;
+	        long nBytes = (((long)(FormatTools.getPlaneSize(this)) * nPlanes)*3)/4;
+	        skip(UINT12stream, nBytes);
+	        UINT12streamPos = 0;
+	      }
+	      setSeries(originalSeries);
+	      UINT12streamSeries = getSeries();
+	    }
+	    // For UINT12 and HasDarkImage, the background image is the last time frame.
+	    // For UINT12 data we assume only 2 series, first is the data, 2nd is the background image
+	    else if (UINT12streamSeries == 1 && DarkImage != null && DarkImage.equals(new String("1"))) { 
+	    	long nBytes = (((long)(FormatTools.getPlaneSize(this)) * (getSizeT()))*3)/4;
+	        skip(UINT12stream, nBytes);
+	        UINT12streamPos = 0;
+	    }
+	    else 
+	    	{
+	    	skip(UINT12stream, ((long)bytesPerPlane * (long)(no - UINT12streamPos)));
+	    	UINT12streamPos = no + 1;
+	    	}
+	    
+	  }
+	  
+  // Added a Function to unpack 12bit data to 16bit data maintaining 12bits depth.
+  private static byte[] convert12to16(byte[] image) {
+	   	byte[] image16 = new byte[image.length * 4 / 3];
+
+		
+		if (image16.length / 4 != image.length / 3)
+	  		return new byte[0];
+
+		for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) 
+		{
+	  		image16[idx16] = (byte)(image[idx] & 0xff);
+	  		image16[idx16 + 1] = (byte)((image[idx + 1] & 0x0f));
+	  		image16[idx16 + 2] = (byte)(((image[idx + 1] & 0xf0) >> 4) + ((image[idx + 2] & 0x0f) << 4));
+	  		image16[idx16 + 3] = (byte)((image[idx + 2] & 0xf0) >> 4);
+		}
+		
+		return image16;
+		}
+  
 
   private void skip(InputStream is, long num) throws IOException {
     long skipLeft = num;
