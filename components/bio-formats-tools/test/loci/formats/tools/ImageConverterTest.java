@@ -137,6 +137,15 @@ public class ImageConverterTest {
     }
   }
 
+  public void testConstructor() throws FormatException, IOException {
+    outFile = tempDir.resolve("test.ome.tiff").toFile();
+    outFile.deleteOnExit();
+    ImageConverter converter = new ImageConverter();
+    boolean status = converter.testConvert(new ImageWriter(), new String[] {"test.fake", outFile.getAbsolutePath()});
+    assertEquals(status, 0);
+    checkImage();
+  }
+
   @Test(dataProvider = "suffixes")
   public void testDefault(String suffix) throws FormatException, IOException {
     outFile = tempDir.resolve("test" + suffix).toFile();
