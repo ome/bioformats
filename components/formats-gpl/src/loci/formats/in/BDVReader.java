@@ -110,7 +110,7 @@ public class BDVReader extends FormatReader {
    * Constructs a new BDV reader.
    */
   public BDVReader() {
-    super("BDV", "xml");
+    super("BDV", new String[] {"xml", "h5"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
@@ -121,6 +121,19 @@ public class BDVReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    if (checkSuffix(id, "h5")) {
+      Location location = new Location(id);
+      Location parent = location.getParentFile();
+      String baseName = location.getName();
+      baseName = baseName.substring(0, baseName.indexOf("."));
+      Location xmlLocation = new Location(parent, baseName + ".xml");
+      if (xmlLocation.exists()) {
+        id = xmlLocation.getAbsolutePath();
+      }
+      else {
+        throw new FormatException("Unable to locate associated BDV XML: " + xmlLocation);
+      }
+    }
     store = makeFilterMetadata();
     in = new RandomAccessInputStream(id);
     in.setEncoding("ASCII");
@@ -155,6 +168,26 @@ public class BDVReader extends FormatReader {
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return new String[] {currentId, h5Id};
+  }
+  
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
+  public boolean isThisType(String name, boolean open) {
+    Location location = new Location(name);
+    if (!location.exists()) {
+        return false;
+    }
+    if (checkSuffix(name, "h5") && open) {
+      location = location.getAbsoluteFile();
+      Location parent = location.getParentFile();
+
+      String baseName = location.getName();
+      Location xmlLocation = new Location(parent, baseName.substring(0, baseName.indexOf(".")) + ".xml");
+      if (xmlLocation.exists()) {
+        return super.isThisType(xmlLocation.getAbsolutePath(), open);
+      }
+    }
+    return super.isThisType(name, open);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
