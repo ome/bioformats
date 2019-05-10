@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -185,7 +186,7 @@ public class ImageReader implements IFormatReader {
       boolean success = false;
       if (!invalid) {
         for (int i=0; i<readers.length; i++) {
-          if (readers[i].isThisType(id, allowOpen)) {
+          if (isThisType(readers[i], id, allowOpen)) {
             current = i;
             currentId = id;
             success = true;
@@ -251,7 +252,7 @@ public class ImageReader implements IFormatReader {
   @Override
   public boolean isThisType(String name, boolean open) {
     for (int i=0; i<readers.length; i++) {
-      if (readers[i].isThisType(name, open)) return true;
+      if (isThisType(readers[i], name, open)) return true;
     }
     return false;
   }
@@ -260,7 +261,7 @@ public class ImageReader implements IFormatReader {
   @Override
   public boolean isThisType(byte[] block) {
     for (int i=0; i<readers.length; i++) {
-      if (readers[i].isThisType(block)) return true;
+      if (isThisType(readers[i], block)) return true;
     }
     return false;
   }
@@ -269,7 +270,7 @@ public class ImageReader implements IFormatReader {
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     for (int i=0; i<readers.length; i++) {
-      if (readers[i].isThisType(stream)) return true;
+      if (isThisType(readers[i], stream)) return true;
     }
     return false;
   }
@@ -851,5 +852,44 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#close() */
   @Override
   public void close() throws IOException { close(false); }
+
+  private boolean isThisType(IFormatReader reader, String name, boolean allowOpen) {
+    try {
+      return reader.isThisType(name, allowOpen);
+    } catch (Exception e) {
+      logIsThisTypeError(reader, e);
+      return false;
+    }
+  }
+
+  private boolean isThisType(IFormatReader reader, byte[] block) {
+    try {
+      return reader.isThisType(block);
+    } catch (Exception e) {
+      logIsThisTypeError(reader, e);
+      return false;
+    }
+  }
+
+  private boolean isThisType(IFormatReader reader, RandomAccessInputStream rais) {
+    try {
+      return reader.isThisType(rais);
+    } catch (Exception e) {
+      logIsThisTypeError(reader, e);
+      return false;
+    }
+  }
+
+  private static AtomicBoolean raisedException = new AtomicBoolean(false);
+
+  private void logIsThisTypeError(IFormatReader reader, Exception e) {
+    LOGGER.debug("{} raised on isThisType", reader, e);
+    if (raisedException.compareAndSet(false, true)) {
+      LOGGER.error(" *** One or more readers is misbehaving." +
+                   " See the debug output for more information. e.g.:\n" +
+                   "     {} -> {}('{}') ***",
+        reader, e.getClass().getName(), e.getMessage());
+    }
+  }
 
 }
