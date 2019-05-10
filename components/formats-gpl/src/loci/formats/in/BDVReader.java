@@ -122,17 +122,7 @@ public class BDVReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     if (checkSuffix(id, "h5")) {
-      Location location = new Location(id);
-      Location parent = location.getParentFile();
-      String baseName = location.getName();
-      baseName = baseName.substring(0, baseName.indexOf("."));
-      Location xmlLocation = new Location(parent, baseName + ".xml");
-      if (xmlLocation.exists()) {
-        id = xmlLocation.getAbsolutePath();
-      }
-      else {
-        throw new FormatException("Unable to locate associated BDV XML: " + xmlLocation);
-      }
+      id = fetchXMLId();
     }
     store = makeFilterMetadata();
     in = new RandomAccessInputStream(id);
@@ -163,11 +153,35 @@ public class BDVReader extends FormatReader {
     }
   }
   
+  private String fetchXMLId() throws FormatException {
+    String xmlId = currentId;
+    Location location = new Location(currentId);
+    Location parent = location.getParentFile();
+    String baseName = location.getName();
+    baseName = baseName.substring(0, baseName.indexOf("."));
+    Location xmlLocation = new Location(parent, baseName + ".xml");
+    if (xmlLocation.exists()) {
+      xmlId = xmlLocation.getAbsolutePath();
+    }
+    else {
+      throw new FormatException("Unable to locate associated BDV XML: " + xmlLocation);
+    }
+    return xmlId;
+  }
+
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    return new String[] {currentId, h5Id};
+    String xmlId = currentId;
+    if (checkSuffix(currentId, "h5")) {
+      try {
+        xmlId = fetchXMLId();
+      } catch (FormatException e) {
+        LOGGER.error("Unable to locate associated BDV XML for file: " + currentId);
+      }
+    }
+    return new String[] {xmlId, h5Id};
   }
   
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
