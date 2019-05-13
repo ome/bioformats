@@ -851,6 +851,9 @@ public class ZeissCZIReader extends FormatReader {
       ms0.sizeY = firstY;
       prestitched = true;
     }
+    else if (allowAutostitching() && prestitched == null && mosaics > 1) {
+      prestitched = mosaics == seriesCount && mosaics == calculatedSeries;
+    }
 
     if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
       planes.size() > 0)
