@@ -487,6 +487,21 @@ public class DeltavisionReader extends FormatReader {
     }
 
     int nStagePositions = xTiles * yTiles;
+
+    // if an *.rcpnl file is encountered, assume all timepoints are positions
+    // the stage position values may not represent a uniform grid,
+    // but should still be separate positions
+    if (checkSuffix(currentId, "rcpnl")) {
+      nStagePositions = getSizeT();
+      if (xTiles * yTiles != nStagePositions) {
+        // if positions are not uniform, we can't reliably determine
+        // the size of the grid or the direction in which the stage moved
+        xTiles = nStagePositions;
+        yTiles = 1;
+        backwardsStage = false;
+      }
+    }
+
     if (nStagePositions > 0 && nStagePositions <= getSizeT()) {
       int t = getSizeT();
       m.sizeT /= nStagePositions;
