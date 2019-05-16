@@ -2361,7 +2361,7 @@ public class LIFReader extends FormatReader {
           for (int i=0; i<x.size(); i++) {
             points.append(x.get(i).doubleValue() * scaleX + roiX);
             points.append(",");
-            points.append(y.get(i).doubleValue() * scaleX + roiY);
+            points.append(y.get(i).doubleValue() * scaleY + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
           store.setPolygonID(shapeID, roi, 1);
