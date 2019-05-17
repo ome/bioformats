@@ -51,7 +51,7 @@
     <slf4j.version>1.7.6</slf4j.version>
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
-    <ome-common.version>6.0.2</ome-common.version>
+    <ome-common.version>6.0.3</ome-common.version>
     <ome-model.group>org.openmicroscopy</ome-model.group>
     <ome-model.version>6.0.1</ome-model.version>
     <ome-poi.version>5.3.3</ome-poi.version>
