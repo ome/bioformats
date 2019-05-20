@@ -2659,6 +2659,11 @@ public class DeltavisionReader extends FormatReader {
         break;
       case 18107: // API 10X, BH
         lensNA = 0.15;
+
+        if (checkSuffix(currentId, "rcpnl")) {
+          lensNA = 0.30;
+        }
+
         magnification = 10.0;
         workingDistance = 15.00;
         immersion = MetadataTools.getImmersion("Air");
