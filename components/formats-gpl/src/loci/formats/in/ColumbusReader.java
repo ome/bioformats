@@ -193,12 +193,16 @@ public class ColumbusReader extends FormatReader {
       }
     }
 
+    Arrays.fill(buf, (byte) 0);
     if (p != null && new Location(p.file).exists()) {
       reader.setId(p.file);
-      reader.openBytes(p.fileIndex, buf, x, y, w, h);
-    }
-    else {
-      Arrays.fill(buf, (byte) 0);
+      if (p.fileIndex < reader.getImageCount()) {
+        reader.openBytes(p.fileIndex, buf, x, y, w, h);
+      }
+      else {
+        LOGGER.warn("Blank plane for series {} plane {}; {} may be truncated",
+          getSeries(), no, p.file);
+      }
     }
     return buf;
   }
