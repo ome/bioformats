@@ -2352,16 +2352,16 @@ public class LIFReader extends FormatReader {
         roiY = transY - 2 * cornerY;
       }
 
-      // TODO : rotation/scaling not populated
+      // TODO : rotation not populated
 
       String shapeID = MetadataTools.createLSID("Shape", roi, 1);
       switch (type) {
         case POLYGON:
           final StringBuilder points = new StringBuilder();
           for (int i=0; i<x.size(); i++) {
-            points.append(x.get(i).doubleValue() + roiX);
+            points.append(x.get(i).doubleValue() * scaleX + roiX);
             points.append(",");
-            points.append(y.get(i).doubleValue() + roiY);
+            points.append(y.get(i).doubleValue() * scaleY + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
           store.setPolygonID(shapeID, roi, 1);
