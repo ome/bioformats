@@ -564,13 +564,20 @@ public class ImportProcess implements StatusReporter {
       String dimOrder = options.getInputOrder(s);
       if (dimOrder != null) dimensionSwapper.swapDimensions(dimOrder);
 
-      // set output order
-      getDimensionSwapper().setOutputOrder(stackOrder);
       try {
         DimensionOrder order = DimensionOrder.fromString(stackOrder);
         getOMEMetadata().setPixelsDimensionOrder(order, s);
       }
       catch (EnumerationException e) { }
+    }
+
+    // if using TileStitcher, getSeriesCount() will be smaller
+    // than the underlying reader's series count
+    // all of the underlying series need to be dimension swapped
+    for (int s=0; s<getDimensionSwapper().getSeriesCount(); s++) {
+      getDimensionSwapper().setSeries(s);
+      // set output order
+      getDimensionSwapper().setOutputOrder(stackOrder);
     }
   }
 
