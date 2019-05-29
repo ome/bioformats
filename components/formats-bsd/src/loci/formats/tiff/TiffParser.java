@@ -906,6 +906,7 @@ public class TiffParser {
     else codecOptions = compression.getCompressionCodecOptions(ifd);
     codecOptions.interleaved = true;
     codecOptions.littleEndian = ifd.isLittleEndian();
+    long imageWidth = ifd.getImageWidth();
     long imageLength = ifd.getImageLength();
 
     long[] stripOffsets = null;
@@ -934,6 +935,21 @@ public class TiffParser {
 
     long[] stripByteCounts = ifd.getStripByteCounts();
 
+    // if the image is stored as strips (not tiles) and
+    // the strips are stored in order with no gaps then we can
+    // treat them as a single strip for faster reading
+    boolean contiguousTiles = tileWidth == imageWidth && planarConfig == 1;
+    if (contiguousTiles) {
+      for (int i=1; i<stripOffsets.length; i++) {
+        if (stripOffsets[i] != stripOffsets[i - 1] + stripByteCounts[i - 1] ||
+          stripOffsets[i] + stripByteCounts[i] > in.length())
+        {
+          contiguousTiles = false;
+          break;
+        }
+      }
+    }
+
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
     if ((effectiveChannels == 1 || planarConfig == 1) && (ifd.getBitsPerSample()[0] % 8) == 0 &&
@@ -941,9 +957,16 @@ public class TiffParser {
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED &&
       ifd.getIFDIntValue(IFD.FILL_ORDER) != 2 &&
-      numTileRows * numTileCols == 1 && stripOffsets != null && stripByteCounts != null &&
-      in.length() >= stripOffsets[0] + stripByteCounts[0])
+      stripOffsets != null && stripByteCounts != null &&
+      in.length() >= stripOffsets[0] + stripByteCounts[0] &&
+      (numTileRows * numTileCols == 1 || contiguousTiles))
     {
+      if (contiguousTiles) {
+        stripByteCounts = new long[] {stripByteCounts[0] * stripByteCounts.length};
+        stripOffsets = new long[] {stripOffsets[0]};
+        tileLength = imageLength;
+      }
+
       long column = x / tileWidth;
       int firstTile = (int) ((y / tileLength) * numTileCols + column);
       int lastTile =
