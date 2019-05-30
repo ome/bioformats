@@ -36,6 +36,7 @@ import com.google.common.base.Joiner;
 
 import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Iterator;
@@ -64,6 +65,7 @@ import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageTools;
 import loci.formats.ImageWriter;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
@@ -118,6 +120,8 @@ public final class ImageConverter {
   private boolean zeroPadding = false;
   private boolean flat = true;
   private int pyramidScale = 1, pyramidResolutions = 1;
+  private boolean useMemoizer = false;
+  private String cacheDir = null;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -160,6 +164,10 @@ public final class ImageConverter {
         else if (args[i].equals("-validate")) validate = true;
         else if (args[i].equals("-padded")) zeroPadding = true;
         else if (args[i].equals("-noflat")) flat = false;
+        else if (args[i].equals("-cache")) useMemoizer = true;
+        else if (args[i].equals("-cache-dir")) {
+          cacheDir = args[++i];
+        }
         else if (args[i].equals("-option")) {
           options.set(args[++i], args[++i]);
         }
@@ -444,6 +452,14 @@ public final class ImageConverter {
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
+    if (useMemoizer) {
+      if (cacheDir != null) {
+        reader = new Memoizer(reader, 0, new File(cacheDir));
+      }
+      else {
+        reader = new Memoizer(reader, 0);
+      }
+    }
     minMax = null;
     if (autoscale) {
       reader = new MinMaxCalculator(reader);
