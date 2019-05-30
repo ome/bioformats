@@ -849,10 +849,8 @@ public class InCellReader extends FormatReader {
         int col = Integer.parseInt(attributes.getValue("col")) - 1;
         exclude[row][col] = true;
       }
-      else if (qName.equals("Images")) {
-        totalImages = Integer.parseInt(attributes.getValue("number"));
-      }
       else if (qName.equals("Image")) {
+        totalImages++;
         String file = attributes.getValue("filename");
         String thumb = attributes.getValue("thumbnail");
         Location current = new Location(currentId).getAbsoluteFile();
