@@ -132,6 +132,7 @@ public class DeltavisionReader extends FormatReader {
 
   private int fileType;
   private String imageSequence;
+  private boolean useFileType = true;
 
   // -- Constructor --
 
@@ -260,6 +261,7 @@ public class DeltavisionReader extends FormatReader {
       yTiles = 0;
       fileType = 0;
       imageSequence = null;
+      useFileType = true;
     }
   }
 
@@ -342,7 +344,7 @@ public class DeltavisionReader extends FormatReader {
 
     in.seek(180);
     int rawSizeT = in.readUnsignedShort();
-    int numPanels = 1;
+    int numPanels = 0;
     if (fileType == NEW_TYPE) {
       in.seek(852);
       int secondaryT = in.readInt();
@@ -351,9 +353,6 @@ public class DeltavisionReader extends FormatReader {
       }
       in.seek(880);
       numPanels = in.readInt();
-      if (numPanels == 0) {
-        numPanels = 1;
-      }
       in.seek(182);
     }
     int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
@@ -371,7 +370,7 @@ public class DeltavisionReader extends FormatReader {
 
     imageSequence = getImageSequence(sequence);
 
-    int sizeZ = imageCount / (sizeC * sizeT * numPanels);
+    int sizeZ = imageCount / (sizeC * sizeT);
 
     // --- populate core metadata ---
 
@@ -382,7 +381,11 @@ public class DeltavisionReader extends FormatReader {
     m.littleEndian = little;
     m.sizeX = sizeX;
     m.sizeY = sizeY;
-    m.imageCount = imageCount / numPanels;
+    m.imageCount = imageCount;
+    if (numPanels > 0) {
+      sizeZ /= numPanels;
+      m.imageCount /= numPanels;
+    }
 
     String pixel = getPixelString(filePixelType);
     m.pixelType = getPixelType(filePixelType);
@@ -449,7 +452,7 @@ public class DeltavisionReader extends FormatReader {
 
     LOGGER.info("Reading extended header");
 
-    setOffsetInfo(getSizeZ(), getSizeC(), getSizeT(), numPanels);
+    setOffsetInfo(getSizeZ(), getSizeC(), getSizeT(), numPanels == 0 ? 1 : numPanels);
     extHdrFields = new DVExtHdrFields[imageCount];
 
     ndFilters = new Double[getSizeC()];
@@ -523,7 +526,10 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
-    if (fileType != NEW_TYPE && nStagePositions > 0 && nStagePositions <= getSizeT()) {
+    if ((fileType != NEW_TYPE || numPanels == 0) &&
+      nStagePositions > 0 && nStagePositions <= getSizeT())
+    {
+      useFileType = fileType != NEW_TYPE;
       int t = getSizeT();
       m.sizeT /= nStagePositions;
       if (getSizeT() * nStagePositions != t) {
@@ -535,7 +541,7 @@ public class DeltavisionReader extends FormatReader {
       }
     }
     else {
-      nStagePositions = numPanels;
+      nStagePositions = numPanels == 0 ? 1 : numPanels;
     }
 
     if (nStagePositions > 1) {
@@ -561,13 +567,13 @@ public class DeltavisionReader extends FormatReader {
           lengths[lengthIndex++] = getSizeC();
           break;
         case 'T':
-          if (fileType != NEW_TYPE) {
+          if (fileType != NEW_TYPE || !useFileType) {
             lengths[lengthIndex++] = getSeriesCount();
           }
           lengths[lengthIndex++] = getSizeT();
           break;
         case 'P':
-          if (fileType == NEW_TYPE) {
+          if (useFileType && fileType == NEW_TYPE) {
             lengths[lengthIndex++] = getSeriesCount();
           }
           break;
@@ -1087,13 +1093,13 @@ public class DeltavisionReader extends FormatReader {
             newCoords[coordIndex++] = currentW;
             break;
           case 'T':
-            if (fileType != NEW_TYPE) {
+            if (fileType != NEW_TYPE || !useFileType) {
               newCoords[coordIndex++] = getSeries();
             }
             newCoords[coordIndex++] = currentT;
             break;
           case 'P':
-            if (fileType == NEW_TYPE) {
+            if (useFileType && fileType == NEW_TYPE) {
               newCoords[coordIndex++] = getSeries();
             }
             break;
