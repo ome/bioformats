@@ -122,6 +122,7 @@ public final class ImageConverter {
   private int pyramidScale = 1, pyramidResolutions = 1;
   private boolean useMemoizer = false;
   private String cacheDir = null;
+  private boolean originalMetadata = true;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -164,6 +165,7 @@ public final class ImageConverter {
         else if (args[i].equals("-validate")) validate = true;
         else if (args[i].equals("-padded")) zeroPadding = true;
         else if (args[i].equals("-noflat")) flat = false;
+        else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-cache")) useMemoizer = true;
         else if (args[i].equals("-cache-dir")) {
           cacheDir = args[++i];
@@ -469,7 +471,7 @@ public final class ImageConverter {
     reader.setMetadataOptions(options);
     reader.setGroupFiles(group);
     reader.setMetadataFiltered(true);
-    reader.setOriginalMetadataPopulated(true);
+    reader.setOriginalMetadataPopulated(originalMetadata);
     reader.setFlattenedResolutions(flat);
     OMEXMLService service = null;
     try {
