@@ -130,9 +130,8 @@ public class DeltavisionReader extends FormatReader {
 
   private boolean truncatedFileFlag = false;
 
-  private int fileType;
   private String imageSequence;
-  private boolean useFileType = true;
+  private boolean newFileType = false;
 
   // -- Constructor --
 
@@ -259,9 +258,8 @@ public class DeltavisionReader extends FormatReader {
       backwardsStage = false;
       xTiles = 0;
       yTiles = 0;
-      fileType = 0;
       imageSequence = null;
-      useFileType = true;
+      newFileType = false;
     }
   }
 
@@ -340,7 +338,7 @@ public class DeltavisionReader extends FormatReader {
     int filePixelType = in.readInt();
 
     in.seek(160);
-    fileType = in.readShort();
+    int fileType = in.readShort();
 
     in.seek(180);
     int rawSizeT = in.readUnsignedShort();
@@ -526,10 +524,11 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
+    // older NEW_TYPE files may have 0 recorded panels but
+    // multiple series are still expected
     if ((fileType != NEW_TYPE || numPanels == 0) &&
       nStagePositions > 0 && nStagePositions <= getSizeT())
     {
-      useFileType = fileType != NEW_TYPE;
       int t = getSizeT();
       m.sizeT /= nStagePositions;
       if (getSizeT() * nStagePositions != t) {
@@ -541,6 +540,7 @@ public class DeltavisionReader extends FormatReader {
       }
     }
     else {
+      newFileType = true;
       nStagePositions = numPanels == 0 ? 1 : numPanels;
     }
 
@@ -567,13 +567,13 @@ public class DeltavisionReader extends FormatReader {
           lengths[lengthIndex++] = getSizeC();
           break;
         case 'T':
-          if (fileType != NEW_TYPE || !useFileType) {
+          if (!newFileType) {
             lengths[lengthIndex++] = getSeriesCount();
           }
           lengths[lengthIndex++] = getSizeT();
           break;
         case 'P':
-          if (useFileType && fileType == NEW_TYPE) {
+          if (newFileType) {
             lengths[lengthIndex++] = getSeriesCount();
           }
           break;
@@ -680,7 +680,7 @@ public class DeltavisionReader extends FormatReader {
       maxWave[i] = in.readFloat();
     }
 
-    fileType = in.readShort();
+    int fileType = in.readShort();
     int lensID = in.readShort();
 
     in.seek(172);
@@ -1093,13 +1093,13 @@ public class DeltavisionReader extends FormatReader {
             newCoords[coordIndex++] = currentW;
             break;
           case 'T':
-            if (fileType != NEW_TYPE || !useFileType) {
+            if (!newFileType) {
               newCoords[coordIndex++] = getSeries();
             }
             newCoords[coordIndex++] = currentT;
             break;
           case 'P':
-            if (useFileType && fileType == NEW_TYPE) {
+            if (newFileType) {
               newCoords[coordIndex++] = getSeries();
             }
             break;
