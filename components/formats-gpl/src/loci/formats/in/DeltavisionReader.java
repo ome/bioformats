@@ -109,7 +109,8 @@ public class DeltavisionReader extends FormatReader {
   private int yTiles;
 
   /** Whether or not the stage moved backwards. */
-  private boolean backwardsStage = false;
+  private boolean backwardsStageX = false;
+  private boolean backwardsStageY = false;
 
   /**
    * The number of ints in each extended header section. These fields appear
@@ -255,7 +256,8 @@ public class DeltavisionReader extends FormatReader {
       ndFilters = null;
       logFile = deconvolutionLogFile = null;
       lengths = null;
-      backwardsStage = false;
+      backwardsStageX = false;
+      backwardsStageY = false;
       xTiles = 0;
       yTiles = 0;
       imageSequence = null;
@@ -499,12 +501,20 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
+    if (xTiles > 1) {
+      final Number x0 = uniqueTileX.get(0).value(UNITS.REFERENCEFRAME);
+      final Number x1 = uniqueTileX.get(1).value(UNITS.REFERENCEFRAME);
+      if (x1.floatValue() < x0.floatValue()) {
+        backwardsStageX = true;
+      }
+    }
+
     if (yTiles > 1) {
        // TODO: use compareTo once Length implements Comparable
       final Number y0 = uniqueTileY.get(0).value(UNITS.REFERENCEFRAME);
       final Number y1 = uniqueTileY.get(1).value(UNITS.REFERENCEFRAME);
       if (y1.floatValue() < y0.floatValue()) {
-        backwardsStage = true;
+        backwardsStageY = true;
       }
     }
 
@@ -520,7 +530,8 @@ public class DeltavisionReader extends FormatReader {
         // the size of the grid or the direction in which the stage moved
         xTiles = nStagePositions;
         yTiles = 1;
-        backwardsStage = false;
+        backwardsStageX = false;
+        backwardsStageY = false;
       }
     }
 
@@ -863,22 +874,25 @@ public class DeltavisionReader extends FormatReader {
     if (getSeriesCount() == 1) {
       xTiles = 1;
       yTiles = 1;
-      backwardsStage = false;
+      backwardsStageX = false;
+      backwardsStageY = false;
     }
 
     for (int series=0; series<getSeriesCount(); series++) {
       int seriesIndex = series;
-      if (backwardsStage) {
+      if (backwardsStageX || backwardsStageY) {
         int x = series % xTiles;
         int y = series / xTiles;
-        seriesIndex = (yTiles - y - 1) * xTiles + (xTiles - x - 1);
+        int xIndex = backwardsStageX ? xTiles - x - 1 : x;
+        int yIndex = backwardsStageY ? yTiles - y - 1 : y;
+        seriesIndex = yIndex * xTiles + xIndex;
       }
 
       Double[] expTime = new Double[getSizeC()];
       for (int i=0; i<getImageCount(); i++) {
         int[] coords = getZCTCoords(i);
 
-        DVExtHdrFields hdr = extHdrFields[getPlaneIndex(series, i)];
+        DVExtHdrFields hdr = extHdrFields[getPlaneIndex(seriesIndex, i)];
         if (expTime[coords[1]] == null) {
           expTime[coords[1]] = new Double(hdr.expTime);
         }
