@@ -2480,7 +2480,8 @@ public class FormatReaderTest {
             // Columbus datasets can consist of OME-TIFF files with
             // extra metadata files
             if (result && r instanceof ColumbusReader &&
-              readers[j] instanceof OMETiffReader)
+              (readers[j] instanceof OMETiffReader ||
+               readers[j] instanceof FlexReader))
             {
               continue;
             }
