@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>6.1.1</version>
+    <version>6.1.2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
