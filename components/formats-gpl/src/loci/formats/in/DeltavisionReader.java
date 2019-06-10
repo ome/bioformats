@@ -871,6 +871,19 @@ public class DeltavisionReader extends FormatReader {
         }
     }
 
+    if (xTiles * yTiles > getSeriesCount()) {
+      if (xTiles == getSeriesCount()) {
+        yTiles = 1;
+      }
+      else if (yTiles == getSeriesCount()) {
+        xTiles = 1;
+      }
+      else {
+        xTiles = 1;
+        yTiles = 1;
+      }
+    }
+
     if (getSeriesCount() == 1) {
       xTiles = 1;
       yTiles = 1;
