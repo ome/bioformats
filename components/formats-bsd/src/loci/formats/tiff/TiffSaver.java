@@ -807,6 +807,18 @@ public class TiffSaver {
         LOGGER.debug("\tnew: (tag={}; type={}; count={}; offset={})",
           new Object[] {newTag, newType, newCount, newOffset});
 
+        // first overwrite the original value with 0s
+        // this makes sure that the original value is really gone
+        // and not just orphaned
+
+        int bytesPerElement = entry.getType().getBytesPerElement();
+        if (entry.getValueCount() > (offset / bytesPerElement)) {
+          out.seek(entry.getValueOffset());
+          for (int b=0; b<entry.getValueCount() * bytesPerElement; b++) {
+            out.writeByte(0);
+          }
+        }
+
         // determine the best way to overwrite the old entry
         if (extraBuf.length() == 0) {
           // new entry is inline; if old entry wasn't, old data is orphaned
@@ -814,7 +826,7 @@ public class TiffSaver {
           LOGGER.debug("overwriteIFDValue: new entry is inline");
         }
         else if (entry.getValueOffset() + entry.getValueCount() *
-          entry.getType().getBytesPerElement() == raf.length())
+          bytesPerElement == raf.length())
         {
           // old entry was already at EOF; overwrite it
           newOffset = entry.getValueOffset();
@@ -838,7 +850,7 @@ public class TiffSaver {
         writeIntValue(out, newOffset);
         if (extraBuf.length() > 0) {
           out.seek(newOffset);
-          out.write(extraBuf.getByteBuffer());
+          out.write(extraBuf.getByteBuffer(), 0, (int) extraBuf.length());
         }
         return;
       }
