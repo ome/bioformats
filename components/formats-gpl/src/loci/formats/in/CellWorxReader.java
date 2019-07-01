@@ -819,8 +819,10 @@ public class CellWorxReader extends FormatReader {
 
   private String[] getTiffFiles(String plateName, char rowLetter, int col,
     int channels, int nTimepoints, int zSteps)
+    throws FormatException
   {
-    String base = plateName + rowLetter + String.format("%02d", col + 1);
+    String well = rowLetter + String.format("%02d", col + 1);
+    String base = plateName + well;
 
     String[] files = new String[fieldCount * channels * nTimepoints * zSteps];
 
@@ -893,12 +895,20 @@ public class CellWorxReader extends FormatReader {
                 for (String f : zList) {
                   String path = new Location(file, f).getAbsolutePath();
                   if (f.startsWith(base) && path.indexOf("_thumb") < 0) {
-                    files[nextFile++] = path;
+                    if (nextFile < files.length) {
+                      files[nextFile] = path;
+                    }
+                    nextFile++;
                   }
                 }
               }
             }
           }
+        }
+        if (nextFile != files.length) {
+          throw new FormatException(
+            "Well " + well + " expected " + files.length +
+            " files; found " + nextFile);
         }
       }
     }
