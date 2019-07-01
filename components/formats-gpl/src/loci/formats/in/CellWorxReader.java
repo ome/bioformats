@@ -87,6 +87,7 @@ public class CellWorxReader extends FormatReader {
     new HashMap<Integer, Timestamp>();
 
   private String[] directoryList;
+  private boolean subdirectories = false;
 
   // -- Constructor --
 
@@ -192,6 +193,7 @@ public class CellWorxReader extends FormatReader {
     int fieldIndex = getSeries() % fieldCount;
 
     String file = getFile(getSeries(), no);
+    LOGGER.trace("Series {} plane {} using file = {}", getSeries(), no, file);
     if (file == null) {
       Arrays.fill(buf, (byte) 0);
       return buf;
@@ -218,10 +220,15 @@ public class CellWorxReader extends FormatReader {
     if (lastReader.getSeriesCount() == fieldCount) {
       lastReader.setSeries(fieldIndex);
     }
-    else {
+    else if (lastReader.getImageCount() == getSizeZ()) {
       int[] zct = getZCTCoords(no);
       planeIndex = zct[0];
     }
+    else {
+      planeIndex = 0;
+    }
+    LOGGER.trace("  file series = {}, planeIndex = {}",
+      lastReader.getSeries(), planeIndex);
     lastReader.openBytes(planeIndex, buf, x, y, w, h);
     return buf;
   }
@@ -246,6 +253,7 @@ public class CellWorxReader extends FormatReader {
       service = null;
       timestamps.clear();
       directoryList = null;
+      subdirectories = false;
     }
   }
 
@@ -408,7 +416,7 @@ public class CellWorxReader extends FormatReader {
     int seriesIndex = 0;
     String file = getFile(seriesIndex, planeIndex);
     while (!new Location(file).exists()) {
-      if (planeIndex <  zSteps * nTimepoints * wavelengths.length) {
+      if (planeIndex < zSteps * nTimepoints * wavelengths.length) {
         planeIndex++;
       }
       else if (seriesIndex < seriesCount - 1) {
@@ -642,6 +650,14 @@ public class CellWorxReader extends FormatReader {
 
     int imageCount = wellFiles[row][col].length / fieldCount;
     if (field * imageCount + no < wellFiles[row][col].length) {
+      if (subdirectories && getDimensionOrder() != null) {
+        int[] coords = getZCTCoords(no);
+        int planeIndex = coords[1];
+        planeIndex += getSizeC() * field;
+        planeIndex += getSizeC() * fieldCount * coords[0];
+        planeIndex += getSizeC() * fieldCount * getSizeZ() * coords[2];
+        return wellFiles[row][col][planeIndex];
+      }
       return wellFiles[row][col][field * imageCount + no];
     }
     else if (field < wellFiles[row][col].length) {
@@ -877,6 +893,8 @@ public class CellWorxReader extends FormatReader {
       }
 
       if (noneExist) {
+        subdirectories = true;
+
         // if all else fails, look for a directory structure:
         //  * file.htd
         //  * TimePoint_<t>
