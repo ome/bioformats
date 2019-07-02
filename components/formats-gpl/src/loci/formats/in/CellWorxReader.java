@@ -901,6 +901,7 @@ public class CellWorxReader extends FormatReader {
         //    * ZStep_<z>
         //      * file_<...>.tif
         base = base.substring(base.lastIndexOf(File.separator) + 1);
+        LOGGER.debug("expected file prefix = {}", base);
         nextFile = 0;
         for (int i=0; i<nTimepoints; i++) {
           Location dir = new Location(parent, "TimePoint_" + (i + 1));
@@ -917,10 +918,12 @@ public class CellWorxReader extends FormatReader {
                 file = dir;
                 zList = file.list(true);
               }
+              LOGGER.debug("parent directory = {}", file);
 
               if (zList != null) {
                 Arrays.sort(zList);
                 for (String f : zList) {
+                  LOGGER.debug("  checking relative path = {}", f);
                   String path = new Location(file, f).getAbsolutePath();
                   if (f.startsWith(base) && path.indexOf("_thumb") < 0) {
                     if (nextFile < files.length) {
