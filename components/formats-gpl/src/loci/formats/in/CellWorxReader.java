@@ -907,8 +907,18 @@ public class CellWorxReader extends FormatReader {
           if (dir.exists() && dir.isDirectory()) {
             for (int z=0; z<zSteps; z++) {
               Location file = new Location(dir, "ZStep_" + (z + 1));
+              String[] zList = null;
               if (file.exists() && file.isDirectory()) {
-                String[] zList = file.list(true);
+                zList = file.list(true);
+              }
+              else if (zSteps == 1) {
+                // if SizeZ == 1, the TIFF files may be in the
+                // TimePoint_<t> directory
+                file = dir;
+                zList = file.list(true);
+              }
+
+              if (zList != null) {
                 Arrays.sort(zList);
                 for (String f : zList) {
                   String path = new Location(file, f).getAbsolutePath();
