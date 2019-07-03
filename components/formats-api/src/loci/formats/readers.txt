@@ -148,6 +148,7 @@ loci.formats.in.LEOReader             # sxm
 loci.formats.in.JPKReader             # jpk
 loci.formats.in.NDPIReader            # ndpi
 loci.formats.in.PCORAWReader          # pcoraw
+loci.formats.in.VentanaReader         # bif
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.OMETiffReader         # tif

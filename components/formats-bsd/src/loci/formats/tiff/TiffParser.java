@@ -775,11 +775,23 @@ public class TiffParser {
       Arrays.fill(buf, (byte) 0);
       return buf;
     }
-    byte[] tile = new byte[(int) stripByteCounts[countIndex]];
+    int tileSize = (int) stripByteCounts[countIndex];
+    if (jpegTable != null) {
+      tileSize += jpegTable.length - 2;
+    }
+    byte[] tile = new byte[tileSize];
 
     LOGGER.debug("Reading tile Length {} Offset {}", tile.length, stripOffset);
-    in.seek(stripOffset);
-    in.read(tile);
+
+    if (jpegTable != null) {
+      System.arraycopy(jpegTable, 0, tile, 0, jpegTable.length - 2);
+      in.seek(stripOffset + 2);
+      in.read(tile, jpegTable.length - 2, tile.length - (jpegTable.length - 2));
+    }
+    else {
+      in.seek(stripOffset);
+      in.read(tile);
+    }
 
     // reverse bits in each byte if FillOrder == 2
 
@@ -796,13 +808,7 @@ public class TiffParser {
       ifd.getPhotometricInterpretation() == PhotoInterp.Y_CB_CR &&
       ifd.getIFDIntValue(IFD.Y_CB_CR_SUB_SAMPLING) == 1 && ycbcrCorrection;
 
-    if (jpegTable != null) {
-      byte[] q = new byte[jpegTable.length + tile.length - 4];
-      System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
-      System.arraycopy(tile, 2, q, jpegTable.length - 2, tile.length - 2);
-      tile = compression.decompress(q, codecOptions);
-    }
-    else tile = compression.decompress(tile, codecOptions);
+    tile = compression.decompress(tile, codecOptions);
     TiffCompression.undifference(tile, ifd);
     unpackBytes(buf, 0, tile, ifd);
 
@@ -1162,23 +1168,17 @@ public class TiffParser {
       sampleCount /= nChannels;
     }
 
-    LOGGER.trace(
-      "unpacking {} samples (startIndex={}; totalBits={}; numBytes={})",
-      new Object[] {sampleCount, startIndex, nChannels * bitsPerSample[0],
-      bytes.length});
-
-    long imageWidth = ifd.getImageWidth();
-    long imageHeight = ifd.getImageLength();
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace(
+        "unpacking {} samples (startIndex={}; totalBits={}; numBytes={})",
+        new Object[] {sampleCount, startIndex, nChannels * bitsPerSample[0],
+        bytes.length});
+    }
 
     int bps0 = bitsPerSample[0];
-    int numBytes = ifd.getBytesPerSample()[0];
-    int nSamples = samples.length / (nChannels * numBytes);
 
-    boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
     boolean bps16 = bps0 == 16;
-
-    boolean littleEndian = ifd.isLittleEndian();
 
     // Hyper optimisation that takes any 8-bit or 16-bit data, where there is
     // only one channel, the source byte buffer's size is less than or equal to
@@ -1194,6 +1194,15 @@ public class TiffParser {
       System.arraycopy(bytes, 0, samples, 0, bytes.length);
       return;
     }
+
+    long imageWidth = ifd.getImageWidth();
+    long imageHeight = ifd.getImageLength();
+
+    int numBytes = ifd.getBytesPerSample()[0];
+    int nSamples = samples.length / (nChannels * numBytes);
+
+    boolean noDiv8 = bps0 % 8 != 0;
+    boolean littleEndian = ifd.isLittleEndian();
 
     long maxValue = (long) Math.pow(2, bps0) - 1;
     if (photoInterp == PhotoInterp.CMYK) maxValue = Integer.MAX_VALUE;
@@ -1229,7 +1238,9 @@ public class TiffParser {
 
     RandomAccessInputStream bb = null;
     try {
-      bb = new RandomAccessInputStream(new ByteArrayHandle(bytes));
+      if (noDiv8) {
+        bb = new RandomAccessInputStream(new ByteArrayHandle(bytes));
+      }
       // unpack pixels
       for (int sample=0; sample<sampleCount; sample++) {
         int ndx = startIndex + sample;
@@ -1263,7 +1274,14 @@ public class TiffParser {
               }
             }
             else {
-              value = DataTools.bytesToLong(bytes, index, numBytes, littleEndian);
+              // DataTools.bytesToLong can handle the numBytes == 1 case,
+              // but direct assignment is faster than potentially thousands of method calls
+              if (numBytes == 1){
+                value = bytes[index] & 0xff;
+              }
+              else {
+                value = DataTools.bytesToLong(bytes, index, numBytes, littleEndian);
+              }
             }
 
             if (photoInterp == PhotoInterp.WHITE_IS_ZERO ||
@@ -1273,8 +1291,15 @@ public class TiffParser {
             }
 
             if (outputIndex + numBytes <= samples.length) {
-              DataTools.unpackBytes(value, samples, outputIndex, numBytes,
-                littleEndian);
+              // DataTools.unpackBytes can handle the numBytes == 1 case,
+              // but direct assignment is faster than potentially thousands of method calls
+              if (numBytes == 1) {
+                samples[outputIndex] = (byte) value;
+              }
+              else {
+                DataTools.unpackBytes(value, samples, outputIndex, numBytes,
+                  littleEndian);
+              }
             }
           }
           else {
