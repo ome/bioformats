@@ -228,7 +228,29 @@ public class OperettaReader extends FormatReader {
           reader = new MinimalTiffReader();
         }
         reader.setId(p.filename);
-        reader.openBytes(0, buf, x, y, w, h);
+        if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
+          reader.openBytes(0, buf, x, y, w, h);
+        }
+        else {
+          LOGGER.warn("Image dimension mismatch in {}", p.filename);
+
+          // the XY dimensions of this TIFF are smaller than expected,
+          // so read the stored image into the upper left corner
+          // the bottom and right side will have a black border
+          if (x < reader.getSizeX() && y < reader.getSizeY()) {
+            int realWidth = (int) Math.min(w, reader.getSizeX() - x);
+            int realHeight = (int) Math.min(h, reader.getSizeY() - y);
+            byte[] realPixels =
+              reader.openBytes(0, x, y, realWidth, realHeight);
+
+            int bpp = FormatTools.getBytesPerPixel(getPixelType());
+            int row = realWidth * bpp;
+            int outputRow = w * bpp;
+            for (int yy=0; yy<realHeight; yy++) {
+              System.arraycopy(realPixels, yy * row, buf, yy * outputRow, row);
+            }
+          }
+        }
         reader.close();
       }
     }
