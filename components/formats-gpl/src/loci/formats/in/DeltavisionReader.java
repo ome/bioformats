@@ -100,6 +100,8 @@ public class DeltavisionReader extends FormatReader {
   /** Size of one time element in the extended header. */
   protected int tSize;
 
+  protected int panelSize;
+
   /** Number of tiles in X direction. */
   private int xTiles;
 
@@ -107,7 +109,8 @@ public class DeltavisionReader extends FormatReader {
   private int yTiles;
 
   /** Whether or not the stage moved backwards. */
-  private boolean backwardsStage = false;
+  private boolean backwardsStageX = false;
+  private boolean backwardsStageY = false;
 
   /**
    * The number of ints in each extended header section. These fields appear
@@ -117,7 +120,7 @@ public class DeltavisionReader extends FormatReader {
   protected int numFloatsPerSection;
 
   /** Initialize an array of Extended Header Field structures. */
-  protected DVExtHdrFields[][][] extHdrFields = null;
+  protected DVExtHdrFields[] extHdrFields = null;
 
   private Double[] ndFilters;
 
@@ -127,6 +130,9 @@ public class DeltavisionReader extends FormatReader {
   private String deconvolutionLogFile;
 
   private boolean truncatedFileFlag = false;
+
+  private String imageSequence;
+  private boolean newFileType = false;
 
   // -- Constructor --
 
@@ -244,14 +250,18 @@ public class DeltavisionReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       extSize = wSize = zSize = tSize = 0;
+      panelSize = 0;
       numIntsPerSection = numFloatsPerSection = 0;
       extHdrFields = null;
       ndFilters = null;
       logFile = deconvolutionLogFile = null;
       lengths = null;
-      backwardsStage = false;
+      backwardsStageX = false;
+      backwardsStageY = false;
       xTiles = 0;
       yTiles = 0;
+      imageSequence = null;
+      newFileType = false;
     }
   }
 
@@ -329,8 +339,22 @@ public class DeltavisionReader extends FormatReader {
     int imageCount = in.readInt();
     int filePixelType = in.readInt();
 
+    in.seek(160);
+    int fileType = in.readShort();
+
     in.seek(180);
     int rawSizeT = in.readUnsignedShort();
+    int numPanels = 0;
+    if (fileType == NEW_TYPE) {
+      in.seek(852);
+      int secondaryT = in.readInt();
+      if (secondaryT > 0 && (rawSizeT <= 0 || rawSizeT == 65535)) {
+        rawSizeT = secondaryT;
+      }
+      in.seek(880);
+      numPanels = in.readInt();
+      in.seek(182);
+    }
     int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
 
     int sequence = in.readShort();
@@ -344,7 +368,7 @@ public class DeltavisionReader extends FormatReader {
 
     // --- compute some secondary values ---
 
-    String imageSequence = getImageSequence(sequence);
+    imageSequence = getImageSequence(sequence);
 
     int sizeZ = imageCount / (sizeC * sizeT);
 
@@ -358,11 +382,16 @@ public class DeltavisionReader extends FormatReader {
     m.sizeX = sizeX;
     m.sizeY = sizeY;
     m.imageCount = imageCount;
+    if (numPanels > 0) {
+      sizeZ /= numPanels;
+      m.imageCount /= numPanels;
+    }
 
     String pixel = getPixelString(filePixelType);
     m.pixelType = getPixelType(filePixelType);
 
-    m.dimensionOrder = "XY" + imageSequence.replaceAll("W", "C");
+    m.dimensionOrder =
+      "XY" + imageSequence.replaceAll("W", "C").replaceAll("P", "");
 
     int planeSize =
       getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
@@ -423,8 +452,8 @@ public class DeltavisionReader extends FormatReader {
 
     LOGGER.info("Reading extended header");
 
-    setOffsetInfo(sequence, getSizeZ(), getSizeC(), getSizeT());
-    extHdrFields = new DVExtHdrFields[getSizeZ()][getSizeC()][getSizeT()];
+    setOffsetInfo(getSizeZ(), getSizeC(), getSizeT(), numPanels == 0 ? 1 : numPanels);
+    extHdrFields = new DVExtHdrFields[imageCount];
 
     ndFilters = new Double[getSizeC()];
 
@@ -436,17 +465,12 @@ public class DeltavisionReader extends FormatReader {
     int offset = HEADER_LENGTH + numIntsPerSection * 4;
     boolean hasZeroX = false;
     boolean hasZeroY = false;
-    for (int i=0; i<getImageCount(); i++) {
-      int[] coords = getZCTCoords(i);
-      int z = coords[0];
-      int w = coords[1];
-      int t = coords[2];
-
+    for (int i=0; i<imageCount; i++) {
       // -- read in the extended header data --
 
-      in.seek(offset + getTotalOffset(z, w, t));
+      in.seek(offset + getTotalPlaneHeaderSize() * i);
       DVExtHdrFields hdr = new DVExtHdrFields(in);
-      extHdrFields[z][w][t] = hdr;
+      extHdrFields[i] = hdr;
 
       if (!uniqueTileX.contains(hdr.stageXCoord) &&
               hdr.stageXCoord.value().floatValue() != 0) {
@@ -477,12 +501,20 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
+    if (xTiles > 1) {
+      final Number x0 = uniqueTileX.get(0).value(UNITS.REFERENCEFRAME);
+      final Number x1 = uniqueTileX.get(1).value(UNITS.REFERENCEFRAME);
+      if (x1.floatValue() < x0.floatValue()) {
+        backwardsStageX = true;
+      }
+    }
+
     if (yTiles > 1) {
        // TODO: use compareTo once Length implements Comparable
       final Number y0 = uniqueTileY.get(0).value(UNITS.REFERENCEFRAME);
       final Number y1 = uniqueTileY.get(1).value(UNITS.REFERENCEFRAME);
       if (y1.floatValue() < y0.floatValue()) {
-        backwardsStage = true;
+        backwardsStageY = true;
       }
     }
 
@@ -498,11 +530,16 @@ public class DeltavisionReader extends FormatReader {
         // the size of the grid or the direction in which the stage moved
         xTiles = nStagePositions;
         yTiles = 1;
-        backwardsStage = false;
+        backwardsStageX = false;
+        backwardsStageY = false;
       }
     }
 
-    if (nStagePositions > 0 && nStagePositions <= getSizeT()) {
+    // older NEW_TYPE files may have 0 recorded panels but
+    // multiple series are still expected
+    if ((fileType != NEW_TYPE || numPanels == 0) &&
+      nStagePositions > 0 && nStagePositions <= getSizeT())
+    {
       int t = getSizeT();
       m.sizeT /= nStagePositions;
       if (getSizeT() * nStagePositions != t) {
@@ -512,13 +549,17 @@ public class DeltavisionReader extends FormatReader {
       else {
         m.imageCount /= nStagePositions;
       }
+    }
+    else {
+      newFileType = true;
+      nStagePositions = numPanels == 0 ? 1 : numPanels;
+    }
 
-      if (nStagePositions > 1) {
-        CoreMetadata originalCore = core.get(0);
-        core.clear();
-        for (int i=0; i<nStagePositions; i++) {
-          core.add(originalCore);
-        }
+    if (nStagePositions > 1) {
+      CoreMetadata originalCore = core.get(0);
+      core.clear();
+      for (int i=0; i<nStagePositions; i++) {
+        core.add(new CoreMetadata(originalCore));
       }
     }
 
@@ -537,8 +578,15 @@ public class DeltavisionReader extends FormatReader {
           lengths[lengthIndex++] = getSizeC();
           break;
         case 'T':
-          lengths[lengthIndex++] = getSeriesCount();
+          if (!newFileType) {
+            lengths[lengthIndex++] = getSeriesCount();
+          }
           lengths[lengthIndex++] = getSizeT();
+          break;
+        case 'P':
+          if (newFileType) {
+            lengths[lengthIndex++] = getSeriesCount();
+          }
           break;
       }
     }
@@ -554,6 +602,7 @@ public class DeltavisionReader extends FormatReader {
     addGlobalMeta("PixelType", pixel);
 
     addGlobalMeta("Number of timepoints", rawSizeT);
+    addGlobalMeta("Number of panels", numPanels);
 
     addGlobalMeta("Image sequence", imageSequence);
 
@@ -565,8 +614,7 @@ public class DeltavisionReader extends FormatReader {
       for (int plane=0; plane<getImageCount(); plane++) {
         int[] coords = getZCTCoords(plane);
 
-        int tIndex = getSeriesCount() * coords[2] + series;
-        DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
+        DVExtHdrFields hdr = extHdrFields[getPlaneIndex(series, plane)];
 
         // -- record original metadata --
 
@@ -643,7 +691,7 @@ public class DeltavisionReader extends FormatReader {
       maxWave[i] = in.readFloat();
     }
 
-    int type = in.readShort();
+    int fileType = in.readShort();
     int lensID = in.readShort();
 
     in.seek(172);
@@ -669,12 +717,16 @@ public class DeltavisionReader extends FormatReader {
     float yOrigin = in.readFloat();
     float zOrigin = in.readFloat();
 
-    in.skipBytes(4);
+    // documentation suggests that the title count uses 4 bytes
+    // but 2 bytes is correct in practice as valid values are
+    // in the range [0, 10]
+    in.skipBytes(2);
+    int numTitles = in.readShort();
 
     // "new" type DV files limit the number of titles so
     // that metadata describing additional channels can be
     // packed into the same size header
-    int titleCount = type < NEW_TYPE ? 10 : 4;
+    int titleCount = fileType < NEW_TYPE ? 10 : 4;
     String[] title = new String[titleCount];
     for (int i=0; i<title.length; i++) {
       // Make sure that "null" characters are stripped out
@@ -682,7 +734,8 @@ public class DeltavisionReader extends FormatReader {
     }
 
     // intensity and wavelength data for channels 6-12 follows titles
-    if (type == NEW_TYPE) {
+    String timestamp = null;
+    if (fileType == NEW_TYPE) {
       for (int i=5; i<MAX_CHANNELS; i++) {
         minWave[i] = in.readFloat();
       }
@@ -698,12 +751,19 @@ public class DeltavisionReader extends FormatReader {
       for (int i=5; i<MAX_CHANNELS; i++) {
         waves[i] = in.readShort();
       }
+
+      in.seek(844);
+      // timestamp stored in seconds; DateTools expects milliseconds
+      long acqDate = (long) (in.readDouble() * 1000);
+      if (acqDate > 0) {
+        timestamp = DateTools.convertDate(acqDate, DateTools.UNIX);
+      }
     }
 
     // --- compute some secondary values ---
 
     String imageType =
-      type < IMAGE_TYPES.length ? IMAGE_TYPES[type] : "unknown";
+      fileType < IMAGE_TYPES.length ? IMAGE_TYPES[fileType] : "unknown";
 
     String imageDesc = title[0];
     if (imageDesc != null && imageDesc.length() == 0) imageDesc = null;
@@ -744,6 +804,7 @@ public class DeltavisionReader extends FormatReader {
     addGlobalMeta("Y origin (in um)", yOrigin);
     addGlobalMeta("Z origin (in um)", zOrigin);
 
+    addGlobalMeta("Valid titles", numTitles);
     for (String t : title) {
       addGlobalMetaList("Title", t);
     }
@@ -791,6 +852,10 @@ public class DeltavisionReader extends FormatReader {
       }
 
       store.setImageDescription(imageDesc, series);
+
+      if (timestamp != null) {
+        store.setImageAcquisitionDate(new Timestamp(timestamp), series);
+      }
     }
 
     populateObjective(store, lensID);
@@ -806,30 +871,49 @@ public class DeltavisionReader extends FormatReader {
         }
     }
 
+    if (xTiles * yTiles > getSeriesCount()) {
+      if (xTiles == getSeriesCount()) {
+        yTiles = 1;
+      }
+      else if (yTiles == getSeriesCount()) {
+        xTiles = 1;
+      }
+      else {
+        xTiles = 1;
+        yTiles = 1;
+      }
+    }
+
     if (getSeriesCount() == 1) {
       xTiles = 1;
       yTiles = 1;
-      backwardsStage = false;
+      backwardsStageX = false;
+      backwardsStageY = false;
     }
 
     for (int series=0; series<getSeriesCount(); series++) {
       int seriesIndex = series;
-      if (backwardsStage) {
+      if (backwardsStageX || backwardsStageY) {
         int x = series % xTiles;
         int y = series / xTiles;
-        seriesIndex = (yTiles - y - 1) * xTiles + (xTiles - x - 1);
+        int xIndex = backwardsStageX ? xTiles - x - 1 : x;
+        int yIndex = backwardsStageY ? yTiles - y - 1 : y;
+        seriesIndex = yIndex * xTiles + xIndex;
       }
 
+      Double[] expTime = new Double[getSizeC()];
       for (int i=0; i<getImageCount(); i++) {
         int[] coords = getZCTCoords(i);
 
-        int tIndex = getSeriesCount() * coords[2] + seriesIndex;
-        DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
+        DVExtHdrFields hdr = extHdrFields[getPlaneIndex(seriesIndex, i)];
+        if (expTime[coords[1]] == null) {
+          expTime[coords[1]] = new Double(hdr.expTime);
+        }
 
         // plane timing
-        store.setPlaneDeltaT(new Time(new Double(hdr.timeStampSeconds), UNITS.SECOND), series, i);
-        store.setPlaneExposureTime(
-          new Time(new Double(extHdrFields[0][coords[1]][0].expTime), UNITS.SECOND), series, i);
+        store.setPlaneDeltaT(
+          new Time(new Double(hdr.timeStampSeconds), UNITS.SECOND), series, i);
+        store.setPlaneExposureTime(new Time(expTime[coords[1]], UNITS.SECOND), series, i);
 
         // stage position
         if (!logFound || getSeriesCount() > 1) {
@@ -837,24 +921,24 @@ public class DeltavisionReader extends FormatReader {
           store.setPlanePositionY(hdr.stageYCoord, series, i);
           store.setPlanePositionZ(hdr.stageZCoord, series, i);
         }
-      }
 
-      for (int w=0; w<getSizeC(); w++) {
-        DVExtHdrFields hdrC = extHdrFields[0][w][series];
+        if (coords[0] == 0 && coords[2] == 0) {
+          int w = coords[1];
 
-        Length emission =
-          FormatTools.getEmissionWavelength(new Double(waves[w]));
-        Length excitation =
-          FormatTools.getExcitationWavelength(new Double(hdrC.exWavelen));
+          Length emission =
+            FormatTools.getEmissionWavelength(new Double(waves[w]));
+          Length excitation =
+            FormatTools.getExcitationWavelength(new Double(hdr.exWavelen));
 
-        if (emission != null) {
-          store.setChannelEmissionWavelength(emission, series, w);
+          if (emission != null) {
+            store.setChannelEmissionWavelength(emission, series, w);
+          }
+          if (excitation != null) {
+            store.setChannelExcitationWavelength(excitation, series, w);
+          }
+          if (ndFilters[w] == null) ndFilters[w] = new Double(hdr.ndFilter);
+          store.setChannelNDFilter(ndFilters[w], series, w);
         }
-        if (excitation != null) {
-          store.setChannelExcitationWavelength(excitation, series, w);
-        }
-        if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
-        store.setChannelNDFilter(ndFilters[w], series, w);
       }
     }
   }
@@ -895,6 +979,10 @@ public class DeltavisionReader extends FormatReader {
         return FormatTools.FLOAT;
       case 6:
         return FormatTools.UINT16;
+      case 7:
+        return FormatTools.INT32;
+      case 8:
+        return FormatTools.DOUBLE;
     }
     return FormatTools.UINT8;
   }
@@ -903,65 +991,101 @@ public class DeltavisionReader extends FormatReader {
   private String getImageSequence(int imageSequence) {
     switch (imageSequence) {
       case 0:
-        return "ZTW";
+        return "ZTWP";
       case 1:
-        return "WZT";
+        return "WZTP";
       case 2:
-        return "ZWT";
+        return "ZWTP";
+      case 3:
+        return "ZPWT";
+      case 4:
+        return "ZWPT";
+      case 5:
+        return "WZPT";
+      case 6:
+        return "WPTZ";
+      case 7:
+        return "PWTZ";
+      case 8:
+        return "PTWZ";
+      case 9:
+        return "PZWT";
+      case 10:
+        return "PWZT";
+      case 11:
+        return "WPZT";
+      case 12:
+        return "WTPZ";
+      case 13:
+        return "TWPZ";
+      case 14:
+        return "TPWZ";
       case 65536:
-        return "WZT";
+        return "WZTP";
     }
-    return "ZTW";
+    return "ZTWP";
   }
 
   /**
    * This method calculates the size of a w, t, z section depending on which
-   * sequence is being used (either ZTW, WZT, or ZWT)
-   * @param imgSequence
+   * sequence is being used
    * @param numZSections
    * @param numWaves
    * @param numTimes
+   * @param numPanels
    */
-  private void setOffsetInfo(int imgSequence, int numZSections,
-    int numWaves, int numTimes)
+  private void setOffsetInfo(int numZSections,
+    int numWaves, int numTimes, int numPanels)
   {
-    int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
+    int smallOffset = getTotalPlaneHeaderSize();
 
-    switch (imgSequence) {
-      // ZTW sequence
-      case 0:
-        zSize = smallOffset;
-        tSize = zSize * numZSections;
-        wSize = tSize * numTimes;
-        break;
+    int[] lens = new int[4];
 
-      // WZT sequence
-      case 1:
-        wSize = smallOffset;
-        zSize = wSize * numWaves;
-        tSize = zSize * numZSections;
-        break;
+    int zIndex = imageSequence.indexOf('Z');
+    int wIndex = imageSequence.indexOf('W');
+    int tIndex = imageSequence.indexOf('T');
+    int pIndex = imageSequence.indexOf('P');
 
-      // ZWT sequence
-      case 2:
-        zSize = smallOffset;
-        wSize = zSize * numZSections;
-        tSize = wSize * numWaves;
-        break;
+    lens[zIndex] = numZSections;
+    lens[wIndex] = numWaves;
+    lens[tIndex] = numTimes;
+    lens[pIndex] = numPanels;
+
+    int[] sizes = new int[4];
+    sizes[0] = smallOffset;
+    for (int i=1; i<sizes.length; i++) {
+      sizes[i] = sizes[i - 1] * lens[i - 1];
     }
+
+    zSize = sizes[zIndex];
+    wSize = sizes[wIndex];
+    tSize = sizes[tIndex];
+    panelSize = sizes[pIndex];
   }
 
-  /**
-   * Given any specific Z, W, and T of a plane, determine the totalOffset from
-   * the start of the extended header.
-   * @param currentZ
-   * @param currentW
-   * @param currentT
-   */
-  private int getTotalOffset(int currentZ, int currentW, int currentT) {
-    return (zSize * currentZ) + (wSize * currentW) + (tSize * currentT);
+  private int getTotalPlaneHeaderSize() {
+    return (numIntsPerSection + numFloatsPerSection) * 4;
   }
 
+  private int getPlaneIndex(int series, int plane) {
+    int zIndex = imageSequence.indexOf('Z');
+    int wIndex = imageSequence.indexOf('W');
+    int tIndex = imageSequence.indexOf('T');
+    int pIndex = imageSequence.indexOf('P');
+    int[] lens = new int[4];
+    lens[zIndex] = getSizeZ();
+    lens[wIndex] = getSizeC();
+    lens[tIndex] = getSizeT();
+    lens[pIndex] = getSeriesCount();
+
+    int[] coords = getZCTCoords(plane);
+    int[] realCoords = new int[4];
+    realCoords[zIndex] = coords[0];
+    realCoords[wIndex] = coords[1];
+    realCoords[tIndex] = coords[2];
+    realCoords[pIndex] = series;
+    return FormatTools.positionToRaster(lens, realCoords);
+  }
 
   /**
    * Given any specific Z, W, and T of a plane, determine the absolute
@@ -976,8 +1100,17 @@ public class DeltavisionReader extends FormatReader {
       int coordIndex = 0;
       int dimIndex = 2;
 
+      String order = getDimensionOrder();
+      int index = imageSequence.indexOf("P") + 2;
+      String start = order.substring(0, index);
+      String end = "";
+      if (index < order.length()) {
+        end = order.substring(index);
+      }
+      order = start + "P" + end;
+
       while (coordIndex < newCoords.length) {
-        char dim = getDimensionOrder().charAt(dimIndex++);
+        char dim = order.charAt(dimIndex++);
 
         switch (dim) {
           case 'Z':
@@ -987,8 +1120,15 @@ public class DeltavisionReader extends FormatReader {
             newCoords[coordIndex++] = currentW;
             break;
           case 'T':
-            newCoords[coordIndex++] = getSeries();
+            if (!newFileType) {
+              newCoords[coordIndex++] = getSeries();
+            }
             newCoords[coordIndex++] = currentT;
+            break;
+          case 'P':
+            if (newFileType) {
+              newCoords[coordIndex++] = getSeries();
+            }
             break;
         }
       }
