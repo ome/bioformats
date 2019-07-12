@@ -170,4 +170,16 @@ public class TiffSaverTest {
     assertTrue("new comment".equals(tiffParser.getComment()));
   }
 
+  @Test
+  public void testOverwriteCommentEqualLength() throws FormatException, IOException {
+    out.seek(0);
+    tiffSaver.writeHeader();
+    tiffSaver.writeIFD(ifd, 46);
+    tiffSaver.writeIFD(ifd, 0);
+    tiffSaver.overwriteComment(in, "COMMENT");
+    assertEquals("COMMENT", tiffParser.getComment());
+    assertEquals("comment",
+      tiffParser.getIFDs().get(1).getIFDTextValue(IFD.IMAGE_DESCRIPTION));
+  }
+
 }
