@@ -177,8 +177,8 @@ public class NDPIReader extends BaseTiffReader {
             for (int i=0; i<markers.length; i++) {
               markers[i] = markers[i] & 0xffffffffL;
             }
+            service.setRestartMarkers(markers);
           }
-          service.setRestartMarkers(markers);
         }
         service.initialize(in, getSizeX(), getSizeY());
       }

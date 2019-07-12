@@ -219,7 +219,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
     if (restartInterval == 1 && restartMarkers.size() <= 1) {
       // interval and markers are not present or invalid
-      throw new IOException("Restart interval and markers invalid");
+      LOGGER.warn("Restart interval and markers are not present");
     }
   }
 
