@@ -467,17 +467,7 @@ public class BDVReader extends FormatReader {
     core.clear();
     // read experiment structure and collect coordinates
 
-    int numTimepoints = 1;
-    if (timepointUsePattern && lastTimepoint > 0) {
-      numTimepoints = lastTimepoint - firstTimepoint + 1;
-      if (timepointIncrement > 0) {
-        numTimepoints /= timepointIncrement;
-      }
-    }
-    else {
-      if (lastTimepoint == 0) lastTimepoint = firstTimepoint;
-      numTimepoints = lastTimepoint - firstTimepoint + 1;
-    }
+    int numTimepoints = verifyTimepoints();
 
     for (int timepoint = firstTimepoint; timepoint <= lastTimepoint; timepoint+=timepointIncrement) {
       String path_to_timepoint = String.format("t%05d", timepoint);
@@ -517,7 +507,8 @@ public class BDVReader extends FormatReader {
           String firstChannelIndex = channelIndexes.size() > 0 ? channelIndexes.get(0).toString() : "";
           
           // Dont create a new series for each channel
-          if (sizeC == 1 || (setupAttributes.containsKey("channel") && setupAttributes.get("channel").equals(firstChannelIndex))) {
+          if (sizeC == 1 || (setupAttributes != null && setupAttributes.containsKey("channel") 
+              && setupAttributes.get("channel").equals(firstChannelIndex))) {
             CoreMetadata m = new CoreMetadata();
             core.add(m);
             int resolutionsInThisSetup = setupResolutionCounts.get(setupIndex);
@@ -588,6 +579,54 @@ public class BDVReader extends FormatReader {
       store.setImageName(seriesNames.get(s), s);
     }
     setSeries(0);
+  }
+  
+  private int verifyTimepoints() throws FormatException {
+    int numTimepoints = 1;
+    if (timepointUsePattern && lastTimepoint > 0) {
+      numTimepoints = lastTimepoint - firstTimepoint + 1;
+      if (timepointIncrement > 0) {
+        numTimepoints /= timepointIncrement;
+      }
+    }
+    else {
+      if (lastTimepoint == 0) lastTimepoint = firstTimepoint;
+      numTimepoints = lastTimepoint - firstTimepoint + 1;
+    }
+
+    boolean timepointsValid = true;
+    for (int timepoint = firstTimepoint; timepoint <= lastTimepoint; timepoint+=timepointIncrement) {
+      String path_to_timepoint = String.format("t%05d", timepoint);
+      if (!jhdf.exists(path_to_timepoint)) {
+        LOGGER.warn("Unable to locate timepoint data for timepoint " + timepoint);
+        timepointsValid = false;
+        break;
+      }
+    }
+    if (!timepointsValid) {
+      LOGGER.warn("Attempting to locate valid timepoints from h5 file");
+      List <Integer> newTimepoints = new ArrayList<Integer>();
+      List<String> allMembers = jhdf.getMember("/");
+      for (String member: allMembers) {
+        if (member.toLowerCase().startsWith("t")) {
+          newTimepoints.add(Integer.parseInt(member.substring(1)));
+        }
+      }
+      numTimepoints = newTimepoints.size();
+      if (numTimepoints == 0) {
+        throw new FormatException("Unable to locate any valid timepoints");
+      }
+      firstTimepoint = newTimepoints.get(0);
+      lastTimepoint = newTimepoints.get(0);
+      for (int tp: newTimepoints) {
+        if (tp < firstTimepoint) firstTimepoint = tp;
+        if (tp > lastTimepoint) lastTimepoint = tp;
+      }
+      numTimepoints = newTimepoints.size();
+      timepointIncrement = (lastTimepoint - firstTimepoint) / numTimepoints;
+      if (timepointIncrement == 0) timepointIncrement = 1;
+    }
+    return numTimepoints;
   }
 
   private int getChannelIndexOfCellObjectName(String cellObjectName) {
