@@ -54,7 +54,7 @@ metadata.createRoot();
 metadata.setImageID('Image:0', 0);
 metadata.setPixelsID('Pixels:0', 0);
 if is_octave()
-    java_true = java_get('java.lang.Boolean', 'TRUE');
+    java_true = javaObject('java.lang.Boolean', 'TRUE');
 else
     java_true = java.lang.Boolean.TRUE;
 end
