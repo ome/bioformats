@@ -2655,6 +2655,13 @@ public class FormatReaderTest {
               continue;
             }
 
+            // Deltavision reader can pick up .rcpnl files
+            if (result && (r instanceof RCPNLReader) &&
+              (readers[j] instanceof DeltavisionReader))
+            {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;

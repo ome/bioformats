@@ -134,6 +134,9 @@ public class DeltavisionReader extends FormatReader {
   private String imageSequence;
   private boolean newFileType = false;
 
+  // toggle whether to treat timepoints as positions
+  protected boolean positionInT = false;
+
   // -- Constructor --
 
   /** Constructs a new Deltavision reader. */
@@ -520,10 +523,7 @@ public class DeltavisionReader extends FormatReader {
 
     int nStagePositions = xTiles * yTiles;
 
-    // if an *.rcpnl file is encountered, assume all timepoints are positions
-    // the stage position values may not represent a uniform grid,
-    // but should still be separate positions
-    if (checkSuffix(currentId, "rcpnl")) {
+    if (positionInT) {
       nStagePositions = getSizeT();
       if (xTiles * yTiles != nStagePositions) {
         // if positions are not uniform, we can't reliably determine
@@ -1585,7 +1585,7 @@ public class DeltavisionReader extends FormatReader {
    * Populate an Objective based upon the lens ID.
    * This is based upon information received from Applied Precision.
    */
-  private void populateObjective(MetadataStore store, int lensID)
+  protected void populateObjective(MetadataStore store, int lensID)
     throws FormatException
   {
     Double lensNA = null;
@@ -2799,11 +2799,6 @@ public class DeltavisionReader extends FormatReader {
         break;
       case 18107: // API 10X, BH
         lensNA = 0.15;
-
-        if (checkSuffix(currentId, "rcpnl")) {
-          lensNA = 0.30;
-        }
-
         magnification = 10.0;
         workingDistance = 15.00;
         immersion = MetadataTools.getImmersion("Air");
