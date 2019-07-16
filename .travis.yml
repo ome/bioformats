@@ -1,3 +1,4 @@
+---
 language: java
 
 # This (sudo: false) is needed to "run on container-based infrastructure" on
@@ -12,8 +13,10 @@ cache:
   - downloads
 
 addons:
-  apt_packages:
+  apt:
+    packages:
     - git
+    - ant
 
 jdk:
   - openjdk11
