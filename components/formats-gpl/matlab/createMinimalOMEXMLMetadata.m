@@ -53,12 +53,7 @@ metadata = OMEXMLService.createOMEXMLMetadata();
 metadata.createRoot();
 metadata.setImageID('Image:0', 0);
 metadata.setPixelsID('Pixels:0', 0);
-if is_octave()
-    java_true = javaObject('java.lang.Boolean', 'TRUE');
-else
-    java_true = java.lang.Boolean.TRUE;
-end
-metadata.setPixelsBigEndian(java_true, 0);
+metadata.setPixelsBigEndian(javaObject('java.lang.Boolean', 'TRUE'), 0);
 
 % Set dimension order
 dimensionOrderEnumHandler = javaObject('ome.xml.model.enums.handlers.DimensionOrderEnumHandler');
