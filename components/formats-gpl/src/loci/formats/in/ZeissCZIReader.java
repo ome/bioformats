@@ -2136,7 +2136,7 @@ public class ZeissCZIReader extends FormatReader {
           }
           if (positions.getLength() == 0 && (mosaics <= 1 || (prestitched != null && prestitched))) {
             positions = scene.getElementsByTagName("CenterPosition");
-            if (positions.getLength() > 0) {
+            if (positions.getLength() > 0 && nextPosition < positionsX.length) {
               Element position = (Element) positions.item(0);
               String[] pos = position.getTextContent().split(",");
               positionsX[nextPosition] = new Length(DataTools.parseDouble(pos[0]), UNITS.MICROM);
