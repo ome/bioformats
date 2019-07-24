@@ -2884,6 +2884,12 @@ public class DeltavisionReader extends FormatReader {
         workingDistance = 0.48;
         immersion = MetadataTools.getImmersion("Air");
         break;
+      case 20007: // Applied Precision 100X/1.4
+        lensNA = 1.4;
+        magnification = 100.0;
+        immersion = MetadataTools.getImmersion("Oil");
+        manufacturer = "Applied Precision";
+        break;
       case 1: // Zeiss 10X/.25
         lensNA = 0.25;
         magnification = 10.0;
