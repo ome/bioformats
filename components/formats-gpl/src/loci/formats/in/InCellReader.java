@@ -84,6 +84,7 @@ public class InCellReader extends FormatReader {
   private List<Double> emWaves, exWaves;
   private List<String> channelNames;
   private int totalImages;
+  private transient int imagesNumber;
   private int imageWidth, imageHeight;
   private String creationDate;
   private String rowName = "A", colName = "1";
@@ -252,6 +253,7 @@ public class InCellReader extends FormatReader {
       imageFiles = null;
       tiffReader = null;
       totalImages = 0;
+      imagesNumber = 0;
       emWaves = exWaves = null;
       channelNames = null;
       wellCoordinates = null;
@@ -413,6 +415,9 @@ public class InCellReader extends FormatReader {
           }
         }
       }
+    } else if (totalImages != imagesNumber) {
+      LOGGER.warn("Inconsistent number of Images {}: expected {} but found {}",
+        id, imagesNumber, totalImages);
     }
 
     for (int t=imageFiles[0][0].length-1; t>=0; t--) {
@@ -848,6 +853,9 @@ public class InCellReader extends FormatReader {
         int row = Integer.parseInt(attributes.getValue("row")) - 1;
         int col = Integer.parseInt(attributes.getValue("col")) - 1;
         exclude[row][col] = true;
+      }
+      else if (qName.equals("Images")) {
+        imagesNumber = Integer.parseInt(attributes.getValue("number"));
       }
       else if (qName.equals("Image")) {
         totalImages++;
