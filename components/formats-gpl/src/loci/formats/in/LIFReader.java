@@ -1990,10 +1990,17 @@ public class LIFReader extends FormatReader {
           String posX = tileNode.getAttribute("PosX");
           String posY = tileNode.getAttribute("PosY");
 
+          while (fieldPosX.size() < image) {
+            fieldPosX.add(null);
+          }
+          while (fieldPosY.size() < image) {
+            fieldPosY.add(null);
+          }
+
           if (posX != null) {
             try {
               final Double number = DataTools.parseDouble(posX);
-              fieldPosX.add(new Length(number, UNITS.REFERENCEFRAME));
+              fieldPosX.add(new Length(number, UNITS.METER));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
@@ -2003,7 +2010,7 @@ public class LIFReader extends FormatReader {
           if (posY != null) {
             try {
               final Double number = DataTools.parseDouble(posY);
-              fieldPosY.add(new Length(number, UNITS.REFERENCEFRAME));
+              fieldPosY.add(new Length(number, UNITS.METER));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
