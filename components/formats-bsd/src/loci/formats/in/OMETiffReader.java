@@ -1192,6 +1192,18 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
     }
 
+    // remove any values we no longer need from the
+    // helper readers' IFDs
+    for (OMETiffPlane[] s : info) {
+      for (OMETiffPlane p : s) {
+        if (p.reader != null && p.reader instanceof MinimalTiffReader) {
+          for (IFD ifd : ((MinimalTiffReader) p.reader).ifds) {
+            ifd.remove(IFD.IMAGE_DESCRIPTION);
+          }
+        }
+      }
+    }
+
     MetadataTools.populatePixels(metadataStore, this, false, false);
     for (int i=0; i<meta.getImageCount(); i++) {
       // make sure that TheZ, TheC, and TheT are all set on any
