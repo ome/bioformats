@@ -852,10 +852,6 @@ public class DeltavisionReader extends FormatReader {
       }
 
       store.setImageDescription(imageDesc, series);
-
-      if (timestamp != null) {
-        store.setImageAcquisitionDate(new Timestamp(timestamp), series);
-      }
     }
 
     populateObjective(store, lensID);
@@ -869,6 +865,14 @@ public class DeltavisionReader extends FormatReader {
               parseDeconvolutionLog(s, store);
             }
         }
+    }
+
+    // timestamp stored in the .dv file takes precedence
+    // over the timestamp in the log file
+    if (timestamp != null) {
+      for (int series=0; series<getSeriesCount(); series++) {
+        store.setImageAcquisitionDate(new Timestamp(timestamp), series);
+      }
     }
 
     if (xTiles * yTiles > getSeriesCount()) {
