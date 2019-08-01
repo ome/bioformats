@@ -422,7 +422,7 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
       // Some TIFF files only store a single tile, even if the image is
       // very, very large.  In those cases, we don't want to open the whole
       // tile if we can avoid it.
-      if (DataTools.safeMultiply32(height, getOptimalTileWidth()) >
+      if (DataTools.safeMultiply64(height, getOptimalTileWidth()) >
         10 * 1024 * 1024)
       {
         return super.getOptimalTileHeight();
