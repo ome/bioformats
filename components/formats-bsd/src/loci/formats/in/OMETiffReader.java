@@ -1332,7 +1332,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
           c.tileHeight = c.sizeY;
         }
         // Duplicate MinimalTiffReader getOptimalTileHeight logic
-        if (DataTools.safeMultiply32(c.tileHeight, c.tileWidth) >
+        if (DataTools.safeMultiply64(c.tileHeight, c.tileWidth) >
           10 * 1024 * 1024) {
           int bpp = FormatTools.getBytesPerPixel(c.pixelType);
           int effC = c.sizeC / (c.imageCount / (c.sizeZ * c.sizeT));
