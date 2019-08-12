@@ -461,7 +461,50 @@ public class CellWorxReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataConverter.convertMetadata(convertMetadata, store);
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
+
+    // check for stage positions in each file
+
+    for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
+
+      String firstFile = null;
+      int plane = 0;
+      while ((firstFile == null || !new Location(firstFile).exists()) &&
+        plane < getImageCount())
+      {
+        firstFile = getFile(s, plane);
+        plane++;
+      }
+      if (firstFile != null && new Location(firstFile).exists()) {
+        try {
+          pnl = getReader(firstFile, true);
+
+          IMetadata meta = (IMetadata) pnl.getMetadataStore();
+          Length posX = meta.getPlanePositionX(0, 0);
+          Length posY = meta.getPlanePositionY(0, 0);
+          Length posZ = meta.getPlanePositionZ(0, 0);
+
+          for (int p=0; p<getImageCount(); p++) {
+            if (posX != null) {
+              store.setPlanePositionX(posX, s, p);
+            }
+            if (posY != null) {
+              store.setPlanePositionY(posY, s, p);
+            }
+            if (posZ != null) {
+              store.setPlanePositionZ(posZ, s, p);
+            }
+          }
+        }
+        finally {
+          pnl.close();
+        }
+      }
+    }
+    setSeries(0);
+
+    // set up plate linkages
 
     String plateID = MetadataTools.createLSID("Plate", 0);
 
