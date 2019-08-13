@@ -481,9 +481,10 @@ public class CellWorxReader extends FormatReader {
           pnl = getReader(firstFile, true);
 
           IMetadata meta = (IMetadata) pnl.getMetadataStore();
-          Length posX = meta.getPlanePositionX(0, 0);
-          Length posY = meta.getPlanePositionY(0, 0);
-          Length posZ = meta.getPlanePositionZ(0, 0);
+          int pnlSeries = s % pnl.getSeriesCount();
+          Length posX = meta.getPlanePositionX(pnlSeries, 0);
+          Length posY = meta.getPlanePositionY(pnlSeries, 0);
+          Length posZ = meta.getPlanePositionZ(pnlSeries, 0);
 
           for (int p=0; p<getImageCount(); p++) {
             if (posX != null) {
