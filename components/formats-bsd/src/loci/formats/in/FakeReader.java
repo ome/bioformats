@@ -213,6 +213,20 @@ public class FakeReader extends FormatReader {
   private transient int fields = 0;
   private transient int plateAcqs = 0;
 
+  // Misc. debugging
+  private int sleepOpenBytes = 0;
+  private int sleepSetId = 0;
+
+  static void sleep(String msg, int ms) {
+    if (ms <= 0) return; // EARLY EXIT
+    try {
+      LOGGER.info("sleeping {}s.", ms);
+      Thread.sleep(ms);
+    } catch (InterruptedException ie) {
+      LOGGER.warn("sleeping interrupted");
+    }
+  }
+
   /**
    * Read byte-encoded metadata from the given plane.
    * @see FakeReader#readSpecialPixels(byte[], int, boolean, int, boolean)
@@ -306,6 +320,8 @@ public class FakeReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    sleep("openBytes", sleepOpenBytes);
 
     final int s = getSeries();
     final int pixelType = getPixelType();
@@ -738,6 +754,10 @@ public class FakeReader extends FormatReader {
           color.add(null);
         }
         color.set(index, parseColor(value));
+      } else if (key.equals("sleepOpenBytes")) {
+        sleepOpenBytes = intValue;
+      } else if (key.equals("sleepSetId")) {
+        sleepSetId = intValue;
       }
     }
 
