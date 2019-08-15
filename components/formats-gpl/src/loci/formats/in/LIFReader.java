@@ -1902,6 +1902,9 @@ public class LIFReader extends FormatReader {
   {
     NodeList scannerSettings = getNodes(imageNode, "ScannerSettingRecord");
     NodeList attachmentNodes = getNodes(imageNode, "Attachment");
+    if (attachmentNodes == null) {
+      return;
+    }
     NodeList confocalSettings = null;
     for (int i=0; i<attachmentNodes.getLength(); i++) {
       Element attachment = (Element) attachmentNodes.item(i);
