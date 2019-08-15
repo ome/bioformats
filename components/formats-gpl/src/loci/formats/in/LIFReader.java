@@ -2126,18 +2126,14 @@ public class LIFReader extends FormatReader {
 
           String value = confocalSetting.getAttribute("StagePosX");
 
-          if (value != null) {
-            if (value != null && !value.trim().isEmpty()) {
-              fieldPosX.add(new Length(DataTools.parseDouble(value.trim()), UNITS.METER));
-            }
+          if (value != null && !value.trim().isEmpty()) {
+            fieldPosX.add(new Length(DataTools.parseDouble(value.trim()), UNITS.METER));
           }
 
           value = confocalSetting.getAttribute("StagePosY");
 
-          if (value != null) {
-            if (value != null && !value.trim().isEmpty()) {
-              fieldPosY.add(new Length(DataTools.parseDouble(value.trim()), UNITS.METER));
-            }
+          if (value != null && !value.trim().isEmpty()) {
+            fieldPosY.add(new Length(DataTools.parseDouble(value.trim()), UNITS.METER));
           }
         }
       }
