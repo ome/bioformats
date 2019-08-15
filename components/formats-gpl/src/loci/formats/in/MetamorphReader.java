@@ -100,7 +100,7 @@ public class MetamorphReader extends BaseTiffReader {
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
   public static final Pattern WELL_COORDS = Pattern.compile(
-      "scan\\s+([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
+      "(scan\\s+)*([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
   );
 
   // IFD tag numbers of important fields
@@ -759,6 +759,10 @@ public class MetamorphReader extends BaseTiffReader {
     Map<String, Integer> rowMap = null;
     Map<String, Integer> colMap = null;
     isHCS = true;
+    if (stageLabels == null) {
+      stageLabels = stageNames.toArray(new String[stageNames.size()]);
+    }
+
     if (null == stageLabels) {
       isHCS = false;
     } else {
@@ -783,8 +787,8 @@ public class MetamorphReader extends BaseTiffReader {
       if (uniqueWells.size() != stageLabels.length) {
         isHCS = false;
       } else {
-        rows = Collections.max(rowMap.values());
-        cols = Collections.max(colMap.values());
+        rows = Collections.max(rowMap.values()) + 1;
+        cols = Collections.max(colMap.values()) + 1;
         CoreMetadata c = core.get(0, 0);
         core.clear();
         c.sizeZ = 1;
@@ -2142,13 +2146,16 @@ public class MetamorphReader extends BaseTiffReader {
   }
 
   private Map.Entry<Integer, Integer> getWellCoords(String label) {
+    if (label.indexOf(",") >= 0) {
+      label = label.substring(0, label.indexOf(","));
+    }
     Matcher matcher = WELL_COORDS.matcher(label);
     if (!matcher.find()) return null;
     int nGroups = matcher.groupCount();
-    if (nGroups != 2) return null;
+    if (nGroups != 3) return null;
     return new AbstractMap.SimpleEntry(
-      (int) (matcher.group(1).toUpperCase().charAt(0) - 'A'),
-      Integer.parseInt(matcher.group(2)) - 1
+      (int) (matcher.group(2).toUpperCase().charAt(0) - 'A'),
+      Integer.parseInt(matcher.group(3)) - 1
     );
   }
 
