@@ -474,13 +474,14 @@ public class MetamorphReader extends BaseTiffReader {
 
       boolean globalDoZ = true;
       boolean doTimelapse = false;
+      boolean doWavelength = false;
 
       StringBuilder currentValue = new StringBuilder();
       String key = "";
 
       for (String line : lines) {
         int comma = line.indexOf(',');
-        if (comma <= 0) {
+        if (comma <= 0 && line.indexOf("EndFile") < 0) {
           currentValue.append("\n");
           currentValue.append(line);
           continue;
@@ -523,8 +524,16 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("DoZSeries")) {
           globalDoZ = Boolean.parseBoolean(value);
         }
+        else if (key.equals("DoWave")) {
+          doWavelength = Boolean.parseBoolean(value);
+        }
 
-        key = line.substring(1, comma - 1).trim();
+        if (comma >= 1) {
+          key = line.substring(1, comma - 1).trim();
+        }
+        else {
+          key = "";
+        }
         currentValue.delete(0, currentValue.length());
         currentValue.append(line.substring(comma + 1).trim());
       }
@@ -629,19 +638,21 @@ public class MetamorphReader extends BaseTiffReader {
             }
             stks[seriesNdx][pt[seriesNdx]] = prefix;
             if (j < waveNames.size() && waveNames.get(j) != null) {
-              stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
-              if (useWaveNames) {
-                String waveName = waveNames.get(j);
-                // If there are underscores in the wavelength name, translate
-                // them to hyphens. (See #558)
-                waveName = waveName.replace('_', '-');
-                // If there are slashes (forward or backward) in the wavelength
-                // name, translate them to hyphens. (See #5922)
-                waveName = waveName.replace('/', '-');
-                waveName = waveName.replace('\\', '-');
-                waveName = waveName.replace('(', '-');
-                waveName = waveName.replace(')', '-');
-                stks[seriesNdx][pt[seriesNdx]] += waveName;
+              if (doWavelength) {
+                stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
+                if (useWaveNames) {
+                  String waveName = waveNames.get(j);
+                  // If there are underscores in the wavelength name, translate
+                  // them to hyphens. (See #558)
+                  waveName = waveName.replace('_', '-');
+                  // If there are slashes (forward or backward) in the wavelength
+                  // name, translate them to hyphens. (See #5922)
+                  waveName = waveName.replace('/', '-');
+                  waveName = waveName.replace('\\', '-');
+                  waveName = waveName.replace('(', '-');
+                  waveName = waveName.replace(')', '-');
+                  stks[seriesNdx][pt[seriesNdx]] += waveName;
+                }
               }
             }
             if (nstages > 0) {
