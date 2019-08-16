@@ -759,7 +759,7 @@ public class MetamorphReader extends BaseTiffReader {
     Map<String, Integer> rowMap = null;
     Map<String, Integer> colMap = null;
     isHCS = true;
-    if (stageLabels == null) {
+    if (stageLabels == null && stageNames != null) {
       stageLabels = stageNames.toArray(new String[stageNames.size()]);
     }
 
