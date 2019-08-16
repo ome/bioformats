@@ -215,7 +215,7 @@ public class FakeReader extends FormatReader {
 
   // Misc. debugging
   private int sleepOpenBytes = 0;
-  private int sleepSetId = 0;
+  private int sleepInitFile = 0;
 
   static void sleep(String msg, int ms) {
     if (ms <= 0) return; // EARLY EXIT
@@ -535,6 +535,9 @@ public class FakeReader extends FormatReader {
 
   @Override
   protected void initFile(String id) throws FormatException, IOException {
+
+    sleep("initFile", sleepInitFile);
+
     if (!checkSuffix(id, "fake")) {
       if (checkSuffix(id, "fake.ini")) {
         id = id.substring(0, id.lastIndexOf("."));
@@ -756,8 +759,8 @@ public class FakeReader extends FormatReader {
         color.set(index, parseColor(value));
       } else if (key.equals("sleepOpenBytes")) {
         sleepOpenBytes = intValue;
-      } else if (key.equals("sleepSetId")) {
-        sleepSetId = intValue;
+      } else if (key.equals("sleepInitFile")) {
+        sleepInitFile = intValue;
       }
     }
 
