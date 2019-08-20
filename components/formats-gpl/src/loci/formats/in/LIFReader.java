@@ -121,6 +121,8 @@ public class LIFReader extends FormatReader {
     return h.build();
   }
 
+  private static final long METER_MULTIPLY = 1000000;
+
   // -- Fields --
 
   /** Offsets to memory blocks, paired with their corresponding description. */
@@ -1938,7 +1940,7 @@ public class LIFReader extends FormatReader {
         }
         else if (id.equals("dblPinhole")) {
           if (value != null && !value.trim().isEmpty()) {
-            pinholes[image] = DataTools.parseDouble(value.trim()) * 1000000;
+            pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
           }
         }
         else if (id.equals("dblZoom")) {
@@ -1948,7 +1950,7 @@ public class LIFReader extends FormatReader {
         }
         else if (id.equals("dblStepSize")) {
           if (value != null && !value.trim().isEmpty()) {
-            zSteps[image] = DataTools.parseDouble(value.trim()) * 1000000;
+            zSteps[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
           }
         }
         else if (id.equals("nDelayTime_s")) {
@@ -2014,7 +2016,7 @@ public class LIFReader extends FormatReader {
         String value = confocalSetting.getAttribute("Pinhole");
 
         if (value != null && !value.trim().isEmpty()) {
-          pinholes[image] = DataTools.parseDouble(value.trim()) * 1000000;
+          pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
         }
 
         value = confocalSetting.getAttribute("Zoom");
@@ -2224,8 +2226,8 @@ public class LIFReader extends FormatReader {
         offByOnePhysicalLen /= 1000;
       }
       else if (unit.equals("m")) {
-        physicalLen *= 1000000;
-        offByOnePhysicalLen *= 1000000;
+        physicalLen *= METER_MULTIPLY;
+        offByOnePhysicalLen *= METER_MULTIPLY;
       }
 
       boolean oldPhysicalSize = useOldPhysicalSizeCalculation();
@@ -2532,19 +2534,19 @@ public class LIFReader extends FormatReader {
 
       // coordinates are in meters
 
-      transX *= 1000000;
-      transY *= 1000000;
+      transX *= METER_MULTIPLY;
+      transY *= METER_MULTIPLY;
       transX *= 1;
       transY *= 1;
 
       for (int i=0; i<x.size(); i++) {
-        double coordinate = x.get(i).doubleValue() * 1000000;
+        double coordinate = x.get(i).doubleValue() * METER_MULTIPLY;
         coordinate *= 1;
         x.set(i, coordinate);
       }
 
       for (int i=0; i<y.size(); i++) {
-        double coordinate = y.get(i).doubleValue() * 1000000;
+        double coordinate = y.get(i).doubleValue() * METER_MULTIPLY;
         coordinate *= 1;
         y.set(i, coordinate);
       }
