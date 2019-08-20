@@ -1935,28 +1935,24 @@ public class LIFReader extends FormatReader {
         String suffix = scannerSetting.getAttribute("Identifier");
         String value = scannerSetting.getAttribute("Variant");
 
+        if (value == null || value.trim().isEmpty()) {
+          continue;
+        }
+
         if (id.equals("SystemType")) {
           microscopeModels[image] = value;
         }
         else if (id.equals("dblPinhole")) {
-          if (value != null && !value.trim().isEmpty()) {
-            pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
-          }
+          pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
         }
         else if (id.equals("dblZoom")) {
-          if (value != null && !value.trim().isEmpty()) {
-            zooms[image] = DataTools.parseDouble(value.trim());
-          }
+          zooms[image] = DataTools.parseDouble(value.trim());
         }
         else if (id.equals("dblStepSize")) {
-          if (value != null && !value.trim().isEmpty()) {
-            zSteps[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
-          }
+          zSteps[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
         }
         else if (id.equals("nDelayTime_s")) {
-          if (value != null && !value.trim().isEmpty()) {
-            tSteps[image] = DataTools.parseDouble(value.trim());
-          }
+          tSteps[image] = DataTools.parseDouble(value.trim());
         }
         else if (id.equals("CameraName")) {
           detectorModels[image].add(value);
@@ -1978,21 +1974,15 @@ public class LIFReader extends FormatReader {
           }
 
           if (id.endsWith("ExposureTime")) {
-            if (value != null && !value.trim().isEmpty()) {
-              expTimes[image][c] = DataTools.parseDouble(value.trim());
-            }
+            expTimes[image][c] = DataTools.parseDouble(value.trim());
           }
           else if (id.endsWith("Gain")) {
-            if (value != null && !value.trim().isEmpty()) {
-              gains[image][c] = DataTools.parseDouble(value.trim());
-            }
+            gains[image][c] = DataTools.parseDouble(value.trim());
           }
           else if (id.endsWith("WaveLength")) {
-            if (value != null && !value.trim().isEmpty()) {
-              Double exWave = DataTools.parseDouble(value.trim());
-              if (exWave != null && exWave > 0) {
-                exWaves[image][c] = exWave;
-              }
+            Double exWave = DataTools.parseDouble(value.trim());
+            if (exWave != null && exWave > 0) {
+              exWaves[image][c] = exWave;
             }
           }
           // NB: "UesrDefName" is not a typo.
