@@ -465,45 +465,43 @@ public class CellWorxReader extends FormatReader {
 
     // check for stage positions in each file
 
-    for (int s=0; s<getSeriesCount(); s++) {
-      setSeries(s);
+    MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
+    if (metadataLevel != MetadataLevel.MINIMUM) {
+      for (int s=0; s<getSeriesCount(); s++) {
+        setSeries(s);
 
-      String firstFile = null;
-      int plane = 0;
-      while ((firstFile == null || !new Location(firstFile).exists()) &&
-        plane < getImageCount())
-      {
-        firstFile = getFile(s, plane);
-        plane++;
-      }
-      if (firstFile != null && new Location(firstFile).exists()) {
-        try {
-          pnl = getReader(firstFile, true);
+        String firstFile = null;
+        int plane = 0;
+        while ((firstFile == null || !new Location(firstFile).exists()) &&
+          plane < getImageCount())
+        {
+          firstFile = getFile(s, plane);
+          plane++;
+        }
+        if (firstFile != null && new Location(firstFile).exists()) {
+          try (IFormatReader helper = getReader(firstFile, true)) {
+            IMetadata meta = (IMetadata) helper.getMetadataStore();
+            int pnlSeries = s % helper.getSeriesCount();
+            Length posX = meta.getPlanePositionX(pnlSeries, 0);
+            Length posY = meta.getPlanePositionY(pnlSeries, 0);
+            Length posZ = meta.getPlanePositionZ(pnlSeries, 0);
 
-          IMetadata meta = (IMetadata) pnl.getMetadataStore();
-          int pnlSeries = s % pnl.getSeriesCount();
-          Length posX = meta.getPlanePositionX(pnlSeries, 0);
-          Length posY = meta.getPlanePositionY(pnlSeries, 0);
-          Length posZ = meta.getPlanePositionZ(pnlSeries, 0);
-
-          for (int p=0; p<getImageCount(); p++) {
-            if (posX != null) {
-              store.setPlanePositionX(posX, s, p);
-            }
-            if (posY != null) {
-              store.setPlanePositionY(posY, s, p);
-            }
-            if (posZ != null) {
-              store.setPlanePositionZ(posZ, s, p);
+            for (int p=0; p<getImageCount(); p++) {
+              if (posX != null) {
+                store.setPlanePositionX(posX, s, p);
+              }
+              if (posY != null) {
+                store.setPlanePositionY(posY, s, p);
+              }
+              if (posZ != null) {
+                store.setPlanePositionZ(posZ, s, p);
+              }
             }
           }
         }
-        finally {
-          pnl.close();
-        }
       }
+      setSeries(0);
     }
-    setSeries(0);
 
     // set up plate linkages
 
