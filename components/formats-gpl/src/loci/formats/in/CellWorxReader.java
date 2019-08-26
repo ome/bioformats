@@ -466,10 +466,10 @@ public class CellWorxReader extends FormatReader {
     // check for stage positions in each file
 
     MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
-    if (metadataLevel != MetadataLevel.MINIMUM) {
-      for (int s=0; s<getSeriesCount(); s++) {
-        setSeries(s);
+    for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
 
+      if (metadataLevel != MetadataLevel.MINIMUM) {
         String firstFile = null;
         int plane = 0;
         while ((firstFile == null || !new Location(firstFile).exists()) &&
@@ -500,8 +500,15 @@ public class CellWorxReader extends FormatReader {
           }
         }
       }
-      setSeries(0);
+      else {
+        for (int p=0; p<getImageCount(); p++) {
+          store.setPlanePositionX(null, s, p);
+          store.setPlanePositionY(null, s, p);
+          store.setPlanePositionZ(null, s, p);
+        }
+      }
     }
+    setSeries(0);
 
     // set up plate linkages
 
