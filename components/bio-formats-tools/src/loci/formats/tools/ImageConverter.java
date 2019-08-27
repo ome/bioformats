@@ -788,8 +788,8 @@ public final class ImageConverter {
     String currentFile)
     throws FormatException, IOException
   {
-    int w = reader.getOptimalTileWidth();
-    int h = reader.getOptimalTileHeight();
+    int w = Math.min(reader.getOptimalTileWidth(), width);
+    int h = Math.min(reader.getOptimalTileHeight(), height);
     if (saveTileWidth > 0 && saveTileWidth <= width) {
       w = saveTileWidth;
     }
