@@ -2086,6 +2086,9 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       acquiredDate = getFirstNodeValue(image, "AcquisitionDateAndTime");
+      if (acquiredDate == null) {
+        acquiredDate = getFirstNodeValue(document, "CreationDate");
+      }
 
       Element objectiveSettings = getFirstNode(image, "ObjectiveSettings");
       correctionCollar =
