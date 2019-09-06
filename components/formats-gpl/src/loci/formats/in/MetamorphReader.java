@@ -2000,7 +2000,7 @@ public class MetamorphReader extends BaseTiffReader {
    */
   private String locateFirstValidFile() {
     for (int q = 0; q < stks.length; q++) {
-      for (int f = 0; f < stks.length; f++) {
+      for (int f = 0; f < stks[q].length; f++) {
         if (stks[q][f] != null) {
           return stks[q][f];
         }
