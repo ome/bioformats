@@ -435,6 +435,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
   // -- Internal FormatReader API methods --
 
+  /* @see loci.formats.SubResolutionFormatReader#getRequiredDirectories(String[]) */
+  @Override
+  public int getRequiredDirectories(String[] files)
+          throws FormatException, IOException
+  {
+    return FormatTools.getRequiredDirectories(files);
+  }
+
   /* @see loci.formats.SubResolutionFormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
