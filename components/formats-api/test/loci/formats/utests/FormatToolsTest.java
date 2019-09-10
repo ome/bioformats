@@ -217,6 +217,20 @@ public class FormatToolsTest {
     };
   }
 
+
+  @DataProvider(name = "fileLists")
+  public Object[][] createFileLists() {
+    return new Object[][] {
+      {new String[]{"/dir1/dir2/test.tif"}, 0},
+      {new String[]{"test.tif"}, 0},
+      {new String[]{"/dir1/dir2/test.tif", "/dir1/dir2/test2.tif"}, 0},
+      {new String[]{"/dir1/test.tif", "/dir1/dir2/test2.tif"}, 1},
+      {new String[]{"test.tif", "dir2/test2.tif"}, 1},
+      {new String[]{"/test.tif", "/dir1/dir2/test2.tif"}, 2},
+      {new String[]{"/dir1/dir2/test.tif", "/dir3/dir4/dir5/test2.tif"}, 3},
+    };
+  }
+
   @Test(dataProvider = "stagePositionStringUnit")
   public void testGetStagePositionStringUnit(Double value, String unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
@@ -242,5 +256,10 @@ public class FormatToolsTest {
     assertEquals(length, FormatTools.parseLength(value + " " + unit));
     assertEquals(length, FormatTools.parseLength(" " + value + unit));
     assertEquals(length, FormatTools.parseLength(value + unit + " "));
+  }
+  
+  @Test(dataProvider = "fileLists")
+  public void testGetRequiredDirectories(String[] files, int number) {
+    assertEquals(number, FormatTools.getRequiredDirectories(files));
   }
 }

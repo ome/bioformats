@@ -32,6 +32,7 @@
 
 package loci.formats;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -2029,5 +2030,49 @@ public final class FormatTools {
         return null;
       }
       return createLength(value, l);
+  }
+
+  /**
+   * Returns the maximum number of directories below the common parent of a
+   * list of file pahts
+   *
+   * @param files            a string array containing a list of file paths
+   *
+   * @return                 the maximum number of directories under the common
+   *                         parent 
+   */
+  public static int getRequiredDirectories(String[] files)
+  {
+    final StringBuilder commonParent = new StringBuilder();
+
+    int dirCount = 0;
+
+    String[] dirs = files[0].split(File.separatorChar == '/' ? "/" : "\\\\");
+    for (String dir : dirs) {
+      boolean canAppend = true;
+      for (String f : files) {
+        if (!f.startsWith(commonParent.toString() + dir)) {
+          canAppend = false;
+          break;
+        }
+      }
+
+      if (canAppend) {
+        commonParent.append(dir);
+        commonParent.append(File.separator);
+        dirCount++;
+      }
+    }
+
+    int maxDirCount = 0;
+    for (String f : files) {
+      int parentDirCount =
+              f.split(File.separatorChar == '/' ? "/" : "\\\\").length - 1;
+      if (parentDirCount > maxDirCount) {
+        maxDirCount = parentDirCount;
+      }
+    }
+
+    return (int) Math.max(maxDirCount - dirCount, 0);
   }
 }
