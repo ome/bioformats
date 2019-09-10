@@ -1278,7 +1278,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   // -- Helper methods --
 
   private String normalizeFilename(String dir, String name) {
-     File file = new File(dir, name);
+     Location file = new Location(dir, name);
      if (file.exists()) return file.getAbsolutePath();
      return name;
   }
