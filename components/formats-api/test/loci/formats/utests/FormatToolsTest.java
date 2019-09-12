@@ -221,6 +221,8 @@ public class FormatToolsTest {
   @DataProvider(name = "fileLists")
   public Object[][] createFileLists() {
     return new Object[][] {
+      {null, 0},
+      {new String[]{}, 0},
       {new String[]{"/dir1/dir2/test.tif"}, 0},
       {new String[]{"test.tif"}, 0},
       {new String[]{"/dir1/dir2/test.tif", "/dir1/dir2/test2.tif"}, 0},

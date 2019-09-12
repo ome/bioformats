@@ -2034,7 +2034,7 @@ public final class FormatTools {
 
   /**
    * Returns the maximum number of directories below the common parent of a
-   * list of file pahts
+   * list of file paths
    *
    * @param files            a string array containing a list of file paths
    *
@@ -2043,6 +2043,7 @@ public final class FormatTools {
    */
   public static int getRequiredDirectories(String[] files)
   {
+    if (files == null || files.length == 0) return 0;
     final StringBuilder commonParent = new StringBuilder();
 
     int dirCount = 0;
