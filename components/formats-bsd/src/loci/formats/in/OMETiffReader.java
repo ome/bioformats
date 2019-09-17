@@ -83,6 +83,9 @@ import ome.xml.model.primitives.Timestamp;
  */
 public class OMETiffReader extends SubResolutionFormatReader {
 
+  public static final String[] OME_TIFF_SUFFIXES =
+    {"ome.tiff", "ome.tif", "ome.tf2", "ome.tf8", "ome.btf", "companion.ome"};
+
   // -- Fields --
 
   /** Mapping from series and plane numbers to files and IFD entries. */
@@ -104,8 +107,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", new String[] {"ome.tiff", "ome.tif", "ome.tf2",
-                                    "ome.tf8", "ome.btf", "companion.ome"});
+    super("OME-TIFF", OME_TIFF_SUFFIXES);
     suffixNecessary = false;
     suffixSufficient = false;
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
@@ -432,6 +434,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
   }
 
   // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.SubResolutionFormatReader#getRequiredDirectories(String[]) */
+  @Override
+  public int getRequiredDirectories(String[] files)
+          throws FormatException, IOException
+  {
+    return FormatTools.getRequiredDirectories(files);
+  }
 
   /* @see loci.formats.SubResolutionFormatReader#initFile(String) */
   @Override
@@ -1268,7 +1278,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   // -- Helper methods --
 
   private String normalizeFilename(String dir, String name) {
-     File file = new File(dir, name);
+     Location file = new Location(dir, name);
      if (file.exists()) return file.getAbsolutePath();
      return name;
   }
