@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.ServiceException;
@@ -68,7 +69,8 @@ public class NDPIReader extends BaseTiffReader {
 
   private JPEGTurboService service = new JPEGTurboServiceImpl();
 
-  private Double magnification;
+  private Double nominalMagnification;
+  private Double calibratedMagnification;
   private String serialNumber;
   private String instrumentModel;
 
@@ -236,7 +238,8 @@ public class NDPIReader extends BaseTiffReader {
       initializedPlane = -1;
       sizeZ = 1;
       pyramidHeight = 1;
-      magnification = null;
+      calibratedMagnification = null;
+      nominalMagnification = null;
       serialNumber = null;
       instrumentModel = null;
       if (tiffParser != null) {
@@ -434,6 +437,11 @@ public class NDPIReader extends BaseTiffReader {
       }
     }
 
+    Object source_lens_value = ifds.get(0).getIFDValue(SOURCE_LENS);
+    if (source_lens_value != null)
+    {
+      nominalMagnification = Double.valueOf((float) source_lens_value);
+    }
     String metadataTag = ifds.get(0).getIFDStringValue(METADATA_TAG);
     if (metadataTag != null) {
       String[] entries = metadataTag.split("\n");
@@ -448,7 +456,7 @@ public class NDPIReader extends BaseTiffReader {
         addGlobalMeta(key, value);
 
         if (key.equals("Objective.Lens.Magnificant")) { // not a typo
-          magnification = new Double(value);
+          calibratedMagnification = new Double(value);
         }
         else if (key.equals("NDP.S/N")) {
           serialNumber = value;
@@ -477,8 +485,12 @@ public class NDPIReader extends BaseTiffReader {
       store.setMicroscopeModel(instrumentModel, 0);
     }
 
-    if (magnification != null) {
-      store.setObjectiveNominalMagnification(magnification, 0, 0);
+    if (nominalMagnification != null) {
+      store.setObjectiveNominalMagnification(nominalMagnification, 0, 0);
+    }
+
+    if (calibratedMagnification != null) {
+      store.setObjectiveCalibratedMagnification(calibratedMagnification, 0, 0);
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
