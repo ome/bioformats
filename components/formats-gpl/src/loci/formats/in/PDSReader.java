@@ -199,7 +199,6 @@ public class PDSReader extends FormatReader {
     }
     Length xPos = null, yPos = null;
     Double deltaX = null, deltaY = null;
-    String date = null;
 
     CoreMetadata m = core.get(0);
 
@@ -253,12 +252,6 @@ public class PDSReader extends FormatReader {
           m.indexed = lutIndex >= 0;
         }
       }
-      else if (key.equals("SCAN TIME")) {
-        long modTime = new Location(currentId).getAbsoluteFile().lastModified();
-        String year = DateTools.convertDate(modTime, DateTools.UNIX, "yyyy");
-        date = value.replaceAll("'", "") + " " + year;
-        date = DateTools.formatDate(date, DATE_FORMAT);
-      }
       else if (key.equals("FILE REC LEN")) {
         recordWidth = Integer.parseInt(value) / 2;
       }
@@ -284,10 +277,6 @@ public class PDSReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, !minimumMetadata);
-
-    if (date != null) {
-      store.setImageAcquisitionDate(new Timestamp(date), 0);
-    }
 
     if (!minimumMetadata) {
       store.setPlanePositionX(xPos, 0, 0);
