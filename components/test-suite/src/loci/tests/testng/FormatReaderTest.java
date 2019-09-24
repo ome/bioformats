@@ -1160,7 +1160,12 @@ public class FormatReaderTest {
       if (retrieve.getImageAcquisitionDate(i) != null) {
         date = retrieve.getImageAcquisitionDate(i).getValue();
       }
-      if (expectedDate != null && date != null && !expectedDate.equals(date)) {
+      boolean bothNull = date == null && expectedDate == null;
+      boolean bothNotNull = date != null && expectedDate != null;
+
+      if ((!bothNull && !bothNotNull) ||
+        (bothNotNull && !expectedDate.equals(date)))
+      {
         result(testName, false, "series " + i +
           " (expected " + expectedDate + ", actual " + date + ")");
         return;
