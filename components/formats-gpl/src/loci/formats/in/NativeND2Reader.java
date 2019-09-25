@@ -835,7 +835,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               }
               else if (attributeName.equals("uiBpcInMemory")) {
                 core.get(0, 0).pixelType = FormatTools.pixelTypeFromBytes(
-                  valueOrLength / 8, false, false);
+                  valueOrLength / 8, false, true);
               }
               else if (attributeName.equals("uiBpcSignificant")) {
                 core.get(0, 0).bitsPerPixel = valueOrLength;
