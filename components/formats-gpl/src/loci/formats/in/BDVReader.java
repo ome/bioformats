@@ -30,6 +30,7 @@ import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,6 +55,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.JHDFService;
 import loci.formats.services.JHDFServiceImpl;
 
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 
@@ -96,6 +98,9 @@ public class BDVReader extends FormatReader {
 
   // Store all custom attributes for each setup ID
   private HashMap<Integer, HashMap<String, String>> setupAttributeList = new HashMap<Integer, HashMap<String, String>>();
+
+  // Store all custom attributes for each setup ID
+  private HashMap<Integer, List<Length>> setupVoxelSizes = new HashMap<Integer, List<Length>>();
 
   // Store the number of mipmap levels for each setup
   private HashMap<Integer, Integer> setupResolutionCounts = new HashMap<Integer, Integer>();
@@ -531,6 +536,8 @@ public class BDVReader extends FormatReader {
                 sumOfResolutions += resolutionsInThisSetup;
               }
             }
+
+            List<Length> setupSizes = setupVoxelSizes.get(setupIndex);
     
             LOGGER.debug(coord.pathToImageData);
             int[] ctzyx = jhdf.getShape(coord.pathToImageData);
@@ -563,7 +570,12 @@ public class BDVReader extends FormatReader {
             else {
               throw new FormatException("Pixel type not understood. Only 8, 16 and 32 bit images supported");
             }
-    
+
+            if (setupSizes != null && setupSizes.size() == 3) {
+              store.setPixelsPhysicalSizeX(setupSizes.get(0), seriesCount);
+              store.setPixelsPhysicalSizeY(setupSizes.get(1), seriesCount);
+              store.setPixelsPhysicalSizeZ(setupSizes.get(2), seriesCount);
+            }
             if (getResolution() == 0) {
               seriesNames.add(String.format("P_%s, W_%s_%s", coord.timepoint, coord.setup, coord.mipmapLevel));
             }
@@ -739,9 +751,12 @@ public class BDVReader extends FormatReader {
     private boolean inPixels;
     private boolean parsingTimepoints;
     private boolean parsingAttributes;
+    private boolean parsingVoxelSizes;
     private boolean parsingViewSetups;
     private boolean parsingId;
     private int currentSetupIndex;
+    private String voxelSizes;
+    private String voxelUnit;
 
     public BDVXMLHandler() {
       xmlBuffer = new StringBuilder();
@@ -797,6 +812,12 @@ public class BDVReader extends FormatReader {
             setupAttributeList.put(DataTools.parseInteger(setupId), new HashMap<String, String>());
           }
         }
+        if (parsingViewSetups && parsingVoxelSizes && currentQName.toLowerCase().equals("unit")) {
+          voxelUnit = new String(ch, start, length);
+        }
+        if (parsingViewSetups && parsingVoxelSizes && currentQName.toLowerCase().equals("size")) {
+          voxelSizes = new String(ch, start, length);
+        }
         if (parsingViewSetups && parsingAttributes && !currentQName.isEmpty() && !currentQName.toLowerCase().equals("attributes")) {
           String attributeValue = new String(ch, start, length);
           setupAttributeList.get(currentSetupIndex).put(currentQName, attributeValue);
@@ -821,6 +842,14 @@ public class BDVReader extends FormatReader {
       if (qName.toLowerCase().equals("viewsetup")) {
         parsingViewSetups = false;
       }
+      if (qName.toLowerCase().equals("voxelsize")) {
+        String [] sizes = voxelSizes.split(" ");
+        Length sizeX = FormatTools.getPhysicalSize(DataTools.parseDouble(sizes[0]), voxelUnit);
+        Length sizeY = FormatTools.getPhysicalSize(DataTools.parseDouble(sizes[1]), voxelUnit);
+        Length sizeZ = FormatTools.getPhysicalSize(DataTools.parseDouble(sizes[2]), voxelUnit);
+        setupVoxelSizes.put(currentSetupIndex, Arrays.asList(sizeX, sizeY, sizeZ));
+        parsingVoxelSizes = false;
+      }
       if (qName.toLowerCase().equals("id")) {
         parsingId = false;
       }
@@ -841,6 +870,9 @@ public class BDVReader extends FormatReader {
       }
       if (qName.toLowerCase().equals("attributes")) {
         parsingAttributes = true;
+      }
+      if (qName.toLowerCase().equals("voxelsize")) {
+        parsingVoxelSizes = true;
       }
       if (qName.toLowerCase().equals("timepoints")) {
         parsingTimepoints = true;
