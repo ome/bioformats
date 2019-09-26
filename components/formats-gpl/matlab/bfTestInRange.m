@@ -30,21 +30,21 @@ function test = bfTestInRange(x,name,maxValue)
     % Check to see if x is a single value
     test = isscalar(x);
     if(~test)
-        error('insequence:notScalar', ...
+        error('bfTestInRange:notScalar', ...
             [name ' value, [' num2str(x) '], is not scalar']);
     end
 
     % Check to see if x is a whole number
     test = mod(x,1) == 0;
     if(~test)
-        error('insequence:notAnInteger', ...
+        error('bfTestInRange:notAnInteger', ...
             [name ' value, ' num2str(x) ', is not an integer']);
     end
 
     % Check to see if x is between 1 and maxValue
     test = x >= 1 && x <= maxValue;
     if(~test)
-        error('insequence:notInSequence', ...
+        error('bfTestInRange:notInSequence', ...
             [name ' value, ' num2str(x) ', is not between 1 and ', ...
             num2str(maxValue)]);
     end
