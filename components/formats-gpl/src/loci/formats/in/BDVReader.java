@@ -816,7 +816,7 @@ public class BDVReader extends FormatReader {
           voxelUnit = new String(ch, start, length);
         }
         if (parsingViewSetups && parsingVoxelSizes && currentQName.toLowerCase().equals("size")) {
-          voxelSizes = new String(ch, start, length);
+          voxelSizes += new String(ch, start, length);
         }
         if (parsingViewSetups && parsingAttributes && !currentQName.isEmpty() && !currentQName.toLowerCase().equals("attributes")) {
           String attributeValue = new String(ch, start, length);
@@ -849,6 +849,7 @@ public class BDVReader extends FormatReader {
         Length sizeZ = FormatTools.getPhysicalSize(DataTools.parseDouble(sizes[2]), voxelUnit);
         setupVoxelSizes.put(currentSetupIndex, Arrays.asList(sizeX, sizeY, sizeZ));
         parsingVoxelSizes = false;
+        voxelSizes = null;
       }
       if (qName.toLowerCase().equals("id")) {
         parsingId = false;
