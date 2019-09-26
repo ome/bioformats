@@ -213,6 +213,7 @@ public class JPEG2000Reader extends FormatReader {
       ms0.pixelType = metadataParser.getHeaderPixelType();
     }
     lut = metadataParser.getLookupTable();
+    resolutionLevels = metadataParser.getResolutionLevels();
 
     pixelsOffset = metadataParser.getCodestreamOffset();
 
