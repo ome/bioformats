@@ -289,10 +289,10 @@ public class ConversionTest {
 
     for (String type : pixelTypes) {
       String compression = CompressionType.J2K.getCompression();
-      testCompressDecompress(ext, compression, false, 1, type);
+      testCompressDecompress(ext, compression, false, 6, type);
 
       compression = CompressionType.J2K_LOSSY.getCompression();
-      testCompressDecompress(ext, compression, true, 1, type);
+      testCompressDecompress(ext, compression, true, 6, type);
     }
   }
 
