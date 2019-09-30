@@ -137,6 +137,7 @@ loci.formats.in.ImarisHDFReader       # ims [NetCDF]
 loci.formats.in.CellH5Reader          # ch5 [JHDF]
 loci.formats.in.WlzReader	      # wlz [JWlz]
 loci.formats.in.VeecoReader           # hdf [NetCDF]
+loci.formats.in.TecanReader           # db [SQLite JDBC]
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]
