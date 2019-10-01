@@ -138,6 +138,7 @@ public class ConversionTest {
     writer.close();
 
     ImageReader reader = new ImageReader();
+    reader.setFlattenedResolutions(false);
     reader.setId(tmp.getAbsolutePath());
 
     assertEquals(reader.getSeriesCount(), seriesCount);
@@ -289,10 +290,10 @@ public class ConversionTest {
 
     for (String type : pixelTypes) {
       String compression = CompressionType.J2K.getCompression();
-      testCompressDecompress(ext, compression, false, 6, type);
+      testCompressDecompress(ext, compression, false, 1, type);
 
       compression = CompressionType.J2K_LOSSY.getCompression();
-      testCompressDecompress(ext, compression, true, 6, type);
+      testCompressDecompress(ext, compression, true, 1, type);
     }
   }
 
