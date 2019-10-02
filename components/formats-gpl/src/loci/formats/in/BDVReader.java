@@ -100,7 +100,7 @@ public class BDVReader extends FormatReader {
   private HashMap<Integer, HashMap<String, String>> setupAttributeList = new HashMap<Integer, HashMap<String, String>>();
 
   // Store all custom attributes for each setup ID
-  private HashMap<Integer, List<Length>> setupVoxelSizes = new HashMap<Integer, List<Length>>();
+  private HashMap<Integer, ArrayList<Length>> setupVoxelSizes = new HashMap<Integer, ArrayList<Length>>();
 
   // Store the number of mipmap levels for each setup
   private HashMap<Integer, Integer> setupResolutionCounts = new HashMap<Integer, Integer>();
@@ -847,7 +847,8 @@ public class BDVReader extends FormatReader {
         Length sizeX = FormatTools.getPhysicalSize(DataTools.parseDouble(sizes[0]), voxelUnit);
         Length sizeY = FormatTools.getPhysicalSize(DataTools.parseDouble(sizes[1]), voxelUnit);
         Length sizeZ = FormatTools.getPhysicalSize(DataTools.parseDouble(sizes[2]), voxelUnit);
-        setupVoxelSizes.put(currentSetupIndex, Arrays.asList(sizeX, sizeY, sizeZ));
+ 
+        setupVoxelSizes.put(currentSetupIndex, new ArrayList<Length>(Arrays.asList(sizeX, sizeY, sizeZ)));
         parsingVoxelSizes = false;
         voxelSizes = "";
       }
