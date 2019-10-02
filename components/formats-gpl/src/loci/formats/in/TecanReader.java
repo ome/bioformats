@@ -163,7 +163,14 @@ public class TecanReader extends FormatReader {
       if (helperReader == null) {
         helperReader = new MinimalTiffReader();
       }
-      helperReader.setId(getImageFile(img.file));
+      String filePath = getImageFile(img.file);
+      LOGGER.debug("Reading plane {} in series {} from {}",
+        no, getSeries(), filePath);
+      helperReader.setId(filePath);
+      if (helperReader.getImageCount() > 1) {
+        LOGGER.warn("File {} has {} planes",
+          img.file, helperReader.getImageCount());
+      }
       helperReader.openBytes(0, buf, x, y, w, h);
     }
     return buf;
@@ -342,7 +349,7 @@ public class TecanReader extends FormatReader {
       String resultId = allImages.getString(2);
 
       PreparedStatement typeQuery = conn.prepareStatement(
-        "SELECT ChannelTypeId, IsResult, IsOverlay " +
+        "SELECT ChannelTypeId, IsResult, IsOverlay, Name " +
         "FROM ImageType WHERE Id = ?");
       typeQuery.setInt(1, Integer.parseInt(imageTypeId));
       ResultSet imageType = typeQuery.executeQuery();
@@ -350,21 +357,37 @@ public class TecanReader extends FormatReader {
 
       img.result = imageType.getBoolean(2);
       img.overlay = imageType.getBoolean(3);
+      img.channelName = imageType.getString(4);
 
-      int channelTypeId = imageType.getInt(1);
-      PreparedStatement channelQuery = conn.prepareStatement(
-        "SELECT Name FROM ChannelType WHERE Id=?");
-      // TODO: join on AcquisitionChannelSetting (ChannelTypeId)
-      channelQuery.setInt(1, channelTypeId);
-      ResultSet channel = channelQuery.executeQuery();
-      // might return 0 rows for overlay/result images
-      if (channel.next()) {
-        img.channelName = channel.getString(1);
+      // make sure the image is "Raw" and not "Processed"
+      // without this check, the channel and image counts will be wrong
+      // as processed files will be included
+      PreparedStatement acquisitionType = conn.prepareStatement(
+        "SELECT Name FROM ImagingResultType INNER JOIN ImagingResult " +
+        "ON ImagingResultType.Id=ImagingResult.ImagingResultTypeId " +
+        "WHERE ImagingResult.Id=?");
+      acquisitionType.setInt(1, Integer.parseInt(resultId));
+      ResultSet acqType = acquisitionType.executeQuery();
+      acqType.next();
 
-        if (!channels.contains(img.channelName)) {
-          channels.add(img.channelName);
+      if ("Raw".equals(acqType.getString(1)) && !img.result && !img.overlay) {
+        int channelTypeId = imageType.getInt(1);
+        PreparedStatement channelQuery = conn.prepareStatement(
+          "SELECT Name FROM ChannelType WHERE Id=?");
+        // TODO: join on AcquisitionChannelSetting (ChannelTypeId)
+        channelQuery.setInt(1, channelTypeId);
+        ResultSet channel = channelQuery.executeQuery();
+        // might return 0 rows for overlay/result images
+        if (channel.next()) {
+          // a single ChannelType (e.g. brightfield) can map
+          // to multiple ImageTypes in the same well
+          img.channelName += " " + channel.getString(1);
+
+          if (!channels.contains(img.channelName)) {
+            channels.add(img.channelName);
+          }
+          img.plane = channels.indexOf(img.channelName);
         }
-        img.plane = channels.indexOf(img.channelName);
       }
 
       // now map the image to a well
