@@ -78,6 +78,7 @@ public class TecanReader extends FormatReader {
   private transient MinimalTiffReader helperReader = null;
   private transient ArrayList<String> channels = new ArrayList<String>();
   private String imageDirectory = null;
+  private ArrayList<String> extraFiles = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -111,6 +112,24 @@ public class TecanReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  @Override
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+
+    ArrayList<String> files = new ArrayList<String>();
+    files.add(getCurrentFile());
+    files.addAll(extraFiles);
+    for (Image img : images) {
+      if (img.result || img.overlay || !noPixels) {
+        files.add(getImageFile(img.file));
+      }
+    }
+    String[] rtn = files.toArray(new String[files.size()]);
+    Arrays.sort(rtn);
+    return rtn;
+  }
+
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
@@ -118,6 +137,7 @@ public class TecanReader extends FormatReader {
 
     ArrayList<String> files = new ArrayList<String>();
     files.add(getCurrentFile());
+    files.addAll(extraFiles);
     for (Image img : images) {
       if (img.series == getSeries()) {
         if (img.result || img.overlay || !noPixels) {
@@ -145,6 +165,7 @@ public class TecanReader extends FormatReader {
       plateColumns = 0;
       plateName = null;
       helperReader = null;
+      extraFiles.clear();
     }
   }
 
@@ -191,6 +212,12 @@ public class TecanReader extends FormatReader {
       throw new IOException("Cannot find expected 'Images' directory");
     }
     imageDirectory = images.getAbsolutePath();
+
+    // look for extra files in the "Export" directory
+    Location export = new Location(parent, "Export");
+    if (export.exists() && export.isDirectory()) {
+      findAllFiles(export, extraFiles);
+    }
 
     Connection conn = openConnection();
     HashMap<Integer, String> wellLabels = null;
@@ -434,6 +461,19 @@ public class TecanReader extends FormatReader {
    */
   private String getImageFile(String file) {
     return new Location(imageDirectory, file).getAbsolutePath();
+  }
+
+  private void findAllFiles(Location root, ArrayList<String> files) {
+    if (root.isDirectory()) {
+      String[] list = root.list(true);
+      for (String file : list) {
+        Location path = new Location(root, file);
+        findAllFiles(path, files);
+      }
+    }
+    else {
+      files.add(root.getAbsolutePath());
+    }
   }
 
   class Image {
