@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -48,11 +48,8 @@ import loci.formats.meta.MetadataStore;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
-import ome.units.quantity.Power;
 import ome.units.quantity.Time;
-import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -312,6 +309,18 @@ public class TecanReader extends FormatReader {
           store.setPixelsPhysicalSizeX(firstImage.pixelSize, i);
           store.setPixelsPhysicalSizeY(firstImage.pixelSize, i);
         }
+        if (firstImage.timestamp != null) {
+          store.setImageAcquisitionDate(new Timestamp(
+            DateTools.formatDate(firstImage.timestamp,
+            "yyyy-MM-dd HH:mm:ss.SSSSSS")), i);
+        }
+
+        for (int p=0; p<getImageCount(); p++) {
+          Image img = lookupImage(i, p, false, false);
+          if (img.exposureTime != null) {
+            store.setPlaneExposureTime(img.exposureTime, i, p);
+          }
+        }
       }
     }
   }
@@ -390,7 +399,7 @@ public class TecanReader extends FormatReader {
       // without this check, the channel and image counts will be wrong
       // as processed files will be included
       PreparedStatement acquisitionType = conn.prepareStatement(
-        "SELECT Name FROM ImagingResultType INNER JOIN ImagingResult " +
+        "SELECT Name, CreatedAt FROM ImagingResultType INNER JOIN ImagingResult " +
         "ON ImagingResultType.Id=ImagingResult.ImagingResultTypeId " +
         "WHERE ImagingResult.Id=?");
       acquisitionType.setInt(1, Integer.parseInt(resultId));
@@ -400,8 +409,10 @@ public class TecanReader extends FormatReader {
       if ("Raw".equals(acqType.getString(1)) && !img.result && !img.overlay) {
         int channelTypeId = imageType.getInt(1);
         PreparedStatement channelQuery = conn.prepareStatement(
-          "SELECT Name FROM ChannelType WHERE Id=?");
-        // TODO: join on AcquisitionChannelSetting (ChannelTypeId)
+          "SELECT Name, ExposureTimeInUs FROM ChannelType " +
+          "INNER JOIN AcquisitionChannelSetting " +
+          "ON AcquisitionChannelSetting.ChannelTypeId=ChannelType.Id " +
+          "WHERE ChannelType.Id=?");
         channelQuery.setInt(1, channelTypeId);
         ResultSet channel = channelQuery.executeQuery();
         // might return 0 rows for overlay/result images
@@ -414,21 +425,14 @@ public class TecanReader extends FormatReader {
             channels.add(img.channelName);
           }
           img.plane = channels.indexOf(img.channelName);
+          img.exposureTime = FormatTools.getTime(channel.getDouble(2), "µs");
+          img.timestamp = acqType.getString(2);
         }
       }
 
       // now map the image to a well
 
-      PreparedStatement linkQuery = conn.prepareStatement(
-        "SELECT SelectedWellId FROM ImagingResult " +
-        "INNER JOIN ResultContext ON " +
-        "ImagingResult.ResultContextId=ResultContext.Id WHERE " +
-        "ImagingResult.Id=?");
-      linkQuery.setInt(1, Integer.parseInt(resultId));
-      ResultSet wellLink = linkQuery.executeQuery();
-      wellLink.next();
-
-      Integer wellId = wellLink.getInt(1);
+      Integer wellId = getWellID(conn, resultId);
       String wellLabel = wells.get(wellId);
       img.wellRow = wellLabel.charAt(0) - 'A';
       img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
@@ -436,6 +440,48 @@ public class TecanReader extends FormatReader {
 
       images.add(img);
     }
+
+    // list of SVG objects is stored separately
+    // each row in ObjectList has a file which needs to be attached to a well
+    PreparedStatement objectQuery = conn.prepareStatement(
+      "SELECT ImagingResultId, Path FROM ObjectList ORDER BY Id");
+    ResultSet objects = objectQuery.executeQuery();
+    while (objects.next()) {
+      String resultId = objects.getString(1);
+      String path = objects.getString(2);
+
+      Integer well = getWellID(conn, resultId);
+      if (well != null) {
+        String wellLabel = wells.get(well);
+        Image img = new Image();
+        img.wellRow = wellLabel.charAt(0) - 'A';
+        img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
+        img.series = well - 1;
+        img.result = true;
+        img.file = path;
+        images.add(img);
+      }
+    }
+  }
+
+  /**
+   * Get the well identifier for the given Id in the ImagingResult table.
+   * @param imagingResultID
+   * @return well ID
+   */
+  private Integer getWellID(Connection conn, String imagingResultID)
+    throws SQLException
+  {
+    PreparedStatement linkQuery = conn.prepareStatement(
+        "SELECT SelectedWellId FROM ImagingResult " +
+        "INNER JOIN ResultContext ON " +
+        "ImagingResult.ResultContextId=ResultContext.Id WHERE " +
+        "ImagingResult.Id=?");
+    linkQuery.setInt(1, Integer.parseInt(imagingResultID));
+    ResultSet wellLink = linkQuery.executeQuery();
+    wellLink.next();
+
+    return wellLink.getInt(1);
   }
 
   private Image lookupImage(int series, int plane,
@@ -484,9 +530,11 @@ public class TecanReader extends FormatReader {
     public int series = -1;
     public int plane = -1;
     public Length pixelSize;
+    public Time exposureTime;
     public String channelName;
     public boolean overlay = false;
     public boolean result = false;
+    public String timestamp;
   }
 
 }
