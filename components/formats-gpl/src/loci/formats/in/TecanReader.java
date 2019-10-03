@@ -25,12 +25,14 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +66,8 @@ public class TecanReader extends FormatReader {
 
   // -- Constants --
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(TecanReader.class);
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(TecanReader.class);
 
   // -- Fields --
 
@@ -76,6 +79,7 @@ public class TecanReader extends FormatReader {
   private transient ArrayList<String> channels = new ArrayList<String>();
   private String imageDirectory = null;
   private ArrayList<String> extraFiles = new ArrayList<String>();
+  private Integer maxField = 1;
 
   // -- Constructor --
 
@@ -84,7 +88,8 @@ public class TecanReader extends FormatReader {
     super("Tecan Spark Cyto", new String[] {"db"});
     hasCompanionFiles = true;
     domains = new String[] {FormatTools.HCS_DOMAIN};
-    datasetDescription = "SQLite database, TIFF files, optional analysis output";
+    datasetDescription =
+      "SQLite database, TIFF files, optional analysis output";
   }
 
   // -- IFormatReader API methods --
@@ -163,6 +168,7 @@ public class TecanReader extends FormatReader {
       plateName = null;
       helperReader = null;
       extraFiles.clear();
+      maxField = 1;
     }
   }
 
@@ -204,11 +210,11 @@ public class TecanReader extends FormatReader {
     // find the parent directory for image data
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
     parent = parent.getParentFile();
-    Location images = new Location(parent, "Images");
-    if (!images.exists() || !images.isDirectory()) {
+    Location imageDir = new Location(parent, "Images");
+    if (!imageDir.exists() || !imageDir.isDirectory()) {
       throw new IOException("Cannot find expected 'Images' directory");
     }
-    imageDirectory = images.getAbsolutePath();
+    imageDirectory = imageDir.getAbsolutePath();
 
     // look for extra files in the "Export" directory
     Location export = new Location(parent, "Export");
@@ -239,13 +245,23 @@ public class TecanReader extends FormatReader {
       }
     }
 
+    // update series index for each Image to account for fields
+    for (Image img : images) {
+      img.series *= maxField;
+      img.series += (img.field - 1);
+    }
+
     core.clear();
     helperReader = new MinimalTiffReader();
-    for (int i=0; i<wellLabels.size(); i++) {
-      Image img = lookupImage(i, 0, false, false);
-
-      if (img != null) {
-        helperReader.setId(getImageFile(img.file));
+    for (int w=0; w<wellLabels.size(); w++) {
+      Image firstImage = lookupImage(w * maxField, 0, false, false);
+      if (firstImage != null) {
+        helperReader.setId(getImageFile(firstImage.file));
+      }
+      else {
+        throw new FormatException("Could not find first file");
+      }
+      for (int f=0; f<maxField; f++) {
         core.add(helperReader.getCoreMetadataList().get(0));
         core.get(core.size() - 1).sizeC *= channels.size();
         core.get(core.size() - 1).imageCount *= channels.size();
@@ -264,12 +280,15 @@ public class TecanReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
+    store.setPlateAcquisitionMaximumFieldCount(
+      new PositiveInteger(maxField), 0, 0);
 
     int nextWell = 0;
     int nextImage = 0;
     for (int row=0; row<plateRows; row++) {
       for (int col=0; col<plateColumns; col++) {
-        store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
+        store.setWellID(
+          MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
         store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
         store.setWellColumn(new NonNegativeInteger(col), 0, nextWell);
 
@@ -279,20 +298,22 @@ public class TecanReader extends FormatReader {
           continue;
         }
 
-        int field = 0;
-        String wellSampleID =
-          MetadataTools.createLSID("WellSample", 0, nextWell, field);
-        store.setWellSampleID(wellSampleID, 0, nextWell, field);
-        store.setWellSampleIndex(
-          new NonNegativeInteger(nextImage), 0, nextWell, field);
-        String imageID = MetadataTools.createLSID("Image", nextImage);
-        store.setImageID(imageID, nextImage);
-        store.setWellSampleImageRef(imageID, 0, nextWell, field);
-        store.setImageName("Well " + label, nextImage);
-        store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
+        for (int field=0; field<maxField; field++) {
+          String wellSampleID =
+            MetadataTools.createLSID("WellSample", 0, nextWell, field);
+          store.setWellSampleID(wellSampleID, 0, nextWell, field);
+          store.setWellSampleIndex(
+            new NonNegativeInteger(nextImage), 0, nextWell, field);
+          String imageID = MetadataTools.createLSID("Image", nextImage);
+          store.setImageID(imageID, nextImage);
+          store.setWellSampleImageRef(imageID, 0, nextWell, field);
+          store.setImageName(
+            "Well " + label + " Field " + (field + 1), nextImage);
+          store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
+          nextImage++;
+        }
 
         nextWell++;
-        nextImage++;
       }
     }
 
@@ -330,8 +351,13 @@ public class TecanReader extends FormatReader {
     try {
       // see https://github.com/xerial/sqlite-jdbc/issues/247
       SQLiteConfig config = new SQLiteConfig();
-      config.setReadOnly(true);
-      conn = config.createConnection("jdbc:sqlite:" + getCurrentFile());
+      // restore the DB in memory instead of reading directly
+      // this is much faster, especially as the DB file size grows
+      // a read-only connection isn't allowed though, so be careful
+      conn = config.createConnection("jdbc:sqlite::memory:");
+      Statement restore = conn.createStatement();
+      restore.execute("restore from " +
+        new Location(getCurrentFile()).getAbsolutePath());
     }
     catch (SQLException e) {
       LOGGER.warn("Could not read from database");
@@ -356,9 +382,12 @@ public class TecanReader extends FormatReader {
     if (plates.next()) {
       LOGGER.warn("Found more than one plate; only using the first one");
     }
+    plates.close();
   }
 
-  private HashMap<Integer, String> getWellLabels(Connection conn) throws SQLException {
+  private HashMap<Integer, String> getWellLabels(Connection conn)
+    throws SQLException
+  {
     HashMap<Integer, String> labels = new HashMap<Integer, String>();
 
     PreparedStatement statement = conn.prepareStatement(
@@ -368,25 +397,45 @@ public class TecanReader extends FormatReader {
     while (wells.next()) {
       labels.put(wells.getInt(1), wells.getString(2));
     }
+    wells.close();
     return labels;
   }
 
-  private void findImages(Connection conn, HashMap<Integer, String> wells) throws SQLException {
+  private void findImages(Connection conn, HashMap<Integer, String> wells)
+    throws SQLException
+  {
     PreparedStatement imageQuery = conn.prepareStatement(
       "SELECT ImageTypeId, ImagingResultId, RelativePath, PixelSizeInNm " +
       "FROM Image ORDER BY Id");
+    PreparedStatement wellLinkQuery = conn.prepareStatement(
+      "SELECT SelectedWellId, CycleIndex FROM ImagingResult " +
+      "INNER JOIN ResultContext ON " +
+      "ImagingResult.ResultContextId=ResultContext.Id WHERE " +
+      "ImagingResult.Id=?");
+    PreparedStatement typeQuery = conn.prepareStatement(
+      "SELECT ChannelTypeId, IsResult, IsOverlay, Name " +
+      "FROM ImageType WHERE Id = ?");
+    PreparedStatement acquisitionType = conn.prepareStatement(
+      "SELECT Name, CreatedAt FROM ImagingResultType " +
+      "INNER JOIN ImagingResult " +
+      "ON ImagingResultType.Id=ImagingResult.ImagingResultTypeId " +
+      "WHERE ImagingResult.Id=?");
+    PreparedStatement channelQuery = conn.prepareStatement(
+      "SELECT Name, ExposureTimeInUs FROM ChannelType " +
+      "INNER JOIN AcquisitionChannelSetting " +
+      "ON AcquisitionChannelSetting.ChannelTypeId=ChannelType.Id " +
+      "WHERE ChannelType.Id=?");
+
     ResultSet allImages = imageQuery.executeQuery();
     while (allImages.next()) {
       Image img = new Image();
       img.file = allImages.getString(3);
       img.pixelSize = FormatTools.getPhysicalSize(allImages.getDouble(4), "nm");
+      LOGGER.debug("processing image file = {}", img.file);
 
       String imageTypeId = allImages.getString(1);
       String resultId = allImages.getString(2);
 
-      PreparedStatement typeQuery = conn.prepareStatement(
-        "SELECT ChannelTypeId, IsResult, IsOverlay, Name " +
-        "FROM ImageType WHERE Id = ?");
       typeQuery.setInt(1, Integer.parseInt(imageTypeId));
       ResultSet imageType = typeQuery.executeQuery();
       imageType.next();
@@ -398,21 +447,12 @@ public class TecanReader extends FormatReader {
       // make sure the image is "Raw" and not "Processed"
       // without this check, the channel and image counts will be wrong
       // as processed files will be included
-      PreparedStatement acquisitionType = conn.prepareStatement(
-        "SELECT Name, CreatedAt FROM ImagingResultType INNER JOIN ImagingResult " +
-        "ON ImagingResultType.Id=ImagingResult.ImagingResultTypeId " +
-        "WHERE ImagingResult.Id=?");
       acquisitionType.setInt(1, Integer.parseInt(resultId));
       ResultSet acqType = acquisitionType.executeQuery();
       acqType.next();
 
       if ("Raw".equals(acqType.getString(1)) && !img.result && !img.overlay) {
         int channelTypeId = imageType.getInt(1);
-        PreparedStatement channelQuery = conn.prepareStatement(
-          "SELECT Name, ExposureTimeInUs FROM ChannelType " +
-          "INNER JOIN AcquisitionChannelSetting " +
-          "ON AcquisitionChannelSetting.ChannelTypeId=ChannelType.Id " +
-          "WHERE ChannelType.Id=?");
         channelQuery.setInt(1, channelTypeId);
         ResultSet channel = channelQuery.executeQuery();
         // might return 0 rows for overlay/result images
@@ -428,18 +468,24 @@ public class TecanReader extends FormatReader {
           img.exposureTime = FormatTools.getTime(channel.getDouble(2), "µs");
           img.timestamp = acqType.getString(2);
         }
+        channel.close();
       }
+      imageType.close();
+      acqType.close();
 
       // now map the image to a well
 
-      Integer wellId = getWellID(conn, resultId);
-      String wellLabel = wells.get(wellId);
+      Integer[] ids = getWellAndField(wellLinkQuery, resultId);
+      String wellLabel = wells.get(ids[0]);
       img.wellRow = wellLabel.charAt(0) - 'A';
       img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
-      img.series = wellId - 1;
+      img.series = ids[0] - 1;
+      img.field = ids[1];
+      maxField = (int) Math.max(img.field, maxField);
 
       images.add(img);
     }
+    allImages.close();
 
     // list of SVG objects is stored separately
     // each row in ObjectList has a file which needs to be attached to a well
@@ -449,39 +495,41 @@ public class TecanReader extends FormatReader {
     while (objects.next()) {
       String resultId = objects.getString(1);
       String path = objects.getString(2);
+      LOGGER.debug("processing object {}", path);
 
-      Integer well = getWellID(conn, resultId);
-      if (well != null) {
-        String wellLabel = wells.get(well);
+      Integer[] ids = getWellAndField(wellLinkQuery, resultId);
+      if (ids != null) {
+        String wellLabel = wells.get(ids[0]);
         Image img = new Image();
         img.wellRow = wellLabel.charAt(0) - 'A';
         img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
-        img.series = well - 1;
+        img.series = ids[0] - 1;
+        img.field = ids[1];
         img.result = true;
         img.file = path;
         images.add(img);
       }
     }
+    objects.close();
   }
 
   /**
-   * Get the well identifier for the given Id in the ImagingResult table.
+   * Get the well identifier and field indexfor the given Id in the
+   * ImagingResult table.
    * @param imagingResultID
    * @return well ID
    */
-  private Integer getWellID(Connection conn, String imagingResultID)
+  private Integer[] getWellAndField(PreparedStatement linkQuery,
+    String imagingResultID)
     throws SQLException
   {
-    PreparedStatement linkQuery = conn.prepareStatement(
-        "SELECT SelectedWellId FROM ImagingResult " +
-        "INNER JOIN ResultContext ON " +
-        "ImagingResult.ResultContextId=ResultContext.Id WHERE " +
-        "ImagingResult.Id=?");
     linkQuery.setInt(1, Integer.parseInt(imagingResultID));
     ResultSet wellLink = linkQuery.executeQuery();
     wellLink.next();
 
-    return wellLink.getInt(1);
+    Integer[] rtn = new Integer[] {wellLink.getInt(1), wellLink.getInt(2)};
+    wellLink.close();
+    return rtn;
   }
 
   private Image lookupImage(int series, int plane,
@@ -506,7 +554,11 @@ public class TecanReader extends FormatReader {
    * @return absolute path to the image file
    */
   private String getImageFile(String file) {
-    return new Location(imageDirectory, file).getAbsolutePath();
+    // sanitize the relative path first
+    // files might be stored in a subdirectory of "Images",
+    // in which case the database may store a "\" to separate the path
+    String sanitized = File.separator + file.replaceAll("\\\\", File.separator);
+    return new Location(imageDirectory + sanitized).getAbsolutePath();
   }
 
   private void findAllFiles(Location root, ArrayList<String> files) {
