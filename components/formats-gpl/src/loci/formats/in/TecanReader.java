@@ -351,12 +351,8 @@ public class TecanReader extends FormatReader {
     try {
       // see https://github.com/xerial/sqlite-jdbc/issues/247
       SQLiteConfig config = new SQLiteConfig();
-      // restore the DB in memory instead of reading directly
-      // this is much faster, especially as the DB file size grows
-      // a read-only connection isn't allowed though, so be careful
-      conn = config.createConnection("jdbc:sqlite::memory:");
-      Statement restore = conn.createStatement();
-      restore.execute("restore from " +
+      config.setReadOnly(true);
+      conn = config.createConnection("jdbc:sqlite:" +
         new Location(getCurrentFile()).getAbsolutePath());
     }
     catch (SQLException e) {
@@ -407,6 +403,10 @@ public class TecanReader extends FormatReader {
     PreparedStatement imageQuery = conn.prepareStatement(
       "SELECT ImageTypeId, ImagingResultId, RelativePath, PixelSizeInNm " +
       "FROM Image ORDER BY Id");
+
+    // not clear if CycleIndex is a field or timepoint index
+    // treating as a field for now (since that's more difficult),
+    // but easy to switch to timepoint if needed
     PreparedStatement wellLinkQuery = conn.prepareStatement(
       "SELECT SelectedWellId, CycleIndex FROM ImagingResult " +
       "INNER JOIN ResultContext ON " +
@@ -480,7 +480,8 @@ public class TecanReader extends FormatReader {
       img.wellRow = wellLabel.charAt(0) - 'A';
       img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
       img.series = ids[0] - 1;
-      img.field = ids[1];
+      // always set a 1-based index
+      img.field = (int) Math.max(1, ids[1]);
       maxField = (int) Math.max(img.field, maxField);
 
       images.add(img);
@@ -504,7 +505,8 @@ public class TecanReader extends FormatReader {
         img.wellRow = wellLabel.charAt(0) - 'A';
         img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
         img.series = ids[0] - 1;
-        img.field = ids[1];
+        // always set a 1-based index
+        img.field = (int) Math.max(1, ids[1]);
         img.result = true;
         img.file = path;
         images.add(img);
