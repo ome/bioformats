@@ -367,18 +367,17 @@ public class TecanReader extends FormatReader {
     // expect only one plate to be defined
     PreparedStatement statement = conn.prepareStatement(
       "SELECT Name, Rows, Columns FROM PlateDefinition ORDER BY Id");
-    ResultSet plates = statement.executeQuery();
+    try (ResultSet plates = statement.executeQuery()) {
+      if (plates.next()) {
+        plateName = plates.getString(1);
+        plateRows = plates.getInt(2);
+        plateColumns = plates.getInt(3);
+      }
 
-    if (plates.next()) {
-      plateName = plates.getString(1);
-      plateRows = plates.getInt(2);
-      plateColumns = plates.getInt(3);
+      if (plates.next()) {
+        LOGGER.warn("Found more than one plate; only using the first one");
+      }
     }
-
-    if (plates.next()) {
-      LOGGER.warn("Found more than one plate; only using the first one");
-    }
-    plates.close();
   }
 
   private HashMap<Integer, String> getWellLabels(Connection conn)
@@ -388,12 +387,11 @@ public class TecanReader extends FormatReader {
 
     PreparedStatement statement = conn.prepareStatement(
       "SELECT Id, AlphanumericCoordinate FROM SelectedWell");
-    ResultSet wells = statement.executeQuery();
-
-    while (wells.next()) {
-      labels.put(wells.getInt(1), wells.getString(2));
+    try (ResultSet wells = statement.executeQuery()) {
+      while (wells.next()) {
+        labels.put(wells.getInt(1), wells.getString(2));
+      }
     }
-    wells.close();
     return labels;
   }
 
@@ -426,93 +424,102 @@ public class TecanReader extends FormatReader {
       "ON AcquisitionChannelSetting.ChannelTypeId=ChannelType.Id " +
       "WHERE ChannelType.Id=?");
 
-    ResultSet allImages = imageQuery.executeQuery();
-    while (allImages.next()) {
-      Image img = new Image();
-      img.file = allImages.getString(3);
-      img.pixelSize = FormatTools.getPhysicalSize(allImages.getDouble(4), "nm");
-      LOGGER.debug("processing image file = {}", img.file);
-
-      String imageTypeId = allImages.getString(1);
-      String resultId = allImages.getString(2);
-
-      typeQuery.setInt(1, Integer.parseInt(imageTypeId));
-      ResultSet imageType = typeQuery.executeQuery();
-      imageType.next();
-
-      img.result = imageType.getBoolean(2);
-      img.overlay = imageType.getBoolean(3);
-      img.channelName = imageType.getString(4);
-
-      // make sure the image is "Raw" and not "Processed"
-      // without this check, the channel and image counts will be wrong
-      // as processed files will be included
-      acquisitionType.setInt(1, Integer.parseInt(resultId));
-      ResultSet acqType = acquisitionType.executeQuery();
-      acqType.next();
-
-      if ("Raw".equals(acqType.getString(1)) && !img.result && !img.overlay) {
-        int channelTypeId = imageType.getInt(1);
-        channelQuery.setInt(1, channelTypeId);
-        ResultSet channel = channelQuery.executeQuery();
-        // might return 0 rows for overlay/result images
-        if (channel.next()) {
-          // a single ChannelType (e.g. brightfield) can map
-          // to multiple ImageTypes in the same well
-          img.channelName += " " + channel.getString(1);
-
-          if (!channels.contains(img.channelName)) {
-            channels.add(img.channelName);
-          }
-          img.plane = channels.indexOf(img.channelName);
-          img.exposureTime = FormatTools.getTime(channel.getDouble(2), "µs");
-          img.timestamp = acqType.getString(2);
-        }
-        channel.close();
-      }
-      imageType.close();
-      acqType.close();
-
-      // now map the image to a well
-
-      Integer[] ids = getWellAndField(wellLinkQuery, resultId);
-      String wellLabel = wells.get(ids[0]);
-      img.wellRow = wellLabel.charAt(0) - 'A';
-      img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
-      img.series = ids[0] - 1;
-      // always set a 1-based index
-      img.field = (int) Math.max(1, ids[1]);
-      maxField = (int) Math.max(img.field, maxField);
-
-      images.add(img);
-    }
-    allImages.close();
-
-    // list of SVG objects is stored separately
-    // each row in ObjectList has a file which needs to be attached to a well
-    PreparedStatement objectQuery = conn.prepareStatement(
-      "SELECT ImagingResultId, Path FROM ObjectList ORDER BY Id");
-    ResultSet objects = objectQuery.executeQuery();
-    while (objects.next()) {
-      String resultId = objects.getString(1);
-      String path = objects.getString(2);
-      LOGGER.debug("processing object {}", path);
-
-      Integer[] ids = getWellAndField(wellLinkQuery, resultId);
-      if (ids != null) {
-        String wellLabel = wells.get(ids[0]);
+    try (ResultSet allImages = imageQuery.executeQuery()) {
+      while (allImages.next()) {
         Image img = new Image();
+        img.file = allImages.getString(3);
+        img.pixelSize =
+          FormatTools.getPhysicalSize(allImages.getDouble(4), "nm");
+        LOGGER.debug("processing image file = {}", img.file);
+
+        String imageTypeId = allImages.getString(1);
+        String resultId = allImages.getString(2);
+
+        typeQuery.setInt(1, Integer.parseInt(imageTypeId));
+        int channelTypeId = 0;
+        try (ResultSet imageType = typeQuery.executeQuery()) {
+          imageType.next();
+
+          channelTypeId = imageType.getInt(1);
+          img.result = imageType.getBoolean(2);
+          img.overlay = imageType.getBoolean(3);
+          img.channelName = imageType.getString(4);
+        }
+
+        // make sure the image is "Raw" and not "Processed"
+        // without this check, the channel and image counts will be wrong
+        // as processed files will be included
+        acquisitionType.setInt(1, Integer.parseInt(resultId));
+
+        String acqTypeName = null;
+        String acqTimestamp = null;
+
+        try (ResultSet acqType = acquisitionType.executeQuery()) {
+          acqType.next();
+          acqTypeName = acqType.getString(1);
+          acqTimestamp = acqType.getString(2);
+        }
+
+        if ("Raw".equals(acqTypeName) && !img.result && !img.overlay) {
+          channelQuery.setInt(1, channelTypeId);
+          try (ResultSet channel = channelQuery.executeQuery()) {
+            // might return 0 rows for overlay/result images
+            if (channel.next()) {
+              // a single ChannelType (e.g. brightfield) can map
+              // to multiple ImageTypes in the same well
+              img.channelName += " " + channel.getString(1);
+
+              if (!channels.contains(img.channelName)) {
+                channels.add(img.channelName);
+              }
+              img.plane = channels.indexOf(img.channelName);
+              img.exposureTime =
+                FormatTools.getTime(channel.getDouble(2), "µs");
+              img.timestamp = acqTimestamp;
+            }
+          }
+        }
+
+        // now map the image to a well
+
+        Integer[] ids = getWellAndField(wellLinkQuery, resultId);
+        String wellLabel = wells.get(ids[0]);
         img.wellRow = wellLabel.charAt(0) - 'A';
         img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
         img.series = ids[0] - 1;
         // always set a 1-based index
         img.field = (int) Math.max(1, ids[1]);
-        img.result = true;
-        img.file = path;
+        maxField = (int) Math.max(img.field, maxField);
+
         images.add(img);
       }
     }
-    objects.close();
+
+    // list of SVG objects is stored separately
+    // each row in ObjectList has a file which needs to be attached to a well
+    PreparedStatement objectQuery = conn.prepareStatement(
+      "SELECT ImagingResultId, Path FROM ObjectList ORDER BY Id");
+    try (ResultSet objects = objectQuery.executeQuery()) {
+      while (objects.next()) {
+        String resultId = objects.getString(1);
+        String path = objects.getString(2);
+        LOGGER.debug("processing object {}", path);
+
+        Integer[] ids = getWellAndField(wellLinkQuery, resultId);
+        if (ids != null) {
+          String wellLabel = wells.get(ids[0]);
+          Image img = new Image();
+          img.wellRow = wellLabel.charAt(0) - 'A';
+          img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
+          img.series = ids[0] - 1;
+          // always set a 1-based index
+          img.field = (int) Math.max(1, ids[1]);
+          img.result = true;
+          img.file = path;
+          images.add(img);
+        }
+      }
+    }
   }
 
   /**
@@ -526,12 +533,10 @@ public class TecanReader extends FormatReader {
     throws SQLException
   {
     linkQuery.setInt(1, Integer.parseInt(imagingResultID));
-    ResultSet wellLink = linkQuery.executeQuery();
-    wellLink.next();
-
-    Integer[] rtn = new Integer[] {wellLink.getInt(1), wellLink.getInt(2)};
-    wellLink.close();
-    return rtn;
+    try (ResultSet wellLink = linkQuery.executeQuery()) {
+      wellLink.next();
+      return new Integer[] {wellLink.getInt(1), wellLink.getInt(2)};
+    }
   }
 
   private Image lookupImage(int series, int plane,
