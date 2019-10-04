@@ -43,5 +43,6 @@ deploy:
   skip_cleanup: true
   on:
     jdk: openjdk11
-    all_branches: true
+    repo: ome/bioformats
+    branch: develop
     tags: false
