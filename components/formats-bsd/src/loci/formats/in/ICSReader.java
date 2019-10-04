@@ -608,6 +608,11 @@ public class ICSReader extends FormatReader {
     int len = FormatTools.getPlaneSize(this);
     int rowLen = FormatTools.getPlaneSize(this, w, 1);
 
+    // Update y value when invertY and reading tiles
+    if (invertY) { 
+      y = getSizeY() - y - h;
+    }
+
     int[] coordinates = getZCTCoords(no);
     int[] prevCoordinates = getZCTCoords(prevImage);
 
