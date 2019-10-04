@@ -42,6 +42,6 @@ deploy:
   script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy"
   skip_cleanup: true
   on:
-    jdk: openjdk8
+    jdk: openjdk11
     all_branches: true
     tags: false
