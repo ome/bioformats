@@ -764,7 +764,7 @@ public class TiffSaver {
       throw new FormatException(
         "No such IFD (" + ifd + " of " + offsets.length + ")");
     }
-    overwriteIFDValue(raf, offsets[ifd], tag, value);
+    overwriteIFDValue(raf, offsets[ifd], tag, value, true);
   }
 
   /**
@@ -784,19 +784,46 @@ public class TiffSaver {
   public void overwriteIFDValue(RandomAccessInputStream raf,
     long ifdOffset, int tag, Object value) throws FormatException, IOException
   {
-    raf.seek(0);
-    TiffParser parser = new TiffParser(raf);
-    Boolean valid = parser.checkHeader();
-    if (valid == null) {
-      throw new FormatException("Invalid TIFF header");
+    overwriteIFDValue(raf, ifdOffset, tag, value, false);
+  }
+
+  /**
+   * Surgically overwrites an existing IFD value with the given one. This
+   * method requires that the IFD directory entry already exist. It
+   * intelligently updates the count field of the entry to match the new
+   * length. If the new length is longer than the old length, it appends the
+   * new data to the end of the file and updates the offset field; if not, or
+   * if the old data is already at the end of the file, it overwrites the old
+   * data in place.
+   *
+   * @param raf the input stream representing the file to be edited
+   * @param ifdOffset the offset to the IFD
+   * @param tag the tag code
+   * @param value the new value for the tag
+   * @param skipHeaderCheck true if the TIFF header does not need to be checked
+   */
+  public void overwriteIFDValue(RandomAccessInputStream raf,
+    long ifdOffset, int tag, Object value, boolean skipHeaderCheck)
+    throws FormatException, IOException
+  {
+    if (!skipHeaderCheck) {
+      raf.seek(0);
+      TiffParser parser = new TiffParser(raf);
+      Boolean valid = parser.checkHeader();
+      if (valid == null) {
+        throw new FormatException("Invalid TIFF header");
+      }
+
+      boolean little = valid.booleanValue();
+      boolean bigTiff = parser.isBigTiff();
+
+      setLittleEndian(little);
+      setBigTiff(bigTiff);
     }
 
-    boolean little = valid.booleanValue();
-    boolean bigTiff = parser.isBigTiff();
-
-    setLittleEndian(little);
-    setBigTiff(bigTiff);
-
+    TiffParser parser = new TiffParser(raf);
+    boolean little = isLittleEndian();
+    boolean bigTiff = isBigTiff();
     long offset = bigTiff ? 8 : 4; // offset to the IFD
 
     int bytesPerEntry = bigTiff ?
