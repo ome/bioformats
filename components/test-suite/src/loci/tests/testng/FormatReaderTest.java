@@ -156,6 +156,10 @@ public class FormatReaderTest {
     return id;
   }
 
+  public String toString() {
+    return getID();
+  }
+
   // -- Setup/teardown methods --
 
   @BeforeClass
