@@ -1077,7 +1077,7 @@ public class LIFReader extends FormatReader {
   }
 
   private Length checkFlip(boolean flip, Length pos) {
-    if (flip) {
+    if (flip && pos != null) {
       pos = new Length(-pos.value().doubleValue(), pos.unit());
     }
     return pos;
