@@ -230,15 +230,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     putInt("MinSampleValue", firstIFD, IFD.MIN_SAMPLE_VALUE);
     putInt("MaxSampleValue", firstIFD, IFD.MAX_SAMPLE_VALUE);
 
-    TiffRational xResolution = firstIFD.getIFDRationalValue(IFD.X_RESOLUTION);
-    TiffRational yResolution = firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION);
-
-    if (xResolution != null) {
-      put("XResolution", xResolution.doubleValue());
-    }
-    if (yResolution != null) {
-      put("YResolution", yResolution.doubleValue());
-    }
+    putDouble("XResolution", firstIFD, IFD.X_RESOLUTION);
+    putDouble("YResolution", firstIFD, IFD.Y_RESOLUTION);
 
     int planar = firstIFD.getIFDIntValue(IFD.PLANAR_CONFIGURATION);
     String planarConfig = null;
@@ -252,8 +245,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("PlanarConfiguration", planarConfig);
 
-    putInt("XPosition", firstIFD, IFD.X_POSITION);
-    putInt("YPosition", firstIFD, IFD.Y_POSITION);
+    putDouble("XPosition", firstIFD, IFD.X_POSITION);
+    putDouble("YPosition", firstIFD, IFD.Y_POSITION);
     putInt("FreeOffsets", firstIFD, IFD.FREE_OFFSETS);
     putInt("FreeByteCounts", firstIFD, IFD.FREE_BYTE_COUNTS);
     putInt("GrayResponseUnit", firstIFD, IFD.GRAY_RESPONSE_UNIT);
@@ -573,6 +566,15 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     } catch (FormatException e) {
     }
     put(key, value);
+  }
+
+  protected void putDouble(String key, IFD ifd, int tag) {
+    if (ifd.getIFDValue(tag) instanceof Number) {
+      Number number = (Number) ifd.getIFDValue(tag);
+      if (number != null) {
+        put(key, number.doubleValue());
+      }
+    }
   }
 
   // -- Internal FormatReader API methods --
