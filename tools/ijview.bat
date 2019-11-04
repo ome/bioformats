@@ -20,7 +20,7 @@ if "%BF_DEVEL%" == "" (
     echo Required JAR libraries not found. Please download:
     echo   ij.jar
     echo from:
-    echo   http://imagej.nih.gov/ij/upgrade/
+    echo   https://imagej.nih.gov/ij/upgrade/
     echo and place in the same directory as the command line tools.
     goto end
   )
