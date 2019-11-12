@@ -234,4 +234,22 @@ public class ImageConverterTest {
       checkImage();
     }
   }
+
+  @Test
+  public void testCropOddTileSize() throws FormatException, IOException {
+    outFile = tempDir.resolve("odd-test.ome.tiff").toFile();
+    String[] args = {
+      "-tilex", "128", "-tiley", "128",
+      "-crop", "123,127,129,131", "test.fake", outFile.getAbsolutePath()
+    };
+    width = 129;
+    try {
+      ImageConverter.main(args);
+    }
+    catch (ExitException e) {
+      outFile.deleteOnExit();
+      assertEquals(e.status, 0);
+      checkImage();
+    }
+  }
 }
