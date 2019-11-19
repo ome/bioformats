@@ -935,7 +935,9 @@ public class ZeissCZIReader extends FormatReader {
 
     assignPlaneIndices();
 
-    if (maxResolution > 0 || (mosaics > 1 && seriesCount == 1)) {
+    if (maxResolution > 0 || (mosaics > 1 && seriesCount == 1) ||
+      (mosaics == 1 && seriesCount > 1))
+    {
       tileWidth = new int[core.size()];
       tileHeight = new int[core.size()];
       for (int s=0; s<core.size();) {
