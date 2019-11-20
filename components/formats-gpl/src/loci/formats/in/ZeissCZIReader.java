@@ -852,7 +852,8 @@ public class ZeissCZIReader extends FormatReader {
       prestitched = true;
     }
     else if (allowAutostitching() && prestitched == null && mosaics > 1) {
-      prestitched = mosaics == seriesCount && mosaics == calculatedSeries;
+      prestitched = (mosaics == seriesCount && mosaics == calculatedSeries) ||
+        (mosaics == (seriesCount / positions));
     }
 
     if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
@@ -914,9 +915,9 @@ public class ZeissCZIReader extends FormatReader {
     // usually this indicates a big image for which a pyramid is
     // expected but not present
     if ((prestitched != null && prestitched) &&
-      seriesCount == mosaics && maxResolution == 0)
+      seriesCount == (mosaics * positions) && maxResolution == 0)
     {
-      seriesCount = 1;
+      seriesCount = positions;
     }
 
     if (seriesCount > 1 || maxResolution > 0) {
@@ -935,7 +936,7 @@ public class ZeissCZIReader extends FormatReader {
 
     assignPlaneIndices();
 
-    if (maxResolution > 0 || (mosaics > 1 && seriesCount == 1) ||
+    if (maxResolution > 0 || (mosaics > 1 && seriesCount == positions) ||
       (mosaics == 1 && seriesCount > 1))
     {
       tileWidth = new int[core.size()];
