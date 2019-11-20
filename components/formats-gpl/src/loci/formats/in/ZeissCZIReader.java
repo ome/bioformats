@@ -2821,6 +2821,37 @@ public class ZeissCZIReader extends FormatReader {
           shape = populateRectangles(text, roiCount, shape);
         }
 
+        NodeList events = getGrandchildren(layer, "Elements", "Events");
+        if (events != null) {
+          for (int s=0; s<events.getLength(); s++) {
+            Element event = (Element) events.item(s);
+
+            Element geometry = getFirstNode(event, "Geometry");
+            Element textElements = getFirstNode(event, "TextElements");
+            Element attributes = getFirstNode(event, "Attributes");
+            Element features = getFirstNode(event, "Features");
+
+            String points = getFirstNodeValue(geometry, "Points");
+            if (points != null) {
+              String[] coords = points.split(" ");
+
+              for (String point : coords) {
+                String[] xy = point.split(",");
+                if (xy.length == 2) {
+                  String pointID =
+                    MetadataTools.createLSID("Shape", roiCount, shape);
+                  store.setPointID(pointID, roiCount, shape);
+                  store.setPointX(
+                    DataTools.parseDouble(xy[0]), roiCount, shape);
+                  store.setPointY(
+                    DataTools.parseDouble(xy[1]), roiCount, shape);
+                  shape++;
+                }
+              }
+            }
+          }
+        }
+
         if (shape > 0) {
           String roiID = MetadataTools.createLSID("ROI", roiCount);
           store.setROIID(roiID, roiCount);
