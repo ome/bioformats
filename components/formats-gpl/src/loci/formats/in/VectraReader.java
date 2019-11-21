@@ -26,12 +26,16 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.DataTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -69,10 +73,17 @@ public class VectraReader extends BaseTiffReader {
   /** TIFF image description prefix for PerkinElmer Vectra/QPTIFF files. */
   private static final String SOFTWARE_CHECK = "PerkinElmer-QPI";
 
+  private static final String ANNOTATION_SUFFIX = "_annotations.xml";
+  private static final List<String> EXTRA_FILES = Arrays.asList(
+    "CoverslipMask.tif", "FocusMap.tif", "Label.tif",
+    "OverviewBF.tif", "OverviewFL.tif", "SampleMask.tif"
+  );
+
   // -- Fields --
 
   private int pyramidDepth = 1;
   private String profileXML;
+  private List<String> allFiles = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -83,6 +94,7 @@ public class VectraReader extends BaseTiffReader {
     noSubresolutions = true;
     suffixSufficient = false;
     canSeparateSeries = false;
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --
@@ -113,6 +125,19 @@ public class VectraReader extends BaseTiffReader {
       LOGGER.debug("I/O exception during isThisType() evaluation.", e);
       return false;
     }
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    if (allFiles.size() == 1) {
+      return super.getSeriesUsedFiles(noPixels);
+    }
+    if (noPixels) {
+      return allFiles.subList(
+        1, allFiles.size()).toArray(new String[allFiles.size() - 1]);
+    }
+    return allFiles.toArray(new String[allFiles.size()]);
   }
 
   /**
@@ -151,6 +176,7 @@ public class VectraReader extends BaseTiffReader {
     if (!fileOnly) {
       pyramidDepth = 1;
       profileXML = null;
+      allFiles.clear();
     }
   }
 
@@ -188,6 +214,21 @@ public class VectraReader extends BaseTiffReader {
   @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
+
+    // look for companion files
+
+    Location currentFile = new Location(currentId).getAbsoluteFile();
+    allFiles.add(currentFile.getAbsolutePath());
+    Location parent = currentFile.getParentFile();
+    String[] list = parent.list(true);
+    Arrays.sort(list);
+    for (String f : list) {
+      if (f.endsWith(ANNOTATION_SUFFIX) || EXTRA_FILES.contains(f)) {
+        allFiles.add(new Location(parent, f).getAbsolutePath());
+      }
+    }
+
+    // set up IFDs
 
     ifds = tiffParser.getMainIFDs();
     thumbnailIFDs = null;
