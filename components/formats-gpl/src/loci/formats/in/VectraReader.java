@@ -42,6 +42,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
+import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 
@@ -276,6 +277,7 @@ public class VectraReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
 
     for (int i=0; i<getSeriesCount(); i++) {
+      setSeries(i);
       int coreIndex = seriesToCoreIndex(i);
       store.setImageName(getImageName(coreIndex), i);
       store.setImageDescription("", i);
@@ -287,7 +289,27 @@ public class VectraReader extends BaseTiffReader {
 
       store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(x), i);
       store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(y), i);
+
+      TiffRational xPos = ifd.getIFDRationalValue(IFD.X_POSITION);
+      TiffRational yPos = ifd.getIFDRationalValue(IFD.Y_POSITION);
+      int unitMultiplier = ifd.getResolutionMultiplier();
+
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        store.setPlaneTheZ(new NonNegativeInteger(0), i, c);
+        store.setPlaneTheT(new NonNegativeInteger(0), i, c);
+        store.setPlaneTheC(new NonNegativeInteger(c), i, c);
+
+        if (xPos != null) {
+          double position = xPos.doubleValue() * unitMultiplier;
+          store.setPlanePositionX(FormatTools.getPhysicalSizeX(position), i, c);
+        }
+        if (yPos != null) {
+          double position = yPos.doubleValue() * unitMultiplier;
+          store.setPlanePositionY(FormatTools.getPhysicalSizeY(position), i, c);
+        }
+      }
     }
+    setSeries(0);
 
     // each high-resolution IFD has an XML description that needs to be parsed
 
@@ -375,9 +397,6 @@ public class VectraReader extends BaseTiffReader {
           else if (name.equals("ExposureTime")) {
             Time exposure = new Time(DataTools.parseDouble(value), UNITS.MICROSECOND);
             store.setPlaneExposureTime(exposure, 0, c);
-            store.setPlaneTheZ(new NonNegativeInteger(0), 0, c);
-            store.setPlaneTheT(new NonNegativeInteger(0), 0, c);
-            store.setPlaneTheC(new NonNegativeInteger(c), 0, c);
           }
         }
       }
