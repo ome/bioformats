@@ -354,7 +354,7 @@ public class VectraReader extends BaseTiffReader {
 
     // each high-resolution IFD has an XML description that needs to be parsed
 
-    for (int c=0; c<getSizeC(); c++) {
+    for (int c=0; c<getEffectiveSizeC(); c++) {
       String xml = getIFDComment(c);
       try {
         Element root = XMLTools.parseDOM(xml).getDocumentElement();
