@@ -1154,7 +1154,11 @@ public class TiffParser {
 
     TiffCompression compression = ifd.getCompression();
     PhotoInterp photoInterp = ifd.getPhotometricInterpretation();
-    if (compression == TiffCompression.JPEG) photoInterp = PhotoInterp.RGB;
+    if (compression == TiffCompression.JPEG ||
+      compression == TiffCompression.JPEGXR)
+    {
+      photoInterp = PhotoInterp.RGB;
+    }
 
     int[] bitsPerSample = ifd.getBitsPerSample();
     int nChannels = bitsPerSample.length;

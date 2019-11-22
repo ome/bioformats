@@ -40,6 +40,7 @@ import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
@@ -102,7 +103,9 @@ public class NDPIReader extends BaseTiffReader {
         if (ifd == null) {
           return false;
         }
-        return ifd.containsKey(MARKER_TAG);
+        // non-JPEG data won't have the marker tag,
+        // but should still have the metadata tag
+        return ifd.containsKey(MARKER_TAG) || ifd.containsKey(METADATA_TAG);
       }
       catch (IOException e) {
         LOGGER.debug("I/O exception during isThisType() evaluation.", e);
@@ -127,11 +130,14 @@ public class NDPIReader extends BaseTiffReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+
     if (x == 0 && y == 0 && w == 1 && h == 1) {
       return buf;
     }
-    else if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE) {
-      int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    else if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE ||
+      ifds.get(ifdIndex).getCompression() != TiffCompression.JPEG)
+    {
       try (RandomAccessInputStream s = new RandomAccessInputStream(currentId)) {
         tiffParser = new TiffParser(s);
         tiffParser.setUse64BitOffsets(true);
@@ -144,7 +150,7 @@ public class NDPIReader extends BaseTiffReader {
     }
 
     if (initializedSeries != getCoreIndex() || initializedPlane != no) {
-      IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
+      IFD ifd = ifds.get(ifdIndex);
 
       long offset = ifd.getStripOffsets()[0];
       long byteCount = ifd.getStripByteCounts()[0];
@@ -285,6 +291,7 @@ public class NDPIReader extends BaseTiffReader {
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
+      tiffParser.fillInIFD(ifd);
       long[] stripOffsets = ifd.getStripOffsets();
 
       boolean neededAdjustment = false;
