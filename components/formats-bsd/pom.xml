@@ -103,6 +103,11 @@
 	    <artifactId>metadata-extractor</artifactId>
 	    <version>2.11.0</version>
     </dependency>
+    <dependency>
+      <groupId>ome</groupId>
+      <artifactId>jxrlib-all</artifactId>
+      <version>${jxrlib.version}</version>
+    </dependency>
 
     <!-- xerces is no longer a dependency of metadata-extractor, but it may be required by other BF components -->
     <dependency>

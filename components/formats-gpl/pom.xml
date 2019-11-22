@@ -64,11 +64,6 @@
       <version>${ome-poi.version}</version>
     </dependency>
     <dependency>
-      <groupId>ome</groupId>
-      <artifactId>jxrlib-all</artifactId>
-      <version>${jxrlib.version}</version>
-    </dependency>
-    <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>cdm</artifactId>
       <version>4.6.13</version>
