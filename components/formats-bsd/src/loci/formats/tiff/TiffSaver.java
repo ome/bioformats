@@ -335,7 +335,10 @@ public class TiffSaver {
 
       // write pixel strips to output buffers
       // Check for the sane cases
-      if (ifd.getImageWidth() == w && ifd.getTileWidth() == w && channelsAllSameSize) {
+      if (channelsAllSameSize &&
+        (ifd.getImageWidth() == w && ifd.getTileWidth() == w) ||
+        (tileHeight * tileWidth * nChannels * bytesPerPixel == buf.length))
+      {
         // If the input, output, and tile widths are all the same,
         // and the input bytesPerPixel (which is actually bytes per sample)
         // matches the bits per channel for all channels,
