@@ -868,15 +868,21 @@ public final class ImageConverter {
           m = System.currentTimeMillis();
         }
 
+        // calculate the XY coordinate in the output image
+        // don't use tileX and tileY, as they will be too large
+        // if any cropping was performed
+        int outputX = x * w;
+        int outputY = y * h;
+
         if (writer instanceof TiffWriter) {
           ((TiffWriter) writer).saveBytes(outputIndex, buf,
-            ifd, tileX, tileY, tileWidth, tileHeight);
+            ifd, outputX, outputY, tileWidth, tileHeight);
         }
         else if (writer instanceof ImageWriter) {
           IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
           if (baseWriter instanceof TiffWriter) {
             ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
-              tileX, tileY, tileWidth, tileHeight);
+              outputX, outputY, tileWidth, tileHeight);
           }
         }
       }

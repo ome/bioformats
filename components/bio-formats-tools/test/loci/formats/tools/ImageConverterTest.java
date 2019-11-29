@@ -65,6 +65,7 @@ public class ImageConverterTest {
 
   private Path tempDir;
   private File outFile;
+  private int width = 512;
   private final SecurityManager oldSecurityManager = System.getSecurityManager();
   private final PrintStream oldOut = System.out;
   private final PrintStream oldErr = System.err;
@@ -96,6 +97,7 @@ public class ImageConverterTest {
 
     tempDir = Files.createTempDirectory(this.getClass().getName());
     tempDir.toFile().deleteOnExit();
+    width = 512;
   }
 
   @AfterMethod
@@ -123,7 +125,7 @@ public class ImageConverterTest {
   public void checkImage() throws FormatException, IOException {
     IFormatReader r = new ImageReader();
     r.setId(outFile.getAbsolutePath());
-    assertEquals(r.getSizeX(), 512);
+    assertEquals(r.getSizeX(), width);
     r.close();
   }
 
@@ -215,5 +217,39 @@ public class ImageConverterTest {
             "plate&plates=1&fields=2.fake", outFile.getAbsolutePath()
     };
     assertConversion(args);
+  }
+
+  @Test
+  public void testCrop() throws FormatException, IOException {
+    outFile = tempDir.resolve("test.ome.tiff").toFile();
+    String[] args = {
+      "-tilex", "128", "-tiley", "128",
+      "-crop", "256,256,256,256", "test.fake", outFile.getAbsolutePath()};
+    width = 256;
+    try {
+      ImageConverter.main(args);
+    } catch (ExitException e) {
+      outFile.deleteOnExit();
+      assertEquals(e.status, 0);
+      checkImage();
+    }
+  }
+
+  @Test
+  public void testCropOddTileSize() throws FormatException, IOException {
+    outFile = tempDir.resolve("odd-test.ome.tiff").toFile();
+    String[] args = {
+      "-tilex", "128", "-tiley", "128",
+      "-crop", "123,127,129,131", "test.fake", outFile.getAbsolutePath()
+    };
+    width = 129;
+    try {
+      ImageConverter.main(args);
+    }
+    catch (ExitException e) {
+      outFile.deleteOnExit();
+      assertEquals(e.status, 0);
+      checkImage();
+    }
   }
 }
