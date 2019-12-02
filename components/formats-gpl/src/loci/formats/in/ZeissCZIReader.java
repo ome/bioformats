@@ -852,7 +852,8 @@ public class ZeissCZIReader extends FormatReader {
       prestitched = true;
     }
     else if (allowAutostitching() && prestitched == null && mosaics > 1) {
-      prestitched = mosaics == seriesCount && mosaics == calculatedSeries;
+      prestitched = (mosaics == seriesCount && mosaics == calculatedSeries) ||
+        (mosaics == (seriesCount / positions));
     }
 
     if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
@@ -914,9 +915,9 @@ public class ZeissCZIReader extends FormatReader {
     // usually this indicates a big image for which a pyramid is
     // expected but not present
     if ((prestitched != null && prestitched) &&
-      seriesCount == mosaics && maxResolution == 0)
+      seriesCount == (mosaics * positions) && maxResolution == 0)
     {
-      seriesCount = 1;
+      seriesCount = positions;
     }
 
     if (seriesCount > 1 || maxResolution > 0) {
@@ -935,7 +936,9 @@ public class ZeissCZIReader extends FormatReader {
 
     assignPlaneIndices();
 
-    if (maxResolution > 0 || (mosaics > 1 && seriesCount == 1)) {
+    if (maxResolution > 0 || (mosaics > 1 && seriesCount == positions) ||
+      (mosaics == 1 && seriesCount > 1))
+    {
       tileWidth = new int[core.size()];
       tileHeight = new int[core.size()];
       for (int s=0; s<core.size();) {
@@ -2816,6 +2819,37 @@ public class ZeissCZIReader extends FormatReader {
         NodeList text = getGrandchildren(layer, "Elements", "Text");
         if (text != null) {
           shape = populateRectangles(text, roiCount, shape);
+        }
+
+        NodeList events = getGrandchildren(layer, "Elements", "Events");
+        if (events != null) {
+          for (int s=0; s<events.getLength(); s++) {
+            Element event = (Element) events.item(s);
+
+            Element geometry = getFirstNode(event, "Geometry");
+            Element textElements = getFirstNode(event, "TextElements");
+            Element attributes = getFirstNode(event, "Attributes");
+            Element features = getFirstNode(event, "Features");
+
+            String points = getFirstNodeValue(geometry, "Points");
+            if (points != null) {
+              String[] coords = points.split(" ");
+
+              for (String point : coords) {
+                String[] xy = point.split(",");
+                if (xy.length == 2) {
+                  String pointID =
+                    MetadataTools.createLSID("Shape", roiCount, shape);
+                  store.setPointID(pointID, roiCount, shape);
+                  store.setPointX(
+                    DataTools.parseDouble(xy[0]), roiCount, shape);
+                  store.setPointY(
+                    DataTools.parseDouble(xy[1]), roiCount, shape);
+                  shape++;
+                }
+              }
+            }
+          }
         }
 
         if (shape > 0) {
