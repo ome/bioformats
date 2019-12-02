@@ -114,7 +114,7 @@ public final class ImageConverter {
   private int firstPlane = 0;
   private int lastPlane = Integer.MAX_VALUE;
   private int channel = -1, zSection = -1, timepoint = -1;
-  private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
+  private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0, width_crop = 0, height_crop = 0;
   private int saveTileWidth = 0, saveTileHeight = 0;
   private boolean validate = false;
   private boolean zeroPadding = false;
@@ -205,8 +205,8 @@ public final class ImageConverter {
           String[] tokens = args[++i].split(",");
           xCoordinate = Integer.parseInt(tokens[0]);
           yCoordinate = Integer.parseInt(tokens[1]);
-          width = Integer.parseInt(tokens[2]);
-          height = Integer.parseInt(tokens[3]);
+          width_crop = Integer.parseInt(tokens[2]);
+          height_crop = Integer.parseInt(tokens[3]);
         }
         else if (args[i].equals("-tilex")) {
           try {
@@ -499,15 +499,20 @@ public final class ImageConverter {
     MetadataTools.populatePixels(store, reader, false, false);
 
     boolean dimensionsSet = true;
-    if (width == 0 || height == 0) {
-      // only switch series if the '-series' flag was used;
-      // otherwise default to series 0
-      if (series >= 0) {
-        reader.setSeries(series);
-      }
+    
+    // only switch series if the '-series' flag was used;
+    // otherwise default to series 0
+    if (series >= 0) {
+      reader.setSeries(series);
+    }
+    
+    if (width_crop == 0 || height_crop == 0) {
       width = reader.getSizeX();
       height = reader.getSizeY();
       dimensionsSet = false;
+    } else {
+      width = Math.min(reader.getSizeX(), width_crop);
+      height = Math.min(reader.getSizeY(), height_crop);
     }
 
     if (channel >= reader.getEffectiveSizeC()) {
@@ -631,6 +636,9 @@ public final class ImageConverter {
             width /= scale;
             height /= scale;
           }
+        } else {
+            width = Math.min(reader.getSizeX(), width_crop);
+            height = Math.min(reader.getSizeY(), height_crop);
         }
 
         int writerSeries = series == -1 ? q : 0;
