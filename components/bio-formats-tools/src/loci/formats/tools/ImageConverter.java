@@ -499,13 +499,13 @@ public final class ImageConverter {
     MetadataTools.populatePixels(store, reader, false, false);
 
     boolean dimensionsSet = true;
-    
+
     // only switch series if the '-series' flag was used;
     // otherwise default to series 0
     if (series >= 0) {
       reader.setSeries(series);
     }
-    
+
     if (width_crop == 0 || height_crop == 0) {
       width = reader.getSizeX();
       height = reader.getSizeY();
@@ -619,6 +619,8 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
+      // OutputIndex should be reset at the start of a new series
+      nextOutputIndex.clear();
       boolean generatePyramid = pyramidResolutions > reader.getResolutionCount();
       int resolutionCount = generatePyramid ? pyramidResolutions : reader.getResolutionCount();
       for (int res=0; res<resolutionCount; res++) {
@@ -637,8 +639,8 @@ public final class ImageConverter {
             height /= scale;
           }
         } else {
-            width = Math.min(reader.getSizeX(), width_crop);
-            height = Math.min(reader.getSizeY(), height_crop);
+          width = Math.min(reader.getSizeX(), width_crop);
+          height = Math.min(reader.getSizeY(), height_crop);
         }
 
         int writerSeries = series == -1 ? q : 0;
@@ -843,11 +845,12 @@ public final class ImageConverter {
           int sizeX = nTileCols == 1 ? width : tileWidth;
           int sizeY = nTileRows == 1 ? height : tileHeight;
           MetadataRetrieve retrieve = writer.getMetadataRetrieve();
+          int writerSeries = series == -1 ? reader.getSeries() : 0;
           if (retrieve instanceof MetadataStore) {
             ((MetadataStore) retrieve).setPixelsSizeX(
-              new PositiveInteger(sizeX), reader.getSeries());
+              new PositiveInteger(sizeX), writerSeries);
             ((MetadataStore) retrieve).setPixelsSizeY(
-              new PositiveInteger(sizeY), reader.getSeries());
+              new PositiveInteger(sizeY), writerSeries);
             setupResolutions((IMetadata) retrieve);
           }
 
@@ -864,9 +867,11 @@ public final class ImageConverter {
 
           if (nTileRows > 1) {
             tileY = 0;
+            ifd.put(IFD.TILE_LENGTH, tileHeight);
           }
           if (nTileCols > 1) {
             tileX = 0;
+            ifd.put(IFD.TILE_WIDTH, tileWidth);
           }
         }
 
@@ -882,6 +887,14 @@ public final class ImageConverter {
         int outputX = x * w;
         int outputY = y * h;
 
+        if (currentFile.indexOf(FormatTools.TILE_NUM) >= 0 ||
+            currentFile.indexOf(FormatTools.TILE_X) >= 0 ||
+            currentFile.indexOf(FormatTools.TILE_Y) >= 0)
+        {
+          outputX = 0;
+          outputY = 0;
+        }
+        
         if (writer instanceof TiffWriter) {
           ((TiffWriter) writer).saveBytes(outputIndex, buf,
             ifd, outputX, outputY, tileWidth, tileHeight);
