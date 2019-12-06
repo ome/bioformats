@@ -1836,7 +1836,7 @@ public class DeltavisionReader extends FormatReader {
       case 10211: // Olympus U-Plan S-Apo 20X/0.75
         lensNA = 0.75;
         magnification = 20.0;
-        workingDistance = 0.65;
+        workingDistance = 0.60;
         immersion = MetadataTools.getImmersion("Air");
         model = "1-U2B825";
         break;
@@ -1989,6 +1989,14 @@ public class DeltavisionReader extends FormatReader {
         workingDistance = 0.2;
         immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B530";
+        break;
+      case 10417: // Olympus 40X/1.25, UPLSAPO 40XS, Super Apochromat Silicone Oil
+        lensNA = 1.25;
+        magnification = 40.0;
+        workingDistance = 0.3;
+        immersion = MetadataTools.getImmersion("Other");
+        model = "";
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10000: // Olympus 100X/1.30, DApo/340, IMT2
         lensNA = 1.30;
@@ -2279,6 +2287,25 @@ public class DeltavisionReader extends FormatReader {
         immersion = MetadataTools.getImmersion("Air");
         correction = MetadataTools.getCorrection("SuperFluor");
         break;
+      case 12209: // Nikon 20X/0.75, Plan Fluor, Multi-Immersion, CFI/60
+        lensNA = 0.75;
+        magnification = 20.;
+        workingDistance = 0.35;
+        immersion = MetadataTools.getImmersion("Water");
+        correction = MetadataTools.getCorrection("PlanFluor");
+        break;
+      case 12301: // Nikon 25X/1.10, Apo, LWD, Water, CFI
+        lensNA = 1.10;
+        magnification = 25.;
+        workingDistance = 2.0;
+        immersion = MetadataTools.getImmersion("Water");
+        break;
+      case 12302: // Nikon 20X/0.95, Apo, LWD, Water, CFI
+        lensNA = 0.95;
+        magnification = 20.;
+        workingDistance = 0.95;
+        immersion = MetadataTools.getImmersion("Water");
+        break;
       case 12401: // Nikon 40X/1.30, PlanFluar, 160mm tube length
         lensNA = 1.30;
         magnification = 40.0;
@@ -2369,6 +2396,19 @@ public class DeltavisionReader extends FormatReader {
         immersion = MetadataTools.getImmersion("Air");
         correction = MetadataTools.getCorrection("PlanFluor");
         break;
+      case 12414: // Nikon 40X/1.15, Apo S, LWD, Water, CFI/60 Lambda
+        lensNA = 1.15;
+        magnification = 40.0;
+        workingDistance = 0.61;
+        immersion = MetadataTools.getImmersion("Water");
+        model = "MRD77410";
+        break;
+      case 12415: // Nikon 40X/1.25, Apo S, Water, CFI/60 Lambda
+        lensNA = 1.25;
+        magnification = 40.0;
+        workingDistance = 0.2;
+        immersion = MetadataTools.getImmersion("Water");
+        break;
       case 12600: // Nikon 60X/1.40, CF N Plan Apochromat, 160mm tube length
         lensNA = 1.40;
         magnification = 60.0;
@@ -2425,6 +2465,37 @@ public class DeltavisionReader extends FormatReader {
         model = "MRH00602";
         correction = MetadataTools.getCorrection("PlanFluor");
         break;
+      case 12607: // Nikon 60X/1.40, Plan Apo, VC, CFI/60
+        lensNA = 1.40;
+        magnification = 60.;
+        workingDistance = 0.13;
+        immersion = MetadataTools.getImmersion("Oil");
+        model = "MRD01602";
+        correction = MetadataTools.getCorrection("PlanApo");
+        break;
+      case 12608: // Nikon 60X/1.20, Water, Plan Apo, VC, CFI/60
+        lensNA = 1.20;
+        magnification = 60.;
+        workingDistance = 0.28;
+        immersion = MetadataTools.getImmersion("Water");
+        model = "MRD07602";
+        correction = MetadataTools.getCorrection("PlanApo");
+        break;
+      case 12609: // Nikon 60X/1.40, Plan Apochromat, Lambda, CFI/60
+        lensNA = 1.40;
+        magnification = 60.;
+        workingDistance = 0.13;
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
+        break;
+      case 12610: // Nikon 60X/1.27, Plan Apochromat IR, Water, Lambda, CFI/60
+        lensNA = 1.27;
+        magnification = 60.;
+        workingDistance = 0.17;
+        immersion = MetadataTools.getImmersion("Water");
+        model = "MRD07620";
+        correction = MetadataTools.getCorrection("PlanApo");
+        break;
       case 12000: // Nikon 100X/1.40, CF N Plan Apochromat, 160mm tube length
         lensNA = 1.40;
         magnification = 100.0;
@@ -2470,6 +2541,21 @@ public class DeltavisionReader extends FormatReader {
         immersion = MetadataTools.getImmersion("Air");
         model = "MRH00900";
         correction = MetadataTools.getCorrection("PlanFluor");
+        break;
+      case 12006: // Nikon 100X/0.85, CR L EPI Plan, Corr Collar 0.0-0.70, CFI 60
+        lensNA = 0.85;
+        magnification = 100.;
+        workingDistance = 0.85;
+        immersion = MetadataTools.getImmersion("Air");
+        model = "MUE35900";
+        break;
+      case 12007: // Nikon 100X/1.40, Plan Apo, VC, CFI/60
+        lensNA = 1.40;
+        magnification = 100.;
+        workingDistance = 0.13;
+        immersion = MetadataTools.getImmersion("Oil");
+        model = "MRD01901";
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12101: // Nikon 2X/0.10, Plan Apo, 160mm tube length
         lensNA = 0.10;
@@ -2801,6 +2887,24 @@ public class DeltavisionReader extends FormatReader {
         workingDistance = 24.00;
         immersion = MetadataTools.getImmersion("Air");
         break;
+      case 18107: // API 10X, BH
+        lensNA = 0.15;
+        magnification = 10.0;
+        workingDistance = 15.00;
+        immersion = MetadataTools.getImmersion("Air");
+        break;
+      case 18108: // GE 10X/0.45, 1mm substrate, GRC
+        lensNA = 0.45;
+        magnification = 10.0;
+        workingDistance = 3.00;
+        immersion = MetadataTools.getImmersion("Air");
+        break;
+      case 18109: // GE 10X/0.45, 0.17mm coverslip, GRC
+        lensNA = 0.45;
+        magnification = 10.0;
+        workingDistance = 3.00;
+        immersion = MetadataTools.getImmersion("Air");
+        break;
       case 18201: // API 20X, HiRes A, CW
         lensNA = 0.55;
         magnification = 20.;
@@ -2850,12 +2954,6 @@ public class DeltavisionReader extends FormatReader {
         magnification = 40.0;
         workingDistance = 0.48;
         immersion = MetadataTools.getImmersion("Air");
-        break;
-      case 20007: // Applied Precision 100X/1.4
-        lensNA = 1.4;
-        magnification = 100.0;
-        immersion = MetadataTools.getImmersion("Oil");
-        manufacturer = "Applied Precision";
         break;
       case 1: // Zeiss 10X/.25
         lensNA = 0.25;
