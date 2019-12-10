@@ -176,7 +176,9 @@ public class VectraReader extends BaseTiffReader {
     if (!fileOnly) {
       pyramidDepth = 1;
       profileXML = null;
-      allFiles.clear();
+      if (allFiles != null) {
+        allFiles.clear();
+      }
     }
   }
 
