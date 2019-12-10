@@ -690,6 +690,11 @@ public final class ImageConverter {
                 FormatTools.TILE_NUM + " or both of " + FormatTools.TILE_X +
                 " and " + FormatTools.TILE_Y + " must be specified.");
             }
+            if (saveTileWidth == 0 && saveTileHeight == 0) {
+              // Using tile output name but not tiled reading
+              writer.setId(FormatTools.getTileFilename(0, 0, 0, outputName));
+              if (compression != null) writer.setCompression(compression);
+            }
           }
 
           int outputIndex = 0;
