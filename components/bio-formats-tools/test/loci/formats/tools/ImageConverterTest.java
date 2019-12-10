@@ -263,7 +263,7 @@ public class ImageConverterTest {
   }
   
   @Test
-  public void testCropLargertThanTileSize() throws FormatException, IOException {
+  public void testCropLargerThanTileSize() throws FormatException, IOException {
     outFile = tempDir.resolve("large-crop.ome.tiff").toFile();
     String[] args = {
       "-tilex", "128", "-tiley", "128",
