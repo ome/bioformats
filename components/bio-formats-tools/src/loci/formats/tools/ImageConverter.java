@@ -837,6 +837,7 @@ public final class ImageConverter {
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
       for (int x=0; x<nXTiles; x++) {
+        writer.close();
         int tileX = xCoordinate + x * w;
         int tileY = yCoordinate + y * h;
         int tileWidth = x < nXTiles - 1 ? w : width - (w * x);
@@ -862,7 +863,6 @@ public final class ImageConverter {
             setupResolutions((IMetadata) retrieve);
           }
 
-          writer.close();
           writer.setMetadataRetrieve(retrieve);
           writer.setId(tileName);
           if (compression != null) writer.setCompression(compression);
