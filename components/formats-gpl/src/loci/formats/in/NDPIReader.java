@@ -46,7 +46,9 @@ import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.UNITS;
 import ome.units.quantity.Length;
 
 /**
@@ -522,7 +524,11 @@ public class NDPIReader extends BaseTiffReader {
 
         addGlobalMeta(key, value);
 
-        if (key.equals("NDP.S/N")) {
+        // key name not a typo
+        if (key.equals("Objective.Lens.Magnificant") && magnification == null) {
+          magnification = new Double(value);
+        }
+        else if (key.equals("NDP.S/N")) {
           serialNumber = value;
         }
         else if (key.equals("Product")) {
@@ -646,6 +652,40 @@ public class NDPIReader extends BaseTiffReader {
       }
       else {
         store.setImageDescription(serialNumber, i);
+
+        for (int p=0; p<getImageCount(); p++) {
+          int ifdIndex = getIFDIndex(i, p);
+          IFD ifd = ifds.get(ifdIndex);
+
+          Number x = (Number) ifd.getIFDValue(X_POSITION);
+          Number y = (Number) ifd.getIFDValue(Y_POSITION);
+          Number z = (Number) ifd.getIFDValue(Z_POSITION);
+
+          int[] zct = getZCTCoords(p);
+          if (x != null || y != null || z != null) {
+            store.setPlaneTheZ(new NonNegativeInteger(zct[0]), i, p);
+            store.setPlaneTheC(new NonNegativeInteger(zct[1]), i, p);
+            store.setPlaneTheT(new NonNegativeInteger(zct[2]), i, p);
+          }
+
+          if (x != null) {
+            store.setPlanePositionX(FormatTools.getStagePosition(
+              x.doubleValue(), UNITS.NANOMETRE), i, p);
+          }
+          if (y != null) {
+            store.setPlanePositionY(FormatTools.getStagePosition(
+              y.doubleValue(), UNITS.NANOMETRE), i, p);
+          }
+          if (z != null) {
+            store.setPlanePositionZ(FormatTools.getStagePosition(
+              z.doubleValue(), UNITS.NANOMETRE), i, p);
+          }
+
+          if (zct[0] == 0 && zct[2] == 0) {
+            String channelName = ifd.getIFDTextValue(FILTER_SET_NAME);
+            store.setChannelName(channelName, i, zct[1]);
+          }
+        }
       }
     }
   }
