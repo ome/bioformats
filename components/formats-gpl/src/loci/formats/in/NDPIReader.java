@@ -707,7 +707,8 @@ public class NDPIReader extends BaseTiffReader {
   private boolean useTiffParser(IFD ifd) throws FormatException {
     return ifd.getImageWidth() <= MAX_SIZE ||
       ifd.getImageLength() <= MAX_SIZE ||
-      ifd.getCompression() != TiffCompression.JPEG;
+      ifd.getCompression() != TiffCompression.JPEG ||
+      !ifd.containsKey(MARKER_TAG);
   }
 
   /**
