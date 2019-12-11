@@ -74,7 +74,9 @@ public final class WriterUtilities {
       FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
   public static final int[] pixelTypesOther = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT, FormatTools.DOUBLE};
-  
+  public static final int[] pixelTypesICS = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
+
   public static IMetadata createMetadata(String pixelType, int rgbChannels,
       int seriesCount, boolean littleEndian, int sizeT) throws Exception {
     IMetadata metadata;
