@@ -837,7 +837,6 @@ public final class ImageConverter {
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
       for (int x=0; x<nXTiles; x++) {
-        writer.close();
         int tileX = xCoordinate + x * w;
         int tileY = yCoordinate + y * h;
         int tileWidth = x < nXTiles - 1 ? w : width - (w * x);
@@ -854,6 +853,7 @@ public final class ImageConverter {
           int sizeX = nTileCols == 1 ? width : tileWidth;
           int sizeY = nTileRows == 1 ? height : tileHeight;
           MetadataRetrieve retrieve = writer.getMetadataRetrieve();
+          writer.close();
           int writerSeries = series == -1 ? reader.getSeries() : 0;
           if (retrieve instanceof MetadataStore) {
             ((MetadataStore) retrieve).setPixelsSizeX(
