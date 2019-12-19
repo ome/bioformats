@@ -28,7 +28,10 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.formats.FormatException;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 public class RCPNLReader extends DeltavisionReader {
 
@@ -57,8 +60,45 @@ public class RCPNLReader extends DeltavisionReader {
   {
     super.populateObjective(store, lensID);
 
-    if (lensID == 18107) {
-      store.setObjectiveLensNA(0.30, 0, 0);
+    switch (lensID) {
+      case 18107:
+        store.setObjectiveNominalMagnification(10.0, 0, 0);
+        store.setObjectiveLensNA(0.30, 0, 0);
+        store.setObjectiveWorkingDistance(
+          new Length(15.0, UNITS.MILLIMETER), 0, 0);
+        store.setObjectiveImmersion(MetadataTools.getImmersion("Air"), 0, 0);
+        store.setObjectiveCorrection(
+          MetadataTools.getCorrection("PlanFluor"), 0, 0);
+        store.setObjectiveManufacturer("Nikon", 0, 0);
+        break;
+      case 18108:
+        store.setObjectiveNominalMagnification(20.0, 0, 0);
+        store.setObjectiveLensNA(0.75, 0, 0);
+        store.setObjectiveCorrection(
+          MetadataTools.getCorrection("PlanApo"), 0, 0);
+        store.setObjectiveManufacturer("Nikon", 0, 0);
+        break;
+      case 18109:
+        store.setObjectiveNominalMagnification(40.0, 0, 0);
+        store.setObjectiveLensNA(0.95, 0, 0);
+        store.setObjectiveCorrection(
+          MetadataTools.getCorrection("PlanApo"), 0, 0);
+        store.setObjectiveManufacturer("Nikon", 0, 0);
+        break;
+      case 18110:
+        store.setObjectiveNominalMagnification(40.0, 0, 0);
+        store.setObjectiveLensNA(0.60, 0, 0);
+        store.setObjectiveCorrection(
+          MetadataTools.getCorrection("PlanFluor"), 0, 0);
+        store.setObjectiveManufacturer("Nikon", 0, 0);
+        break;
+      case 18111:
+        store.setObjectiveNominalMagnification(4.0, 0, 0);
+        store.setObjectiveLensNA(0.20, 0, 0);
+        store.setObjectiveCorrection(
+          MetadataTools.getCorrection("PlanApo"), 0, 0);
+        store.setObjectiveManufacturer("Nikon", 0, 0);
+        break;
     }
   }
 
