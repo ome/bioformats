@@ -29,14 +29,20 @@ env:
 matrix:
   fast_finish: true
   exclude:
-  - jdk: oraclejdk11
-    env: BUILD=ant
   - jdk: openjdk11
-    env: BUILD=ant
-  - jdk: oraclejdk8
     env: BUILD=ant
   - jdk: openjdk8
     env: BUILD=maven
 
 script:
   - ./tools/test-build $BUILD
+
+deploy:
+  provider: script
+  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy"
+  skip_cleanup: true
+  on:
+    jdk: openjdk11
+    repo: ome/bioformats
+    branch: develop
+    tags: false

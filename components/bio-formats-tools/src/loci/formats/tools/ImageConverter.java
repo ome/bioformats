@@ -114,7 +114,7 @@ public final class ImageConverter {
   private int firstPlane = 0;
   private int lastPlane = Integer.MAX_VALUE;
   private int channel = -1, zSection = -1, timepoint = -1;
-  private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
+  private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0, width_crop = 0, height_crop = 0;
   private int saveTileWidth = 0, saveTileHeight = 0;
   private boolean validate = false;
   private boolean zeroPadding = false;
@@ -205,8 +205,8 @@ public final class ImageConverter {
           String[] tokens = args[++i].split(",");
           xCoordinate = Integer.parseInt(tokens[0]);
           yCoordinate = Integer.parseInt(tokens[1]);
-          width = Integer.parseInt(tokens[2]);
-          height = Integer.parseInt(tokens[3]);
+          width_crop = Integer.parseInt(tokens[2]);
+          height_crop = Integer.parseInt(tokens[3]);
         }
         else if (args[i].equals("-tilex")) {
           try {
@@ -372,6 +372,9 @@ public final class ImageConverter {
       "   " + FormatTools.Z_NUM + "\t\tZ index",
       "   " + FormatTools.T_NUM + "\t\tT index",
       "   " + FormatTools.TIMESTAMP + "\t\tacquisition timestamp",
+      "   " + FormatTools.TILE_X + "\t\trow index of the tile",
+      "   " + FormatTools.TILE_Y + "\t\tcolumn index of the tile",
+      "   " + FormatTools.TILE_NUM + "\t\toverall tile index",
       "",
       "If any of these patterns are present, then the images to be saved",
       "will be split into multiple files.  For example, if the input file",
@@ -499,15 +502,20 @@ public final class ImageConverter {
     MetadataTools.populatePixels(store, reader, false, false);
 
     boolean dimensionsSet = true;
-    if (width == 0 || height == 0) {
-      // only switch series if the '-series' flag was used;
-      // otherwise default to series 0
-      if (series >= 0) {
-        reader.setSeries(series);
-      }
+
+    // only switch series if the '-series' flag was used;
+    // otherwise default to series 0
+    if (series >= 0) {
+      reader.setSeries(series);
+    }
+
+    if (width_crop == 0 || height_crop == 0) {
       width = reader.getSizeX();
       height = reader.getSizeY();
       dimensionsSet = false;
+    } else {
+      width = Math.min(reader.getSizeX(), width_crop);
+      height = Math.min(reader.getSizeY(), height_crop);
     }
 
     if (channel >= reader.getEffectiveSizeC()) {
@@ -614,6 +622,8 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
+      // OutputIndex should be reset at the start of a new series
+      nextOutputIndex.clear();
       boolean generatePyramid = pyramidResolutions > reader.getResolutionCount();
       int resolutionCount = generatePyramid ? pyramidResolutions : reader.getResolutionCount();
       for (int res=0; res<resolutionCount; res++) {
@@ -631,6 +641,9 @@ public final class ImageConverter {
             width /= scale;
             height /= scale;
           }
+        } else {
+          width = Math.min(reader.getSizeX(), width_crop);
+          height = Math.min(reader.getSizeY(), height_crop);
         }
 
         int writerSeries = series == -1 ? q : 0;
@@ -679,6 +692,11 @@ public final class ImageConverter {
               throw new FormatException("Invalid file name pattern; " +
                 FormatTools.TILE_NUM + " or both of " + FormatTools.TILE_X +
                 " and " + FormatTools.TILE_Y + " must be specified.");
+            }
+            if (saveTileWidth == 0 && saveTileHeight == 0) {
+              // Using tile output name but not tiled reading
+              writer.setId(FormatTools.getTileFilename(0, 0, 0, outputName));
+              if (compression != null) writer.setCompression(compression);
             }
           }
 
@@ -835,15 +853,16 @@ public final class ImageConverter {
           int sizeX = nTileCols == 1 ? width : tileWidth;
           int sizeY = nTileRows == 1 ? height : tileHeight;
           MetadataRetrieve retrieve = writer.getMetadataRetrieve();
+          writer.close();
+          int writerSeries = series == -1 ? reader.getSeries() : 0;
           if (retrieve instanceof MetadataStore) {
             ((MetadataStore) retrieve).setPixelsSizeX(
-              new PositiveInteger(sizeX), reader.getSeries());
+              new PositiveInteger(sizeX), writerSeries);
             ((MetadataStore) retrieve).setPixelsSizeY(
-              new PositiveInteger(sizeY), reader.getSeries());
+              new PositiveInteger(sizeY), writerSeries);
             setupResolutions((IMetadata) retrieve);
           }
 
-          writer.close();
           writer.setMetadataRetrieve(retrieve);
           writer.setId(tileName);
           if (compression != null) writer.setCompression(compression);
@@ -856,9 +875,11 @@ public final class ImageConverter {
 
           if (nTileRows > 1) {
             tileY = 0;
+            ifd.put(IFD.TILE_LENGTH, tileHeight);
           }
           if (nTileCols > 1) {
             tileX = 0;
+            ifd.put(IFD.TILE_WIDTH, tileWidth);
           }
         }
 
@@ -868,15 +889,29 @@ public final class ImageConverter {
           m = System.currentTimeMillis();
         }
 
+        // calculate the XY coordinate in the output image
+        // don't use tileX and tileY, as they will be too large
+        // if any cropping was performed
+        int outputX = x * w;
+        int outputY = y * h;
+
+        if (currentFile.indexOf(FormatTools.TILE_NUM) >= 0 ||
+            currentFile.indexOf(FormatTools.TILE_X) >= 0 ||
+            currentFile.indexOf(FormatTools.TILE_Y) >= 0)
+        {
+          outputX = 0;
+          outputY = 0;
+        }
+        
         if (writer instanceof TiffWriter) {
           ((TiffWriter) writer).saveBytes(outputIndex, buf,
-            ifd, tileX, tileY, tileWidth, tileHeight);
+            ifd, outputX, outputY, tileWidth, tileHeight);
         }
         else if (writer instanceof ImageWriter) {
           IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
           if (baseWriter instanceof TiffWriter) {
             ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
-              tileX, tileY, tileWidth, tileHeight);
+              outputX, outputY, tileWidth, tileHeight);
           }
         }
       }

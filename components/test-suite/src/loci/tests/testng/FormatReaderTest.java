@@ -156,6 +156,10 @@ public class FormatReaderTest {
     return id;
   }
 
+  public String toString() {
+    return getID();
+  }
+
   // -- Setup/teardown methods --
 
   @BeforeClass
@@ -1160,7 +1164,12 @@ public class FormatReaderTest {
       if (retrieve.getImageAcquisitionDate(i) != null) {
         date = retrieve.getImageAcquisitionDate(i).getValue();
       }
-      if (expectedDate != null && date != null && !expectedDate.equals(date)) {
+      boolean bothNull = date == null && expectedDate == null;
+      boolean bothNotNull = date != null && expectedDate != null;
+
+      if ((!bothNull && !bothNotNull) ||
+        (bothNotNull && !expectedDate.equals(date)))
+      {
         result(testName, false, "series " + i +
           " (expected " + expectedDate + ", actual " + date + ")");
         return;
@@ -1943,6 +1952,17 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Companion file grouping non-ome-tiff files:
+          // setId must be called on the companion file
+          if (reader.getFormat().equals("OME-TIFF")) {
+            if (file.toLowerCase().endsWith(".companion.ome") &&
+                !OMETiffReader.checkSuffix(base[i],
+                                           OMETiffReader.OME_TIFF_SUFFIXES))
+            {
+              continue;
+            }
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2421,6 +2441,16 @@ public class FormatReaderTest {
           for (int j=0; j<readers.length; j++) {
             boolean result = readers[j].isThisType(used[i]);
 
+            // Companion file grouping non-ome-tiff files:
+            // setId must be called on the companion file
+            if (!result && readers[j] instanceof OMETiffReader &&
+                r.getCurrentFile().toLowerCase().endsWith(".companion.ome") &&
+                !OMETiffReader.checkSuffix(used[i],
+                                           OMETiffReader.OME_TIFF_SUFFIXES))
+            {
+              continue;
+            }
+
             // TIFF reader is allowed to redundantly green-light files
             if (result && readers[j] instanceof TiffDelegateReader) continue;
 
@@ -2651,6 +2681,13 @@ public class FormatReaderTest {
             // ignore anything other than .wpi for CV7000
             if (!used[i].toLowerCase().endsWith(".wpi") &&
               r instanceof CV7000Reader)
+            {
+              continue;
+            }
+
+            // Deltavision reader can pick up .rcpnl files
+            if (result && (r instanceof RCPNLReader) &&
+              (readers[j] instanceof DeltavisionReader))
             {
               continue;
             }

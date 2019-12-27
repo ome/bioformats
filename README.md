@@ -1,6 +1,6 @@
 # Bio-Formats
 
-[![Build Status](https://travis-ci.org/openmicroscopy/bioformats.png)](http://travis-ci.org/openmicroscopy/bioformats)
+[![Build Status](https://travis-ci.org/ome/bioformats.png)](https://travis-ci.org/ome/bioformats)
 
 Bio-Formats is a standalone Java library for reading and writing life sciences
 image file formats. It is capable of parsing both pixels and metadata for a

@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.ServiceException;
@@ -434,6 +435,11 @@ public class NDPIReader extends BaseTiffReader {
       }
     }
 
+    Object source_lens_value = ifds.get(0).getIFDValue(SOURCE_LENS);
+    if (source_lens_value != null)
+    {
+      magnification = Double.valueOf((float) source_lens_value);
+    }
     String metadataTag = ifds.get(0).getIFDStringValue(METADATA_TAG);
     if (metadataTag != null) {
       String[] entries = metadataTag.split("\n");
@@ -447,10 +453,7 @@ public class NDPIReader extends BaseTiffReader {
 
         addGlobalMeta(key, value);
 
-        if (key.equals("Objective.Lens.Magnificant")) { // not a typo
-          magnification = new Double(value);
-        }
-        else if (key.equals("NDP.S/N")) {
+        if (key.equals("NDP.S/N")) {
           serialNumber = value;
         }
         else if (key.equals("Product")) {

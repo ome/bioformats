@@ -138,6 +138,7 @@ public class ConversionTest {
     writer.close();
 
     ImageReader reader = new ImageReader();
+    reader.setFlattenedResolutions(false);
     reader.setId(tmp.getAbsolutePath());
 
     assertEquals(reader.getSeriesCount(), seriesCount);

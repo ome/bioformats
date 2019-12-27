@@ -458,6 +458,31 @@ public class OperettaReader extends FormatReader {
       }
     }
 
+    // some series may not have valid XY dimensions,
+    // particularly if the first series was not recorded in the Index.idx.xml
+    // look for the first series that has valid dimensions and copy as needed
+    // this will allow blank planes to be returned instead of throwing an exception
+    //
+    // unrecorded series are kept so that fields can be compared across wells
+    int firstValidSeries = -1;
+    for (int i=0; i<seriesCount; i++) {
+      if (core.get(i).sizeX > 0 && core.get(i).sizeY > 0) {
+        firstValidSeries = i;
+        break;
+      }
+    }
+    if (firstValidSeries < 0) {
+      throw new FormatException("No valid images found");
+    }
+    for (int i=0; i<seriesCount; i++) {
+      if (core.get(i).sizeX == 0 || core.get(i).sizeY == 0) {
+        core.get(i).sizeX = core.get(firstValidSeries).sizeX;
+        core.get(i).sizeY = core.get(firstValidSeries).sizeY;
+        core.get(i).pixelType = core.get(firstValidSeries).pixelType;
+        core.get(i).littleEndian = core.get(firstValidSeries).littleEndian;
+      }
+    }
+
     addGlobalMeta("Plate name", handler.getPlateName());
     addGlobalMeta("Plate description", handler.getPlateDescription());
     addGlobalMeta("Plate ID", handler.getPlateIdentifier());
