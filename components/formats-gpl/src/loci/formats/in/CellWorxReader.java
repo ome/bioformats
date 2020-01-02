@@ -937,9 +937,8 @@ public class CellWorxReader extends FormatReader {
           }
         }
         if (nextFile != files.length) {
-          throw new FormatException(
-            "Well " + well + " expected " + files.length +
-            " files; found " + nextFile);
+          LOGGER.warn("Well {} expected {} files; found {}",
+            well, files.length, nextFile);
         }
       }
     }
