@@ -353,7 +353,8 @@ public class GatanReader extends FormatReader {
               i, 0);
 
         if (mode != null) {
-          store.setChannelAcquisitionMode(getAcquisitionMode(mode), i, 0);
+          store.setChannelAcquisitionMode(
+            MetadataTools.getAcquisitionMode(mode), i, 0);
         }
 
         if (foundMontage && i < stageX.size()) {
