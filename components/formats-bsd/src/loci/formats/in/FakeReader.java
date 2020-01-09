@@ -1294,7 +1294,7 @@ public class FakeReader extends FormatReader {
         rows = ResourceNamer.alphabeticIndexCount(elements[0]);
         cols = Integer.parseInt(elements[1]) + 1;
       } else if (pathToken.startsWith(ResourceNamer.FIELD)) {
-        String fieldName = pathToken.substring(0, pathToken.lastIndexOf("."));
+        String fieldName = pathToken.substring(0, pathToken.indexOf("."));
         fields = Integer.parseInt(fieldName.substring(fieldName.lastIndexOf(
             ResourceNamer.FIELD) + ResourceNamer.FIELD.length(),
             fieldName.length())) + 1;
