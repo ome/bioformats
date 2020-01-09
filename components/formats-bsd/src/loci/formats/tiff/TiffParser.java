@@ -32,6 +32,7 @@
 
 package loci.formats.tiff;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffParser {
+public class TiffParser implements Closeable {
 
   // -- Constants --
 
@@ -95,11 +96,14 @@ public class TiffParser {
   /** Codec options to be used when decoding compressed pixel data. */
   private CodecOptions codecOptions = CodecOptions.getDefaultOptions();
 
+  private boolean canClose = false;
+
   // -- Constructors --
 
   /** Constructs a new TIFF parser from the given file name. */
   public TiffParser(String filename) throws IOException {
     this(new RandomAccessInputStream(filename));
+    canClose = true;
   }
 
   /** Constructs a new TIFF parser from the given input source. */
@@ -112,6 +116,20 @@ public class TiffParser {
       in.seek(fp);
     }
     catch (IOException e) { }
+  }
+
+  // -- Closeable methods --
+
+  /**
+   * Close the underlying stream, if this TiffParser was constructed
+   * with a file path.  Closing a stream that was pre-initialized
+   * is potentially dangerous.
+   */
+  @Override
+  public void close() throws IOException {
+    if (canClose && in != null) {
+      in.close();
+    }
   }
 
   // -- TiffParser methods --
