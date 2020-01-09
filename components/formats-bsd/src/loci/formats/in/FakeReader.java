@@ -1204,7 +1204,23 @@ public class FakeReader extends FormatReader {
           }
         }
         catch (NumberFormatException e) {
-          LOGGER.trace("Could not parse ExposureTime for series #" + s + " plane #" + i, e);
+          LOGGER.trace("Could not parse ExposureTime for series #" + newSeries + " plane #" + i, e);
+        }
+      }
+
+      String deltaT = table.get("DeltaT_" + i);
+      String deltaTUnit = table.get("DeltaTUnit_" + i);
+
+      if (deltaT != null) {
+        try {
+          Double v = Double.valueOf(deltaT);
+          Time delta = FormatTools.getTime(v, deltaTUnit);
+          if (delta != null) {
+            store.setPlaneDeltaT(delta, newSeries, i);
+          }
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Could not parse DeltaT for series #" + newSeries + " plane #" + i, e);
         }
       }
 
