@@ -95,20 +95,17 @@ public class XMLValidate {
         if (file == null || file.trim().length() == 0) {
           results[i] = false;
         } else{
-          String f = file.toLowerCase();
-          boolean b;
-          String extension = f.substring(f.lastIndexOf(".")+1);
-          if (extensions.contains(extension)) {
+          String extension = file.substring(file.lastIndexOf(".")+1);
+          if (extensions.contains(extension.toLowerCase())) {
             String comment = "";
             try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
               comment = new TiffParser(stream).getComment();
             }
-            b = validate(new BufferedReader(new StringReader(comment)), f);
+            results[i] = validate(new BufferedReader(new StringReader(comment)), file);
           } else {
-            b = validate(new BufferedReader(new InputStreamReader(
-                      new FileInputStream(f), Constants.ENCODING)), f);
+            results[i] = validate(new BufferedReader(new InputStreamReader(
+                      new FileInputStream(file), Constants.ENCODING)), file);
           }
-          results[i] = b;
         }
     }
     return results;
