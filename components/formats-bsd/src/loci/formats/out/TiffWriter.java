@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2020 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -199,7 +199,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * Saves the given image to the specified (possibly already open) file.
    * The IFD hashtable allows specification of TIFF parameters such as bit
-   * depth, compression and units.
+   * depth, compression and units. Use one IFD instance per plane.
    */
   public void saveBytes(int no, byte[] buf, IFD ifd)
     throws IOException, FormatException
@@ -212,7 +212,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * Saves the given image to the specified series in the current file.
    * The IFD hashtable allows specification of TIFF parameters such as bit
-   * depth, compression and units.
+   * depth, compression and units. Use one IFD instance per plane.
    */
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws IOException, FormatException
