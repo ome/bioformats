@@ -40,6 +40,7 @@ import java.util.List;
 import ome.xml.model.primitives.PositiveInteger;
 
 import loci.common.DataTools;
+import loci.common.Location;
 import loci.common.RandomAccessOutputStream;
 import loci.common.Region;
 import loci.formats.codec.CodecOptions;
@@ -549,7 +550,19 @@ public abstract class FormatWriter extends FormatHandler
     return z * c * t;
   }
 
+  /**
+   * Create an output stream for the current file path.
+   * If the file path's parent directory does not exist, it will be created.
+   *
+   * @return an open RandomAccessOuputStream for the current file
+   * @throws IOException if the directory or output stream creation fails
+   */
   protected RandomAccessOutputStream createOutputStream() throws IOException {
+    Location current = new Location(currentId).getAbsoluteFile();
+    Location parent = current.getParentFile();
+    if (!parent.exists()) {
+      parent.mkdirs();
+    }
     return new RandomAccessOutputStream(currentId);
   }
 
