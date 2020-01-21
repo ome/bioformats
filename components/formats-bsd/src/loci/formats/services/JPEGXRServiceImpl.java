@@ -52,6 +52,17 @@ public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService 
     checkClassDependency(ome.jxrlib.Decode.class);
   }
 
+  /* @see JPEGXRServiceImpl#isBGR(byte[]) */
+  public boolean isBGR(byte[] compressed) throws FormatException {
+    try {
+      Decode decode = new Decode(compressed);
+      return decode.isBGR();
+    }
+    catch (Exception e) {
+      throw new FormatException(e);
+    }
+  }
+
   /**
    * @see JPEGXRServiceImpl#decompress(byte[])
    */

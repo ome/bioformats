@@ -41,6 +41,12 @@ import loci.formats.FormatException;
 public interface JPEGXRService extends Service {
 
   /**
+   * @param compressed the complete JPEG-XR compressed data
+   * @return true if the decompressed data will be in BGR (not RGB) order
+   */
+  boolean isBGR(byte[] compressed) throws FormatException;
+
+  /**
    * Decompress the given JPEG-XR compressed byte array and return as a byte array.
    * Opening and closing of decoders and streams is handled internally.
    *
