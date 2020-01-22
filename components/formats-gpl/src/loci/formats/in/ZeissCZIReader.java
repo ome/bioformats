@@ -1753,9 +1753,6 @@ public class ZeissCZIReader extends FormatReader {
                       ms0.sizeT = uniqueT.size();
                     }
     		  }
-              if (endIndex > getSizeT()) {
-                  ms0.sizeT = endIndex;
-              } 
             break;
           case 'R':
             if (dimension.start >= rotations) {
