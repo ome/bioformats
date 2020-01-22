@@ -88,27 +88,13 @@ public class JPEGXRCodec extends BaseCodec {
   {
     initialize();
 
-    boolean bgr = service.isBGR(buf);
-    byte[] uncompressed = service.decompress(buf);
     int bpp = options.bitsPerSample / 8;
     int pixels = options.width * options.height;
+
+    byte[] uncompressed = service.decompress(buf);
     int channels = uncompressed.length / (pixels * bpp);
 
-    if (channels == 1) {
-      return uncompressed;
-    }
-
-    if (options.interleaved) {
-      if (bgr && channels >= 3) {
-        for (int p=0; p<uncompressed.length; p+=channels*bpp) {
-          for (int b=0; b<bpp; b++) {
-            int index = p + b;
-            byte tmp = uncompressed[index];
-            uncompressed[index] = uncompressed[index + 2 * bpp];
-            uncompressed[index + 2 * bpp] = tmp;
-          }
-        }
-      }
+    if (channels == 1 || options.interleaved) {
       return uncompressed;
     }
 
@@ -120,12 +106,6 @@ public class JPEGXRCodec extends BaseCodec {
           int bb = options.littleEndian ? b : bpp - b - 1;
           int src = bpp * (p * channels + c) + b;
           int dest = bpp * (c * pixels + p) + bb;
-
-          if (bgr) {
-            int swapChannel = c == 2 ? 0 : c == 0 ? 2 : c;
-            src = bpp * (p * channels + swapChannel) + b;
-          }
-
           deinterleaved[dest] = uncompressed[src];
         }
       }

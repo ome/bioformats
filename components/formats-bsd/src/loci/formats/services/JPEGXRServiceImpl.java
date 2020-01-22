@@ -32,6 +32,8 @@
 
 package loci.formats.services;
 
+import java.nio.ByteBuffer;
+
 import loci.common.services.AbstractService;
 import loci.formats.FormatException;
 
@@ -52,25 +54,30 @@ public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService 
     checkClassDependency(ome.jxrlib.Decode.class);
   }
 
-  /* @see JPEGXRServiceImpl#isBGR(byte[]) */
-  public boolean isBGR(byte[] compressed) throws FormatException {
-    try {
-      Decode decode = new Decode(compressed);
-      return decode.isBGR();
-    }
-    catch (Exception e) {
-      throw new FormatException(e);
-    }
-  }
-
   /**
    * @see JPEGXRServiceImpl#decompress(byte[])
    */
   public byte[] decompress(byte[] compressed) throws FormatException {
       LOGGER.trace("begin tile decode; compressed size = {}", compressed.length);
       try {
-        byte[] raw = Decode.decodeFirstFrame(compressed, 0, compressed.length);
-        LOGGER.trace("retrieved decompressed bytes size = {}", raw.length);
+        Decode decode = new Decode(compressed);
+        boolean bgr = decode.isBGR();
+        int bpp = (int) decode.getBytesPerPixel();
+        int pixels = (int) (decode.getWidth() * decode.getHeight());
+        ByteBuffer output = ByteBuffer.allocateDirect(pixels * bpp);
+        decode.toBytes(output);
+
+        if (bgr) {
+          // only happens with 8 bits per channel,
+          // 3 (BGR) or 4 (BGRA) channel data
+          for (int p=0; p<output.capacity(); p+=bpp) {
+            byte tmp = output.get(p);
+            output.put(p, output.get(p + 2));
+            output.put(p + 2, tmp);
+          }
+        }
+        byte[] raw = new byte[output.capacity()];
+        output.get(raw);
         return raw;
       }
       // really only want to catch ome.jxrlib.FormatError, but that doesn't compile
