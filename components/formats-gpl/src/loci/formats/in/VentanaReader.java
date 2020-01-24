@@ -456,7 +456,7 @@ public class VentanaReader extends BaseTiffReader {
       }
       String xml = ifds.get(index).getIFDTextValue(XML_TAG);
       LOGGER.debug("XMP tag for series #{} = {}", i, xml);
-      if (xml != null && resolutionCount == 1) {
+      if (xml != null && resolutionCount <= 1) {
         parseXML(xml);
       }
     }
@@ -819,15 +819,21 @@ public class VentanaReader extends BaseTiffReader {
     }
 
     Element iScan = (Element) root.getElementsByTagName("iScan").item(0);
-    String physicalSize = iScan.getAttribute("ScanRes");
-    if (physicalSize != null) {
-      physicalPixelSize = DataTools.parseDouble(physicalSize);
+    if (iScan != null) {
+      String physicalSize = iScan.getAttribute("ScanRes");
+      if (physicalSize != null) {
+        physicalPixelSize = DataTools.parseDouble(physicalSize);
+      }
     }
 
     Element slideStitchInfo =
       (Element) root.getElementsByTagName("SlideStitchInfo").item(0);
     Element aoiOrigins =
       (Element) root.getElementsByTagName("AoiOrigin").item(0);
+
+    if (slideStitchInfo == null || aoiOrigins == null) {
+      return;
+    }
 
     NodeList imageInfos = slideStitchInfo.getElementsByTagName("ImageInfo");
     for (int i=0; i<imageInfos.getLength(); i++) {
