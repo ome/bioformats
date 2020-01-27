@@ -313,8 +313,11 @@ public class FlexReader extends FormatReader {
       bpp = FormatTools.getBytesPerPixel(getPixelType());
   
       // read pixels from the file
-      
       tp.fillInIFD(ifd);
+      
+      // log the first offset used
+      LOGGER.trace("first offset for series={} no={}: {}", getCoreIndex(), no, ifd.getStripOffsets()[0]);
+      
       tp.getSamples(ifd, buf, x, y, w, h);
       factor = file.factors == null ? 1d : file.factors[imageNumber];
       tp.getStream().close();
