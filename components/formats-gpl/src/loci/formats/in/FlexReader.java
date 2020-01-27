@@ -1409,7 +1409,7 @@ public class FlexReader extends FormatReader {
                 firstIFD.getStripOffsets().length == 1)
               {
               tp.setDoCaching(false);
-              file.ifds = tp.getIFDs();
+              file.ifds = tp.getMainIFDs();
               file.ifds.set(0, firstIFD);
               if (firstIFD.getStripOffsets().length == 1) {
                 // used to ensure that image offsets are read, not calculated
