@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -30,7 +30,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -103,6 +105,7 @@ public class FlexReader extends FormatReader {
   private int plateCount;
   private int wellCount;
   private int fieldCount;
+  private int runCount;
 
   private int wellRows, wellColumns;
 
@@ -119,7 +122,8 @@ public class FlexReader extends FormatReader {
 
   private List<String> measurementFiles;
 
-  private String plateName, plateBarcode;
+  private Set<String> plateBarcodes = new HashSet<String>();
+  private String plateName;
   private int nRows = 0, nCols = 0;
 
   private String plateAcqStartTime;
@@ -130,6 +134,7 @@ public class FlexReader extends FormatReader {
   private ArrayList<Double> planeExposureTime = new ArrayList<Double>();
   private ArrayList<Double> planeDeltaT = new ArrayList<Double>();
 
+  private ArrayList<Location> runDirs;
   private ArrayList<FlexFile> flexFiles;
 
   private int nFiles = 0;
@@ -199,13 +204,20 @@ public class FlexReader extends FormatReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
 
-    FlexFile file = lookupFile(0);
-    IFD ifd = file.ifds.get(0);
-    try {
-      return (int) ifd.getTileWidth();
+    int index = 0;
+    FlexFile file = lookupFile(index);
+    while ((file == null || file.ifds == null) && index < getSeriesCount()) {
+      index++;
+      file = lookupFile(index);
     }
-    catch (FormatException e) {
-      LOGGER.debug("Could not retrieve tile width", e);
+    if (file != null && file.ifds != null && file.ifds.size() > 0) {
+      IFD ifd = file.ifds.get(0);
+      try {
+        return (int) ifd.getTileWidth();
+      }
+      catch (FormatException e) {
+        LOGGER.debug("Could not retrieve tile width", e);
+      }
     }
     return super.getOptimalTileWidth();
   }
@@ -215,13 +227,20 @@ public class FlexReader extends FormatReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
 
-    FlexFile file = lookupFile(0);
-    IFD ifd = file.ifds.get(0);
-    try {
-      return (int) ifd.getTileLength();
+    int index = 0;
+    FlexFile file = lookupFile(index);
+    while ((file == null || file.ifds == null) && index < getSeriesCount()) {
+      index++;
+      file = lookupFile(index);
     }
-    catch (FormatException e) {
-      LOGGER.debug("Could not retrieve tile height", e);
+    if (file != null && file.ifds != null && file.ifds.size() > 0) {
+      IFD ifd = file.ifds.get(0);
+      try {
+        return (int) ifd.getTileLength();
+      }
+      catch (FormatException e) {
+        LOGGER.debug("Could not retrieve tile height", e);
+      }
     }
     return super.getOptimalTileHeight();
   }
@@ -237,66 +256,65 @@ public class FlexReader extends FormatReader {
 
     FlexFile firstFile = lookupFile(0);
     FlexFile file = lookupFile(getSeries());
+    if (file == null) {
+      return buf; // EARLY EXIT
+    }
 
     int[] lengths =
-      new int[] {fieldCount / effectiveFieldCount, wellCount, plateCount};
+      new int[] {fieldCount / effectiveFieldCount, wellCount, plateCount, runCount};
     int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
 
     int imageNumber = file.offsets == null ? getImageCount() * pos[0] + no : 0;
 
-    int nBytes = 0;
-    int bpp = 0;
-    double factor = 0;
-    try (RandomAccessInputStream s =
-      new RandomAccessInputStream(getFileHandle(file.file))) {
-        IFD ifd;
-        if (file.offsets == null) {
-          if (imageNumber < file.ifds.size()) {
-            ifd = file.ifds.get(imageNumber);
-            factor = 1d;
-          }
-          else {
-            Arrays.fill(buf, (byte) 0);
-            return buf;
-          }
-        }
-        else {
-          // Only the first IFD was read. Hack the IFD to adjust the offset.
-          final IFD firstIFD = firstFile.ifds.get(0);
-          ifd = new IFD(firstIFD);
-          int tag = IFD.STRIP_OFFSETS;
-          if (firstIFD.isTiled() &&
-            firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
-          {
-            tag = IFD.TILE_OFFSETS;
-          }
-          long [] offsets = ifd.getIFDLongArray(tag);
+    RandomAccessInputStream s =
+      new RandomAccessInputStream(getFileHandle(file.file));
 
-          final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
-          ifd.getBitsPerSample()[0] / 8;
-          final int index = getImageCount() * pos[0] + no;
-          long offset = (index == file.offsets.length - 1 ?
-              s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
-
-          for (int i = 0; i < offsets.length; i++) {
-            offsets[i] += offset;
-          }
-          ifd.putIFDValue(tag, offsets);
-        }
-        nBytes = ifd.getBitsPerSample()[0] / 8;
-        bpp = FormatTools.getBytesPerPixel(getPixelType());
-
-        // read pixels from the file
-        TiffParser tp = new TiffParser(s);
-        tp.fillInIFD(ifd);
-
-        // log the first offset used
-        LOGGER.trace("first offset for series={} no={}: {}", getCoreIndex(), no, ifd.getStripOffsets()[0]);
-
-        tp.getSamples(ifd, buf, x, y, w, h);
-        factor = file.factors == null ? 1d : file.factors[imageNumber];
-        LOGGER.trace("  using factor = {}", factor);
+    TiffParser tp = new TiffParser(s);
+    IFD ifd;
+    double factor;
+    if (file.offsets == null) {
+      ifd = file.ifds.get(imageNumber);
+      factor = 1d;
     }
+    else if (firstFile != null && firstFile.ifds != null) {
+      // Only the first IFD was read. Hack the IFD to adjust the offset.
+      final IFD firstIFD = firstFile.ifds.get(0);
+      ifd = new IFD(firstIFD);
+      int tag = IFD.STRIP_OFFSETS;
+      if (firstIFD.isTiled() &&
+        firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
+      {
+        tag = IFD.TILE_OFFSETS;
+      }
+      long [] offsets = ifd.getIFDLongArray(tag);
+
+      final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+      ifd.getBitsPerSample()[0] / 8;
+      final int index = getImageCount() * pos[0] + no;
+      long offset = (index == file.offsets.length - 1 ?
+          s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
+
+      for (int i = 0; i < offsets.length; i++) {
+        offsets[i] += offset;
+      }
+      ifd.putIFDValue(tag, offsets);
+    }
+    else if (file.offsets != null) {
+      ifd = tp.getIFD(file.offsets[imageNumber]);
+    }
+    else {
+      tp.getStream().close();
+      s.close();
+      return buf;
+    }
+    int nBytes = ifd.getBitsPerSample()[0] / 8;
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+
+    // read pixels from the file
+    tp.fillInIFD(ifd);
+    tp.getSamples(ifd, buf, x, y, w, h);
+    factor = file.factors == null ? 1d : file.factors[imageNumber];
+    tp.getStream().close();
 
     // expand pixel values with multiplication by factor[no]
     int num = buf.length / bpp;
@@ -310,6 +328,8 @@ public class FlexReader extends FormatReader {
       }
     }
 
+    s.close();
+
     return buf;
   }
 
@@ -319,7 +339,7 @@ public class FlexReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       binX = binY = 0;
-      plateCount = wellCount = fieldCount = 0;
+      runCount = plateCount = wellCount = fieldCount = 0;
       channelNames = null;
       measurementFiles = null;
       xSizes = ySizes = null;
@@ -331,7 +351,8 @@ public class FlexReader extends FormatReader {
       xPositions = yPositions = null;
       filterSets = null;
       filterSetMap = null;
-      plateName = plateBarcode = null;
+      plateName = null;
+      plateBarcodes.clear();
       nRows = nCols = 0;
       flexFiles = null;
       wellNumber = null;
@@ -344,6 +365,7 @@ public class FlexReader extends FormatReader {
       reverseFileMapping.clear();
       dichroicMap.clear();
       filterMap.clear();
+      runDirs = null;
     }
   }
 
@@ -365,7 +387,7 @@ public class FlexReader extends FormatReader {
     }
     else initMeaFile(id);
 
-    if (plateCount == flexFiles.size()) {
+    if (plateCount == flexFiles.size() / runCount) {
       plateCount /= wellCount;
       if ((plateCount % fieldCount) == 0) {
         plateCount /= fieldCount;
@@ -503,14 +525,33 @@ public class FlexReader extends FormatReader {
       // group together .flex files that are in the same directory
 
       Location dir = currentFile.getParentFile();
-      String[] files = dir.list(true);
+      runDirs = new ArrayList<Location>();
+      if (!dir.getName().startsWith("Meas_")) {
+        runDirs.add(dir);
+      }
+      else {
+        // look for other acquisitions of the same plate
+        dir = dir.getParentFile();
+        String[] parentDirs = dir.list(true);
+        Arrays.sort(parentDirs);
+        for (String d : parentDirs) {
+          Location f = new Location(dir.getAbsoluteFile(), d);
+          if (f.isDirectory() && d.startsWith("Meas_")) {
+            runDirs.add(f);
+          }
+        }
+      }
 
-      for (String file : files) {
-        // file names should be nnnnnnnnn.flex, where 'n' is 0-9
-        LOGGER.debug("Checking if {} belongs in the same dataset.", file);
-        if (file.endsWith(".flex") && file.length() == 14) {
-          flex.add(new Location(dir, file).getAbsolutePath());
-          LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
+      for (Location runDir : runDirs) {
+        String[] files = runDir.list(true);
+
+        for (String file : files) {
+          // file names should be nnnnnnnnn.flex, where 'n' is 0-9
+          LOGGER.debug("Checking if {} belongs in the same dataset.", file);
+          if (file.endsWith(".flex") && file.length() == 14) {
+            flex.add(new Location(runDir, file).getAbsolutePath());
+            LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
+          }
         }
       }
     }
@@ -528,6 +569,8 @@ public class FlexReader extends FormatReader {
     LOGGER.debug("Determined that {} .flex files belong together.",
       files.length);
 
+    runCount = runDirs.size();
+
     groupFiles(files, store);
     populateMetadataStore(store);
   }
@@ -538,23 +581,37 @@ public class FlexReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     Location currentFile = new Location(getCurrentFile()).getAbsoluteFile();
-    int[] lengths = new int[] {fieldCount, wellCount, plateCount};
-
-    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
-    String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
-    store.setPlateAcquisitionID(plateAcqID, 0, 0);
-
-    PositiveInteger maxFieldCount = FormatTools.getMaxFieldCount(fieldCount);
-    if (maxFieldCount != null) {
-      store.setPlateAcquisitionMaximumFieldCount(maxFieldCount, 0, 0);
-    }
+    int[] lengths = new int[] {fieldCount, wellCount, plateCount, runCount};
 
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
 
-    if (plateAcqStartTime != null) {
-      store.setPlateAcquisitionStartTime(
-        new Timestamp(plateAcqStartTime), 0, 0);
+    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    for (int run=0; run<runCount; run++) {
+      String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, run);
+      store.setPlateAcquisitionID(plateAcqID, 0, run);
+
+      String acqName = runDirs.get(run).getName();
+      store.setPlateAcquisitionName(acqName, 0, run);
+
+      int timeStart = acqName.indexOf("(");
+      if (timeStart > 0) {
+        String time = acqName.substring(timeStart);
+        time = DateTools.formatDate(time, "(yyyy-MM-dd_HH-mm-ss)");
+
+        store.setPlateAcquisitionStartTime(new Timestamp(time), 0, run);
+        plateAcqStartTime = null;
+      }
+
+      PositiveInteger maxFieldCount = FormatTools.getMaxFieldCount(fieldCount);
+      if (maxFieldCount != null) {
+        store.setPlateAcquisitionMaximumFieldCount(maxFieldCount, 0, run);
+      }
+
+      if (plateAcqStartTime != null) {
+        store.setPlateAcquisitionStartTime(
+          new Timestamp(plateAcqStartTime), 0, run);
+      }
     }
 
     for (int row=0; row<wellRows; row++) {
@@ -590,24 +647,32 @@ public class FlexReader extends FormatReader {
         store.setWellRow(row, pos[2], pos[1]);
         store.setWellColumn(col, pos[2], pos[1]);
       }
+      int sampleIndex = pos[0] + pos[3] * fieldCount;
       String wellSample =
-        MetadataTools.createLSID("WellSample", pos[2], well, pos[0]);
-      store.setWellSampleID(wellSample, pos[2], well, pos[0]);
-      store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, pos[0]);
-      store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
+        MetadataTools.createLSID("WellSample", pos[2], well, sampleIndex);
+      store.setWellSampleID(wellSample, pos[2], well, sampleIndex);
+      store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, sampleIndex);
+      store.setWellSampleImageRef(imageID, pos[2], well, sampleIndex);
 
-      store.setPlateAcquisitionWellSampleRef(wellSample, 0, 0, i);
+      store.setPlateAcquisitionWellSampleRef(wellSample, 0, pos[3], i % (getSeriesCount() / runCount));
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
 
-      if (plateName == null) plateName = currentFile.getParentFile().getName();
-      if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
+      if (plateName == null) {
+        if (runCount <= 1) {
+          plateName = " " + currentFile.getParentFile().getName();
+        }
+        else {
+          plateName = "";
+        }
+      }
+      if (plateBarcodes.size() > 0) plateName = plateBarcodes.iterator().next() + plateName;
       store.setPlateName(plateName, 0);
-      store.setPlateRowNamingConvention(MetadataTools.getNamingConvention("Letter"), 0);
-      store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention("Number"), 0);
+      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
         int[] pos = FormatTools.rasterToPosition(lengths, i);
@@ -643,7 +708,7 @@ public class FlexReader extends FormatReader {
               store.setDetectorSettingsID(cameraRefs.get(index), i, c);
               if (index < binnings.size()) {
                 store.setDetectorSettingsBinning(
-                  MetadataTools.getBinning(binnings.get(index)), i, c);
+                  getBinning(binnings.get(index)), i, c);
               }
             }
             if (lightSources != null && c < lightSources.size()) {
@@ -699,7 +764,7 @@ public class FlexReader extends FormatReader {
           store.setWellSamplePositionX(l, pos[2], well, pos[0]);
         }
         if (pos[0] < yPositions.size()) {
-          Length l = new Length(yPositions.get(pos[0]), UNITS.REFERENCEFRAME); 
+          Length l = new Length(yPositions.get(pos[0]), UNITS.REFERENCEFRAME);
           store.setWellSamplePositionY(l, pos[2], well, pos[0]);
         }
 
@@ -786,14 +851,16 @@ public class FlexReader extends FormatReader {
    * If the 'firstFile' flag is set, then the core metadata is also
    * populated.
    */
-  private void parseFlexFile(int currentWell, int wellRow, int wellCol,
+  private boolean parseFlexFile(int currentWell, int wellRow, int wellCol,
     int field, boolean firstFile, MetadataStore store)
     throws FormatException, IOException
   {
     LOGGER.info("Parsing .flex file (well {}{}, field {})",
       (char) (wellRow + 'A'), wellCol + 1, field);
-    FlexFile file = lookupFile(wellRow, wellCol, field < 0 ? 0 : field);
-    if (file == null) return;
+    int fieldIndex = field < 0 || fieldCount == 0 ? 0 : field % fieldCount;
+    int runIndex = field < 0 || fieldCount == 0 ? 0 : field / fieldCount;
+    FlexFile file = lookupFile(wellRow, wellCol, fieldIndex, runIndex);
+    if (file == null) return false;
 
     int originalFieldCount = fieldCount;
 
@@ -826,9 +893,12 @@ public class FlexReader extends FormatReader {
       ifd = file.ifds.get(0);
     }
     else {
-      try (RandomAccessInputStream ras = new RandomAccessInputStream(file.file)) {
+      RandomAccessInputStream ras = new RandomAccessInputStream(file.file);
+      try {
         TiffParser parser = new TiffParser(ras);
         ifd = parser.getFirstIFD();
+      } finally {
+        ras.close();
       }
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
@@ -918,6 +988,7 @@ public class FlexReader extends FormatReader {
     if (oneFactors) {
       file.factors = null;
     }
+    return true;
   }
 
   /** Populate core metadata using the given list of image names. */
@@ -959,6 +1030,7 @@ public class FlexReader extends FormatReader {
 
     if (getSizeZ() == 0) ms0.sizeZ = 1;
     if (getSizeT() == 0) ms0.sizeT = 1;
+    if (runCount == 0) runCount = 1;
     if (plateCount == 0) plateCount = 1;
     if (wellCount == 0) wellCount = 1;
     if (fieldCount == 0) fieldCount = 1;
@@ -966,7 +1038,7 @@ public class FlexReader extends FormatReader {
     // adjust dimensions if the number of IFDs doesn't match the number
     // of reported images
 
-    FlexFile file = lookupFile(wellRow, wellCol, field);
+    FlexFile file = lookupFile(wellRow, wellCol, field, 0);
     IFD ifd = file.ifds.get(0);
     int nPlanes = file.ifds.size();
     if (file.offsets != null) {
@@ -974,10 +1046,6 @@ public class FlexReader extends FormatReader {
     }
 
     ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
-
-    if (getImageCount() == imageNames.size()) {
-      fieldCount = 1;
-    }
 
     // if the calculated image count is the same as the number of planes
     // in the file, then we can assume one field per file
@@ -1005,10 +1073,13 @@ public class FlexReader extends FormatReader {
     ms0.pixelType = ifd.getPixelType();
 
     if (fieldCount == 1) {
-      fieldCount *= nFiles;
+      fieldCount *= (nFiles / runCount);
+    }
+    if (fieldCount == 0) {
+      fieldCount = 1;
     }
 
-    int seriesCount = plateCount * wellCount * fieldCount;
+    int seriesCount = runCount * plateCount * wellCount * fieldCount;
     if (seriesCount > 1) {
       core.clear();
       for (int i = 0; i < seriesCount; i++) {
@@ -1217,39 +1288,20 @@ public class FlexReader extends FormatReader {
     HashMap<String, ArrayList<String>> v = new HashMap<String, ArrayList<String>>();
     Boolean firstCompressed = null;
     int firstIFDCount = 0;
-    String firstBarcode = null;
     for (String file : fileList) {
       LOGGER.warn("parsing {}", file);
-      IFD firstIFD = null;
-      int ifdCount = 0;
-      try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
-        TiffParser parser = new TiffParser(s);
-        firstIFD = parser.getFirstIFD();
-        ifdCount = parser.getIFDOffsets().length;
-      }
+      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
+      TiffParser parser = new TiffParser(s);
+      IFD firstIFD = parser.getFirstIFD();
+      int ifdCount = parser.getIFDOffsets().length;
+      s.close();
       boolean compressed =
         firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
       if (firstCompressed == null) {
         firstCompressed = compressed;
         firstIFDCount = ifdCount;
       }
-      String xml = XMLTools.sanitizeXML(firstIFD.getIFDStringValue(FLEX));
-      int barcodeIndex = xml.indexOf("Barcode");
-      String barcode = "";
-      if (barcodeIndex >= 0) {
-        int start = xml.indexOf(">", barcodeIndex) + 1;
-        int end = xml.indexOf("<", barcodeIndex);
-        if (start > 0 && end > 0) {
-          barcode = xml.substring(start, end);
-        }
-      }
-      if (firstBarcode == null) {
-        firstBarcode = barcode;
-      }
-
-      if (compressed == firstCompressed && barcode.equals(firstBarcode) &&
-        ifdCount <= firstIFDCount)
-      {
+      if (compressed == firstCompressed && ifdCount == firstIFDCount) {
         int[] well = getWell(file);
         int field = getField(file);
         if (well[0] > nRows) nRows = well[0];
@@ -1304,6 +1356,9 @@ public class FlexReader extends FormatReader {
           continue;
         }
 
+        // 'files' represents all of the files for a specific well
+        // this can be a combination of runs and fields
+
         nFiles = files.size();
 
         String[] sortedFiles = files.toArray(new String[files.size()]);
@@ -1317,8 +1372,10 @@ public class FlexReader extends FormatReader {
           FlexFile file = new FlexFile();
           file.row = row;
           file.column = col;
-          file.field = field;
+          file.field = field % (nFiles / runCount);
           file.file = files.get(field);
+          file.acquisition = runDirs.size() == 0 ? 0:
+            runDirs.indexOf(new Location(file.file).getParentFile());
 
           if (file.file == null) {
             continue;
@@ -1337,16 +1394,10 @@ public class FlexReader extends FormatReader {
             compressed =
               firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
 
-            if (compressed || firstIFD.getStripOffsets()[0] == 16 ||
-              firstIFD.getStripOffsets().length == 1)
-            {
+            if (compressed || firstIFD.getStripOffsets()[0] == 16) {
               tp.setDoCaching(false);
-              file.ifds = tp.getMainIFDs();
+              file.ifds = tp.getIFDs();
               file.ifds.set(0, firstIFD);
-              if (firstIFD.getStripOffsets().length == 1) {
-                // used to ensure that image offsets are read, not calculated
-                compressed = true;
-              }
             }
             else {
               // if the pixel data is uncompressed and the IFD is stored
@@ -1384,9 +1435,9 @@ public class FlexReader extends FormatReader {
 
           // setting a negative field index indicates that the field count
           // should be taken from the XML
-          parseFlexFile(currentWell, row, col, nFiles == 1 ? -1 : field, firstFile, store);
+          boolean parsedXML = parseFlexFile(currentWell, row, col, nFiles == 1 ? -1 : field, firstFile, store);
           s.close();
-          if (firstFile) firstFile = false;
+	  if (firstFile && parsedXML) firstFile = false;
         }
         currentWell++;
       }
@@ -1400,10 +1451,10 @@ public class FlexReader extends FormatReader {
     return new NIOFileHandle(new File(Location.getMappedId(flexFile)), "r", 16);
   }
 
-  private FlexFile lookupFile(int wellRow, int wellColumn, int field) {
+  private FlexFile lookupFile(int wellRow, int wellColumn, int field, int acquisition) {
     for (FlexFile file : flexFiles) {
       if (file.row == wellRow && file.column == wellColumn &&
-        file.field == field)
+        file.field == field && file.acquisition == acquisition)
       {
         return file;
       }
@@ -1413,18 +1464,18 @@ public class FlexReader extends FormatReader {
 
   private FlexFile lookupFile(int fileSeries) {
     effectiveFieldCount = fieldCount;
-    if (wellCount * plateCount == flexFiles.size()) {
+    if (wellCount * plateCount * runCount == flexFiles.size()) {
       effectiveFieldCount = 1;
     }
 
-    int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+    int[] lengths = new int[] {fieldCount, wellCount, plateCount, runCount};
     int[] pos = FormatTools.rasterToPosition(lengths, fileSeries);
 
     boolean zeroWell = wellCount == 1 && effectiveFieldCount == 1;
     int row = zeroWell ? 0 : wellNumber[pos[1]][0];
     int col = zeroWell ? 0 : wellNumber[pos[1]][1];
 
-    return lookupFile(row, col, effectiveFieldCount == 1 ? 0 : pos[0]);
+    return lookupFile(row, col, effectiveFieldCount == 1 ? 0 : pos[0], pos[3]);
   }
 
   // -- Helper classes --
@@ -1433,6 +1484,7 @@ public class FlexReader extends FormatReader {
     public int row;
     public int column;
     public int field;
+    public int acquisition;
 
     public String file;
     public IFDList ifds;
@@ -1528,8 +1580,12 @@ public class FlexReader extends FormatReader {
         if (plateName == null) plateName = value;
       }
       else if (qName.equals("Barcode")) {
-        if (plateBarcode == null) plateBarcode = value;
-        if (populateCore) {
+        int size = plateBarcodes.size();
+        plateBarcodes.add(value);
+        if (plateBarcodes.size() > size) {
+          nextPlate++;
+        }
+        if (populateCore && value != null && nextPlate == 1) {
           store.setPlateExternalIdentifier(value, nextPlate - 1);
         }
       }
@@ -1542,8 +1598,8 @@ public class FlexReader extends FormatReader {
           store.setLaserWavelength(wave, 0, nextLaser);
         }
         try {
-          store.setLaserType(MetadataTools.getLaserType("Other"), 0, nextLaser);
-          store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, nextLaser);
+          store.setLaserType(getLaserType("Other"), 0, nextLaser);
+          store.setLaserLaserMedium(getLaserMedium("Other"), 0, nextLaser);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1563,7 +1619,7 @@ public class FlexReader extends FormatReader {
         else LOGGER.warn("Unknown immersion medium: {}", value);
         try {
           store.setObjectiveImmersion(
-            MetadataTools.getImmersion(immersion), 0, nextObjective);
+            getImmersion(immersion), 0, nextObjective);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1700,7 +1756,7 @@ public class FlexReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
         try {
-          store.setDetectorType(MetadataTools.getDetectorType(
+          store.setDetectorType(getDetectorType(
             attributes.getValue("CameraType")), 0, nextCamera);
         }
         catch (FormatException e) {
@@ -1718,7 +1774,7 @@ public class FlexReader extends FormatReader {
         store.setObjectiveID(objectiveID, 0, nextObjective);
         try {
           store.setObjectiveCorrection(
-            MetadataTools.getCorrection("Other"), 0, nextObjective);
+            getCorrection("Other"), 0, nextObjective);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1755,13 +1811,6 @@ public class FlexReader extends FormatReader {
           String y = attributes.getValue("CameraBinningY");
           if (x != null) binX = Integer.parseInt(x);
           if (y != null) binY = Integer.parseInt(y);
-        }
-      }
-      else if (qName.equals("Plate")) {
-        parentQName = qName;
-        if (qName.equals("Plate")) {
-          nextPlate++;
-          plateCount++;
         }
       }
       else if (qName.equals("WellCoordinate")) {
