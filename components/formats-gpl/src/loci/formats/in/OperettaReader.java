@@ -571,7 +571,8 @@ public class OperettaReader extends FormatReader {
           }
           if (planes[i][c] != null) {
             if (planes[i][c].acqType != null) {
-              store.setChannelAcquisitionMode(getAcquisitionMode(planes[i][c].acqType), i, c);
+              store.setChannelAcquisitionMode(
+                MetadataTools.getAcquisitionMode(planes[i][c].acqType), i, c);
             }
             if (planes[i][c].channelType != null) {
               store.setChannelContrastMethod(

@@ -1743,15 +1743,16 @@ public class ZeissCZIReader extends FormatReader {
               ms0.sizeZ = dimension.size;
             }
             break;
-          case 'T':
-            int startIndex = dimension.start;
-            int endIndex = startIndex + dimension.size;
-              for (int i=startIndex; i<endIndex; i++) {
-                if (!uniqueT.contains(i)) {
-                  uniqueT.add(i);
-                    ms0.sizeT = uniqueT.size();
-                  }
-               }
+          case 'T':        	  
+    		    int startIndex = dimension.start;
+    		    int endIndex = startIndex + dimension.size;
+    	  
+    		    for (int i=startIndex; i<endIndex; i++) {
+    			    if (!uniqueT.contains(i)) {
+                uniqueT.add(i);
+                ms0.sizeT = uniqueT.size();
+              }
+    		    }
             break;
           case 'R':
             if (dimension.start >= rotations) {
@@ -2143,8 +2144,8 @@ public class ZeissCZIReader extends FormatReader {
             if (positions.getLength() > 0 && nextPosition < positionsX.length) {
               Element position = (Element) positions.item(0);
               String[] pos = position.getTextContent().split(",");
-              positionsX[nextPosition] = new Length(DataTools.parseDouble(pos[0]), UNITS.MICROM);
-              positionsY[nextPosition] = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROM);
+              positionsX[nextPosition] = new Length(DataTools.parseDouble(pos[0]), UNITS.MICROMETER);
+              positionsY[nextPosition] = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROMETER);
             }
             nextPosition++;
           }
@@ -3944,15 +3945,15 @@ public class ZeissCZIReader extends FormatReader {
               if (text != null) {
                 if (tagNode.getNodeName().equals("StageXPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageX = new Length(number, UNITS.MICROM);
+                  stageX = new Length(number, UNITS.MICROMETER);
                 }
                 else if (tagNode.getNodeName().equals("StageYPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageY = new Length(number, UNITS.MICROM);
+                  stageY = new Length(number, UNITS.MICROMETER);
                 }
                 else if (tagNode.getNodeName().equals("FocusPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageZ = new Length(number, UNITS.MICROM);
+                  stageZ = new Length(number, UNITS.MICROMETER);
                 }
                 else if (tagNode.getNodeName().equals("AcquisitionTime")) {
                   Timestamp t = Timestamp.valueOf(text);
