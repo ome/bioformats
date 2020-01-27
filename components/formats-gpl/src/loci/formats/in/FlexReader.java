@@ -678,8 +678,8 @@ public class FlexReader extends FormatReader {
       }
       if (plateBarcodes.size() > 0) plateName = plateBarcodes.iterator().next() + plateName;
       store.setPlateName(plateName, 0);
-      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
-      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
+      store.setPlateRowNamingConvention(MetadataTools.getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention("Number"), 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
         int[] pos = FormatTools.rasterToPosition(lengths, i);
@@ -715,7 +715,7 @@ public class FlexReader extends FormatReader {
               store.setDetectorSettingsID(cameraRefs.get(index), i, c);
               if (index < binnings.size()) {
                 store.setDetectorSettingsBinning(
-                  getBinning(binnings.get(index)), i, c);
+                    MetadataTools.getBinning(binnings.get(index)), i, c);
               }
             }
             if (lightSources != null && c < lightSources.size()) {
@@ -1615,8 +1615,8 @@ public class FlexReader extends FormatReader {
           store.setLaserWavelength(wave, 0, nextLaser);
         }
         try {
-          store.setLaserType(getLaserType("Other"), 0, nextLaser);
-          store.setLaserLaserMedium(getLaserMedium("Other"), 0, nextLaser);
+          store.setLaserType(MetadataTools.getLaserType("Other"), 0, nextLaser);
+          store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, nextLaser);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1636,7 +1636,7 @@ public class FlexReader extends FormatReader {
         else LOGGER.warn("Unknown immersion medium: {}", value);
         try {
           store.setObjectiveImmersion(
-            getImmersion(immersion), 0, nextObjective);
+              MetadataTools.getImmersion(immersion), 0, nextObjective);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1773,7 +1773,7 @@ public class FlexReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
         try {
-          store.setDetectorType(getDetectorType(
+          store.setDetectorType(MetadataTools.getDetectorType(
             attributes.getValue("CameraType")), 0, nextCamera);
         }
         catch (FormatException e) {
@@ -1791,7 +1791,7 @@ public class FlexReader extends FormatReader {
         store.setObjectiveID(objectiveID, 0, nextObjective);
         try {
           store.setObjectiveCorrection(
-            getCorrection("Other"), 0, nextObjective);
+              MetadataTools.getCorrection("Other"), 0, nextObjective);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
