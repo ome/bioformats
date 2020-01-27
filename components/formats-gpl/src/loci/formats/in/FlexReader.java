@@ -266,69 +266,72 @@ public class FlexReader extends FormatReader {
 
     int imageNumber = file.offsets == null ? getImageCount() * pos[0] + no : 0;
 
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(getFileHandle(file.file));
+    int nBytes = 0;
+    int bpp = 0;
+    double factor = 0;
 
-    TiffParser tp = new TiffParser(s);
-    IFD ifd;
-    double factor;
-    if (file.offsets == null) {
-      ifd = file.ifds.get(imageNumber);
-      factor = 1d;
-    }
-    else if (firstFile != null && firstFile.ifds != null) {
-      // Only the first IFD was read. Hack the IFD to adjust the offset.
-      final IFD firstIFD = firstFile.ifds.get(0);
-      ifd = new IFD(firstIFD);
-      int tag = IFD.STRIP_OFFSETS;
-      if (firstIFD.isTiled() &&
-        firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
-      {
-        tag = IFD.TILE_OFFSETS;
+    try (RandomAccessInputStream s = 
+        new RandomAccessInputStream(getFileHandle(file.file))) {
+      TiffParser tp = new TiffParser(s);
+      IFD ifd;
+      if (file.offsets == null) {
+        ifd = file.ifds.get(imageNumber);
+        factor = 1d;
       }
-      long [] offsets = ifd.getIFDLongArray(tag);
-
-      final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
-      ifd.getBitsPerSample()[0] / 8;
-      final int index = getImageCount() * pos[0] + no;
-      long offset = (index == file.offsets.length - 1 ?
-          s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
-
-      for (int i = 0; i < offsets.length; i++) {
-        offsets[i] += offset;
+      else if (firstFile != null && firstFile.ifds != null) {
+        // Only the first IFD was read. Hack the IFD to adjust the offset.
+        final IFD firstIFD = firstFile.ifds.get(0);
+        ifd = new IFD(firstIFD);
+        int tag = IFD.STRIP_OFFSETS;
+        if (firstIFD.isTiled() &&
+          firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
+        {
+          tag = IFD.TILE_OFFSETS;
+        }
+        long [] offsets = ifd.getIFDLongArray(tag);
+  
+        final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+        ifd.getBitsPerSample()[0] / 8;
+        final int index = getImageCount() * pos[0] + no;
+        long offset = (index == file.offsets.length - 1 ?
+            s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
+  
+        for (int i = 0; i < offsets.length; i++) {
+          offsets[i] += offset;
+        }
+        ifd.putIFDValue(tag, offsets);
       }
-      ifd.putIFDValue(tag, offsets);
-    }
-    else if (file.offsets != null) {
-      ifd = tp.getIFD(file.offsets[imageNumber]);
-    }
-    else {
+      else if (file.offsets != null) {
+        ifd = tp.getIFD(file.offsets[imageNumber]);
+      }
+      else {
+        tp.getStream().close();
+        s.close();
+        return buf;
+      }
+      nBytes = ifd.getBitsPerSample()[0] / 8;
+      bpp = FormatTools.getBytesPerPixel(getPixelType());
+  
+      // read pixels from the file
+      
+      tp.fillInIFD(ifd);
+      tp.getSamples(ifd, buf, x, y, w, h);
+      factor = file.factors == null ? 1d : file.factors[imageNumber];
       tp.getStream().close();
-      s.close();
-      return buf;
-    }
-    int nBytes = ifd.getBitsPerSample()[0] / 8;
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-
-    // read pixels from the file
-    tp.fillInIFD(ifd);
-    tp.getSamples(ifd, buf, x, y, w, h);
-    factor = file.factors == null ? 1d : file.factors[imageNumber];
-    tp.getStream().close();
-
-    // expand pixel values with multiplication by factor[no]
-    int num = buf.length / bpp;
-
-    if (factor != 1d || nBytes != bpp) {
-      for (int i=num-1; i>=0; i--) {
-        int q = nBytes == 1 ? buf[i] & 0xff :
-          DataTools.bytesToInt(buf, i * nBytes, nBytes, isLittleEndian());
-        q = (int) (q * factor);
-        DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
+  
+      // expand pixel values with multiplication by factor[no]
+      int num = buf.length / bpp;
+  
+      if (factor != 1d || nBytes != bpp) {
+        for (int i=num-1; i>=0; i--) {
+          int q = nBytes == 1 ? buf[i] & 0xff :
+            DataTools.bytesToInt(buf, i * nBytes, nBytes, isLittleEndian());
+          q = (int) (q * factor);
+          DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
+        }
       }
-    }
 
-    s.close();
+    }
 
     return buf;
   }
