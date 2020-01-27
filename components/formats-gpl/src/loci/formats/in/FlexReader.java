@@ -327,20 +327,18 @@ public class FlexReader extends FormatReader {
       tp.getSamples(ifd, buf, x, y, w, h);
       factor = file.factors == null ? 1d : file.factors[imageNumber];
       LOGGER.trace("  using factor = {}", factor);
-      tp.getStream().close();
+    }
   
-      // expand pixel values with multiplication by factor[no]
-      int num = buf.length / bpp;
+    // expand pixel values with multiplication by factor[no]
+    int num = buf.length / bpp;
   
-      if (factor != 1d || nBytes != bpp) {
-        for (int i=num-1; i>=0; i--) {
-          int q = nBytes == 1 ? buf[i] & 0xff :
-            DataTools.bytesToInt(buf, i * nBytes, nBytes, isLittleEndian());
-          q = (int) (q * factor);
-          DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
-        }
+    if (factor != 1d || nBytes != bpp) {
+      for (int i=num-1; i>=0; i--) {
+        int q = nBytes == 1 ? buf[i] & 0xff :
+        DataTools.bytesToInt(buf, i * nBytes, nBytes, isLittleEndian());
+        q = (int) (q * factor);
+        DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
       }
-
     }
 
     return buf;
@@ -906,12 +904,9 @@ public class FlexReader extends FormatReader {
       ifd = file.ifds.get(0);
     }
     else {
-      RandomAccessInputStream ras = new RandomAccessInputStream(file.file);
-      try {
+      try (RandomAccessInputStream ras = new RandomAccessInputStream(file.file)) {
         TiffParser parser = new TiffParser(ras);
         ifd = parser.getFirstIFD();
-      } finally {
-        ras.close();
       }
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
@@ -1308,11 +1303,13 @@ public class FlexReader extends FormatReader {
     String firstBarcode = null;
     for (String file : fileList) {
       LOGGER.warn("parsing {}", file);
-      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
-      TiffParser parser = new TiffParser(s);
-      IFD firstIFD = parser.getFirstIFD();
-      int ifdCount = parser.getIFDOffsets().length;
-      s.close();
+      IFD firstIFD = null;
+      int ifdCount = 0;
+      try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
+        TiffParser parser = new TiffParser(s);
+        firstIFD = parser.getFirstIFD();
+        ifdCount = parser.getIFDOffsets().length;
+      }
       boolean compressed =
         firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
       if (firstCompressed == null) {
