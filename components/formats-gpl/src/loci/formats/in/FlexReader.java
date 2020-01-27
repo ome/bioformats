@@ -320,6 +320,7 @@ public class FlexReader extends FormatReader {
       
       tp.getSamples(ifd, buf, x, y, w, h);
       factor = file.factors == null ? 1d : file.factors[imageNumber];
+      LOGGER.trace("  using factor = {}", factor);
       tp.getStream().close();
   
       // expand pixel values with multiplication by factor[no]
