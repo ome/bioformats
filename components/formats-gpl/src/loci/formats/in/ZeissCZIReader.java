@@ -2199,8 +2199,7 @@ public class ZeissCZIReader extends FormatReader {
           if (detector != null) {
             String detectorID = detector.getAttribute("Id");
             if (detectorID.indexOf(' ') != -1) {
-              detectorID =
-                detectorID.substring(detectorID.lastIndexOf(" ") + 1);
+              detectorID = detectorID.replaceAll("\\s","");
             }
             if (!detectorID.startsWith("Detector:")) {
               detectorID = "Detector:" + detectorID;
