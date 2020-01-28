@@ -581,7 +581,9 @@ public class FlexReader extends FormatReader {
       files.length);
 
     runCount = runDirs.size();
-
+    if (runCount < 1) {
+      runCount = 1;
+    }
     groupFiles(files, store);
     populateMetadataStore(store);
   }
