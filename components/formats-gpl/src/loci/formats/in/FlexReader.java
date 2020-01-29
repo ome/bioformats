@@ -398,6 +398,7 @@ public class FlexReader extends FormatReader {
     }
     else initMeaFile(id);
 
+    if (runCount == 0) runCount = 1;
     if (plateCount == flexFiles.size() / runCount) {
       plateCount /= wellCount;
       if ((plateCount % fieldCount) == 0) {
@@ -581,9 +582,7 @@ public class FlexReader extends FormatReader {
       files.length);
 
     runCount = runDirs.size();
-    if (runCount < 1) {
-      runCount = 1;
-    }
+    if (runCount == 0) runCount = 1;
     groupFiles(files, store);
     populateMetadataStore(store);
   }
@@ -667,6 +666,7 @@ public class FlexReader extends FormatReader {
       store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, sampleIndex);
       store.setWellSampleImageRef(imageID, pos[2], well, sampleIndex);
 
+      if (runCount == 0) runCount = 1;
       store.setPlateAcquisitionWellSampleRef(wellSample, 0, pos[3], i % (getSeriesCount() / runCount));
     }
 
@@ -1398,6 +1398,7 @@ public class FlexReader extends FormatReader {
         for (String f : sortedFiles) {
           files.add(f);
         }
+        if (runCount == 0) runCount = 1;
 
         for (int field=0; field<nFiles; field++) {
           FlexFile file = new FlexFile();
