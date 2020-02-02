@@ -1404,7 +1404,12 @@ public class FlexReader extends FormatReader {
           FlexFile file = new FlexFile();
           file.row = row;
           file.column = col;
+          LOGGER.info("FlexTest: RunCount = " + runCount + "  NFiles = " + nFiles);
           if (runCount == 0) runCount = 1;
+          if (nFiles == 0) nFiles = 1;
+          if (runCount > nFiles) {
+            runCount = 1;
+          }
           file.field = field % (nFiles / runCount);
           file.file = files.get(field);
           file.acquisition = runDirs.size() == 0 ? 0:
