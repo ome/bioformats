@@ -276,7 +276,6 @@ public class FlexReader extends FormatReader {
       IFD ifd;
       if (file.offsets == null) {
         if (imageNumber < file.ifds.size()) {
-          factor = 1d;              ifd = file.ifds.get(imageNumber);
             factor = 1d;
           }
           else {
@@ -561,7 +560,7 @@ public class FlexReader extends FormatReader {
           // file names should be nnnnnnnnn.flex, where 'n' is 0-9
           LOGGER.debug("Checking if {} belongs in the same dataset.", file);
           if (file.endsWith(".flex") && file.length() == 14) {
-            flex.add(new Location(runDir, file).getAbsolutePath());
+            //flex.add(new Location(runDir, file).getAbsolutePath());
             LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
           }
         }
@@ -581,7 +580,7 @@ public class FlexReader extends FormatReader {
     LOGGER.debug("Determined that {} .flex files belong together.",
       files.length);
 
-    runCount = runDirs.size();
+    runCount = 1;
     if (runCount == 0) runCount = 1;
     groupFiles(files, store);
     populateMetadataStore(store);
