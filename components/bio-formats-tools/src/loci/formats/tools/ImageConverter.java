@@ -106,6 +106,7 @@ public final class ImageConverter {
   private String compression = null;
   private boolean stitch = false, separate = false, merge = false, fill = false;
   private boolean bigtiff = false, group = true;
+  private boolean nobigtiff = false;
   private boolean printVersion = false;
   private boolean lookup = true;
   private boolean autoscale = false;
@@ -156,6 +157,7 @@ public final class ImageConverter {
         else if (args[i].equals("-merge")) merge = true;
         else if (args[i].equals("-expand")) fill = true;
         else if (args[i].equals("-bigtiff")) bigtiff = true;
+        else if (args[i].equals("-nobigtiff")) nobigtiff = true;
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-compression")) compression = args[++i];
         else if (args[i].equals("-nogroup")) group = false;
@@ -258,6 +260,11 @@ public final class ImageConverter {
         }
       }
     }
+
+    if (bigtiff && nobigtiff) {
+      LOGGER.error("Do not specify both -bigtiff and -nobigtiff");
+      return false;
+    }
     return true;
   }
 
@@ -304,7 +311,7 @@ public final class ImageConverter {
     String[] s = {
       "To convert a file between formats, run:",
       "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
-      "    [-bigtiff] [-compression codec] [-series series] [-noflat]",
+      "    [-bigtiff] [-nobigtiff] [-compression codec] [-series series] [-noflat]",
       "    [-cache] [-cache-dir dir] [-no-sas]",
       "    [-map id] [-range start end] [-crop x,y,w,h]",
       "    [-channel channel] [-z Z] [-timepoint timepoint] [-nogroup]",
@@ -321,6 +328,7 @@ public final class ImageConverter {
       "              -merge: combine separate channels into RGB image",
       "             -expand: expand indexed color to RGB",
       "            -bigtiff: force BigTIFF files to be written",
+      "          -nobigtiff: do not automatically switch to BigTIFF",
       "        -compression: specify the codec to use when saving images",
       "             -series: specify which image series to convert",
       "             -noflat: do not flatten subresolutions",
@@ -601,11 +609,13 @@ public final class ImageConverter {
 
     if (writer instanceof TiffWriter) {
       ((TiffWriter) writer).setBigTiff(bigtiff);
+      ((TiffWriter) writer).setCanDetectBigTiff(!nobigtiff);
     }
     else if (writer instanceof ImageWriter) {
       IFormatWriter w = ((ImageWriter) writer).getWriter(out);
       if (w instanceof TiffWriter) {
         ((TiffWriter) w).setBigTiff(bigtiff);
+        ((TiffWriter) w).setCanDetectBigTiff(!nobigtiff);
       }
     }
 
