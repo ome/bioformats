@@ -3859,8 +3859,13 @@ public class ZeissCZIReader extends FormatReader {
             data = new JPEGXRCodec().decompress(data, options);
           }
           catch (FormatException e) {
-            LOGGER.warn("Could not decompress block; some pixels may be 0", e);
-            data = new byte[options.maxBytes];
+            if (data.length == options.maxBytes) {
+              LOGGER.debug("Invalid JPEG-XR compression flag");
+            }
+            else {
+              LOGGER.warn("Could not decompress block; some pixels may be 0", e);
+              data = new byte[options.maxBytes];
+            }
           }
           break;
         case 104: // camera-specific packed pixels
