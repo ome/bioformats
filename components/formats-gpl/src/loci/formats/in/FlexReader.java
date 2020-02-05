@@ -276,6 +276,7 @@ public class FlexReader extends FormatReader {
       IFD ifd;
       if (file.offsets == null) {
         if (imageNumber < file.ifds.size()) {
+            ifd = file.ifds.get(imageNumber);
             factor = 1d;
           }
           else {
