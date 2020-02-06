@@ -390,6 +390,25 @@ public class FlexReader extends FormatReader {
     measurementFiles = new ArrayList<String>();
     acquisitionDates = new HashMap<Integer, Timestamp>();
 
+    Location currentFile = new Location(id).getAbsoluteFile();
+    Location dir = currentFile.getParentFile();
+    runDirs = new ArrayList<Location>();
+    if (!dir.getName().startsWith("Meas_")) {
+      runDirs.add(dir);
+    }
+    else {
+      // look for other acquisitions of the same plate
+      dir = dir.getParentFile();
+      String[] parentDirs = dir.list(true);
+      Arrays.sort(parentDirs);
+      for (String d : parentDirs) {
+        Location f = new Location(dir.getAbsoluteFile(), d);
+        if (f.isDirectory() && d.startsWith("Meas_")) {
+          runDirs.add(f);
+        }
+      }
+    }
+    
     if (checkSuffix(id, FLEX_SUFFIX)) {
       initFlexFile(id);
     }
@@ -536,24 +555,6 @@ public class FlexReader extends FormatReader {
     if (doGrouping) {
       // group together .flex files that are in the same directory
 
-      Location dir = currentFile.getParentFile();
-      runDirs = new ArrayList<Location>();
-      if (!dir.getName().startsWith("Meas_")) {
-        runDirs.add(dir);
-      }
-      else {
-        // look for other acquisitions of the same plate
-        dir = dir.getParentFile();
-        String[] parentDirs = dir.list(true);
-        Arrays.sort(parentDirs);
-        for (String d : parentDirs) {
-          Location f = new Location(dir.getAbsoluteFile(), d);
-          if (f.isDirectory() && d.startsWith("Meas_")) {
-            runDirs.add(f);
-          }
-        }
-      }
-
       for (Location runDir : runDirs) {
         String[] files = runDir.list(true);
 
@@ -561,8 +562,8 @@ public class FlexReader extends FormatReader {
           // file names should be nnnnnnnnn.flex, where 'n' is 0-9
           LOGGER.debug("Checking if {} belongs in the same dataset.", file);
           if (file.endsWith(".flex") && file.length() == 14) {
-            //flex.add(new Location(runDir, file).getAbsolutePath());
-            LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
+            flex.add(new Location(runDir, file).getAbsolutePath());
+            //LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
           }
         }
       }
@@ -1412,7 +1413,7 @@ public class FlexReader extends FormatReader {
           }
           file.field = field % (nFiles / runCount);
           file.file = files.get(field);
-          file.acquisition = runDirs.size() == 0 ? 0:
+          file.acquisition = (runDirs == null || runDirs.size() == 0) ? 0:
             runDirs.indexOf(new Location(file.file).getParentFile());
 
           if (file.file == null) {
