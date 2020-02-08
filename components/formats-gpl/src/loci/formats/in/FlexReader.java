@@ -99,6 +99,9 @@ public class FlexReader extends FormatReader {
 
   // -- Fields --
 
+  public static final String GROUP_PLATES = "flex.group.pLate";
+  public static final boolean GROUP_PLATES_DEFAULT = false;
+
   /** Camera binning values. */
   private int binX, binY;
 
@@ -393,7 +396,7 @@ public class FlexReader extends FormatReader {
     Location currentFile = new Location(id).getAbsoluteFile();
     Location dir = currentFile.getParentFile();
     runDirs = new ArrayList<Location>();
-    if (!dir.getName().startsWith("Meas_")) {
+    if (!dir.getName().startsWith("Meas_") || !groupPlates()) {
       runDirs.add(dir);
     }
     else {
@@ -2147,6 +2150,15 @@ public class FlexReader extends FormatReader {
       String[] servers = line.substring(eq + 1).trim().split(";");
       mapServer(alias, servers);
     }
+  }
+  
+  public boolean groupPlates() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        GROUP_PLATES, GROUP_PLATES_DEFAULT);
+    }
+    return GROUP_PLATES_DEFAULT;
   }
 
 }
