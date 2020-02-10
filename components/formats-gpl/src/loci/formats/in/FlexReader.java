@@ -1861,6 +1861,9 @@ public class FlexReader extends FormatReader {
           if (y != null) binY = Integer.parseInt(y);
         }
       }
+      else if (qName.equals("Plate")) { 
+          plateCount++; 
+      }
       else if (qName.equals("WellCoordinate")) {
         if (wellNumber.length == 1) {
           wellNumber[0][0] = Integer.parseInt(attributes.getValue("Row")) - 1;
