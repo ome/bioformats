@@ -87,6 +87,9 @@ public class TiffWriter extends FormatWriter {
   /** Whether or not the output file is a BigTIFF file. */
   protected boolean isBigTiff;
 
+  /** Whether or not BigTIFF can be used automatically. */
+  protected boolean canDetectBigTiff = true;
+
   /** The TiffSaver that will do most of the writing. */
   protected TiffSaver tiffSaver;
 
@@ -183,8 +186,14 @@ public class TiffWriter extends FormatWriter {
         }
 
         if (totalBytes >= BIG_TIFF_CUTOFF) {
-          LOGGER.info("Switching to BigTIFF (by file size)");
-          isBigTiff = true;
+          if (canDetectBigTiff) {
+            LOGGER.info("Switching to BigTIFF (by file size)");
+            isBigTiff = true;
+          }
+          else {
+            LOGGER.info("Automatic BigTIFF disabled but pixel byte count = {}",
+              totalBytes);
+          }
         }
       }
     }
@@ -497,6 +506,16 @@ public class TiffWriter extends FormatWriter {
   public void setBigTiff(boolean bigTiff) {
     FormatTools.assertId(currentId, false, 1);
     isBigTiff = bigTiff;
+  }
+
+  /**
+   * Sets whether or not BigTIFF can be used automatically
+   * based upon the input data size (true by default).
+   * This flag is not reset when close() is called.
+   */
+  public void setCanDetectBigTiff(boolean detect) {
+    FormatTools.assertId(currentId, false, 1);
+    canDetectBigTiff = detect;
   }
 
   // -- Helper methods --
