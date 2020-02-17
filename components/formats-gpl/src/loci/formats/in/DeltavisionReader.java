@@ -2892,6 +2892,8 @@ public class DeltavisionReader extends FormatReader {
         magnification = 10.0;
         workingDistance = 15.00;
         immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanFluor");  
+        manufacturer = "Nikon"; 
         break;
       case 18108: // GE 10X/0.45, 1mm substrate, GRC
         lensNA = 0.45;
@@ -2954,6 +2956,12 @@ public class DeltavisionReader extends FormatReader {
         magnification = 40.0;
         workingDistance = 0.48;
         immersion = MetadataTools.getImmersion("Air");
+        break;
+      case 20007: // Applied Precision 100X/1.4 
+        lensNA = 1.4; 
+        magnification = 100.0;  
+        immersion = MetadataTools.getImmersion("Oil");  
+        manufacturer = "Applied Precision"; 
         break;
       case 1: // Zeiss 10X/.25
         lensNA = 0.25;
