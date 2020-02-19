@@ -2368,7 +2368,7 @@ public class ZeissCZIReader extends FormatReader {
               if (zoom.indexOf(',') != -1) {
                 zoom = zoom.substring(0, zoom.indexOf(','));
               }
-              store.setDetectorZoom(new Double(zoom), 0, detectorIndex);
+              store.setDetectorZoom(DataTools.parseDouble(zoom), 0, detectorIndex);
             }
           }
 
