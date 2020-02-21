@@ -1744,15 +1744,15 @@ public class ZeissCZIReader extends FormatReader {
             }
             break;
           case 'T':        	  
-    		  int startIndex = dimension.start;
-    		  int endIndex = startIndex + dimension.size;
+    		    int startIndex = dimension.start;
+    		    int endIndex = startIndex + dimension.size;
     	  
-    		  for (int i=startIndex; i<endIndex; i++) {
-    			  if (!uniqueT.contains(i)) {
-                      uniqueT.add(i);
-                      ms0.sizeT = uniqueT.size();
-                    }
-    		  }
+    		    for (int i=startIndex; i<endIndex; i++) {
+    			    if (!uniqueT.contains(i)) {
+                uniqueT.add(i);
+                ms0.sizeT = uniqueT.size();
+              }
+    		    }
             break;
           case 'R':
             if (dimension.start >= rotations) {
@@ -2199,8 +2199,7 @@ public class ZeissCZIReader extends FormatReader {
           if (detector != null) {
             String detectorID = detector.getAttribute("Id");
             if (detectorID.indexOf(' ') != -1) {
-              detectorID =
-                detectorID.substring(detectorID.lastIndexOf(" ") + 1);
+              detectorID = detectorID.replaceAll("\\s","");
             }
             if (!detectorID.startsWith("Detector:")) {
               detectorID = "Detector:" + detectorID;
@@ -2328,7 +2327,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String detectorID = detector.getAttribute("Id");
           if (detectorID.indexOf(' ') != -1) {
-            detectorID = detectorID.substring(detectorID.lastIndexOf(" ") + 1);
+            detectorID = detectorID.replaceAll("\\s","");
           }
           if (!detectorID.startsWith("Detector:")) {
             detectorID = "Detector:" + detectorID;
@@ -2345,16 +2344,17 @@ public class ZeissCZIReader extends FormatReader {
           store.setDetectorSerialNumber(serialNumber, 0, detectorIndex);
           store.setDetectorLotNumber(lotNumber, 0, detectorIndex);
 
-          if (gain == null || gain.equals("0")) {
-            gain = getFirstNodeValue(detector, "Gain");
-          }
-          if (detectorIndex == 0 || detectorIndex >= gains.size()) {
-            store.setDetectorGain(DataTools.parseDouble(gain), 0, detectorIndex);
-          }
-          else {
-            store.setDetectorGain(
-              DataTools.parseDouble(gains.get(detectorIndex)), 0,
-              detectorIndex);
+          
+          gain = getFirstNodeValue(detector, "Gain");
+          if (gain != null && !gain.isEmpty()) {
+            if (detectorIndex == 0 || detectorIndex >= gains.size()) {
+              store.setDetectorGain(DataTools.parseDouble(gain), 0, detectorIndex);
+            }
+            else {
+              store.setDetectorGain(
+                DataTools.parseDouble(gains.get(detectorIndex)), 0,
+                detectorIndex);
+            }
           }
 
           String offset = getFirstNodeValue(detector, "Offset");
@@ -2362,11 +2362,14 @@ public class ZeissCZIReader extends FormatReader {
             store.setDetectorOffset(new Double(offset), 0, detectorIndex);
           }
 
-          if (zoom == null) {
-            zoom = getFirstNodeValue(detector, "Zoom");
-          }
-          if (zoom != null && !zoom.equals("")) {
-            store.setDetectorZoom(new Double(zoom), 0, detectorIndex);
+          zoom = getFirstNodeValue(detector, "Zoom");
+          if (zoom != null && !zoom.isEmpty()) {
+            if (zoom != null && !zoom.equals("")) {
+              if (zoom.indexOf(',') != -1) {
+                zoom = zoom.substring(0, zoom.indexOf(','));
+              }
+              store.setDetectorZoom(DataTools.parseDouble(zoom), 0, detectorIndex);
+            }
           }
 
           String ampGain = getFirstNodeValue(detector, "AmplificationGain");
