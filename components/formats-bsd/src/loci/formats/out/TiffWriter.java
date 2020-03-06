@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2020 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -86,6 +86,9 @@ public class TiffWriter extends FormatWriter {
 
   /** Whether or not the output file is a BigTIFF file. */
   protected boolean isBigTiff;
+
+  /** Whether or not BigTIFF can be used automatically. */
+  protected boolean canDetectBigTiff = true;
 
   /** The TiffSaver that will do most of the writing. */
   protected TiffSaver tiffSaver;
@@ -183,8 +186,14 @@ public class TiffWriter extends FormatWriter {
         }
 
         if (totalBytes >= BIG_TIFF_CUTOFF) {
-          LOGGER.info("Switching to BigTIFF (by file size)");
-          isBigTiff = true;
+          if (canDetectBigTiff) {
+            LOGGER.info("Switching to BigTIFF (by file size)");
+            isBigTiff = true;
+          }
+          else {
+            LOGGER.info("Automatic BigTIFF disabled but pixel byte count = {}",
+              totalBytes);
+          }
         }
       }
     }
@@ -199,7 +208,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * Saves the given image to the specified (possibly already open) file.
    * The IFD hashtable allows specification of TIFF parameters such as bit
-   * depth, compression and units.
+   * depth, compression and units. Use one IFD instance per plane.
    */
   public void saveBytes(int no, byte[] buf, IFD ifd)
     throws IOException, FormatException
@@ -212,7 +221,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * Saves the given image to the specified series in the current file.
    * The IFD hashtable allows specification of TIFF parameters such as bit
-   * depth, compression and units.
+   * depth, compression and units. Use one IFD instance per plane.
    */
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws IOException, FormatException
@@ -497,6 +506,16 @@ public class TiffWriter extends FormatWriter {
   public void setBigTiff(boolean bigTiff) {
     FormatTools.assertId(currentId, false, 1);
     isBigTiff = bigTiff;
+  }
+
+  /**
+   * Sets whether or not BigTIFF can be used automatically
+   * based upon the input data size (true by default).
+   * This flag is not reset when close() is called.
+   */
+  public void setCanDetectBigTiff(boolean detect) {
+    FormatTools.assertId(currentId, false, 1);
+    canDetectBigTiff = detect;
   }
 
   // -- Helper methods --

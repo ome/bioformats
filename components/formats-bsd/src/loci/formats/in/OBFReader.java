@@ -450,10 +450,10 @@ public class OBFReader extends FormatReader {
           final String label = in.readString(length);
           labels.add(label);
 
-          if (label.endsWith("X") || (dimension == 1 && isFLIMLabel(labels.get(0)))) {
+          if ((label.endsWith("X") && meta_data.sizeX == 0) || (dimension == 1 && isFLIMLabel(labels.get(0)))) {
             meta_data.sizeX = sizes[dimension];
           }
-          else if (label.endsWith("Y") || (dimension == 2 && isFLIMLabel(labels.get(0)))) {
+          else if ((label.endsWith("Y") && meta_data.sizeY == 0) || (dimension == 2 && isFLIMLabel(labels.get(0)))) {
             meta_data.sizeY = sizes[dimension];
           }
           else if (isFLIMLabel(label)) {

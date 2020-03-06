@@ -33,6 +33,7 @@
 package loci.formats.tiff;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -60,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffSaver {
+public class TiffSaver implements Closeable {
 
   // -- Constructor --
 
@@ -335,7 +336,10 @@ public class TiffSaver {
 
       // write pixel strips to output buffers
       // Check for the sane cases
-      if (ifd.getImageWidth() == w && ifd.getTileWidth() == w && channelsAllSameSize) {
+      if (channelsAllSameSize &&
+        (ifd.getImageWidth() == w && ifd.getTileWidth() == w) ||
+        (tileHeight * tileWidth * nChannels * bytesPerPixel == buf.length))
+      {
         // If the input, output, and tile widths are all the same,
         // and the input bytesPerPixel (which is actually bytes per sample)
         // matches the bits per channel for all channels,
