@@ -1026,7 +1026,9 @@ public class TiffParser implements Closeable {
           // we only want a piece of the tile, so read each row separately
           // this is especially necessary for large single-tile images
           int bpp = bytes * effectiveChannels;
-          in.skipBytes((int) (y * bpp * tileWidth));
+          // don't use skipBytes here, as the number of bytes to skip may
+          // be greater than Integer.MAX_VALUE if the tile is large
+          in.seek(in.getFilePointer() + (y * bpp * tileWidth));
           for (int row=0; row<height; row++) {
             in.skipBytes(x * bpp);
             int len = (int) Math.min(buf.length - offset, width * bpp);
