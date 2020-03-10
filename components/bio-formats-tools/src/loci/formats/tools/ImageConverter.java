@@ -579,21 +579,21 @@ public final class ImageConverter {
         }
         else {
           for (int i=0; i<reader.getSeriesCount(); i++) {
-            meta.setPixelsSizeX(new PositiveInteger(width), 0);
-            meta.setPixelsSizeY(new PositiveInteger(height), 0);
+            meta.setPixelsSizeX(new PositiveInteger(width), i);
+            meta.setPixelsSizeY(new PositiveInteger(height), i);
 
             if (autoscale) {
               store.setPixelsType(PixelType.UINT8, i);
             }
 
             if (channel >= 0) {
-              meta.setPixelsSizeC(new PositiveInteger(1), 0);
+              meta.setPixelsSizeC(new PositiveInteger(1), i);
             }
             if (zSection >= 0) {
-              meta.setPixelsSizeZ(new PositiveInteger(1), 0);
+              meta.setPixelsSizeZ(new PositiveInteger(1), i);
             }
             if (timepoint >= 0) {
-              meta.setPixelsSizeT(new PositiveInteger(1), 0);
+              meta.setPixelsSizeT(new PositiveInteger(1), i);
             }
           }
 
