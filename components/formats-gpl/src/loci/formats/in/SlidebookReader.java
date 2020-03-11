@@ -668,7 +668,7 @@ public class SlidebookReader extends FormatReader {
           in.seek(in.getFilePointer() - 1);
           long nSkipped = in.getFilePointer() - fp;
           if (nSkipped < 8) {
-            in.skipBytes((int) (8 - nSkipped));
+            in.skipBytes(8 - nSkipped);
           }
           String objective = readCString().trim();
           in.seek(fp + 144);

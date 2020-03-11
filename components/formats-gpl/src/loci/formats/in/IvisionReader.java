@@ -109,7 +109,7 @@ public class IvisionReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int planeSize = getSizeX() * getSizeY() * getSizeC();
+    long planeSize = (long) getSizeX() * getSizeY() * getSizeC();
     if (color16) planeSize = 2 * (planeSize / 3);
     else if (squareRoot) planeSize *= 2;
     else if (hasPaddingByte) {
@@ -129,15 +129,15 @@ public class IvisionReader extends FormatReader {
     }
     else if (hasPaddingByte) {
       int next = 0;
-      in.skipBytes(y * getSizeX() * getSizeC());
+      in.skipBytes((long) y * getSizeX() * getSizeC());
       for (int row=0; row<h; row++) {
-        in.skipBytes(x * getSizeC());
+        in.skipBytes((long) x * getSizeC());
         for (int col=0; col<w; col++) {
           in.skipBytes(1);
           in.read(buf, next, getSizeC());
           next += getSizeC();
         }
-        in.skipBytes(getSizeC() * (getSizeX() - w - x));
+        in.skipBytes((long) getSizeC() * (getSizeX() - w - x));
       }
     }
     else readPlane(in, x, y, w, h, buf);

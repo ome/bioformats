@@ -231,7 +231,7 @@ public class LiFlimReader extends FormatReader {
       int thisSeries = getSeries();
       for (int i=0; i<thisSeries; i++) {
         setSeries(i);
-        in.skipBytes(getImageCount() * FormatTools.getPlaneSize(this));
+        in.skipBytes((long) getImageCount() * FormatTools.getPlaneSize(this));
       }
       setSeries(thisSeries);
       readPlane(in, x, y, w, h, buf);

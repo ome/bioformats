@@ -373,7 +373,7 @@ public class BioRadReader extends FormatReader {
     // skip image data
     int imageLen = getSizeX() * getSizeY();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    in.skipBytes(bpp * getImageCount() * imageLen + 6);
+    in.skipBytes((long) bpp * getImageCount() * imageLen + 6);
 
     m.sizeZ = getImageCount();
     m.sizeC = 1;
@@ -538,7 +538,7 @@ public class BioRadReader extends FormatReader {
     throws IOException
   {
     s.seek(70);
-    int imageLen = getSizeX() * getSizeY();
+    long imageLen = getSizeX() * getSizeY();
     if (picFiles == null) imageLen *= getImageCount();
     else {
       imageLen *= (getImageCount() / picFiles.length);

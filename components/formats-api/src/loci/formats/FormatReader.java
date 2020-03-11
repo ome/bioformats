@@ -524,23 +524,23 @@ public abstract class FormatReader extends FormatHandler
     }
     else if (x == 0 && w == getSizeX() && scanlinePad == 0) {
       if (isInterleaved()) {
-        s.skipBytes(y * w * bpp * c);
+        s.skipBytes((long) y * w * bpp * c);
         s.read(buf, 0, h * w * bpp * c);
       }
       else {
         int rowLen = w * bpp;
         for (int channel=0; channel<c; channel++) {
-          s.skipBytes(y * rowLen);
+          s.skipBytes((long) y * rowLen);
           s.read(buf, channel * h * rowLen, h * rowLen);
           if (channel < c - 1) {
             // no need to skip bytes after reading final channel
-            s.skipBytes((getSizeY() - y - h) * rowLen);
+            s.skipBytes((long) (getSizeY() - y - h) * rowLen);
           }
         }
       }
     }
     else {
-      int scanlineWidth = getSizeX() + scanlinePad;
+      long scanlineWidth = getSizeX() + scanlinePad;
       if (isInterleaved()) {
         s.skipBytes(y * scanlineWidth * bpp * c);
         for (int row=0; row<h; row++) {
