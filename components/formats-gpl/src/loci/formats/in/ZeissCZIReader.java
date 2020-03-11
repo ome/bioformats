@@ -343,6 +343,7 @@ public class ZeissCZIReader extends FormatReader {
 
     Arrays.fill(buf, (byte) 0);
     boolean emptyTile = true;
+    int compression = -1;
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
       int baseResolution = currentIndex;
@@ -391,6 +392,7 @@ public class ZeissCZIReader extends FormatReader {
 
             if (tile.intersects(image)) {
               emptyTile = false;
+              compression = plane.directoryEntry.compression;
               byte[] rawData = new SubBlock(plane).readPixelData();
               Region intersection = tile.intersection(image);
               int intersectionX = 0;
@@ -437,6 +439,7 @@ public class ZeissCZIReader extends FormatReader {
             else {
               rawData = new SubBlock(plane).readPixelData();
             }
+            compression = plane.directoryEntry.compression;
             if (rawData.length > buf.length || pixels.size() > 0) {
               RandomAccessInputStream s = new RandomAccessInputStream(rawData);
               try {
@@ -457,8 +460,9 @@ public class ZeissCZIReader extends FormatReader {
     } finally {
     }
 
-    if (isRGB() && !emptyTile) {
+    if (isRGB() && !emptyTile && compression != JPEGXR) {
       // channels are stored in BGR order; red and blue channels need switching
+      // JPEG-XR data has already been reversed during decompression
       int redOffset = bpp * 2;
       for (int i=0; i<buf.length/pixel; i++) {
         int index = i * pixel;

@@ -542,7 +542,7 @@ public class TiffParser implements Closeable {
     }
 
     if (offset != in.getFilePointer()) {
-      if (fakeBigTiff && (offset < 0 || offset > in.getFilePointer())) {
+      if (fakeBigTiff && offset < 0) {
         offset &= 0xffffffffL;
         offset += 0x100000000L;
       }
@@ -1173,7 +1173,11 @@ public class TiffParser implements Closeable {
 
     TiffCompression compression = ifd.getCompression();
     PhotoInterp photoInterp = ifd.getPhotometricInterpretation();
-    if (compression == TiffCompression.JPEG) photoInterp = PhotoInterp.RGB;
+    if (compression == TiffCompression.JPEG ||
+      compression == TiffCompression.JPEGXR)
+    {
+      photoInterp = PhotoInterp.RGB;
+    }
 
     int[] bitsPerSample = ifd.getBitsPerSample();
     int nChannels = bitsPerSample.length;
