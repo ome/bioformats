@@ -53,6 +53,15 @@ function bfsave(varargin)
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+if nargin >= 2
+filename = varargin{2};
+[mypath,myname,myend] = fileparts(filename);
+if length(myname<4) || strcmp(myname(end-4:end),'.ome')
+    fprintf('WARNING: Filename to save %s did is not an ome.tif, changed filename to comply with the OME standards.\n',filename);
+    varargin{2} = [mypath myname '.ome.tif'];
+end
+end
+
 % verify that enough memory is allocated
 bfCheckJavaMemory();
 
@@ -61,6 +70,7 @@ bfCheckJavaPath();
 
 % Input check
 ip = inputParser;
+
 ip.addRequired('I', @isnumeric);
 ip.addRequired('outputPath', @ischar);
 ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
@@ -69,13 +79,17 @@ ip.addParamValue('Compression', '',  @ischar);
 ip.addParamValue('BigTiff', false , @islogical);
 ip.parse(varargin{:});
 
+permutation = [2,1,3:ndims(ip.Results.I)]; 
+DataToWrite = permute(ip.Results.I,permutation);  % Important: Do this before the sizes are accounted for
+clear ip.Results.I; % to save the memory
+
 % Create Writer object from output path
 imageWriter = javaObject('loci.formats.ImageWriter');
 writer = imageWriter.getWriter(ip.Results.outputPath);
 
 % Create metadata
 if isempty(ip.Results.metadata)
-    metadata = createMinimalOMEXMLMetadata(ip.Results.I,...
+    metadata = createMinimalOMEXMLMetadata(DataToWrite,...
         ip.Results.dimensionOrder);
 else
     metadata = ip.Results.metadata;
@@ -85,6 +99,15 @@ else
 end
 
 writer.setWriteSequentially(true);
+
+newid=['ImageJ=1.51j' char(10)];
+newid=[newid 'images=' num2str(size(DataToWrite,3)) char(10)];
+newid=[newid 'slices=' num2str(size(DataToWrite,3)) char(10)];
+newid=[newid 'unit=µm' char(10)];
+newid=[newid 'spacing=' num2str(double(metadata.getPixelsPhysicalSizeZ(0).value))];
+newid=[newid 'loop=false' char(10)];
+metadata.setImageDescription(newid,0);
+
 writer.setMetadataRetrieve(metadata);
 if ~isempty(ip.Results.Compression)
     compressionTypes = getCompressionTypes(writer);
@@ -95,13 +118,14 @@ if ~isempty(ip.Results.Compression)
     end
     writer.setCompression(ip.Results.Compression);
 end
+
 if ip.Results.BigTiff
     writer.setBigTiff(ip.Results.BigTiff);
 end
 writer.setId(ip.Results.outputPath);
 
 % Load conversion tools for saving planes
-switch class(ip.Results.I)
+switch class(DataToWrite)
     case {'int8', 'uint8'}
         getBytes = @(x) x(:);
     case {'uint16','int16'}
@@ -118,15 +142,37 @@ end
 nPlanes = metadata.getPixelsSizeZ(0).getValue() *...
     metadata.getPixelsSizeC(0).getValue() *...
     metadata.getPixelsSizeT(0).getValue();
-zctCoord = [size(ip.Results.I, 3) size(ip.Results.I, 4)...
-    size(ip.Results.I, 5)];
-for index = 1 : nPlanes
-    [i, j, k] = ind2sub(zctCoord, index);
-    plane = ip.Results.I(:, :, i, j, k)';
-    writer.saveBytes(index-1, getBytes(plane));
+zctCoord = [size(DataToWrite, 3) size(DataToWrite, 4) size(DataToWrite, 5)];
+% for index = 1 : nPlanes
+%     [i, j, k] = ind2sub(zctCoord, index);
+%     % plane = DataToWrite(:, :, i, j, k);
+%     plane = DataToWrite(:, :, i, j, k);
+%     writer.saveBytes(index-1, getBytes(plane));
+%     if i==1
+%         fprintf('\nCol: %d, Time %d\n',j,k);
+%     end
+%     fprintf('.');
+% end
+
+index = 0;
+for t = 1:size(DataToWrite,5)
+    for z = 1:size(DataToWrite,3)
+        for e = 1:size(DataToWrite,4)  % The order of writing seems to be important!
+            plane = DataToWrite(:, :, z, e, t);
+            writer.saveBytes(index, getBytes(plane));
+%             if e==1
+%                 fprintf('\n Z slice: %d, Time %d\n',z,t);
+%             end
+            fprintf('.');
+            if mod(index,32)==0
+                fprintf(', %2.0f percent\n',100*index/(size(DataToWrite,5)*size(DataToWrite,3)*size(DataToWrite,4)));
+            end
+            index = index +1;
+        end
+    end
 end
 writer.close();
-
+fprintf(', %2.0f percent\n',100*index/(size(DataToWrite,5)*size(DataToWrite,3)*size(DataToWrite,4)));
 end
 
 function dimensionOrders = getDimensionOrders()
