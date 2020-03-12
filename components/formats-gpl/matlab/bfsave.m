@@ -56,9 +56,9 @@ function bfsave(varargin)
 if nargin >= 2
 filename = varargin{2};
 [mypath,myname,myend] = fileparts(filename);
-if length(myname<4) || strcmp(myname(end-4:end),'.ome')
+if length(myname)<4 || ((strcmp(myend,'.tif') || strcmp(myend,'.tiff')) && ~strcmp(myname(end-3:end),'.ome'))
     fprintf('WARNING: Filename to save %s did is not an ome.tif, changed filename to comply with the OME standards.\n',filename);
-    varargin{2} = [mypath myname '.ome.tif'];
+    varargin{2} = [mypath filesep myname '.ome.tif'];
 end
 end
 
