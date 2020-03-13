@@ -121,6 +121,8 @@ public class LIFReader extends FormatReader {
     return h.build();
   }
 
+  private static final long METER_MULTIPLY = 1000000;
+
   // -- Fields --
 
   /** Offsets to memory blocks, paired with their corresponding description. */
@@ -137,6 +139,7 @@ public class LIFReader extends FormatReader {
 
   private String[] descriptions, microscopeModels, serialNumber;
   private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
+  private boolean[] flipX, flipY, swapXY;
   private Double[][] expTimes, gains, detectorOffsets;
   private String[][] channelNames;
   private List[] detectorModels;
@@ -441,6 +444,7 @@ public class LIFReader extends FormatReader {
       physicalSizeYs.clear();
       descriptions = microscopeModels = serialNumber = null;
       pinholes = zooms = lensNA = null;
+      flipX = flipY = swapXY = null;
       zSteps = tSteps = null;
       expTimes = gains = null;
       detectorOffsets = null;
@@ -1023,6 +1027,16 @@ public class LIFReader extends FormatReader {
         if (i < fieldPosY.size() && fieldPosY.get(i) != null) {
           yPos = fieldPosY.get(i);
         }
+
+        if (swapXY[index]) {
+          Length temp = xPos;
+          xPos = yPos;
+          yPos = temp;
+        }
+
+        xPos = checkFlip(flipX[index], xPos);
+        yPos = checkFlip(flipY[index], yPos);
+
         if (xPos != null) {
           store.setPlanePositionX(xPos, i, image);
         }
@@ -1061,6 +1075,14 @@ public class LIFReader extends FormatReader {
       }
     }
   }
+
+  private Length checkFlip(boolean flip, Length pos) {
+    if (flip && pos != null) {
+      pos = new Length(-pos.value().doubleValue(), pos.unit());
+    }
+    return pos;
+  }
+
 
   private Element getMetadataRoot(String xml)
     throws FormatException, IOException
@@ -1164,7 +1186,9 @@ public class LIFReader extends FormatReader {
     tSteps = new Double[imageNodes.size()];
     pinholes = new Double[imageNodes.size()];
     zooms = new Double[imageNodes.size()];
-
+    flipX = new boolean[imageNodes.size()];
+    flipY = new boolean[imageNodes.size()];
+    swapXY = new boolean[imageNodes.size()];
     expTimes = new Double[imageNodes.size()][];
     gains = new Double[imageNodes.size()][];
     detectorOffsets = new Double[imageNodes.size()][];
@@ -1879,7 +1903,22 @@ public class LIFReader extends FormatReader {
     throws FormatException
   {
     NodeList scannerSettings = getNodes(imageNode, "ScannerSettingRecord");
-    if (scannerSettings == null) return;
+    NodeList attachmentNodes = getNodes(imageNode, "Attachment");
+    if (attachmentNodes == null) {
+      return;
+    }
+    NodeList confocalSettings = null;
+    for (int i=0; i<attachmentNodes.getLength(); i++) {
+      Element attachment = (Element) attachmentNodes.item(i);
+
+      String attachmentName = attachment.getAttribute("Name");
+
+      if ("HardwareSetting".equals(attachmentName)) {
+        confocalSettings = getNodes(attachment, "ATLConfocalSettingDefinition");
+      }
+    }
+
+    if (scannerSettings == null && confocalSettings == null) return;
 
     expTimes[image] = new Double[getEffectiveSizeC()];
     gains[image] = new Double[getEffectiveSizeC()];
@@ -1888,82 +1927,119 @@ public class LIFReader extends FormatReader {
     exWaves[image] = new Double[getEffectiveSizeC()];
     detectorModels[image] = new ArrayList<String>();
 
-    for (int i=0; i<scannerSettings.getLength(); i++) {
-      Element scannerSetting = (Element) scannerSettings.item(i);
-      String id = scannerSetting.getAttribute("Identifier");
-      if (id == null) id = "";
-      String suffix = scannerSetting.getAttribute("Identifier");
-      String value = scannerSetting.getAttribute("Variant");
+    if (scannerSettings != null) {
+      for (int i=0; i<scannerSettings.getLength(); i++) {
+        Element scannerSetting = (Element) scannerSettings.item(i);
+        String id = scannerSetting.getAttribute("Identifier");
+        if (id == null) id = "";
+        String suffix = scannerSetting.getAttribute("Identifier");
+        String value = scannerSetting.getAttribute("Variant");
 
-      if (id.equals("SystemType")) {
-        microscopeModels[image] = value;
-      }
-      else if (id.equals("dblPinhole")) {
-        if (value != null && !value.trim().isEmpty()) {
-          pinholes[image] = DataTools.parseDouble(value.trim()) * 1000000;
-        }
-      }
-      else if (id.equals("dblZoom")) {
-        if (value != null && !value.trim().isEmpty()) {
-          zooms[image] = DataTools.parseDouble(value.trim());
-        }
-      }
-      else if (id.equals("dblStepSize")) {
-        if (value != null && !value.trim().isEmpty()) {
-          zSteps[image] = DataTools.parseDouble(value.trim()) * 1000000;
-        }
-      }
-      else if (id.equals("nDelayTime_s")) {
-        if (value != null && !value.trim().isEmpty()) {
-          tSteps[image] = DataTools.parseDouble(value.trim());
-        }
-      }
-      else if (id.equals("CameraName")) {
-        detectorModels[image].add(value);
-      }
-      else if (id.equals("eDirectional")) {
-        addSeriesMeta("Reverse X orientation", "1".equals(value.trim()));
-      }
-      else if (id.equals("eDirectionalY")) {
-        addSeriesMeta("Reverse Y orientation", "1".equals(value.trim()));
-      }
-      else if (id.indexOf("WFC") == 1) {
-        int c = 0;
-        try {
-          c = Integer.parseInt(id.replaceAll("\\D", ""));
-        }
-        catch (NumberFormatException e) { }
-        if (c < 0 || c >= getEffectiveSizeC()) {
+        if (value == null || value.trim().isEmpty()) {
           continue;
         }
 
-        if (id.endsWith("ExposureTime")) {
-          if (value != null && !value.trim().isEmpty()) {
+        if (id.equals("SystemType")) {
+          microscopeModels[image] = value;
+        }
+        else if (id.equals("dblPinhole")) {
+          pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
+        }
+        else if (id.equals("dblZoom")) {
+          zooms[image] = DataTools.parseDouble(value.trim());
+        }
+        else if (id.equals("dblStepSize")) {
+          zSteps[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
+        }
+        else if (id.equals("nDelayTime_s")) {
+          tSteps[image] = DataTools.parseDouble(value.trim());
+        }
+        else if (id.equals("CameraName")) {
+          detectorModels[image].add(value);
+        }
+        else if (id.equals("eDirectional")) {
+          addSeriesMeta("Reverse X orientation", "1".equals(value.trim()));
+        }
+        else if (id.equals("eDirectionalY")) {
+          addSeriesMeta("Reverse Y orientation", "1".equals(value.trim()));
+        }
+        else if (id.indexOf("WFC") == 1) {
+          int c = 0;
+          try {
+            c = Integer.parseInt(id.replaceAll("\\D", ""));
+          }
+          catch (NumberFormatException e) { }
+          if (c < 0 || c >= getEffectiveSizeC()) {
+            continue;
+          }
+
+          if (id.endsWith("ExposureTime")) {
             expTimes[image][c] = DataTools.parseDouble(value.trim());
           }
-        }
-        else if (id.endsWith("Gain")) {
-          if (value != null && !value.trim().isEmpty()) {
+          else if (id.endsWith("Gain")) {
             gains[image][c] = DataTools.parseDouble(value.trim());
           }
-        }
-        else if (id.endsWith("WaveLength")) {
-          if (value != null && !value.trim().isEmpty()) {
+          else if (id.endsWith("WaveLength")) {
             Double exWave = DataTools.parseDouble(value.trim());
             if (exWave != null && exWave > 0) {
               exWaves[image][c] = exWave;
             }
           }
-        }
-        // NB: "UesrDefName" is not a typo.
-        else if ((id.endsWith("UesrDefName") || id.endsWith("UserDefName")) &&
-          !value.equals("None"))
-        {
-          if (channelNames[image][c] == null ||
-            channelNames[image][c].trim().isEmpty())
+          // NB: "UesrDefName" is not a typo.
+          else if ((id.endsWith("UesrDefName") || id.endsWith("UserDefName")) &&
+            !value.equals("None"))
           {
-            channelNames[image][c] = value;
+            if (channelNames[image][c] == null ||
+              channelNames[image][c].trim().isEmpty())
+            {
+              channelNames[image][c] = value;
+            }
           }
+        }
+      }
+    }
+
+    if (confocalSettings != null) {
+      for (int i=0; i<confocalSettings.getLength(); i++) {
+        Element confocalSetting = (Element) confocalSettings.item(i);
+
+        String value = confocalSetting.getAttribute("Pinhole");
+
+        if (value != null && !value.trim().isEmpty()) {
+          pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
+        }
+
+        value = confocalSetting.getAttribute("Zoom");
+
+        if (value != null && !value.trim().isEmpty()) {
+          zooms[image] = DataTools.parseDouble(value.trim());
+        }
+
+        value = confocalSetting.getAttribute("ObjectiveName");
+
+        if (value != null && !value.trim().isEmpty()) {
+          objectiveModels[image] = value.trim();
+        }
+
+        value = confocalSetting.getAttribute("FlipX");
+
+        if (value != null && !value.trim().isEmpty()) {
+          flipX[image] = "1".equals(value.trim());
+          addSeriesMeta("Reverse X orientation", flipX[image]);
+        }
+
+        value = confocalSetting.getAttribute("FlipY");
+
+        if (value != null && !value.trim().isEmpty()) {
+          flipY[image] = "1".equals(value.trim());
+          addSeriesMeta("Reverse Y orientation", flipY[image]);
+        }
+
+        value = confocalSetting.getAttribute("SwapXY");
+
+        if (value != null && !value.trim().isEmpty()) {
+          swapXY[image] = "1".equals(value.trim());
+          addSeriesMeta("Swap XY orientation", swapXY[image]);
         }
       }
     }
@@ -1972,6 +2048,7 @@ public class LIFReader extends FormatReader {
   private void translateAttachmentNodes(Element imageNode, int image)
     throws FormatException
   {
+    boolean tilesAttachmentFound = false;
     NodeList attachmentNodes = getNodes(imageNode, "Attachment");
     if (attachmentNodes == null) return;
     for (int i=0; i<attachmentNodes.getLength(); i++) {
@@ -1990,10 +2067,17 @@ public class LIFReader extends FormatReader {
           String posX = tileNode.getAttribute("PosX");
           String posY = tileNode.getAttribute("PosY");
 
+          while (fieldPosX.size() < image) {
+            fieldPosX.add(null);
+          }
+          while (fieldPosY.size() < image) {
+            fieldPosY.add(null);
+          }
+
           if (posX != null) {
             try {
               final Double number = DataTools.parseDouble(posX);
-              fieldPosX.add(new Length(number, UNITS.REFERENCEFRAME));
+              fieldPosX.add(new Length(number, UNITS.METER));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
@@ -2003,7 +2087,7 @@ public class LIFReader extends FormatReader {
           if (posY != null) {
             try {
               final Double number = DataTools.parseDouble(posY);
-              fieldPosY.add(new Length(number, UNITS.REFERENCEFRAME));
+              fieldPosY.add(new Length(number, UNITS.METER));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
@@ -2011,6 +2095,43 @@ public class LIFReader extends FormatReader {
             }
           }
         }
+        tilesAttachmentFound = true;
+      }
+    }
+
+    if (!tilesAttachmentFound) {
+      NodeList confocalSettings = null;
+      for (int i=0; i<attachmentNodes.getLength(); i++) {
+        Element attachment = (Element) attachmentNodes.item(i);
+
+        String attachmentName = attachment.getAttribute("Name");
+
+        if ("HardwareSetting".equals(attachmentName)) {
+          confocalSettings = getNodes(attachment, "ATLConfocalSettingDefinition");
+          break;
+        }
+      }
+
+      if (confocalSettings != null) {
+        for (int i=0; i<confocalSettings.getLength(); i++) {
+          Element confocalSetting = (Element) confocalSettings.item(i);
+
+          String value = confocalSetting.getAttribute("StagePosX");
+
+          if (value != null && !value.trim().isEmpty()) {
+            fieldPosX.add(new Length(DataTools.parseDouble(value.trim()), UNITS.METER));
+          }
+
+          value = confocalSetting.getAttribute("StagePosY");
+
+          if (value != null && !value.trim().isEmpty()) {
+            fieldPosY.add(new Length(DataTools.parseDouble(value.trim()), UNITS.METER));
+          }
+        }
+      }
+      else {
+        fieldPosX.add(null);
+        fieldPosY.add(null);
       }
     }
   }
@@ -2095,8 +2216,8 @@ public class LIFReader extends FormatReader {
         offByOnePhysicalLen /= 1000;
       }
       else if (unit.equals("m")) {
-        physicalLen *= 1000000;
-        offByOnePhysicalLen *= 1000000;
+        physicalLen *= METER_MULTIPLY;
+        offByOnePhysicalLen *= METER_MULTIPLY;
       }
 
       boolean oldPhysicalSize = useOldPhysicalSizeCalculation();
@@ -2352,16 +2473,16 @@ public class LIFReader extends FormatReader {
         roiY = transY - 2 * cornerY;
       }
 
-      // TODO : rotation/scaling not populated
+      // TODO : rotation not populated
 
       String shapeID = MetadataTools.createLSID("Shape", roi, 1);
       switch (type) {
         case POLYGON:
           final StringBuilder points = new StringBuilder();
           for (int i=0; i<x.size(); i++) {
-            points.append(x.get(i).doubleValue() + roiX);
+            points.append(x.get(i).doubleValue() * scaleX + roiX);
             points.append(",");
-            points.append(y.get(i).doubleValue() + roiY);
+            points.append(y.get(i).doubleValue() * scaleY + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
           store.setPolygonID(shapeID, roi, 1);
@@ -2403,19 +2524,19 @@ public class LIFReader extends FormatReader {
 
       // coordinates are in meters
 
-      transX *= 1000000;
-      transY *= 1000000;
+      transX *= METER_MULTIPLY;
+      transY *= METER_MULTIPLY;
       transX *= 1;
       transY *= 1;
 
       for (int i=0; i<x.size(); i++) {
-        double coordinate = x.get(i).doubleValue() * 1000000;
+        double coordinate = x.get(i).doubleValue() * METER_MULTIPLY;
         coordinate *= 1;
         x.set(i, coordinate);
       }
 
       for (int i=0; i<y.size(); i++) {
-        double coordinate = y.get(i).doubleValue() * 1000000;
+        double coordinate = y.get(i).doubleValue() * METER_MULTIPLY;
         coordinate *= 1;
         y.set(i, coordinate);
       }

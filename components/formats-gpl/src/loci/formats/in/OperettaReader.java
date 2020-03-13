@@ -228,7 +228,29 @@ public class OperettaReader extends FormatReader {
           reader = new MinimalTiffReader();
         }
         reader.setId(p.filename);
-        reader.openBytes(0, buf, x, y, w, h);
+        if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
+          reader.openBytes(0, buf, x, y, w, h);
+        }
+        else {
+          LOGGER.warn("Image dimension mismatch in {}", p.filename);
+
+          // the XY dimensions of this TIFF are smaller than expected,
+          // so read the stored image into the upper left corner
+          // the bottom and right side will have a black border
+          if (x < reader.getSizeX() && y < reader.getSizeY()) {
+            int realWidth = (int) Math.min(w, reader.getSizeX() - x);
+            int realHeight = (int) Math.min(h, reader.getSizeY() - y);
+            byte[] realPixels =
+              reader.openBytes(0, x, y, realWidth, realHeight);
+
+            int bpp = FormatTools.getBytesPerPixel(getPixelType());
+            int row = realWidth * bpp;
+            int outputRow = w * bpp;
+            for (int yy=0; yy<realHeight; yy++) {
+              System.arraycopy(realPixels, yy * row, buf, yy * outputRow, row);
+            }
+          }
+        }
         reader.close();
       }
     }
@@ -436,6 +458,31 @@ public class OperettaReader extends FormatReader {
       }
     }
 
+    // some series may not have valid XY dimensions,
+    // particularly if the first series was not recorded in the Index.idx.xml
+    // look for the first series that has valid dimensions and copy as needed
+    // this will allow blank planes to be returned instead of throwing an exception
+    //
+    // unrecorded series are kept so that fields can be compared across wells
+    int firstValidSeries = -1;
+    for (int i=0; i<seriesCount; i++) {
+      if (core.get(i).sizeX > 0 && core.get(i).sizeY > 0) {
+        firstValidSeries = i;
+        break;
+      }
+    }
+    if (firstValidSeries < 0) {
+      throw new FormatException("No valid images found");
+    }
+    for (int i=0; i<seriesCount; i++) {
+      if (core.get(i).sizeX == 0 || core.get(i).sizeY == 0) {
+        core.get(i).sizeX = core.get(firstValidSeries).sizeX;
+        core.get(i).sizeY = core.get(firstValidSeries).sizeY;
+        core.get(i).pixelType = core.get(firstValidSeries).pixelType;
+        core.get(i).littleEndian = core.get(firstValidSeries).littleEndian;
+      }
+    }
+
     addGlobalMeta("Plate name", handler.getPlateName());
     addGlobalMeta("Plate description", handler.getPlateDescription());
     addGlobalMeta("Plate ID", handler.getPlateIdentifier());
@@ -524,7 +571,8 @@ public class OperettaReader extends FormatReader {
           }
           if (planes[i][c] != null) {
             if (planes[i][c].acqType != null) {
-              store.setChannelAcquisitionMode(getAcquisitionMode(planes[i][c].acqType), i, c);
+              store.setChannelAcquisitionMode(
+                MetadataTools.getAcquisitionMode(planes[i][c].acqType), i, c);
             }
             if (planes[i][c].channelType != null) {
               store.setChannelContrastMethod(

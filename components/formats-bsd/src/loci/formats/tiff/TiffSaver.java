@@ -33,6 +33,7 @@
 package loci.formats.tiff;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -60,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffSaver {
+public class TiffSaver implements Closeable {
 
   // -- Constructor --
 
@@ -335,7 +336,10 @@ public class TiffSaver {
 
       // write pixel strips to output buffers
       // Check for the sane cases
-      if (ifd.getImageWidth() == w && ifd.getTileWidth() == w && channelsAllSameSize) {
+      if (channelsAllSameSize &&
+        (ifd.getImageWidth() == w && ifd.getTileWidth() == w) ||
+        (tileHeight * tileWidth * nChannels * bytesPerPixel == buf.length))
+      {
         // If the input, output, and tile widths are all the same,
         // and the input bytesPerPixel (which is actually bytes per sample)
         // matches the bits per channel for all channels,
@@ -476,7 +480,12 @@ public class TiffSaver {
           ifd = parser.getIFD(ifdOffsets[no]);
         }
         else if (no > 0 && no - 1 < ifdOffsets.length) {
-          ifd = parser.getIFD(ifdOffsets[no - 1]);
+          IFD copy = parser.getIFD(ifdOffsets[no - 1]);
+          for (Integer tag : copy.keySet()) {
+            if (!ifd.containsKey(tag)) {
+              ifd.put(tag, copy.get(tag));
+            }
+          }
           long next = parser.getNextOffset(ifdOffsets[no - 1]);
           out.seek(next);
         }
@@ -719,6 +728,11 @@ public class TiffSaver {
    * new data to the end of the file and updates the offset field; if not, or
    * if the old data is already at the end of the file, it overwrites the old
    * data in place.
+   *
+   * @param raf the input stream representing the file to be edited
+   * @param ifd the index into the list of IFDs {@see TiffParser#getIFDOffsets()}
+   * @param tag the tag code
+   * @param value the new value for the tag
    */
   public void overwriteIFDValue(RandomAccessInputStream raf,
     int ifd, int tag, Object value) throws FormatException, IOException
@@ -754,14 +768,79 @@ public class TiffSaver {
       throw new FormatException(
         "No such IFD (" + ifd + " of " + offsets.length + ")");
     }
-    raf.seek(offsets[ifd]);
+    overwriteIFDValue(raf, offsets[ifd], tag, value, true);
+  }
+
+  /**
+   * Surgically overwrites an existing IFD value with the given one. This
+   * method requires that the IFD directory entry already exist. It
+   * intelligently updates the count field of the entry to match the new
+   * length. If the new length is longer than the old length, it appends the
+   * new data to the end of the file and updates the offset field; if not, or
+   * if the old data is already at the end of the file, it overwrites the old
+   * data in place.
+   *
+   * @param raf the input stream representing the file to be edited
+   * @param ifdOffset the offset to the IFD
+   * @param tag the tag code
+   * @param value the new value for the tag
+   */
+  public void overwriteIFDValue(RandomAccessInputStream raf,
+    long ifdOffset, int tag, Object value) throws FormatException, IOException
+  {
+    overwriteIFDValue(raf, ifdOffset, tag, value, false);
+  }
+
+  /**
+   * Surgically overwrites an existing IFD value with the given one. This
+   * method requires that the IFD directory entry already exist. It
+   * intelligently updates the count field of the entry to match the new
+   * length. If the new length is longer than the old length, it appends the
+   * new data to the end of the file and updates the offset field; if not, or
+   * if the old data is already at the end of the file, it overwrites the old
+   * data in place.
+   *
+   * @param raf the input stream representing the file to be edited
+   * @param ifdOffset the offset to the IFD
+   * @param tag the tag code
+   * @param value the new value for the tag
+   * @param skipHeaderCheck true if the TIFF header does not need to be checked
+   */
+  public void overwriteIFDValue(RandomAccessInputStream raf,
+    long ifdOffset, int tag, Object value, boolean skipHeaderCheck)
+    throws FormatException, IOException
+  {
+    if (!skipHeaderCheck) {
+      raf.seek(0);
+      TiffParser parser = new TiffParser(raf);
+      Boolean valid = parser.checkHeader();
+      if (valid == null) {
+        throw new FormatException("Invalid TIFF header");
+      }
+
+      boolean little = valid.booleanValue();
+      boolean bigTiff = parser.isBigTiff();
+
+      setLittleEndian(little);
+      setBigTiff(bigTiff);
+    }
+
+    TiffParser parser = new TiffParser(raf);
+    boolean little = isLittleEndian();
+    boolean bigTiff = isBigTiff();
+    long offset = bigTiff ? 8 : 4; // offset to the IFD
+
+    int bytesPerEntry = bigTiff ?
+      TiffConstants.BIG_TIFF_BYTES_PER_ENTRY : TiffConstants.BYTES_PER_ENTRY;
+
+    raf.seek(ifdOffset);
 
     // get the number of directory entries
     long num = bigTiff ? raf.readLong() : raf.readUnsignedShort();
 
     // search directory entries for proper tag
     for (int i=0; i<num; i++) {
-      raf.seek(offsets[ifd] + (bigTiff ? 8 : 2) + bytesPerEntry * i);
+      raf.seek(ifdOffset + (bigTiff ? 8 : 2) + bytesPerEntry * i);
 
       TiffIFDEntry entry = parser.readTiffIFDEntry();
       if (entry.getTag() == tag) {
@@ -802,6 +881,18 @@ public class TiffSaver {
         LOGGER.debug("\tnew: (tag={}; type={}; count={}; offset={})",
           new Object[] {newTag, newType, newCount, newOffset});
 
+        // first overwrite the original value with 0s
+        // this makes sure that the original value is really gone
+        // and not just orphaned
+
+        int bytesPerElement = entry.getType().getBytesPerElement();
+        if (entry.getValueCount() > (offset / bytesPerElement)) {
+          out.seek(entry.getValueOffset());
+          for (int b=0; b<entry.getValueCount() * bytesPerElement; b++) {
+            out.writeByte(0);
+          }
+        }
+
         // determine the best way to overwrite the old entry
         if (extraBuf.length() == 0) {
           // new entry is inline; if old entry wasn't, old data is orphaned
@@ -809,7 +900,7 @@ public class TiffSaver {
           LOGGER.debug("overwriteIFDValue: new entry is inline");
         }
         else if (entry.getValueOffset() + entry.getValueCount() *
-          entry.getType().getBytesPerElement() == raf.length())
+          bytesPerElement == raf.length())
         {
           // old entry was already at EOF; overwrite it
           newOffset = entry.getValueOffset();
@@ -827,13 +918,13 @@ public class TiffSaver {
         }
 
         // overwrite old entry
-        out.seek(offsets[ifd] + (bigTiff ? 8 : 2) + bytesPerEntry * i + 2);
+        out.seek(ifdOffset + (bigTiff ? 8 : 2) + bytesPerEntry * i + 2);
         out.writeShort(newType);
         writeIntValue(out, newCount);
         writeIntValue(out, newOffset);
         if (extraBuf.length() > 0) {
           out.seek(newOffset);
-          out.write(extraBuf.getByteBuffer());
+          out.write(extraBuf.getByteBuffer(), 0, (int) extraBuf.length());
         }
         return;
       }

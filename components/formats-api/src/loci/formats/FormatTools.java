@@ -32,6 +32,7 @@
 
 package loci.formats;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -40,8 +41,11 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
@@ -2022,4 +2026,98 @@ public final class FormatTools {
     return new Time(value.getNumberValue(), valueUnit);
   }
 
+  /**
+   * Parse a length composed of a value and an optional unit
+   *
+   * @param s                a string composed of a positive value and
+   *                         an optional length unit
+   *
+   * @return                 a {@link Length} object or {@code null} if the
+   *                         string cannot be parsed
+   */
+  public static Length parseLength(String s) {
+    return parseLength(s, null);
+  }
+
+  /**
+   * Parse a length composed of a value and an optional unit
+   *
+   * @param s                a string composed of a positive value and
+                             an optional length unit
+   * @param defaultUnit      a default unit to use if not present in the string
+   *
+   * @return                 a {@link Length} object or {@code null} if the
+   *                         string cannot be parsed
+   */
+  public static Length parseLength(String s, String defaultUnit) {
+      Matcher m = Pattern.compile("\\s*([-e\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(s);
+      if (!m.matches()) {
+        LOGGER.warn("{} does not match a length", s);
+        return null;
+      }
+      Double value = DataTools.parseDouble(m.group(1));
+      if (value == null || value == Double.POSITIVE_INFINITY ||
+          value == Double.NEGATIVE_INFINITY) {
+        LOGGER.warn("{} is not a valid length value", m.group(1));
+        return null;
+      }
+      String unit = m.group(2);
+      if (unit == null || unit.trim().length() == 0) {
+        unit = defaultUnit;
+      }
+
+      Unit<Length> l = null;
+      try {
+        l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
+      } catch (EnumerationException e) {
+        LOGGER.warn("{} does not match a length unit!", unit);
+        return null;
+      }
+      return createLength(value, l);
+  }
+
+  /**
+   * Returns the maximum number of directories below the common parent of a
+   * list of file paths
+   *
+   * @param files            a string array containing a list of file paths
+   *
+   * @return                 the maximum number of directories under the common
+   *                         parent 
+   */
+  public static int getRequiredDirectories(String[] files)
+  {
+    if (files == null || files.length == 0) return 0;
+    final StringBuilder commonParent = new StringBuilder();
+
+    int dirCount = 0;
+
+    String[] dirs = files[0].split(File.separatorChar == '/' ? "/" : "\\\\");
+    for (String dir : dirs) {
+      boolean canAppend = true;
+      for (String f : files) {
+        if (!f.startsWith(commonParent.toString() + dir)) {
+          canAppend = false;
+          break;
+        }
+      }
+
+      if (canAppend) {
+        commonParent.append(dir);
+        commonParent.append(File.separator);
+        dirCount++;
+      }
+    }
+
+    int maxDirCount = 0;
+    for (String f : files) {
+      int parentDirCount =
+              f.split(File.separatorChar == '/' ? "/" : "\\\\").length - 1;
+      if (parentDirCount > maxDirCount) {
+        maxDirCount = parentDirCount;
+      }
+    }
+
+    return (int) Math.max(maxDirCount - dirCount, 0);
+  }
 }

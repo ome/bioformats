@@ -1419,8 +1419,8 @@ public class OIRReader extends FormatReader {
     if (tIndex < 0) {
       return 0;
     }
-    // assumes 3 digits
-    return Integer.parseInt(uid.substring(tIndex + 1, tIndex + 4)) - 1;
+    String tSubString = uid.substring(tIndex+1);
+    return Integer.parseInt(tSubString.substring(0, tSubString.indexOf("_"))) - 1;
   }
 
   private int getBlock(String uid) {

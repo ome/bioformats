@@ -259,19 +259,19 @@ public class ICSWriter extends FormatWriter {
         char dim = outputOrder.charAt(i);
         Number value = 1.0;
         if (dim == 'X') {
-          if (meta.getPixelsPhysicalSizeX(0) != null) {
+          if (meta.getPixelsPhysicalSizeX(0) != null && meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROMETER) != null) {
             value = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Y') {
-          if (meta.getPixelsPhysicalSizeY(0) != null) {
+          if (meta.getPixelsPhysicalSizeY(0) != null && meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROMETER) != null) {
             value = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Z') {
-          if (meta.getPixelsPhysicalSizeZ(0) != null) {
+          if (meta.getPixelsPhysicalSizeZ(0) != null && meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROMETER) != null) {
             value = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");

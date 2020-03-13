@@ -100,7 +100,7 @@ public class MetamorphReader extends BaseTiffReader {
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
   public static final Pattern WELL_COORDS = Pattern.compile(
-      "scan\\s+([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
+      "\\b([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
   );
 
   // IFD tag numbers of important fields
@@ -474,13 +474,14 @@ public class MetamorphReader extends BaseTiffReader {
 
       boolean globalDoZ = true;
       boolean doTimelapse = false;
+      boolean doWavelength = false;
 
       StringBuilder currentValue = new StringBuilder();
       String key = "";
 
       for (String line : lines) {
         int comma = line.indexOf(',');
-        if (comma <= 0) {
+        if (comma <= 0 && line.indexOf("EndFile") < 0) {
           currentValue.append("\n");
           currentValue.append(line);
           continue;
@@ -523,8 +524,16 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("DoZSeries")) {
           globalDoZ = Boolean.parseBoolean(value);
         }
+        else if (key.equals("DoWave")) {
+          doWavelength = Boolean.parseBoolean(value);
+        }
 
-        key = line.substring(1, comma - 1).trim();
+        if (comma >= 1) {
+          key = line.substring(1, comma - 1).trim();
+        }
+        else {
+          key = "";
+        }
         currentValue.delete(0, currentValue.length());
         currentValue.append(line.substring(comma + 1).trim());
       }
@@ -629,19 +638,21 @@ public class MetamorphReader extends BaseTiffReader {
             }
             stks[seriesNdx][pt[seriesNdx]] = prefix;
             if (j < waveNames.size() && waveNames.get(j) != null) {
-              stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
-              if (useWaveNames) {
-                String waveName = waveNames.get(j);
-                // If there are underscores in the wavelength name, translate
-                // them to hyphens. (See #558)
-                waveName = waveName.replace('_', '-');
-                // If there are slashes (forward or backward) in the wavelength
-                // name, translate them to hyphens. (See #5922)
-                waveName = waveName.replace('/', '-');
-                waveName = waveName.replace('\\', '-');
-                waveName = waveName.replace('(', '-');
-                waveName = waveName.replace(')', '-');
-                stks[seriesNdx][pt[seriesNdx]] += waveName;
+              if (doWavelength) {
+                stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
+                if (useWaveNames) {
+                  String waveName = waveNames.get(j);
+                  // If there are underscores in the wavelength name, translate
+                  // them to hyphens. (See #558)
+                  waveName = waveName.replace('_', '-');
+                  // If there are slashes (forward or backward) in the wavelength
+                  // name, translate them to hyphens. (See #5922)
+                  waveName = waveName.replace('/', '-');
+                  waveName = waveName.replace('\\', '-');
+                  waveName = waveName.replace('(', '-');
+                  waveName = waveName.replace(')', '-');
+                  stks[seriesNdx][pt[seriesNdx]] += waveName;
+                }
               }
             }
             if (nstages > 0) {
@@ -759,9 +770,15 @@ public class MetamorphReader extends BaseTiffReader {
     Map<String, Integer> rowMap = null;
     Map<String, Integer> colMap = null;
     isHCS = true;
+    if (stageLabels == null && stageNames != null) {
+      stageLabels = stageNames.toArray(new String[stageNames.size()]);
+    }
+
     if (null == stageLabels) {
       isHCS = false;
-    } else {
+    } else if (stks == null ||
+      (stks != null && stageLabels.length == stks.length))
+    {
       Set<Map.Entry<Integer, Integer>> uniqueWells =
         new HashSet<Map.Entry<Integer, Integer>>();
       rowMap = new HashMap<String, Integer>();
@@ -780,25 +797,32 @@ public class MetamorphReader extends BaseTiffReader {
         rowMap.put(label, wellCoords.getKey());
         colMap.put(label, wellCoords.getValue());
       }
-      if (uniqueWells.size() != stageLabels.length) {
+      if (uniqueWells.size() != stageLabels.length ||
+        rowMap.size() == 0)
+      {
         isHCS = false;
       } else {
-        rows = Collections.max(rowMap.values());
-        cols = Collections.max(colMap.values());
-        CoreMetadata c = core.get(0, 0);
-        core.clear();
-        c.sizeZ = 1;
-        c.sizeT = 1;
-        c.imageCount = 1;
-        for (int s = 0; s < uniqueWells.size(); s++) {
-          CoreMetadata toAdd = new CoreMetadata(c);
-          if (s > 0) {
-            toAdd.seriesMetadata.clear();
+        rows = Collections.max(rowMap.values()) + 1;
+        cols = Collections.max(colMap.values()) + 1;
+        if (rows > 0 && cols > 0) {
+          CoreMetadata c = core.get(0, 0);
+          core.clear();
+          c.sizeZ = 1;
+          c.sizeT = 1;
+          c.imageCount = 1;
+          for (int s = 0; s < uniqueWells.size(); s++) {
+            CoreMetadata toAdd = new CoreMetadata(c);
+            if (s > 0) {
+              toAdd.seriesMetadata.clear();
+            }
+            core.add(toAdd);
           }
-          core.add(toAdd);
+          seriesToIFD = true;
         }
-        seriesToIFD = true;
       }
+    }
+    if (rows <= 0 || cols <= 0) {
+      isHCS = false;
     }
 
     List<String> timestamps = null;
@@ -2000,7 +2024,7 @@ public class MetamorphReader extends BaseTiffReader {
    */
   private String locateFirstValidFile() {
     for (int q = 0; q < stks.length; q++) {
-      for (int f = 0; f < stks.length; f++) {
+      for (int f = 0; f < stks[q].length; f++) {
         if (stks[q][f] != null) {
           return stks[q][f];
         }
@@ -2142,6 +2166,12 @@ public class MetamorphReader extends BaseTiffReader {
   }
 
   private Map.Entry<Integer, Integer> getWellCoords(String label) {
+    if (label.indexOf(",") >= 0) {
+      label = label.substring(0, label.indexOf(","));
+    }
+    if (label.indexOf(":") >= 0) {
+      label = label.substring(label.indexOf(":") + 1);
+    }
     Matcher matcher = WELL_COORDS.matcher(label);
     if (!matcher.find()) return null;
     int nGroups = matcher.groupCount();

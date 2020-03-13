@@ -102,6 +102,10 @@ public class SVSReader extends BaseTiffReader {
     canSeparateSeries = false;
   }
 
+  public SVSReader(String name, String[] suffixes) {
+    super(name, suffixes);
+  }  
+  
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */

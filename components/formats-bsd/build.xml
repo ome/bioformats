@@ -17,7 +17,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test" depends="jar,compile-tests,test-long-running,
       test-no-ome-xml,test-no-exif,
-      test-no-xerces,test-spec"
+      test-spec"
     description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
@@ -76,31 +76,6 @@ Type "ant -p" for a list of targets.
     </path>
     <testng failureProperty="failedTest">
       <classpath refid="test-no-exif.classpath"/>
-      <classpath>
-        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
-        <pathelement location="${test-classes.dir}"/>
-        <pathelement location="${classes.dir}"/>
-      </classpath>
-      <xmlfileset file="${build.dir}/testng.xml"/>
-      <jvmarg value="-mx${testng.memory}"/>
-    </testng>
-    <fail if="failedTest"/>
-  </target>
-
-  <target name="test-no-xerces" depends="compile-tests"
-    description="run missing Xerces JAR tests" if="doTests">
-    <copy tofile="${build.dir}/testng.xml" overwrite="true"
-      file="${tests.dir}/loci/formats/utests/testng-no-xerces.xml"/>
-    <path id="test-no-xerces.classpath">
-      <restrict>
-        <path refid="test.classpath"/>
-        <rsel:not>
-          <rsel:name name="xerces*.jar"/>
-        </rsel:not>
-      </restrict>
-    </path>
-    <testng failureProperty="failedTest">
-      <classpath refid="test-no-xerces.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>

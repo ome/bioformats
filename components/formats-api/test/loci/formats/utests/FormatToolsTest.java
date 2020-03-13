@@ -177,6 +177,62 @@ public class FormatToolsTest {
     };
   }
 
+  @DataProvider(name = "lengthStringsWithDefault")
+  public Object[][] createLengthStringsWithDefault() {
+    return new Object[][] {
+      {"invalidvalue", "", "m", null},
+      {"1.0", "", "", null},
+      {"1.0", "", "s", null},
+      {"1.0", "s", "m", null},
+      {"1e400", "m", "", null},
+      {"-1e400", "m", "", null},
+      {"e10", "m", "", null},
+      {"1.0", "invalidunit", "m", null},
+      {"-0.1", "m", "", new Length(-0.1, UNITS.METER)},
+      {"0.0", "m", "", new Length(0.0, UNITS.METER)},
+      {"1.0", "m", "", new Length(1.0, UNITS.METER)},
+      {"1.0", "m", "m", new Length(1.0, UNITS.METER)},
+      {"1.0", "m", "mm", new Length(1.0, UNITS.METER)},
+      {"1.0", "mm", "mm", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0", "", "m", new Length(1.0, UNITS.METER)},
+      {"1.0", "", "mm", new Length(1.0, UNITS.MILLIMETER)},
+    };
+  }
+
+  @DataProvider(name = "lengthStrings")
+  public Object[][] createLengthStrings() {
+    return new Object[][] {
+      {"1.0", "", null},
+      {"invalidvalue", "", null},
+      {"1.0", "invalidunit", null},
+      {"1.0", "s", null},
+      {"1e400", "m", null},
+      {"-1e400", "m", null},
+      {"e10", "m", null},
+      {"-1e-3", "mm", new Length(-0.001, UNITS.MILLIMETER)},
+      {"-0.1", "m", new Length(-0.1, UNITS.METER)},
+      {"0.0", "m", new Length(0.0, UNITS.METER)},
+      {"1.0", "m", new Length(1.0, UNITS.METER)},
+      {"1.0", "mm", new Length(1.0, UNITS.MILLIMETER)},
+    };
+  }
+
+
+  @DataProvider(name = "fileLists")
+  public Object[][] createFileLists() {
+    return new Object[][] {
+      {null, 0},
+      {new String[]{}, 0},
+      {new String[]{"/dir1/dir2/test.tif"}, 0},
+      {new String[]{"test.tif"}, 0},
+      {new String[]{"/dir1/dir2/test.tif", "/dir1/dir2/test2.tif"}, 0},
+      {new String[]{"/dir1/test.tif", "/dir1/dir2/test2.tif"}, 1},
+      {new String[]{"test.tif", "dir2/test2.tif"}, 1},
+      {new String[]{"/test.tif", "/dir1/dir2/test2.tif"}, 2},
+      {new String[]{"/dir1/dir2/test.tif", "/dir3/dir4/dir5/test2.tif"}, 3},
+    };
+  }
+
   @Test(dataProvider = "stagePositionStringUnit")
   public void testGetStagePositionStringUnit(Double value, String unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
@@ -186,5 +242,26 @@ public class FormatToolsTest {
   @Test(dataProvider = "stagePositionUnit")
   public void testGetStagePositionUnit(Double value, Unit<Length> unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
+  }
+
+  @Test(dataProvider = "lengthStringsWithDefault")
+  public void testParseLengthWithDefault(String value, String unit, String defaultUnit, Length length) {
+    assertEquals(length, FormatTools.parseLength(value + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(value + " " + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(" " + value + unit, defaultUnit));
+    assertEquals(length, FormatTools.parseLength(value + unit + " ", defaultUnit));
+  }
+
+  @Test(dataProvider = "lengthStrings")
+  public void testParseLength(String value, String unit, Length length) {
+    assertEquals(length, FormatTools.parseLength(value + unit));
+    assertEquals(length, FormatTools.parseLength(value + " " + unit));
+    assertEquals(length, FormatTools.parseLength(" " + value + unit));
+    assertEquals(length, FormatTools.parseLength(value + unit + " "));
+  }
+  
+  @Test(dataProvider = "fileLists")
+  public void testGetRequiredDirectories(String[] files, int number) {
+    assertEquals(number, FormatTools.getRequiredDirectories(files));
   }
 }

@@ -25,6 +25,7 @@ loci.formats.in.GIFReader             # gif
 loci.formats.in.BMPReader             # bmp
 loci.formats.in.IPLabReader           # ipl
 loci.formats.in.IvisionReader         # ipm
+loci.formats.in.RCPNLReader           # rcpnl
 loci.formats.in.DeltavisionReader     # dv, r3d
 loci.formats.in.MRCReader             # mrc, st, ali
 loci.formats.in.GatanReader           # dm3
@@ -148,6 +149,7 @@ loci.formats.in.LEOReader             # sxm
 loci.formats.in.JPKReader             # jpk
 loci.formats.in.NDPIReader            # ndpi
 loci.formats.in.PCORAWReader          # pcoraw
+loci.formats.in.VentanaReader         # bif
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.OMETiffReader         # tif
@@ -163,6 +165,7 @@ loci.formats.in.MicromanagerReader    # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
 loci.formats.in.NikonTiffReader       # tif
+loci.formats.in.MikroscanTiffReader   # tif
 loci.formats.in.PhotoshopTiffReader   # tif
 loci.formats.in.FEITiffReader         # tif
 loci.formats.in.SimplePCITiffReader   # tif
@@ -193,3 +196,4 @@ loci.formats.in.HitachiReader         # txt, tif, jpg, bmp
 loci.formats.in.BrukerReader          # fid, acqp
 loci.formats.in.CanonRawReader        # cr2, crw, jpg, thm, wav
 loci.formats.in.OBFReader             # obf, msr
+loci.formats.in.BDVReader             # xml, h5

@@ -156,6 +156,10 @@ public class FormatReaderTest {
     return id;
   }
 
+  public String toString() {
+    return getID();
+  }
+
   // -- Setup/teardown methods --
 
   @BeforeClass
@@ -1160,7 +1164,12 @@ public class FormatReaderTest {
       if (retrieve.getImageAcquisitionDate(i) != null) {
         date = retrieve.getImageAcquisitionDate(i).getValue();
       }
-      if (expectedDate != null && date != null && !expectedDate.equals(date)) {
+      boolean bothNull = date == null && expectedDate == null;
+      boolean bothNotNull = date != null && expectedDate != null;
+
+      if ((!bothNull && !bothNotNull) ||
+        (bothNotNull && !expectedDate.equals(date)))
+      {
         result(testName, false, "series " + i +
           " (expected " + expectedDate + ", actual " + date + ")");
         return;
@@ -1928,6 +1937,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // CellWorx datasets can only be reliably detected with the .HTD file
+          if (reader.getFormat().equals("CellWorx")) {
+            continue;
+          }
+
           // NRRD datasets are allowed to have differing used files.
           // One raw file can have multiple header files associated with
           // it, in which case selecting the raw file will always produce
@@ -1936,6 +1950,17 @@ public class FormatReaderTest {
             base[i].toLowerCase().endsWith(".nhdr"))
           {
             continue;
+          }
+
+          // Companion file grouping non-ome-tiff files:
+          // setId must be called on the companion file
+          if (reader.getFormat().equals("OME-TIFF")) {
+            if (file.toLowerCase().endsWith(".companion.ome") &&
+                !OMETiffReader.checkSuffix(base[i],
+                                           OMETiffReader.OME_TIFF_SUFFIXES))
+            {
+              continue;
+            }
           }
 
           r.setId(base[i]);
@@ -2416,6 +2441,16 @@ public class FormatReaderTest {
           for (int j=0; j<readers.length; j++) {
             boolean result = readers[j].isThisType(used[i]);
 
+            // Companion file grouping non-ome-tiff files:
+            // setId must be called on the companion file
+            if (!result && readers[j] instanceof OMETiffReader &&
+                r.getCurrentFile().toLowerCase().endsWith(".companion.ome") &&
+                !OMETiffReader.checkSuffix(used[i],
+                                           OMETiffReader.OME_TIFF_SUFFIXES))
+            {
+              continue;
+            }
+
             // TIFF reader is allowed to redundantly green-light files
             if (result && readers[j] instanceof TiffDelegateReader) continue;
 
@@ -2475,7 +2510,8 @@ public class FormatReaderTest {
             // Columbus datasets can consist of OME-TIFF files with
             // extra metadata files
             if (result && r instanceof ColumbusReader &&
-              readers[j] instanceof OMETiffReader)
+              (readers[j] instanceof OMETiffReader ||
+               readers[j] instanceof FlexReader))
             {
               continue;
             }
@@ -2645,6 +2681,20 @@ public class FormatReaderTest {
             // ignore anything other than .wpi for CV7000
             if (!used[i].toLowerCase().endsWith(".wpi") &&
               r instanceof CV7000Reader)
+            {
+              continue;
+            }
+
+            // Deltavision reader can pick up .rcpnl files
+            if (result && (r instanceof RCPNLReader) &&
+              (readers[j] instanceof DeltavisionReader))
+            {
+              continue;
+            }
+
+            // CellWorx datasets can only be reliably detected with the .HTD file
+            if (!used[i].toLowerCase().endsWith(".htd") &&
+              r instanceof CellWorxReader)
             {
               continue;
             }
