@@ -58,7 +58,11 @@ filename = varargin{2};
 [mypath,myname,myend] = fileparts(filename);
 if length(myname)<4 || ((strcmp(myend,'.tif') || strcmp(myend,'.tiff')) && ~strcmp(myname(end-3:end),'.ome'))
     fprintf('WARNING: Filename to save %s did is not an ome.tif, changed filename to comply with the OME standards.\n',filename);
-    varargin{2} = [mypath filesep myname '.ome.tif'];
+    if isempty(mypath)
+        varargin{2} = [myname '.ome.tif'];
+    else
+        varargin{2} = [mypath filesep myname '.ome.tif'];
+    end
 end
 end
 
@@ -100,13 +104,15 @@ end
 
 writer.setWriteSequentially(true);
 
-newid=['ImageJ=1.51j' char(10)];
-newid=[newid 'images=' num2str(size(DataToWrite,3)) char(10)];
-newid=[newid 'slices=' num2str(size(DataToWrite,3)) char(10)];
-newid=[newid 'unit=µm' char(10)];
-newid=[newid 'spacing=' num2str(double(metadata.getPixelsPhysicalSizeZ(0).value))];
-newid=[newid 'loop=false' char(10)];
-metadata.setImageDescription(newid,0);
+% if (~isempty(metadata.getPixelsPhysicalSizeZ(0)))
+%     newid=['ImageJ=1.51j' char(10)];
+%     newid=[newid 'images=' num2str(size(DataToWrite,3)) char(10)];
+%     newid=[newid 'slices=' num2str(size(DataToWrite,3)) char(10)];
+%     newid=[newid 'unit=µm' char(10)];
+%         newid=[newid 'spacing=' num2str(double(metadata.getPixelsPhysicalSizeZ(0).value))];
+%     newid=[newid 'loop=false' char(10)];
+%     metadata.setImageDescription(newid,0);
+% end
 
 writer.setMetadataRetrieve(metadata);
 if ~isempty(ip.Results.Compression)
