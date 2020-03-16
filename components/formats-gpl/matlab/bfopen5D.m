@@ -3,7 +3,7 @@ function [ResData,AllColorMaps,LabelList,FileInfo,OMEMetaData,seriesNumber] = bf
 % based on the bfopen function, but optimized for importing up to 5D data.
 %
 % SYNOPSIS [ResData,AllColorMaps,LabelList,FileInfo,OMEMetaData] = bfopen5D(id)
-%          [ResData,AllColorMaps,LabelList,FileInfo,OMEMetaData] = bfopen5D(id, x, y, w, h)
+%          [ResData,AllColorMaps,LabelList,FileInfo,OMEMetaData] = bfopen5D(id, x, y, w, h, cs, ce, ts, te)
 %
 % Input
 %    r - the reader object (e.g. the output bfGetReader)
@@ -137,9 +137,8 @@ bfInitLogging();
 r = bfGetReader(id, stitchFiles);
 
 % Test plane size
-if nargin >=4
-    planeSize = javaMethod('getPlaneSize', 'loci.formats.FormatTools', ...
-                           r, varargin{3}, varargin{4});
+if nargin >=4 && ~isempty(varargin{3}) && ~isempty(varargin{4})
+    planeSize = javaMethod('getPlaneSize', 'loci.formats.FormatTools', r, varargin{3}, varargin{4});
 else
     planeSize = javaMethod('getPlaneSize', 'loci.formats.FormatTools', r);
 end
@@ -186,6 +185,55 @@ else
     indx=[1:numSeries];
 end
 
+if SizeC > 1 && nargin >= 5 && ~isempty(varargin{5}) % time range was specified
+    cs = varargin{5};
+else
+    cs = 1; 
+end
+if SizeC > 1 && nargin >= 6 && ~isempty(varargin{6}) % time range was specified
+    ce = varargin{6};
+else
+    ce = SizeC;
+end
+
+myans=[];
+if SizeT > 1 && nargin >= 7 && ~isempty(varargin{7}) % time range was specified
+    if varargin{7} < 0  % raise a user dialoge to ask whether the whole series should be loaded or only this one file
+        myans=questdlg('This file contains a time series. Do you want to load the whole series or just one time point?','Load Series?','Single Timepoint','Series','Single Timepoint');
+        if strcmp(myans,'Single Timepoint')
+            NameList = r.getSeriesUsedFiles();
+            myName = string(r.getCurrentFile());
+            toLoad = 1;
+            [~,~,myFormat] = fileparts(myName);
+            curIdx = 0;
+            for q=1:length(NameList)
+                curName = string(NameList(q));
+                [~,~,curFormat] = fileparts(curName);
+                if strcmp(lower(curFormat),lower(myFormat))
+                   curIdx = curIdx+1; 
+                end
+                if contains(lower(curName),lower(myName))
+                    toLoad = curIdx;
+                end
+            end
+            myZct = double(r.getZCTCoords((toLoad-1)*SizeZ)); 
+            ts = myZct(3)+1;
+            te = myZct(3)+1;
+        else
+            ts = 1; te = SizeT;
+        end
+    end
+else
+    ts = 1; 
+end
+if isempty(myans)
+    if SizeC > 1 && nargin >= 8 && ~isempty(varargin{8}) % time range was specified
+        te = varargin{8};
+    else
+        te = SizeT;
+    end
+end
+
 didReadFirst=0;
 for s = 1:numSeries
     if ~ismember(s,indx)
@@ -209,17 +257,30 @@ for s = 1:numSeries
         if mod(i,32)==0
            fprintf(', %2.0f percent\n',100*i/(numImages*numSeries));
         end
-        arr = bfGetPlane(r, i, varargin{:});
+        
+        zct = r.getZCTCoords(i - 1);
+        mycol = zct(2)+1 ;
+        mytime = zct(3)+1 ;
+        if mycol < cs || mycol > ce || mytime < ts || mytime > te
+            % fprintf('skipping time point: %d\n',mytime);
+            continue; % skip this
+        end
+
+        if nargin<=4 || isempty(varargin{1}) || isempty(varargin{2}) || isempty(varargin{3}) || isempty(varargin{4})
+            arr = bfGetPlane(r, i);
+        else
+            arr = bfGetPlane(r, i, varargin{1:4}); % do not include the color and time range in the bfGetPlane call
+        end
         [SizeX,SizeY] = size(arr);
         SizeZ = r.getSizeZ();
         SizeC = r.getSizeC();
         SizeT = r.getSizeT();
-        TotalSize = [SizeX,SizeY,SizeZ,SizeC,SizeT];
+        TotalSize = [SizeX,SizeY,SizeZ];
         if i==1
            fprintf('Series %d, datatype: %s. Casted to uint16.\n',s,class(arr));
         end
-        if i==1 && didReadFirst==0 % first plane read
-            ResData = zeros([SizeX,SizeY,SizeZ,SizeC,SizeT],'uint16');  % class(arr)
+        if didReadFirst==0 % first plane read
+            ResData = zeros([SizeX,SizeY,SizeZ,ce-cs+1,te-ts+1],'uint16');  % class(arr)
             LabelList = cell(1,SizeC);
             seriesMetadata = r.getSeriesMetadata();
             javaMethod('merge', 'loci.formats.MetadataTools', ...
@@ -228,10 +289,9 @@ for s = 1:numSeries
             % reshape(ResData,TotalSize);
             OMEMetaData = r.getMetadataStore();            
         end
-        if ~equalsizes(size(ResData),TotalSize)
-            if i == 1
-                fprintf('Problem reading data. Size Variation in series! Slice %d plane %d. Ignoring...\n',s,i);   
-            end
+        sall = size(ResData);
+        if ~equalsizes(sall(1:3),TotalSize)
+            fprintf('Problem reading data. Size Variation in series! Slice %d plane %d. Ignoring...\n',s,i);   
             break;  % finishes this for loop and continues with the next series
         end
 
@@ -295,7 +355,7 @@ for s = 1:numSeries
         else
         end
         % save image plane and label into the list
-        ResData(:,:,zct(1)+1,zct(2)+1,zct(3)+1) = arr;
+        ResData(:,:,zct(1)+1,zct(2)+1-(cs-1),zct(3)+1-(ts-1)) = arr;
 %        imageList{i, 2} = label;
     end
 
@@ -345,7 +405,6 @@ FileInfo=struct('physDims',astruct);
 r.close();
 
 % isequal=equasizes(size1,size2) : Determines whether the two sizes are equal exept for trailing singleton dimensions
-% Author: Rainer Heintzmann
 function isequal=equalsizes(size1,size2)
 l1=length(size1);l2=length(size2);
 if l1 > l2
