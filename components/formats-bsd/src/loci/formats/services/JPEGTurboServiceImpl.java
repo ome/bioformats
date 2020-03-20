@@ -291,13 +291,17 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     for (int row=0; row<restartInterval; row++) {
       int end = start + 1;
 
+      long startOffset = restartMarkers.get(start);
+      long endOffset = in.length();
       if (end < restartMarkers.size()) {
-        long startOffset = restartMarkers.get(start);
-        long endOffset = restartMarkers.get(end);
-
-        dataLength += (endOffset - startOffset);
+        endOffset = restartMarkers.get(end);
       }
+
+      dataLength += (endOffset - startOffset);
       start += xTiles;
+      if (start >= restartMarkers.size()) {
+        break;
+      }
     }
 
     byte[] data = new byte[(int) dataLength];
@@ -310,18 +314,25 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     for (int row=0; row<restartInterval; row++) {
       int end = start + 1;
 
+      long endOffset = in.length();
+
       if (end < restartMarkers.size()) {
-        long startOffset = restartMarkers.get(start);
-        long endOffset = restartMarkers.get(end);
-
-        in.seek(startOffset);
-        in.read(data, offset, (int) (endOffset - startOffset - 2));
-        offset += (int) (endOffset - startOffset - 2);
-
-        DataTools.unpackBytes(0xffd0 + (row % 8), data, offset, 2, false);
-        offset += 2;
+        endOffset = restartMarkers.get(end);
       }
+      long startOffset = restartMarkers.get(start);
+
+      in.seek(startOffset);
+      int toRead = (int) (endOffset - startOffset - 2);
+      in.read(data, offset, toRead);
+      offset += toRead;
+
+      DataTools.unpackBytes(0xffd0 + (row % 8), data, offset, 2, false);
+      offset += 2;
       start += xTiles;
+
+      if (start >= restartMarkers.size()) {
+        break;
+      }
     }
 
     DataTools.unpackBytes(EOI, data, offset, 2, false);
