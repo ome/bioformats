@@ -71,6 +71,7 @@ import org.w3c.dom.NodeList;
 /**
  * OBFReader is the file format reader for Imspector OBF files.
  *
+ * @see <a href="https://imspectordocs.readthedocs.io/en/latest/fileformat.html#the-obf-file-format">The OBF File Format</a>
  * @author Bjoern Thiel bjoern.thiel at mpibpc.mpg.de
  */
 
@@ -557,6 +558,11 @@ public class OBFReader extends FormatReader {
         in.skipBytes(obsoleteMetadataLength);
 
         if (numFlushPoints > 0) {
+            if (numFlushPoints > Integer.MAX_VALUE ) {
+              throw new FormatException("The implementation can not currently " +
+                "handle more than Integer.MAX_VALUE flush points");
+            }
+
             List<Long> flushPoints = new ArrayList<>((int)numFlushPoints);
             for (int i = 0; i < numFlushPoints; ++i) {
                 flushPoints.add(in.readLong());
@@ -567,6 +573,11 @@ public class OBFReader extends FormatReader {
         in.skipBytes(tagDictionaryLength);
 
         if (numChunkPositions > 0) {
+          if (numChunkPositions > Integer.MAX_VALUE ) {
+              throw new FormatException("The implementation can not currently " +
+                "handle more than Integer.MAX_VALUE chunk positions");
+            }
+
           List<Long> logicalPositions = new ArrayList<>((int)numChunkPositions + 1);
           List<Long> filePositions = new ArrayList<>((int)numChunkPositions + 1);
 
@@ -652,11 +663,17 @@ public class OBFReader extends FormatReader {
   }
 
   private long remainingBytesInChunk(Stack stack)
-    throws IOException
+    throws IOException, FormatException
   {
-    return state.chunkFileStart +
+    long result = state.chunkFileStart +
         state.chunkSize -
         in.getFilePointer();
+
+    if (result < 0) {
+      throw new FormatException("Negative remaining bytes in chunk; malformed file?");
+    }
+
+    return result;
   }
 
   private void readFromStackRaw(Stack stack, byte[] buffer, int bufferOffset, int bytes)
@@ -673,11 +690,15 @@ public class OBFReader extends FormatReader {
 
       int bytesToRead = (int)Math.min(bytes, remainingBytesInChunk);
 
-      in.read(
-        buffer,
-        bufferOffset,
-        bytesToRead
-      );
+      if(buffer != null) {
+        in.read(
+          buffer,
+          bufferOffset,
+          bytesToRead
+        );
+      } else {
+        in.skipBytes(bytesToRead);
+      }
 
       bufferOffset += bytesToRead;
       remainingBytesInChunk -= bytesToRead;
@@ -817,7 +838,7 @@ public class OBFReader extends FormatReader {
     boolean hasChunks = stack.chunkLogicalPositions != null;
 
     if (!stack.compression && !hasChunks) {
-      in.seek(in.getFilePointer() + byteCount);
+      in.skipBytes(byteCount);
       state.nextReadPosition += byteCount;
     } else if (stack.compression) {
       if (skipBuffer == null) {
@@ -830,19 +851,10 @@ public class OBFReader extends FormatReader {
         byteCount -= readSize;
       }
     } else {
-      long remainingBytesInChunk = remainingBytesInChunk(stack);
-
-      while (byteCount > 0) {
-        while (remainingBytesInChunk == 0) {
-          switchChunk(stack, state.currentChunk + 1);
-          in.seek(state.chunkFileStart);
-          remainingBytesInChunk = remainingBytesInChunk(stack);
-        }
-
-        long skipSize = Math.min(remainingBytesInChunk, byteCount);
-        in.seek(in.getFilePointer() + skipSize);
+      while(byteCount > 0) {
+        int skipSize = (int)Math.min(byteCount, Integer.MAX_VALUE);
+        readFromStackRaw(stack, null, 0, skipSize);
         byteCount -= skipSize;
-        remainingBytesInChunk -= skipSize;
       }
     }
   }
