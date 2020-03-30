@@ -2692,6 +2692,13 @@ public class FormatReaderTest {
               continue;
             }
 
+            // CellWorx datasets can only be reliably detected with the .HTD file
+            if (!used[i].toLowerCase().endsWith(".htd") &&
+              r instanceof CellWorxReader)
+            {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;

@@ -49,24 +49,19 @@ ip.addRequired('r', isValidReader);
 ip.parse(r);
 
 % Plane check
-isValidPlane = @(x) isscalar(x) && ismember(x, 1 : r.getImageCount());
+isValidPlane = @(p) bfTestInRange(p,'iPlane',r.getImageCount());
 % Optional tile arguments check
-isValidX = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
-isValidY = @(x) isscalar(x) && ismember(x, 1 : r.getSizeY());
+isValidX = @(x) bfTestInRange(x,'x',r.getSizeX());
+isValidY = @(y) bfTestInRange(y,'y',r.getSizeY());
+isValidWidth = @(w) bfTestInRange(w,'width',r.getSizeX()-varargin{2}+1);
+isValidHeight = @(h) bfTestInRange(h,'height',r.getSizeY()-varargin{3}+1);
+
 ip.addRequired('iPlane', isValidPlane);
 ip.addOptional('x', 1, isValidX);
 ip.addOptional('y', 1, isValidY);
-ip.addOptional('width', r.getSizeX(), isValidX);
-ip.addOptional('height', r.getSizeY(), isValidY);
+ip.addOptional('width', r.getSizeX(), isValidWidth);
+ip.addOptional('height', r.getSizeY(), isValidHeight);
 ip.parse(r, varargin{:});
-
-% Additional check for tile size
-assert(ip.Results.x - 1 + ip.Results.width <= r.getSizeX(),...
-     'MATLAB:InputParser:ArgumentFailedValidation',...
-     'Invalid tile size');
-assert(ip.Results.y - 1 + ip.Results.height <= r.getSizeY(),...
-     'MATLAB:InputParser:ArgumentFailedValidation',...
-     'Invalid tile size');
 
 % Get pixel type
 pixelType = r.getPixelType();

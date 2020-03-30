@@ -47,6 +47,7 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.JPEGXRCodec;
 import loci.formats.codec.LZWCodec;
 import loci.formats.codec.LuraWaveCodec;
 import loci.formats.codec.NikonCodec;
@@ -193,7 +194,8 @@ public enum TiffCompression implements CodedEnum {
  
   },
   NIKON(34713, new NikonCodec(), "Nikon"),
-  LURAWAVE(65535, new LuraWaveCodec(), "LuraWave");
+  LURAWAVE(65535, new LuraWaveCodec(), "LuraWave"),
+  JPEGXR(22610, new JPEGXRCodec(), "JPEG-XR");
 
   // -- Constants --
 

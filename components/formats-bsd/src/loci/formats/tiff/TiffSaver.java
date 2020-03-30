@@ -33,6 +33,7 @@
 package loci.formats.tiff;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -60,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffSaver {
+public class TiffSaver implements Closeable {
 
   // -- Constructor --
 

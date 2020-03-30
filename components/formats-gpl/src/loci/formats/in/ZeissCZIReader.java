@@ -343,6 +343,7 @@ public class ZeissCZIReader extends FormatReader {
 
     Arrays.fill(buf, (byte) 0);
     boolean emptyTile = true;
+    int compression = -1;
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
       int baseResolution = currentIndex;
@@ -391,6 +392,7 @@ public class ZeissCZIReader extends FormatReader {
 
             if (tile.intersects(image)) {
               emptyTile = false;
+              compression = plane.directoryEntry.compression;
               byte[] rawData = new SubBlock(plane).readPixelData();
               Region intersection = tile.intersection(image);
               int intersectionX = 0;
@@ -437,6 +439,7 @@ public class ZeissCZIReader extends FormatReader {
             else {
               rawData = new SubBlock(plane).readPixelData();
             }
+            compression = plane.directoryEntry.compression;
             if (rawData.length > buf.length || pixels.size() > 0) {
               RandomAccessInputStream s = new RandomAccessInputStream(rawData);
               try {
@@ -457,8 +460,9 @@ public class ZeissCZIReader extends FormatReader {
     } finally {
     }
 
-    if (isRGB() && !emptyTile) {
+    if (isRGB() && !emptyTile && compression != JPEGXR) {
       // channels are stored in BGR order; red and blue channels need switching
+      // JPEG-XR data has already been reversed during decompression
       int redOffset = bpp * 2;
       for (int i=0; i<buf.length/pixel; i++) {
         int index = i * pixel;
@@ -1744,15 +1748,15 @@ public class ZeissCZIReader extends FormatReader {
             }
             break;
           case 'T':        	  
-    		  int startIndex = dimension.start;
-    		  int endIndex = startIndex + dimension.size;
+    		    int startIndex = dimension.start;
+    		    int endIndex = startIndex + dimension.size;
     	  
-    		  for (int i=startIndex; i<endIndex; i++) {
-    			  if (!uniqueT.contains(i)) {
-                      uniqueT.add(i);
-                      ms0.sizeT = uniqueT.size();
-                    }
-    		  }
+    		    for (int i=startIndex; i<endIndex; i++) {
+    			    if (!uniqueT.contains(i)) {
+                uniqueT.add(i);
+                ms0.sizeT = uniqueT.size();
+              }
+    		    }
             break;
           case 'R':
             if (dimension.start >= rotations) {
@@ -2144,8 +2148,8 @@ public class ZeissCZIReader extends FormatReader {
             if (positions.getLength() > 0 && nextPosition < positionsX.length) {
               Element position = (Element) positions.item(0);
               String[] pos = position.getTextContent().split(",");
-              positionsX[nextPosition] = new Length(DataTools.parseDouble(pos[0]), UNITS.MICROM);
-              positionsY[nextPosition] = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROM);
+              positionsX[nextPosition] = new Length(DataTools.parseDouble(pos[0]), UNITS.MICROMETER);
+              positionsY[nextPosition] = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROMETER);
             }
             nextPosition++;
           }
@@ -2199,8 +2203,7 @@ public class ZeissCZIReader extends FormatReader {
           if (detector != null) {
             String detectorID = detector.getAttribute("Id");
             if (detectorID.indexOf(' ') != -1) {
-              detectorID =
-                detectorID.substring(detectorID.lastIndexOf(" ") + 1);
+              detectorID = detectorID.replaceAll("\\s","");
             }
             if (!detectorID.startsWith("Detector:")) {
               detectorID = "Detector:" + detectorID;
@@ -2328,7 +2331,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String detectorID = detector.getAttribute("Id");
           if (detectorID.indexOf(' ') != -1) {
-            detectorID = detectorID.substring(detectorID.lastIndexOf(" ") + 1);
+            detectorID = detectorID.replaceAll("\\s","");
           }
           if (!detectorID.startsWith("Detector:")) {
             detectorID = "Detector:" + detectorID;
@@ -2345,16 +2348,17 @@ public class ZeissCZIReader extends FormatReader {
           store.setDetectorSerialNumber(serialNumber, 0, detectorIndex);
           store.setDetectorLotNumber(lotNumber, 0, detectorIndex);
 
-          if (gain == null || gain.equals("0")) {
-            gain = getFirstNodeValue(detector, "Gain");
-          }
-          if (detectorIndex == 0 || detectorIndex >= gains.size()) {
-            store.setDetectorGain(DataTools.parseDouble(gain), 0, detectorIndex);
-          }
-          else {
-            store.setDetectorGain(
-              DataTools.parseDouble(gains.get(detectorIndex)), 0,
-              detectorIndex);
+          
+          gain = getFirstNodeValue(detector, "Gain");
+          if (gain != null && !gain.isEmpty()) {
+            if (detectorIndex == 0 || detectorIndex >= gains.size()) {
+              store.setDetectorGain(DataTools.parseDouble(gain), 0, detectorIndex);
+            }
+            else {
+              store.setDetectorGain(
+                DataTools.parseDouble(gains.get(detectorIndex)), 0,
+                detectorIndex);
+            }
           }
 
           String offset = getFirstNodeValue(detector, "Offset");
@@ -2362,11 +2366,14 @@ public class ZeissCZIReader extends FormatReader {
             store.setDetectorOffset(new Double(offset), 0, detectorIndex);
           }
 
-          if (zoom == null) {
-            zoom = getFirstNodeValue(detector, "Zoom");
-          }
-          if (zoom != null && !zoom.equals("")) {
-            store.setDetectorZoom(new Double(zoom), 0, detectorIndex);
+          zoom = getFirstNodeValue(detector, "Zoom");
+          if (zoom != null && !zoom.isEmpty()) {
+            if (zoom != null && !zoom.equals("")) {
+              if (zoom.indexOf(',') != -1) {
+                zoom = zoom.substring(0, zoom.indexOf(','));
+              }
+              store.setDetectorZoom(DataTools.parseDouble(zoom), 0, detectorIndex);
+            }
           }
 
           String ampGain = getFirstNodeValue(detector, "AmplificationGain");
@@ -3859,8 +3866,13 @@ public class ZeissCZIReader extends FormatReader {
             data = new JPEGXRCodec().decompress(data, options);
           }
           catch (FormatException e) {
-            LOGGER.warn("Could not decompress block; some pixels may be 0", e);
-            data = new byte[options.maxBytes];
+            if (data.length == options.maxBytes) {
+              LOGGER.debug("Invalid JPEG-XR compression flag");
+            }
+            else {
+              LOGGER.warn("Could not decompress block; some pixels may be 0", e);
+              data = new byte[options.maxBytes];
+            }
           }
           break;
         case 104: // camera-specific packed pixels
@@ -3941,15 +3953,15 @@ public class ZeissCZIReader extends FormatReader {
               if (text != null) {
                 if (tagNode.getNodeName().equals("StageXPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageX = new Length(number, UNITS.MICROM);
+                  stageX = new Length(number, UNITS.MICROMETER);
                 }
                 else if (tagNode.getNodeName().equals("StageYPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageY = new Length(number, UNITS.MICROM);
+                  stageY = new Length(number, UNITS.MICROMETER);
                 }
                 else if (tagNode.getNodeName().equals("FocusPosition")) {
                   final Double number = Double.valueOf(text);
-                  stageZ = new Length(number, UNITS.MICROM);
+                  stageZ = new Length(number, UNITS.MICROMETER);
                 }
                 else if (tagNode.getNodeName().equals("AcquisitionTime")) {
                   Timestamp t = Timestamp.valueOf(text);

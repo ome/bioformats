@@ -32,6 +32,7 @@
 
 package loci.formats.tiff;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffParser {
+public class TiffParser implements Closeable {
 
   // -- Constants --
 
@@ -95,11 +96,14 @@ public class TiffParser {
   /** Codec options to be used when decoding compressed pixel data. */
   private CodecOptions codecOptions = CodecOptions.getDefaultOptions();
 
+  private boolean canClose = false;
+
   // -- Constructors --
 
   /** Constructs a new TIFF parser from the given file name. */
   public TiffParser(String filename) throws IOException {
     this(new RandomAccessInputStream(filename));
+    canClose = true;
   }
 
   /** Constructs a new TIFF parser from the given input source. */
@@ -112,6 +116,20 @@ public class TiffParser {
       in.seek(fp);
     }
     catch (IOException e) { }
+  }
+
+  // -- Closeable methods --
+
+  /**
+   * Close the underlying stream, if this TiffParser was constructed
+   * with a file path.  Closing a stream that was pre-initialized
+   * is potentially dangerous.
+   */
+  @Override
+  public void close() throws IOException {
+    if (canClose && in != null) {
+      in.close();
+    }
   }
 
   // -- TiffParser methods --
@@ -524,7 +542,7 @@ public class TiffParser {
     }
 
     if (offset != in.getFilePointer()) {
-      if (fakeBigTiff && (offset < 0 || offset > in.getFilePointer())) {
+      if (fakeBigTiff && offset < 0) {
         offset &= 0xffffffffL;
         offset += 0x100000000L;
       }
@@ -1008,7 +1026,8 @@ public class TiffParser {
           // we only want a piece of the tile, so read each row separately
           // this is especially necessary for large single-tile images
           int bpp = bytes * effectiveChannels;
-          in.skipBytes((int) (y * bpp * tileWidth));
+          // the number of bytes to skip may be greater than Integer.MAX_VALUE if the tile is large
+          in.skipBytes(y * bpp * tileWidth);
           for (int row=0; row<height; row++) {
             in.skipBytes(x * bpp);
             int len = (int) Math.min(buf.length - offset, width * bpp);
@@ -1154,7 +1173,11 @@ public class TiffParser {
 
     TiffCompression compression = ifd.getCompression();
     PhotoInterp photoInterp = ifd.getPhotometricInterpretation();
-    if (compression == TiffCompression.JPEG) photoInterp = PhotoInterp.RGB;
+    if (compression == TiffCompression.JPEG ||
+      compression == TiffCompression.JPEGXR)
+    {
+      photoInterp = PhotoInterp.RGB;
+    }
 
     int[] bitsPerSample = ifd.getBitsPerSample();
     int nChannels = bitsPerSample.length;

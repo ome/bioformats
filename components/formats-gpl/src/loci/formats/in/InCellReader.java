@@ -1129,8 +1129,15 @@ public class InCellReader extends FormatReader {
           index = offsetPointCounter++;
         }
 
+        // Y value multiplied by -1 to correct for difference in assumptions
+        // - position is relative to center of well
+        // - acquisition software seems to assume smaller Y is below larger Y,
+        //   consistent with (0, 0) being the center
+        // - we typically assume smaller Y is above larger Y,
+        //   consistent with image origins being in the top left corner
+
         posX.put(index, new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
-        posY.put(index, new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
+        posY.put(index, new Length(-1 * Double.valueOf(y), UNITS.REFERENCEFRAME));
 
         addGlobalMetaList("X position for position", x);
         addGlobalMetaList("Y position for position", y);

@@ -25,6 +25,7 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,6 +87,7 @@ public class CellWorxReader extends FormatReader {
     new HashMap<Integer, Timestamp>();
 
   private String[] directoryList;
+  private boolean subdirectories = false;
 
   // -- Constructor --
 
@@ -191,6 +193,7 @@ public class CellWorxReader extends FormatReader {
     int fieldIndex = getSeries() % fieldCount;
 
     String file = getFile(getSeries(), no);
+    LOGGER.trace("Series {} plane {} using file = {}", getSeries(), no, file);
     if (file == null) {
       Arrays.fill(buf, (byte) 0);
       return buf;
@@ -217,10 +220,15 @@ public class CellWorxReader extends FormatReader {
     if (lastReader.getSeriesCount() == fieldCount) {
       lastReader.setSeries(fieldIndex);
     }
-    else {
+    else if (lastReader.getImageCount() == getSizeZ()) {
       int[] zct = getZCTCoords(no);
       planeIndex = zct[0];
     }
+    else {
+      planeIndex = 0;
+    }
+    LOGGER.trace("  file series = {}, planeIndex = {}",
+      lastReader.getSeries(), planeIndex);
     lastReader.openBytes(planeIndex, buf, x, y, w, h);
     return buf;
   }
@@ -245,6 +253,7 @@ public class CellWorxReader extends FormatReader {
       service = null;
       timestamps.clear();
       directoryList = null;
+      subdirectories = false;
     }
   }
 
@@ -295,6 +304,7 @@ public class CellWorxReader extends FormatReader {
     int xFields = 0, yFields = 0;
     String[] wavelengths = null;
     int nTimepoints = 1;
+    int zSteps = 1;
 
     // determine dataset dimensions
     for (String line : lines) {
@@ -329,6 +339,9 @@ public class CellWorxReader extends FormatReader {
       }
       else if (key.equals("TimePoints")) {
         nTimepoints = Integer.parseInt(value);
+      }
+      else if (key.equals("ZSteps")) {
+        zSteps = Integer.parseInt(value);
       }
       else if (key.startsWith("SiteSelection")) {
         int row = Integer.parseInt(key.substring(13)) - 1;
@@ -372,7 +385,7 @@ public class CellWorxReader extends FormatReader {
             // using TIFF files instead
 
             wellFiles[row][col] = getTiffFiles(
-              plateName, rowLetter, col, wavelengths.length, nTimepoints);
+              plateName, rowLetter, col, wavelengths.length, nTimepoints, zSteps);
           }
         }
       }
@@ -403,7 +416,7 @@ public class CellWorxReader extends FormatReader {
     int seriesIndex = 0;
     String file = getFile(seriesIndex, planeIndex);
     while (!new Location(file).exists()) {
-      if (planeIndex <  nTimepoints * wavelengths.length) {
+      if (planeIndex < zSteps * nTimepoints * wavelengths.length) {
         planeIndex++;
       }
       else if (seriesIndex < seriesCount - 1) {
@@ -426,7 +439,7 @@ public class CellWorxReader extends FormatReader {
       ms.sizeX = pnl.getSizeX();
       ms.sizeY = pnl.getSizeY();
       ms.pixelType = pnl.getPixelType();
-      ms.sizeZ = 1;
+      ms.sizeZ = zSteps;
       ms.sizeT = nTimepoints;
       ms.sizeC = wavelengths.length;
       ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
@@ -637,6 +650,14 @@ public class CellWorxReader extends FormatReader {
 
     int imageCount = wellFiles[row][col].length / fieldCount;
     if (field * imageCount + no < wellFiles[row][col].length) {
+      if (subdirectories && getDimensionOrder() != null) {
+        int[] coords = getZCTCoords(no);
+        int planeIndex = coords[1];
+        planeIndex += getSizeC() * field;
+        planeIndex += getSizeC() * fieldCount * coords[0];
+        planeIndex += getSizeC() * fieldCount * getSizeZ() * coords[2];
+        return wellFiles[row][col][planeIndex];
+      }
       return wellFiles[row][col][field * imageCount + no];
     }
     else if (field < wellFiles[row][col].length) {
@@ -813,11 +834,13 @@ public class CellWorxReader extends FormatReader {
   }
 
   private String[] getTiffFiles(String plateName, char rowLetter, int col,
-    int channels, int nTimepoints)
+    int channels, int nTimepoints, int zSteps)
+    throws FormatException
   {
-    String base = plateName + rowLetter + String.format("%02d", col + 1);
+    String well = rowLetter + String.format("%02d", col + 1);
+    String base = plateName + well;
 
-    String[] files = new String[fieldCount * channels * nTimepoints];
+    String[] files = new String[fieldCount * channels * nTimepoints * zSteps];
 
     int nextFile = 0;
     for (int field=0; field<fieldCount; field++) {
@@ -844,7 +867,7 @@ public class CellWorxReader extends FormatReader {
 
     boolean noneExist = true;
     for (String file : files) {
-      if (new Location(file).exists()) {
+      if (file != null && new Location(file).exists()) {
         noneExist = false;
         break;
       }
@@ -864,7 +887,58 @@ public class CellWorxReader extends FormatReader {
           if (path.startsWith(base) && path.toLowerCase().indexOf("_thumb") < 0)
           {
             files[nextFile++] = path;
+            noneExist = false;
           }
+        }
+      }
+
+      if (noneExist) {
+        subdirectories = true;
+
+        // if all else fails, look for a directory structure:
+        //  * file.htd
+        //  * TimePoint_<t>
+        //    * ZStep_<z>
+        //      * file_<...>.tif
+        base = base.substring(base.lastIndexOf(File.separator) + 1);
+        LOGGER.debug("expected file prefix = {}", base);
+        nextFile = 0;
+        for (int i=0; i<nTimepoints; i++) {
+          Location dir = new Location(parent, "TimePoint_" + (i + 1));
+          if (dir.exists() && dir.isDirectory()) {
+            for (int z=0; z<zSteps; z++) {
+              Location file = new Location(dir, "ZStep_" + (z + 1));
+              String[] zList = null;
+              if (file.exists() && file.isDirectory()) {
+                zList = file.list(true);
+              }
+              else if (zSteps == 1) {
+                // if SizeZ == 1, the TIFF files may be in the
+                // TimePoint_<t> directory
+                file = dir;
+                zList = file.list(true);
+              }
+              LOGGER.debug("parent directory = {}", file);
+
+              if (zList != null) {
+                Arrays.sort(zList);
+                for (String f : zList) {
+                  LOGGER.debug("  checking relative path = {}", f);
+                  String path = new Location(file, f).getAbsolutePath();
+                  if (f.startsWith(base) && path.indexOf("_thumb") < 0) {
+                    if (nextFile < files.length) {
+                      files[nextFile] = path;
+                    }
+                    nextFile++;
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (nextFile != files.length) {
+          LOGGER.warn("Well {} expected {} files; found {}",
+            well, files.length, nextFile);
         }
       }
     }
