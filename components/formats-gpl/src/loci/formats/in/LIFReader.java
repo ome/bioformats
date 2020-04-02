@@ -328,7 +328,7 @@ public class LIFReader extends FormatReader {
     long planeSize = (long) getSizeX() * getSizeY() * bpp;
     long nextOffset = index + 1 < offsets.size() ?
       offsets.get(index + 1).longValue() : endPointer;
-    int bytesToSkip = (int) (nextOffset - offset - planeSize * getImageCount());
+    long bytesToSkip = nextOffset - offset - planeSize * getImageCount();
     bytesToSkip /= getSizeY();
     if ((getSizeX() % 4) == 0) bytesToSkip = 0;
 

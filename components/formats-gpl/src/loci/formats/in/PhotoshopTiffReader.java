@@ -248,7 +248,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
             addGlobalMetaList("Layer name", layerNames[layer]);
             core.add(layerCore);
           }
-          tag.skipBytes((int) (fp + len - tag.getFilePointer()));
+          tag.skipBytes(fp + len - tag.getFilePointer());
         }
 
         nLayers = core.size() - 1;
@@ -282,7 +282,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           }
         }
       }
-      else tag.skipBytes(length + skip);
+      else tag.skipBytes((long) length + skip);
     }
 
     MetadataStore store = makeFilterMetadata();

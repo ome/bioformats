@@ -1680,7 +1680,7 @@ public class MetamorphReader extends BaseTiffReader {
           hasAbsoluteZValid = true;
           break;
         case 46:
-          in.skipBytes(mmPlanes * 8); // TODO
+          in.skipBytes((long) mmPlanes * 8); // TODO
           break;
         default:
           in.skipBytes(4);

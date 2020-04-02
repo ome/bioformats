@@ -1100,7 +1100,7 @@ public class DicomReader extends FormatReader {
     if (skip) {
       long skipCount = (long) elementLength;
       if (in.getFilePointer() + skipCount <= in.length()) {
-        in.skipBytes((int) skipCount);
+        in.skipBytes(skipCount);
       }
       location += elementLength;
       value = "";
