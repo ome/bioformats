@@ -100,7 +100,7 @@ public class FlexReader extends FormatReader {
   // -- Fields --
 
   public static final String GROUP_PLATES = "flex.group.plate";
-  public static final boolean GROUP_PLATES_DEFAULT = true;
+  public static final boolean GROUP_PLATES_DEFAULT = false;
 
   /** Camera binning values. */
   private int binX, binY;
