@@ -362,6 +362,12 @@ public class CellWorxReader extends FormatReader {
       }
     }
 
+    // If the acquisition only contains one site, the SiteSelection1 key
+    // might be asent. In that case, assume the field was selected.
+    if (xFields == 1 && yFields == 1) {
+      fieldMap[0][0] = true;
+    }
+
     for (int row=0; row<fieldMap.length; row++) {
       for (int col=0; col<fieldMap[row].length; col++) {
         if (fieldMap[row][col]) fieldCount++;
