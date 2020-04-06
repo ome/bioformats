@@ -217,7 +217,7 @@ public class CellWorxReader extends FormatReader {
     }
 
     int planeIndex = no;
-    if (lastReader.getSeriesCount() == fieldCount) {
+    if (lastReader.getSeriesCount() == fieldCount && fieldCount > 1) {
       lastReader.setSeries(fieldIndex);
     }
     else if (lastReader.getImageCount() == getSizeZ()) {
