@@ -335,7 +335,18 @@ public class CellWorxReader extends FormatReader {
       }
       else if (key.equals("YSites")) {
         yFields = Integer.parseInt(value);
-        fieldMap = new boolean[yFields][xFields];
+        // if no site acquisition ("Sites" == "FALSE"),
+        // don't overwrite the single-site field map
+        if (fieldMap == null) {
+          fieldMap = new boolean[yFields][xFields];
+        }
+      }
+      else if (key.equals("Sites")) {
+        // field acquisition may be turned off with
+        // XSites and YSites both greater than 1
+        if (value.equalsIgnoreCase("false")) {
+          fieldMap = new boolean[][] {{true}};
+        }
       }
       else if (key.equals("TimePoints")) {
         nTimepoints = Integer.parseInt(value);
