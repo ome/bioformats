@@ -351,12 +351,23 @@ public class DeltavisionReader extends FormatReader {
     if (fileType == NEW_TYPE) {
       in.seek(852);
       int secondaryT = in.readInt();
-      if (secondaryT > 0 && (rawSizeT <= 0 || rawSizeT == 65535)) {
-        rawSizeT = secondaryT;
-      }
       in.seek(880);
       numPanels = in.readInt();
       in.seek(182);
+
+      // if unreasonable data found, assume that an old header
+      // version is used in spite of the newer file type ID
+      // maybe happens when files are processed in other software?
+      if (numPanels < 0 || numPanels > (in.length() / (sizeX * sizeY))) {
+        fileType = 0;
+        numPanels = 0;
+      }
+      else {
+        // if the panel data looks reasonable, then the T value can be trusted
+        if (secondaryT > 0 && (rawSizeT <= 0 || rawSizeT == 65535)) {
+          rawSizeT = secondaryT;
+        }
+      }
     }
     int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
 
