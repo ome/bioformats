@@ -171,6 +171,7 @@ public class MetamorphReader extends BaseTiffReader {
     suffixSufficient = false;
     datasetDescription = "One or more .stk or .tif/.tiff files plus an " +
       "optional .nd or .scan file";
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --
