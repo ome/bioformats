@@ -217,7 +217,7 @@ public class CellWorxReader extends FormatReader {
     }
 
     int planeIndex = no;
-    if (lastReader.getSeriesCount() == fieldCount) {
+    if (lastReader.getSeriesCount() == fieldCount && fieldCount > 1) {
       lastReader.setSeries(fieldIndex);
     }
     else if (lastReader.getImageCount() == getSizeZ()) {
@@ -335,7 +335,18 @@ public class CellWorxReader extends FormatReader {
       }
       else if (key.equals("YSites")) {
         yFields = Integer.parseInt(value);
-        fieldMap = new boolean[yFields][xFields];
+        // if no site acquisition ("Sites" == "FALSE"),
+        // don't overwrite the single-site field map
+        if (fieldMap == null) {
+          fieldMap = new boolean[yFields][xFields];
+        }
+      }
+      else if (key.equals("Sites")) {
+        // field acquisition may be turned off with
+        // XSites and YSites both greater than 1
+        if (value.equalsIgnoreCase("false")) {
+          fieldMap = new boolean[][] {{true}};
+        }
       }
       else if (key.equals("TimePoints")) {
         nTimepoints = Integer.parseInt(value);
@@ -360,6 +371,12 @@ public class CellWorxReader extends FormatReader {
         int index = Integer.parseInt(key.substring(8)) - 1;
         wavelengths[index] = value.replaceAll("\"", "");
       }
+    }
+
+    // If the acquisition only contains one site, the SiteSelection1 key
+    // might be asent. In that case, assume the field was selected.
+    if (xFields == 1 && yFields == 1) {
+      fieldMap[0][0] = true;
     }
 
     for (int row=0; row<fieldMap.length; row++) {
