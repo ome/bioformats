@@ -1804,7 +1804,9 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
-    positions = maxPositions - minPositions + 1;
+    if (maxPositions > Integer.MIN_VALUE && minPositions < Integer.MAX_VALUE) {
+      positions = maxPositions - minPositions + 1;
+    }
     setCoreIndex(previousCoreIndex);
   }
 
