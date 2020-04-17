@@ -80,6 +80,7 @@ public class TecanReader extends FormatReader {
   private String imageDirectory = null;
   private ArrayList<String> extraFiles = new ArrayList<String>();
   private Integer maxField = 1;
+  private Integer maxCycle = 1;
 
   // -- Constructor --
 
@@ -169,6 +170,7 @@ public class TecanReader extends FormatReader {
       helperReader = null;
       extraFiles.clear();
       maxField = 1;
+      maxCycle = 1;
     }
   }
 
@@ -245,10 +247,11 @@ public class TecanReader extends FormatReader {
       }
     }
 
-    // update series index for each Image to account for fields
+    // update series and plane index for each Image to account for fields/timepoints
     for (Image img : images) {
       img.series *= maxField;
       img.series += (img.field - 1);
+      img.plane += (img.cycle - 1) * channels.size();
     }
 
     core.clear();
@@ -264,7 +267,8 @@ public class TecanReader extends FormatReader {
       for (int f=0; f<maxField; f++) {
         core.add(helperReader.getCoreMetadataList().get(0));
         core.get(core.size() - 1).sizeC *= channels.size();
-        core.get(core.size() - 1).imageCount *= channels.size();
+        core.get(core.size() - 1).sizeT = maxCycle;
+        core.get(core.size() - 1).imageCount *= (channels.size() * maxCycle);
       }
     }
 
@@ -482,13 +486,15 @@ public class TecanReader extends FormatReader {
 
         // now map the image to a well
 
-        Integer[] ids = getWellAndField(wellLinkQuery, resultId);
+        Integer[] ids = getWellLink(wellLinkQuery, resultId);
         String wellLabel = wells.get(ids[0]);
         img.wellRow = wellLabel.charAt(0) - 'A';
         img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
         img.series = ids[0] - 1;
         // always set a 1-based index
-        img.field = (int) Math.max(1, ids[1]);
+        img.cycle = (int) Math.max(1, ids[1]);
+
+        maxCycle = (int) Math.max(img.cycle, maxCycle);
         maxField = (int) Math.max(img.field, maxField);
 
         images.add(img);
@@ -505,7 +511,7 @@ public class TecanReader extends FormatReader {
         String path = objects.getString(2);
         LOGGER.debug("processing object {}", path);
 
-        Integer[] ids = getWellAndField(wellLinkQuery, resultId);
+        Integer[] ids = getWellLink(wellLinkQuery, resultId);
         if (ids != null) {
           String wellLabel = wells.get(ids[0]);
           Image img = new Image();
@@ -513,7 +519,7 @@ public class TecanReader extends FormatReader {
           img.wellColumn = Integer.parseInt(wellLabel.substring(1)) - 1;
           img.series = ids[0] - 1;
           // always set a 1-based index
-          img.field = (int) Math.max(1, ids[1]);
+          img.cycle = (int) Math.max(1, ids[1]);
           img.result = true;
           img.file = path;
           images.add(img);
@@ -528,7 +534,7 @@ public class TecanReader extends FormatReader {
    * @param imagingResultID
    * @return well ID
    */
-  private Integer[] getWellAndField(PreparedStatement linkQuery,
+  private Integer[] getWellLink(PreparedStatement linkQuery,
     String imagingResultID)
     throws SQLException
   {
@@ -585,7 +591,8 @@ public class TecanReader extends FormatReader {
     public String file;
     public int wellRow = -1;
     public int wellColumn = -1;
-    public int field = -1;
+    public int field = 1;
+    public int cycle = -1;
     public int series = -1;
     public int plane = -1;
     public Length pixelSize;
