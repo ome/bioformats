@@ -10,13 +10,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,6 +35,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.Inflater;
 import java.util.zip.DataFormatException;
@@ -69,6 +71,7 @@ import org.w3c.dom.NodeList;
 /**
  * OBFReader is the file format reader for Imspector OBF files.
  *
+ * @see <a href="https://imspectordocs.readthedocs.io/en/latest/fileformat.html#the-obf-file-format">The OBF File Format</a>
  * @author Bjoern Thiel bjoern.thiel at mpibpc.mpg.de
  */
 
@@ -89,17 +92,40 @@ public class OBFReader extends FormatReader {
     long position;
     long length;
     boolean compression;
+
+    long samplesWritten = -1;
+    int bytesPerSample = 0;
+    List<Long> flushPoints;
+    long flushBlockSize = 0;
+
+    List<Long> chunkLogicalPositions;
+    List<Long> chunkFilePositions;
   }
+
+  private class State {
+    State(int series) {
+      this.series = series;
+    }
+
+    Inflater inflater;
+
+    byte[] inflateInputBuffer;
+    byte[] wholeStackBuffer;
+
+    int series = -1;
+    long nextReadPosition = -1;
+
+    int currentChunk = -1;
+    long chunkLogicalStart = 0;
+    long chunkFileStart = 0;
+    long chunkSize = 0;
+  };
+
+  private State state;
+
+  private byte[] skipBuffer;
+
   private List<Stack> stacks = new ArrayList<Stack>();
-
-  private class Frame {
-    byte[] bytes;
-    int series;
-    int number;
-  }
-  private Frame currentInflatedFrame = new Frame();
-
-  private transient Inflater inflater;
 
   public OBFReader() {
     super("OBF", new String[] {"obf", "msr"});
@@ -135,9 +161,6 @@ public class OBFReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-
-    currentInflatedFrame.series = -1;
-    currentInflatedFrame.number = -1;
 
     in = new RandomAccessInputStream(id);
 
@@ -271,7 +294,7 @@ public class OBFReader extends FormatReader {
 
     final String magicString = in.readString(STACK_MAGIC_STRING.length());
     final short magicNumber = in.readShort();
-    final int version = in.readInt();
+    final int stackVersion = in.readInt();
 
     if (magicString.equals(STACK_MAGIC_STRING) && magicNumber == MAGIC_NUMBER) {
       final int image = core.size();
@@ -288,9 +311,17 @@ public class OBFReader extends FormatReader {
         throw new FormatException("Unsupported number of " + numberOfDimensions + " dimensions");
       }
 
+      Stack stack = new Stack();
+      stack.samplesWritten = 1;
+
       int[] sizes = new int[MAXIMAL_NUMBER_OF_DIMENSIONS];
       for (int dimension = 0; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS; ++ dimension) {
         final int size = in.readInt();
+
+        if(dimension < numberOfDimensions) {
+          stack.samplesWritten *= size;
+        }
+
         sizes[dimension] = dimension < numberOfDimensions ? size : 1;
       }
 
@@ -342,11 +373,11 @@ public class OBFReader extends FormatReader {
       meta_data.pixelType = getPixelType(type);
       meta_data.bitsPerPixel = getBitsPerPixel(type);
 
+      stack.bytesPerSample = meta_data.bitsPerPixel / 8;
+
       meta_data.indexed = false;
       meta_data.rgb = false;
       meta_data.interleaved = false;
-
-      Stack stack = new Stack();
 
       final int compression = in.readInt();
       stack.compression = getCompression(compression);
@@ -419,9 +450,7 @@ public class OBFReader extends FormatReader {
 
       stack.position = in.getFilePointer();
 
-      stacks.add(stack);
-
-      if (file_version >= 1) {
+      if (stackVersion >= 1) {
         in.skip(lengthOfData);
 
         final long footer = in.getFilePointer();
@@ -440,6 +469,37 @@ public class OBFReader extends FormatReader {
           if (dimension < numberOfDimensions) {
             stepLabelsPresent.add(new Boolean(present != 0));
           }
+        }
+
+        int obsoleteMetadataLength = 0;
+        long numFlushPoints = 0;
+
+        if (stackVersion >=  3) {
+          final int SI_UNIT_SIZE = 80;
+
+          obsoleteMetadataLength = in.readInt();
+          in.skipBytes(SI_UNIT_SIZE * (MAXIMAL_NUMBER_OF_DIMENSIONS + 1));
+          numFlushPoints = in.readLong();
+          stack.flushBlockSize = in.readLong();
+        }
+
+        long tagDictionaryLength = 0;
+        long stackEndDisk = 0;
+        int minFormatVersion = 0;
+
+        if (stackVersion >= 4) {
+          tagDictionaryLength = in.readLong();
+          stackEndDisk = in.readLong();
+          minFormatVersion = in.readInt();
+        }
+
+        long stackEndUsedDisk = 0;
+        long numChunkPositions = 0;
+
+        if (stackVersion >= 6) {
+          stackEndUsedDisk = in.readLong();
+          stack.samplesWritten = in.readLong();
+          numChunkPositions = in.readLong();
         }
 
         in.seek(footer + offset);
@@ -494,7 +554,48 @@ public class OBFReader extends FormatReader {
           stepLabels.add(list);
         }
         meta_data.seriesMetadata.put("StepLabels", stepLabels);
+
+        in.skipBytes(obsoleteMetadataLength);
+
+        if (numFlushPoints > 0) {
+            if (numFlushPoints > Integer.MAX_VALUE ) {
+              throw new FormatException("The implementation can not currently " +
+                "handle more than Integer.MAX_VALUE flush points");
+            }
+
+            List<Long> flushPoints = new ArrayList<>((int)numFlushPoints);
+            for (int i = 0; i < numFlushPoints; ++i) {
+                flushPoints.add(in.readLong());
+            }
+            stack.flushPoints = flushPoints;
+        }
+
+        in.skipBytes(tagDictionaryLength);
+
+        if (numChunkPositions > 0) {
+          if (numChunkPositions > Integer.MAX_VALUE ) {
+              throw new FormatException("The implementation can not currently " +
+                "handle more than Integer.MAX_VALUE chunk positions");
+            }
+
+          List<Long> logicalPositions = new ArrayList<>((int)numChunkPositions + 1);
+          List<Long> filePositions = new ArrayList<>((int)numChunkPositions + 1);
+
+          logicalPositions.add(Long.valueOf(0));
+          filePositions.add(Long.valueOf(0));
+
+          for (int i = 0; i < numChunkPositions; ++i) {
+              logicalPositions.add(in.readLong());
+              filePositions.add(in.readLong());
+          }
+
+          stack.chunkLogicalPositions = logicalPositions;
+          stack.chunkFilePositions = filePositions;
+        }
       }
+
+      stacks.add(stack);
+
       return next;
     }
     else {
@@ -561,112 +662,336 @@ public class OBFReader extends FormatReader {
     }
   }
 
-  @Override
-  public byte[] openBytes(int no, byte[] buffer, int x, int y, int w, int h)
-    throws FormatException, IOException 
+  private long remainingBytesInChunk(Stack stack)
+    throws IOException, FormatException
   {
-    FormatTools.checkPlaneParameters(this, no, buffer.length, x, y, w, h);
+    long result = state.chunkFileStart +
+        state.chunkSize -
+        in.getFilePointer();
 
-    final int rows = getSizeY();
-    final int columns = getSizeX();
-    final int bytesPerPixel = getBitsPerPixel() / 8;
+    if (result < 0) {
+      throw new FormatException("Negative remaining bytes in chunk; malformed file?");
+    }
 
-    boolean isFLIM = FormatTools.LIFETIME.equals(getModuloZ().type);
+    return result;
+  }
 
-    final int series = getSeries();
-    final Stack stack = stacks.get(series);
-    if (stack.compression) {
-      if (series != currentInflatedFrame.series) {
-        int bufferSize = rows * columns * bytesPerPixel;
-        if (isFLIM) {
-          bufferSize *= getSizeZ();
-        }
-        currentInflatedFrame.bytes = new byte[bufferSize];
-        currentInflatedFrame.series = series;
-        currentInflatedFrame.number = - 1;
+  private void readFromStackRaw(Stack stack, byte[] buffer, int bufferOffset, int bytes)
+    throws IOException, FormatException
+  {
+    long remainingBytesInChunk = remainingBytesInChunk(stack);
+
+    while (bytes > 0) {
+      while (remainingBytesInChunk == 0) {
+        switchChunk(stack, state.currentChunk + 1);
+        in.seek(state.chunkFileStart);
+        remainingBytesInChunk = remainingBytesInChunk(stack);
       }
 
-      if (inflater == null) {
-        inflater = new Inflater();
+      int bytesToRead = (int)Math.min(bytes, remainingBytesInChunk);
+
+      if(buffer != null) {
+        in.read(
+          buffer,
+          bufferOffset,
+          bytesToRead
+        );
+      } else {
+        in.skipBytes(bytesToRead);
       }
 
-      byte[] bytes = currentInflatedFrame.bytes;
-      if (no != currentInflatedFrame.number) {
-        if (no < currentInflatedFrame.number && !isFLIM) {
-          currentInflatedFrame.number = - 1;
-        }
-        if (currentInflatedFrame.number == - 1) {
-          in.seek(stack.position);
-          inflater.reset();
-        }
+      bufferOffset += bytesToRead;
+      remainingBytesInChunk -= bytesToRead;
+      bytes -= bytesToRead;
+    }
+  }
 
-        byte[] input = new byte[8192];
-        int end = isFLIM ? getSizeZ() - 1 : no;
+  private void readFromStack(Stack stack, byte[] buffer, int bufferOffset, int bytes)
+    throws IOException, FormatException
+  {
+    int remainingBytes = bytes;
 
-        while (currentInflatedFrame.number != end) {
-          int offset = 0;
-          while (offset != bytes.length) {
-            if (inflater.needsInput()) {
-              final long remainder = stack.position + stack.length - in.getFilePointer();
-              if (remainder > 0) {
-                final int length = remainder > input.length ? input.length : (int) remainder;
+    final long stackByteCount = stack.samplesWritten * stack.bytesPerSample;
 
-                in.read(input, 0, length);
-                inflater.setInput(input, 0, length);
-              }
-              else if (isFLIM && remainder == 0 && currentInflatedFrame.number >= 0) {
-                offset = bytes.length;
-                continue;
-              }
-              else {
-                throw new FormatException("Corrupted zlib compression");
-              }
-            }
-            else if (inflater.needsDictionary()) {
-              throw new FormatException("Unsupported zlib compression");
-            }
-            try {
-              offset += inflater.inflate(bytes, offset, bytes.length - offset);
-            }
-            catch (DataFormatException exception) {
-              throw new FormatException(exception.getMessage());
-            }
+    if (!stack.compression) {
+      readFromStackRaw(stack, buffer, bufferOffset, bytes);
+
+    } else if (stack.compression) {
+      Inflater inflater = state.inflater;
+      byte[] input = state.inflateInputBuffer;
+
+      while (remainingBytes > 0) {
+        if (inflater.needsInput()) {
+          final long logicalOffset = state.chunkLogicalStart +
+            (in.getFilePointer() - state.chunkFileStart);
+
+          final long remainder = stackByteCount - logicalOffset;
+
+          if (remainder > 0) {
+            final int length = remainder > input.length ? input.length : (int) remainder;
+            readFromStackRaw(stack, input, 0, length);
+            inflater.setInput(input, 0, length);
+          } else {
+            throw new FormatException("Corrupted zlib compression");
           }
-          ++ currentInflatedFrame.number;
+        } else if (inflater.needsDictionary()) {
+          throw new FormatException("Unsupported zlib compression");
         }
-      }
-      if (isFLIM) {
-        for (int yy=y; yy<y+h; yy++) {
-          for (int xx=x; xx<x+w; xx++) {
-            int src = getSizeZ() * bytesPerPixel * ((yy * getSizeX()) + xx) + no * bytesPerPixel;
-            int dest = ((yy - y) * w * bytesPerPixel) + ((xx - x) * bytesPerPixel);
-            System.arraycopy(bytes, src, buffer, dest, bytesPerPixel);
-          }
+
+        try {
+          int decompressedBytes = inflater.inflate(buffer, bufferOffset, remainingBytes);
+          bufferOffset += decompressedBytes;
+          remainingBytes -= decompressedBytes;
         }
-      }
-      else {
-        for (int row = 0; row != h; ++ row) {
-          System.arraycopy(bytes, ((row + y) * columns + x) * bytesPerPixel, buffer, row * w * bytesPerPixel, w * bytesPerPixel);
+        catch (DataFormatException exception) {
+          throw new FormatException(exception.getMessage());
         }
       }
     }
-    else {
-      if (isFLIM) {
-        for (int yy=y; yy<y+h; yy++) {
-          for (int xx=x; xx<x+w; xx++) {
-            long src = stack.position + getSizeZ() * bytesPerPixel * ((yy * getSizeX()) + xx) + no * bytesPerPixel;
-            int dest = ((yy - y) * w * bytesPerPixel) + ((xx - x) * bytesPerPixel);
-            in.seek(src);
-            in.read(buffer, dest, bytesPerPixel);
-          }
-        }
+
+    state.nextReadPosition += bytes;
+  }
+
+  private void switchChunk(Stack stack, int chunkIndex)
+    throws FormatException
+  {
+    if (chunkIndex >= stack.chunkLogicalPositions.size()) {
+      throw new FormatException("Missing OBF data chunks");
+    }
+
+    state.currentChunk = chunkIndex;
+    state.chunkLogicalStart = stack.chunkLogicalPositions.get(chunkIndex);
+
+    state.chunkFileStart =
+      stack.chunkFilePositions.get(chunkIndex) + stack.position;
+
+    if (chunkIndex + 1 == stack.chunkLogicalPositions.size()) {
+      state.chunkSize = (stack.samplesWritten * stack.bytesPerSample) -
+        state.chunkLogicalStart;
+    } else {
+      state.chunkSize = stack.chunkLogicalPositions.get(chunkIndex + 1) -
+        state.chunkLogicalStart;
+    }
+  }
+
+  private void seekToFrameStart(Stack stack, long sampleOffset)
+    throws IOException, FormatException
+  {
+    boolean hasChunks = stack.chunkLogicalPositions != null;
+    long stackByteOffset = sampleOffset * stack.bytesPerSample;
+
+    if (state.nextReadPosition == stackByteOffset) {
+      return;
+    }
+
+    state.nextReadPosition = stackByteOffset;
+
+    if (!hasChunks) {
+      state.chunkLogicalStart = 0;
+      state.chunkFileStart = stack.position;
+      state.chunkSize = stack.samplesWritten * stack.bytesPerSample;
+
+      if (!stack.compression) {
+        in.seek(stack.position + stackByteOffset);
+        return;
       }
-      else {
-        for (int row = 0; row != h; ++ row) {
-          in.seek(stack.position + ((no * rows + row + y) * columns + x) * bytesPerPixel);
-          in.read(buffer, row * w * bytesPerPixel, w * bytesPerPixel);
-        }
+    }
+
+    long seekDestination = 0;
+    long extraSkipBytes = stackByteOffset;
+
+    if (stack.flushPoints != null && stack.flushBlockSize != 0) {
+      int flushBlockIndex = (int)(stackByteOffset / stack.flushBlockSize);
+
+      if (flushBlockIndex > 0) {
+        seekDestination = stack.flushPoints.get(flushBlockIndex - 1);
+        extraSkipBytes -= flushBlockIndex * stack.flushBlockSize;
       }
+    }
+
+    if (stack.compression) {
+      state.inflater = new Inflater(seekDestination != 0);
+
+      if (state.inflateInputBuffer == null) {
+        state.inflateInputBuffer = new byte[8192];
+      }
+    }
+
+    if (!hasChunks) {
+      in.seek(stack.position + seekDestination);
+      skipBytes(stack, extraSkipBytes);
+      return;
+    }
+
+    switchChunk(stack, Collections.binarySearch(
+      stack.chunkLogicalPositions, seekDestination));
+
+    in.seek(state.chunkFileStart +
+      seekDestination - state.chunkLogicalStart);
+
+    skipBytes(stack, extraSkipBytes);
+  }
+
+  private void skipBytes(Stack stack, long byteCount)
+    throws IOException, FormatException
+  {
+    boolean hasChunks = stack.chunkLogicalPositions != null;
+
+    if (!stack.compression && !hasChunks) {
+      in.skipBytes(byteCount);
+      state.nextReadPosition += byteCount;
+    } else if (stack.compression) {
+      if (skipBuffer == null) {
+        skipBuffer = new byte[8192];
+      }
+
+      while (byteCount > 0) {
+        int readSize = (int)Math.min(skipBuffer.length, byteCount);
+        readFromStack(stack, skipBuffer, 0, readSize);
+        byteCount -= readSize;
+      }
+    } else {
+      while(byteCount > 0) {
+        int skipSize = (int)Math.min(byteCount, Integer.MAX_VALUE);
+        readFromStackRaw(stack, null, 0, skipSize);
+        byteCount -= skipSize;
+      }
+    }
+  }
+
+  private void readStackFrame(Stack stack, long sampleOffset, byte[] buffer, int bufferOffset, int w, int h)
+    throws IOException, FormatException
+  {
+    final long columns = getSizeX();
+    final long rows = getSizeY();
+
+    long frameSamplesTotal = columns * rows;
+
+    long frameBytesWritten =
+      Math.max(
+        Math.min(
+          stack.samplesWritten - sampleOffset,
+          frameSamplesTotal
+        ) * stack.bytesPerSample,
+        0
+     );
+
+    if (frameBytesWritten > 0) {
+      seekToFrameStart(stack, sampleOffset);
+    }
+
+    long rowSkipBytes = (columns - w) * stack.bytesPerSample;
+
+    int currentBufferOffset = bufferOffset;
+
+    for (int y = 0; y < h; ++y) {
+      if (y != 0 && rowSkipBytes > 0) {
+        long writtenSkipBytes = Math.min(rowSkipBytes, frameBytesWritten);
+        skipBytes(stack, writtenSkipBytes);
+        frameBytesWritten -= writtenSkipBytes;
+      }
+
+      int totalRowBytes = w * stack.bytesPerSample;
+
+      int writtenRowBytes = (int)Math.min(totalRowBytes, frameBytesWritten);
+
+      int unwrittenRowBytes = Math.max(w - writtenRowBytes, 0);
+
+      if(writtenRowBytes > 0) {
+        readFromStack(
+          stack,
+          buffer,
+          currentBufferOffset,
+          writtenRowBytes
+        );
+
+        currentBufferOffset += writtenRowBytes;
+        frameBytesWritten -= writtenRowBytes;
+      }
+
+      if(unwrittenRowBytes > 0) {
+        Arrays.fill(
+          buffer,
+          currentBufferOffset,
+          currentBufferOffset + unwrittenRowBytes,
+          (byte)0
+        );
+      }
+    }
+  }
+
+  private void readFlimFrame(Stack stack, int no, byte[] buffer, int x, int y, int w, int h)
+    throws IOException, FormatException
+  {
+    if (state.wholeStackBuffer == null) {
+      int wholeStackSize =
+        getSizeX() * getSizeY() * getSizeZ() * stack.bytesPerSample;
+
+      state.wholeStackBuffer = new byte[wholeStackSize];
+
+      seekToFrameStart(stack, 0);
+
+      readFromStack(
+        stack,
+        state.wholeStackBuffer,
+        0,
+        (int)stack.samplesWritten * stack.bytesPerSample
+      );
+    }
+
+    byte[] wholeStackBuffer = state.wholeStackBuffer;
+
+    int bytesPerSample = stack.bytesPerSample;
+    int width = getSizeX();
+    int lifetimeCount = getSizeZ();
+
+    for (int yy=y; yy < y+h; ++yy) {
+      for (int xx=x; xx < x+w; ++xx) {
+        int sourcePosition =
+          lifetimeCount * bytesPerSample * ((yy * width) + xx) +
+          no * bytesPerSample;
+
+        int destinationPosition =
+          ((yy - y) * w * bytesPerSample) + ((xx - x) * bytesPerSample);
+
+        System.arraycopy(
+          wholeStackBuffer,
+          sourcePosition,
+          buffer,
+          destinationPosition,
+          bytesPerSample
+        );
+      }
+    }
+  }
+
+  @Override
+  public byte[] openBytes(int no, byte[] buffer, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.checkPlaneParameters(this, no, buffer.length, x, y, w, h);
+
+    final int series = getSeries();
+
+    if (state == null || state.series != series) {
+      state = new State(series);
+    }
+
+    final long rows = getSizeY();
+    final long columns = getSizeX();
+
+    boolean isFLIM = FormatTools.LIFETIME.equals(getModuloZ().type);
+
+    final Stack stack = stacks.get(series);
+
+    if (isFLIM) {
+      readFlimFrame(stack, no, buffer, x, y, w, h);
+    } else {
+      long frameStartSampleOffset = (no * rows * columns) +
+        y * columns +
+        x;
+
+      readStackFrame(stack, frameStartSampleOffset, buffer, 0, w, h);
     }
 
     return buffer;
@@ -675,16 +1000,15 @@ public class OBFReader extends FormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     if (! fileOnly) {
+      state = null;
+      skipBuffer = null;
       file_version = - 1;
       ome_meta_data = null;
       stacks.clear();
-      currentInflatedFrame = new Frame();
-      inflater = null;
     }
 
     super.close(fileOnly);
   }
-
 
   private ArrayList<Element> getChildNodes(Element root) {
     ArrayList<Element> list = new ArrayList<Element>();
