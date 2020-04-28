@@ -1694,6 +1694,9 @@ public class ZeissCZIReader extends FormatReader {
 
     ArrayList<Integer> uniqueT = new ArrayList<Integer>();
 
+    int minPositions = Integer.MAX_VALUE;
+    int maxPositions = Integer.MIN_VALUE;
+
     for (SubBlock plane : planes) {
       if (xyOnly && plane.coreIndex != coreIndex) {
         continue;
@@ -1764,8 +1767,11 @@ public class ZeissCZIReader extends FormatReader {
             }
             break;
           case 'S':
-            if (dimension.start >= positions) {
-              positions = dimension.start + 1;
+            if (dimension.start < minPositions) {
+              minPositions = dimension.start;
+            }
+            if (dimension.start > maxPositions) {
+              maxPositions = dimension.start;
             }
             break;
           case 'I':
@@ -1797,6 +1803,9 @@ public class ZeissCZIReader extends FormatReader {
             LOGGER.warn("Unknown dimension '{}'", dimension.dimension);
         }
       }
+    }
+    if (maxPositions > Integer.MIN_VALUE && minPositions < Integer.MAX_VALUE) {
+      positions = maxPositions - minPositions + 1;
     }
     setCoreIndex(previousCoreIndex);
   }
