@@ -282,7 +282,7 @@ public class BDVReader extends FormatReader {
     lastChannel = getZCTCoords(no)[1];
 
     // pixel data is stored in XYZ blocks
-    Object image = getImageData(no, y, h);
+    Object image = getImageData(no, x, y, w, h);
 
     boolean little = isLittleEndian();
 
@@ -370,13 +370,12 @@ public class BDVReader extends FormatReader {
     }
   }
 
-  private Object getImageData(int no, int y, int height) throws FormatException
+  private Object getImageData(int no, int x, int y, int width, int height) throws FormatException
   {
     int[] zct = getZCTCoords(no);
     int zslice = zct[0];
     int channel = zct[1];
     int time = zct[2];
-    int width = getSizeX();
     
     int seriesIndex = series;
     int requiredResolution = getResolution();
@@ -427,7 +426,7 @@ public class BDVReader extends FormatReader {
 
     int elementSize = jhdf.getElementSize(imagePath.pathToImageData);
 
-    int[] arrayOrigin = new int[] {zslice, y, 0};
+    int[] arrayOrigin = new int[] {zslice, y, x};
     int[] arrayDimension = new int[] {1, height, width};
 
     MDIntArray subBlock = jhdf.readIntBlockArray(imagePath.pathToImageData, arrayOrigin, arrayDimension);
