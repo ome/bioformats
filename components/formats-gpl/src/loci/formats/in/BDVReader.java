@@ -299,26 +299,26 @@ public class BDVReader extends FormatReader {
         short[][] data = (short[][]) image;
         short[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          DataTools.unpackBytes(rowData[i + x], buf, base + 2 * i, 2, little);
+          DataTools.unpackBytes(rowData[i], buf, base + 2 * i, 2, little);
         }
       } else if (image instanceof int[][]) {
         int[][] data = (int[][]) image;
         int[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          DataTools.unpackBytes(rowData[i + x], buf, base + i * 4, 4, little);
+          DataTools.unpackBytes(rowData[i], buf, base + i * 4, 4, little);
         }
       } else if (image instanceof float[][]) {
         float[][] data = (float[][]) image;
         float[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          int v = Float.floatToIntBits(rowData[i + x]);
+          int v = Float.floatToIntBits(rowData[i]);
           DataTools.unpackBytes(v, buf, base + i * 4, 4, little);
         }
       } else if (image instanceof double[][]) {
         double[][] data = (double[][]) image;
         double[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          long v = Double.doubleToLongBits(rowData[i + x]);
+          long v = Double.doubleToLongBits(rowData[i]);
           DataTools.unpackBytes(v, buf, base + i * 8, 8, little);
         }
       }
