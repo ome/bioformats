@@ -276,11 +276,12 @@ public class CellomicsReader extends FormatReader {
       if (!uniqueChannels.contains(channel)) uniqueChannels.add(channel);
 
       files.add(new ChannelFile(f, wellRow, wellCol, field, channel));
+
+      wellRows = (int) Math.max(wellRows, wellRow);
+      wellColumns = (int) Math.max(wellColumns, wellCol);
     }
 
     fields = uniqueFields.size();
-    wellRows = uniqueRows.size();
-    wellColumns = uniqueCols.size();
 
     for (int file=0; file<files.size(); file++) {
       ChannelFile f = files.get(file);
