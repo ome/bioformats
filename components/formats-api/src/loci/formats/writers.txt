@@ -19,3 +19,4 @@ loci.formats.out.V3DrawWriter	# v3draw
 # writers requiring third-party libraries
 loci.formats.out.WlzWriter	# wlz
 loci.formats.out.CellH5Writer 	# ch5
+loci.formats.out.ZarrWriter     # zarr

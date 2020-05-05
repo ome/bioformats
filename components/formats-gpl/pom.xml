@@ -170,6 +170,13 @@
     	<artifactId>json</artifactId>
     	<version>20090211</version>
     </dependency>
+    
+    <dependency>
+      <groupId>com.bc.zarr</groupId>
+      <artifactId>jzarr</artifactId>
+      <version>0.2</version>
+    </dependency>
+
   </dependencies>
 
   <properties>
@@ -388,9 +395,15 @@
       <url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
     </repository>
     <repository>
+      <id>bc-nexus-repo</id>
+      <name>Brockmann-Consult Public Maven Repository</name>
+      <url>http://nexus.senbox.net/nexus/content/groups/public/</url>
+   </repository>
+    <repository>
       <id>imagej.public</id>
       <name>ImageJ Maven repositrory</name>
       <url>https://maven.imagej.net/content/groups/public</url>
     </repository>
+
   </repositories>
 </project>
