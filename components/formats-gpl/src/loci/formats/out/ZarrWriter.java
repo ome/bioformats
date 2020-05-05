@@ -113,13 +113,14 @@ public class ZarrWriter extends FormatWriter {
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
     if(zarrService == null) {
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        zarrService = factory.getInstance(ZarrService.class);
-      }
-      catch (DependencyException e) {
-        throw new FormatException(ZarrServiceImpl.NO_ZARR_MSG, e);
-      }
+//      try {
+//        ServiceFactory factory = new ServiceFactory();
+//        zarrService = factory.getInstance(ZarrService.class);
+//      }
+//      catch (DependencyException e) {
+//        throw new FormatException(ZarrServiceImpl.NO_ZARR_MSG, e);
+//      }
+      zarrService = new ZarrServiceImpl();
     }
     if(zarrService != null) {
       if (!zarrService.isOpen() && zarrService.getID() != id) {

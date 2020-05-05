@@ -176,13 +176,14 @@ public class ZarrReader extends FormatReader  {
   // -- Helper methods --
 
   private void initializeZarrService(String id) throws IOException, FormatException {
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      zarrService = factory.getInstance(ZarrService.class);
-      zarrService.open(id);
-    } catch (DependencyException e) {
-      throw new MissingLibraryException(ZarrServiceImpl.NO_ZARR_MSG, e);
-    }
+//    try {
+//      ServiceFactory factory = new ServiceFactory();
+//      zarrService = factory.getInstance(ZarrService.class);
+//      zarrService.open(id);
+//    } catch (DependencyException e) {
+//      throw new MissingLibraryException(ZarrServiceImpl.NO_ZARR_MSG, e);
+//    }
+    zarrService = new ZarrServiceImpl();
   }
   
   @Override
