@@ -165,7 +165,7 @@ public class OBFReader extends FormatReader {
     in = new RandomAccessInputStream(id);
 
     file_version = getFileVersion(in);
-    addGlobalMeta("Version", version);
+    addGlobalMeta("Version", file_version);
     long stackPosition = in.readLong();
     final int lengthOfDescription = in.readInt();
     final String description = in.readString(lengthOfDescription);
