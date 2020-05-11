@@ -412,10 +412,6 @@
     </pluginManagement>
   </build>
 
-  <prerequisites>
-    <maven>3.0.5</maven>
-  </prerequisites>
-
   <organization>
     <name>Open Microscopy Environment</name>
     <url>http://www.openmicroscopy.org/</url>
