@@ -2654,7 +2654,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String illumination = getFirstNodeValue(channel, "IlluminationType");
 
-          if (illumination != null) {
+          if (illumination != null && (channels.get(i).illumination == null || channels.get(i).illumination == IlluminationType.OTHER)) {
             channels.get(i).illumination = MetadataTools.getIlluminationType(illumination);
           }
         }
