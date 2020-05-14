@@ -230,7 +230,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     // newer files from Versa systems do not
     if (handler != null) {
       Image i = handler.imageMap.get(0);
-      tiffParser.setYCbCrCorrection(!"versa".equalsIgnoreCase(i.devModel));
+      tiffParser.setYCbCrCorrection(!"versa".equalsIgnoreCase(i.devModel) && !"leica scn400".equalsIgnoreCase(i.devModel);
     }
   }
 
