@@ -69,6 +69,7 @@ import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 import org.xml.sax.SAXException;
@@ -1491,8 +1492,8 @@ public class ZeissCZIReader extends FormatReader {
           if (channel < channels.size() &&
             channels.get(channel).exposure != null)
           {
-            store.setPlaneExposureTime(
-              new Time(channels.get(channel).exposure, UNITS.SECOND), i, plane);
+            Time expTime = FormatTools.getTime(channels.get(channel).exposure, channels.get(channel).timeUnit);
+            store.setPlaneExposureTime(expTime, i, plane);
           }
         }
       }
@@ -1750,16 +1751,16 @@ public class ZeissCZIReader extends FormatReader {
               ms0.sizeZ = dimension.size;
             }
             break;
-          case 'T':        	  
-    		    int startIndex = dimension.start;
-    		    int endIndex = startIndex + dimension.size;
-    	  
-    		    for (int i=startIndex; i<endIndex; i++) {
-    			    if (!uniqueT.contains(i)) {
+          case 'T': 
+            int startIndex = dimension.start;
+            int endIndex = startIndex + dimension.size;
+        
+            for (int i=startIndex; i<endIndex; i++) {
+              if (!uniqueT.contains(i)) {
                 uniqueT.add(i);
                 ms0.sizeT = uniqueT.size();
               }
-    		    }
+            }
             break;
           case 'R':
             if (dimension.start >= rotations) {
@@ -3266,6 +3267,14 @@ public class ZeissCZIReader extends FormatReader {
         while (channels.size() <= i) {
           channels.add(new Channel());
         }
+        
+        Element timeSpan = getFirstNode(acquisition, "TimeSpan");
+        if (timeSpan != null) {
+          String units = getFirstNodeValue(timeSpan, "DefaultUnitFormat");
+          if (units != null) {
+            channels.get(i).timeUnit = units;
+          }
+        }
 
         try {
           if (exposure != null) {
@@ -4237,6 +4246,7 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   static class Channel {
+    public String timeUnit;
     public String name;
     public String color;
     public IlluminationType illumination;
