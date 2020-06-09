@@ -579,6 +579,11 @@ public class SVSReader extends BaseTiffReader {
   }
 
   protected Double getExposureTime() {
+    if (exposureTime == null || exposureScale == null) {
+      LOGGER.debug("Ignoring exposure time = {}, scale = {}",
+        exposureTime, exposureScale);
+      return null;
+    }
     return exposureTime * exposureScale * 1000;
   }
 
