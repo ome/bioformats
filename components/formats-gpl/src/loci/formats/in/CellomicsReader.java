@@ -437,10 +437,10 @@ public class CellomicsReader extends FormatReader {
       Length sizeY = FormatTools.getPhysicalSizeY(height);
       for (int i=0; i<getSeriesCount(); i++) {
         if (sizeX != null) {
-          store.setPixelsPhysicalSizeX(sizeX, 0);
+          store.setPixelsPhysicalSizeX(sizeX, i);
         }
         if (sizeY != null) {
-          store.setPixelsPhysicalSizeY(sizeY, 0);
+          store.setPixelsPhysicalSizeY(sizeY, i);
         }
       }
     }
