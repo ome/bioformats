@@ -370,7 +370,9 @@ public class AFIReader extends FormatReader {
             store.setChannelColor(displayColor[c], i, c);
           }
 
-          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.SECOND), i, c);
+          if (exposure[c] != null) {
+            store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.SECOND), i, c);
+          }
         }
       }
     }
