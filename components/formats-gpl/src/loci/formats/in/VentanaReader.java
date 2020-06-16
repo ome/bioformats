@@ -579,6 +579,14 @@ public class VentanaReader extends BaseTiffReader {
           upSum += overlap.y;
           upCount++;
         }
+        else if (overlap.direction.equals("LEFT")) {
+          rightSum += overlap.x;
+          rightCount++;
+          if (overlap.y <= 0) {
+            columnYAdjust.put(getTileColumn(
+              overlap.a, area.tileRows, area.tileColumns), overlap.y);
+          }
+        }
         else {
           throw new FormatException(
             "Unsupported overlap direction: " + overlap.direction);
