@@ -367,8 +367,8 @@ public class CellomicsReader extends FormatReader {
     store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
     store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
 
-    int realRows = wellRows;
-    int realCols = wellColumns;
+    int realRows = wellRows + 1;
+    int realCols = wellColumns + 1;
 
     if (getSeriesCount() == 1) {
       realRows = 1;
