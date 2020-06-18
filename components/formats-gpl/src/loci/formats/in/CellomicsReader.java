@@ -467,7 +467,7 @@ public class CellomicsReader extends FormatReader {
     if (m.matches()) {
       return m.group(1);
     }
-    return null;
+    return filename.substring(0, filename.lastIndexOf("."));
   }
 
   private String getWellName(String filename) {
