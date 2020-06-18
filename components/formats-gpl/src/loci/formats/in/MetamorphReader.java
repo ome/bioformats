@@ -1434,6 +1434,13 @@ public class MetamorphReader extends BaseTiffReader {
               catch (NumberFormatException e) { }
             }
           }
+          else if (key.equalsIgnoreCase("wavelength")) {
+            try {
+              wavelength = Integer.parseInt(value);
+            }
+            catch (NumberFormatException e) {
+            }
+          }
         }
       }
 
