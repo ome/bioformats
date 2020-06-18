@@ -29,11 +29,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -42,9 +46,12 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.MDBService;
 import ome.xml.model.enums.NamingConvention;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 /**
  * Reader for Cellomics C01 files.
@@ -200,6 +207,7 @@ public class CellomicsReader extends FormatReader {
     ArrayList<String> pixelFiles = new ArrayList<String>();
 
     String plateName = getPlateName(baseFile.getName());
+    String mdbFile = null;
 
     if (plateName != null && isGroupFiles()) {
       String[] list = parent.list();
@@ -213,6 +221,10 @@ public class CellomicsReader extends FormatReader {
         }
         else if (hasPlateName) {
           metadataFiles.add(loc.getAbsolutePath());
+
+          if (checkSuffix(f, "mdb")) {
+            mdbFile = loc.getAbsolutePath();
+          }
         }
       }
     }
@@ -340,6 +352,56 @@ public class CellomicsReader extends FormatReader {
       addGlobalMeta("Color important", colorImportant);
     }
 
+    Color[] channelColors = new Color[uniqueChannels.size()];
+    String[] channelNames = new String[uniqueChannels.size()];
+    Time[] exposureTimes = new Time[uniqueChannels.size()];
+    if (mdbFile != null) {
+      MDBService mdb = null;
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        mdb = factory.getInstance(MDBService.class);
+
+        mdb.initialize(mdbFile);
+        Vector<Vector<String[]>> tables = mdb.parseDatabase();
+        for (Vector<String[]> table : tables) {
+          String[] header = table.get(0);
+          if (header[0].equals("asnProtocolChannel")) {
+            int nameColumn = DataTools.indexOf(header, "Name") - 1;
+            int exposureTimeColumn = DataTools.indexOf(header, "ExposureTime") - 1;
+            int colorColumn = DataTools.indexOf(header, "CompositeColor") - 1;
+            for (int r=1; r<table.size(); r++) {
+              String[] row = table.get(r);
+              if (nameColumn >= 0) {
+                channelNames[r - 1] = row[nameColumn];
+              }
+              if (colorColumn >= 0) {
+                int color = Integer.parseInt(row[colorColumn]);
+                int alpha = (color >> 24) & 0xff;
+                int blue = (color >> 16) & 0xff;
+                int green = (color >> 8) & 0xff;
+                int red = color & 0xff;
+
+                channelColors[r - 1] = new Color(red, green, blue, alpha);
+              }
+              if (exposureTimeColumn >= 0) {
+                double exposure = DataTools.parseDouble(row[exposureTimeColumn]);
+                exposureTimes[r - 1] = FormatTools.getTime(exposure, null);
+              }
+            }
+            break;
+          }
+        }
+      }
+      catch (DependencyException e) {
+        LOGGER.warn("Could not parse MDB file", e);
+      }
+      finally {
+        if (mdb != null) {
+          mdb.close();
+        }
+      }
+    }
+
     LOGGER.info("Populating core metadata");
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -359,7 +421,7 @@ public class CellomicsReader extends FormatReader {
     LOGGER.info("Populating metadata store");
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateName(plateName, 0);
@@ -441,6 +503,21 @@ public class CellomicsReader extends FormatReader {
         }
         if (sizeY != null) {
           store.setPixelsPhysicalSizeY(sizeY, i);
+        }
+
+        for (int c=0; c<getEffectiveSizeC(); c++) {
+          if (channelNames[c] != null) {
+            store.setChannelName(channelNames[c], i, c);
+          }
+          if (channelColors[c] != null) {
+            store.setChannelColor(channelColors[c], i, c);
+          }
+        }
+        for (int p=0; p<getImageCount(); p++) {
+          int[] zct = getZCTCoords(p);
+          if (exposureTimes[zct[1]] != null) {
+            store.setPlaneExposureTime(exposureTimes[zct[1]], i, p);
+          }
         }
       }
     }
