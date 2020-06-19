@@ -571,9 +571,9 @@ public class BDVReader extends FormatReader {
             }
 
             if (setupSizes != null && setupSizes.size() == 3) {
-              store.setPixelsPhysicalSizeX(setupSizes.get(0), seriesCount);
-              store.setPixelsPhysicalSizeY(setupSizes.get(1), seriesCount);
-              store.setPixelsPhysicalSizeZ(setupSizes.get(2), seriesCount);
+              store.setPixelsPhysicalSizeX(setupSizes.get(0), coreIndexToSeries(seriesCount));
+              store.setPixelsPhysicalSizeY(setupSizes.get(1), coreIndexToSeries(seriesCount));
+              store.setPixelsPhysicalSizeZ(setupSizes.get(2), coreIndexToSeries(seriesCount));
             }
             if (getResolution() == 0) {
               seriesNames.add(String.format("P_%s, W_%s_%s", coord.timepoint, coord.setup, coord.mipmapLevel));
