@@ -343,6 +343,10 @@ public class BDVReader extends FormatReader {
         }
         jhdf = null;
         lastChannel = 0;
+        channelIndexes.clear();
+        setupAttributeList.clear();
+        setupVoxelSizes.clear();
+        setupResolutionCounts.clear();
       }
     }
   }
