@@ -58,6 +58,7 @@ public class MikroscanTiffReader extends SVSReader {
     super("Mikroscan TIFF", new String[] {"tif", "tiff"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN};
     suffixNecessary = false;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
