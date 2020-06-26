@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.AbstractMap;
 import java.util.Collections;
+import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -997,6 +998,14 @@ public class MetamorphReader extends BaseTiffReader {
         }
         store.setDetectorSettingsID(detectorID, i, c);
 
+        if (wave == null && handler.getWavelengths() != null) {
+          Vector<Integer> xmlWavelengths = handler.getWavelengths();
+          wave = new double[xmlWavelengths.size()];
+          for (int w=0; w<wave.length; w++) {
+            wave[w] = xmlWavelengths.get(w);
+          }
+        }
+
         if (wave != null && waveIndex < wave.length) {
           Length wavelength =
             FormatTools.getWavelength(wave[waveIndex]);
@@ -1013,6 +1022,7 @@ public class MetamorphReader extends BaseTiffReader {
 
             if (wavelength != null) {
               store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+              store.setChannelEmissionWavelength(wavelength, i, c);
             }
           }
         }
@@ -1436,7 +1446,10 @@ public class MetamorphReader extends BaseTiffReader {
           }
           else if (key.equalsIgnoreCase("wavelength")) {
             try {
-              wavelength = Integer.parseInt(value);
+              if (wave == null || wave.length == 0) {
+                wave = new double[1];
+              }
+              wave[0] = DataTools.parseDouble(value);
             }
             catch (NumberFormatException e) {
             }
