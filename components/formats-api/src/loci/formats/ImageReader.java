@@ -107,6 +107,11 @@ public class ImageReader implements IFormatReader {
 
   private boolean allowOpen = true;
 
+  private boolean isOmero(String id) {
+    return id != null && id.toLowerCase().startsWith("omero:") &&
+    id.indexOf("\n") > 0;
+  }
+
   // -- Constructors --
 
   /**
@@ -166,8 +171,7 @@ public class ImageReader implements IFormatReader {
     id = id.substring(0, id.length() - 1);
    }
    boolean fake = id != null && id.toLowerCase().endsWith(".fake");
-   boolean omero = id != null && id.toLowerCase().startsWith("omero:") &&
-    id.indexOf("\n") > 0;
+   boolean omero = isOmero(id);
 
    // blacklist temporary files that are being copied e.g. by WinSCP
    boolean invalid = id != null && id.toLowerCase().endsWith(".filepart");
@@ -838,8 +842,10 @@ public class ImageReader implements IFormatReader {
   @Override
   public void setId(String id) throws FormatException, IOException {
     IFormatReader currentReader = getReader(id);
-    LOGGER.info("{} initializing {}",
+    if (!isOmero(id)) {
+      LOGGER.info("{} initializing {}",
       currentReader.getClass().getSimpleName(), id);
+    }
     currentReader.setId(id);
   }
 

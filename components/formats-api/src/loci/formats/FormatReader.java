@@ -1381,7 +1381,10 @@ public abstract class FormatReader extends FormatHandler
    */
   @Override
   public void setId(String id) throws FormatException, IOException {
-    LOGGER.debug("{} initializing {}", this.getClass().getSimpleName(), id);
+    if (!isOmero(id)) {
+      LOGGER.debug("{} initializing {}", this.getClass().getSimpleName(), id);
+    }
+    
 
     if (currentId == null || !new Location(id).getAbsolutePath().equals(
       new Location(currentId).getAbsolutePath()))
@@ -1796,6 +1799,11 @@ public abstract class FormatReader extends FormatHandler
     transform.setA01(Math.sin(theta));
     transform.setA10(-1 * Math.sin(theta));
     return transform;
+  }
+
+  private boolean isOmero(String id) {
+    return id != null && id.toLowerCase().startsWith("omero:") &&
+    id.indexOf("\n") > 0;
   }
 
 }
