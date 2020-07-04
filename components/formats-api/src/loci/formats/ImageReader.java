@@ -173,7 +173,7 @@ public class ImageReader implements IFormatReader {
    boolean fake = id != null && id.toLowerCase().endsWith(".fake");
    boolean omero = isOmero(id);
 
-   // blacklist temporary files that are being copied e.g. by WinSCP
+   // block temporary files that are being copied e.g. by WinSCP
    boolean invalid = id != null && id.toLowerCase().endsWith(".filepart");
 
    // NB: Check that we can generate a valid handle for the ID;
