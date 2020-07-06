@@ -288,16 +288,25 @@ public class OperettaReader extends FormatReader {
     for (String f : list) {
       Location path = new Location(parent, f);
       if (path.isDirectory()) {
+        // the current file's parent directory will usually be "Images",
+        // but may have been renamed especially if there are no
+        // analysis results
+        if (f.equals(currentFile.getParentFile().getName())) {
+          LOGGER.trace("Skipping current directory {}", f);
+          continue;
+        }
+        // Skipping other directories containing Operetta metadata files
+        for (String XML_FILE : XML_FILES) {
+          if (new Location(path, XML_FILE).exists()) {
+            LOGGER.trace("Skipping {} containing {}", f, XML_FILE);
+            continue;
+          }
+        }
         String[] companionFolders = path.list(true);
         Arrays.sort(companionFolders);
         for (String folder : companionFolders) {
           LOGGER.trace("Found folder {}", folder);
-          // the current file's parent directory will usually be "Images",
-          // but may have been renamed especially if there are no
-          // analysis results
-          if ((!f.equals("Images") &&
-            !f.equals(currentFile.getParentFile().getName())) ||
-            !checkSuffix(folder, "tiff"))
+          if (!checkSuffix(folder, "tiff"))
           {
             String metadataFile = new Location(path, folder).getAbsolutePath();
             if (!metadataFile.equals(currentFile.getAbsolutePath())) {
