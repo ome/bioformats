@@ -362,33 +362,30 @@ public class CellomicsReader extends FormatReader {
         mdb = factory.getInstance(MDBService.class);
 
         mdb.initialize(mdbFile);
-        Vector<Vector<String[]>> tables = mdb.parseDatabase();
-        for (Vector<String[]> table : tables) {
+        Vector<String[]> table = mdb.parseTable("asnProtocolChannel");
+        if (table != null) {
           String[] header = table.get(0);
-          if (header[0].equals("asnProtocolChannel")) {
-            int nameColumn = DataTools.indexOf(header, "Name") - 1;
-            int exposureTimeColumn = DataTools.indexOf(header, "ExposureTime") - 1;
-            int colorColumn = DataTools.indexOf(header, "CompositeColor") - 1;
-            for (int r=1; r<table.size(); r++) {
-              String[] row = table.get(r);
-              if (nameColumn >= 0) {
-                channelNames[r - 1] = row[nameColumn];
-              }
-              if (colorColumn >= 0) {
-                int color = Integer.parseInt(row[colorColumn]);
-                int alpha = (color >> 24) & 0xff;
-                int blue = (color >> 16) & 0xff;
-                int green = (color >> 8) & 0xff;
-                int red = color & 0xff;
-
-                channelColors[r - 1] = new Color(red, green, blue, alpha);
-              }
-              if (exposureTimeColumn >= 0) {
-                double exposure = DataTools.parseDouble(row[exposureTimeColumn]);
-                exposureTimes[r - 1] = FormatTools.getTime(exposure, null);
-              }
+          int nameColumn = DataTools.indexOf(header, "Name") - 1;
+          int exposureTimeColumn = DataTools.indexOf(header, "ExposureTime") - 1;
+          int colorColumn = DataTools.indexOf(header, "CompositeColor") - 1;
+          for (int r=1; r<table.size(); r++) {
+            String[] row = table.get(r);
+            if (nameColumn >= 0) {
+              channelNames[r - 1] = row[nameColumn];
             }
-            break;
+            if (colorColumn >= 0) {
+              int color = Integer.parseInt(row[colorColumn]);
+              int alpha = (color >> 24) & 0xff;
+              int blue = (color >> 16) & 0xff;
+              int green = (color >> 8) & 0xff;
+              int red = color & 0xff;
+
+              channelColors[r - 1] = new Color(red, green, blue, alpha);
+            }
+            if (exposureTimeColumn >= 0) {
+              double exposure = DataTools.parseDouble(row[exposureTimeColumn]);
+              exposureTimes[r - 1] = FormatTools.getTime(exposure, null);
+            }
           }
         }
       }
