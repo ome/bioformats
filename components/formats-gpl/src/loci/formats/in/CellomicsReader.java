@@ -365,26 +365,36 @@ public class CellomicsReader extends FormatReader {
         Vector<String[]> table = mdb.parseTable("asnProtocolChannel");
         if (table != null) {
           String[] header = table.get(0);
-          int nameColumn = DataTools.indexOf(header, "Name") - 1;
-          int exposureTimeColumn = DataTools.indexOf(header, "ExposureTime") - 1;
-          int colorColumn = DataTools.indexOf(header, "CompositeColor") - 1;
+          int nameColumn = DataTools.indexOf(header, "Name");
+          int exposureTimeColumn = DataTools.indexOf(header, "ExposureTime");
+          int colorColumn = DataTools.indexOf(header, "CompositeColor");
           for (int r=1; r<table.size(); r++) {
             String[] row = table.get(r);
             if (nameColumn >= 0) {
               channelNames[r - 1] = row[nameColumn];
             }
             if (colorColumn >= 0) {
-              int color = Integer.parseInt(row[colorColumn]);
-              int alpha = (color >> 24) & 0xff;
-              int blue = (color >> 16) & 0xff;
-              int green = (color >> 8) & 0xff;
-              int red = color & 0xff;
+              try {
+                int color = Integer.parseInt(row[colorColumn]);
+                int alpha = (color >> 24) & 0xff;
+                int blue = (color >> 16) & 0xff;
+                int green = (color >> 8) & 0xff;
+                int red = color & 0xff;
 
-              channelColors[r - 1] = new Color(red, green, blue, alpha);
+                channelColors[r - 1] = new Color(red, green, blue, alpha);
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse channel color " + row[colorColumn], e);
+              }
             }
             if (exposureTimeColumn >= 0) {
-              double exposure = DataTools.parseDouble(row[exposureTimeColumn]);
-              exposureTimes[r - 1] = FormatTools.getTime(exposure, null);
+              try {
+                double exposure = DataTools.parseDouble(row[exposureTimeColumn]);
+                exposureTimes[r - 1] = FormatTools.getTime(exposure, null);
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse exposure time " + row[exposureTimeColumn], e);
+              }
             }
           }
         }
