@@ -249,7 +249,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (checkSuffix(file, ND_SUFFIX) &&
        l.getName().startsWith(file.substring(0, file.lastIndexOf("."))))
       {
-        return FormatTools.MUST_GROUP;
+        return FormatTools.CAN_GROUP;
       }
     }
 
