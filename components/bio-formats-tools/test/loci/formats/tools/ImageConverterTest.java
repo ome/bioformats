@@ -42,11 +42,15 @@ import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import loci.formats.ClassList;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.FormatException;
 import loci.formats.tools.ImageConverter;
+import loci.formats.in.ICSReader;
+import loci.formats.in.OMETiffReader;
+import loci.formats.in.TiffDelegateReader;
 import loci.formats.out.OMETiffWriter;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -126,7 +130,12 @@ public class ImageConverterTest {
   }
 
   public void checkImage(String outFileToCheck, int expectedWidth) throws FormatException, IOException {
-    IFormatReader r = new ImageReader();
+    ClassList<IFormatReader> readerClasses = new ClassList<IFormatReader>(IFormatReader.class);
+    readerClasses.addClass(OMETiffReader.class);
+    readerClasses.addClass(ICSReader.class);
+    readerClasses.addClass(TiffDelegateReader.class);
+
+    IFormatReader r = new ImageReader(readerClasses);
     r.setFlattenedResolutions(false);
     r.setId(outFileToCheck);
     assertEquals(r.getSizeX(), expectedWidth);
