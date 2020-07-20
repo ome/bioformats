@@ -1963,6 +1963,13 @@ public class FormatReaderTest {
             }
           }
 
+          // Cellomics datasets cannot be reliably detected with the .mdb file
+          if (reader.getFormat().equals("Cellomics C01") &&
+            base[i].toLowerCase().endsWith(".mdb"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2695,6 +2702,13 @@ public class FormatReaderTest {
             // CellWorx datasets can only be reliably detected with the .HTD file
             if (!used[i].toLowerCase().endsWith(".htd") &&
               r instanceof CellWorxReader)
+            {
+              continue;
+            }
+
+            // Cellomics datasets cannot be reliably detected with .mdb file
+            if (used[i].toLowerCase().endsWith(".mdb") &&
+              r instanceof CellomicsReader)
             {
               continue;
             }

@@ -149,6 +149,7 @@ public class CellomicsReader extends FormatReader {
     if (!fileOnly) {
       files.clear();
       cellomicsPattern = null;
+      metadataFiles.clear();
     }
   }
 
@@ -162,13 +163,13 @@ public class CellomicsReader extends FormatReader {
     }
 
     ArrayList<String> seriesFiles = new ArrayList<String>();
-    seriesFiles.addAll(metadataFiles);
     for (int c=0; c<getSizeC(); c++) {
       ChannelFile f = lookupFile(getSeries(), c);
       if (f != null && f.filename != null) {
         seriesFiles.add(f.filename);
       }
     }
+    seriesFiles.addAll(metadataFiles);
     return seriesFiles.toArray(new String[seriesFiles.size()]);
   }
 
@@ -181,10 +182,10 @@ public class CellomicsReader extends FormatReader {
     }
 
     ArrayList<String> allFiles = new ArrayList<String>();
-    allFiles.addAll(metadataFiles);
     for (ChannelFile f : files) {
       allFiles.add(f.filename);
     }
+    allFiles.addAll(metadataFiles);
     return allFiles.toArray(new String[allFiles.size()]);
   }
 
@@ -551,7 +552,14 @@ public class CellomicsReader extends FormatReader {
     if (m.matches()) {
       return m.group(1);
     }
-    return filename.substring(0, filename.lastIndexOf("."));
+    if (checkSuffix(filename, suffixes)) {
+      return null;
+    }
+    int lastDot = filename.lastIndexOf(".");
+    if (lastDot < 0) {
+      lastDot = filename.length();
+    }
+    return filename.substring(0, lastDot);
   }
 
   private String getWellName(String filename) {
