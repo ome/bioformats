@@ -1938,7 +1938,9 @@ public class FormatReaderTest {
           }
 
           // CellWorx datasets can only be reliably detected with the .HTD file
-          if (reader.getFormat().equals("CellWorx")) {
+          if (reader.getFormat().equals("CellWorx") ||
+            reader.getFormat().equals("MetaXpress TIFF"))
+          {
             continue;
           }
 
@@ -2695,6 +2697,13 @@ public class FormatReaderTest {
             // CellWorx datasets can only be reliably detected with the .HTD file
             if (!used[i].toLowerCase().endsWith(".htd") &&
               r instanceof CellWorxReader)
+            {
+              continue;
+            }
+
+            // MetaXpress TIFF reader can flag .HTD files from CellWorX
+            if (result && r instanceof CellWorxReader &&
+              readers[j] instanceof MetaxpressTiffReader)
             {
               continue;
             }
