@@ -70,6 +70,7 @@ loci.formats.in.BioRadGelReader       # 1sc
 loci.formats.in.RHKReader             # sm2, sm3
 loci.formats.in.MolecularImagingReader # stp
 loci.formats.in.CellWorxReader        # pnl, htd
+loci.formats.in.MetaxpressTiffReader      # htd
 loci.formats.in.Ecat7Reader           # v
 loci.formats.in.VarianFDFReader       # fdf
 loci.formats.in.AIMReader             # aim

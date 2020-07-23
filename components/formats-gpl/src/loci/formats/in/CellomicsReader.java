@@ -289,11 +289,12 @@ public class CellomicsReader extends FormatReader {
       if (!uniqueChannels.contains(channel)) uniqueChannels.add(channel);
 
       files.add(new ChannelFile(f, wellRow, wellCol, field, channel));
+
+      wellRows = (int) Math.max(wellRows, wellRow);
+      wellColumns = (int) Math.max(wellColumns, wellCol);
     }
 
     fields = uniqueFields.size();
-    wellRows = uniqueRows.size();
-    wellColumns = uniqueCols.size();
 
     for (int file=0; file<files.size(); file++) {
       ChannelFile f = files.get(file);
@@ -436,8 +437,8 @@ public class CellomicsReader extends FormatReader {
     store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
     store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
 
-    int realRows = wellRows;
-    int realCols = wellColumns;
+    int realRows = wellRows + 1;
+    int realCols = wellColumns + 1;
 
     if (getSeriesCount() == 1) {
       realRows = 1;
