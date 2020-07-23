@@ -71,7 +71,9 @@ public interface MDBService extends Service {
    * @return table data or null if the named table does not exist
    * @throws IOException if there is a problem reading the table data
    */
-  public Vector<String[]> parseTable(String name) throws IOException;
+  public default Vector<String[]> parseTable(String name) throws IOException {
+    return null;
+  }
 
   /** Close the currently initialized file. */
   public void close();
