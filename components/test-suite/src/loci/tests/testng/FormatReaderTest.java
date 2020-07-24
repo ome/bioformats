@@ -954,14 +954,16 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  private boolean isEqual(String s1, String s2) {
+  private boolean isEqual(String expected, String real) {
 
-    if (s1 == null && s2 == null) {
+    if (expected == null && real == null) {
       return true;
-    } else if (s1 == null || s2 == null) {
+    } else if (expected.equals("null")  && real == null) {
+      return true;
+    } else if (expected == null) {
       return false;
     } else {
-      return s1.equals(s2);
+      return expected.equals(real);
     }
   }
 
