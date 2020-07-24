@@ -378,12 +378,11 @@ public class CellomicsReader extends FormatReader {
             if (colorColumn >= 0) {
               try {
                 int color = Integer.parseInt(row[colorColumn]);
-                int alpha = (color >> 24) & 0xff;
                 int blue = (color >> 16) & 0xff;
                 int green = (color >> 8) & 0xff;
                 int red = color & 0xff;
 
-                channelColors[r - 1] = new Color(red, green, blue, alpha);
+                channelColors[r - 1] = new Color(red, green, blue, 255);
               }
               catch (NumberFormatException e) {
                 LOGGER.debug("Could not parse channel color " + row[colorColumn], e);
