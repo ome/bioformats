@@ -69,7 +69,7 @@
       <version>${jgoodies-forms.version}</version>
     </dependency>
     <dependency>
-     <groupId>com.esotericsoftware.kryo</groupId>
+     <groupId>com.esotericsoftware</groupId>
      <artifactId>kryo</artifactId>
      <version>${kryo.version}</version>
     </dependency>
