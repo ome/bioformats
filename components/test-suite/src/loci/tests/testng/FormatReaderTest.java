@@ -963,7 +963,7 @@ public class FormatReaderTest {
     } else if (expected == null) {
       return false;
     } else {
-      return expected.equals(real);
+      return expected.trim().equals(real.trim());
     }
   }
 
