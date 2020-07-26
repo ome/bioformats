@@ -613,7 +613,7 @@ public class Configuration {
 
         if (canOpenImages(reader)) {
           try {
-            byte[] plane = reader.openBytes(0);
+            byte[] plane = unflattenedReader.openBytes(0);
             seriesTable.put(MD5, TestTools.md5(plane));
           } catch (FormatException e) {
             // TODO
@@ -626,7 +626,7 @@ public class Configuration {
           int w = (int) Math.min(TILE_SIZE, reader.getSizeX());
           int h = (int) Math.min(TILE_SIZE, reader.getSizeY());
 
-          byte[] tile = reader.openBytes(0, 0, 0, w, h);
+          byte[] tile = unflattenedReader.openBytes(0, 0, 0, w, h);
           seriesTable.put(TILE_MD5, TestTools.md5(tile));
         } catch (FormatException e) {
           // TODO
