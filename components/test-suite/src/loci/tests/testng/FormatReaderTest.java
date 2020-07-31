@@ -954,6 +954,19 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
+  private boolean isEqual(String expected, String real) {
+
+    if (expected == null && real == null) {
+      return true;
+    } else if (expected.equals("null")  && real == null) {
+      return true;
+    } else if (expected == null) {
+      return false;
+    } else {
+      return expected.trim().equals(real.trim());
+    }
+  }
+
   private boolean isAlmostEqual(Quantity q1, Quantity q2) {
 
     if (q1 == null && q2 == null) {
@@ -1094,9 +1107,7 @@ public class FormatReaderTest {
         String realName = retrieve.getChannelName(i, c);
         String expectedName = config.getChannelName(c);
 
-        if (!expectedName.equals(realName) &&
-          (realName == null && !expectedName.equals("null")))
-        {
+        if (!isEqual(expectedName, realName)) {
           result(testName, false, "Series " + i + " channel " + c +
             " (got '" + realName + "', expected '" + expectedName + "')");
         }
@@ -1398,9 +1409,7 @@ public class FormatReaderTest {
       String realName = retrieve.getImageName(i);
       String expectedName = config.getImageName();
 
-      if (!expectedName.equals(realName) &&
-        !(realName == null && expectedName.equals("null")))
-      {
+      if (!isEqual(expectedName, realName)) {
         result(testName, false, "Series " + i + " (got '" + realName +
           "', expected '" + expectedName + "')");
       }
