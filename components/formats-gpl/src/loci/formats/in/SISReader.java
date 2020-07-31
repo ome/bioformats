@@ -156,8 +156,8 @@ public class SISReader extends BaseTiffReader {
     long metadataPointer = ifd.getIFDLongValue(SIS_TAG, 0);
     in.seek(metadataPointer);
 
-	// The tag here is interpreted according to the implementation in tiff.py (https://gist.github.com/tbenst/7db5a9aa9b221e67ba85c5642b23f094)
-	// '<4s6shhhhh6s32sh', 60 bytes in total  => (magic, _, minute, hour, day, month, year, _, name, tagcount)
+    // The tag here is interpreted according to the implementation in tiff.py (https://gist.github.com/tbenst/7db5a9aa9b221e67ba85c5642b23f094)
+    // '<4s6shhhhh6s32sh', 60 bytes in total  => (magic, _, minute, hour, day, month, year, _, name, tagcount)
     in.skipBytes(4);
     in.skipBytes(6);
     int minute = in.readShort();
@@ -175,43 +175,28 @@ public class SISReader extends BaseTiffReader {
 
     in.seek(metadataPointer);
     in.skip(60);
-
-	// This code didn't work for the image we looked at. The "important delimiter" was "6".
-    // Todo: remove during PR discussion - just here for reference
-//    short check = in.readShort();
-//    while (check != 7 && check != 8) {
-//      check = in.readShort();
-
-//      if (check == 0x700 || check == 0x800 || check == 0xa00) {
-        //in.skipBytes(1);
-//        break;
-//      }
-//    }
-//    in.skipBytes(4);
     
     // according to tiff.py the entries here are defined like that '<10shdd8sd2s34s32s'
-	// structure of one tag: '<hhI' - 8 bytes in total
+    // structure of one tag: '<hhI' - 8 bytes in total
     in.skipBytes(2); // tag type
     in.skipBytes(2); // count
 
     byte[] bytes = new byte[4];
-    for (int k=0; k<4; k++)  // offset
-    {
-    	bytes[k] =in.readByte();
+    for (int k=0; k<4; k++) {
+      bytes[k] =in.readByte();
     }			    
     long tagOffset = DataTools.bytesToInt(bytes, true);
     
-	// check if the offset is still within the file
+    // check if the offset is still within the file
     if (tagOffset >= in.length()) {
       return;
     }
 	
-    if (tagOffset > 0)
-	{
-		in.seek(tagOffset);
-	}
+    if (tagOffset > 0) {
+		  in.seek(tagOffset);
+	  }
 	
-	// structure of tags with more Metadata '<10shdd8sd2s34s32s', 112 bytes in total => (_, lenexp, xcal, ycal, _, mag, _, camname, pictype)
+    // structure of tags with more Metadata '<10shdd8sd2s34s32s', 112 bytes in total => (_, lenexp, xcal, ycal, _, mag, _, camname, pictype)
     in.skipBytes(10);
 
     double unitExp = in.readShort();    
@@ -223,13 +208,12 @@ public class SISReader extends BaseTiffReader {
       physicalSizeY = in.readDouble();
     }
     
-	// check if unit exponential is in a valid range [-12..12]
-    if (unitExp >= -12 && unitExp <= 12)
-    {
-		// we want the resulting pixels sizes to be in microns, but consider the unit exponential in the Metadata, so we multiply by 10e^6
-        double unitMultiplier = Math.pow(10, unitExp) * Math.pow(10, 6);
+    // check if unit exponential is in a valid range [-12..12]
+    if (unitExp >= -12 && unitExp <= 12) {
+		  // we want the resulting pixels sizes to be in microns, but consider the unit exponential in the Metadata, so we multiply by 10e^6
+      double unitMultiplier = Math.pow(10, unitExp) * Math.pow(10, 6);
     	physicalSizeX *= unitMultiplier;
-        physicalSizeY *= unitMultiplier;
+      physicalSizeY *= unitMultiplier;
    	}
     		
     in.skipBytes(8);
@@ -289,12 +273,6 @@ public class SISReader extends BaseTiffReader {
       store.setDetectorModel(cameraName, 0, 0);
       store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
       store.setDetectorSettingsID(detector, 0, 0);
-
-		// Todo: Maybe, we need to remember whether the above pixel size estimation already incorporated the correct unit multiplier.
-		// Outcommented for this particular test image here. Might still be very relevant for other images. 
-        // --> I would see this as part of the PR discussion
-//      physicalSizeX /= 1000;
-//      physicalSizeY /= 1000;
 
       Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
       Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
