@@ -208,7 +208,7 @@ public class SISReader extends BaseTiffReader {
       physicalSizeY = in.readDouble();
     }
     
-	  // check if unit exponential is in a valid range [-12..12]
+    // check if unit exponential is in a valid range [-12..12]
     if (unitExp >= -12 && unitExp <= 12) {
 		  // we want the resulting pixels sizes to be in microns, but consider the unit exponential in the Metadata, so we multiply by 10e^6
       double unitMultiplier = Math.pow(10, unitExp) * Math.pow(10, 6);
