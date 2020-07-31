@@ -156,8 +156,8 @@ public class SISReader extends BaseTiffReader {
     long metadataPointer = ifd.getIFDLongValue(SIS_TAG, 0);
     in.seek(metadataPointer);
 
-	  // The tag here is interpreted according to the implementation in tiff.py (https://gist.github.com/tbenst/7db5a9aa9b221e67ba85c5642b23f094)
-	  // '<4s6shhhhh6s32sh', 60 bytes in total  => (magic, _, minute, hour, day, month, year, _, name, tagcount)
+    // The tag here is interpreted according to the implementation in tiff.py (https://gist.github.com/tbenst/7db5a9aa9b221e67ba85c5642b23f094)
+    // '<4s6shhhhh6s32sh', 60 bytes in total  => (magic, _, minute, hour, day, month, year, _, name, tagcount)
     in.skipBytes(4);
     in.skipBytes(6);
     int minute = in.readShort();
@@ -177,7 +177,7 @@ public class SISReader extends BaseTiffReader {
     in.skip(60);
     
     // according to tiff.py the entries here are defined like that '<10shdd8sd2s34s32s'
-	  // structure of one tag: '<hhI' - 8 bytes in total
+    // structure of one tag: '<hhI' - 8 bytes in total
     in.skipBytes(2); // tag type
     in.skipBytes(2); // count
 
@@ -187,7 +187,7 @@ public class SISReader extends BaseTiffReader {
     }			    
     long tagOffset = DataTools.bytesToInt(bytes, true);
     
-	  // check if the offset is still within the file
+    // check if the offset is still within the file
     if (tagOffset >= in.length()) {
       return;
     }
@@ -196,7 +196,7 @@ public class SISReader extends BaseTiffReader {
 		  in.seek(tagOffset);
 	  }
 	
-	  // structure of tags with more Metadata '<10shdd8sd2s34s32s', 112 bytes in total => (_, lenexp, xcal, ycal, _, mag, _, camname, pictype)
+    // structure of tags with more Metadata '<10shdd8sd2s34s32s', 112 bytes in total => (_, lenexp, xcal, ycal, _, mag, _, camname, pictype)
     in.skipBytes(10);
 
     double unitExp = in.readShort();    
