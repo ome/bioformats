@@ -171,7 +171,7 @@ public class SISReader extends BaseTiffReader {
     acquisitionDate = DateTools.formatDate(acquisitionDate, "yyyy-M-d H:m");
 
     in.skipBytes(6);
-    imageName = in.readCString();
+    imageName = in.readCString().trim();
 
     in.seek(metadataPointer);
     in.skip(60);
@@ -220,7 +220,7 @@ public class SISReader extends BaseTiffReader {
 
     magnification = in.readDouble();
     int cameraNameLength = in.readShort();
-    channelName = in.readCString();
+    channelName = in.readCString().trim();
 
     if (channelName.length() > 128) {
       channelName = "";
