@@ -256,11 +256,11 @@ public class GatanReader extends FormatReader {
     if (foundMontage && stageX.size() > 1) {
       if (m.sizeZ > 1) {
         m.sizeZ /= stageX.size();
-      }
-      m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+        m.imageCount = getSizeZ() * getSizeC() * getSizeT();
 
-      for (int i=1; i<stageX.size(); i++) {
-        core.add(new CoreMetadata(core.get(0)));
+        for (int i=1; i<stageX.size(); i++) {
+          core.add(new CoreMetadata(core.get(0)));
+        }
       }
     }
 
