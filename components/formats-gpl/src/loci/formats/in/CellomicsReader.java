@@ -129,6 +129,7 @@ public class CellomicsReader extends FormatReader {
 
     ChannelFile file = lookupFile(getSeries(), zct[1]);
     if (file != null && file.filename != null) {
+      LOGGER.trace("series {} #{} reading from {}", getSeries(), no, file.filename);
       try (RandomAccessInputStream s = getDecompressedStream(file.filename)) {
         int planeSize = FormatTools.getPlaneSize(this);
         s.seek(52 + zct[0] * planeSize);
@@ -297,7 +298,16 @@ public class CellomicsReader extends FormatReader {
     fields = uniqueFields.size();
 
     for (int file=0; file<files.size(); file++) {
+      // file names were sorted by row, column, field, and channel
+      // so 'files' is known to be sorted in the correct order
+      //
+      // don't try to calculate the series index based upon the
+      // max column index or unique column count, as that won't
+      // allow for variations in the columns acquired between
+      // different rows
       ChannelFile f = files.get(file);
+      // all wells/fields are assumed to have the same channel count,
+      // here and when calculating the overall series count
       f.series = file / uniqueChannels.size();
       f.channel = uniqueChannels.indexOf(f.channel);
     }
@@ -336,8 +346,7 @@ public class CellomicsReader extends FormatReader {
     int pixelWidth = 0, pixelHeight = 0;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      pixelWidth = in.readInt();
-      pixelHeight = in.readInt();
+      pixelWidth = in.readInt(); pixelHeight = in.readInt();
       int colorUsed = in.readInt();
       int colorImportant = in.readInt();
 
@@ -467,24 +476,30 @@ public class CellomicsReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<getSeriesCount(); i++) {
-      ChannelFile f = files.get(i * getSizeC());
-      int row = f.row;
-      int col = f.col;
-      int field = f.field;
+    int image = 0;
+    for (int s=0; s<getSeriesCount(); s++) {
+      ChannelFile file = null;
+      for (int c=0; file == null && c < getEffectiveSizeC(); c++) {
+        file = lookupFile(s, c);
+      }
+
+      int row = file.row;
+      int col = file.col;
+      int field = file.field;
+
       int fieldIndex = uniqueFields.indexOf(field);
       store.setImageName(
         String.format("Well %s%02d, Field #%02d",
                   new String(Character.toChars(row+'A')),
-                  col + 1, field), i);
+                  col + 1, field), image);
 
       if (getSeriesCount() == 1) {
         row = 0;
         col = 0;
       }
 
-      String imageID = MetadataTools.createLSID("Image", i);
-      store.setImageID(imageID, i);
+      String imageID = MetadataTools.createLSID("Image", image);
+      store.setImageID(imageID, image);
       if (row < realRows && col < realCols) {
         int wellIndex = row * realCols + col;
 
@@ -492,9 +507,10 @@ public class CellomicsReader extends FormatReader {
           0, wellIndex, fieldIndex);
         store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
         store.setWellSampleIndex(
-          new NonNegativeInteger(i), 0, wellIndex, fieldIndex);
+          new NonNegativeInteger(image), 0, wellIndex, fieldIndex);
         store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
       }
+      image++;
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
