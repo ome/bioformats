@@ -38,9 +38,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -59,6 +61,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 /**
  *
  */
@@ -76,7 +82,7 @@ public class TecanReader extends FormatReader {
   private transient String plateName = null;
   private ArrayList<Image> images = new ArrayList<Image>();
   private transient MinimalTiffReader helperReader = null;
-  private transient ArrayList<String> channels = new ArrayList<String>();
+  private transient ArrayList<Channel> channels = new ArrayList<Channel>();
   private String imageDirectory = null;
   private ArrayList<String> extraFiles = new ArrayList<String>();
   private Integer maxField = 1;
@@ -272,6 +278,8 @@ public class TecanReader extends FormatReader {
       }
     }
 
+    findExtraMetadata();
+
     // populate the MetadataStore
 
     MetadataStore store = makeFilterMetadata();
@@ -296,7 +304,7 @@ public class TecanReader extends FormatReader {
         store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
         store.setWellColumn(new NonNegativeInteger(col), 0, nextWell);
 
-        String label = (char) (row + 'A') + String.valueOf(col + 1);
+        String label = makeWellLabel(row, col);
         if (!wellLabels.containsValue(label)) {
           nextWell++;
           continue;
@@ -325,7 +333,7 @@ public class TecanReader extends FormatReader {
       for (int i=0; i<getSeriesCount(); i++) {
         if (channels != null) {
           for (int c=0; c<getEffectiveSizeC(); c++) {
-            store.setChannelName(channels.get(c), i, c);
+            store.setChannelName(channels.get(c).name, i, c);
           }
         }
 
@@ -364,6 +372,219 @@ public class TecanReader extends FormatReader {
       throw new IOException(e);
     }
     return conn;
+  }
+
+  private void findExtraMetadata() {
+    Connection conn = null;
+    try {
+      conn = openConnection();
+
+      PreparedStatement instrument = conn.prepareStatement(
+        "SELECT InstrumentSerial FROM InstrumentConfig ORDER BY Id");
+      try (ResultSet instruments = instrument.executeQuery()) {
+        if (instruments.next()) {
+          String serialNumber = instruments.getString(1);
+          addGlobalMeta("Serial number", serialNumber);
+        }
+      }
+
+      PreparedStatement completionTime = conn.prepareStatement(
+        "SELECT CompletedAt FROM Workspace ORDER BY Id"
+      );
+      try (ResultSet workspace = completionTime.executeQuery()) {
+        if (workspace.next()) {
+          addGlobalMeta("Date/Time", workspace.getString(1));
+        }
+      }
+
+      PreparedStatement acquisitionSetting = conn.prepareStatement(
+        "SELECT ObjectiveTypeId, IntrawellPatternId, SettleTimeInMs " +
+        "FROM AcquisitionSetting ORDER BY Id"
+      );
+      try (ResultSet acquisition = acquisitionSetting.executeQuery()) {
+        if (acquisition.next()) {
+          int objectiveTypeId = acquisition.getInt(1);
+          int intrawellPatternId = acquisition.getInt(2);
+
+          addGlobalMeta("Settle time [ms]", acquisition.getDouble(3));
+
+          PreparedStatement objectiveType = conn.prepareStatement(
+            "SELECT Name FROM ObjectiveType WHERE Id=?"
+          );
+          objectiveType.setInt(1, objectiveTypeId);
+          try (ResultSet objective = objectiveType.executeQuery()) {
+            if (objective.next()) {
+              addGlobalMeta("Objective", objective.getString(1));
+            }
+          }
+
+          PreparedStatement wellPattern = conn.prepareStatement(
+            "SELECT Name FROM IntrawellPattern INNER JOIN IntrawellPatternType " +
+            "ON IntrawellPattern.IntrawellPatternTypeId=IntrawellPatternType.Id " +
+            "WHERE IntrawellPattern.Id=?"
+          );
+          wellPattern.setInt(1, intrawellPatternId);
+          try (ResultSet wellPatternType = wellPattern.executeQuery()) {
+            if (wellPatternType.next()) {
+              addGlobalMeta("Pattern", wellPatternType.getString(1));
+            }
+          }
+        }
+      }
+
+      PreparedStatement application = conn.prepareStatement(
+        "SELECT Name FROM AnalysisSetting " +
+        "INNER JOIN ApplicationType " +
+        "ON AnalysisSetting.ApplicationTypeId=ApplicationType.Id"
+      );
+      try (ResultSet applicationType = application.executeQuery()) {
+        if (applicationType.next()) {
+          addGlobalMeta("Application", applicationType.getString(1));
+        }
+      }
+
+      PreparedStatement labels = conn.prepareStatement(
+        "SELECT DISTINCT OutputName FROM ImagingResult " +
+        "INNER JOIN DataLabel " +
+        "ON ImagingResult.DataLabelId=DataLabel.Id"
+      );
+      try (ResultSet labelNames = labels.executeQuery()) {
+        while (labelNames.next()) {
+          addGlobalMetaList("Label Name", labelNames.getString(1));
+        }
+      }
+
+      PreparedStatement method = conn.prepareStatement(
+        "SELECT MethodName, SerializedMethod FROM MethodSnapshot ORDER BY Id"
+      );
+      try (ResultSet methods = method.executeQuery()) {
+        if (methods.next()) {
+          String methodName = methods.getString(1);
+          String methodXML = methods.getString(2);
+
+          addGlobalMeta("Method name", methodName);
+
+          try {
+            methodXML = methodXML.substring(methodXML.indexOf("<MethodStrip"));
+            Element root = XMLTools.parseDOM(methodXML).getDocumentElement();
+            NodeList channelSettings = root.getElementsByTagName("tadodssdf:FluorescenceImagingChannelSetting");
+            NodeList plateStrips = root.getElementsByTagName("PlateStrip");
+            NodeList plateDefinitions = root.getElementsByTagName("MicroplateDefinition");
+
+            if (plateStrips.getLength() > 0) {
+              Element plateStrip = (Element) plateStrips.item(0);
+              addGlobalMeta("Lid lifter", plateStrip.getAttribute("LidType"));
+              addGlobalMeta("Humidity Cassette", plateStrip.getAttribute("HumidityCassetteType"));
+            }
+
+            if (plateDefinitions.getLength() > 0) {
+              Element plateDef = (Element) plateDefinitions.item(0);
+              addGlobalMeta("Plate",
+                plateDef.getAttribute("DisplayName") + " " + plateDef.getAttribute("Comment"));
+            }
+
+            StringBuffer channelNames = new StringBuffer();
+            for (int i=0; i<channelSettings.getLength(); i++) {
+              Element channel = (Element) channelSettings.item(i);
+              String enabled = channel.getAttribute("IsEnabled");
+              String name = channel.getAttribute("Name");
+
+              if (Boolean.parseBoolean(enabled)) {
+                if (channelNames.length() > 0) {
+                  channelNames.append(", ");
+                }
+                channelNames.append(name);
+
+                int index = lookupChannelIndex(name);
+                if (index >= 0) {
+                  NodeList crosstalkCorrections = channel.getElementsByTagName("tadodssdf:CrosstalkSettings.CrosstalkCorrectionDict");
+                  if (crosstalkCorrections.getLength() > 0) {
+                    Element crosstalkCorrection = (Element) crosstalkCorrections.item(0);
+                    NodeList dict = crosstalkCorrection.getElementsByTagName("x:Int16");
+                    StringBuffer crosstalk = new StringBuffer();
+
+                    for (int d=0; d<dict.getLength(); d++) {
+                      if (crosstalk.length() > 0) {
+                        crosstalk.append(", ");
+                      }
+                      Element component = (Element) dict.item(d);
+                      crosstalk.append(component.getAttribute("x:Key"));
+                      crosstalk.append(": ");
+                      crosstalk.append(component.getTextContent());
+                      crosstalk.append("%");
+                    }
+
+                    addGlobalMeta("Channel #" + (index + 1) + " Cross-talk settings",
+                      crosstalk.toString());
+                  }
+                }
+              }
+            }
+            addGlobalMeta("Channels", channelNames.toString());
+          }
+          catch (ParserConfigurationException|SAXException e) {
+            LOGGER.debug("Could not parse XML", e);
+          }
+        }
+      }
+    }
+    catch (IOException|SQLException e) {
+      LOGGER.warn("Could not read all extra metadata", e);
+    }
+    finally {
+      if (conn != null) {
+        try {
+          conn.close();
+        }
+        catch (SQLException ex) {
+          LOGGER.warn("Could not close database connection", ex);
+        }
+      }
+    }
+
+    for (int c=0; c<channels.size(); c++) {
+      String prefix = "Channel #" + (c + 1) + " ";
+      Channel channel = channels.get(c);
+
+      addGlobalMeta(prefix + "Name", channel.originalName);
+      addGlobalMeta(prefix + "LED Intensity [%]", channel.intensity);
+      addGlobalMeta(prefix + "Focus offset [µm]", channel.focusOffset);
+      addGlobalMeta(prefix + "Exposure time [µs]", channel.exposureTime);
+    }
+
+    int minRow = Integer.MAX_VALUE;
+    int maxRow = Integer.MIN_VALUE;
+    int minCol = Integer.MAX_VALUE;
+    int maxCol = Integer.MIN_VALUE;
+    for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
+
+      for (int p=0; p<getImageCount(); p++) {
+        Image img = lookupImage(s, p, false, false);
+
+        String prefix = "Plane #" + (p + 1) + " ";
+
+        addSeriesMeta(prefix + "Position on Micro Plate",
+          makeWellLabel(img.wellRow, img.wellColumn));
+        addSeriesMeta(prefix + "File creation time", img.timestamp);
+
+        String[] fileTokens = img.file.split("_");
+        addSeriesMeta(prefix + "Data", fileTokens[fileTokens.length - 2]);
+
+        minRow = (int) Math.min(minRow, img.wellRow);
+        maxRow = (int) Math.max(maxRow, img.wellRow);
+        minCol = (int) Math.min(minCol, img.wellColumn);
+        maxCol = (int) Math.max(maxCol, img.wellColumn);
+      }
+    }
+    setSeries(0);
+
+    addGlobalMeta("Part of Plate",
+      makeWellLabel(minRow, minCol) + "-" + makeWellLabel(maxRow, maxCol));
+  }
+
+  private String makeWellLabel(int row, int col) {
+    return (char) (row + 'A') + String.valueOf(col + 1);
   }
 
   private void findPlateDimensions(Connection conn) throws SQLException {
@@ -423,7 +644,7 @@ public class TecanReader extends FormatReader {
       "ON ImagingResultType.Id=ImagingResult.ImagingResultTypeId " +
       "WHERE ImagingResult.Id=?");
     PreparedStatement channelQuery = conn.prepareStatement(
-      "SELECT Name, ExposureTimeInUs FROM ChannelType " +
+      "SELECT Name, ExposureTimeInUs, FocusOffsetInUm, LedIntensityInPercent FROM ChannelType " +
       "INNER JOIN AcquisitionChannelSetting " +
       "ON AcquisitionChannelSetting.ChannelTypeId=ChannelType.Id " +
       "WHERE ChannelType.Id=?");
@@ -473,12 +694,16 @@ public class TecanReader extends FormatReader {
               // to multiple ImageTypes in the same well
               img.channelName += " " + channel.getString(1);
 
-              if (!channels.contains(img.channelName)) {
-                channels.add(img.channelName);
+              if (lookupChannelIndex(img.channelName) < 0) {
+                Channel c = new Channel(img.channelName);
+                c.originalName = channel.getString(1);
+                c.exposureTime = channel.getDouble(2);
+                c.focusOffset = channel.getDouble(3);
+                c.intensity = channel.getDouble(4);
+                channels.add(c);
               }
-              img.plane = channels.indexOf(img.channelName);
-              img.exposureTime =
-                FormatTools.getTime(channel.getDouble(2), "µs");
+              img.plane = lookupChannelIndex(img.channelName);
+              img.exposureTime = FormatTools.getTime(channel.getDouble(2), "µs");
               img.timestamp = acqTimestamp;
             }
           }
@@ -558,6 +783,17 @@ public class TecanReader extends FormatReader {
     return null;
   }
 
+  private int lookupChannelIndex(String name) {
+    for (int i=0; i<channels.size(); i++) {
+      if (channels.get(i).name.equals(name) ||
+        channels.get(i).originalName.equals(name))
+      {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   /**
    * Turn a relative image file path into an absolute path.
    * Storing relative paths and one copy of the parent directory
@@ -601,6 +837,19 @@ public class TecanReader extends FormatReader {
     public boolean overlay = false;
     public boolean result = false;
     public String timestamp;
+  }
+
+  class Channel {
+    public String name;
+    public String originalName;
+    public int index = -1;
+    public double intensity;
+    public double focusOffset;
+    public double exposureTime;
+
+    public Channel(String name) {
+      this.name = name;
+    }
   }
 
 }
