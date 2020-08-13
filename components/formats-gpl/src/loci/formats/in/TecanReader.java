@@ -26,6 +26,7 @@
 package loci.formats.in;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import java.sql.Connection;
@@ -38,10 +39,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.xml.parsers.ParserConfigurationException;
 
+import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.ZipHandle;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -74,6 +80,11 @@ public class TecanReader extends FormatReader {
 
   private static final Logger LOGGER =
     LoggerFactory.getLogger(TecanReader.class);
+
+  private static final String[] SPREADSHEET_KEYS = new String[] {
+    "Application:", "Device", "Firmware",
+    "System", "User", "Smooth mode", "Part of Plate"
+  };
 
   // -- Fields --
 
@@ -439,7 +450,7 @@ public class TecanReader extends FormatReader {
       );
       try (ResultSet applicationType = application.executeQuery()) {
         if (applicationType.next()) {
-          addGlobalMeta("Application", applicationType.getString(1));
+          addGlobalMeta("Application type", applicationType.getString(1));
         }
       }
 
@@ -552,10 +563,6 @@ public class TecanReader extends FormatReader {
       addGlobalMeta(prefix + "Exposure time [µs]", channel.exposureTime);
     }
 
-    int minRow = Integer.MAX_VALUE;
-    int maxRow = Integer.MIN_VALUE;
-    int minCol = Integer.MAX_VALUE;
-    int maxCol = Integer.MIN_VALUE;
     for (int s=0; s<getSeriesCount(); s++) {
       setSeries(s);
 
@@ -570,17 +577,110 @@ public class TecanReader extends FormatReader {
 
         String[] fileTokens = img.file.split("_");
         addSeriesMeta(prefix + "Data", fileTokens[fileTokens.length - 2]);
-
-        minRow = (int) Math.min(minRow, img.wellRow);
-        maxRow = (int) Math.max(maxRow, img.wellRow);
-        minCol = (int) Math.min(minCol, img.wellColumn);
-        maxCol = (int) Math.max(maxCol, img.wellColumn);
       }
     }
     setSeries(0);
 
-    addGlobalMeta("Part of Plate",
-      makeWellLabel(minRow, minCol) + "-" + makeWellLabel(maxRow, maxCol));
+    parseSpreadsheet();
+  }
+
+  private void parseSpreadsheet() {
+    try {
+      String spreadsheet = null;
+      for (String file : extraFiles) {
+        if (checkSuffix(file, "xlsx")) {
+          spreadsheet = file;
+          break;
+        }
+      }
+      if (spreadsheet == null) {
+        return;
+      }
+
+      String sharedStringsXML = null;
+      String firstSheetXML = null;
+
+      try (ZipInputStream z = new ZipInputStream(new FileInputStream(spreadsheet))) {
+        while (true) {
+          ZipEntry ze = z.getNextEntry();
+          if (ze == null) {
+            break;
+          }
+          if (ze.getName().equals("xl/sharedStrings.xml")) {
+            ZipHandle handle = new ZipHandle(spreadsheet, ze);
+            try {
+              byte[] b = new byte[(int) handle.length()];
+              handle.read(b);
+              sharedStringsXML = new String(b, Constants.ENCODING).trim();
+            }
+            finally {
+              handle.close();
+            }
+          }
+          else if (ze.getName().equals("xl/worksheets/sheet1.xml")) {
+            ZipHandle handle = new ZipHandle(spreadsheet, ze);
+            try {
+              byte[] b = new byte[(int) handle.length()];
+              handle.read(b);
+              firstSheetXML = new String(b, Constants.ENCODING).trim();
+            }
+            finally {
+              handle.close();
+            }
+          }
+          if (sharedStringsXML != null && firstSheetXML != null) {
+            break;
+          }
+        }
+      }
+
+      if (sharedStringsXML != null && firstSheetXML != null) {
+        Element sharedStrings = XMLTools.parseDOM(sharedStringsXML).getDocumentElement();
+        NodeList strings = sharedStrings.getElementsByTagName("t");
+
+        Element worksheet = XMLTools.parseDOM(firstSheetXML).getDocumentElement();
+        NodeList cells = worksheet.getElementsByTagName("c");
+
+        String key = null;
+        String value = "";
+        for (int i=0; i<cells.getLength(); i++) {
+          Element cell = (Element) cells.item(i);
+
+          if (cell.getFirstChild() != null) {
+            int cellValueIndex = Integer.parseInt(cell.getFirstChild().getTextContent());
+            if (cellValueIndex < 0 || cellValueIndex >= strings.getLength()) {
+              continue;
+            }
+            String cellValue = strings.item(cellValueIndex).getTextContent();
+
+            if (DataTools.indexOf(SPREADSHEET_KEYS, cellValue) >= 0) {
+              key = cellValue;
+            }
+            else if (key != null) {
+              addGlobalMeta(key, value + " " + cellValue);
+              key = null;
+              value = "";
+            }
+            else {
+              for (String knownKey : SPREADSHEET_KEYS) {
+                if (cellValue.startsWith(knownKey) ||
+                  cellValue.startsWith(knownKey + ":"))
+                {
+                  int index = cellValue.indexOf(":");
+                  if (index > 0) {
+                    key = cellValue.substring(0, index);
+                    value = cellValue.substring(index + 1).trim();
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    catch (IOException|ParserConfigurationException|SAXException e) {
+      LOGGER.debug("Could not parse spreadsheet", e);
+    }
   }
 
   private String makeWellLabel(int row, int col) {
