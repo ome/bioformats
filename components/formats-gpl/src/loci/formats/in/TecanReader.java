@@ -906,7 +906,11 @@ public class TecanReader extends FormatReader {
     // sanitize the relative path first
     // files might be stored in a subdirectory of "Images",
     // in which case the database may store a "\" to separate the path
-    String sanitized = File.separator + file.replaceAll("\\\\", File.separator);
+    String sanitized = File.separator + file;
+    try {
+      sanitized = File.separator + file.replaceAll("\\\\", File.separator);
+    }
+    catch (IllegalArgumentException e) { }
     return new Location(imageDirectory + sanitized).getAbsolutePath();
   }
 
