@@ -681,6 +681,9 @@ public class TecanReader extends FormatReader {
     catch (IOException|ParserConfigurationException|SAXException e) {
       LOGGER.debug("Could not parse spreadsheet", e);
     }
+    catch (NumberFormatException n) {
+      LOGGER.debug("Unexpected spreadsheet contents", n);
+    }
   }
 
   private String makeWellLabel(int row, int col) {
