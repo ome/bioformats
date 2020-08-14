@@ -71,7 +71,7 @@ public class ScanrReader extends FormatReader {
   private static final String ACQUISITION_FILE = "AcquisitionLog.dat";
   private static final String[] METADATA_SUFFIXES = new String[] {"dat", "xml"};
   public static final String SKIP_MISSING_WELLS = "scanr.skip_missing_wells";
-  public static final boolean INCLUDE_ATTACHMENTS_DEFAULT = true;
+  public static final boolean SKIP_MISSING_WELLS_DEFAULT = true;
   
   // -- Fields --
 
