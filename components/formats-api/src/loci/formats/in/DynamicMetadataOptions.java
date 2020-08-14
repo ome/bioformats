@@ -39,6 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.Constants;
+import loci.common.IniList;
+import loci.common.IniParser;
+import loci.common.IniTable;
 import loci.formats.FormatException;
 
 import java.io.BufferedReader;
@@ -503,43 +506,18 @@ public class DynamicMetadataOptions implements MetadataOptions {
       return;
     }
 
-    // locate an input stream
-    InputStream stream = null;
-    try {
-      stream = new FileInputStream(optionsFile);
-    } catch (FileNotFoundException e) {
-      LOGGER.debug(e.getMessage());
-      return;
-    }
-
-    // Read options from file
-    BufferedReader in = null;
-    in = new BufferedReader(new InputStreamReader(stream, Constants.ENCODING));
-    while (true) {
-      String line = null;
-      line = in.readLine();
-      if (line == null) break;
-      // Ignore characters following # sign (comments)
-      int ndx = line.indexOf('#');
-      if (ndx >= 0) line = line.substring(0, ndx);
-      line = line.trim();
-      if (line.equals("")) break;
-
-      StringTokenizer st1 = new StringTokenizer(line, "=");
-      while (st1.hasMoreTokens()) {
-        String key = st1.nextToken();
-        if (st1.hasMoreTokens()) {
-          set(key, st1.nextToken());
-        }
+    IniParser parser = new IniParser();
+    IniList list = parser.parseINI(optionsFile);
+    for (IniTable attrs: list) {
+      for (String key: attrs.keySet()) {
+        set(key, attrs.get(key));
       }
     }
-    in.close();
   }
 
   public static File getMetadataOptionsFile(String id) {
     File f = new File(id);
     if (f != null && f.getParent() != null) {
-      f.getParentFile().mkdirs();
       String p = f.getParent();
       String n = f.getName();
       n = n.substring(0, n.indexOf("."));
