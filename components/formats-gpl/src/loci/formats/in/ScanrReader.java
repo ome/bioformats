@@ -544,7 +544,12 @@ public class ScanrReader extends FormatReader {
     }
 
     reader = new MinimalTiffReader();
-    reader.setId(tiffs[0]);
+    for (String tiff : tiffs) {
+      if (tiff != null) {
+        reader.setId(tiff);
+        break;
+      }
+    }
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
     int pixelType = reader.getPixelType();
