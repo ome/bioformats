@@ -32,6 +32,7 @@
 
 package loci.formats;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -47,7 +48,9 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMetadata;
@@ -242,6 +245,14 @@ public abstract class FormatReader extends FormatHandler
     // reinitialize the MetadataStore
     // NB: critical for metadata conversion to work properly!
     getMetadataStore().createRoot();
+
+    File optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(id);
+    if (optionsFile != null) {
+      MetadataOptions options = getMetadataOptions();
+      if (options instanceof DynamicMetadataOptions) {
+        ((DynamicMetadataOptions) options).loadOptions(optionsFile);
+      }
+    }
   }
 
   /** Returns true if the given file name is in the used files list. */

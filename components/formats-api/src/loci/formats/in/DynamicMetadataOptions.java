@@ -33,13 +33,28 @@
 package loci.formats.in;
 
 import java.util.Properties;
+import java.util.StringTokenizer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import loci.common.Constants;
+import loci.formats.FormatException;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 /**
  * Configuration object for readers and writers.
  */
 public class DynamicMetadataOptions implements MetadataOptions {
+  protected static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataOptions.class);
 
   public static final String METADATA_LEVEL_KEY = "metadata.level";
   public static final MetadataLevel METADATA_LEVEL_DEFAULT = MetadataLevel.ALL;
@@ -475,6 +490,62 @@ public class DynamicMetadataOptions implements MetadataOptions {
       return defaultValue;
     }
     return new File(val);
+  }
+  
+  public void loadOptions(File optionsFile) throws IOException, FormatException {
+    if (!optionsFile.exists()) {
+      LOGGER.trace("Options file doesn't exist: {}", optionsFile);
+      // TODO: potentially create option
+      return;
+    }
+    if(!optionsFile.canRead()) {
+      LOGGER.trace("Can't read options file: {}", optionsFile);
+      return;
+    }
+
+    // locate an input stream
+    InputStream stream = null;
+    try {
+      stream = new FileInputStream(optionsFile);
+    } catch (FileNotFoundException e) {
+      LOGGER.debug(e.getMessage());
+      return;
+    }
+
+    // Read options from file
+    BufferedReader in = null;
+    in = new BufferedReader(new InputStreamReader(stream, Constants.ENCODING));
+    while (true) {
+      String line = null;
+      line = in.readLine();
+      if (line == null) break;
+      // Ignore characters following # sign (comments)
+      int ndx = line.indexOf('#');
+      if (ndx >= 0) line = line.substring(0, ndx);
+      line = line.trim();
+      if (line.equals("")) break;
+
+      StringTokenizer st1 = new StringTokenizer(line, "=");
+      while (st1.hasMoreTokens()) {
+        String key = st1.nextToken();
+        if (st1.hasMoreTokens()) {
+          set(key, st1.nextToken());
+        }
+      }
+    }
+    in.close();
+  }
+
+  public static File getMetadataOptionsFile(String id) {
+    File f = new File(id);
+    if (f != null && f.getParent() != null) {
+      f.getParentFile().mkdirs();
+      String p = f.getParent();
+      String n = f.getName();
+      n = n.substring(0, n.indexOf("."));
+      return new File(p, n + ".bfoptions");
+    }
+    return null;
   }
 
 }
