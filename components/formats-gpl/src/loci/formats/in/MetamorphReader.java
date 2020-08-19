@@ -59,6 +59,7 @@ import loci.formats.CoreMetadataList;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -1012,7 +1013,7 @@ public class MetamorphReader extends BaseTiffReader {
 
           if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
-            int laserIndex = i * getEffectiveSizeC() + c;
+            int laserIndex = ((IMetadata)getMetadataStore()).getLightSourceCount(0);
             String lightSourceID =
               MetadataTools.createLSID("LightSource", 0, laserIndex);
             store.setLaserID(lightSourceID, 0, laserIndex);
