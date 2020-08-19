@@ -250,11 +250,19 @@ public abstract class FormatReader extends FormatHandler
     if (optionsFile != null) {
       MetadataOptions options = getMetadataOptions();
       if (options instanceof DynamicMetadataOptions) {
-        ((DynamicMetadataOptions) options).loadOptions(optionsFile);
+        ((DynamicMetadataOptions) options).loadOptions(optionsFile, getAvailableOptions());
       }
     }
   }
 
+  /** Returns true if the list of available metadata options. */
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = new ArrayList<String>();
+    optionsList.add(DynamicMetadataOptions.METADATA_LEVEL_KEY);
+    optionsList.add(DynamicMetadataOptions.READER_VALIDATE_KEY);
+    return optionsList;
+  }
+  
   /** Returns true if the given file name is in the used files list. */
   protected boolean isUsedFile(String file) {
     String[] usedFiles = getUsedFiles();

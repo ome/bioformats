@@ -32,26 +32,19 @@
 
 package loci.formats.in;
 
+import java.util.ArrayList;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.formats.FormatException;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 
 /**
  * Configuration object for readers and writers.
@@ -495,7 +488,7 @@ public class DynamicMetadataOptions implements MetadataOptions {
     return new File(val);
   }
   
-  public void loadOptions(File optionsFile) throws IOException, FormatException {
+  public void loadOptions(File optionsFile, ArrayList<String> availableOptionKeys) throws IOException, FormatException {
     if (!optionsFile.exists()) {
       LOGGER.trace("Options file doesn't exist: {}", optionsFile);
       // TODO: potentially create option
@@ -510,6 +503,9 @@ public class DynamicMetadataOptions implements MetadataOptions {
     IniList list = parser.parseINI(optionsFile);
     for (IniTable attrs: list) {
       for (String key: attrs.keySet()) {
+        if (!availableOptionKeys.contains(key)) {
+          LOGGER.warn("Metadata Option Key is not supported in this reader " + key);
+        }
         set(key, attrs.get(key));
       }
     }
