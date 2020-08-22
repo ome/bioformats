@@ -48,7 +48,6 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -591,7 +590,6 @@ public class FormatReaderTest {
 
         // NB: OME-TIFF files do not have a BinData element under Pixels
         IFormatReader r = reader.unwrap();
-        if (r instanceof FileStitcher) r = ((FileStitcher) r).getReader();
         if (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).unwrap();
         if (!(r instanceof OMETiffReader)) {
           boolean littleEndian = false;
@@ -1768,7 +1766,7 @@ public class FormatReaderTest {
 
       LOGGER.debug("newFile = {}", newFile);
 
-      IFormatReader check = new FileStitcher();
+      IFormatReader check = new ImageReader();
       try {
         check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
@@ -1819,7 +1817,7 @@ public class FormatReaderTest {
       else if (success) {
         Arrays.sort(base);
         IFormatReader r =
-          /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
+          /*config.noStitching() ? new ImageReader() :*/ new ImageReader();
 
         int maxFiles = (int) Math.min(base.length, 100);
 
@@ -2443,9 +2441,6 @@ public class FormatReaderTest {
         if (r instanceof ReaderWrapper) {
           r = ((ReaderWrapper) r).getReader();
         }
-        else if (r instanceof FileStitcher) {
-          r = ((FileStitcher) r).getReader();
-        }
         else break;
       }
       if (r instanceof ImageReader) {
@@ -2972,11 +2967,11 @@ public class FormatReaderTest {
     IFormatReader ir = null;
     if (flattened) {
       ir = new ImageReader();
-      ir = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
+      ir = new BufferedImageReader(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File("")));
       ir.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
     }
     else {
-      ir = new BufferedImageReader(new FileStitcher());
+      ir = new BufferedImageReader(new ImageReader());
       ir.setFlattenedResolutions(false);
     }
 
