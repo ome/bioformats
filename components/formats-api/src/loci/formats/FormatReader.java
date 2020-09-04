@@ -1021,7 +1021,7 @@ public abstract class FormatReader extends FormatHandler
     String[] seriesUsedFiles;    
     Set<String> files = new LinkedHashSet<String>();
     File optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(currentId);
-    if (optionsFile != null) {
+    if (optionsFile != null && optionsFile.exists()) {
       String optionsFilePath = optionsFile.getAbsolutePath();
       files.add(optionsFilePath);
     }
