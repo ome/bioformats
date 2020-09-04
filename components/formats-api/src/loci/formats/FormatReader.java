@@ -1018,25 +1018,34 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getUsedFiles() */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
-    String[] seriesUsedFiles;
+    String[] seriesUsedFiles;    
+    Set<String> files = new LinkedHashSet<String>();
+    File optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(currentId);
+    if (optionsFile != null) {
+      String optionsFilePath = optionsFile.getAbsolutePath();
+      files.add(optionsFilePath);
+    }
+
     int seriesCount = getSeriesCount();
     if (seriesCount == 1) {
       seriesUsedFiles = getSeriesUsedFiles(noPixels);
       if (null == seriesUsedFiles) {
         seriesUsedFiles = new String[] {};
       }
-      return seriesUsedFiles;
+      files.addAll(Arrays.asList(seriesUsedFiles));
     }
-    int oldSeries = getSeries();
-    Set<String> files = new LinkedHashSet<String>();
-    for (int i = 0; i < seriesCount; i++) {
-      setSeries(i);
-      seriesUsedFiles = getSeriesUsedFiles(noPixels);
-      if (seriesUsedFiles != null) {
-        files.addAll(Arrays.asList(seriesUsedFiles));
+    else {
+      int oldSeries = getSeries();
+  
+      for (int i = 0; i < seriesCount; i++) {
+        setSeries(i);
+        seriesUsedFiles = getSeriesUsedFiles(noPixels);
+        if (seriesUsedFiles != null) {
+          files.addAll(Arrays.asList(seriesUsedFiles));
+        }
       }
+      setSeries(oldSeries);
     }
-    setSeries(oldSeries);
     return files.toArray(new String[files.size()]);
   }
 
