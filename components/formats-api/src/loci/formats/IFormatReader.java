@@ -256,7 +256,7 @@ public interface IFormatReader extends IFormatHandler, IPyramidHandler {
    * pre-allocated byte array of
    * (sizeX * sizeY * bytesPerPixel * RGB channel count).
    *
-   * @param no the image index within the file.
+   * @param no the plane index within the current series.
    * @param buf a pre-allocated buffer.
    * @return the pre-allocated buffer <code>buf</code> for convenience.
    * @throws FormatException if there was a problem parsing the metadata of the
@@ -270,7 +270,7 @@ public interface IFormatReader extends IFormatHandler, IPyramidHandler {
    * Obtains a sub-image of the specified image plane
    * into a pre-allocated byte array.
    *
-   * @param no the image index within the file.
+   * @param no the plane index within the current series.
    * @param buf a pre-allocated buffer.
    * @param x X coordinate of the upper-left corner of the sub-image
    * @param y Y coordinate of the upper-left corner of the sub-image

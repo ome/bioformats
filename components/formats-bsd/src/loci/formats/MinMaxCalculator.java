@@ -297,7 +297,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   /**
    * Updates min/max values based on the given byte array.
-   * @param no the image index within the file.
+   * @param no the plane index within the series.
    * @param buf a pre-allocated buffer.
    * @param len as <code>buf</code> may be larger than the actual pixel count
    * having been written to it, the length (in bytes) of the those pixels.
