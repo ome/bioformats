@@ -255,7 +255,7 @@ public abstract class FormatReader extends FormatHandler
     }
   }
 
-  /** Returns true if the list of available metadata options. */
+  /** Returns the list of available metadata options. */
   protected ArrayList<String> getAvailableOptions() {
     ArrayList<String> optionsList = new ArrayList<String>();
     optionsList.add(DynamicMetadataOptions.METADATA_LEVEL_KEY);
