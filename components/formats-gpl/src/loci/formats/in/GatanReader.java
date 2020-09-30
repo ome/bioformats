@@ -85,6 +85,9 @@ public class GatanReader extends FormatReader {
   private static final int ELLIPSE = 6;
   private static final int TEXT = 13;
 
+  public static final String SPLIT_MONTAGE = "gatan.split_montage";
+  public static final boolean SPLIT_MONTAGE_DEFAULT = true;
+
   // -- Fields --
 
   /** Offset to pixel data. */
@@ -180,6 +183,14 @@ public class GatanReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(SPLIT_MONTAGE);
+    return optionsList;
+  }
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -253,7 +264,7 @@ public class GatanReader extends FormatReader {
     m.indexed = false;
     m.falseColor = false;
 
-    if (foundMontage && stageX.size() > 1) {
+    if (foundMontage && splitMontage() && stageX.size() > 1) {
       if (m.sizeZ > 1) {
         m.sizeZ /= stageX.size();
         m.imageCount = getSizeZ() * getSizeC() * getSizeT();
@@ -440,6 +451,15 @@ public class GatanReader extends FormatReader {
         }
       }
     }
+  }
+
+  public boolean splitMontage() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+          SPLIT_MONTAGE, SPLIT_MONTAGE_DEFAULT);
+    }
+    return SPLIT_MONTAGE_DEFAULT;
   }
 
   // -- Helper methods --
