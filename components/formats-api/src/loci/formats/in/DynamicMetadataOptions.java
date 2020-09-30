@@ -32,14 +32,25 @@
 
 package loci.formats.in;
 
+import java.util.ArrayList;
 import java.util.Properties;
-import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import loci.common.IniList;
+import loci.common.IniParser;
+import loci.common.IniTable;
+import loci.formats.FormatException;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Configuration object for readers and writers.
  */
 public class DynamicMetadataOptions implements MetadataOptions {
+  protected static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataOptions.class);
 
   public static final String METADATA_LEVEL_KEY = "metadata.level";
   public static final MetadataLevel METADATA_LEVEL_DEFAULT = MetadataLevel.ALL;
@@ -475,6 +486,42 @@ public class DynamicMetadataOptions implements MetadataOptions {
       return defaultValue;
     }
     return new File(val);
+  }
+  
+  public void loadOptions(File optionsFile, ArrayList<String> availableOptionKeys) throws IOException, FormatException {
+    if (!optionsFile.exists()) {
+      LOGGER.trace("Options file doesn't exist: {}", optionsFile);
+      // TODO: potentially create option
+      return;
+    }
+    if(!optionsFile.canRead()) {
+      LOGGER.trace("Can't read options file: {}", optionsFile);
+      return;
+    }
+
+    IniParser parser = new IniParser();
+    IniList list = parser.parseINI(optionsFile);
+    for (IniTable attrs: list) {
+      for (String key: attrs.keySet()) {
+        if (!availableOptionKeys.contains(key)) {
+          LOGGER.warn("Metadata Option Key is not supported in this reader " + key);
+        }
+        set(key, attrs.get(key));
+      }
+    }
+  }
+
+  public static File getMetadataOptionsFile(String id) {
+    File f = new File(id);
+    if (f != null && f.getParent() != null) {
+      String p = f.getParent();
+      String n = f.getName();
+      if (n.indexOf(".") >= 0) {
+        n = n.substring(0, n.indexOf("."));
+      }
+      return new File(p, n + ".bfoptions");
+    }
+    return null;
   }
 
 }

@@ -165,6 +165,7 @@ public class OBFReader extends FormatReader {
     in = new RandomAccessInputStream(id);
 
     file_version = getFileVersion(in);
+    addGlobalMeta("Version", file_version);
     long stackPosition = in.readLong();
     final int lengthOfDescription = in.readInt();
     final String description = in.readString(lengthOfDescription);
@@ -295,6 +296,7 @@ public class OBFReader extends FormatReader {
     final String magicString = in.readString(STACK_MAGIC_STRING.length());
     final short magicNumber = in.readShort();
     final int stackVersion = in.readInt();
+    addGlobalMeta("Stack version", stackVersion);
 
     if (magicString.equals(STACK_MAGIC_STRING) && magicNumber == MAGIC_NUMBER) {
       final int image = core.size();

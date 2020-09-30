@@ -48,7 +48,6 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -591,7 +590,6 @@ public class FormatReaderTest {
 
         // NB: OME-TIFF files do not have a BinData element under Pixels
         IFormatReader r = reader.unwrap();
-        if (r instanceof FileStitcher) r = ((FileStitcher) r).getReader();
         if (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).unwrap();
         if (!(r instanceof OMETiffReader)) {
           boolean littleEndian = false;
@@ -954,6 +952,19 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
+  private boolean isEqual(String expected, String real) {
+
+    if (expected == null && real == null) {
+      return true;
+    } else if (expected.equals("null")  && real == null) {
+      return true;
+    } else if (expected == null) {
+      return false;
+    } else {
+      return expected.trim().equals(real.trim());
+    }
+  }
+
   private boolean isAlmostEqual(Quantity q1, Quantity q2) {
 
     if (q1 == null && q2 == null) {
@@ -1094,9 +1105,7 @@ public class FormatReaderTest {
         String realName = retrieve.getChannelName(i, c);
         String expectedName = config.getChannelName(c);
 
-        if (!expectedName.equals(realName) &&
-          (realName == null && !expectedName.equals("null")))
-        {
+        if (!isEqual(expectedName, realName)) {
           result(testName, false, "Series " + i + " channel " + c +
             " (got '" + realName + "', expected '" + expectedName + "')");
         }
@@ -1398,9 +1407,7 @@ public class FormatReaderTest {
       String realName = retrieve.getImageName(i);
       String expectedName = config.getImageName();
 
-      if (!expectedName.equals(realName) &&
-        !(realName == null && expectedName.equals("null")))
-      {
+      if (!isEqual(expectedName, realName)) {
         result(testName, false, "Series " + i + " (got '" + realName +
           "', expected '" + expectedName + "')");
       }
@@ -1759,7 +1766,7 @@ public class FormatReaderTest {
 
       LOGGER.debug("newFile = {}", newFile);
 
-      IFormatReader check = new FileStitcher();
+      IFormatReader check = new ImageReader();
       try {
         check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
@@ -1810,7 +1817,7 @@ public class FormatReaderTest {
       else if (success) {
         Arrays.sort(base);
         IFormatReader r =
-          /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
+          /*config.noStitching() ? new ImageReader() :*/ new ImageReader();
 
         int maxFiles = (int) Math.min(base.length, 100);
 
@@ -1938,7 +1945,9 @@ public class FormatReaderTest {
           }
 
           // CellWorx datasets can only be reliably detected with the .HTD file
-          if (reader.getFormat().equals("CellWorx")) {
+          if (reader.getFormat().equals("CellWorx") ||
+            reader.getFormat().equals("MetaXpress TIFF"))
+          {
             continue;
           }
 
@@ -1961,6 +1970,13 @@ public class FormatReaderTest {
             {
               continue;
             }
+          }
+
+          // Cellomics datasets cannot be reliably detected with the .mdb file
+          if (reader.getFormat().equals("Cellomics C01") &&
+            base[i].toLowerCase().endsWith(".mdb"))
+          {
+            continue;
           }
 
           r.setId(base[i]);
@@ -2425,9 +2441,6 @@ public class FormatReaderTest {
         if (r instanceof ReaderWrapper) {
           r = ((ReaderWrapper) r).getReader();
         }
-        else if (r instanceof FileStitcher) {
-          r = ((FileStitcher) r).getReader();
-        }
         else break;
       }
       if (r instanceof ImageReader) {
@@ -2699,6 +2712,20 @@ public class FormatReaderTest {
               continue;
             }
 
+            // Cellomics datasets cannot be reliably detected with .mdb file
+            if (used[i].toLowerCase().endsWith(".mdb") &&
+              r instanceof CellomicsReader)
+            {
+              continue;
+            }
+
+            // MetaXpress TIFF reader can flag .HTD files from CellWorX
+            if (result && r instanceof CellWorxReader &&
+              readers[j] instanceof MetaxpressTiffReader)
+            {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
@@ -2940,11 +2967,11 @@ public class FormatReaderTest {
     IFormatReader ir = null;
     if (flattened) {
       ir = new ImageReader();
-      ir = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
+      ir = new BufferedImageReader(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File("")));
       ir.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
     }
     else {
-      ir = new BufferedImageReader(new FileStitcher());
+      ir = new BufferedImageReader(new ImageReader());
       ir.setFlattenedResolutions(false);
     }
 

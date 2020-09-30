@@ -42,11 +42,15 @@ import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import loci.formats.ClassList;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.FormatException;
 import loci.formats.tools.ImageConverter;
+import loci.formats.in.ICSReader;
+import loci.formats.in.OMETiffReader;
+import loci.formats.in.TiffDelegateReader;
 import loci.formats.out.OMETiffWriter;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -66,6 +70,7 @@ public class ImageConverterTest {
   private Path tempDir;
   private File outFile;
   private int width = 512;
+  private int resolutionCount;
   private final SecurityManager oldSecurityManager = System.getSecurityManager();
   private final PrintStream oldOut = System.out;
   private final PrintStream oldErr = System.err;
@@ -98,6 +103,7 @@ public class ImageConverterTest {
     tempDir = Files.createTempDirectory(this.getClass().getName());
     tempDir.toFile().deleteOnExit();
     width = 512;
+    resolutionCount = 1;
   }
 
   @AfterMethod
@@ -124,9 +130,16 @@ public class ImageConverterTest {
   }
 
   public void checkImage(String outFileToCheck, int expectedWidth) throws FormatException, IOException {
-    IFormatReader r = new ImageReader();
+    ClassList<IFormatReader> readerClasses = new ClassList<IFormatReader>(IFormatReader.class);
+    readerClasses.addClass(OMETiffReader.class);
+    readerClasses.addClass(ICSReader.class);
+    readerClasses.addClass(TiffDelegateReader.class);
+
+    IFormatReader r = new ImageReader(readerClasses);
+    r.setFlattenedResolutions(false);
     r.setId(outFileToCheck);
     assertEquals(r.getSizeX(), expectedWidth);
+    assertEquals(r.getResolutionCount(), resolutionCount);
     r.close();
   }
 
@@ -307,5 +320,24 @@ public class ImageConverterTest {
     String [] args = new String[argsList.size()];
     File outFileToCheck = outFile = tempDir.resolve("seperate-tiles_0_0_0.ome.tiff").toFile();
     assertConversion(argsList.toArray(args), outFileToCheck.getAbsolutePath(), 256);
+  }
+  
+  @Test
+  public void testConvertResolutionsFlattened() throws FormatException, IOException {
+    outFile = tempDir.resolve("resoutions_flat.ome.tiff").toFile();
+    String[] args = {
+      "test&resolutions=2.fake", outFile.getAbsolutePath()
+    };
+    assertConversion(args);
+  }
+
+  @Test
+  public void testConvertResolutions() throws FormatException, IOException {
+    outFile = tempDir.resolve("resolutions_noflat.ome.tiff").toFile();
+    String[] args = {
+      "-noflat", "test&resolutions=2.fake", outFile.getAbsolutePath()
+    };
+    resolutionCount = 2;
+    assertConversion(args);
   }
 }

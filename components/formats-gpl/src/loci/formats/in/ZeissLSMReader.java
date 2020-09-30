@@ -364,11 +364,24 @@ public class ZeissLSMReader extends FormatReader {
     return s;
   }
 
+  /* @see loci.formats.IFormatReader#setCoreIndex(int) */
+  @Override
+  public void setCoreIndex(int coreIndex) {
+    if (coreIndex != getCoreIndex()) {
+      prevBuf = null;
+      prevPlane = -1;
+      prevRegion = null;
+    }
+    super.setCoreIndex(coreIndex);
+  }
+
   /* @see loci.formats.IFormatReader#setSeries(int) */
   @Override
   public void setSeries(int series) {
     if (series != getSeries()) {
       prevBuf = null;
+      prevPlane = -1;
+      prevRegion = null;
     }
     super.setSeries(series);
   }

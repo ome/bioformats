@@ -260,7 +260,7 @@ public class TiffSaver implements Closeable {
    *
    * @param buf The block that is to be written.
    * @param ifd The Image File Directories. Mustn't be <code>null</code>.
-   * @param no  The image index within the current file, starting from 0.
+   * @param no the plane index within the current series.
    * @param pixelType The type of pixels.
    * @param x   The X-coordinate of the top-left corner.
    * @param y   The Y-coordinate of the top-left corner.
@@ -441,7 +441,7 @@ public class TiffSaver implements Closeable {
    * Performs the actual work of dealing with IFD data and writing it to the
    * TIFF for a given image or sub-image.
    * @param ifd The Image File Directories. Mustn't be <code>null</code>.
-   * @param no The image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param strips The strips to write to the file.
    * @param last Pass <code>true</code> if it is the last image,
    * <code>false</code> otherwise.
