@@ -578,6 +578,15 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   // -- Internal FormatReader API methods --
+  
+  /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(ALLOW_AUTOSTITCHING_KEY);
+    optionsList.add(INCLUDE_ATTACHMENTS_KEY);
+    return optionsList;
+  }
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
