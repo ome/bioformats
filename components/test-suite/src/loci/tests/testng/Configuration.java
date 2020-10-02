@@ -42,6 +42,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
 
