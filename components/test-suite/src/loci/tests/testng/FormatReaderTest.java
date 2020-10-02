@@ -2968,7 +2968,7 @@ public class FormatReaderTest {
     if (flattened) {
       ir = new ImageReader();
       ir = new BufferedImageReader(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File("")));
-      ir.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+      ir.setMetadataOptions(new DynamicMetadataOptions(MetadataLevel.NO_OVERLAYS));
     }
     else {
       ir = new BufferedImageReader(new ImageReader());

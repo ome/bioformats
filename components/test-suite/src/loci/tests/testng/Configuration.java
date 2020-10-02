@@ -42,7 +42,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
 
@@ -538,7 +538,7 @@ public class Configuration {
     if (seriesCount > 1) {
       unflattenedReader = new ImageReader();
       unflattenedReader.setFlattenedResolutions(false);
-      unflattenedReader.setMetadataOptions(new DefaultMetadataOptions());
+      unflattenedReader.setMetadataOptions(new DynamicMetadataOptions());
       try {
         unflattenedReader.setId(reader.getCurrentFile());
       }
