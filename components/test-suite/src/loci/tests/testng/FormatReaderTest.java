@@ -2454,6 +2454,12 @@ public class FormatReaderTest {
           for (int j=0; j<readers.length; j++) {
             boolean result = readers[j].isThisType(used[i]);
 
+            // Options files
+            if (!result && used[i].toLowerCase().endsWith(".bfoptions"))
+            {
+              continue;
+            }
+
             // Companion file grouping non-ome-tiff files:
             // setId must be called on the companion file
             if (!result && readers[j] instanceof OMETiffReader &&
