@@ -537,6 +537,7 @@ public class Configuration {
     if (seriesCount > 1) {
       unflattenedReader = new ImageReader();
       unflattenedReader.setFlattenedResolutions(false);
+      unflattenedReader.setMetadataOptions(new DefaultMetadataOptions());
       try {
         unflattenedReader.setId(reader.getCurrentFile());
       }
