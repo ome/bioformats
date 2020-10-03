@@ -1020,11 +1020,6 @@ public abstract class FormatReader extends FormatHandler
   public String[] getUsedFiles(boolean noPixels) {
     String[] seriesUsedFiles;    
     Set<String> files = new LinkedHashSet<String>();
-    File optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(currentId);
-    if (optionsFile != null && optionsFile.exists()) {
-      String optionsFilePath = optionsFile.getAbsolutePath();
-      files.add(optionsFilePath);
-    }
 
     int seriesCount = getSeriesCount();
     if (seriesCount == 1) {
@@ -1046,6 +1041,13 @@ public abstract class FormatReader extends FormatHandler
       }
       setSeries(oldSeries);
     }
+
+    File optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(currentId);
+    if (optionsFile != null && optionsFile.exists()) {
+      String optionsFilePath = optionsFile.getAbsolutePath();
+      files.add(optionsFilePath);
+    }
+
     return files.toArray(new String[files.size()]);
   }
 
