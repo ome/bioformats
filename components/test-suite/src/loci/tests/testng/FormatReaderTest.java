@@ -1767,6 +1767,7 @@ public class FormatReaderTest {
       LOGGER.debug("newFile = {}", newFile);
 
       IFormatReader check = new ImageReader();
+      check.setMetadataOptions(new DynamicMetadataOptions());
       try {
         check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
