@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
+import loci.common.Location;
 import loci.formats.FormatException;
 
 import java.io.File;
@@ -488,13 +489,13 @@ public class DynamicMetadataOptions implements MetadataOptions {
     return new File(val);
   }
   
-  public void loadOptions(File optionsFile, ArrayList<String> availableOptionKeys) throws IOException, FormatException {
-    if (!optionsFile.exists()) {
+  public void loadOptions(String optionsFile, ArrayList<String> availableOptionKeys) throws IOException, FormatException {
+    if (!new Location(optionsFile).exists()) {
       LOGGER.trace("Options file doesn't exist: {}", optionsFile);
       // TODO: potentially create option
       return;
     }
-    if(!optionsFile.canRead()) {
+    if(!new Location(optionsFile).canRead()) {
       LOGGER.trace("Can't read options file: {}", optionsFile);
       return;
     }
@@ -511,15 +512,15 @@ public class DynamicMetadataOptions implements MetadataOptions {
     }
   }
 
-  public static File getMetadataOptionsFile(String id) {
-    File f = new File(id);
+  public static String getMetadataOptionsFile(String id) {
+    Location f = new Location(id);
     if (f != null && f.getParent() != null) {
       String p = f.getParent();
       String n = f.getName();
       if (n.indexOf(".") >= 0) {
         n = n.substring(0, n.indexOf("."));
       }
-      return new File(p, n + ".bfoptions");
+      return new Location(p, n + ".bfoptions").getAbsolutePath();
     }
     return null;
   }
