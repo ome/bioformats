@@ -501,7 +501,7 @@ public class DynamicMetadataOptions implements MetadataOptions {
     }
 
     IniParser parser = new IniParser();
-    IniList list = parser.parseINI(optionsFile);
+    IniList list = parser.parseINI(new File(optionsFile));
     for (IniTable attrs: list) {
       for (String key: attrs.keySet()) {
         if (!availableOptionKeys.contains(key)) {
