@@ -249,7 +249,7 @@ public abstract class FormatReader extends FormatHandler
     String optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(id);
     if (optionsFile != null) {
       MetadataOptions options = getMetadataOptions();
-      if (options instanceof DynamicMetadataOptions) {
+      if (options != null && options instanceof DynamicMetadataOptions) {
         ((DynamicMetadataOptions) options).loadOptions(optionsFile, getAvailableOptions());
       }
     }
