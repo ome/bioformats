@@ -42,6 +42,8 @@ import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -73,7 +75,7 @@ public class TCSReader extends FormatReader {
   private List<String> tiffs;
 
   /** Helper readers. */
-  private TiffReader[] tiffReaders;
+  private IFormatReader[] tiffReaders;
 
   private TiffParser tiffParser;
 
@@ -224,7 +226,7 @@ public class TCSReader extends FormatReader {
     if (!fileOnly) {
       tiffs = null;
       if (tiffReaders != null) {
-        for (TiffReader r : tiffReaders) {
+        for (IFormatReader r : tiffReaders) {
           if (r != null) r.close();
         }
       }
@@ -282,7 +284,7 @@ public class TCSReader extends FormatReader {
     tiffReaders = new TiffReader[tiffs.size()];
 
     for (int i=0; i<tiffReaders.length; i++) {
-      tiffReaders[i] = new TiffReader();
+      tiffReaders[i] = Memoizer.wrap(getMetadataOptions(), new TiffReader());
     }
     tiffReaders[0].setId(tiffs.get(0));
 

@@ -45,7 +45,9 @@ import loci.common.ZipHandle;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
+import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 
 /**
  * Reader for Zip files.
@@ -54,7 +56,7 @@ public class ZipReader extends FormatReader {
 
   // -- Fields --
 
-  private transient ImageReader reader;
+  private transient IFormatReader reader;
   private String entryName;
 
   private ArrayList<String> mappedFiles = new ArrayList<String>();
@@ -125,6 +127,7 @@ public class ZipReader extends FormatReader {
     }
     else {
       reader = new ImageReader();
+      reader = Memoizer.wrap(getMetadataOptions(), reader);
     }
     findZipEntries();
   }
@@ -139,6 +142,7 @@ public class ZipReader extends FormatReader {
       reader.close();
     }
     reader = new ImageReader();
+    reader = Memoizer.wrap(getMetadataOptions(), reader);
 
     reader.setMetadataOptions(getMetadataOptions());
     reader.setMetadataFiltered(isMetadataFiltered());

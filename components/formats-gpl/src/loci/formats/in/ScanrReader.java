@@ -45,6 +45,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -89,7 +91,7 @@ public class ScanrReader extends FormatReader {
   private int tileHeight = 0;
 
   private String[] tiffs;
-  private MinimalTiffReader reader;
+  private IFormatReader reader;
 
   private boolean foundPositions = false;
   private Length[] fieldPositionX;
@@ -332,7 +334,7 @@ public class ScanrReader extends FormatReader {
 
       r.close();
       tiffs = new String[] {id};
-      reader = new MinimalTiffReader();
+      reader = Memoizer.wrap(getMetadataOptions(), new MinimalTiffReader());
 
       return;
     }
@@ -543,7 +545,7 @@ public class ScanrReader extends FormatReader {
       nPos = realPosCount;
     }
 
-    reader = new MinimalTiffReader();
+    reader = Memoizer.wrap(getMetadataOptions(), new MinimalTiffReader());
     reader.setId(tiffs[0]);
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();

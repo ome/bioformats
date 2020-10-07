@@ -48,6 +48,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.UnknownFormatException;
 import loci.formats.UnsupportedCompressionException;
@@ -67,7 +68,7 @@ public class NRRDReader extends FormatReader {
   // -- Fields --
 
   /** Helper reader. */
-  private ImageReader helper;
+  private IFormatReader helper;
 
   /** Name of data file, if the current extension is 'nhdr'. */
   private String dataFile;
@@ -259,6 +260,7 @@ public class NRRDReader extends FormatReader {
       }
     }
     helper = new ImageReader(newClasses);
+    helper = Memoizer.wrap(getMetadataOptions(), helper);
     helper.setMetadataOptions(
       new DefaultMetadataOptions(MetadataLevel.MINIMUM));
 

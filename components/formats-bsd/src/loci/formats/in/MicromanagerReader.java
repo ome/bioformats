@@ -50,6 +50,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -99,7 +101,7 @@ public class MicromanagerReader extends FormatReader {
   // -- Fields --
 
   /** Helper reader for TIFF files. */
-  private MinimalTiffReader tiffReader;
+  private IFormatReader tiffReader;
 
   private Vector<Position> positions;
   private int start = 0;
@@ -260,6 +262,7 @@ public class MicromanagerReader extends FormatReader {
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     tiffReader = new MinimalTiffReader();
+    tiffReader = Memoizer.wrap(getMetadataOptions(), tiffReader);
     positions = new Vector<Position>();
 
     LOGGER.info("Reading metadata file");

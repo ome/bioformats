@@ -43,6 +43,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
@@ -835,6 +836,7 @@ public class CellWorxReader extends FormatReader {
     if (checkSuffix(file, "tif")) {
       pnl = new MetamorphReader();
     }
+    pnl = Memoizer.wrap(getMetadataOptions(), pnl);
 
     if (omexml) {
       IMetadata metadata;

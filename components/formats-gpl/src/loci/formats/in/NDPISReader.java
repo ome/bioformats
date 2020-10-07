@@ -36,6 +36,8 @@ import loci.formats.ChannelSeparator;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -57,7 +59,7 @@ public class NDPISReader extends FormatReader {
   // -- Fields --
 
   private String[] ndpiFiles;
-  private ChannelSeparator[] readers;
+  private IFormatReader[] readers;
   private int[] bandUsed;
   private static final int TAG_CHANNEL = 65434;
   private static final int TAG_EMISSION_WAVELENGTH = 65451;
@@ -144,7 +146,7 @@ public class NDPISReader extends FormatReader {
     if (!fileOnly) {
       ndpiFiles = null;
       if (readers != null) {
-        for (ChannelSeparator reader : readers) {
+        for (IFormatReader reader : readers) {
           if (reader != null) {
             reader.close();
           }
@@ -180,13 +182,13 @@ public class NDPISReader extends FormatReader {
       else if (key.startsWith("Image")) {
         int index = Integer.parseInt(key.replaceAll("Image", ""));
         ndpiFiles[index] = new Location(parent, value).getAbsolutePath();
-        readers[index] = new ChannelSeparator(new NDPIReader());
+        readers[index] = Memoizer.wrap(getMetadataOptions(), new ChannelSeparator(new NDPIReader()));
         readers[index].setFlattenedResolutions(hasFlattenedResolutions());
       }
     }
 
     MetadataStore store = makeFilterMetadata();
-    readers[0].getReader().setMetadataStore(store);
+    readers[0].setMetadataStore(store);
     readers[0].setId(ndpiFiles[0]);
 
     core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadataList());

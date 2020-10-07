@@ -53,6 +53,7 @@ import loci.formats.CoreMetadataList;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.Modulo;
@@ -548,6 +549,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
     if (!isGroupFiles() && !isSingleFile(currentId)) {
       IFormatReader reader = new MinimalTiffReader();
+      reader = Memoizer.wrap(getMetadataOptions(), reader);
       initializeReader(reader, currentId);
       core.set(0, 0, new OMETiffCoreMetadata(reader.getCoreMetadataList().get(0)));
       int ifdCount = reader.getImageCount();
@@ -1021,6 +1023,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         if (info[s][0].reader == null) {
           info[s][0].reader = new MinimalTiffReader();
+          info[s][0].reader = Memoizer.wrap(getMetadataOptions(), info[s][0].reader);
         }
         String firstFile = info[s][0].id;
         if (firstFile == null ||

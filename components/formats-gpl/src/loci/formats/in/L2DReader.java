@@ -38,6 +38,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.units.quantity.Length;
@@ -61,7 +63,7 @@ public class L2DReader extends FormatReader {
   /** List of all metadata files in the dataset. */
   private List<String>[] metadataFiles;
 
-  private MinimalTiffReader reader;
+  private IFormatReader reader;
   private int[] tileWidth, tileHeight;
 
   // -- Constructor --
@@ -219,6 +221,7 @@ public class L2DReader extends FormatReader {
       }
       r.close();
       reader = new MinimalTiffReader();
+      reader = Memoizer.wrap(getMetadataOptions(), reader);
       return;
     }
 
@@ -301,6 +304,7 @@ public class L2DReader extends FormatReader {
     setSeries(0);
 
     reader = new MinimalTiffReader();
+    reader = Memoizer.wrap(getMetadataOptions(), reader);
 
     MetadataStore store = makeFilterMetadata();
 
