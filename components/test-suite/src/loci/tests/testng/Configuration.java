@@ -38,7 +38,6 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.IniWriter;
 import loci.common.Location;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -536,7 +535,7 @@ public class Configuration {
     int seriesCount = reader.getSeriesCount();
     IFormatReader unflattenedReader = reader;
     if (seriesCount > 1) {
-      unflattenedReader = new FileStitcher();
+      unflattenedReader = new ImageReader();
       unflattenedReader.setFlattenedResolutions(false);
       try {
         unflattenedReader.setId(reader.getCurrentFile());

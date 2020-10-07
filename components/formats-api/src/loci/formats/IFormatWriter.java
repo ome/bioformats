@@ -48,7 +48,7 @@ public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
   /**
    * Saves the given image to the current series in the current file.
    *
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param buf the byte array that represents the image.
    * @throws FormatException if one of the parameters is invalid.
    * @throws IOException if there was a problem writing to the file.
@@ -58,7 +58,7 @@ public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
   /**
    * Saves the given image tile to the current series in the current file.
    *
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param buf the byte array that represents the image tile.
    * @param x the X coordinate of the upper-left corner of the image tile.
    * @param y the Y coordinate of the upper-left corner of the image tile.
@@ -73,7 +73,7 @@ public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
   /**
    * Saves the given image tile to the current series in the current file.
    *
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param buf the byte array that represents the image tile.
    * @param tile the Region representing the image tile to be read.
    * @throws FormatException if one of the parameters is invalid.
@@ -85,7 +85,7 @@ public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
   /**
    * Saves the given image plane to the current series in the current file.
    *
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param plane the image plane.
    * @throws FormatException if one of the parameters is invalid.
    * @throws IOException if there was a problem writing to the file.
@@ -95,7 +95,7 @@ public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
   /**
    * Saves the given image plane to the current series in the current file.
    *
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param plane the image plane.
    * @param x the X coordinate of the upper-left corner of the image tile.
    * @param y the Y coordinate of the upper-left corner of the image tile.
@@ -110,7 +110,7 @@ public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
   /**
    * Saves the given image plane to the current series in the current file.
    *
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param plane the image plane.
    * @param tile the Region representing the image tile to be read.
    * @throws FormatException if one of the parameters is invalid.

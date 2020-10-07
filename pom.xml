@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>6.5.1</version>
+  <version>6.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -35,7 +35,7 @@
          When possible, we advise using the relevant groupId and version
          properties for your dependencies rather than hardcoding them. -->
 
-    <release.version>6.5.1</release.version>
+    <release.version>6.6.0-SNAPSHOT</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2017</year>
     <project.rootdir>${basedir}</project.rootdir>
@@ -49,9 +49,9 @@
     <ome-metakit.version>5.3.2</ome-metakit.version>
     <metakit.version>${ome-metakit.version}</metakit.version>
     <slf4j.version>1.7.6</slf4j.version>
-    <kryo.version>2.24.0</kryo.version>
+    <kryo.version>4.0.2</kryo.version>
     <testng.version>6.8</testng.version>
-    <ome-common.version>6.0.4</ome-common.version>
+    <ome-common.version>6.0.6</ome-common.version>
     <ome-model.group>org.openmicroscopy</ome-model.group>
     <ome-model.version>6.1.0</ome-model.version>
     <ome-poi.version>5.3.3</ome-poi.version>
@@ -411,10 +411,6 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <prerequisites>
-    <maven>3.0.5</maven>
-  </prerequisites>
 
   <organization>
     <name>Open Microscopy Environment</name>

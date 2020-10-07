@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>6.5.1</version>
+    <version>6.6.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -69,7 +69,7 @@
       <version>${jgoodies-forms.version}</version>
     </dependency>
     <dependency>
-     <groupId>com.esotericsoftware.kryo</groupId>
+     <groupId>com.esotericsoftware</groupId>
      <artifactId>kryo</artifactId>
      <version>${kryo.version}</version>
     </dependency>

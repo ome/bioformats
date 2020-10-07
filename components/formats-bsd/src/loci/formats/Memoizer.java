@@ -335,7 +335,7 @@ public class Memoizer extends ReaderWrapper {
    * cached items. This should happen when the order and type of objects stored
    * in the memo file changes.
    */
-  public static final Integer VERSION = 3;
+  public static final Integer VERSION = 4;
 
   /**
    * Default value for {@link #minimumElapsed} if none is provided in the

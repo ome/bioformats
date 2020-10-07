@@ -31,8 +31,6 @@ matrix:
   exclude:
   - jdk: openjdk11
     env: BUILD=ant
-  - jdk: openjdk8
-    env: BUILD=maven
 
 script:
   - ./tools/test-build $BUILD
