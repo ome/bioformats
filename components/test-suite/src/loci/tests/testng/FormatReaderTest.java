@@ -1840,6 +1840,12 @@ public class FormatReaderTest {
             }
           }
 
+          // Options files
+          if (base[i].toLowerCase().endsWith(".bfoptions"))
+          {
+            continue;
+          }
+
           // extra metadata files in Harmony/Operetta datasets
           // cannot be used for type detection
           if (reader.getFormat().equals("PerkinElmer Operetta")) {
