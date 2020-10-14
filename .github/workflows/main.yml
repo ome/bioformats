@@ -1,14 +1,15 @@
 ---
-name: Publish packages
+name: Build with Maven and Ant
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         java: [1.8, 11]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK ${{ matrix.java }}
