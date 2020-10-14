@@ -27,7 +27,10 @@ jobs:
           touch SHASUMS
           for asset in ./artifacts/*; do
             assets+=("-a" "$asset")
-            sha256sum $asset >> SHASUMS
+            filename=$(basename -- "$asset")
+            value=$(sha256sum $asset)
+            IFS=' ' read -r -a array <<< "$value"
+            echo "${array[0]} $filename" >> SHASUMS
           done
           assets+=("-a" SHASUMS)
           tag_name="${GITHUB_REF##*/}"
