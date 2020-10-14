@@ -25,14 +25,19 @@ jobs:
           set -x
           assets=()
           touch SHASUMS
+          touch MD5
           for asset in ./artifacts/*; do
             assets+=("-a" "$asset")
             filename=$(basename -- "$asset")
-            value=$(sha256sum $asset)
-            IFS=' ' read -r -a array <<< "$value"
+            sha=$(sha256sum $asset)
+            IFS=' ' read -r -a array <<< "$sha"
             echo "${array[0]} $filename" >> SHASUMS
+            md5=$(md5sum $asset)
+            IFS=' ' read -r -a array <<< "$md5"
+            echo "${array[0]} $filename" >> MD5
           done
           assets+=("-a" SHASUMS)
+          assets+=("-a" MD5)
           tag_name="${GITHUB_REF##*/}"
           hub release create "${assets[@]}" -m "$tag_name" "$tag_name"
         env: 
