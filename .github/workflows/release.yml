@@ -17,14 +17,19 @@ jobs:
         with:
           java-version: 11
       - name: Build artifacts
-        run: ./tools/test-build ant
+        run: |
+          ./tools/test-build ant
+          ant release
       - name: Create and Upload Release Assets
         run: |
           set -x
           assets=()
-          for asset in ./artifacts/*.jar; do
+          touch SHASUMS
+          for asset in ./artifacts/*; do
             assets+=("-a" "$asset")
+            sha256sum $asset >> SHASUMS
           done
+          assets+=("-a" SHASUMS)
           tag_name="${GITHUB_REF##*/}"
           hub release create "${assets[@]}" -m "$tag_name" "$tag_name"
         env: 
