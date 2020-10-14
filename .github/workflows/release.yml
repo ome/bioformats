@@ -1,5 +1,5 @@
 ---
-name: Publish packages
+name: Build and publish packages
 
 on:
   push:
