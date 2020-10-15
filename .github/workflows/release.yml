@@ -20,6 +20,7 @@ jobs:
         run: |
           ./tools/test-build ant
           ant release
+          ant docs
       - name: Create and Upload Release Assets
         run: |
           set -x
