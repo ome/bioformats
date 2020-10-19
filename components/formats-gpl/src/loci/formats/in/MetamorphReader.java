@@ -53,14 +53,18 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.CoreMetadataList;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.IMetadata;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -1013,7 +1017,16 @@ public class MetamorphReader extends BaseTiffReader {
 
           if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
-            int laserIndex = ((IMetadata)getMetadataStore()).getLightSourceCount(0);
+            int laserIndex = i * getEffectiveSizeC() + c;
+            try {
+              ServiceFactory factory = new ServiceFactory();
+              OMEXMLService omexmlService = factory.getInstance(OMEXMLService.class);
+              laserIndex = omexmlService.asRetrieve(getMetadataStore()).getLightSourceCount(0);
+            }
+            catch (DependencyException de) {
+              throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
+            }
+
             String lightSourceID =
               MetadataTools.createLSID("LightSource", 0, laserIndex);
             store.setLaserID(lightSourceID, 0, laserIndex);
