@@ -420,7 +420,6 @@ public class FlexReader extends FormatReader {
     }
     else initMeaFile(id);
 
-    if (runCount == 0) runCount = 1;
     if (plateCount == flexFiles.size() / runCount) {
       plateCount /= wellCount;
       if ((plateCount % fieldCount) == 0) {
@@ -566,7 +565,7 @@ public class FlexReader extends FormatReader {
           LOGGER.debug("Checking if {} belongs in the same dataset.", file);
           if (file.endsWith(".flex") && file.length() == 14) {
             flex.add(new Location(runDir, file).getAbsolutePath());
-            //LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
+            LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
           }
         }
       }
@@ -585,7 +584,7 @@ public class FlexReader extends FormatReader {
     LOGGER.debug("Determined that {} .flex files belong together.",
       files.length);
 
-    runCount = 1;
+    runCount = runDirs.size();
     if (runCount == 0) runCount = 1;
     groupFiles(files, store);
     populateMetadataStore(store);
@@ -670,7 +669,6 @@ public class FlexReader extends FormatReader {
       store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, sampleIndex);
       store.setWellSampleImageRef(imageID, pos[2], well, sampleIndex);
 
-      if (runCount == 0) runCount = 1;
       store.setPlateAcquisitionWellSampleRef(wellSample, 0, pos[3], i % (getSeriesCount() / runCount));
     }
 
@@ -1402,18 +1400,11 @@ public class FlexReader extends FormatReader {
         for (String f : sortedFiles) {
           files.add(f);
         }
-        if (runCount == 0) runCount = 1;
 
         for (int field=0; field<nFiles; field++) {
           FlexFile file = new FlexFile();
           file.row = row;
           file.column = col;
-          LOGGER.info("FlexTest: RunCount = " + runCount + "  NFiles = " + nFiles);
-          if (runCount == 0) runCount = 1;
-          if (nFiles == 0) nFiles = 1;
-          if (runCount > nFiles) {
-            runCount = 1;
-          }
           file.field = field % (nFiles / runCount);
           file.file = files.get(field);
           file.acquisition = (runDirs == null || runDirs.size() == 0) ? 0:
@@ -1862,7 +1853,11 @@ public class FlexReader extends FormatReader {
         }
       }
       else if (qName.equals("Plate")) { 
-          plateCount++; 
+        parentQName = qName;
+        if (qName.equals("Plate")) {
+          nextPlate++;
+          plateCount++;
+        }
       }
       else if (qName.equals("WellCoordinate")) {
         if (wellNumber.length == 1) {
