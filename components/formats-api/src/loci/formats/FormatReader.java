@@ -246,10 +246,10 @@ public abstract class FormatReader extends FormatHandler
     // NB: critical for metadata conversion to work properly!
     getMetadataStore().createRoot();
 
-    File optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(id);
+    String optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(id);
     if (optionsFile != null) {
       MetadataOptions options = getMetadataOptions();
-      if (options instanceof DynamicMetadataOptions) {
+      if (options != null && options instanceof DynamicMetadataOptions) {
         ((DynamicMetadataOptions) options).loadOptions(optionsFile, getAvailableOptions());
       }
     }
@@ -1020,11 +1020,6 @@ public abstract class FormatReader extends FormatHandler
   public String[] getUsedFiles(boolean noPixels) {
     String[] seriesUsedFiles;    
     Set<String> files = new LinkedHashSet<String>();
-    File optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(currentId);
-    if (optionsFile != null && optionsFile.exists()) {
-      String optionsFilePath = optionsFile.getAbsolutePath();
-      files.add(optionsFilePath);
-    }
 
     int seriesCount = getSeriesCount();
     if (seriesCount == 1) {
@@ -1046,6 +1041,12 @@ public abstract class FormatReader extends FormatHandler
       }
       setSeries(oldSeries);
     }
+
+    String optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(currentId);
+    if (optionsFile != null && new Location(optionsFile).exists()) {
+      files.add(optionsFile);
+    }
+
     return files.toArray(new String[files.size()]);
   }
 

@@ -1767,6 +1767,7 @@ public class FormatReaderTest {
       LOGGER.debug("newFile = {}", newFile);
 
       IFormatReader check = new ImageReader();
+      check.setMetadataOptions(new DynamicMetadataOptions());
       try {
         check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
@@ -1837,6 +1838,12 @@ public class FormatReaderTest {
             {
               continue;
             }
+          }
+
+          // Options files
+          if (base[i].toLowerCase().endsWith(".bfoptions"))
+          {
+            continue;
           }
 
           // extra metadata files in Harmony/Operetta datasets
@@ -2454,6 +2461,12 @@ public class FormatReaderTest {
           for (int j=0; j<readers.length; j++) {
             boolean result = readers[j].isThisType(used[i]);
 
+            // Options files
+            if (!result && used[i].toLowerCase().endsWith(".bfoptions"))
+            {
+              continue;
+            }
+
             // Companion file grouping non-ome-tiff files:
             // setId must be called on the companion file
             if (!result && readers[j] instanceof OMETiffReader &&
@@ -2968,7 +2981,7 @@ public class FormatReaderTest {
     if (flattened) {
       ir = new ImageReader();
       ir = new BufferedImageReader(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File("")));
-      ir.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+      ir.setMetadataOptions(new DynamicMetadataOptions(MetadataLevel.NO_OVERLAYS));
     }
     else {
       ir = new BufferedImageReader(new ImageReader());
