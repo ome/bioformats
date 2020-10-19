@@ -504,7 +504,8 @@ public class DynamicMetadataOptions implements MetadataOptions {
     IniList list = parser.parseINI(new File(optionsFile));
     for (IniTable attrs: list) {
       for (String key: attrs.keySet()) {
-        if (!availableOptionKeys.contains(key)) {
+        if (!key.equals(IniTable.HEADER_KEY) &&
+            !availableOptionKeys.contains(key)) {
           LOGGER.warn("Metadata Option Key is not supported in this reader " + key);
         }
         set(key, attrs.get(key));
