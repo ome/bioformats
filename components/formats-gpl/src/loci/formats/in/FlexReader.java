@@ -412,6 +412,9 @@ public class FlexReader extends FormatReader {
       }
     }
     
+    runCount = runDirs.size();
+    if (runCount == 0) runCount = 1;
+
     if (checkSuffix(id, FLEX_SUFFIX)) {
       initFlexFile(id);
     }
@@ -584,8 +587,6 @@ public class FlexReader extends FormatReader {
     LOGGER.debug("Determined that {} .flex files belong together.",
       files.length);
 
-    runCount = runDirs.size();
-    if (runCount == 0) runCount = 1;
     groupFiles(files, store);
     populateMetadataStore(store);
   }
