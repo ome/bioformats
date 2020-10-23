@@ -100,6 +100,13 @@ public class DynamicMetadataOptionsTest {
                            {"-3.14", new Double(-3.14)}};
   }
 
+  @DataProvider(name = "optionFiles")
+  public Object[][] mkOptionFiles() {
+    return new Object[][] {{"t1.tiff", null},
+                           {"/t1.tiff", "/t1.tiff.bfoptions"},
+                           {"/foo/t1.tiff", "/foo/t1.tiff.bfoptions"}};
+  }
+
   @BeforeMethod
   public void setUp() {
     opt = new DynamicMetadataOptions();
@@ -361,6 +368,11 @@ public class DynamicMetadataOptionsTest {
     assertTrue(opt.isValidate());
     opt.setValidate(false);
     assertFalse(opt.isValidate());
+  }
+
+  @Test(dataProvider = "optionFiles")
+  public void testGetMetadataOptionsFile(String source, String target) {
+    assertEquals(DynamicMetadataOptions.getMetadataOptionsFile(source), target);
   }
 
 }

@@ -504,7 +504,8 @@ public class DynamicMetadataOptions implements MetadataOptions {
     IniList list = parser.parseINI(new File(optionsFile));
     for (IniTable attrs: list) {
       for (String key: attrs.keySet()) {
-        if (!availableOptionKeys.contains(key)) {
+        if (!key.equals(IniTable.HEADER_KEY) &&
+            !availableOptionKeys.contains(key)) {
           LOGGER.warn("Metadata Option Key is not supported in this reader " + key);
         }
         set(key, attrs.get(key));
@@ -517,9 +518,6 @@ public class DynamicMetadataOptions implements MetadataOptions {
     if (f != null && f.getParent() != null) {
       String p = f.getParent();
       String n = f.getName();
-      if (n.indexOf(".") >= 0) {
-        n = n.substring(0, n.indexOf("."));
-      }
       return new Location(p, n + ".bfoptions").getAbsolutePath();
     }
     return null;
