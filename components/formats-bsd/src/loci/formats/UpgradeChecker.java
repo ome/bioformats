@@ -85,7 +85,7 @@ public class UpgradeChecker {
    * Location of the JAR artifacts for the stable releases.
    */
   public static final String STABLE_BUILD =
-    "http://downloads.openmicroscopy.org/bio-formats/";
+    "http://downloads.openmicroscopy.org/bio-formats/latest/artifacts/";
 
   /** Name of the ueber tools JAR. */
   public static final String TOOLS = "bioformats_package.jar";
