@@ -358,6 +358,14 @@ public class APNGReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int rowLen = width * getRGBChannelCount() * bpp;
 
+    if (width > getSizeX()) {
+      throw new FormatException(
+        "Width (" + width + ") exceeds image width (" +  getSizeX() + ")");
+    }
+    if (height > getSizeY()) {
+      throw new FormatException(
+        "Height (" + height + ") exceeds image height (" +  getSizeY() + ")");
+    }
     if (getBitsPerPixel() < bpp * 8) {
       int div = (bpp * 8) / getBitsPerPixel();
       if (div < rowLen) {
