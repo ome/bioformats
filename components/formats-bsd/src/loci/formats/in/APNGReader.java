@@ -149,7 +149,7 @@ public class APNGReader extends FormatReader {
       try (PNGInputStream stream = new PNGInputStream("IDAT")) {
         int decodeHeight = y + h;
         if (decodeHeight < getSizeY() && decodeHeight % 8 != 0) {
-          decodeHeight += 8 - (decodeHeight % 8);
+          decodeHeight += Math.min(8 - (decodeHeight % 8), getSizeY() - decodeHeight);
         }
         lastImage = decode(stream, getSizeX(), decodeHeight);
       }
