@@ -516,8 +516,6 @@ public class DynamicMetadataOptions implements MetadataOptions {
   public static String getMetadataOptionsFile(String id) {
     Location f = new Location(id);
     if (f != null && f.getParent() != null) {
-      String p = f.getParent();
-      String n = f.getName();
       return new Location(id + ".bfoptions").getAbsolutePath();
     }
     return null;
