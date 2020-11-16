@@ -518,7 +518,7 @@ public class DynamicMetadataOptions implements MetadataOptions {
     if (f != null && f.getParent() != null) {
       String p = f.getParent();
       String n = f.getName();
-      return new Location(p, n + ".bfoptions").getAbsolutePath();
+      return new Location(id + ".bfoptions").getAbsolutePath();
     }
     return null;
   }
