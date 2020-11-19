@@ -816,6 +816,8 @@ public class MIASReader extends FormatReader {
     String plateAcqId = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqId, 0, 0);
     store.setPlateAcquisitionMaximumFieldCount(new PositiveInteger(1), 0, 0);
+    store.setPlateRows(new PositiveInteger(nWells / wellColumns), 0);
+    store.setPlateColumns(new PositiveInteger(wellColumns), 0);
 
     for (int well=0; well<nWells; well++) {
       int wellIndex = wellNumber[well];

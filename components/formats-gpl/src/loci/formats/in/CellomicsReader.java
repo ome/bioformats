@@ -50,6 +50,7 @@ import loci.formats.services.MDBService;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 
@@ -460,6 +461,9 @@ public class CellomicsReader extends FormatReader {
       realRows = 16;
       realCols = 24;
     }
+
+    store.setPlateRows(new PositiveInteger(realRows), 0);
+    store.setPlateColumns(new PositiveInteger(realCols), 0);
 
     for (int row=0; row<realRows; row++) {
       for (int col=0; col<realCols; col++) {

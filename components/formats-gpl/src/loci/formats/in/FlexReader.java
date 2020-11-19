@@ -557,6 +557,9 @@ public class FlexReader extends FormatReader {
         new Timestamp(plateAcqStartTime), 0, 0);
     }
 
+    store.setPlateRows(new PositiveInteger(wellRows), 0);
+    store.setPlateColumns(new PositiveInteger(wellColumns), 0);
+
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
         int well = row * wellColumns + col;
