@@ -108,9 +108,29 @@ public class TecanReader extends FormatReader {
     domains = new String[] {FormatTools.HCS_DOMAIN};
     datasetDescription =
       "SQLite database, TIFF files, optional analysis output";
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
+  public boolean isThisType(String name, boolean open) {
+    if (!checkSuffix(name, "db")) {
+      return false;
+    }
+    if (!open) {
+      return super.isThisType(name, open);
+    }
+    try {
+      Connection conn = openConnection(name);
+      findPlateDimensions(conn);
+      return true;
+    }
+    catch (Exception e) {
+    }
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
   @Override
@@ -370,13 +390,17 @@ public class TecanReader extends FormatReader {
   }
 
   private Connection openConnection() throws IOException {
+    return openConnection(getCurrentFile());
+  }
+
+  private Connection openConnection(String file) throws IOException {
     Connection conn = null;
     try {
       // see https://github.com/xerial/sqlite-jdbc/issues/247
       SQLiteConfig config = new SQLiteConfig();
       config.setReadOnly(true);
       conn = config.createConnection("jdbc:sqlite:" +
-        new Location(getCurrentFile()).getAbsolutePath());
+        new Location(file).getAbsolutePath());
     }
     catch (SQLException e) {
       LOGGER.warn("Could not read from database");
