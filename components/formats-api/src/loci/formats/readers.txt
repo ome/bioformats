@@ -16,6 +16,7 @@ loci.formats.in.JPEGReader            # jpg, jpeg [javax.imageio]
 # external readers with unique file extensions
 loci.formats.in.SlideBook6Reader[type=external]      # sld
 loci.formats.in.ScreenReader[type=external]         # .screen
+loci.formats.in.ZarrReader[type=external]         # .zarr
 
 # standalone readers with unique file extensions
 loci.formats.in.PGMReader             # pgm
