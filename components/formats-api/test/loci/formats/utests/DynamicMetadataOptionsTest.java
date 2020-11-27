@@ -376,9 +376,13 @@ public class DynamicMetadataOptionsTest {
     source = source.replace('/', File.separatorChar);
     if (target != null) {
       target = target.replace('/', File.separatorChar);
-      target = (new Location(target)).getAbsolutePath();
     }
-    assertEquals(DynamicMetadataOptions.getMetadataOptionsFile(source), target);
+    source = DynamicMetadataOptions.getMetadataOptionsFile(source);
+    if (source != null) {
+      String[] values = source.split(":");
+      source = values[values.length-1];
+    }
+    assertEquals(source, target);
   }
 
 }
