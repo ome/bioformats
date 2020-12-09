@@ -64,6 +64,9 @@ public class UpgradeChecker {
   // -- Constants --
 
   /** Version number of the latest stable release. */
+  /**
+   * @deprecated  As of release 6.6.0
+   */
   public static final String STABLE_VERSION = "6.5.1";
 
   /** Location of the OME continuous integration server. */
@@ -85,7 +88,7 @@ public class UpgradeChecker {
    * Location of the JAR artifacts for the stable releases.
    */
   public static final String STABLE_BUILD =
-    "http://downloads.openmicroscopy.org/bio-formats/" +  STABLE_VERSION + "/artifacts/";
+    "http://downloads.openmicroscopy.org/bio-formats/latest/artifacts/";
 
   /** Name of the ueber tools JAR. */
   public static final String TOOLS = "bioformats_package.jar";

@@ -42,6 +42,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import loci.common.Location;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 
@@ -372,7 +373,16 @@ public class DynamicMetadataOptionsTest {
 
   @Test(dataProvider = "optionFiles")
   public void testGetMetadataOptionsFile(String source, String target) {
-    assertEquals(DynamicMetadataOptions.getMetadataOptionsFile(source), target);
+    source = source.replace('/', File.separatorChar);
+    if (target != null) {
+      target = target.replace('/', File.separatorChar);
+    }
+    source = DynamicMetadataOptions.getMetadataOptionsFile(source);
+    if (source != null) {
+      String[] values = source.split(":");
+      source = values[values.length-1];
+    }
+    assertEquals(source, target);
   }
 
 }

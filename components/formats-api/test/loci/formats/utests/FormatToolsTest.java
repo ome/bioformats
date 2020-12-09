@@ -32,6 +32,7 @@
 
 package loci.formats.utests;
 
+import java.io.File;
 import loci.common.Constants;
 import loci.formats.FormatTools;
 
@@ -42,6 +43,7 @@ import ome.units.UNITS;
 import static org.testng.AssertJUnit.assertEquals;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
 
 
 /**
@@ -262,6 +264,13 @@ public class FormatToolsTest {
   
   @Test(dataProvider = "fileLists")
   public void testGetRequiredDirectories(String[] files, int number) {
-    assertEquals(number, FormatTools.getRequiredDirectories(files));
+    String[] newfiles = null;
+    if (files != null) {
+      newfiles = new String[files.length];
+      for (int i = 0; i < files.length; i++) {
+        newfiles[i] = files[i].replace('/', File.separatorChar);
+      }
+    }
+    assertEquals(number, FormatTools.getRequiredDirectories(newfiles));
   }
 }

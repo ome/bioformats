@@ -6,10 +6,8 @@ from optparse import OptionParser
 import os
 from subprocess import call
 import sys
-import time
 import zipfile
 import tarfile
-import StringIO
 import platform
 
 # This script archives the base tree and repacks it into a single zip which is
@@ -163,7 +161,7 @@ if __name__ == "__main__":
     basetar.close()
     try:
         call(['xz', "%s/%s.tar" % (options.target, prefix)])
-    except:
+    except Exception:
         # This is expected to fail on Windows when xz is unavailable,
         # but is always an error on all other platforms.
         if platform.system() != 'Windows':
