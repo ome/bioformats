@@ -1,5 +1,5 @@
 ---
-name: Build with Ant
+name: Ant
 
 on: [push, pull_request]
 
