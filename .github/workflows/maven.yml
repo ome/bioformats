@@ -33,7 +33,7 @@ jobs:
       - name: Build
         run: mvn ${{ env.maven_commands }}
   deploy:
-    if: contains('refs/heads/develop', github.ref) &&  startsWith(github.ref, 'refs/tags') != true
+    if: contains('refs/heads/develop', github.ref)
     needs: build
     runs-on: ubuntu-latest
     steps:
