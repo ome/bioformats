@@ -33,15 +33,20 @@ jobs:
       - name: Build
         run: mvn ${{ env.maven_commands }}
   deploy:
-    if: contains('refs/heads/develop', github.ref) ||  startsWith(github.ref, 'refs/tags')
+    if: contains('refs/heads/develop', github.ref)
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Get server
-        id: get_server
+      - name: Retrieve version
+        id: get_version
         run: |
-          if [${{ github.ref }} == 'refs/heads/develop']; then
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "::set-output name=version::$VERSION"
+      - name: Set server
+        id: set_server
+        run: |
+          if [[ ${{ steps.get_version.outputs.version }} =~ 'SNAPSHOT' ]]; then
             echo ::set-output name=server::'ome.snapshots'
           else
             echo ::set-output name=server::'ome.staging'
@@ -50,7 +55,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-          server-id: ${{ steps.get_server.outputs.server }}
+          server-id: ${{ steps.set_server.outputs.server }}
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Deploy SNAPSHOT
