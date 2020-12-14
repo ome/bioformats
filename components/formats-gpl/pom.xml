@@ -170,6 +170,11 @@
     	<artifactId>json</artifactId>
     	<version>20090211</version>
     </dependency>
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>${sqlite.version}</version>
+    </dependency>
   </dependencies>
 
   <properties>

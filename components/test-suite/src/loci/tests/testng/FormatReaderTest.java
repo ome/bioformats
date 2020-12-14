@@ -1986,6 +1986,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Tecan datasets can only be detected with the .db file
+          if (reader.getFormat().equals("Tecan Spark Cyto") &&
+            !base[i].toLowerCase().endsWith(".db"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2735,6 +2742,20 @@ public class FormatReaderTest {
             // MetaXpress TIFF reader can flag .HTD files from CellWorX
             if (result && r instanceof CellWorxReader &&
               readers[j] instanceof MetaxpressTiffReader)
+            {
+              continue;
+            }
+
+            // Tecan data can only be detected with the .db file
+            if (!result && readers[j] instanceof TecanReader &&
+              !used[i].toLowerCase().endsWith(".db"))
+            {
+              continue;
+            }
+
+            // OK for other readers to flag Tecan files other than .db
+            if (result && r instanceof TecanReader &&
+              !used[i].toLowerCase().endsWith(".db"))
             {
               continue;
             }
