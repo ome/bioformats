@@ -241,11 +241,11 @@ public class NikonTiffReader extends BaseTiffReader {
       store.setObjectiveNominalMagnification(magnification, 0, 0);
 
       if (correction == null) correction = "Other";
-      store.setObjectiveCorrection(getCorrection(correction), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection(correction), 0, 0);
       store.setObjectiveLensNA(lensNA, 0, 0);
       store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROMETER), 0, 0);
       if (immersion == null) immersion = "Other";
-      store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), 0, 0);
 
       for (int i=0; i<wavelength.size(); i++) {
         String laser = MetadataTools.createLSID("LightSource", 0, i);
@@ -256,14 +256,14 @@ public class NikonTiffReader extends BaseTiffReader {
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);
         }
-        store.setLaserType(getLaserType("Other"), 0, i);
-        store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
+        store.setLaserType(MetadataTools.getLaserType("Other"), 0, i);
+        store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, i);
       }
 
       for (int i=0; i<gain.size(); i++) {
         store.setDetectorID(MetadataTools.createLSID("Detector", 0, i), 0, i);
         store.setDetectorGain(gain.get(i), 0, i);
-        store.setDetectorType(getDetectorType("Other"), 0, i);
+        store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, i);
       }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {

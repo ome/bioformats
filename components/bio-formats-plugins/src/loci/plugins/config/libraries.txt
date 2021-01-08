@@ -93,7 +93,7 @@ notes = Optional plugin. If you have Nikon's ND2 plugin installed, you can
 type = ImageJ plugin
 class = loci.plugins.About
 version = bfVersion
-url = http://www.openmicroscopy.org/site/support/bio-formats/users/imagej/index.html
+url = https://docs.openmicroscopy.org/latest/bio-formats/users/imagej/
 license = GPL
 notes = Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including
         the Bio-Formats Importer, Bio-Formats Exporter,
@@ -140,7 +140,7 @@ notes = OME Bio-Formats package for reading and converting
 type = Java library
 class = loci.ome.io.OMEUtils
 version = omeVersion
-url = http://www.openmicroscopy.org/site/support/legacy/ome-server/developer/java-api
+url = https://docs.openmicroscopy.org/latest/omero/developers/Java.html
 license = GPL
 notes = OME database I/O package for communicating with OME and OMERO servers.
 
@@ -214,7 +214,7 @@ notes = Used by Bio-Formats to work with OME-XML.
 [OME-Java API]
 type = Java library
 class = org.openmicroscopy.is.ImageServer
-url = http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
+url = https://docs.openmicroscopy.org/latest/omero/developers/Java.html
 license = LGPL
 notes = Used by the "Download from OME" and "Upload to OME" plugins
         to connect to OME servers.

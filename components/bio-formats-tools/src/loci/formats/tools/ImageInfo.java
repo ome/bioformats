@@ -347,7 +347,7 @@ public class ImageInfo {
       "* = may result in loss of precision",
       ""
     };
-    for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
+    for (int i=0; i<s.length; i++) System.out.println(s[i]);
   }
 
   public void setReader(IFormatReader reader) {
@@ -573,6 +573,8 @@ public class ImageInfo {
       Modulo moduloT = reader.getModuloT();
       int thumbSizeX = reader.getThumbSizeX();
       int thumbSizeY = reader.getThumbSizeY();
+      int tileSizeX = reader.getOptimalTileWidth();
+      int tileSizeY = reader.getOptimalTileHeight();
       boolean little = reader.isLittleEndian();
       String dimOrder = reader.getDimensionOrder();
       boolean orderCertain = reader.isOrderCertain();
@@ -636,6 +638,7 @@ public class ImageInfo {
       if (imageCount != sizeZ * effSizeC * sizeT) {
         LOGGER.info("\t************ ZCT mismatch ************");
       }
+      LOGGER.info("\tTile size = {} x {}", tileSizeX, tileSizeY);
       LOGGER.info("\tThumbnail size = {} x {}", thumbSizeX, thumbSizeY);
       LOGGER.info("\tEndianness = {}",
         little ? "intel (little)" : "motorola (big)");
@@ -1013,7 +1016,6 @@ public class ImageInfo {
       CommandLineTools.printVersion();
       return true;
     }
-    CommandLineTools.runUpgradeCheck(args);
 
     createReader();
 
@@ -1021,6 +1023,8 @@ public class ImageInfo {
       printUsage();
       return false;
     }
+
+    CommandLineTools.runUpgradeCheck(args);
 
     mapLocation();
     configureReaderPreInit();

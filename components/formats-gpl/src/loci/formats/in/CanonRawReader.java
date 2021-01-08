@@ -84,9 +84,9 @@ public class CanonRawReader extends FormatReader {
         pix, plane, COLOR_MAP, getSizeX(), getSizeY(), isLittleEndian());
     }
 
-    RandomAccessInputStream s = new RandomAccessInputStream(plane);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
+    try (RandomAccessInputStream s = new RandomAccessInputStream(plane)) {
+      readPlane(s, x, y, w, h, buf);
+    }
 
     return buf;
   }

@@ -33,6 +33,7 @@
 package loci.formats.tiff;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -60,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffSaver {
+public class TiffSaver implements Closeable {
 
   // -- Constructor --
 
@@ -259,7 +260,7 @@ public class TiffSaver {
    *
    * @param buf The block that is to be written.
    * @param ifd The Image File Directories. Mustn't be <code>null</code>.
-   * @param no  The image index within the current file, starting from 0.
+   * @param no the plane index within the current series.
    * @param pixelType The type of pixels.
    * @param x   The X-coordinate of the top-left corner.
    * @param y   The Y-coordinate of the top-left corner.
@@ -328,43 +329,77 @@ public class TiffSaver {
         stripOut[strip] = new DataOutputStream(stripBuf[strip]);
       }
       int[] bps = ifd.getBitsPerSample();
-      int off;
+      boolean channelsAllSameSize = true;
+      for (int c = 0; c < nChannels; c++)
+        if (bps[c] != bytesPerPixel * 8)
+          channelsAllSameSize = false;
 
       // write pixel strips to output buffers
-      int effectiveStrips = !interleaved ? nStrips / nChannels : nStrips;
-      if (effectiveStrips == 1 && copyDirectly) {
-        stripOut[0].write(buf);
-      }
-      else {
-        for (int strip = 0; strip < effectiveStrips; strip++) {
-          int xOffset = (strip % tilesPerRow) * tileWidth;
-          int yOffset = (strip / tilesPerRow) * tileHeight;
-          for (int row=0; row<tileHeight; row++) {
-            for (int col=0; col<tileWidth; col++) {
-              int ndx = ((row+yOffset) * w + col + xOffset) * bytesPerPixel;
-              for (int c=0; c<nChannels; c++) {
-                for (int n=0; n<bps[c]/8; n++) {
-                  if (interleaved) {
-                    off = ndx * nChannels + c * bytesPerPixel + n;
-                    if (row >= h || col >= w) {
-                      stripOut[strip].writeByte(0);
-                    } else if (off < buf.length) {
-                      stripOut[strip].writeByte(buf[off]);
+      // Check for the sane cases
+      if (channelsAllSameSize &&
+        (ifd.getImageWidth() == w && ifd.getTileWidth() == w) ||
+        (tileHeight * tileWidth * nChannels * bytesPerPixel == buf.length))
+      {
+        // If the input, output, and tile widths are all the same,
+        // and the input bytesPerPixel (which is actually bytes per sample)
+        // matches the bits per channel for all channels,
+        // then the input can be directly copied to the output in appropriate size strips.
+        // Any interleaving of channels will be the same for input and output.
+        if (buf.length % stripSize == 0) {
+          for (int strip = 0; strip < nStrips; strip++) {
+            stripOut[strip].write(buf, strip * stripSize, stripSize);
+          }
+        } else {
+          for (int strip = 0; strip < nStrips - 1; strip++) {
+            stripOut[strip].write(buf, strip * stripSize, stripSize);
+          }
+          // Sigh.  Need to pad the last strip.
+          int pos = (nStrips - 1) * stripSize;
+          int len = buf.length - pos;
+          stripOut[nStrips - 1].write(buf, pos, len);
+          for (int n = len; n < stripSize; n++) {
+            stripOut[nStrips - 1].writeByte(0);
+          }
+        }
+      } else {
+        int effectiveStrips = !interleaved ? nStrips / nChannels : nStrips;
+        if (effectiveStrips == 1 && copyDirectly) {
+          stripOut[0].write(buf);
+        }
+        else {
+          for (int strip = 0; strip < effectiveStrips; strip++) {
+            // This is broken; the tilesPerRow is based on output image size and tile size,
+            // but the xOffset and yOffset are used to compute offsets into the input image buffer.
+            // This is only sane if the input image width and the output image width are the same.
+            int xOffset = (strip % tilesPerRow) * tileWidth;
+            int yOffset = (strip / tilesPerRow) * tileHeight;
+            for (int row=0; row<tileHeight; row++) {
+              for (int col=0; col<tileWidth; col++) {
+                int ndx = ((row+yOffset) * w + col + xOffset) * bytesPerPixel;
+                for (int c=0; c<nChannels; c++) {
+                  for (int n=0; n<bps[c]/8; n++) {
+                    if (interleaved) {
+                      int off = ndx * nChannels + c * bytesPerPixel + n;
+                      if (row >= h || col >= w) {
+                        stripOut[strip].writeByte(0);
+                      } else if (off < buf.length) {
+                        stripOut[strip].writeByte(buf[off]);
+                      }
+                      else {
+                        stripOut[strip].writeByte(0);
+                      }
                     }
                     else {
-                      stripOut[strip].writeByte(0);
-                    }
-                  }
-                  else {
-                    off = c * blockSize + ndx + n;
-                    int realStrip = (c * (nStrips / nChannels)) + strip;
-                    if (row >= h || col >= w) {
-                      stripOut[realStrip].writeByte(0);
-                    } else if (off < buf.length) {
-                      stripOut[realStrip].writeByte(buf[off]);
-                    }
-                    else {
-                      stripOut[realStrip].writeByte(0);
+                      int off = c * blockSize + ndx + n;
+                      int realStrip = (c * (nStrips / nChannels)) + strip;
+                      if (row >= h || col >= w) {
+                        stripOut[realStrip].writeByte(0);
+                      } else if (off < buf.length) {
+                        stripOut[realStrip].writeByte(buf[off]);
+                      }
+                      else {
+                        stripOut[realStrip].writeByte(0);
+                      }
                     }
                   }
                 }
@@ -406,7 +441,7 @@ public class TiffSaver {
    * Performs the actual work of dealing with IFD data and writing it to the
    * TIFF for a given image or sub-image.
    * @param ifd The Image File Directories. Mustn't be <code>null</code>.
-   * @param no The image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param strips The strips to write to the file.
    * @param last Pass <code>true</code> if it is the last image,
    * <code>false</code> otherwise.
@@ -424,7 +459,7 @@ public class TiffSaver {
 
     RandomAccessInputStream in = null;
     try {
-      if (!sequentialWrite) {   
+      if (!sequentialWrite) {
         if (filename != null) {
           in = new RandomAccessInputStream(filename);
         }
@@ -443,6 +478,16 @@ public class TiffSaver {
           LOGGER.debug("Reading IFD from {} in non-sequential write.",
               ifdOffsets[no]);
           ifd = parser.getIFD(ifdOffsets[no]);
+        }
+        else if (no > 0 && no - 1 < ifdOffsets.length) {
+          IFD copy = parser.getIFD(ifdOffsets[no - 1]);
+          for (Integer tag : copy.keySet()) {
+            if (!ifd.containsKey(tag)) {
+              ifd.put(tag, copy.get(tag));
+            }
+          }
+          long next = parser.getNextOffset(ifdOffsets[no - 1]);
+          out.seek(next);
         }
       }
       else if (isTiled) {
@@ -659,6 +704,22 @@ public class TiffSaver {
     writeIntValue(out, 0);
   }
 
+  public void overwriteIFDOffset(RandomAccessInputStream raf, long offset,
+    long nextPointer)
+    throws FormatException, IOException
+  {
+    if (raf == null) {
+      throw new FormatException("Input stream cannot be null");
+    }
+    int bytesPerEntry = bigTiff ?
+      TiffConstants.BIG_TIFF_BYTES_PER_ENTRY : TiffConstants.BYTES_PER_ENTRY;
+    raf.seek(offset);
+    long entries = bigTiff ? raf.readLong() : raf.readUnsignedShort();
+    long overwriteOffset = offset + bytesPerEntry * entries + (bigTiff ? 8 : 2);
+    out.seek(overwriteOffset);
+    writeIntValue(out, nextPointer);
+  }
+
   /**
    * Surgically overwrites an existing IFD value with the given one. This
    * method requires that the IFD directory entry already exist. It
@@ -667,6 +728,11 @@ public class TiffSaver {
    * new data to the end of the file and updates the offset field; if not, or
    * if the old data is already at the end of the file, it overwrites the old
    * data in place.
+   *
+   * @param raf the input stream representing the file to be edited
+   * @param ifd the index into the list of IFDs {@see TiffParser#getIFDOffsets()}
+   * @param tag the tag code
+   * @param value the new value for the tag
    */
   public void overwriteIFDValue(RandomAccessInputStream raf,
     int ifd, int tag, Object value) throws FormatException, IOException
@@ -702,14 +768,79 @@ public class TiffSaver {
       throw new FormatException(
         "No such IFD (" + ifd + " of " + offsets.length + ")");
     }
-    raf.seek(offsets[ifd]);
+    overwriteIFDValue(raf, offsets[ifd], tag, value, true);
+  }
+
+  /**
+   * Surgically overwrites an existing IFD value with the given one. This
+   * method requires that the IFD directory entry already exist. It
+   * intelligently updates the count field of the entry to match the new
+   * length. If the new length is longer than the old length, it appends the
+   * new data to the end of the file and updates the offset field; if not, or
+   * if the old data is already at the end of the file, it overwrites the old
+   * data in place.
+   *
+   * @param raf the input stream representing the file to be edited
+   * @param ifdOffset the offset to the IFD
+   * @param tag the tag code
+   * @param value the new value for the tag
+   */
+  public void overwriteIFDValue(RandomAccessInputStream raf,
+    long ifdOffset, int tag, Object value) throws FormatException, IOException
+  {
+    overwriteIFDValue(raf, ifdOffset, tag, value, false);
+  }
+
+  /**
+   * Surgically overwrites an existing IFD value with the given one. This
+   * method requires that the IFD directory entry already exist. It
+   * intelligently updates the count field of the entry to match the new
+   * length. If the new length is longer than the old length, it appends the
+   * new data to the end of the file and updates the offset field; if not, or
+   * if the old data is already at the end of the file, it overwrites the old
+   * data in place.
+   *
+   * @param raf the input stream representing the file to be edited
+   * @param ifdOffset the offset to the IFD
+   * @param tag the tag code
+   * @param value the new value for the tag
+   * @param skipHeaderCheck true if the TIFF header does not need to be checked
+   */
+  public void overwriteIFDValue(RandomAccessInputStream raf,
+    long ifdOffset, int tag, Object value, boolean skipHeaderCheck)
+    throws FormatException, IOException
+  {
+    if (!skipHeaderCheck) {
+      raf.seek(0);
+      TiffParser parser = new TiffParser(raf);
+      Boolean valid = parser.checkHeader();
+      if (valid == null) {
+        throw new FormatException("Invalid TIFF header");
+      }
+
+      boolean little = valid.booleanValue();
+      boolean bigTiff = parser.isBigTiff();
+
+      setLittleEndian(little);
+      setBigTiff(bigTiff);
+    }
+
+    TiffParser parser = new TiffParser(raf);
+    boolean little = isLittleEndian();
+    boolean bigTiff = isBigTiff();
+    long offset = bigTiff ? 8 : 4; // offset to the IFD
+
+    int bytesPerEntry = bigTiff ?
+      TiffConstants.BIG_TIFF_BYTES_PER_ENTRY : TiffConstants.BYTES_PER_ENTRY;
+
+    raf.seek(ifdOffset);
 
     // get the number of directory entries
     long num = bigTiff ? raf.readLong() : raf.readUnsignedShort();
 
     // search directory entries for proper tag
     for (int i=0; i<num; i++) {
-      raf.seek(offsets[ifd] + (bigTiff ? 8 : 2) + bytesPerEntry * i);
+      raf.seek(ifdOffset + (bigTiff ? 8 : 2) + bytesPerEntry * i);
 
       TiffIFDEntry entry = parser.readTiffIFDEntry();
       if (entry.getTag() == tag) {
@@ -719,9 +850,11 @@ public class TiffSaver {
         ByteArrayHandle extraBuf = new ByteArrayHandle();
         RandomAccessOutputStream extraOut =
           new RandomAccessOutputStream(extraBuf);
+        ifdOut.order(little);
         extraOut.order(little);
         TiffSaver saver = new TiffSaver(ifdOut, ifdBuf);
-        saver.setLittleEndian(isLittleEndian());
+        saver.setLittleEndian(little);
+        saver.setBigTiff(bigTiff);
         saver.writeIFDValue(extraOut, entry.getValueOffset(), tag, value);
         ifdOut.close();
         saver.close();
@@ -736,7 +869,7 @@ public class TiffSaver {
         int newCount;
         long newOffset;
         if (bigTiff) {
-          newCount = ifdBuf.readInt();
+          newCount = (int) ifdBuf.readLong();
           newOffset = ifdBuf.readLong();
         }
         else {
@@ -748,6 +881,18 @@ public class TiffSaver {
         LOGGER.debug("\tnew: (tag={}; type={}; count={}; offset={})",
           new Object[] {newTag, newType, newCount, newOffset});
 
+        // first overwrite the original value with 0s
+        // this makes sure that the original value is really gone
+        // and not just orphaned
+
+        int bytesPerElement = entry.getType().getBytesPerElement();
+        if (entry.getValueCount() > (offset / bytesPerElement)) {
+          out.seek(entry.getValueOffset());
+          for (int b=0; b<entry.getValueCount() * bytesPerElement; b++) {
+            out.writeByte(0);
+          }
+        }
+
         // determine the best way to overwrite the old entry
         if (extraBuf.length() == 0) {
           // new entry is inline; if old entry wasn't, old data is orphaned
@@ -755,7 +900,7 @@ public class TiffSaver {
           LOGGER.debug("overwriteIFDValue: new entry is inline");
         }
         else if (entry.getValueOffset() + entry.getValueCount() *
-          entry.getType().getBytesPerElement() == raf.length())
+          bytesPerElement == raf.length())
         {
           // old entry was already at EOF; overwrite it
           newOffset = entry.getValueOffset();
@@ -773,13 +918,13 @@ public class TiffSaver {
         }
 
         // overwrite old entry
-        out.seek(offsets[ifd] + (bigTiff ? 8 : 2) + bytesPerEntry * i + 2);
+        out.seek(ifdOffset + (bigTiff ? 8 : 2) + bytesPerEntry * i + 2);
         out.writeShort(newType);
         writeIntValue(out, newCount);
         writeIntValue(out, newOffset);
         if (extraBuf.length() > 0) {
           out.seek(newOffset);
-          out.write(extraBuf.getByteBuffer(), 0, newCount);
+          out.write(extraBuf.getByteBuffer(), 0, (int) extraBuf.length());
         }
         return;
       }
@@ -848,9 +993,13 @@ public class TiffSaver {
       ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.UNCOMPRESSED.getCode());
     }
 
-    boolean indexed = nChannels == 1 && ifd.getIFDValue(IFD.COLOR_MAP) != null;
-    PhotoInterp pi = indexed ? PhotoInterp.RGB_PALETTE :
-      nChannels == 1 ? PhotoInterp.BLACK_IS_ZERO : PhotoInterp.RGB;
+    PhotoInterp pi = PhotoInterp.BLACK_IS_ZERO;
+    if (nChannels == 1 && ifd.getIFDValue(IFD.COLOR_MAP) != null) {
+      pi = PhotoInterp.RGB_PALETTE;
+    }
+    else if (nChannels == 3) {
+      pi = PhotoInterp.RGB;
+    }
     ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION, pi.getCode());
 
     ifd.putIFDValue(IFD.SAMPLES_PER_PIXEL, nChannels);
@@ -967,8 +1116,21 @@ public class TiffSaver {
     //      * tileCount is 2
 
     int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
+
+    long stripStartPos = out.length();
+    long totalStripSize = 0;
     for (int i=0; i<strips.length; i++) {
-      out.seek(out.length());
+      totalStripSize += strips[i].length;
+    }
+    // sets the output file size without having to allocate for each strip iteration
+    out.seek(stripStartPos + totalStripSize);
+    // return to original position
+    out.seek(stripStartPos);
+
+    long stripOffset = 0;
+    for (int i=0; i<strips.length; i++) {
+      out.seek(stripStartPos + stripOffset);
+      stripOffset += strips[i].length;
       int index = interleaved ? i : (i / nChannels) * nChannels;
       int c = interleaved ? 0 : i % nChannels;
       int thisOffset = firstOffset + index + (c * tileCount);

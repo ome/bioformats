@@ -162,9 +162,9 @@ public class JPEG2000Reader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (lastSeries == getCoreIndex() && lastSeriesPlane != null) {
-      RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
+      try (RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane)) {
+        readPlane(s, x, y, w, h, buf);
+      }
       return buf;
     }
 
@@ -180,9 +180,9 @@ public class JPEG2000Reader extends FormatReader {
 
     in.seek(pixelsOffset);
     lastSeriesPlane = new JPEG2000Codec().decompress(in, options);
-    RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
+    try (RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane)) {
+      readPlane(s, x, y, w, h, buf);
+    }
     lastSeries = getCoreIndex();
     return buf;
   }
@@ -213,6 +213,7 @@ public class JPEG2000Reader extends FormatReader {
       ms0.pixelType = metadataParser.getHeaderPixelType();
     }
     lut = metadataParser.getLookupTable();
+    resolutionLevels = metadataParser.getResolutionLevels();
 
     pixelsOffset = metadataParser.getCodestreamOffset();
 
@@ -233,8 +234,8 @@ public class JPEG2000Reader extends FormatReader {
       for (int i = 1; i < seriesCount; i++) {
         CoreMetadata ms = new CoreMetadata(this, 0);
         core.add(ms);
-        ms.sizeX = core.get(i - 1).sizeX / 2;
-        ms.sizeY = core.get(i - 1).sizeY / 2;
+        ms.sizeX = Math.max(core.get(i - 1).sizeX / 2, 1);
+        ms.sizeY = Math.max(core.get(i - 1).sizeY / 2, 1);
         ms.thumbnail = true;
       }
     }

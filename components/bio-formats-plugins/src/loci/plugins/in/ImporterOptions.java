@@ -154,6 +154,9 @@ public class ImporterOptions extends OptionsList {
   private List<List<DoubleOption>> customColors =
     new ArrayList<List<DoubleOption>>();
 
+  // whether to treat the given id as a file pattern directly
+  private boolean usePatternIds;
+
   // -- Constructor --
 
   public ImporterOptions() throws IOException {
@@ -509,6 +512,9 @@ public class ImporterOptions extends OptionsList {
   public String getCustomColorKey(int s, int c) {
     return s + "_" + c;
   }
+
+  public boolean isUsingPatternIds() { return usePatternIds; }
+  public void setUsingPatternIds(boolean b) { usePatternIds = b; }
 
   // -- Helper methods --
 

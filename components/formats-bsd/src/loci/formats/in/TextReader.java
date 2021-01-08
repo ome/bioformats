@@ -256,16 +256,16 @@ public class TextReader extends FormatReader {
     }
     else {
       // read data using RandomAccessInputStream (data may not be a file)
-      RandomAccessInputStream in = new RandomAccessInputStream(handle);
-      int no = 0;
-      while (true) {
-        no++;
-        time = checkTime(time, no, in.getFilePointer(), in.length());
-        String line = in.readLine();
-        if (line == null) break; // eof
-        lines.add(line);
+      try (RandomAccessInputStream in = new RandomAccessInputStream(handle)) {
+        int no = 0;
+        while (true) {
+          no++;
+          time = checkTime(time, no, in.getFilePointer(), in.length());
+          String line = in.readLine();
+          if (line == null) break; // eof
+          lines.add(line);
+        }
       }
-      in.close();
     }
     return lines;
   }

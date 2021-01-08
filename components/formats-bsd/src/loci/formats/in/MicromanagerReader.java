@@ -34,11 +34,12 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -54,6 +55,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -81,6 +83,14 @@ public class MicromanagerReader extends FormatReader {
   private static final int MM_JSON_TAG = 51123;
 
   /**
+   * Defines maximum Micro-Manager version supported.
+   * Anything acquired with a version after 1.4.22 (especially 2.x.x)
+   * is expected to not work reliably.
+   */
+  private static final int MAX_MAJOR_VERSION = 1;
+  private static final String MAX_VERSION = "1.4.22";
+
+  /**
    * Optional file containing additional acquisition parameters.
    * (And yes, the spelling is correct.)
    */
@@ -92,6 +102,9 @@ public class MicromanagerReader extends FormatReader {
   private MinimalTiffReader tiffReader;
 
   private Vector<Position> positions;
+  private int start = 0;
+
+  private boolean spim = false;
 
   // -- Constructor --
 
@@ -119,12 +132,10 @@ public class MicromanagerReader extends FormatReader {
       name.equals(XML) || name.endsWith(File.separator + XML) || name.endsWith("_" + METADATA))
     {
       final int blockSize = 1048576;
-      try {
-        RandomAccessInputStream stream = new RandomAccessInputStream(name);
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
         long length = stream.length();
         String data = stream.readString((int) Math.min(blockSize, length));
         data = data.toLowerCase();
-        stream.close();
         return length > 0 && (data.indexOf("micro-manager") >= 0 ||
           data.indexOf("micromanager") >= 0);
       }
@@ -138,16 +149,14 @@ public class MicromanagerReader extends FormatReader {
       // is chosen
       return false;
     }
-    try {
+    try (RandomAccessInputStream s = new RandomAccessInputStream(name)) {
       Location thisFile = new Location(name).getAbsoluteFile();
       Location parent = thisFile.getParentFile();
       Location metaFile = new Location(parent, METADATA);
       if (!metaFile.exists()) {
         metaFile = new Location(parent, getPrefixMetadataName(thisFile.getName()));
       }
-      RandomAccessInputStream s = new RandomAccessInputStream(name);
       boolean validTIFF = isThisType(s);
-      s.close();
       return validTIFF && isThisType(metaFile.getAbsolutePath(), open);
     }
     catch (NullPointerException e) { }
@@ -219,6 +228,8 @@ public class MicromanagerReader extends FormatReader {
     if (tiffReader != null) tiffReader.close(fileOnly);
     if (!fileOnly) {
       positions = null;
+      start = 0;
+      spim = false;
     }
   }
 
@@ -296,7 +307,29 @@ public class MicromanagerReader extends FormatReader {
       setSeries(i);
       parsePosition(i);
     }
+
     setSeries(0);
+
+    // collapse original metadata so that keys with the same
+    // per-plane value are stored only once
+
+    for (int i=0; i<seriesCount; i++) {
+      for (String key : core.get(i).seriesMetadata.keySet()) {
+        if (core.get(i).seriesMetadata.get(key) instanceof Vector) {
+          Vector v = (Vector) core.get(i).seriesMetadata.get(key);
+          boolean collapse = true;
+          for (Object o : v) {
+            if (!o.equals(v.get(0))) {
+              collapse = false;
+              break;
+            }
+          }
+          if (collapse) {
+            core.get(i).seriesMetadata.put(key, v.get(0));
+          }
+        }
+      }
+    }
 
     populateMetadata();
   }
@@ -317,9 +350,13 @@ public class MicromanagerReader extends FormatReader {
         }
       }
 
-      if (positions.size() > 1) {
-        Location parent = new Location(p.metadataFile).getParentFile();
-        store.setImageName(parent.getName(), i);
+      if (p.name != null) {
+        store.setImageName(p.name, i);
+      } else {
+        if (positions.size() > 1) {
+          Location parent = new Location(p.metadataFile).getParentFile();
+          store.setImageName(parent.getName(), i);
+        }
       }
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -330,6 +367,11 @@ public class MicromanagerReader extends FormatReader {
 
         for (int c=0; c<p.channels.length; c++) {
           store.setChannelName(p.channels[c], i, c);
+        }
+        if (p.channelColors != null) {
+          for (int c=0; c<p.channelColors.length; c++) {
+            store.setChannelColor(Color.valueOf(p.channelColors[c]), i, c);
+          }
         }
 
         Length sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
@@ -372,7 +414,7 @@ public class MicromanagerReader extends FormatReader {
         p.detectorID = MetadataTools.createLSID("Detector", 0, i);
 
         for (int c=0; c<p.channels.length; c++) {
-          store.setDetectorSettingsBinning(getBinning(p.binning), i, c);
+          store.setDetectorSettingsBinning(MetadataTools.getBinning(p.binning), i, c);
           store.setDetectorSettingsGain(new Double(p.gain), i, c);
           if (c < p.voltage.size()) {
             store.setDetectorSettingsVoltage(
@@ -395,7 +437,7 @@ public class MicromanagerReader extends FormatReader {
         }
 
         if (p.cameraMode == null) p.cameraMode = "Other";
-        store.setDetectorType(getDetectorType(p.cameraMode), 0, i);
+        store.setDetectorType(MetadataTools.getDetectorType(p.cameraMode), 0, i);
         store.setImagingEnvironmentTemperature(
                 new Temperature(p.temperature, UNITS.CELSIUS), i);
       }
@@ -425,8 +467,8 @@ public class MicromanagerReader extends FormatReader {
 
   private void parsePosition(int posIndex) throws IOException, FormatException {
     Position p = positions.get(posIndex);
-    String s = DataTools.readFile(p.metadataFile);
-    parsePosition(s, posIndex);
+
+    parsePosition(p.metadataFile, posIndex);
 
     buildTIFFList(posIndex);
 
@@ -434,7 +476,10 @@ public class MicromanagerReader extends FormatReader {
     p.positions = new Double[p.tiffs.size()][3];
     int digits = String.valueOf(p.tiffs.size() - 1).length();
 
-    boolean parseMMJSONTag = true;
+    // safe to assume that no extra data (i.e. not already in _metadata.txt)
+    // will be included in the MM_JSON tags for SPIM data
+    boolean parseMMJSONTag = !spim;
+
     for (int plane=0; plane<p.tiffs.size(); ) {
       String path = p.tiffs.get(plane);
       // use getFile(...) lookup if possible, to make sure that
@@ -446,9 +491,9 @@ public class MicromanagerReader extends FormatReader {
         plane++;
         continue;
       }
-      try {
-        TiffParser parser = new TiffParser(path);
-        int nIFDs = parser.getIFDs().size();
+      try (RandomAccessInputStream in = new RandomAccessInputStream(path)) {
+        TiffParser parser = new TiffParser(in);
+        int nIFDs = parser.getMainIFDs().size();
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
 
@@ -480,7 +525,7 @@ public class MicromanagerReader extends FormatReader {
           }
         }
 
-        IFDList ifds = parser.getIFDs();
+        IFDList ifds = parser.getMainIFDs();
         for (int i=0; i<ifds.size(); i++) {
           if (!parseMMJSONTag) {
             break;
@@ -498,6 +543,7 @@ public class MicromanagerReader extends FormatReader {
           String[] tokens = json.split("[\\{\\}:,\"]");
           String key = null, value = null, propType = null;
           int nEmptyTokens = 0;
+
           for (int q=0; q<tokens.length; q++) {
             String token = tokens[q];
             if (token.length() == 0) {
@@ -551,7 +597,6 @@ public class MicromanagerReader extends FormatReader {
           }
         }
         plane += ifds.size();
-        parser.getStream().close();
       }
       catch (IOException e) {
         LOGGER.debug("Failed to read metadata from " + path, e);
@@ -559,29 +604,22 @@ public class MicromanagerReader extends FormatReader {
     }
   }
 
-  private void parseKeyAndValue(String key, String value, int digits, int plane, int nPlanes) {
-    Position p = positions.get(getCoreIndex());
 
+  private void parseKeyAndValue(String key, String value, int digits, int plane, int nPlanes) {
     // using key alone will result in conflicts with metadata.txt values
     for (int i=plane; i<plane+nPlanes; i++) {
       addSeriesMeta(String.format("Plane #%0" + digits + "d %s", i, key), value);
       if (key.equals("XPositionUm")) {
-        try {
-          p.positions[i][0] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][0] = DataTools.parseDouble(value);
       }
       else if (key.equals("YPositionUm")) {
-        try {
-          p.positions[i][1] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][1] = DataTools.parseDouble(value);
       }
       else if (key.equals("ZPositionUm")) {
-        try {
-          p.positions[i][2] = new Double(value);
-        }
-        catch (NumberFormatException e) { }
+        Position p = positions.get(getCoreIndex());
+        p.positions[i][2] = DataTools.parseDouble(value);
       }
     }
   }
@@ -662,11 +700,23 @@ public class MicromanagerReader extends FormatReader {
 
     Vector<Double> stamps = new Vector<Double>();
     p.voltage = new Vector<Double>();
+    byte[] b = null;
+    try (RandomAccessInputStream s = new RandomAccessInputStream(jsonData)) {
+      if (s.length() > Integer.MAX_VALUE) {
+        LOGGER.warn(jsonData + " exceeds 2GB; metadata parsing is likely to fail");
+      }
+      else if (s.length() > 100 * 1024 * 1024) {
+        LOGGER.warn(jsonData + " is larger than 100MB and may require additional memory to parse. " +
+          "A minimum of 1024MB is suggested.");
+      }
 
-    StringTokenizer st = new StringTokenizer(jsonData, "\n");
+      b = new byte[(int) s.length()];
+      s.readFully(b);
+    }
     int[] slice = new int[3];
-    while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
+    start = 0;
+    while (start < b.length) {
+      String token = getNextLine(b).trim();
       boolean open = token.indexOf('[') != -1;
       boolean closed = token.indexOf(']') != -1;
       if (open || (!open && !closed && !token.equals("{") &&
@@ -682,7 +732,7 @@ public class MicromanagerReader extends FormatReader {
         else if (!closed) {
           final StringBuilder valueBuffer = new StringBuilder();
           while (!closed) {
-            token = st.nextToken();
+            token = getNextLine(b);
             closed = token.indexOf(']') != -1;
             valueBuffer.append(token);
           }
@@ -699,10 +749,9 @@ public class MicromanagerReader extends FormatReader {
         if (value.length() == 0) {
           continue;
         }
-        value = value.substring(0, value.length() - 1);
         value = value.replaceAll("\"", "");
         if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
-        addSeriesMeta(key, value);
+        handleKeyValue(key, value);
         if (key.equals("Channels")) {
           ms.sizeC = Integer.parseInt(value);
         }
@@ -710,6 +759,12 @@ public class MicromanagerReader extends FormatReader {
           p.channels = value.split(",");
           for (int q=0; q<p.channels.length; q++) {
             p.channels[q] = p.channels[q].replaceAll("\"", "").trim();
+          }
+        }
+        else if (key.equals("ChColors")) {
+          p.channelColors = value.split(",");
+          for (int q=0; q<p.channelColors.length; q++) {
+            p.channelColors[q] = p.channelColors[q].trim();
           }
         }
         else if (key.equals("Frames")) {
@@ -726,10 +781,10 @@ public class MicromanagerReader extends FormatReader {
           }
         }
         else if (key.equals("PixelSize_um")) {
-          p.pixelSize = new Double(value);
+          p.pixelSize = DataTools.parseDouble(value);
         }
         else if (key.equals("z-step_um")) {
-          p.sliceThickness = new Double(value);
+          p.sliceThickness = DataTools.parseDouble(value);
         }
         else if (key.equals("Time")) {
           p.time = value;
@@ -763,6 +818,9 @@ public class MicromanagerReader extends FormatReader {
               throw new FormatException("Unknown type: " + type);
           }
         }
+        else if (key.equals("SPIMmode")) {
+          spim = true;
+        }
       }
 
       if (token.startsWith("\"FrameKey")) {
@@ -776,7 +834,7 @@ public class MicromanagerReader extends FormatReader {
         slice[0] = Integer.parseInt(token.substring(dash,
           token.indexOf("\"", dash)));
 
-        token = st.nextToken().trim();
+        token = getNextLine(b).trim();
         String key = "";
         StringBuilder valueBuffer = new StringBuilder();
         boolean valueArray = false;
@@ -786,27 +844,27 @@ public class MicromanagerReader extends FormatReader {
 
           if (token.trim().endsWith("{")) {
             nestedCount++;
-            token = st.nextToken().trim();
+            token = getNextLine(b).trim();
             continue;
           }
           else if (token.trim().startsWith("}")) {
             nestedCount--;
-            token = st.nextToken().trim();
+            token = getNextLine(b).trim();
             continue;
           }
 
-          if (valueArray) {
+          if (valueArray || token.trim().equals("],")) {
             if (token.trim().equals("],")) {
               valueArray = false;
             }
             else {
               valueBuffer.append(token.trim().replaceAll("\"", ""));
-              token = st.nextToken().trim();
+              token = getNextLine(b).trim();
               continue;
             }
           }
           else {
-            int colon = token.indexOf(':');
+            int colon = token.indexOf(":");
             key = token.substring(1, colon).trim();
             valueBuffer.setLength(0);
             valueBuffer.append(token.substring(colon + 1, token.length() - 1).trim().replaceAll("\"", ""));
@@ -815,13 +873,13 @@ public class MicromanagerReader extends FormatReader {
 
             if (token.trim().endsWith("[")) {
               valueArray = true;
-              token = st.nextToken().trim();
+              token = getNextLine(b).trim();
               continue;
             }
           }
 
           String value = valueBuffer.toString();
-          addSeriesMeta(key, value);
+          handleKeyValue(key, value);
 
           if (key.equals("Exposure-ms")) {
             p.exposureTime = new Time(Double.valueOf(value), UNITS.MILLISECOND);
@@ -839,19 +897,28 @@ public class MicromanagerReader extends FormatReader {
             p.detectorModel = value;
           }
           else if (key.equals(p.cameraRef + "-Gain")) {
-            p.gain = (int) Double.parseDouble(value);
+            Double gain = DataTools.parseDouble(value);
+            if (gain != null) {
+              p.gain = gain.intValue();
+            }
           }
           else if (key.equals(p.cameraRef + "-Name")) {
             p.detectorManufacturer = value;
           }
           else if (key.equals(p.cameraRef + "-Temperature")) {
-            p.temperature = Double.parseDouble(value);
+            Double temperature = DataTools.parseDouble(value);
+            if (temperature != null) {
+              p.temperature = temperature;
+            }
           }
           else if (key.equals(p.cameraRef + "-CCDMode")) {
             p.cameraMode = value;
           }
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
-            p.voltage.add(new Double(value));
+            p.voltage.add(DataTools.parseDouble(value));
+          }
+          else if (key.equals("PositionName") && !value.equals("null")) {
+            p.name = value;
           }
           else if (key.equals("FileName")) {
             p.fileNameMap.put(new Index(slice), value);
@@ -867,7 +934,7 @@ public class MicromanagerReader extends FormatReader {
             }
           }
 
-          token = st.nextToken().trim();
+          token = getNextLine(b).trim();
         }
       }
       else if (token.startsWith("\"Coords-")) {
@@ -897,7 +964,7 @@ public class MicromanagerReader extends FormatReader {
             }
           }
 
-          token = st.nextToken().trim();
+          token = getNextLine(b).trim();
         }
         Index idx = new Index(zct);
         idx.position = position;
@@ -1055,12 +1122,18 @@ public class MicromanagerReader extends FormatReader {
     XMLTools.parseXML(xmlData, handler);
   }
 
-  /** Initialize the TIFF reader with the first file in the current series. */
+  /** Initialize the TIFF reader with the first non-null file in the current series. */
   private void setupReader() {
     try {
+      int plane = 0;
       String file = positions.get(getSeries()).getFile(
         getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
-        getImageCount(), 0);
+        getImageCount(), plane++);
+      while (file == null && plane < getImageCount()) {
+        file = positions.get(getSeries()).getFile(
+          getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+          getImageCount(), plane++);
+      }
       tiffReader.setId(file);
     }
     catch (Exception e) {
@@ -1076,6 +1149,49 @@ public class MicromanagerReader extends FormatReader {
     return baseName + "_" + METADATA;
   }
 
+  /**
+   * Process a piece of metadata represented by a key/value pair.
+   * Mostly this just adds to the original metadata table, but
+   * is also helpful for handling specific keys consistently independent of
+   * which file/INI table the key and value came from.
+   */
+  private void handleKeyValue(String key, String value) {
+    if (key == null || value == null) {
+      return;
+    }
+    addSeriesMetaList(key, value);
+
+    if (key.equals("MicroManagerVersion")) {
+      String[] version = value.split("\\.");
+      Integer major = null;
+      try {
+        if (version.length > 0) {
+          major = new Integer(version[0]);
+        }
+      }
+      catch (NumberFormatException e) {
+        LOGGER.trace("Could not parse major version " + version[0], e);
+      }
+      if (major == null || major > MAX_MAJOR_VERSION) {
+        LOGGER.warn("Dataset acquired with Micro-Manager {}; " +
+          "versions greater than {} are not officially supported", value, MAX_VERSION);
+      }
+    }
+  }
+
+  private String getNextLine(byte[] buf) throws UnsupportedEncodingException {
+    for (int i=start; i<buf.length; i++) {
+      if (buf[i] == '\n') {
+        String line = new String(buf, start, (i - start) + 1, Constants.ENCODING);
+        start = i + 1;
+        return line;
+      }
+    }
+    String line = new String(buf, start, buf.length - start, Constants.ENCODING);
+    start = buf.length;
+    return line;
+  }
+
   // -- Helper classes --
 
   /** SAX handler for parsing Acqusition.xml. */
@@ -1088,7 +1204,7 @@ public class MicromanagerReader extends FormatReader {
         String key = attributes.getValue("key");
         String value = attributes.getValue("value");
 
-        addSeriesMeta(key, value);
+        handleKeyValue(key, value);
       }
     }
   }
@@ -1100,8 +1216,10 @@ public class MicromanagerReader extends FormatReader {
 
     public String metadataFile;
     public String xmlFile;
+    public transient String name;
 
     public String[] channels;
+    public String[] channelColors;
 
     public String comment, time;
     public Time exposureTime;

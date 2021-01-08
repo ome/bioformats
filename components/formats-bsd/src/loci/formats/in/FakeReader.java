@@ -97,6 +97,7 @@ import ome.units.UNITS;
  *  <li>showinf 'SPW&amp;screens=2&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=1&amp;plateAcqs=1.fake'</li>
  *  <li>showinf 'Plate&amp;screens=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  *  <li>showinf 'regions&amp;points=10&amp;ellipses=5&amp;rectangles=10.fake'</li>
+ *  <li>showinf 'pyramid&amp;sizeX=10000&amp;sizeY=10000&amp;resolutions=5&amp;resolutionScale=2.fake' -noflat -resolution 4</li>
  * </ul></p>
  */
 public class FakeReader extends FormatReader {
@@ -127,6 +128,8 @@ public class FakeReader extends FormatReader {
   public static final int DEFAULT_PIXEL_TYPE = FormatTools.UINT8;
   public static final int DEFAULT_RGB_CHANNEL_COUNT = 1;
   public static final String DEFAULT_DIMENSION_ORDER = "XYZCT";
+
+  public static final int DEFAULT_RESOLUTION_SCALE = 2;
 
   private static final String TOKEN_SEPARATOR = "&";
   private static final long SEED = 0xcafebabe;
@@ -202,6 +205,27 @@ public class FakeReader extends FormatReader {
   private OMEXMLMetadata omeXmlMetadata;
 
   private OMEXMLService omeXmlService;
+
+  private transient int screens = 0;
+  private transient int plates = 0;
+  private transient int plateRows = 0;
+  private transient int plateCols = 0;
+  private transient int fields = 0;
+  private transient int plateAcqs = 0;
+
+  // Misc. debugging
+  private int sleepOpenBytes = 0;
+  private int sleepInitFile = 0;
+
+  static void sleep(String msg, int ms) {
+    if (ms <= 0) return; // EARLY EXIT
+    try {
+      LOGGER.info("sleeping {}s.", ms);
+      Thread.sleep(ms);
+    } catch (InterruptedException ie) {
+      LOGGER.warn("sleeping interrupted");
+    }
+  }
 
   /**
    * Read byte-encoded metadata from the given plane.
@@ -296,6 +320,8 @@ public class FakeReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    sleep("openBytes", sleepOpenBytes);
 
     final int s = getSeries();
     final int pixelType = getPixelType();
@@ -476,6 +502,12 @@ public class FakeReader extends FormatReader {
     scaleFactor = 1;
     lut8 = null;
     lut16 = null;
+    screens = 0;
+    plates = 0;
+    plateRows = 0;
+    plateCols = 0;
+    fields = 0;
+    plateAcqs = 0;
     super.close(fileOnly);
   }
 
@@ -503,6 +535,9 @@ public class FakeReader extends FormatReader {
 
   @Override
   protected void initFile(String id) throws FormatException, IOException {
+
+    sleep("initFile", sleepInitFile);
+
     if (!checkSuffix(id, "fake")) {
       if (checkSuffix(id, "fake.ini")) {
         id = id.substring(0, id.lastIndexOf("."));
@@ -576,19 +611,16 @@ public class FakeReader extends FormatReader {
     boolean withMicrobeam = false;
 
     int seriesCount = 1;
+    int resolutionCount = 1;
+    int resolutionScale = DEFAULT_RESOLUTION_SCALE;
     int lutLength = 3;
 
     String acquisitionDate = null;
 
-    int screens = 0;
-    int plates = 0;
-    int plateRows = 0;
-    int plateCols = 0;
-    int fields = 0;
-    int plateAcqs = 0;
-
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
+
+    ArrayList<IniTable> seriesTables = new ArrayList<IniTable>();
 
     // add properties file values to list of tokens.
     if (iniFile != null) {
@@ -607,7 +639,9 @@ public class FakeReader extends FormatReader {
       table = list.getTable("GlobalMetadata");
       if (table != null) {
         for (Map.Entry<String, String> entry : table.entrySet()) {
-          addGlobalMeta(entry.getKey(), entry.getValue());
+          if (!IniTable.HEADER_KEY.equals(entry.getKey())) {
+            addGlobalMeta(entry.getKey(), entry.getValue());
+          }
         }
       }
 
@@ -617,6 +651,12 @@ public class FakeReader extends FormatReader {
       System.arraycopy(oldTokArr, 0, tokens, 0, oldTokArr.length);
       System.arraycopy(newTokArr, 0, tokens, oldTokArr.length, newTokArr.length);
       // Properties overrides file name values
+
+      int seriesIndex = 0;
+      while (list.getTable("series_" + seriesIndex) != null) {
+        seriesTables.add(list.getTable("series_" + seriesIndex));
+        seriesIndex++;
+      }
     }
 
     // parse tokens from filename
@@ -665,6 +705,8 @@ public class FakeReader extends FormatReader {
       else if (key.equals("metadataComplete")) metadataComplete = boolValue;
       else if (key.equals("thumbnail")) thumbnail = boolValue;
       else if (key.equals("series")) seriesCount = intValue;
+      else if (key.equals("resolutions")) resolutionCount = intValue;
+      else if (key.equals("resolutionScale")) resolutionScale = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
       else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.SECOND);
@@ -693,9 +735,15 @@ public class FakeReader extends FormatReader {
       else if (key.equals("polygons")) polygons = intValue;
       else if (key.equals("polylines")) polylines = intValue;
       else if (key.equals("rectangles")) rectangles = intValue;
-      else if (key.equals("physicalSizeX")) physicalSizeX = parseLength(value, getPhysicalSizeXUnitXsdDefault());
-      else if (key.equals("physicalSizeY")) physicalSizeY = parseLength(value, getPhysicalSizeYUnitXsdDefault());
-      else if (key.equals("physicalSizeZ")) physicalSizeZ = parseLength(value, getPhysicalSizeZUnitXsdDefault());
+      else if (key.equals("physicalSizeX")) {
+        physicalSizeX = parsePhysicalSize(value, getPhysicalSizeXUnitXsdDefault());
+      }
+      else if (key.equals("physicalSizeY")) {
+        physicalSizeY = parsePhysicalSize(value, getPhysicalSizeYUnitXsdDefault());
+      }
+      else if (key.equals("physicalSizeZ")) {
+        physicalSizeZ = parsePhysicalSize(value, getPhysicalSizeZUnitXsdDefault());
+      }
       else if (key.equals("color")) {
         defaultColor = parseColor(value);
       }
@@ -709,6 +757,10 @@ public class FakeReader extends FormatReader {
           color.add(null);
         }
         color.set(index, parseColor(value));
+      } else if (key.equals("sleepOpenBytes")) {
+        sleepOpenBytes = intValue;
+      } else if (key.equals("sleepInitFile")) {
+        sleepInitFile = intValue;
       }
     }
 
@@ -728,7 +780,7 @@ public class FakeReader extends FormatReader {
       throw new FormatException("Invalid sizeC/rgb combination: " +
         sizeC + "/" + rgb);
     }
-    getDimensionOrder(dimOrder);
+    MetadataTools.getDimensionOrder(dimOrder);
     if (falseColor && !indexed) {
       throw new FormatException("False color images must be indexed");
     }
@@ -737,6 +789,12 @@ public class FakeReader extends FormatReader {
     }
     if (lutLength < 1) {
       throw new FormatException("Invalid lutLength: " + lutLength);
+    }
+    if (resolutionCount < 1) {
+      throw new FormatException("Invalid resolutionCount: " + resolutionCount);
+    }
+    if (resolutionScale <= 1) {
+      throw new FormatException("Invalid resolutionScale: " + resolutionScale);
     }
 
     // populate SPW metadata
@@ -762,6 +820,7 @@ public class FakeReader extends FormatReader {
     core.clear();
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
+      ms.resolutionCount = resolutionCount;
       core.add(ms);
       ms.sizeX = sizeX;
       ms.sizeY = sizeY;
@@ -782,15 +841,27 @@ public class FakeReader extends FormatReader {
       ms.falseColor = falseColor;
       ms.metadataComplete = metadataComplete;
       ms.thumbnail = thumbnail;
+
+      for (int r=1; r<resolutionCount; r++) {
+        CoreMetadata subres = new CoreMetadata(ms);
+        int scale = (int) Math.pow(resolutionScale, r);
+        subres.sizeX /= scale;
+        subres.sizeY /= scale;
+        core.add(subres);
+      }
     }
 
     // populate OME metadata
-    boolean planeInfo = (exposureTime != null);
+    boolean planeInfo = (exposureTime != null) || seriesTables.size() > 0;
 
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
     fillPhysicalSizes(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
+      if (currentImageIndex < seriesTables.size()) {
+        parseSeriesTable(seriesTables.get(currentImageIndex), store, currentImageIndex);
+      }
+
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
       fillAcquisitionDate(store, acquisitionDate, currentImageIndex);
@@ -1113,7 +1184,97 @@ public class FakeReader extends FormatReader {
     }
   }
 
+  /**
+   * Translate key/value pairs from the INI table for the specified series.
+   */
+  private void parseSeriesTable(IniTable table, MetadataStore store, int newSeries) {
+    int s = getSeries();
+    setSeries(newSeries);
+
+    for (int i=0; i<getImageCount(); i++) {
+      String exposureTime = table.get("ExposureTime_" + i);
+      String exposureTimeUnit = table.get("ExposureTimeUnit_" + i);
+
+      if (exposureTime != null) {
+        try {
+          Double v = Double.valueOf(exposureTime);
+          Time exposure = FormatTools.getTime(v, exposureTimeUnit);
+          if (exposure != null) {
+            store.setPlaneExposureTime(exposure, newSeries, i);
+          }
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Could not parse ExposureTime for series #" + newSeries + " plane #" + i, e);
+        }
+      }
+
+      String deltaT = table.get("DeltaT_" + i);
+      String deltaTUnit = table.get("DeltaTUnit_" + i);
+
+      if (deltaT != null) {
+        try {
+          Double v = Double.valueOf(deltaT);
+          Time delta = FormatTools.getTime(v, deltaTUnit);
+          if (delta != null) {
+            store.setPlaneDeltaT(delta, newSeries, i);
+          }
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Could not parse DeltaT for series #" + newSeries + " plane #" + i, e);
+        }
+      }
+
+      int[] spwCoordinate = toSPWCoordinates(newSeries);
+
+      // TODO: could be cleaned up further when Java 8 is the minimum version
+      Length x = parsePosition("X", s, i, table);
+      if (x != null) {
+        store.setPlanePositionX(x, newSeries, i);
+        if (spwCoordinate != null) {
+          store.setWellSamplePositionX(x,
+            spwCoordinate[2], spwCoordinate[1], spwCoordinate[0]);
+        }
+      }
+
+      Length y = parsePosition("Y", s, i, table);
+      if (y != null) {
+        store.setPlanePositionY(y, newSeries, i);
+        if (spwCoordinate != null) {
+          store.setWellSamplePositionY(y,
+            spwCoordinate[2], spwCoordinate[1], spwCoordinate[0]);
+        }
+      }
+
+      Length z = parsePosition("Z", s, i, table);
+      if (z != null) {
+        store.setPlanePositionZ(z, newSeries, i);
+      }
+    }
+
+    setSeries(s);
+  }
+
 // -- Helper methods --
+
+  /**
+   * Convert the given series (Image) index to a
+   * WellSample, Well, and Plate index.
+   * This should match the ordering used by XMLMockObjects.
+   *
+   * @param seriesIndex the index of the series/Image
+   * @return an array of length 3 containing the
+   *  WellSample, Well, and Plate indices (in order),
+   *  or null if SPW metadata was not defined
+   */
+  private int[] toSPWCoordinates(int seriesIndex) {
+    if (plates < 1) {
+      return null;
+    }
+    int screenCount = (int) Math.max(screens, 1);
+    return FormatTools.rasterToPosition(
+      new int[] {plateAcqs * fields, plateRows * plateCols,
+        screenCount * plates}, seriesIndex);
+  }
 
   private String[] extractTokensFromFakeSeries(String path) {
     List<String> tokens = new ArrayList<String>();
@@ -1149,7 +1310,7 @@ public class FakeReader extends FormatReader {
         rows = ResourceNamer.alphabeticIndexCount(elements[0]);
         cols = Integer.parseInt(elements[1]) + 1;
       } else if (pathToken.startsWith(ResourceNamer.FIELD)) {
-        String fieldName = pathToken.substring(0, pathToken.lastIndexOf("."));
+        String fieldName = pathToken.substring(0, pathToken.indexOf("."));
         fields = Integer.parseInt(fieldName.substring(fieldName.lastIndexOf(
             ResourceNamer.FIELD) + ResourceNamer.FIELD.length(),
             fieldName.length())) + 1;
@@ -1257,28 +1418,43 @@ public class FakeReader extends FormatReader {
     return 0;
   }
 
-  private Length parseLength(String value, String defaultUnit) {
-      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(value);
-      if (!m.matches()) {
-        throw new RuntimeException(String.format(
-                "%s does not match a physical size!", value));
-      }
-      String number = m.group(1);
-      String unit = m.group(2);
-      if (unit == null || unit.trim().length() == 0) {
-        unit = defaultUnit;
-      }
+  private Length parsePosition(String axis, int s, int index, IniTable table) {
+    String position = table.get("Position" + axis + "_" + index);
+    String positionUnit = table.get("Position" + axis + "Unit_" + index);
 
-      double d = Double.valueOf(number);
-      Unit<Length> l = null;
+    if (position != null) {
       try {
-        l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
-      } catch (EnumerationException e) {
-        LOGGER.warn("{} does not match a length unit!", unit);
+        Double v = Double.valueOf(position);
+        Length size = new Length(v, UNITS.MICROMETER);
+        if (positionUnit != null) {
+          try {
+            UnitsLength ul = UnitsLength.fromString(positionUnit);
+            size = UnitsLength.create(v, ul);
+          }
+          catch (EnumerationException e) {
+            LOGGER.trace("Could not parse Position" + axis + "Unit for series #" + s + " plane #" + index, e);
+          }
+        }
+        return size;
       }
-      if (l != null && d > Constants.EPSILON) {
-        return new Length(d, l);
+      catch (NumberFormatException e) {
+        LOGGER.trace("Could not parse Position" + axis + " for series #" + s + " plane #" + index, e);
       }
-      return null;
+    }
+
+    return null;
   }
+
+  private Length parsePhysicalSize(String s, String defaultUnit) {
+    Length physicalSize = FormatTools.parseLength(s, defaultUnit);
+    if (physicalSize == null) {
+      throw new RuntimeException("Invalid physical size: " + s);
+    }
+    if (!FormatTools.isPositiveValue(physicalSize.value().doubleValue())) {
+      LOGGER.warn("Invalid physical size value: {}", physicalSize.value());
+      return null;
+    }
+    return physicalSize;
+  }
+
 }

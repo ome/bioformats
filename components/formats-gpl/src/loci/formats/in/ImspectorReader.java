@@ -208,7 +208,7 @@ public class ImspectorReader extends FormatReader {
     }
     m.pixelType = FormatTools.UINT16;
     int bpp = FormatTools.getBytesPerPixel(m.pixelType);
-    in.skipBytes(m.sizeX * m.sizeY * planesPerBlock.get(0) * bpp + 2);
+    in.skipBytes((long) m.sizeX * m.sizeY * planesPerBlock.get(0) * bpp + 2);
 
     int tileX = 1;
     int tileY = 1;
@@ -414,12 +414,15 @@ public class ImspectorReader extends FormatReader {
           catch (NumberFormatException e) { }
         }
         else if (key.equals("xyz-Table Z Resolution")) {
-          int z = DataTools.parseDouble(value).intValue();
-          if (z == 1 && getSizeZ() > 1) {
-            originalT = getSizeT();
-            originalZ = getSizeZ();
-            m.sizeT *= getSizeZ();
-            m.sizeZ = 1;
+          Double doubleValue = DataTools.parseDouble(value);
+          if (doubleValue != null) {
+            int z = doubleValue.intValue();
+            if (z == 1 && getSizeZ() > 1) {
+              originalT = getSizeT();
+              originalZ = getSizeZ();
+              m.sizeT *= getSizeZ();
+              m.sizeZ = 1;
+            }
           }
         }
         else if (key.equals("Time Time Resolution")) {
@@ -652,7 +655,7 @@ public class ImspectorReader extends FormatReader {
       planesPerBlock.get(planesPerBlock.size() - 1) * 2;
     if (planeSize > 0 && in.getFilePointer() + planeSize < in.length()) {
       pixelsOffsets.add(in.getFilePointer());
-      in.skipBytes((int) planeSize + 2);
+      in.skipBytes(planeSize + 2);
     }
     else {
       planesPerBlock.remove(planesPerBlock.size() - 1);

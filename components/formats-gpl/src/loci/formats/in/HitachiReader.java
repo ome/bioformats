@@ -205,7 +205,9 @@ public class HitachiReader extends FormatReader {
     }
 
     for (String key : image.keySet()) {
-      addGlobalMeta(key, image.get(key));
+      if (!IniTable.HEADER_KEY.equals(key)) {
+        addGlobalMeta(key, image.get(key));
+      }
     }
 
     String imageName = image.get("SampleName");

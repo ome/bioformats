@@ -42,6 +42,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import loci.common.Location;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 
@@ -98,6 +99,13 @@ public class DynamicMetadataOptionsTest {
     return new Object[][] {{"3.14", new Double(3.14)},
                            {"03.14", new Double(3.14)},
                            {"-3.14", new Double(-3.14)}};
+  }
+
+  @DataProvider(name = "optionFiles")
+  public Object[][] mkOptionFiles() {
+    return new Object[][] {{"t1.tiff", null},
+                           {"/t1.tiff", "/t1.tiff.bfoptions"},
+                           {"/foo/t1.tiff", "/foo/t1.tiff.bfoptions"}};
   }
 
   @BeforeMethod
@@ -361,6 +369,20 @@ public class DynamicMetadataOptionsTest {
     assertTrue(opt.isValidate());
     opt.setValidate(false);
     assertFalse(opt.isValidate());
+  }
+
+  @Test(dataProvider = "optionFiles")
+  public void testGetMetadataOptionsFile(String source, String target) {
+    source = source.replace('/', File.separatorChar);
+    if (target != null) {
+      target = target.replace('/', File.separatorChar);
+    }
+    source = DynamicMetadataOptions.getMetadataOptionsFile(source);
+    if (source != null) {
+      String[] values = source.split(":");
+      source = values[values.length-1];
+    }
+    assertEquals(source, target);
   }
 
 }

@@ -37,7 +37,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
-import loci.formats.FormatReader;
+import loci.formats.SubResolutionFormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
@@ -50,7 +50,7 @@ import ome.units.quantity.Length;
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
  */
-public class ImarisHDFReader extends FormatReader {
+public class ImarisHDFReader extends SubResolutionFormatReader {
 
   // -- Constants --
 
@@ -85,13 +85,13 @@ public class ImarisHDFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   @Override
   public int getOptimalTileWidth() {
-    return core.get(core.size() - 1).sizeX;
+    return core.get(series, core.size(series) - 1).sizeX;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
-    return core.get(core.size() - 1).sizeY;
+    return core.get(series, core.size(series) - 1).sizeY;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -264,18 +264,15 @@ public class ImarisHDFReader extends FormatReader {
     seriesCount = 0;
 
     // read all of the metadata key/value pairs
+    CoreMetadata ms0 = core.get(0, 0);
 
     parseAttributes();
 
-    CoreMetadata ms0 = core.get(0);
+    int currentSeries = 0;
 
     if (seriesCount > 1) {
       for (int i=1; i<seriesCount; i++) {
-        core.add(new CoreMetadata());
-      }
-
-      for (int i=1; i<seriesCount; i++) {
-        CoreMetadata ms = core.get(i);
+        CoreMetadata ms = new CoreMetadata();
         String groupPath =
           "DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
         ms.sizeX =
@@ -290,12 +287,12 @@ public class ImarisHDFReader extends FormatReader {
         ms.thumbnail = true;
 
         if (ms.sizeZ == ms0.sizeZ && ms.sizeC == ms0.sizeC &&
-          ms.sizeT == ms0.sizeT)
-        {
-          // do not assume that all series will have the same dimensions
-          // if the Z, C or T size is different, then it cannot
-          // be a subresolution
-          ms0.resolutionCount++;
+            ms.sizeT == ms0.sizeT) {
+          core.add(currentSeries, ms);
+        }
+        else {
+          core.add(ms);
+          currentSeries++;
         }
       }
     }
@@ -318,17 +315,19 @@ public class ImarisHDFReader extends FormatReader {
       throw new FormatException("Unknown pixel type: " + pix);
     }
 
-    for (int i=0; i<core.size(); i++) {
-      CoreMetadata ms = core.get(i);
-      ms.pixelType = type;
-      ms.dimensionOrder = "XYZCT";
-      ms.rgb = false;
-      ms.thumbSizeX = 128;
-      ms.thumbSizeY = 128;
-      ms.orderCertain = true;
-      ms.littleEndian = true;
-      ms.interleaved = false;
-      ms.indexed = colors.size() >= getSizeC();
+    for (int i = 0; i < core.size(); i++) {
+      for (int j = 0; j < core.size(i); j++) {
+        CoreMetadata ms = core.get(i, j);
+        ms.pixelType = type;
+        ms.dimensionOrder = "XYZCT";
+        ms.rgb = false;
+        ms.thumbSizeX = 128;
+        ms.thumbSizeY = 128;
+        ms.orderCertain = true;
+        ms.littleEndian = true;
+        ms.interleaved = false;
+        ms.indexed = colors.size() >= getSizeC();
+      }
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -478,7 +477,7 @@ public class ImarisHDFReader extends FormatReader {
 
   private void parseAttributes() {
     final List<String> attributes = netcdf.getAttributeList();
-    CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(0, 0);
 
     for (String attr : attributes) {
       String name = attr.substring(attr.lastIndexOf("/") + 1);

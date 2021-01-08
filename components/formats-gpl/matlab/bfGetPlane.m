@@ -49,24 +49,19 @@ ip.addRequired('r', isValidReader);
 ip.parse(r);
 
 % Plane check
-isValidPlane = @(x) isscalar(x) && ismember(x, 1 : r.getImageCount());
+isValidPlane = @(p) bfTestInRange(p,'iPlane',r.getImageCount());
 % Optional tile arguments check
-isValidX = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
-isValidY = @(x) isscalar(x) && ismember(x, 1 : r.getSizeY());
+isValidX = @(x) bfTestInRange(x,'x',r.getSizeX());
+isValidY = @(y) bfTestInRange(y,'y',r.getSizeY());
+isValidWidth = @(w) bfTestInRange(w,'width',r.getSizeX()-varargin{2}+1);
+isValidHeight = @(h) bfTestInRange(h,'height',r.getSizeY()-varargin{3}+1);
+
 ip.addRequired('iPlane', isValidPlane);
 ip.addOptional('x', 1, isValidX);
 ip.addOptional('y', 1, isValidY);
-ip.addOptional('width', r.getSizeX(), isValidX);
-ip.addOptional('height', r.getSizeY(), isValidY);
+ip.addOptional('width', r.getSizeX(), isValidWidth);
+ip.addOptional('height', r.getSizeY(), isValidHeight);
 ip.parse(r, varargin{:});
-
-% Additional check for tile size
-assert(ip.Results.x - 1 + ip.Results.width <= r.getSizeX(),...
-     'MATLAB:InputParser:ArgumentFailedValidation',...
-     'Invalid tile size');
-assert(ip.Results.y - 1 + ip.Results.height <= r.getSizeY(),...
-     'MATLAB:InputParser:ArgumentFailedValidation',...
-     'Invalid tile size');
 
 % Get pixel type
 pixelType = r.getPixelType();
@@ -79,22 +74,13 @@ plane = r.openBytes(...
     ip.Results.iPlane - 1, ip.Results.x - 1, ip.Results.y - 1, ...
     ip.Results.width, ip.Results.height);
 
-% convert byte array to MATLAB image
-if sgn
-    % can get the data directly to a matrix
-    I = javaMethod('makeDataArray2D', 'loci.common.DataTools', plane, ...
-        bpp, fp, little, ip.Results.height);
-else
-    % get the data as a vector, either because makeDataArray2D
-    % is not available, or we need a vector for typecast
-    I = javaMethod('makeDataArray', 'loci.common.DataTools', plane, ...
-        bpp, fp, little);
-end
-
-% Java does not have explicitly unsigned data types;
-% hence, we must inform MATLAB when the data is unsigned
+% Convert byte array to MATLAB image
+I = javaMethod('makeDataArray2D', 'loci.common.DataTools', plane, ...
+    bpp, fp, little, ip.Results.height);
 if ~sgn
-    % NB: arr will always be a vector here
+    % Java does not have explicitly unsigned data types;
+    % hence, we must inform MATLAB when the data is unsigned
+    I = I(:);        % Need vector for typecast
     switch class(I)
         case 'int8'
             I = typecast(I, 'uint8');
@@ -105,10 +91,5 @@ if ~sgn
         case 'int64'
             I = typecast(I, 'uint64');
     end
-end
-
-if isvector(I)
-    % convert results from vector to matrix
-    shape = [ip.Results.width ip.Results.height];
-    I = reshape(I, shape)';
+    I = reshape(I, [ip.Results.height ip.Results.width]); % Convert back to matrix
 end

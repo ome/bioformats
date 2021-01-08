@@ -333,7 +333,7 @@ public class Memoizer extends ReaderWrapper {
    * cached items. This should happen when the order and type of objects stored
    * in the memo file changes.
    */
-  public static final Integer VERSION = 3;
+  public static final Integer VERSION = 4;
 
   /**
    * Default value for {@link #minimumElapsed} if none is provided in the
@@ -607,6 +607,19 @@ public class Memoizer extends ReaderWrapper {
     this.versionChecking = version;
   }
 
+  /**
+   * Set whether a memo file should be saved if a valid file is not present.
+   *
+   * If {@code false} (default), then a memo file will be saved.  This may
+   * cause an existing memo file to be overwritten.
+   *
+   * If {@code true}, then a memo file will not be saved.  This effectively
+   * makes the current Memoizer read-only.
+   */
+  public void skipSave(boolean skip) {
+    this.skipSave = skip;
+  }
+
   protected void cleanup() {
     if (ser != null) {
       ser.close();
@@ -715,7 +728,7 @@ public class Memoizer extends ReaderWrapper {
    */
   protected boolean deleteQuietly(File file) {
     try {
-      if (file != null && file.exists()) {
+      if (file != null && file.exists() && !skipSave) {
         if (file.delete()) {
           LOGGER.trace("deleted {}", file);
           return true;
@@ -755,7 +768,7 @@ public class Memoizer extends ReaderWrapper {
     return service;
   }
   protected Slf4JStopWatch stopWatch() {
-      return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
+    return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
   }
 
   /**
@@ -797,7 +810,7 @@ public class Memoizer extends ReaderWrapper {
 
       // Check either the in-place folder or the main memoizer directory
       // exists and is writeable
-      if (!writeDirectory.exists() || !writeDirectory.canWrite()) {
+      if (!isWritableDirectory(writeDirectory)) {
         LOGGER.warn("skipping memo: directory not writeable - {}",
           writeDirectory);
         return null;
@@ -808,6 +821,15 @@ public class Memoizer extends ReaderWrapper {
     String p = f.getParent();
     String n = f.getName();
     return new File(p, "." + n + ".bfmemo");
+  }
+
+  /**
+   * Test if the given {@link File} instance is a writable directory.
+   * @param writeDirectory a possible writable directory
+   * @return if the given {@link File} is indeed a writable directory
+   */
+  protected boolean isWritableDirectory(File writeDirectory) {
+    return writeDirectory.canWrite() && writeDirectory.isDirectory();
   }
 
   /**
@@ -1041,6 +1063,26 @@ public class Memoizer extends ReaderWrapper {
 
     }
     return memo;
+  }
+
+  /**
+   * Convenience method to generate (or regenerate) the memo file for a given file.
+   * Uses the cache directory and timing settings passed via Memoizer's constructor.
+   *
+   * @param file the file for which to generate a memo file
+   * @return true if a memo file was saved
+   */
+  public boolean generateMemo(String file) throws IOException {
+    try {
+      setId(file);
+    }
+    catch (FormatException e) {
+      LOGGER.warn("Could not initialize " + file, e);
+    }
+    finally {
+      close();
+    }
+    return isSavedToMemo();
   }
 
   public static void main(String[] args) throws Exception {

@@ -277,10 +277,10 @@ public class LeicaReader extends FormatReader {
         return tiff.openBytes(planeIndex, buf, x, y, w, h);
       }
       else {
-        RandomAccessInputStream s = new RandomAccessInputStream(filename);
-        s.seek(planeIndex * FormatTools.getPlaneSize(this));
-        readPlane(s, x, y, w, h, buf);
-        s.close();
+        try (RandomAccessInputStream s = new RandomAccessInputStream(filename)) {
+          s.seek(planeIndex * FormatTools.getPlaneSize(this));
+          readPlane(s, x, y, w, h, buf);
+        }
       }
     }
 
@@ -601,8 +601,7 @@ public class LeicaReader extends FormatReader {
       String filename = (String) files[i].get(0);
 
       if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {
-        RandomAccessInputStream s = new RandomAccessInputStream(filename, 16);
-        try {
+        try (RandomAccessInputStream s = new RandomAccessInputStream(filename, 16)) {
           TiffParser parser = new TiffParser(s);
           parser.setDoCaching(false);
           IFD firstIFD = parser.getFirstIFD();
@@ -625,9 +624,6 @@ public class LeicaReader extends FormatReader {
 
           tileWidth[i] = (int) firstIFD.getTileWidth();
           tileHeight[i] = (int) firstIFD.getTileLength();
-        }
-        finally {
-          s.close();
         }
       }
       else {
@@ -784,7 +780,7 @@ public class LeicaReader extends FormatReader {
 
       // open the TIFF file and look for the "Image Description" field
 
-      ifds = tp.getIFDs();
+      ifds = tp.getMainIFDs();
       if (ifds == null) throw new FormatException("No IFDs found");
       String descr = ifds.get(0).getComment();
 
@@ -1083,7 +1079,7 @@ public class LeicaReader extends FormatReader {
     addSeriesMeta("Maximum voxel intensity", getString(true));
     addSeriesMeta("Minimum voxel intensity", getString(true));
     int len = in.readInt();
-    in.skipBytes(len * 2 + 4);
+    in.skipBytes((long) len * 2 + 4);
 
     len = in.readInt();
     for (int j=0; j<len; j++) {
@@ -1403,10 +1399,10 @@ public class LeicaReader extends FormatReader {
           if (immersion != null) immersion = immersion.trim();
           if (correction != null) correction = correction.trim();
 
-          Correction realCorrection = getCorrection(correction);
-          Correction testCorrection = getCorrection(immersion);
-          Immersion realImmersion = getImmersion(immersion);
-          Immersion testImmersion = getImmersion(correction);
+          Correction realCorrection = MetadataTools.getCorrection(correction);
+          Correction testCorrection = MetadataTools.getCorrection(immersion);
+          Immersion realImmersion = MetadataTools.getImmersion(immersion);
+          Immersion testImmersion = MetadataTools.getImmersion(correction);
 
           // Correction and Immersion are reversed
           if ((testCorrection != Correction.OTHER &&
@@ -1420,9 +1416,9 @@ public class LeicaReader extends FormatReader {
           }
 
           store.setObjectiveImmersion(
-            getImmersion(immersion), series, objective);
+            MetadataTools.getImmersion(immersion), series, objective);
           store.setObjectiveCorrection(
-            getCorrection(correction), series, objective);
+            MetadataTools.getCorrection(correction), series, objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
 
@@ -1564,7 +1560,7 @@ public class LeicaReader extends FormatReader {
         store.setDetectorVoltage(
                 new ElectricPotential(detector.voltage, UNITS.VOLT), series,
                 nextDetector);
-        store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
+        store.setDetectorType(MetadataTools.getDetectorType("PMT"), series, nextDetector);
 
         String detectorID =
           MetadataTools.createLSID("Detector", series, nextDetector);

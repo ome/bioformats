@@ -42,6 +42,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.enums.Binning;
@@ -414,18 +415,51 @@ public class InCellReader extends FormatReader {
       }
     }
 
+    for (int t=imageFiles[0][0].length-1; t>=0; t--) {
+      boolean allNull = true;
+      for (int well=0; well<imageFiles.length; well++) {
+        for (int field=0; field<imageFiles[well].length; field++) {
+          for (int p=0; p<imageFiles[well][field][t].length; p++) {
+            if (imageFiles[well][field][t][p] != null) {
+              allNull = false;
+              break;
+            }
+          }
+        }
+      }
+      if (allNull) {
+        ms0.sizeT--;
+      }
+    }
+
     int seriesCount = 0;
 
     if (exclude != null) {
       for (int row=0; row<wellRows; row++) {
         for (int col=0; col<wellCols; col++) {
           if (!exclude[row][col]) {
-            seriesCount += imageFiles[row*wellCols + col].length;
+            int well = row * wellCols + col;
+            boolean hasNonNullImage = false;
+            for (int field=0; field<imageFiles[well].length; field++) {
+              for (int t=0; t<imageFiles[well][field].length; t++) {
+                for (int p=0; p<imageFiles[well][field][t].length; p++) {
+                  if (imageFiles[well][field][t][p] != null) {
+                    hasNonNullImage = true;
+                    break;
+                  }
+                }
+              }
+            }
+            if (hasNonNullImage) {
+              seriesCount += imageFiles[well].length;
+            }
           }
         }
       }
       int expectedSeries = totalImages / (getSizeZ() * getSizeC() * getSizeT());
-      seriesCount = (int) Math.min(seriesCount, expectedSeries);
+      if (expectedSeries > 0) {
+        seriesCount = (int) Math.min(seriesCount, expectedSeries);
+      }
     }
     else seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
 
@@ -518,18 +552,10 @@ public class InCellReader extends FormatReader {
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateName(plateName, 0);
-    store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
-    store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
-
-    for (int r=0; r<wellRows; r++) {
-      for (int c=0; c<wellCols; c++) {
-        int well = r * wellCols + c;
-        String wellID = MetadataTools.createLSID("Well", 0, well);
-        store.setWellID(wellID, 0, well);
-        store.setWellRow(new NonNegativeInteger(r), 0, well);
-        store.setWellColumn(new NonNegativeInteger(c), 0, well);
-      }
-    }
+    store.setPlateRowNamingConvention(MetadataTools.getNamingConvention(rowNaming), 0);
+    store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention(colNaming), 0);
+    store.setPlateRows(new PositiveInteger(wellRows), 0);
+    store.setPlateColumns(new PositiveInteger(wellCols), 0);
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
@@ -552,6 +578,7 @@ public class InCellReader extends FormatReader {
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
 
+    int prevWell = -1;
     for (int i=0; i<seriesCount; i++) {
       store.setObjectiveSettingsID(objectiveID, i);
 
@@ -566,7 +593,7 @@ public class InCellReader extends FormatReader {
       }
 
       int well = getWellFromSeries(i);
-      int field = getFieldFromSeries(i) + 1;
+      int field = getFieldFromSeries(i);
       int totalTimepoints =
         oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
       int timepoint = oneTimepointPerSeries ? (i % totalTimepoints) + 1 : -1;
@@ -578,6 +605,15 @@ public class InCellReader extends FormatReader {
 
       int wellRow = well / wellCols;
       int wellCol = well % wellCols;
+      wellIndex = i / (fieldCount * totalTimepoints);
+
+      if (well != prevWell) {
+        String wellID = MetadataTools.createLSID("Well", 0, wellIndex);
+        store.setWellID(wellID, 0, wellIndex);
+        store.setWellRow(new NonNegativeInteger(wellRow), 0, wellIndex);
+        store.setWellColumn(new NonNegativeInteger(wellCol), 0, wellIndex);
+        prevWell = well;
+      }
 
       char rowChar = rowName.charAt(rowName.length() - 1);
       char colChar = colName.charAt(colName.length() - 1);
@@ -594,7 +630,7 @@ public class InCellReader extends FormatReader {
       }
       else col += (char) (colChar + wellCol);
 
-      String imageName = "Well " + row + "-" + col + ", Field #" + field;
+      String imageName = "Well " + row + "-" + col + ", Field #" + (field + 1);
       if (timepoint >= 0) {
         imageName += ", Timepoint #" + timepoint;
       }
@@ -606,18 +642,18 @@ public class InCellReader extends FormatReader {
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;
-      int sampleIndex = (field - 1) * totalTimepoints + timepoint;
+      int sampleIndex = field * totalTimepoints + timepoint;
 
       String wellSampleID =
-        MetadataTools.createLSID("WellSample", 0, well, sampleIndex);
-      store.setWellSampleID(wellSampleID, 0, well, sampleIndex);
-      store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
-      store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
-      if (posX.containsKey(field - 1)) {
-        store.setWellSamplePositionX(posX.get(field - 1), 0, well, sampleIndex);
+        MetadataTools.createLSID("WellSample", 0, wellIndex, sampleIndex);
+      store.setWellSampleID(wellSampleID, 0, wellIndex, sampleIndex);
+      store.setWellSampleIndex(new NonNegativeInteger(i), 0, wellIndex, sampleIndex);
+      store.setWellSampleImageRef(imageID, 0, wellIndex, sampleIndex);
+      if (posX.containsKey(field)) {
+        store.setWellSamplePositionX(posX.get(field), 0, wellIndex, sampleIndex);
       }
-      if (posY.containsKey(field - 1)) {
-        store.setWellSamplePositionY(posY.get(field - 1), 0, well, sampleIndex);
+      if (posY.containsKey(field)) {
+        store.setWellSamplePositionY(posY.get(field), 0, wellIndex, sampleIndex);
       }
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);
@@ -633,6 +669,7 @@ public class InCellReader extends FormatReader {
         int field = getFieldFromSeries(i);
         int timepoint = oneTimepointPerSeries ?
           i % channelsPerTimepoint.size() : 0;
+        Double[][] minMax = new Double[getEffectiveSizeC()][2];
         for (int time=0; time<getSizeT(); time++) {
           if (!oneTimepointPerSeries) timepoint = time;
           int c = channelsPerTimepoint.get(timepoint).intValue();
@@ -650,6 +687,18 @@ public class InCellReader extends FormatReader {
             store.setPlanePositionX(posX.get(field), i, plane);
             store.setPlanePositionY(posY.get(field), i, plane);
             store.setPlanePositionZ(img.zPosition, i, plane);
+
+            int channel = getZCTCoords(plane)[1];
+            if (img.min != null && (minMax[channel][0] == null ||
+              img.min < minMax[channel][0]))
+            {
+              minMax[channel][0] = img.min;
+            }
+            if (img.max != null && (minMax[channel][1] == null ||
+              img.max > minMax[channel][1]))
+            {
+              minMax[channel][1] = img.max;
+            }
           }
         }
 
@@ -681,6 +730,11 @@ public class InCellReader extends FormatReader {
             if (gain != null) {
               store.setDetectorSettingsGain(gain, i, q);
             }
+          }
+          LOGGER.trace("series {} channel {}: min = {}, max = {}", i, q, minMax[q][0], minMax[q][1]);
+          if (store instanceof IMinMaxStore) {
+            IMinMaxStore minMaxStore = (IMinMaxStore) store;
+            minMaxStore.setChannelGlobalMinMax(q, minMax[q][0], minMax[q][1], i);
           }
         }
         if (temperature != null) {
@@ -732,6 +786,7 @@ public class InCellReader extends FormatReader {
     private int nChannels = 0;
     private boolean doT = true;
     private boolean doZ = true;
+    private Image lastImage = null;
 
     @Override
     public void endElement(String uri, String localName, String qName) {
@@ -828,6 +883,13 @@ public class InCellReader extends FormatReader {
         img.isTiff = currentImageFile.endsWith(".tif") ||
           currentImageFile.endsWith(".tiff");
         imageFiles[wellRow * wellCols + wellCol][field][t][index] = img;
+        lastImage = img;
+      }
+      else if (qName.equals("MinMaxMean")) {
+        if (lastImage != null) {
+          lastImage.min = DataTools.parseDouble(attributes.getValue("min"));
+          lastImage.max = DataTools.parseDouble(attributes.getValue("max"));
+        }
       }
       else if (qName.equals("offset_point")) {
         fieldCount++;
@@ -940,7 +1002,7 @@ public class InCellReader extends FormatReader {
         store.setExperimentID(experimentID, 0);
         try {
           store.setExperimentType(
-            getExperimentType(attributes.getValue("type")), 0);
+            MetadataTools.getExperimentType(attributes.getValue("type")), 0);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -981,7 +1043,7 @@ public class InCellReader extends FormatReader {
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         try {
-         store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+         store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -993,7 +1055,7 @@ public class InCellReader extends FormatReader {
         store.setObjectiveManufacturer(tokens[0], 0, 0);
         String correction = tokens.length > 2 ? tokens[2] : "Other";
         try {
-          store.setObjectiveCorrection(getCorrection(correction), 0, 0);
+          store.setObjectiveCorrection(MetadataTools.getCorrection(correction), 0, 0);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1018,7 +1080,7 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("Camera")) {
         store.setDetectorModel(attributes.getValue("name"), 0, 0);
         try {
-          store.setDetectorType(getDetectorType("Other"), 0, 0);
+          store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1027,7 +1089,7 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("Binning")) {
         String binning = attributes.getValue("value");
         try {
-          bin = getBinning(binning);
+          bin = MetadataTools.getBinning(binning);
         }
         catch (FormatException e) { }
       }
@@ -1067,8 +1129,15 @@ public class InCellReader extends FormatReader {
           index = offsetPointCounter++;
         }
 
+        // Y value multiplied by -1 to correct for difference in assumptions
+        // - position is relative to center of well
+        // - acquisition software seems to assume smaller Y is below larger Y,
+        //   consistent with (0, 0) being the center
+        // - we typically assume smaller Y is above larger Y,
+        //   consistent with image origins being in the top left corner
+
         posX.put(index, new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
-        posY.put(index, new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
+        posY.put(index, new Length(-1 * Double.valueOf(y), UNITS.REFERENCEFRAME));
 
         addGlobalMetaList("X position for position", x);
         addGlobalMetaList("Y position for position", y);
@@ -1082,6 +1151,8 @@ public class InCellReader extends FormatReader {
     public boolean isTiff;
     public Double deltaT, exposure;
     public Length zPosition;
+    public Double min;
+    public Double max;
   }
 
 }

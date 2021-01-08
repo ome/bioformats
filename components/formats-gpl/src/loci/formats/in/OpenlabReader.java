@@ -297,9 +297,9 @@ public class OpenlabReader extends FormatReader {
           pixPos += size;
         }
 
-        RandomAccessInputStream pix = new RandomAccessInputStream(plane);
-        readPlane(pix, x, y, w, h, buf);
-        pix.close();
+        try (RandomAccessInputStream pix = new RandomAccessInputStream(plane)) {
+          readPlane(pix, x, y, w, h, buf);
+        }
         plane = null;
       }
     }
@@ -395,7 +395,7 @@ public class OpenlabReader extends FormatReader {
         in.skipBytes(16);
         long pointer = in.getFilePointer();
         planes[imagesFound].planeName = readCString().trim();
-        in.skipBytes((int) (256 - in.getFilePointer() + pointer));
+        in.skipBytes(256 - in.getFilePointer() + pointer);
 
         planes[imagesFound].planeOffset = in.getFilePointer();
 
@@ -629,7 +629,7 @@ public class OpenlabReader extends FormatReader {
       String detectorID = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detectorID, 0, 0);
 
-      store.setDetectorType(getDetectorType("Other"), 0, 0);
+      store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         PlaneInfo plane = getPlane(new int[] {0, c, 0});

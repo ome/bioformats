@@ -160,59 +160,63 @@ public class CellVoyagerReader extends FormatReader
         continue;
       }
 
-      tiffReader.setId( image.getAbsolutePath() );
+      try {
+        tiffReader.setId( image.getAbsolutePath() );
 
-      // Tile size
-      final int tw = channelInfos.get( 0 ).tileWidth;
-      final int th = channelInfos.get( 0 ).tileHeight;
+        // Tile size
+        final int tw = channelInfos.get( 0 ).tileWidth;
+        final int th = channelInfos.get( 0 ).tileHeight;
 
-      // Field bounds in full final image, full width, full height
-      // (referential named '0', as if x=0 and y=0).
-      final int xbs0 = ( int ) field.xpixels;
-      final int ybs0 = ( int ) field.ypixels;
+        // Field bounds in full final image, full width, full height
+        // (referential named '0', as if x=0 and y=0).
+        final int xbs0 = ( int ) field.xpixels;
+        final int ybs0 = ( int ) field.ypixels;
 
-      // Subimage bounds in full final image is simply x, y, x+w, y+h
+        // Subimage bounds in full final image is simply x, y, x+w, y+h
 
-      // Do they intersect?
-      if ( x + w < xbs0 || xbs0 + tw < x || y + h < ybs0 || ybs0 + th < y )
-      {
-        continue;
+        // Do they intersect?
+        if ( x + w < xbs0 || xbs0 + tw < x || y + h < ybs0 || ybs0 + th < y )
+        {
+          continue;
+        }
+
+        // Common rectangle in reconstructed image referential.
+        final int xs0 = Math.max( xbs0 - x, 0 );
+        final int ys0 = Math.max( ybs0 - y, 0 );
+
+        // Common rectangle in tile referential (named with '1').
+        final int xs1 = Math.max( x - xbs0, 0 );
+        final int ys1 = Math.max( y - ybs0, 0 );
+        final int xe1 = Math.min( tw, x + w - xbs0 );
+        final int ye1 = Math.min( th, y + h - ybs0 );
+        final int w1 = xe1 - xs1;
+        final int h1 = ye1 - ys1;
+
+        if ( w1 <= 0 || h1 <= 0 )
+        {
+          continue;
+        }
+
+        // Get corresponding data.
+        final byte[] bytes = tiffReader.openBytes( 0, xs1, ys1, w1, h1 );
+        final int nbpp = cm.bitsPerPixel / 8;
+
+        for ( int row1 = 0; row1 < h1; row1++ )
+        {
+          // Line index in tile coords
+          final int ls1 = nbpp * ( row1 * w1 );
+          final int length = nbpp * w1;
+
+          // Line index in reconstructed image coords
+          final int ls0 = nbpp * ( ( ys0 + row1 ) * w + xs0 );
+
+          // Transfer
+          System.arraycopy( bytes, ls1, buf, ls0, length );
+        }
       }
-
-      // Common rectangle in reconstructed image referential.
-      final int xs0 = Math.max( xbs0 - x, 0 );
-      final int ys0 = Math.max( ybs0 - y, 0 );
-
-      // Common rectangle in tile referential (named with '1').
-      final int xs1 = Math.max( x - xbs0, 0 );
-      final int ys1 = Math.max( y - ybs0, 0 );
-      final int xe1 = Math.min( tw, x + w - xbs0 );
-      final int ye1 = Math.min( th, y + h - ybs0 );
-      final int w1 = xe1 - xs1;
-      final int h1 = ye1 - ys1;
-
-      if ( w1 <= 0 || h1 <= 0 )
-      {
-        continue;
+      finally {
+        tiffReader.close();
       }
-
-      // Get corresponding data.
-      final byte[] bytes = tiffReader.openBytes( 0, xs1, ys1, w1, h1 );
-      final int nbpp = cm.bitsPerPixel / 8;
-
-      for ( int row1 = 0; row1 < h1; row1++ )
-      {
-        // Line index in tile coords
-        final int ls1 = nbpp * ( row1 * w1 );
-        final int length = nbpp * w1;
-
-        // Line index in reconstructed image coords
-        final int ls0 = nbpp * ( ( ys0 + row1 ) * w + xs0 );
-
-        // Transfer
-        System.arraycopy( bytes, ls1, buf, ls0, length );
-      }
-      tiffReader.close();
     }
 
     return buf;
@@ -565,9 +569,26 @@ public class CellVoyagerReader extends FormatReader
      * back manually. Some are fixed here
      */
 
+
+    final Element containerEl = getChild(msRoot, new String[] {
+      "Attachment", "HolderInfoList", "HolderInfo", "MountedSampleContainer" });
+    final String type = containerEl.getAttribute("xsi:type");
+    boolean plateMetadata = type.equals("WellPlate");
+
+    // fix the Plate and Screen IDs if this is a plate dataset
+    // otherwise remove the extra Plate and Screen to avoid confusion
+    if (plateMetadata) {
+      omeMD.setScreenID(MetadataTools.createLSID("Screen", 0), 0);
+      omeMD.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    }
+    else {
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omeMD.getRoot();
+      root.removeScreen(root.getScreen(0));
+      root.removePlate(root.getPlate(0));
+      omeMD.setRoot(root);
+    }
+
     omeMD.setProjectID( MetadataTools.createLSID( "Project", 0 ), 0 );
-    omeMD.setScreenID( MetadataTools.createLSID( "Screen", 0 ), 0 );
-    omeMD.setPlateID( MetadataTools.createLSID( "Plate", 0 ), 0 );
     omeMD.setInstrumentID( MetadataTools.createLSID( "Instrument", 0 ), 0 );
 
     // Read pixel sizes from OME metadata.
@@ -730,12 +751,7 @@ public class CellVoyagerReader extends FormatReader
      * MicroPlate specific stuff
      */
 
-    final Element containerEl = getChild( msRoot, new String[] { "Attachment", "HolderInfoList", "HolderInfo", "MountedSampleContainer" } );
-    final String type = containerEl.getAttribute( "xsi:type" );
-    boolean plateMetadata = false;
-    if ( type.equals( "WellPlate" ) )
-    {
-      plateMetadata = true;
+    if (plateMetadata) {
 
       final int nrows = Integer.parseInt( getChildText( containerEl, "RowCount" ) );
       final int ncols = Integer.parseInt( getChildText( containerEl, "ColumnCount" ) );

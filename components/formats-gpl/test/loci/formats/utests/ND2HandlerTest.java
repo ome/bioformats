@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import loci.formats.CoreMetadata;
+import loci.formats.CoreMetadataList;
 import loci.formats.in.ND2Handler;
 
 import static org.testng.Assert.assertEquals;
@@ -41,12 +42,12 @@ import org.testng.annotations.Test;
  */
 public class ND2HandlerTest {
 
-  private List<CoreMetadata> coreList;
+  private CoreMetadataList coreList;
   private ND2Handler handler;
 
   @BeforeMethod
   public void setUp() {
-    coreList = new ArrayList<CoreMetadata>();
+    coreList = new CoreMetadataList();
     coreList.add(new CoreMetadata());
     handler = new ND2Handler(coreList, 1);
   }

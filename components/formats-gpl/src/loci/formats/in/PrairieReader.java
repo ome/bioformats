@@ -168,11 +168,9 @@ public class PrairieReader extends FormatReader {
     }
 
     boolean validXML = false;
-    try {
-      RandomAccessInputStream xmlStream =
-        new RandomAccessInputStream(xml.getAbsolutePath());
+    try (RandomAccessInputStream xmlStream =
+        new RandomAccessInputStream(xml.getAbsolutePath())) {
       validXML = isThisType(xmlStream);
-      xmlStream.close();
     }
     catch (IOException e) {
       LOGGER.trace("Failed to check XML file's type", e);
@@ -578,7 +576,7 @@ public class PrairieReader extends FormatReader {
           // create a Detector for this channel
           detectorIDs[c] = MetadataTools.createLSID("Detector", 0, c);
           store.setDetectorID(detectorIDs[c], 0, c);
-          store.setDetectorType(getDetectorType("Other"), 0, c);
+          store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, c);
 
           // NB: Ideally we would populate the detector zoom differently for
           // each Image, rather than globally for the Detector, but
@@ -603,7 +601,7 @@ public class PrairieReader extends FormatReader {
         // create an Objective
         objectiveID = MetadataTools.createLSID("Objective", 0, 0);
         store.setObjectiveID(objectiveID, 0, 0);
-        store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+        store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
 
         // populate Objective NominalMagnification
         final Double magnification = firstFrame.getMagnification();
@@ -618,7 +616,7 @@ public class PrairieReader extends FormatReader {
 
         // populate Objective Immersion
         final String immersion = firstFrame.getImmersion();
-        store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+        store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), 0, 0);
 
         // populate Objective LensNA
         final Double lensNA = firstFrame.getObjectiveLensNA();
@@ -692,10 +690,10 @@ public class PrairieReader extends FormatReader {
 
     // read entire XML document into a giant byte array
     final byte[] buf = new byte[(int) file.length()];
-    final RandomAccessInputStream is =
-      new RandomAccessInputStream(file.getAbsolutePath());
-    is.readFully(buf);
-    is.close();
+    try(RandomAccessInputStream is =
+      new RandomAccessInputStream(file.getAbsolutePath())) {
+      is.readFully(buf);
+    }
 
     // filter out invalid characters from the XML
     final String xml =

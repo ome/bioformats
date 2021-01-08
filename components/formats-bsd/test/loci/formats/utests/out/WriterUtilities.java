@@ -74,7 +74,9 @@ public final class WriterUtilities {
       FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
   public static final int[] pixelTypesOther = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT, FormatTools.DOUBLE};
-  
+  public static final int[] pixelTypesICS = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
+
   public static IMetadata createMetadata(String pixelType, int rgbChannels,
       int seriesCount, boolean littleEndian, int sizeT) throws Exception {
     IMetadata metadata;
@@ -98,8 +100,14 @@ public final class WriterUtilities {
 
     return metadata;
   }
-  
-  public static Plane writeImage(File file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
+
+  public static Plane writeImage(File file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels,
+      int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
+    return writeImage(file.getAbsolutePath(), tileSize, littleEndian, interleaved, rgbChannels,
+      seriesCount, sizeT, compression, pixelType, bigTiff);
+  }
+
+  public static Plane writeImage(String file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels,
       int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     TiffWriter writer = new TiffWriter();
     String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
@@ -107,11 +115,11 @@ public final class WriterUtilities {
     writer.setCompression(compression);
     writer.setInterleaved(interleaved);
     writer.setBigTiff(bigTiff);
-    if (tileSize != PLANE_WIDTH) {
+    if (tileSize != 0) {
       writer.setTileSizeX(tileSize);
       writer.setTileSizeY(tileSize);
     }
-    writer.setId(file.getAbsolutePath());
+    writer.setId(file);
 
     int bytes = FormatTools.getBytesPerPixel(pixelType);
     byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);

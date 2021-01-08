@@ -125,7 +125,7 @@ public class EPSReader extends FormatReader {
       }
 
       byte[] b = new byte[w * h];
-      int bpp = (int) (byteCounts[0] / (getSizeX() * getSizeY()));
+      long bpp = byteCounts[0] / (getSizeX() * getSizeY());
       in.skipBytes(bpp * y * getSizeX());
       for (int row=0; row<h; row++) {
         in.skipBytes(x * bpp);
@@ -231,9 +231,11 @@ public class EPSReader extends FormatReader {
       in.seek(offset);
       in.read(b);
 
+      //close the first stream
+      in.close();
       in = new RandomAccessInputStream(b);
       TiffParser tp = new TiffParser(in);
-      ifds = tp.getIFDs();
+      ifds = tp.getMainIFDs();
 
       IFD firstIFD = ifds.get(0);
       map = tp.getColorMap(firstIFD);

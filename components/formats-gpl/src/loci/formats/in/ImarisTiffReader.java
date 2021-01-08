@@ -102,7 +102,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     LOGGER.info("Populating metadata");
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     m.sizeC = ifds.size();
     m.sizeZ = tmp.size() / getSizeC();

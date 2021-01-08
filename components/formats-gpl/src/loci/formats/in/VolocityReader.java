@@ -154,58 +154,55 @@ public class VolocityReader extends FormatReader {
       return buf;
     }
 
-    RandomAccessInputStream pix =
-      new RandomAccessInputStream(stack.pixelsFiles[zct[1]]);
+    try (RandomAccessInputStream pix =
+      new RandomAccessInputStream(stack.pixelsFiles[zct[1]])) {
+      int padding = zct[2] * stack.planePadding;
 
-    int padding = zct[2] * stack.planePadding;
+      long planeSize = FormatTools.getPlaneSize(this);
+      int planesInFile = (int) (pix.length() / planeSize);
+      int planeIndex = no / getEffectiveSizeC();
+      if (planesInFile == getSizeT()) {
+        planeIndex = zct[2];
 
-    long planeSize = FormatTools.getPlaneSize(this);
-    int planesInFile = (int) (pix.length() / planeSize);
-    int planeIndex = no / getEffectiveSizeC();
-    if (planesInFile == getSizeT()) {
-      planeIndex = zct[2];
-
-      int block = stack.blockSize;
-      padding = block - (int) (planeSize % block);
-      if (padding == block) {
-        padding = 0;
-      }
-      padding *= zct[2];
-    }
-
-    long offset = (long) stack.blockSize + planeIndex * planeSize + padding;
-    if (offset >= pix.length()) {
-      pix.close();
-      return buf;
-    }
-    pix.seek(offset);
-
-    if (stack.clippingData) {
-      pix.seek(offset - 3);
-      ByteArrayHandle v = new ByteArrayHandle();
-      while (v.length() < FormatTools.getPlaneSize(this) &&
-        pix.getFilePointer() < pix.length())
-      {
-        try {
-          byte[] b = new LZOCodec().decompress(pix, null);
-          pix.skipBytes(4);
-          v.write(b);
+        int block = stack.blockSize;
+        padding = block - (int) (planeSize % block);
+        if (padding == block) {
+          padding = 0;
         }
-        catch (IOException e) { }
+        padding *= zct[2];
       }
-      RandomAccessInputStream s = new RandomAccessInputStream(v);
-      s.seek(0);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
-    }
-    else {
-      if (pix.getFilePointer() + planeSize > pix.length()) {
-        pix.close();
+
+      long offset = (long) stack.blockSize + planeIndex * planeSize + padding;
+      if (offset >= pix.length()) {
         return buf;
       }
-      readPlane(pix, x, y, w, h, buf);
+      pix.seek(offset);
+
+      if (stack.clippingData) {
+        pix.seek(offset - 3);
+        ByteArrayHandle v = new ByteArrayHandle();
+        while (v.length() < FormatTools.getPlaneSize(this) &&
+          pix.getFilePointer() < pix.length())
+        {
+          try {
+            byte[] b = new LZOCodec().decompress(pix, null);
+            pix.skipBytes(4);
+            v.write(b);
+          }
+          catch (IOException e) { }
+        }
+        try (RandomAccessInputStream s = new RandomAccessInputStream(v)) {
+          s.seek(0);
+          readPlane(s, x, y, w, h, buf);
+        }
+      }
+      else {
+        if (pix.getFilePointer() + planeSize > pix.length()) {
+          return buf;
+        }
+        readPlane(pix, x, y, w, h, buf);
+      }
     }
-    pix.close();
 
     if (getRGBChannelCount() == 4) {
       // stored as ARGB, need to swap to RGBA
@@ -298,24 +295,26 @@ public class VolocityReader extends FormatReader {
         (sampleTable[i][14] != null && !sampleTable[i][14].equals(0)) ||
         ((byte[]) sampleTable[i][13]).length > 21))
       {
+        String parentName = getParentName((Integer) sampleTable[i][1]);
+
         if (channelIndex < 0) {
-          RandomAccessInputStream s = getStream(i);
-          s.seek(0);
-          if (s.read() != 'I') {
-            s.order(false);
+          try (RandomAccessInputStream s = getStream(i)) {
+            s.seek(0);
+            if (s.read() != 'I') {
+              s.order(false);
+            }
+            s.seek(22);
+            int x = s.readInt();
+            int y = s.readInt();
+            int z = s.readInt();
+            if (x * y * z > 0 && x * y * z < (s.length() * 3)) {
+              stackNames.add(parentName + name);
+              parentIDs.add((Integer) sampleTable[i][0]);
+            }
           }
-          s.seek(22);
-          int x = s.readInt();
-          int y = s.readInt();
-          int z = s.readInt();
-          if (x * y * z > 0 && x * y * z < (s.length() * 3)) {
-            stackNames.add(name);
-            parentIDs.add((Integer) sampleTable[i][0]);
-          }
-          s.close();
         }
         else {
-          stackNames.add(name);
+          stackNames.add(parentName + name);
           parentIDs.add((Integer) sampleTable[i][0]);
         }
       }
@@ -338,23 +337,23 @@ public class VolocityReader extends FormatReader {
           stack.channelNames[c] =
             getString((Integer) sampleTable[channels[c]][11]);
 
-          RandomAccessInputStream data = getStream(channels[c]);
-          if (data.length() > 22) {
-            data.seek(22);
-            int stackID = data.readInt();
-            Location f = new Location(dir, stackID + ".aisf");
-            if (!f.exists()) {
-              f = new Location(dir, DataTools.swap(stackID) + ".aisf");
+          try (RandomAccessInputStream data = getStream(channels[c])) {
+            if (data.length() > 22) {
+              data.seek(22);
+              int stackID = data.readInt();
+              Location f = new Location(dir, stackID + ".aisf");
+              if (!f.exists()) {
+                f = new Location(dir, DataTools.swap(stackID) + ".aisf");
+              }
+              stack.pixelsFiles[c] = f.getAbsolutePath();
             }
-            stack.pixelsFiles[c] = f.getAbsolutePath();
+            else {
+              Integer child =
+                getAllChildren((Integer) sampleTable[channels[c]][0])[0];
+                stack.pixelsFiles[c] =
+                  getFile((Integer) sampleTable[child][0], dir);
+            }
           }
-          else {
-            Integer child =
-              getAllChildren((Integer) sampleTable[channels[c]][0])[0];
-            stack.pixelsFiles[c] =
-              getFile((Integer) sampleTable[child][0], dir);
-          }
-          data.close();
         }
       }
       else {
@@ -379,100 +378,98 @@ public class VolocityReader extends FormatReader {
         }
       }
 
-      RandomAccessInputStream data = null;
-
       int timestampIndex = getChildIndex(parent, "Timepoint times stream");
       if (timestampIndex >= 0) {
-        data = getStream(timestampIndex);
-        data.seek(22);
-        int timestampID = data.readInt();
-        Location f = new Location(dir, timestampID + ".atsf");
-        if (!f.exists()) {
-          f = new Location(dir, DataTools.swap(timestampID) + ".atsf");
+        try (RandomAccessInputStream data = getStream(timestampIndex)) {
+          data.seek(22);
+          int timestampID = data.readInt();
+          Location f = new Location(dir, timestampID + ".atsf");
+          if (!f.exists()) {
+            f = new Location(dir, DataTools.swap(timestampID) + ".atsf");
+          }
+          stack.timestampFile = f.getAbsolutePath();
         }
-        stack.timestampFile = f.getAbsolutePath();
-        data.close();
       }
 
       int xIndex = getChildIndex(parent, "um/pixel (X)");
       if (xIndex >= 0) {
-        data = getStream(xIndex);
-        data.seek(SIGNATURE_SIZE);
-        stack.physicalX = data.readDouble();
-        data.close();
+        try (RandomAccessInputStream data = getStream(xIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          stack.physicalX = data.readDouble();
+        }
       }
 
       int yIndex = getChildIndex(parent, "um/pixel (Y)");
       if (yIndex >= 0) {
-        data = getStream(yIndex);
-        data.seek(SIGNATURE_SIZE);
-        stack.physicalY = data.readDouble();
-        data.close();
+        try (RandomAccessInputStream data = getStream(yIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          stack.physicalY = data.readDouble();
+        }
       }
 
       int zIndex = getChildIndex(parent, "um/pixel (Z)");
       if (zIndex >= 0) {
-        data = getStream(zIndex);
-        data.seek(SIGNATURE_SIZE);
-        stack.physicalZ = data.readDouble();
-        data.close();
+        try (RandomAccessInputStream data = getStream(zIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          stack.physicalZ = data.readDouble();
+        }
       }
 
       timestampIndex = getChildIndex(parent, "TimepointTimes");
       if (timestampIndex >= 0) {
-        data = getStream(timestampIndex);
-        data.seek(SIGNATURE_SIZE);
-        data.close();
+        try (RandomAccessInputStream data = getStream(timestampIndex)) {
+          data.seek(SIGNATURE_SIZE);
+        }
       }
 
       int objectiveIndex = getChildIndex(parent, "Microscope Objective");
       if (objectiveIndex >= 0) {
-        data = getStream(objectiveIndex);
-        data.seek(SIGNATURE_SIZE);
-        stack.magnification = data.readDouble();
-        data.close();
+        try (RandomAccessInputStream data = getStream(objectiveIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          stack.magnification = data.readDouble();
+        }
       }
 
       int detectorIndex = getChildIndex(parent, "Camera/Detector");
       if (detectorIndex >= 0) {
-        data = getStream(detectorIndex);
-        data.seek(SIGNATURE_SIZE);
-        int len = data.readInt();
-        stack.detector = data.readString(len);
-        data.close();
+        try (RandomAccessInputStream data = getStream(detectorIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          int len = data.readInt();
+          stack.detector = data.readString(len);
+        }
       }
 
       int descriptionIndex = getChildIndex(parent, "Experiment Description");
       if (descriptionIndex >= 0) {
-        data = getStream(descriptionIndex);
-        data.seek(SIGNATURE_SIZE);
-        int len = data.readInt();
-        stack.description = data.readString(len);
-        data.close();
+        try (RandomAccessInputStream data = getStream(descriptionIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          int len = data.readInt();
+          stack.description = data.readString(len);
+        }
       }
 
       int xLocationIndex = getChildIndex(parent, "X Location");
       if (xLocationIndex >= 0) {
-        data = getStream(xLocationIndex);
-        data.seek(SIGNATURE_SIZE);
-        stack.xLocation = data.readDouble();
-        data.close();
+        try (RandomAccessInputStream data = getStream(xLocationIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          stack.xLocation = data.readDouble();
+        }
       }
 
       int yLocationIndex = getChildIndex(parent, "Y Location");
       if (yLocationIndex >= 0) {
-        data = getStream(yLocationIndex);
-        data.seek(SIGNATURE_SIZE);
-        stack.yLocation = data.readDouble();
-        data.close();
+        try (RandomAccessInputStream data = getStream(yLocationIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          stack.yLocation = data.readDouble();
+        }
       }
 
       int zLocationIndex = getChildIndex(parent, "Z Location");
       if (zLocationIndex >= 0) {
-        data = getStream(zLocationIndex);
-        data.seek(SIGNATURE_SIZE);
-        stack.zLocation = data.readDouble();
-        data.close();
+        try (RandomAccessInputStream data = getStream(zLocationIndex)) {
+          data.seek(SIGNATURE_SIZE);
+          stack.zLocation = data.readDouble();
+        }
       }
 
       stacks.add(stack);
@@ -488,20 +485,20 @@ public class VolocityReader extends FormatReader {
         i--;
         continue;
       }
-
-      RandomAccessInputStream base =
-        new RandomAccessInputStream(stack.pixelsFiles[0]);
-      long baseLength = base.length();
-      base.close();
+      long baseLength = 0;
+      try (RandomAccessInputStream base =
+        new RandomAccessInputStream(stack.pixelsFiles[0])) {
+        baseLength = base.length();
+      }
 
       for (int q=1; q<stack.pixelsFiles.length; q++) {
         if (!new Location(stack.pixelsFiles[q]).exists()) {
           continue;
         }
-        base = new RandomAccessInputStream(stack.pixelsFiles[q]);
-        long length = base.length();
-        base.close();
-
+        long length = 0;
+        try (RandomAccessInputStream base = new RandomAccessInputStream(stack.pixelsFiles[q])) {
+          length = base.length();
+        }
         if (length > baseLength) {
           // split the stack
           Stack newStack = new Stack();
@@ -553,29 +550,28 @@ public class VolocityReader extends FormatReader {
       ms.littleEndian = true;
 
       if (stack.timestampFile != null) {
-        RandomAccessInputStream s =
-          new RandomAccessInputStream(stack.timestampFile);
-        s.seek(0);
-        if (s.read() != 'I') {
-          ms.littleEndian = false;
-        }
-        s.seek(17);
-        s.order(isLittleEndian());
-        ms.sizeT = s.readInt();
-
-        Double firstStamp = null;
-        Double[] stamps = new Double[ms.sizeT];
-        for (int t=0; t<ms.sizeT; t++) {
-          // timestamps are stored in microseconds
-          double timestamp = s.readLong() / 1000000.0;
-          if (firstStamp == null) {
-            firstStamp = timestamp;
+        try (RandomAccessInputStream s =
+          new RandomAccessInputStream(stack.timestampFile)) {
+          s.seek(0);
+          if (s.read() != 'I') {
+            ms.littleEndian = false;
           }
-          stamps[t] = timestamp - firstStamp;
-        }
-        timestamps.add(stamps);
+          s.seek(17);
+          s.order(isLittleEndian());
+          ms.sizeT = s.readInt();
 
-        s.close();
+          Double firstStamp = null;
+          Double[] stamps = new Double[ms.sizeT];
+          for (int t=0; t<ms.sizeT; t++) {
+            // timestamps are stored in microseconds
+            double timestamp = s.readLong() / 1000000.0;
+            if (firstStamp == null) {
+              firstStamp = timestamp;
+            }
+            stamps[t] = timestamp - firstStamp;
+          }
+          timestamps.add(stamps);
+        }
       }
       else {
         ms.sizeT = 1;
@@ -585,112 +581,112 @@ public class VolocityReader extends FormatReader {
       ms.interleaved = true;
       ms.dimensionOrder = "XYCZT";
 
-      RandomAccessInputStream s =
-        new RandomAccessInputStream(stack.pixelsFiles[0]);
-      s.order(isLittleEndian());
-
-      if (checkSuffix(stack.pixelsFiles[0], "aisf")) {
-        s.seek(18);
-        stack.blockSize = s.readShort() * 256;
-        s.skipBytes(5);
-        int x = s.readInt();
-        int y = s.readInt();
-        int zStart = s.readInt();
-        int w = s.readInt();
-        int h = s.readInt();
-
-        if (w - x < 0 || h - y < 0 || (w - x) * (h - y) < 0) {
-          ms.littleEndian = !isLittleEndian();
+      try (RandomAccessInputStream s =
+        new RandomAccessInputStream(stack.pixelsFiles[0])) {
           s.order(isLittleEndian());
-          s.seek(s.getFilePointer() - 20);
-          x = s.readInt();
-          y = s.readInt();
-          zStart = s.readInt();
-          w = s.readInt();
-          h = s.readInt();
-        }
 
-        ms.sizeX = w - x;
-        ms.sizeY = h - y;
-        ms.sizeZ = s.readInt() - zStart;
-        ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
-        ms.pixelType = FormatTools.INT8;
+          if (checkSuffix(stack.pixelsFiles[0], "aisf")) {
+            s.seek(18);
+            stack.blockSize = s.readShort() * 256;
+            s.skipBytes(5);
+            int x = s.readInt();
+            int y = s.readInt();
+            int zStart = s.readInt();
+            int w = s.readInt();
+            int h = s.readInt();
 
-        int planesPerFile = getSizeZ() * getSizeT();
-        int planeSize = FormatTools.getPlaneSize(this);
-        int bytesPerPlane =
-          (int) ((s.length() - stack.blockSize) / planesPerFile);
+            if (w - x < 0 || h - y < 0 || (w - x) * (h - y) < 0) {
+              ms.littleEndian = !isLittleEndian();
+              s.order(isLittleEndian());
+              s.seek(s.getFilePointer() - 20);
+              x = s.readInt();
+              y = s.readInt();
+              zStart = s.readInt();
+              w = s.readInt();
+              h = s.readInt();
+            }
 
-        int bytesPerPixel = 0;
-        while (bytesPerPlane >= planeSize) {
-          bytesPerPixel++;
-          bytesPerPlane -= planeSize;
-        }
+            ms.sizeX = w - x;
+            ms.sizeY = h - y;
+            ms.sizeZ = s.readInt() - zStart;
+            ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
+            ms.pixelType = FormatTools.INT8;
 
-        if ((bytesPerPixel % 3) == 0) {
-          ms.sizeC *= 3;
-          ms.rgb = true;
-          bytesPerPixel /= 3;
-        }
+            int planesPerFile = getSizeZ() * getSizeT();
+            int planeSize = FormatTools.getPlaneSize(this);
+            int bytesPerPlane =
+              (int) ((s.length() - stack.blockSize) / planesPerFile);
 
-        ms.pixelType = FormatTools.pixelTypeFromBytes(
-          bytesPerPixel, false, bytesPerPixel > 2);
+            int bytesPerPixel = 0;
+            while (bytesPerPlane >= planeSize) {
+              bytesPerPixel++;
+              bytesPerPlane -= planeSize;
+            }
 
-        // full timepoints are padded to have a multiple of 256 bytes
-        int timepoint = FormatTools.getPlaneSize(this) * getSizeZ();
-        stack.planePadding = stack.blockSize - (timepoint % stack.blockSize);
-        if (stack.planePadding == stack.blockSize) {
-          stack.planePadding = 0;
-        }
-      }
-      else {
-        boolean embedded = Location.getMappedFile(EMBEDDED_STREAM) != null;
+            if ((bytesPerPixel % 3) == 0) {
+              ms.sizeC *= 3;
+              ms.rgb = true;
+              bytesPerPixel /= 3;
+            }
 
-        s.seek(0);
-        if (s.read() != 'I') {
-          ms.littleEndian = false;
-          s.order(false);
-        }
+            ms.pixelType = FormatTools.pixelTypeFromBytes(
+              bytesPerPixel, false, bytesPerPixel > 2);
 
-        s.seek(22);
-        ms.sizeX = s.readInt();
-        ms.sizeY = s.readInt();
-        ms.sizeZ = s.readInt();
-        ms.sizeC = embedded ? 1 : 4;
-        ms.imageCount = getSizeZ() * getSizeT();
-        ms.rgb = ms.sizeC > 1;
-        ms.pixelType = FormatTools.UINT8;
-        stack.blockSize = embedded ? (int) s.getFilePointer() : 99;
-        stack.planePadding = 0;
-
-        if (s.length() > ms.sizeX * ms.sizeY * ms.sizeZ * 6) {
-          ms.pixelType = FormatTools.UINT16;
-          ms.sizeC = 3;
-          ms.rgb = true;
-        }
-
-        if (s.length() <
-          (ms.sizeX * ms.sizeY * ms.sizeZ * ms.sizeC))
-        {
-          ms.rgb = false;
-          ms.sizeC = 1;
-          long pixels = ms.sizeX * ms.sizeY * ms.sizeZ;
-          double approximateBytes = (double) s.length() / pixels;
-          int bytes = (int) Math.ceil(approximateBytes);
-          if (bytes == 0) {
-            bytes = 1;
+            // full timepoints are padded to have a multiple of 256 bytes
+            int timepoint = FormatTools.getPlaneSize(this) * getSizeZ();
+            stack.planePadding = stack.blockSize - (timepoint % stack.blockSize);
+            if (stack.planePadding == stack.blockSize) {
+              stack.planePadding = 0;
+            }
           }
-          else if (bytes == 3) {
-            bytes = 2;
+          else {
+            boolean embedded = Location.getMappedFile(EMBEDDED_STREAM) != null;
+
+            s.seek(0);
+            if (s.read() != 'I') {
+              ms.littleEndian = false;
+              s.order(false);
+            }
+
+            s.seek(22);
+            ms.sizeX = s.readInt();
+            ms.sizeY = s.readInt();
+            ms.sizeZ = s.readInt();
+            ms.sizeC = embedded ? 1 : 4;
+            ms.imageCount = getSizeZ() * getSizeT();
+            ms.rgb = ms.sizeC > 1;
+            ms.pixelType = FormatTools.UINT8;
+            stack.blockSize = embedded ? (int) s.getFilePointer() : 99;
+            stack.planePadding = 0;
+
+            if (s.length() > ms.sizeX * ms.sizeY * ms.sizeZ * 6) {
+              ms.pixelType = FormatTools.UINT16;
+              ms.sizeC = 3;
+              ms.rgb = true;
+            }
+
+            if (s.length() <
+              (ms.sizeX * ms.sizeY * ms.sizeZ * ms.sizeC))
+            {
+              ms.rgb = false;
+              ms.sizeC = 1;
+              long pixels = ms.sizeX * ms.sizeY * ms.sizeZ;
+              double approximateBytes = (double) s.length() / pixels;
+              int bytes = (int) Math.ceil(approximateBytes);
+              if (bytes == 0) {
+                bytes = 1;
+              }
+              else if (bytes == 3) {
+                bytes = 2;
+              }
+              ms.pixelType =
+                FormatTools.pixelTypeFromBytes(bytes, false, false);
+              s.seek(70);
+              stack.blockSize = s.readInt();
+              stack.clippingData = true;
+            }
           }
-          ms.pixelType =
-            FormatTools.pixelTypeFromBytes(bytes, false, false);
-          s.seek(70);
-          stack.blockSize = s.readInt();
-          stack.clippingData = true;
-        }
       }
-      s.close();
     }
     setSeries(0);
 
@@ -753,8 +749,8 @@ public class VolocityReader extends FormatReader {
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);
       store.setObjectiveNominalMagnification(stack.magnification, 0, i);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, i);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, i);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, i);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, i);
       store.setObjectiveSettingsID(objective, i);
 
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
@@ -784,6 +780,24 @@ public class VolocityReader extends FormatReader {
       }
     }
     setSeries(0);
+  }
+
+  private String getParentName(Integer parentID) {
+    String parentName = "";
+    while (parentID != 1) {
+      Integer originalID = parentID;
+      for (int row=0; row<sampleTable.length; row++) {
+        if (parentID.intValue() == ((Integer) sampleTable[row][0]).intValue()) {
+          parentName = getString((Integer) sampleTable[row][11]) + "/" + parentName;
+          parentID = (Integer) sampleTable[row][1];
+          break;
+        }
+      }
+      if (parentID.equals(originalID)) {
+        break;
+      }
+    }
+    return parentName;
   }
 
   private String getString(Integer stringID) {

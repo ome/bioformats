@@ -26,6 +26,7 @@ Type "ant -p" for a list of targets.
         <pathelement location="${classes.dir}"/>
       </classpath>
       <classpath refid="test.classpath"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -65,6 +66,9 @@ Type "ant -p" for a list of targets.
         <path refid="test.classpath"/>
         <rsel:not>
           <rsel:name name="netcdf*.jar"/>
+        </rsel:not>
+        <rsel:not>
+          <rsel:name name="cdm*.jar"/>
         </rsel:not>
       </restrict>
     </path>

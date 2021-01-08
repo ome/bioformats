@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.7.3-SNAPSHOT</version>
+    <version>6.6.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -34,7 +34,7 @@
       <version>${ome-common.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openmicroscopy</groupId>
+      <groupId>${ome-model.group}</groupId>
       <artifactId>ome-xml</artifactId>
       <version>${ome-model.version}</version>
     </dependency>
@@ -64,30 +64,21 @@
       <version>${ome-poi.version}</version>
     </dependency>
     <dependency>
-      <groupId>ome</groupId>
-      <artifactId>jxrlib-all</artifactId>
-      <version>${jxrlib.version}</version>
-    </dependency>
-    <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>netcdf</artifactId>
-      <version>4.3.22</version>
+      <artifactId>cdm</artifactId>
+      <version>4.6.13</version>
       <exclusions>
+        <exclusion>
+          <groupId>com.amazonaws</groupId>
+          <artifactId>aws-java-sdk-s3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.beust</groupId>
+          <artifactId>jcommander</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>com.google.protobuf</groupId>
           <artifactId>protobuf-java</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sleepycat</groupId>
-          <artifactId>je</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jna</groupId>
-          <artifactId>jna</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-httpclient</groupId>
-          <artifactId>commons-httpclient</artifactId>
         </exclusion>
         <exclusion>
           <groupId>edu.ucar</groupId>
@@ -102,8 +93,8 @@
           <artifactId>jcip-annotations</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>net.sf.ehcache</groupId>
-          <artifactId>ehcache-core</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpcore</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.jdom</groupId>
@@ -135,12 +126,19 @@
       <version>2.2</version>
     </dependency>
     <dependency>
-      <groupId>com.esotericsoftware.kryo</groupId>
+      <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>
       <version>${kryo.version}</version>
     </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
+
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.0</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>
@@ -163,9 +161,19 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>ch.systems.cisd</groupId>
+      <groupId>cisd</groupId>
       <artifactId>jhdf5</artifactId>
-      <version>14.12.0</version>
+      <version>14.12.6</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.json</groupId>
+    	<artifactId>json</artifactId>
+    	<version>20090211</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>${sqlite.version}</version>
     </dependency>
   </dependencies>
 
@@ -175,6 +183,10 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
@@ -202,6 +214,9 @@
               <additionalClasspathElements>
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
+              <systemPropertyVariables>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
             </configuration>
           </execution>
           <execution>
@@ -220,6 +235,9 @@
               <classpathDependencyExcludes>
                 <classpathDependencyExclude>org.openmicroscopy:ome-mdbtools</classpathDependencyExclude>
               </classpathDependencyExcludes>
+              <systemPropertyVariables>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
             </configuration>
           </execution>
           <execution>
@@ -238,6 +256,9 @@
               <classpathDependencyExcludes>
                 <classpathDependencyExclude>org.openmicroscopy:ome-poi</classpathDependencyExclude>
               </classpathDependencyExcludes>
+              <systemPropertyVariables>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
             </configuration>
           </execution>
           <execution>
@@ -254,8 +275,11 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>edu.ucar:netcdf</classpathDependencyExclude>
+                <classpathDependencyExclude>edu.ucar:cdm</classpathDependencyExclude>
               </classpathDependencyExcludes>
+              <systemPropertyVariables>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
             </configuration>
           </execution>
         </executions>
@@ -367,6 +391,11 @@
       <id>ome</id>
       <name>OME Artifactory</name>
       <url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
+    </repository>
+    <repository>
+      <id>imagej.public</id>
+      <name>ImageJ Maven repositrory</name>
+      <url>https://maven.imagej.net/content/groups/public</url>
     </repository>
   </repositories>
 </project>

@@ -816,6 +816,13 @@ public class MIASReader extends FormatReader {
     String plateAcqId = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqId, 0, 0);
     store.setPlateAcquisitionMaximumFieldCount(new PositiveInteger(1), 0, 0);
+    if (nWells >= wellColumns) {
+      store.setPlateRows(new PositiveInteger(nWells / wellColumns), 0);
+    }
+    else {
+      store.setPlateRows(new PositiveInteger(1), 0);
+    }
+    store.setPlateColumns(new PositiveInteger(wellColumns), 0);
 
     for (int well=0; well<nWells; well++) {
       int wellIndex = wellNumber[well];
@@ -845,12 +852,12 @@ public class MIASReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       String experimentID = MetadataTools.createLSID("Experiment", 0);
       store.setExperimentID(experimentID, 0);
-      store.setExperimentType(getExperimentType("Other"), 0);
+      store.setExperimentType(MetadataTools.getExperimentType("Other"), 0);
       store.setExperimentDescription(experiment.getName(), 0);
 
       // populate SPW metadata
-      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
-      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention("Number"), 0);
+      store.setPlateRowNamingConvention(MetadataTools.getNamingConvention("Letter"), 0);
 
       parseTemplateFile(store);
 
@@ -947,12 +954,15 @@ public class MIASReader extends FormatReader {
   private Color getChannelColorFromFile(String file)
     throws FormatException, IOException
   {
-    RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
-    TiffParser tp = new TiffParser(s);
-    IFD ifd = tp.getFirstIFD();
-    s.close();
+    IFD ifd = null;
+    int[] colorMap = null;
+    try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
+      TiffParser tp = new TiffParser(s);
+      ifd = tp.getFirstIFD();
+      colorMap = tp.getColorMap(ifd);
+    }
+
     if (ifd == null) return null;
-    int[] colorMap = tp.getColorMap(ifd);
     if (colorMap == null) return null;
 
     int nEntries = colorMap.length / 3;

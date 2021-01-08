@@ -85,6 +85,9 @@ public class GatanReader extends FormatReader {
   private static final int ELLIPSE = 6;
   private static final int TEXT = 13;
 
+  public static final String SPLIT_MONTAGE = "gatan.split_montage";
+  public static final boolean SPLIT_MONTAGE_DEFAULT = true;
+
   // -- Fields --
 
   /** Offset to pixel data. */
@@ -108,6 +111,11 @@ public class GatanReader extends FormatReader {
   private int version;
 
   private transient List<ROIShape> shapes;
+
+  private transient boolean foundMontage = false;
+  private transient List<Length> stageX = new ArrayList<Length>();
+  private transient List<Length> stageY = new ArrayList<Length>();
+  private transient List<Length> stageZ = new ArrayList<Length>();
 
   // -- Constructor --
 
@@ -138,7 +146,9 @@ public class GatanReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    long planeOffset = (long) no * FormatTools.getPlaneSize(this);
+    int planeIndex = getSeries() * getImageCount() + no;
+
+    long planeOffset = (long) planeIndex * FormatTools.getPlaneSize(this);
     in.seek(pixelOffset + planeOffset);
     readPlane(in, x, y, w, h, buf);
     return buf;
@@ -162,10 +172,22 @@ public class GatanReader extends FormatReader {
       sampleTime = 0;
       units = null;
       shapes = null;
+      foundMontage = false;
+      stageX.clear();
+      stageY.clear();
+      stageZ.clear();
     }
   }
 
   // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(SPLIT_MONTAGE);
+    return optionsList;
+  }
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
@@ -242,6 +264,17 @@ public class GatanReader extends FormatReader {
     m.indexed = false;
     m.falseColor = false;
 
+    if (foundMontage && splitMontage() && stageX.size() > 1) {
+      if (m.sizeZ > 1) {
+        m.sizeZ /= stageX.size();
+        m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+
+        for (int i=1; i<stageX.size(); i++) {
+          core.add(new CoreMetadata(core.get(0)));
+        }
+      }
+    }
+
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
@@ -274,10 +307,14 @@ public class GatanReader extends FormatReader {
         Length sizeX = FormatTools.getPhysicalSizeX(x, convertUnits(xUnits));
         Length sizeY = FormatTools.getPhysicalSizeY(y, convertUnits(yUnits));
         if (sizeX != null) {
-          store.setPixelsPhysicalSizeX(sizeX, 0);
+          for (int i=0; i<getSeriesCount(); i++) {
+            store.setPixelsPhysicalSizeX(sizeX, i);
+          }
         }
         if (sizeY != null) {
-          store.setPixelsPhysicalSizeY(sizeY, 0);
+          for (int i=0; i<getSeriesCount(); i++) {
+            store.setPixelsPhysicalSizeY(sizeY, i);
+          }
         }
 
         if (index < pixelSizes.size() - 2) {
@@ -285,110 +322,144 @@ public class GatanReader extends FormatReader {
           String zUnits = index + 2 < units.size() ? units.get(index + 2) : "";
           Length sizeZ = FormatTools.getPhysicalSizeZ(z, convertUnits(zUnits));
           if (sizeZ != null) {
-            store.setPixelsPhysicalSizeZ(sizeZ, 0);
+            for (int i=0; i<getSeriesCount(); i++) {
+              store.setPixelsPhysicalSizeZ(sizeZ, i);
+            }
           }
         }
       }
 
       String instrument = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrument, 0);
-      store.setImageInstrumentRef(instrument, 0);
 
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
-      store.setObjectiveCorrection(getCorrection("Unknown"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Unknown"), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Unknown"), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Unknown"), 0, 0);
       store.setObjectiveNominalMagnification(mag, 0, 0);
-
-      store.setObjectiveSettingsID(objective, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detector, 0, 0);
 
-      store.setDetectorSettingsID(detector, 0, 0);
-      store.setDetectorSettingsVoltage(new ElectricPotential(voltage, UNITS.VOLT),
-              0, 0);
-
+      String mode = null;
       if (info == null) info = "";
       String[] scopeInfo = info.split("\\(");
       for (String token : scopeInfo) {
         token = token.trim();
         if (token.startsWith("Mode")) {
           token = token.substring(token.indexOf(' ')).trim();
-          String mode = token.substring(0, token.indexOf(' ')).trim();
+          mode = token.substring(0, token.indexOf(' ')).trim();
           if (mode.equals("TEM")) mode = "Other";
-          store.setChannelAcquisitionMode(getAcquisitionMode(mode), 0, 0);
         }
       }
 
-      store.setPlanePositionX(posX, 0, 0);
-      store.setPlanePositionY(posY, 0, 0);
-      store.setPlanePositionZ(posZ, 0, 0);
+      int digits = String.valueOf(getSeriesCount() + 1).length();
+      for (int i=0; i<getSeriesCount(); i++) {
+        if (foundMontage && getSeriesCount() > 1) {
+          store.setImageName(
+            String.format("Tile #%0" + digits + "d", i + 1), i);
+        }
+        store.setImageInstrumentRef(instrument, i);
+        store.setObjectiveSettingsID(objective, i);
+        store.setDetectorSettingsID(detector, i, 0);
+        store.setDetectorSettingsVoltage(new ElectricPotential(voltage, UNITS.VOLT),
+              i, 0);
 
-      for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), 0, i);
+        if (mode != null) {
+          store.setChannelAcquisitionMode(
+            MetadataTools.getAcquisitionMode(mode), i, 0);
+        }
+
+        if (foundMontage && i < stageX.size()) {
+          store.setPlanePositionX(stageX.get(i), i, 0);
+          store.setPlanePositionY(stageY.get(i), i, 0);
+          store.setPlanePositionZ(stageZ.get(i), i, 0);
+        }
+        else {
+          store.setPlanePositionX(posX, i, 0);
+          store.setPlanePositionY(posY, i, 0);
+          store.setPlanePositionZ(posZ, i, 0);
+        }
+
+        for (int p=0; p<getImageCount(); p++) {
+          store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), i, p);
+        }
       }
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS &&
       shapes.size() > 0)
     {
+      int nextROI = 0;
       for (int i=0; i<shapes.size(); i++) {
-        String roi = MetadataTools.createLSID("ROI", i);
-        store.setROIID(roi, i);
-        store.setImageROIRef(roi, 0, i);
-
-        String shapeID = MetadataTools.createLSID("Shape", i, 0);
         ROIShape shape = shapes.get(i);
+        String shapeID = null;
 
         switch (shape.type) {
           case LINE:
-            store.setLineID(shapeID, i, 0);
-            store.setLineX1(shape.x1, i, 0);
-            store.setLineY1(shape.y1, i, 0);
-            store.setLineX2(shape.x2, i, 0);
-            store.setLineY2(shape.y2, i, 0);
-            store.setLineText(shape.text, i, 0);
-            store.setLineFontSize(shape.fontSize, i, 0);
-            store.setLineStrokeColor(shape.strokeColor, i, 0);
+            shapeID = createROI(store, nextROI);
+            store.setLineID(shapeID, nextROI, 0);
+            store.setLineX1(shape.x1, nextROI, 0);
+            store.setLineY1(shape.y1, nextROI, 0);
+            store.setLineX2(shape.x2, nextROI, 0);
+            store.setLineY2(shape.y2, nextROI, 0);
+            store.setLineText(shape.text, nextROI, 0);
+            store.setLineFontSize(shape.fontSize, nextROI, 0);
+            store.setLineStrokeColor(shape.strokeColor, nextROI, 0);
+            nextROI++;
             break;
           case TEXT:
-            store.setLabelID(shapeID, i, 0);
-            store.setLabelX(shape.x1, i, 0);
-            store.setLabelY(shape.y1, i, 0);
-            store.setLabelText(shape.text, i, 0);
-            store.setLabelFontSize(shape.fontSize, i, 0);
-            store.setLabelStrokeColor(shape.strokeColor, i, 0);
+            shapeID = createROI(store, nextROI);
+            store.setLabelID(shapeID, nextROI, 0);
+            store.setLabelX(shape.x1, nextROI, 0);
+            store.setLabelY(shape.y1, nextROI, 0);
+            store.setLabelText(shape.text, nextROI, 0);
+            store.setLabelFontSize(shape.fontSize, nextROI, 0);
+            store.setLabelStrokeColor(shape.strokeColor, nextROI, 0);
+            nextROI++;
             break;
           case ELLIPSE:
-            store.setEllipseID(shapeID, i, 0);
+            shapeID = createROI(store, nextROI);
+            store.setEllipseID(shapeID, nextROI, 0);
 
             double radiusX = (shape.x2 - shape.x1) / 2;
             double radiusY = (shape.y2 - shape.y1) / 2;
 
-            store.setEllipseX(shape.x1 + radiusX, i, 0);
-            store.setEllipseY(shape.y1 + radiusY, i, 0);
-            store.setEllipseRadiusX(radiusX, i, 0);
-            store.setEllipseRadiusY(radiusY, i, 0);
-            store.setEllipseText(shape.text, i, 0);
-            store.setEllipseFontSize(shape.fontSize, i, 0);
-            store.setEllipseStrokeColor(shape.strokeColor, i, 0);
+            store.setEllipseX(shape.x1 + radiusX, nextROI, 0);
+            store.setEllipseY(shape.y1 + radiusY, nextROI, 0);
+            store.setEllipseRadiusX(radiusX, nextROI, 0);
+            store.setEllipseRadiusY(radiusY, nextROI, 0);
+            store.setEllipseText(shape.text, nextROI, 0);
+            store.setEllipseFontSize(shape.fontSize, nextROI, 0);
+            store.setEllipseStrokeColor(shape.strokeColor, nextROI, 0);
+            nextROI++;
             break;
           case RECTANGLE:
-            store.setRectangleID(shapeID, i, 0);
-            store.setRectangleX(shape.x1, i, 0);
-            store.setRectangleY(shape.y1, i, 0);
-            store.setRectangleWidth(shape.x2 - shape.x1, i, 0);
-            store.setRectangleHeight(shape.y2 - shape.y1, i, 0);
-            store.setRectangleText(shape.text, i, 0);
-            store.setRectangleFontSize(shape.fontSize, i, 0);
-            store.setRectangleStrokeColor(shape.strokeColor, i, 0);
+            shapeID = createROI(store, nextROI);
+            store.setRectangleID(shapeID, nextROI, 0);
+            store.setRectangleX(shape.x1, nextROI, 0);
+            store.setRectangleY(shape.y1, nextROI, 0);
+            store.setRectangleWidth(shape.x2 - shape.x1, nextROI, 0);
+            store.setRectangleHeight(shape.y2 - shape.y1, nextROI, 0);
+            store.setRectangleText(shape.text, nextROI, 0);
+            store.setRectangleFontSize(shape.fontSize, nextROI, 0);
+            store.setRectangleStrokeColor(shape.strokeColor, nextROI, 0);
+            nextROI++;
             break;
           default:
             LOGGER.warn("Unknown ROI type: {}", shape.type);
         }
       }
     }
+  }
+
+  public boolean splitMontage() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+          SPLIT_MONTAGE, SPLIT_MONTAGE_DEFAULT);
+    }
+    return SPLIT_MONTAGE_DEFAULT;
   }
 
   // -- Helper methods --
@@ -408,6 +479,9 @@ public class GatanReader extends FormatReader {
   private void parseTags(int numTags, String parent, String indent)
     throws FormatException, IOException, ParseException
   {
+    if ("Montage".equals(parent)) {
+      foundMontage = true;
+    }
     for (int i=0; i<numTags; i++) {
       if (in.getFilePointer() + 3 >= in.length()) break;
 
@@ -553,15 +627,23 @@ public class GatanReader extends FormatReader {
         parseTags(num, labelString.isEmpty() ? parent : labelString, indent + "  ");
         LOGGER.debug("{}}", indent);
       }
+      else if (type == 23) {
+        in.skipBytes(5);
+        i--;
+      }
       else {
         LOGGER.debug("{}{}: unknown type: {}", new Object[] {indent, i, type});
+        LOGGER.debug("  unknown type @ fp = {}", in.getFilePointer());
       }
 
       NumberFormat f = NumberFormat.getInstance(Locale.ENGLISH);
       if (value != null) {
         addGlobalMeta(labelString, value);
 
-        if (parent != null && parent.equals("AnnotationGroupList")) {
+        if (parent != null &&
+          (parent.equals("AnnotationGroupList") ||
+          parent.equals("DocumentObjectList")))
+        {
           // ROI found
           ROIShape shape = new ROIShape();
           if (labelString.equals("AnnotationType")) {
@@ -594,6 +676,22 @@ public class GatanReader extends FormatReader {
           if (labelString.equals("FontSize")) {
             ROIShape shape = shapes.get(shapes.size() - 1);
             shape.fontSize = FormatTools.getFontSize(DataTools.parseDouble(value).intValue());
+          }
+        }
+        else if (foundMontage &&
+          parent != null && parent.equals("Stage Position"))
+        {
+          if (labelString.equals("Stage X")) {
+            stageX.add(
+              new Length(DataTools.parseDouble(value), UNITS.REFERENCEFRAME));
+          }
+          else if (labelString.equals("Stage Y")) {
+            stageY.add(
+              new Length(DataTools.parseDouble(value), UNITS.REFERENCEFRAME));
+          }
+          else if (labelString.equals("Stage Z")) {
+            stageZ.add(
+              new Length(DataTools.parseDouble(value), UNITS.REFERENCEFRAME));
           }
         }
 
@@ -702,7 +800,10 @@ public class GatanReader extends FormatReader {
         return in.readByte();
       case UNKNOWN:
       case UNKNOWN2:
-        return in.readLong();
+        if (adjustEndianness) in.order(!in.isLittleEndian());
+        long l = in.readLong();
+        if (adjustEndianness) in.order(!in.isLittleEndian());
+        return l;
     }
     return 0;
   }
@@ -722,6 +823,9 @@ public class GatanReader extends FormatReader {
       case UBYTE:
       case CHAR:
         return 1;
+      case UNKNOWN:
+      case UNKNOWN2:
+        return 8;
     }
     return 0;
   }
@@ -742,6 +846,20 @@ public class GatanReader extends FormatReader {
       }
     }
     return UNITS.MICROMETER;
+  }
+
+  /**
+   * Create an empty ROI and link it to the Image.
+   * @param store MetadataStore in which to create the ROI
+   * @param index ROI index
+   * @return corresponding Shape ID to be used with the new ROI
+   */
+  private String createROI(MetadataStore store, int index) {
+    String roi = MetadataTools.createLSID("ROI", index);
+    store.setROIID(roi, index);
+    store.setImageROIRef(roi, 0, index);
+
+    return MetadataTools.createLSID("Shape", index, 0);
   }
 
   class ROIShape {

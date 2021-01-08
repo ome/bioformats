@@ -42,7 +42,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * Interface for all biological file format readers.
  */
-public interface IFormatReader extends IFormatHandler {
+public interface IFormatReader extends IFormatHandler, IPyramidHandler {
 
   // -- Constants --
 
@@ -64,10 +64,22 @@ public interface IFormatReader extends IFormatHandler {
    */
   boolean isThisType(String name, boolean open);
 
-  /** Checks if the given block is a valid header for this file format. */
+  /**
+   * Checks if the given block is a valid header for this file format.
+   * @see #isThisType(RandomAccessInputStream)
+   */
   boolean isThisType(byte[] block);
 
-  /** Checks if the given stream is a valid stream for this file format. */
+  /**
+   * Checks if the given stream is a valid stream for this file format.
+   * The number of bytes read is format-dependent.
+   *
+   * @param stream A RandomAccessInputStream representing the file to check.
+   *    The first byte in the stream is assumed to be the first byte
+   *    in the file.
+   * @return true if the file represented by the stream can be read by this
+   *    reader; false otherwise.
+   */
   boolean isThisType(RandomAccessInputStream stream) throws IOException;
 
   /** Determines the number of image planes in the current file. */
@@ -244,7 +256,7 @@ public interface IFormatReader extends IFormatHandler {
    * pre-allocated byte array of
    * (sizeX * sizeY * bytesPerPixel * RGB channel count).
    *
-   * @param no the image index within the file.
+   * @param no the plane index within the current series.
    * @param buf a pre-allocated buffer.
    * @return the pre-allocated buffer <code>buf</code> for convenience.
    * @throws FormatException if there was a problem parsing the metadata of the
@@ -258,7 +270,7 @@ public interface IFormatReader extends IFormatHandler {
    * Obtains a sub-image of the specified image plane
    * into a pre-allocated byte array.
    *
-   * @param no the image index within the file.
+   * @param no the plane index within the current series.
    * @param buf a pre-allocated buffer.
    * @param x X coordinate of the upper-left corner of the sub-image
    * @param y Y coordinate of the upper-left corner of the sub-image
@@ -326,38 +338,89 @@ public interface IFormatReader extends IFormatHandler {
    */
   boolean isOriginalMetadataPopulated();
 
-  /** Specifies whether or not to force grouping in multi-file formats. */
+  /**
+   * Specifies whether or not to force grouping in multi-file formats.
+   *
+   * @see #fileGroupOption(String)
+   * @see #isGroupFiles()
+   */
   void setGroupFiles(boolean group);
 
-  /** Returns true if we should group files in multi-file formats.*/
+  /**
+   * Returns true if we should group files in multi-file formats.
+   *
+   * @see #setGroupFiles(boolean)
+   * @see #fileGroupOption(String)
+   */
   boolean isGroupFiles();
 
   /** Returns true if this format's metadata is completely parsed. */
   boolean isMetadataComplete();
 
   /**
-   * Returns an int indicating that we cannot, must, or might group the files
-   * in a given dataset.
+   * Returns an indication of whether the files in a multi-file dataset can
+   * be handled individually.  This method is only useful for formats and
+   * datasets which contain multiple files.
+   *
+   * @param id a file in the multi-file dataset
+   * @return an int indicating that we cannot, must, or might group the files.
+   *    A return value of {@link FormatTools#MUST_GROUP} indicates that the
+   *    files cannot be handled separately; the reader will always detect and
+   *    read all files in the dataset.  {@link FormatTools#CAN_GROUP} indicates
+   *    that the files may be handled separately, but file grouping must then
+   *    be disabled via {@link #setGroupFiles(boolean)}.
+   *    {@link FormatTools#CANNOT_GROUP} indicates that the files must be handled
+   *    separately; the reader will not attempt to read all files in the dataset
+   *    (this is rare).
+   *
+   * @see FormatTools#MUST_GROUP
+   * @see FormatTools#CAN_GROUP
+   * @see FormatTools#CANNOT_GROUP
    */
   int fileGroupOption(String id) throws FormatException, IOException;
 
-  /** Returns an array of filenames needed to open this dataset. */
+  /**
+   * Returns an array of filenames needed to open this dataset.
+   * The first element in the array is expected to be the path passed to
+   * {@link #setId(String)}.  The remaining elements are expected to be in a
+   * consistent order; if a directory listing is necessary to build the list
+   * then it should be sorted first.
+   */
   String[] getUsedFiles();
 
   /**
    * Returns an array of filenames needed to open this dataset.
    * If the 'noPixels' flag is set, then only files that do not contain
    * pixel data will be returned.
+   *
+   * The first element in the array is expected to be the path passed to
+   * {@link #setId(String)}, if appropriate based upon 'noPixels'.
+   * The remaining elements are expected to be in a consistent order;
+   * if a directory listing is necessary to build the list then it should
+   * be sorted first.
    */
   String[] getUsedFiles(boolean noPixels);
 
-  /** Returns an array of filenames needed to open the current series. */
+  /**
+   * Returns an array of filenames needed to open the current series.
+   *
+   * The first element in the array is expected to be the path passed to
+   * {@link #setId(String)}.  The remaining elements are expected to be in a
+   * consistent order; if a directory listing is necessary to build the list
+   * then it should be sorted first.
+   */
   String[] getSeriesUsedFiles();
 
   /**
    * Returns an array of filenames needed to open the current series.
    * If the 'noPixels' flag is set, then only files that do not contain
    * pixel data will be returned.
+   *
+   * The first element in the array is expected to be the path passed to
+   * {@link #setId(String)}, if appropriate based upon 'noPixels'.
+   * The remaining elements are expected to be in a consistent order;
+   * if a directory listing is necessary to build the list then it should
+   * be sorted first.
    */
   String[] getSeriesUsedFiles(boolean noPixels);
 
@@ -445,7 +508,10 @@ public interface IFormatReader extends IFormatHandler {
    */
   Hashtable<String, Object> getSeriesMetadata();
 
-  /** Obtains the core metadata values for the current file. */
+  /** Obtains the core metadata values for the current file.
+   * @deprecated Reader internals should not be accessed by reader users
+   */
+  @Deprecated
   List<CoreMetadata> getCoreMetadataList();
 
   /**
@@ -488,7 +554,10 @@ public interface IFormatReader extends IFormatHandler {
    */
   IFormatReader[] getUnderlyingReaders();
 
-  /** Returns true if this is a single-file format. */
+  /**
+   * Returns true if the named file is expected to be the only
+   * file in the dataset.  For single-file formats, always returns true.
+   */
   boolean isSingleFile(String id) throws FormatException, IOException;
 
   /**
@@ -524,13 +593,22 @@ public interface IFormatReader extends IFormatHandler {
 
   // -- Sub-resolution API methods --
 
-  /** Returns the first core index corresponding to the specified series. */
+  /** Returns the first core index corresponding to the specified series.
+   * @deprecated This method is no longer required for sub-resolution support.
+   */
+  @Deprecated
   int seriesToCoreIndex(int series);
 
-  /** Returns the series corresponding to the specified core index. */
+  /** Returns the series corresponding to the specified core index.
+   * @deprecated This method is no longer required for sub-resolution support.
+   */
+  @Deprecated
   int coreIndexToSeries(int index);
 
-  /** Return the index into CoreMetadata of the current resolution/series. */
+  /** Return the index into CoreMetadata of the current resolution/series.
+   * @deprecated This method is no longer required for sub-resolution support.
+   */
+  @Deprecated
   int getCoreIndex();
 
   /**
@@ -538,30 +616,11 @@ public interface IFormatReader extends IFormatHandler {
    *
    * Equivalent to setSeries, but with flattened resolutions always
    * set to false.
+   *
+   * @deprecated This method is no longer required for sub-resolution support.
    */
+  @Deprecated
   void setCoreIndex(int no);
-
-  /**
-   * Return the number of resolutions for the current series.
-   *
-   * Resolutions are stored in descending order, so the largest resolution is
-   * first and the smallest resolution is last.
-   */
-  int getResolutionCount();
-
-  /**
-   * Set the resolution level.
-   *
-   * @see #getResolutionCount()
-   */
-  void setResolution(int resolution);
-
-  /**
-   * Get the current resolution level.
-   *
-   * @see #getResolutionCount()
-   */
-  int getResolution();
 
   /** Return whether or not resolution flattening is enabled. */
   boolean hasFlattenedResolutions();

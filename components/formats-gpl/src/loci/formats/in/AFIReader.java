@@ -27,7 +27,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -42,6 +45,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -58,11 +62,11 @@ public class AFIReader extends FormatReader {
 
   // -- Constants --
 
-  private static final int EXTRA_IMAGES = 3;
+  private static final int EXTRA_IMAGES = 2;
 
   // -- Fields --
 
-  private ArrayList<String> pixels = new ArrayList<String>();
+  private ArrayList<String> pixels = new ArrayList<>();
   private ChannelSeparator[] reader;
 
   // -- Constructor --
@@ -94,12 +98,14 @@ public class AFIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   @Override
   public int getOptimalTileWidth() {
+    reader[0].setCoreIndex(getCoreIndex());
     return reader[0].getOptimalTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
+    reader[0].setCoreIndex(getCoreIndex());
     return reader[0].getOptimalTileHeight();
   }
 
@@ -140,7 +146,41 @@ public class AFIReader extends FormatReader {
     int index = getIndex(coords[0], 0, coords[2]);
 
     reader[channel].setCoreIndex(getCoreIndex());
-    return reader[channel].openBytes(index, buf, x, y, w, h);
+
+    int srcBytes = FormatTools.getBytesPerPixel(reader[channel].getPixelType());
+    int destBytes = FormatTools.getBytesPerPixel(getPixelType());
+
+    int diff = destBytes - srcBytes;
+
+    if (diff == 0) {
+      return reader[channel].openBytes(index, buf, x, y, w, h);
+    }
+    else if (diff > 0) {
+      Arrays.fill(buf, (byte) 0);
+      byte[] tmp = reader[channel].openBytes(index, x, y, w, h);
+      for (int i=0, dest=0; i<tmp.length; i+=srcBytes, dest+=destBytes) {
+        if (isLittleEndian()) {
+          for (int j=0; j<srcBytes; j++) {
+            buf[dest + j] = tmp[i + j];
+          }
+        }
+        else {
+          for (int j=0; j<srcBytes; j++) {
+            buf[dest + destBytes - j - 1] = tmp[i + srcBytes - j - 1];
+          }
+        }
+      }
+      Object s = DataTools.makeDataArray(
+        buf, destBytes, FormatTools.isFloatingPoint(getPixelType()), isLittleEndian());
+      long max = (long) Math.pow(2, destBytes * 8) - 1;
+      for (int i=0; i<Array.getLength(s); i++) {
+        double scale = Array.getDouble(s, i) / 255;
+        DataTools.unpackBytes(
+          (long) (scale * max), buf, i * destBytes, destBytes, isLittleEndian());
+      }
+      return buf;
+    }
+    throw new FormatException("Downsampling images is not supported");
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -219,6 +259,11 @@ public class AFIReader extends FormatReader {
       reader[i] = new ChannelSeparator(new SVSReader());
       reader[i].setFlattenedResolutions(hasFlattenedResolutions());
       reader[i].setId(pixels.get(i));
+
+      ArrayList<String> dyeNames = ((SVSReader) reader[i].getReader()).getDyeNames();
+      if (dyeNames.size() > 0) {
+        channelNames[i] = dyeNames.get(0);
+      }
     }
 
     core = reader[0].getCoreMetadataList();
@@ -231,17 +276,40 @@ public class AFIReader extends FormatReader {
       if (i == 0) {
         c.resolutionCount = core.size() - EXTRA_IMAGES;
       }
+      else {
+        c.pixelType = core.get(0).pixelType;
+      }
     }
+
+    for (int s=0; s<core.size(); s++) {
+      setCoreIndex(s);
+      core.get(s).seriesMetadata = new Hashtable<String, Object>();
+      for (int i=0; i<reader.length; i++) {
+        reader[i].setCoreIndex(s);
+        Hashtable<String, Object> m = reader[i].getSeriesMetadata();
+        for (String key : m.keySet()) {
+          addSeriesMetaList(key, m.get(key));
+        }
+      }
+    }
+    setCoreIndex(0);
 
     MetadataStore store = makeFilterMetadata();
     boolean minimalMetadata =
       getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
     MetadataTools.populatePixels(store, this, !minimalMetadata);
 
-    String fileID = currentId.substring(
-      currentId.lastIndexOf(File.separator) + 1, currentId.lastIndexOf("."));
-    for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(fileID + " - image #" + (i + 1), i);
+    String fileID = currentId.substring(currentId.lastIndexOf(File.separator) + 1);
+
+    if (hasFlattenedResolutions()) {
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setImageName(fileID + " - image #" + (i + 1), i);
+      }
+    }
+    else {
+      store.setImageName("", 0);
+      store.setImageName("label image", 1);
+      store.setImageName("macro image", 2);
     }
 
     if (!minimalMetadata) {
@@ -251,6 +319,7 @@ public class AFIReader extends FormatReader {
       Timestamp[] datestamp = new Timestamp[pixels.size()];
       Length[] physicalSizes = null;
       double magnification = Double.NaN;
+      Color[] displayColor = new Color[pixels.size()];
 
       for (int c=0; c<pixels.size(); c++) {
         SVSReader baseReader = (SVSReader) reader[c].getReader();
@@ -259,6 +328,7 @@ public class AFIReader extends FormatReader {
         exposure[c] = baseReader.getExposureTime();
         datestamp[c] = baseReader.getDatestamp();
         physicalSizes = baseReader.getPhysicalSizes();
+        displayColor[c] = baseReader.getDisplayColor();
 
         if (c == 0) {
           magnification = baseReader.getMagnification();
@@ -296,8 +366,13 @@ public class AFIReader extends FormatReader {
           if (excitation[c] != null) {
             store.setChannelExcitationWavelength(excitation[c], i, c);
           }
+          if (displayColor[c] != null) {
+            store.setChannelColor(displayColor[c], i, c);
+          }
 
-          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.SECOND), i, c);
+          if (exposure[c] != null) {
+            store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.SECOND), i, c);
+          }
         }
       }
     }

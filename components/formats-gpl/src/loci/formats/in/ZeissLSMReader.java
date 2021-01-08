@@ -197,6 +197,8 @@ public class ZeissLSMReader extends FormatReader {
     new HashMap<Integer, String>();
   private Color[] channelColor;
 
+  private transient boolean isSIM = false;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
@@ -280,6 +282,7 @@ public class ZeissLSMReader extends FormatReader {
       acquiredDate.clear();
       channelNames = null;
       channelColor = null;
+      isSIM = false;
     }
   }
 
@@ -290,7 +293,7 @@ public class ZeissLSMReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     TiffParser parser = new TiffParser(stream);
     if (parser.isValidHeader()) {
-      return true;
+      return parser.getIFDOffsets().length > 1;
     }
     stream.seek(4);
     if (stream.readShort() == 0x5374) {
@@ -361,11 +364,24 @@ public class ZeissLSMReader extends FormatReader {
     return s;
   }
 
+  /* @see loci.formats.IFormatReader#setCoreIndex(int) */
+  @Override
+  public void setCoreIndex(int coreIndex) {
+    if (coreIndex != getCoreIndex()) {
+      prevBuf = null;
+      prevPlane = -1;
+      prevRegion = null;
+    }
+    super.setCoreIndex(coreIndex);
+  }
+
   /* @see loci.formats.IFormatReader#setSeries(int) */
   @Override
   public void setSeries(int series) {
     if (series != getSeries()) {
       prevBuf = null;
+      prevPlane = -1;
+      prevRegion = null;
     }
     super.setSeries(series);
   }
@@ -471,9 +487,7 @@ public class ZeissLSMReader extends FormatReader {
 
     int realSeries = 0;
     for (int i=0; i<lsmFilenames.length; i++) {
-      RandomAccessInputStream stream = null;
-      try {
-        stream = new RandomAccessInputStream(lsmFilenames[i], 16);
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(lsmFilenames[i], 16)){
         int count = seriesCounts.get(lsmFilenames[i]);
         TiffParser tp = new TiffParser(stream);
         Boolean littleEndian = tp.checkHeader();
@@ -507,8 +521,6 @@ public class ZeissLSMReader extends FormatReader {
         }
       } catch (IOException e) {
           throw e;
-      } finally {
-        if (stream != null) stream.close();
       }
     }
 
@@ -1082,6 +1094,11 @@ public class ZeissLSMReader extends FormatReader {
         }
       }
 
+      if (applicationTagOffset != 0) {
+        in.seek(applicationTagOffset);
+        parseApplicationTags();
+      }
+
       if (channelColorsOffset != 0) {
         in.seek(channelColorsOffset + 12);
         int colorsOffset = in.readInt();
@@ -1108,7 +1125,7 @@ public class ZeissLSMReader extends FormatReader {
             // previous channel (necessary for SIM data)
             // otherwise set the color to white, as this will display better
             if (red == 0 && green == 0 & blue == 0) {
-              if (i > 0) {
+              if (i > 0 && isSIM) {
                 red = channelColor[i - 1].getRed();
                 green = channelColor[i - 1].getGreen();
                 blue = channelColor[i - 1].getBlue();
@@ -1294,11 +1311,6 @@ public class ZeissLSMReader extends FormatReader {
           populateMetadataStore(block, store, series);
         }
       }
-
-      if (applicationTagOffset != 0) {
-        in.seek(applicationTagOffset);
-        parseApplicationTags();
-      }
     }
 
     imageNames.add(imageName);
@@ -1400,9 +1412,9 @@ public class ZeissLSMReader extends FormatReader {
         binning = recording.binning;
       }
       store.setObjectiveCorrection(
-        getCorrection(recording.correction), instrument, 0);
+        MetadataTools.getCorrection(recording.correction), instrument, 0);
       store.setObjectiveImmersion(
-        getImmersion(recording.immersion), instrument, 0);
+        MetadataTools.getImmersion(recording.immersion), instrument, 0);
       if (recording.magnification != null) {
         store.setObjectiveNominalMagnification(
           recording.magnification, instrument, 0);
@@ -1414,11 +1426,11 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof Laser) {
       Laser laser = (Laser) block;
       if (laser.medium != null) {
-        store.setLaserLaserMedium(getLaserMedium(laser.medium),
+        store.setLaserLaserMedium(MetadataTools.getLaserMedium(laser.medium),
           instrument, nextLaser);
       }
       if (laser.type != null) {
-        store.setLaserType(getLaserType(laser.type), instrument, nextLaser);
+        store.setLaserType(MetadataTools.getLaserType(laser.type), instrument, nextLaser);
       }
       if (laser.model != null) {
         store.setLaserModel(laser.model, instrument, nextLaser);
@@ -1459,7 +1471,7 @@ public class ZeissLSMReader extends FormatReader {
           if (type.equals("BP")) type = "BandPass";
           else if (type.equals("LP")) type = "LongPass";
 
-          store.setFilterType(getFilterType(type), instrument, nextFilter);
+          store.setFilterType(MetadataTools.getFilterType(type), instrument, nextFilter);
 
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
@@ -1502,7 +1514,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.gain != null) {
         store.setDetectorGain(channel.gain, instrument, nextDetector);
       }
-      store.setDetectorType(getDetectorType("PMT"), instrument, nextDetector);
+      store.setDetectorType(MetadataTools.getDetectorType("PMT"), instrument, nextDetector);
       store.setDetectorZoom(zoom, instrument, nextDetector);
       nextDetectChannel++;
       nextDetector++;
@@ -2253,6 +2265,10 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       addGlobalMeta(entryName, data);
+
+      if (entryName.startsWith("SimOut") || entryName.startsWith("SimPar")) {
+        isSIM = true;
+      }
 
       if (in.getFilePointer() == fp + entrySize) {
         continue;

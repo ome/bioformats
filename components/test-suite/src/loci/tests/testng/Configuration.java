@@ -42,6 +42,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
 
@@ -69,6 +70,7 @@ public class Configuration {
   private static final String HAS_VALID_XML = "hasValidXML";
   private static final String READER = "reader";
   private static final String SERIES = " series_";
+  private static final String RESOLUTION = "resolution_";
 
   private static final String SIZE_X = "SizeX";
   private static final String SIZE_Y = "SizeY";
@@ -108,6 +110,7 @@ public class Configuration {
   private static final String NAME = "Name";
   private static final String DESCRIPTION = "Description";
   private static final String SERIES_COUNT = "series_count";
+  private static final String RESOLUTION_COUNT = "resolution_count";
   private static final String CHANNEL_COUNT = "channel_count";
   private static final String DATE = "Date";
   private static final String DELTA_T = "DeltaT_";
@@ -117,7 +120,17 @@ public class Configuration {
   private static final String Y_POSITION_UNIT = "PositionYUnit_";
   private static final String Z_POSITION = "PositionZ_";
   private static final String Z_POSITION_UNIT = "PositionZUnit_";
-  
+
+  private static final String PLATE = "Plate";
+  private static final String PLATE_ACQUISITION = "PlateAcquisition";
+  private static final String WELL_ROW = "WellRow";
+  private static final String WELL_COLUMN = "WellColumn";
+  private static final String WELL_SAMPLE = "WellSample";
+  private static final String WELL_SAMPLE_POSITION_X = "WellSamplePositionX";
+  private static final String WELL_SAMPLE_POSITION_X_UNIT = "WellSamplePositionXUnit";
+  private static final String WELL_SAMPLE_POSITION_Y = "WellSamplePositionY";
+  private static final String WELL_SAMPLE_POSITION_Y_UNIT = "WellSamplePositionYUnit";
+
   // -- Fields --
 
   private String dataFile;
@@ -127,18 +140,23 @@ public class Configuration {
   private IniTable currentTable;
   private IniTable globalTable;
 
+  // flattened series count for this dataset
+  private Integer flattenedCount = null;
+
   // -- Constructors --
 
   public Configuration(String dataFile, String configFile) throws IOException {
     this.dataFile = dataFile;
     this.configFile = configFile;
 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(
-      new FileInputStream(this.configFile), Constants.ENCODING));
-    IniParser parser = new IniParser();
-    parser.setCommentDelimiter(null);
-    ini = parser.parseINI(reader);
-    pruneINI();
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+      new FileInputStream(this.configFile), Constants.ENCODING)))
+    {
+      IniParser parser = new IniParser();
+      parser.setCommentDelimiter(null);
+      ini = parser.parseINI(reader);
+      pruneINI();
+    }
   }
 
   public Configuration(IFormatReader reader, String configFile) {
@@ -181,7 +199,23 @@ public class Configuration {
   }
 
   public int getSeriesCount() {
-    return Integer.parseInt(globalTable.get(SERIES_COUNT));
+    return getSeriesCount(true);
+  }
+
+  public int getSeriesCount(boolean flattened) {
+    int tableCount = Integer.parseInt(globalTable.get(SERIES_COUNT));
+    if (flattened) {
+      if (flattenedCount == null) {
+        int count = 0;
+        for (int i=0; i<tableCount; i++) {
+          setSeries(i, false);
+          count += getResolutionCount();
+        }
+        flattenedCount = count;
+      }
+      return flattenedCount;
+    }
+    return tableCount;
   }
 
   // -- Per-series metadata --
@@ -259,39 +293,15 @@ public class Configuration {
   }
 
   public Length getPhysicalSizeX() {
-    String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
-    String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNIT);
-    try {
-      UnitsLength xUnits = sizeXUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeXUnits);
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), xUnits); 
-    }
-    catch (NumberFormatException e) { }
-    catch (EnumerationException e) { }
-    return null;
+    return getPhysicalSize(PHYSICAL_SIZE_X, PHYSICAL_SIZE_X_UNIT);
   }
 
   public Length getPhysicalSizeY() {
-    String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
-    String sizeYUnits = currentTable.get(PHYSICAL_SIZE_Y_UNIT);
-    try {
-      UnitsLength yUnits = sizeYUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeYUnits);
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), yUnits);
-    }
-    catch (NumberFormatException e) { }
-    catch (EnumerationException e) { }
-    return null;
+    return getPhysicalSize(PHYSICAL_SIZE_Y, PHYSICAL_SIZE_Y_UNIT);
   }
 
   public Length getPhysicalSizeZ() {
-    String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
-    String sizeZUnits = currentTable.get(PHYSICAL_SIZE_Z_UNIT);
-    try {
-      UnitsLength zUnits = sizeZUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeZUnits);
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), zUnits);
-    }
-    catch (NumberFormatException e) { }
-    catch (EnumerationException e) { }
-    return null;
+    return getPhysicalSize(PHYSICAL_SIZE_Z, PHYSICAL_SIZE_Z_UNIT);
   }
 
   public Time getTimeIncrement() {
@@ -406,9 +416,87 @@ public class Configuration {
     return currentTable.get(DATE);
   }
 
-  public void setSeries(int series) {
+  public int getResolutionCount() {
+    return getInt(RESOLUTION_COUNT, 1);
+  }
+
+  public int getPlate() {
+    return getInt(PLATE, -1);
+  }
+
+  public int getPlateAcquisition() {
+    return getInt(PLATE_ACQUISITION, -1);
+  }
+
+  public int getWellRow() {
+    return getInt(WELL_ROW, -1);
+  }
+
+  public int getWellColumn() {
+    return getInt(WELL_COLUMN, -1);
+  }
+
+  public int getWellSample() {
+    return getInt(WELL_SAMPLE, -1);
+  }
+
+  public Length getWellSamplePositionX() {
+    return getPhysicalSize(WELL_SAMPLE_POSITION_X, WELL_SAMPLE_POSITION_X_UNIT);
+  }
+
+  public Length getWellSamplePositionY() {
+    return getPhysicalSize(WELL_SAMPLE_POSITION_Y, WELL_SAMPLE_POSITION_Y_UNIT);
+  }
+
+  public void setSeries(int series) throws IndexOutOfBoundsException {
+    setSeries(series, true);
+  }
+
+  public void setSeries(int series, boolean flattened) throws IndexOutOfBoundsException {
+    int s = series, r = 0;
+    int index = series;
+
+    if (flattened && getSeriesCount(true) != getSeriesCount(false)) {
+      index = 0;
+      s = 0;
+      while (index < series) {
+        setSeries(s, false);
+        int resolutionCount = getResolutionCount();
+        if (resolutionCount + index <= series) {
+          index += resolutionCount;
+          s++;
+        }
+        else {
+          r = series - index;
+          index += r;
+        }
+      }
+    }
+
+    try {
+      setResolution(s, r);
+    }
+    catch (IndexOutOfBoundsException e) {
+      Location file = new Location(dataFile);
+      String tableName = file.getName() + SERIES + index;
+      currentTable = ini.getTable(tableName);
+      if (currentTable == null) {
+        throw new IndexOutOfBoundsException("Invalid table name: " + tableName);
+      }
+    }
+  }
+
+  public void setResolution(int series, int resolution) throws IndexOutOfBoundsException {
     Location file = new Location(dataFile);
-    currentTable = ini.getTable(file.getName() + SERIES + series);
+    String tableName = file.getName() + SERIES + series + " " + RESOLUTION + resolution;
+    currentTable = ini.getTable(tableName);
+    if (currentTable == null && resolution == 0) {
+      // don't require the resolution key for single-resolution series
+      currentTable = ini.getTable(file.getName() + SERIES + series);
+    }
+    if (currentTable == null) {
+      throw new IndexOutOfBoundsException("Invalid table name: " + tableName);
+    }
   }
 
   public void saveToFile() throws IOException {
@@ -446,6 +534,17 @@ public class Configuration {
     putTableName(globalTable, reader, " global");
 
     int seriesCount = reader.getSeriesCount();
+    IFormatReader unflattenedReader = reader;
+    if (seriesCount > 1) {
+      unflattenedReader = new ImageReader();
+      unflattenedReader.setFlattenedResolutions(false);
+      unflattenedReader.setMetadataOptions(new DynamicMetadataOptions());
+      try {
+        unflattenedReader.setId(reader.getCurrentFile());
+      }
+      catch (FormatException | IOException e) { }
+      seriesCount = unflattenedReader.getSeriesCount();
+    }
 
     globalTable.put(SERIES_COUNT, String.valueOf(seriesCount));
 
@@ -465,12 +564,8 @@ public class Configuration {
     globalTable.put(TEST, "true");
     globalTable.put(MEMORY, String.valueOf(TestTools.getUsedMemory()));
 
-    long planeSize = (long) FormatTools.getPlaneSize(reader) * 3;
-    boolean canOpenImages =
-      planeSize > 0 && TestTools.canFitInMemory(planeSize);
-
     long t0 = System.currentTimeMillis();
-    if (canOpenImages) {
+    if (canOpenImages(reader)) {
       try {
         reader.openBytes(0);
       }
@@ -484,173 +579,200 @@ public class Configuration {
     ini.add(globalTable);
 
     for (int series=0; series<seriesCount; series++) {
-      reader.setSeries(series);
+      unflattenedReader.setSeries(series);
+      int resolutionCount = unflattenedReader.getResolutionCount();
+      for (int resolution = 0; resolution < resolutionCount; resolution++) {
+        unflattenedReader.setResolution(resolution);
+        int index = unflattenedReader.getCoreIndex();
+        reader.setCoreIndex(index);
 
-      IniTable seriesTable = new IniTable();
-      putTableName(seriesTable, reader, SERIES + series);
+        IniTable seriesTable = new IniTable();
+        putTableName(seriesTable, unflattenedReader, SERIES + series + " " + RESOLUTION + resolution);
 
-      seriesTable.put(SIZE_X, String.valueOf(reader.getSizeX()));
-      seriesTable.put(SIZE_Y, String.valueOf(reader.getSizeY()));
-      seriesTable.put(SIZE_Z, String.valueOf(reader.getSizeZ()));
-      seriesTable.put(SIZE_C, String.valueOf(reader.getSizeC()));
-      seriesTable.put(SIZE_T, String.valueOf(reader.getSizeT()));
-      seriesTable.put(DIMENSION_ORDER, reader.getDimensionOrder());
-      seriesTable.put(IS_INTERLEAVED, String.valueOf(reader.isInterleaved()));
-      seriesTable.put(IS_INDEXED, String.valueOf(reader.isIndexed()));
-      seriesTable.put(IS_FALSE_COLOR, String.valueOf(reader.isFalseColor()));
-      seriesTable.put(IS_RGB, String.valueOf(reader.isRGB()));
-      seriesTable.put(THUMB_SIZE_X, String.valueOf(reader.getThumbSizeX()));
-      seriesTable.put(THUMB_SIZE_Y, String.valueOf(reader.getThumbSizeY()));
-      seriesTable.put(PIXEL_TYPE,
-        FormatTools.getPixelTypeString(reader.getPixelType()));
-      seriesTable.put(IS_LITTLE_ENDIAN,
-        String.valueOf(reader.isLittleEndian()));
-
-      seriesTable.put(CHANNEL_COUNT,
-        String.valueOf(retrieve.getChannelCount(series)));
-
-      try {
-        planeSize = DataTools.safeMultiply32(reader.getSizeX(),
-          reader.getSizeY(), reader.getEffectiveSizeC(),
-          FormatTools.getBytesPerPixel(reader.getPixelType()));
-        canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
-      }
-      catch (IllegalArgumentException e) {
-        canOpenImages = false;
-      }
-
-      if (canOpenImages) {
-        try {
-          byte[] plane = reader.openBytes(0);
-          seriesTable.put(MD5, TestTools.md5(plane));
+        if (resolution == 0) {
+          seriesTable.put(RESOLUTION_COUNT, String.valueOf(resolutionCount));
         }
-        catch (FormatException e) {
+        seriesTable.put(SIZE_X, String.valueOf(reader.getSizeX()));
+        seriesTable.put(SIZE_Y, String.valueOf(reader.getSizeY()));
+        seriesTable.put(SIZE_Z, String.valueOf(reader.getSizeZ()));
+        seriesTable.put(SIZE_C, String.valueOf(reader.getSizeC()));
+        seriesTable.put(SIZE_T, String.valueOf(reader.getSizeT()));
+        seriesTable.put(DIMENSION_ORDER, reader.getDimensionOrder());
+        seriesTable.put(IS_INTERLEAVED, String.valueOf(reader.isInterleaved()));
+        seriesTable.put(IS_INDEXED, String.valueOf(reader.isIndexed()));
+        seriesTable.put(IS_FALSE_COLOR, String.valueOf(reader.isFalseColor()));
+        seriesTable.put(IS_RGB, String.valueOf(reader.isRGB()));
+        seriesTable.put(THUMB_SIZE_X, String.valueOf(reader.getThumbSizeX()));
+        seriesTable.put(THUMB_SIZE_Y, String.valueOf(reader.getThumbSizeY()));
+        seriesTable.put(PIXEL_TYPE,
+          FormatTools.getPixelTypeString(reader.getPixelType()));
+        seriesTable.put(IS_LITTLE_ENDIAN,
+          String.valueOf(reader.isLittleEndian()));
+
+        seriesTable.put(CHANNEL_COUNT,
+          String.valueOf(retrieve.getChannelCount(index)));
+
+        if (canOpenImages(reader)) {
+          try {
+            byte[] plane = reader.openBytes(0);
+            seriesTable.put(MD5, TestTools.md5(plane));
+          } catch (FormatException e) {
+            // TODO
+          } catch (IOException e) {
+            // TODO
+          }
+        }
+
+        try {
+          int w = (int) Math.min(TILE_SIZE, reader.getSizeX());
+          int h = (int) Math.min(TILE_SIZE, reader.getSizeY());
+
+          byte[] tile = reader.openBytes(0, 0, 0, w, h);
+          seriesTable.put(TILE_MD5, TestTools.md5(tile));
+        } catch (FormatException e) {
+          // TODO
+        } catch (IOException e) {
           // TODO
         }
-        catch (IOException e) {
-          // TODO
+
+        seriesTable.put(NAME, retrieve.getImageName(index));
+        seriesTable.put(DESCRIPTION, retrieve.getImageDescription(index));
+
+        Length physicalX = retrieve.getPixelsPhysicalSizeX(index);
+        putLength(
+          seriesTable, physicalX, PHYSICAL_SIZE_X, PHYSICAL_SIZE_X_UNIT);
+        Length physicalY = retrieve.getPixelsPhysicalSizeY(index);
+        putLength(
+          seriesTable, physicalY, PHYSICAL_SIZE_Y, PHYSICAL_SIZE_Y_UNIT);
+        Length physicalZ = retrieve.getPixelsPhysicalSizeZ(index);
+        putLength(
+          seriesTable, physicalZ, PHYSICAL_SIZE_Z, PHYSICAL_SIZE_Z_UNIT);
+        Time timeIncrement = retrieve.getPixelsTimeIncrement(index);
+        if (timeIncrement != null) {
+          seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
+          seriesTable.put(TIME_INCREMENT_UNIT, timeIncrement.unit().getSymbol());
         }
-      }
 
-      try {
-        int w = (int) Math.min(TILE_SIZE, reader.getSizeX());
-        int h = (int) Math.min(TILE_SIZE, reader.getSizeY());
-
-        byte[] tile = reader.openBytes(0, 0, 0, w, h);
-        seriesTable.put(TILE_MD5, TestTools.md5(tile));
-      }
-      catch (FormatException e) {
-        // TODO
-      }
-      catch (IOException e) {
-        // TODO
-      }
-
-      seriesTable.put(NAME, retrieve.getImageName(series));
-      seriesTable.put(DESCRIPTION, retrieve.getImageDescription(series));
-
-      Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
-      if (physicalX != null) {
-        seriesTable.put(PHYSICAL_SIZE_X, physicalX.value().toString());
-        seriesTable.put(PHYSICAL_SIZE_X_UNIT, physicalX.unit().getSymbol());
-      }
-      Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
-      if (physicalY != null) {
-        seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value().toString());
-        seriesTable.put(PHYSICAL_SIZE_Y_UNIT, physicalY.unit().getSymbol());
-      }
-      Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
-      if (physicalZ != null) {
-        seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value().toString());
-        seriesTable.put(PHYSICAL_SIZE_Z_UNIT, physicalZ.unit().getSymbol());
-      }
-      Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
-      if (timeIncrement != null) {
-        seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
-        seriesTable.put(TIME_INCREMENT_UNIT, timeIncrement.unit().getSymbol());
-      }
-
-      Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
-      if (acquisition != null) {
-        String date = acquisition.getValue();
-        if (date != null) {
-          seriesTable.put(DATE, date);
-        }
-      }
-
-      for (int c=0; c<retrieve.getChannelCount(series); c++) {
-        seriesTable.put(CHANNEL_NAME + c, retrieve.getChannelName(series, c));
-        try {
-          seriesTable.put(LIGHT_SOURCE + c,
-            retrieve.getChannelLightSourceSettingsID(series, c));
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          int plane = reader.getIndex(0, c, 0);
-          if (plane < retrieve.getPlaneCount(series)) {
-            seriesTable.put(EXPOSURE_TIME + c,
-              retrieve.getPlaneExposureTime(series, plane).value().toString());
-            seriesTable.put(EXPOSURE_TIME_UNIT + c,
-              retrieve.getPlaneExposureTime(series, plane).unit().getSymbol());
+        Timestamp acquisition = retrieve.getImageAcquisitionDate(index);
+        if (acquisition != null) {
+          String date = acquisition.getValue();
+          if (date != null) {
+            seriesTable.put(DATE, date);
           }
         }
-        catch (NullPointerException e) { }
 
-        Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
-        if (emWavelength != null) {
-          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value().toString());
-          seriesTable.put(EMISSION_WAVELENGTH_UNIT + c, emWavelength.unit().getSymbol());
+        for (int c = 0; c < retrieve.getChannelCount(index); c++) {
+          seriesTable.put(CHANNEL_NAME + c, retrieve.getChannelName(index, c));
+          try {
+            seriesTable.put(LIGHT_SOURCE + c,
+              retrieve.getChannelLightSourceSettingsID(index, c));
+          } catch (NullPointerException e) {
+          }
+
+          try {
+            int plane = reader.getIndex(0, c, 0);
+            if (plane < retrieve.getPlaneCount(index)) {
+              seriesTable.put(EXPOSURE_TIME + c,
+                retrieve.getPlaneExposureTime(index, plane).value().toString());
+              seriesTable.put(EXPOSURE_TIME_UNIT + c,
+                retrieve.getPlaneExposureTime(index, plane).unit().getSymbol());
+            }
+          } catch (NullPointerException e) {
+          }
+
+          Length emWavelength = retrieve.getChannelEmissionWavelength(index, c);
+          putLength(seriesTable, emWavelength,
+            EMISSION_WAVELENGTH + c, EMISSION_WAVELENGTH_UNIT + c);
+          Length exWavelength =
+            retrieve.getChannelExcitationWavelength(index, c);
+          putLength(seriesTable, exWavelength,
+            EXCITATION_WAVELENGTH + c, EXCITATION_WAVELENGTH_UNIT + c);
+          try {
+            seriesTable.put(DETECTOR + c,
+              retrieve.getDetectorSettingsID(index, c));
+          } catch (NullPointerException e) {
+          }
         }
-        Length exWavelength =
-          retrieve.getChannelExcitationWavelength(series, c);
-        if (exWavelength != null) {
-          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value().toString());
-          seriesTable.put(EXCITATION_WAVELENGTH_UNIT + c, exWavelength.unit().getSymbol());
+
+        for (int p = 0; p < reader.getImageCount(); p++) {
+          try {
+            Time deltaT = retrieve.getPlaneDeltaT(index, p);
+            if (deltaT != null) {
+              seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
+            }
+            Length xPos = retrieve.getPlanePositionX(index, p);
+            putLength(seriesTable, xPos, X_POSITION + p, X_POSITION_UNIT + p);
+            Length yPos = retrieve.getPlanePositionY(index, p);
+            putLength(seriesTable, yPos, Y_POSITION + p, Y_POSITION_UNIT + p);
+            Length zPos = retrieve.getPlanePositionZ(index, p);
+            putLength(seriesTable, zPos, Z_POSITION + p, Z_POSITION_UNIT + p);
+          } catch (IndexOutOfBoundsException e) {
+            // only happens if no Plane elements were populated
+          }
         }
-        try {
-          seriesTable.put(DETECTOR + c,
-            retrieve.getDetectorSettingsID(series, c));
+
+        // look for HCS metadata
+
+        String imageID = retrieve.getImageID(index);
+        boolean foundWellSample = false;
+        for (int p=0; !foundWellSample && p<retrieve.getPlateCount(); p++) {
+          for (int w=0; !foundWellSample && w<retrieve.getWellCount(p); w++) {
+            for (int ws=0; ws<retrieve.getWellSampleCount(p, w); ws++) {
+              String imageRef = retrieve.getWellSampleImageRef(p, w, ws);
+              if (imageID.equals(imageRef)) {
+                seriesTable.put(PLATE, String.valueOf(p));
+                seriesTable.put(WELL_ROW, retrieve.getWellRow(p, w).toString());
+                seriesTable.put(WELL_COLUMN, retrieve.getWellColumn(p, w).toString());
+                seriesTable.put(WELL_SAMPLE, String.valueOf(ws));
+
+                Length positionX = retrieve.getWellSamplePositionX(p, w, ws);
+                Length positionY = retrieve.getWellSamplePositionY(p, w, ws);
+                putLength(seriesTable, positionX, WELL_SAMPLE_POSITION_X, WELL_SAMPLE_POSITION_X_UNIT);
+                putLength(seriesTable, positionY, WELL_SAMPLE_POSITION_Y, WELL_SAMPLE_POSITION_Y_UNIT);
+
+                String wellSampleID = retrieve.getWellSampleID(p, w, ws);
+                boolean foundPA = false;
+                for (int pa=0; !foundPA && pa<retrieve.getPlateAcquisitionCount(p); pa++) {
+                  for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(p, pa); wsRef++) {
+                    String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(p, pa, wsRef);
+                    if (wellSampleID.equals(wellSampleRef)) {
+                      seriesTable.put(PLATE_ACQUISITION, String.valueOf(pa));
+                      foundPA = true;
+                      break;
+                    }
+                  }
+                }
+
+                break;
+              }
+            }
+          }
         }
-        catch (NullPointerException e) { }
+
+        ini.add(seriesTable);
       }
-
-      for (int p=0; p<reader.getImageCount(); p++) {
-        try {
-          Time deltaT = retrieve.getPlaneDeltaT(series, p);
-          if (deltaT != null) {
-            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
-          }
-          Length xPos = retrieve.getPlanePositionX(series, p);
-          if (xPos != null) {
-            seriesTable.put(X_POSITION + p, xPos.value().toString());
-            seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
-          }
-          Length yPos = retrieve.getPlanePositionY(series, p);
-          if (yPos != null) {
-            seriesTable.put(Y_POSITION + p, yPos.value().toString());
-            seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
-          }
-          Length zPos = retrieve.getPlanePositionZ(series, p);
-          if (zPos != null) {
-            seriesTable.put(Z_POSITION + p, zPos.value().toString());
-            seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
-          }
-        }
-        catch (IndexOutOfBoundsException e) {
-          // only happens if no Plane elements were populated
-        }
-      }
-
-      ini.add(seriesTable);
     }
 
+    if (!unflattenedReader.equals(reader)) {
+      try {
+        unflattenedReader.close();
+      }
+      catch (IOException e) {
+      }
+    }
   }
 
   private void putTableName(IniTable table, IFormatReader reader, String suffix)
   {
     Location file = new Location(reader.getCurrentFile());
     table.put(IniTable.HEADER_KEY, file.getName() + suffix);
+  }
+
+  private void putLength(IniTable table, Length value, String valueKey, String unitKey) {
+    if (value != null) {
+      table.put(valueKey, String.valueOf(value.value().doubleValue()));
+      table.put(unitKey, value.unit().getSymbol());
+    }
   }
 
   private void pruneINI() {
@@ -667,5 +789,45 @@ public class Configuration {
       }
     }
     ini = newIni;
+  }
+
+  private int getInt(String key, int defaultValue) {
+    int rtn = defaultValue;
+    if (currentTable.get(key) != null) {
+      rtn = Integer.parseInt(currentTable.get(key));
+    }
+    return rtn;
+  }
+
+  private Length getPhysicalSize(String valueKey, String unitKey) {
+    String physicalSize = currentTable.get(valueKey);
+    String units = currentTable.get(unitKey);
+    try {
+      UnitsLength unit = units == null ? UnitsLength.MICROMETER : UnitsLength.fromString(units);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), unit);
+    }
+    catch (NumberFormatException e) { }
+    catch (EnumerationException e) { }
+    return null;
+  }
+
+  /**
+   * Check if a whole plane can be read.
+   *
+   * @param reader initialized reader set to the series to check
+   * @return true if the plane size is smaller than both 2GB
+                  and the amount of free memory
+   */
+  private boolean canOpenImages(IFormatReader reader) {
+    try {
+      long planeSize = DataTools.safeMultiply32(reader.getSizeX(),
+          reader.getSizeY(), reader.getEffectiveSizeC(),
+          reader.getRGBChannelCount(),
+          FormatTools.getBytesPerPixel(reader.getPixelType()));
+      return planeSize > 0 && TestTools.canFitInMemory(planeSize);
+    }
+    catch (IllegalArgumentException e) {
+      return false;
+    }
   }
 }

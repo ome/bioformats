@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.7.3-SNAPSHOT</version>
+    <version>6.6.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -34,7 +34,7 @@
       <version>${ome-common.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openmicroscopy</groupId>
+      <groupId>${ome-model.group}</groupId>
       <artifactId>ome-xml</artifactId>
       <version>${ome-model.version}</version>
     </dependency>
@@ -96,6 +96,10 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
             <suiteXmlFiles>
@@ -104,6 +108,9 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
+          <systemPropertyVariables>
+            <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>

@@ -136,31 +136,29 @@ public class APNGReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (no == lastImageIndex && lastImage != null && y + h <= lastImageRow) {
-      RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
-      s = null;
+      
+      try (RandomAccessInputStream s = new RandomAccessInputStream(lastImage)) {
+        readPlane(s, x, y, w, h, buf);
+      }
       return buf;
     }
 
     if (no == 0) {
       lastImage = null;
 
-      PNGInputStream stream = new PNGInputStream("IDAT");
-      int decodeHeight = y + h;
-      if (decodeHeight < getSizeY() && decodeHeight % 8 != 0) {
-        decodeHeight += 8 - (decodeHeight % 8);
+      try (PNGInputStream stream = new PNGInputStream("IDAT")) {
+        int decodeHeight = y + h;
+        if (decodeHeight < getSizeY() && decodeHeight % 8 != 0) {
+          decodeHeight += Math.min(8 - (decodeHeight % 8), getSizeY() - decodeHeight);
+        }
+        lastImage = decode(stream, getSizeX(), decodeHeight);
       }
-      lastImage = decode(stream, getSizeX(), decodeHeight);
-      stream.close();
       lastImageIndex = 0;
       lastImageRow = y + h;
 
-      RandomAccessInputStream pix = new RandomAccessInputStream(lastImage);
-      readPlane(pix, x, y, w, h, buf);
-      pix.close();
-      pix = null;
-
+      try (RandomAccessInputStream pix = new RandomAccessInputStream(lastImage)) {
+        readPlane(pix, x, y, w, h, buf);
+      }
       if (y + h < getSizeY()) {
         lastImage = null;
       }
@@ -172,9 +170,10 @@ public class APNGReader extends FormatReader {
 
     lastImage = openBytes(0);
     lastImageRow = getSizeY();
-    PNGInputStream stream = new PNGInputStream("fdAT", no);
-    byte[] newImage = decode(stream, coords[2], coords[3]);
-    stream.close();
+    byte[] newImage = null;
+    try (PNGInputStream stream = new PNGInputStream("fdAT", no)) {
+      newImage = decode(stream, coords[2], coords[3]);
+    }
 
     // paste current image onto first image
 
@@ -202,9 +201,9 @@ public class APNGReader extends FormatReader {
 
     lastImageIndex = no;
 
-    RandomAccessInputStream pix = new RandomAccessInputStream(lastImage);
-    readPlane(pix, x, y, w, h, buf);
-    pix.close();
+    try (RandomAccessInputStream pix = new RandomAccessInputStream(lastImage)) {
+      readPlane(pix, x, y, w, h, buf);
+    }
     return buf;
   }
 
@@ -359,6 +358,14 @@ public class APNGReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int rowLen = width * getRGBChannelCount() * bpp;
 
+    if (width > getSizeX()) {
+      throw new FormatException(
+        "Width (" + width + ") exceeds image width (" +  getSizeX() + ")");
+    }
+    if (height > getSizeY()) {
+      throw new FormatException(
+        "Height (" + height + ") exceeds image height (" +  getSizeY() + ")");
+    }
     if (getBitsPerPixel() < bpp * 8) {
       int div = (bpp * 8) / getBitsPerPixel();
       if (div < rowLen) {
@@ -380,8 +387,7 @@ public class APNGReader extends FormatReader {
       byte[] filters = new byte[height];
       image = new byte[rowLen * height];
 
-      InflaterInputStream decompressor = new InflaterInputStream(bytes);
-      try {
+      try (InflaterInputStream decompressor = new InflaterInputStream(bytes)) {
         int n = 0;
         for (int row=0; row<height; row++) {
           n = 0;
@@ -393,10 +399,6 @@ public class APNGReader extends FormatReader {
             n += decompressor.read(image, row * rowLen + n, rowLen - n);
           }
         }
-      }
-      finally {
-        decompressor.close();
-        decompressor = null;
       }
 
       // perform any necessary unfiltering
@@ -431,8 +433,7 @@ public class APNGReader extends FormatReader {
 
       image = new byte[FormatTools.getPlaneSize(this)];
 
-      InflaterInputStream decompressor = new InflaterInputStream(bytes);
-      try {
+      try (InflaterInputStream decompressor = new InflaterInputStream(bytes)) {
         for (int i=0; i<passImages.length; i++) {
           int passWidth = PASS_WIDTHS[i] * nColBlocks;
           int passHeight = PASS_HEIGHTS[i] * nRowBlocks;
@@ -613,10 +614,6 @@ public class APNGReader extends FormatReader {
           unfilter(filters, passImages[i], passWidth, passHeight);
         }
       }
-      finally {
-        decompressor.close();
-        decompressor = null;
-      }
 
       int chunk = bpp * getRGBChannelCount();
       int[] passOffset = new int[7];
@@ -669,19 +666,17 @@ public class APNGReader extends FormatReader {
 
     if (getBitsPerPixel() < 8) {
       byte[] expandedImage = new byte[FormatTools.getPlaneSize(this)];
-      RandomAccessInputStream bits = new RandomAccessInputStream(image);
-
-      int skipBits = rowLen * 8 - getSizeX() * getBitsPerPixel();
-      for (int row=0; row<getSizeY(); row++) {
-        for (int col=0; col<getSizeX(); col++) {
-          int index = row * getSizeX() + col;
-          expandedImage[index] =
-            (byte) (bits.readBits(getBitsPerPixel()) & 0xff);
+      try (RandomAccessInputStream bits = new RandomAccessInputStream(image)) {
+        int skipBits = rowLen * 8 - getSizeX() * getBitsPerPixel();
+        for (int row=0; row<getSizeY(); row++) {
+          for (int col=0; col<getSizeX(); col++) {
+            int index = row * getSizeX() + col;
+            expandedImage[index] =
+              (byte) (bits.readBits(getBitsPerPixel()) & 0xff);
+          }
+          bits.skipBits(skipBits);
         }
-        bits.skipBits(skipBits);
       }
-      bits.close();
-      bits = null;
 
       image = expandedImage;
     }

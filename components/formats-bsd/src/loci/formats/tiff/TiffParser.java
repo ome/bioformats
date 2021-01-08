@@ -32,8 +32,10 @@
 
 package loci.formats.tiff;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -58,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffParser {
+public class TiffParser implements Closeable {
 
   // -- Constants --
 
@@ -94,11 +96,14 @@ public class TiffParser {
   /** Codec options to be used when decoding compressed pixel data. */
   private CodecOptions codecOptions = CodecOptions.getDefaultOptions();
 
+  private boolean canClose = false;
+
   // -- Constructors --
 
   /** Constructs a new TIFF parser from the given file name. */
   public TiffParser(String filename) throws IOException {
     this(new RandomAccessInputStream(filename));
+    canClose = true;
   }
 
   /** Constructs a new TIFF parser from the given input source. */
@@ -111,6 +116,20 @@ public class TiffParser {
       in.seek(fp);
     }
     catch (IOException e) { }
+  }
+
+  // -- Closeable methods --
+
+  /**
+   * Close the underlying stream, if this TiffParser was constructed
+   * with a file path.  Closing a stream that was pre-initialized
+   * is potentially dangerous.
+   */
+  @Override
+  public void close() throws IOException {
+    if (canClose && in != null) {
+      in.close();
+    }
   }
 
   // -- TiffParser methods --
@@ -210,7 +229,53 @@ public class TiffParser {
 
   // -- TiffParser methods - IFD parsing --
 
-  /** Returns all IFDs in the file.  */
+  /** Returns the main list of IFDs in the file.
+   *
+   * This does not include SUBIFDS.
+   */
+  public IFDList getMainIFDs() throws IOException {
+    if (ifdList != null) return ifdList;
+
+    long[] offsets = getIFDOffsets();
+    IFDList ifds = new IFDList();
+
+    for (long offset : offsets) {
+      IFD ifd = getIFD(offset);
+      if (ifd == null) continue;
+      if (ifd.containsKey(IFD.IMAGE_WIDTH)) {
+        ifds.add(ifd);
+      }
+    }
+    if (doCaching) {
+      ifdList = ifds;
+    }
+
+    return ifds;
+  }
+
+  /** Returns the SUBIFDS belonging to a given IFD. */
+  public IFDList getSubIFDs(IFD ifd) throws IOException {
+    IFDList list = new IFDList();
+    long[] offsets = null;
+    try {
+      fillInIFD(ifd);
+      offsets = ifd.getIFDLongArray(IFD.SUB_IFD);
+    } catch (FormatException e) {
+    }
+
+    if (offsets != null) {
+      for (long offset : offsets) {
+        list.add(getIFD(offset));
+      }
+    }
+
+    return list;
+  }
+
+  /** Returns all IFDs in the file, including SUBIFDS.
+   * @deprecated Use {@link #getMainIFDs()} and {@link #getSubIFDs(IFD)} instead.
+   */
+  @Deprecated
   public IFDList getIFDs() throws IOException {
     if (ifdList != null) return ifdList;
 
@@ -245,7 +310,7 @@ public class TiffParser {
 
   /** Returns thumbnail IFDs. */
   public IFDList getThumbnailIFDs() throws IOException {
-    IFDList ifds = getIFDs();
+    IFDList ifds = getMainIFDs();
     IFDList thumbnails = new IFDList();
     for (IFD ifd : ifds) {
       Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
@@ -259,7 +324,7 @@ public class TiffParser {
 
   /** Returns non-thumbnail IFDs. */
   public IFDList getNonThumbnailIFDs() throws IOException {
-    IFDList ifds = getIFDs();
+    IFDList ifds = getMainIFDs();
     IFDList nonThumbs = new IFDList();
     for (IFD ifd : ifds) {
       Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
@@ -273,7 +338,7 @@ public class TiffParser {
 
   /** Returns EXIF IFDs. */
   public IFDList getExifIFDs() throws FormatException, IOException {
-    IFDList ifds = getIFDs();
+    IFDList ifds = getMainIFDs();
     IFDList exif = new IFDList();
     for (IFD ifd : ifds) {
       long offset = ifd.getIFDLongValue(IFD.EXIF, 0);
@@ -298,8 +363,13 @@ public class TiffParser {
     while (offset > 0 && offset < in.length()) {
       in.seek(offset);
       offsets.add(offset);
-      int nEntries = bigTiff ? (int) in.readLong() : in.readUnsignedShort();
-      in.skipBytes(nEntries * bytesPerEntry);
+      long nEntries = bigTiff ? in.readLong() : in.readUnsignedShort();
+      long entryBytes = nEntries * bytesPerEntry;
+      if (in.getFilePointer() + entryBytes + (bigTiff ? 8 : 4) > in.length()) {
+        // this can easily happen when writing multiple planes to a file
+        break;
+      }
+      in.skipBytes(entryBytes);
       offset = getNextOffset(offset);
     }
 
@@ -376,10 +446,10 @@ public class TiffParser {
     ifd.put(new Integer(IFD.BIG_TIFF), new Boolean(bigTiff));
 
     // read in directory entries for this IFD
-    LOGGER.trace("getIFDs: seeking IFD at {}", offset);
+    LOGGER.trace("getIFD: seeking IFD at {}", offset);
     in.seek(offset);
     long numEntries = bigTiff ? in.readLong() : in.readUnsignedShort();
-    LOGGER.trace("getIFDs: {} directory entries to read", numEntries);
+    LOGGER.trace("getIFD: {} directory entries to read", numEntries);
     if (numEntries == 0 || numEntries == 1) return ifd;
 
     int bytesPerEntry = bigTiff ?
@@ -413,7 +483,7 @@ public class TiffParser {
       if (count * bpe + pointer > inputLen) {
         int oldCount = count;
         count = (int) ((inputLen - pointer) / bpe);
-        LOGGER.trace("getIFDs: truncated {} array elements for tag {}",
+        LOGGER.trace("getIFD: truncated {} array elements for tag {}",
           (oldCount - count), tag);
         if (count < 0) count = oldCount;
       }
@@ -472,7 +542,7 @@ public class TiffParser {
     }
 
     if (offset != in.getFilePointer()) {
-      if (fakeBigTiff && (offset < 0 || offset > in.getFilePointer())) {
+      if (fakeBigTiff && offset < 0) {
         offset &= 0xffffffffL;
         offset += 0x100000000L;
       }
@@ -718,17 +788,34 @@ public class TiffParser {
 
     if (buf == null) buf = new byte[size];
     if (stripByteCounts[countIndex] == 0 || stripOffset >= in.length()) {
+      // make sure that the buffer is cleared before returning
+      // the caller may be reusing the same buffer for multiple calls to getTile
+      Arrays.fill(buf, (byte) 0);
       return buf;
     }
-    byte[] tile = new byte[(int) stripByteCounts[countIndex]];
+    int tileSize = (int) stripByteCounts[countIndex];
+    if (jpegTable != null) {
+      tileSize += jpegTable.length - 2;
+    }
+    byte[] tile = new byte[tileSize];
 
     LOGGER.debug("Reading tile Length {} Offset {}", tile.length, stripOffset);
-    in.seek(stripOffset);
-    in.read(tile);
+
+    if (jpegTable != null) {
+      System.arraycopy(jpegTable, 0, tile, 0, jpegTable.length - 2);
+      in.seek(stripOffset + 2);
+      in.read(tile, jpegTable.length - 2, tile.length - (jpegTable.length - 2));
+    }
+    else {
+      in.seek(stripOffset);
+      in.read(tile);
+    }
 
     // reverse bits in each byte if FillOrder == 2
 
-    if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2) {
+    if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2 &&
+      compression.getCode() <= TiffCompression.GROUP_4_FAX.getCode())
+    {
       for (int i=0; i<tile.length; i++) {
         tile[i] = (byte) (Integer.reverse(tile[i]) >> 24);
       }
@@ -739,13 +826,7 @@ public class TiffParser {
       ifd.getPhotometricInterpretation() == PhotoInterp.Y_CB_CR &&
       ifd.getIFDIntValue(IFD.Y_CB_CR_SUB_SAMPLING) == 1 && ycbcrCorrection;
 
-    if (jpegTable != null) {
-      byte[] q = new byte[jpegTable.length + tile.length - 4];
-      System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
-      System.arraycopy(tile, 2, q, jpegTable.length - 2, tile.length - 2);
-      tile = compression.decompress(q, codecOptions);
-    }
-    else tile = compression.decompress(tile, codecOptions);
+    tile = compression.decompress(tile, codecOptions);
     TiffCompression.undifference(tile, ifd);
     unpackBytes(buf, 0, tile, ifd);
 
@@ -849,6 +930,7 @@ public class TiffParser {
     else codecOptions = compression.getCompressionCodecOptions(ifd);
     codecOptions.interleaved = true;
     codecOptions.littleEndian = ifd.isLittleEndian();
+    long imageWidth = ifd.getImageWidth();
     long imageLength = ifd.getImageLength();
 
     long[] stripOffsets = null;
@@ -877,6 +959,21 @@ public class TiffParser {
 
     long[] stripByteCounts = ifd.getStripByteCounts();
 
+    // if the image is stored as strips (not tiles) and
+    // the strips are stored in order with no gaps then we can
+    // treat them as a single strip for faster reading
+    boolean contiguousTiles = tileWidth == imageWidth && planarConfig == 1;
+    if (contiguousTiles) {
+      for (int i=1; i<stripOffsets.length; i++) {
+        if (stripOffsets[i] != stripOffsets[i - 1] + stripByteCounts[i - 1] ||
+          stripOffsets[i] + stripByteCounts[i] > in.length())
+        {
+          contiguousTiles = false;
+          break;
+        }
+      }
+    }
+
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
     if ((effectiveChannels == 1 || planarConfig == 1) && (ifd.getBitsPerSample()[0] % 8) == 0 &&
@@ -884,9 +981,16 @@ public class TiffParser {
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED &&
       ifd.getIFDIntValue(IFD.FILL_ORDER) != 2 &&
-      numTileRows * numTileCols == 1 && stripOffsets != null && stripByteCounts != null &&
-      in.length() >= stripOffsets[0] + stripByteCounts[0])
+      stripOffsets != null && stripByteCounts != null &&
+      in.length() >= stripOffsets[0] + stripByteCounts[0] &&
+      (numTileRows * numTileCols == 1 || contiguousTiles))
     {
+      if (contiguousTiles) {
+        stripByteCounts = new long[] {stripByteCounts[0] * stripByteCounts.length};
+        stripOffsets = new long[] {stripOffsets[0]};
+        tileLength = imageLength;
+      }
+
       long column = x / tileWidth;
       int firstTile = (int) ((y / tileLength) * numTileCols + column);
       int lastTile =
@@ -922,7 +1026,8 @@ public class TiffParser {
           // we only want a piece of the tile, so read each row separately
           // this is especially necessary for large single-tile images
           int bpp = bytes * effectiveChannels;
-          in.skipBytes((int) (y * bpp * tileWidth));
+          // the number of bytes to skip may be greater than Integer.MAX_VALUE if the tile is large
+          in.skipBytes(y * bpp * tileWidth);
           for (int row=0; row<height; row++) {
             in.skipBytes(x * bpp);
             int len = (int) Math.min(buf.length - offset, width * bpp);
@@ -1030,10 +1135,13 @@ public class TiffParser {
             outputRowLen * (tileY - y);
           if (planarConfig == 2) dest += (planeSize * (row / nrows));
 
-          // copying the tile directly will only work if there is no overlap;
+          // copying the tile directly will only work if there is no overlap
+          // and only one tile needs to be read
           // otherwise, we may be overwriting a previous tile
           // (or the current tile may be overwritten by a subsequent tile)
-          if (rowLen == outputRowLen && overlapX == 0 && overlapY == 0) {
+          if (rowLen == outputRowLen && overlapX == 0 && overlapY == 0 &&
+            rowLen == pixel * imageBounds.intersection(tileBounds).width)
+          {
             System.arraycopy(cachedTileBuffer, src, buf, dest, copy * theight);
           }
           else {
@@ -1065,7 +1173,11 @@ public class TiffParser {
 
     TiffCompression compression = ifd.getCompression();
     PhotoInterp photoInterp = ifd.getPhotometricInterpretation();
-    if (compression == TiffCompression.JPEG) photoInterp = PhotoInterp.RGB;
+    if (compression == TiffCompression.JPEG ||
+      compression == TiffCompression.JPEGXR)
+    {
+      photoInterp = PhotoInterp.RGB;
+    }
 
     int[] bitsPerSample = ifd.getBitsPerSample();
     int nChannels = bitsPerSample.length;
@@ -1079,23 +1191,17 @@ public class TiffParser {
       sampleCount /= nChannels;
     }
 
-    LOGGER.trace(
-      "unpacking {} samples (startIndex={}; totalBits={}; numBytes={})",
-      new Object[] {sampleCount, startIndex, nChannels * bitsPerSample[0],
-      bytes.length});
-
-    long imageWidth = ifd.getImageWidth();
-    long imageHeight = ifd.getImageLength();
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace(
+        "unpacking {} samples (startIndex={}; totalBits={}; numBytes={})",
+        new Object[] {sampleCount, startIndex, nChannels * bitsPerSample[0],
+        bytes.length});
+    }
 
     int bps0 = bitsPerSample[0];
-    int numBytes = ifd.getBytesPerSample()[0];
-    int nSamples = samples.length / (nChannels * numBytes);
 
-    boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
     boolean bps16 = bps0 == 16;
-
-    boolean littleEndian = ifd.isLittleEndian();
 
     // Hyper optimisation that takes any 8-bit or 16-bit data, where there is
     // only one channel, the source byte buffer's size is less than or equal to
@@ -1111,6 +1217,15 @@ public class TiffParser {
       System.arraycopy(bytes, 0, samples, 0, bytes.length);
       return;
     }
+
+    long imageWidth = ifd.getImageWidth();
+    long imageHeight = ifd.getImageLength();
+
+    int numBytes = ifd.getBytesPerSample()[0];
+    int nSamples = samples.length / (nChannels * numBytes);
+
+    boolean noDiv8 = bps0 % 8 != 0;
+    boolean littleEndian = ifd.isLittleEndian();
 
     long maxValue = (long) Math.pow(2, bps0) - 1;
     if (photoInterp == PhotoInterp.CMYK) maxValue = Integer.MAX_VALUE;
@@ -1146,7 +1261,9 @@ public class TiffParser {
 
     RandomAccessInputStream bb = null;
     try {
-      bb = new RandomAccessInputStream(new ByteArrayHandle(bytes));
+      if (noDiv8) {
+        bb = new RandomAccessInputStream(new ByteArrayHandle(bytes));
+      }
       // unpack pixels
       for (int sample=0; sample<sampleCount; sample++) {
         int ndx = startIndex + sample;
@@ -1180,7 +1297,14 @@ public class TiffParser {
               }
             }
             else {
-              value = DataTools.bytesToLong(bytes, index, numBytes, littleEndian);
+              // DataTools.bytesToLong can handle the numBytes == 1 case,
+              // but direct assignment is faster than potentially thousands of method calls
+              if (numBytes == 1){
+                value = bytes[index] & 0xff;
+              }
+              else {
+                value = DataTools.bytesToLong(bytes, index, numBytes, littleEndian);
+              }
             }
 
             if (photoInterp == PhotoInterp.WHITE_IS_ZERO ||
@@ -1190,8 +1314,15 @@ public class TiffParser {
             }
 
             if (outputIndex + numBytes <= samples.length) {
-              DataTools.unpackBytes(value, samples, outputIndex, numBytes,
-                littleEndian);
+              // DataTools.unpackBytes can handle the numBytes == 1 case,
+              // but direct assignment is faster than potentially thousands of method calls
+              if (numBytes == 1) {
+                samples[outputIndex] = (byte) value;
+              }
+              else {
+                DataTools.unpackBytes(value, samples, outputIndex, numBytes,
+                  littleEndian);
+              }
             }
           }
           else {
@@ -1291,5 +1422,4 @@ public class TiffParser {
 
     return new TiffIFDEntry(entryTag, entryType, valueCount, offset);
   }
-
 }

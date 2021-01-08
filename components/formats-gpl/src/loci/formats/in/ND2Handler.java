@@ -27,12 +27,12 @@ package loci.formats.in;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.xml.BaseHandler;
 import loci.formats.CoreMetadata;
+import loci.formats.CoreMetadataList;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -65,7 +65,7 @@ public class ND2Handler extends BaseHandler {
   private String prevElement = null;
 
   private Hashtable<String, Object> metadata = new Hashtable<String, Object>();
-  private List<CoreMetadata> core;
+  private CoreMetadataList core;
 
   private boolean isLossless;
   private ArrayList<Long> zs = new ArrayList<Long>();
@@ -114,15 +114,15 @@ public class ND2Handler extends BaseHandler {
 
   // -- Constructor --
 
-  public ND2Handler(List<CoreMetadata> core, int nImages) {
+  public ND2Handler(CoreMetadataList core, int nImages) {
     this(core, true, nImages);
   }
 
-  public ND2Handler(List<CoreMetadata> core, boolean populateXY, int nImages) {
+  public ND2Handler(CoreMetadataList core, boolean populateXY, int nImages) {
     super();
     this.populateXY = populateXY;
     this.nImages = nImages;
-    this.core = new ArrayList<CoreMetadata>(core);
+    this.core = new CoreMetadataList(core);
   }
 
   // -- ND2Handler API methods --
@@ -131,7 +131,7 @@ public class ND2Handler extends BaseHandler {
     return nXFields;
   }
 
-  public List<CoreMetadata> getCoreMetadataList() {
+  public CoreMetadataList getCoreMetadataList() {
     return core;
   }
 
@@ -359,7 +359,7 @@ public class ND2Handler extends BaseHandler {
     }
 
     String value = attributes.getValue("value");
-    CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(0, 0);
 
     try {
       if (qName.equals("uiWidth")) {
@@ -420,7 +420,7 @@ public class ND2Handler extends BaseHandler {
           ms0.sizeT = v;
         }
         else if (qName.equals("no_name") && v > 1 && core.size() == 1) {
-          core = new ArrayList<CoreMetadata>();
+          core = new CoreMetadataList();
           for (int q=0; q<v; q++) {
             core.add(ms0);
           }
@@ -631,7 +631,7 @@ public class ND2Handler extends BaseHandler {
     if (nXFields > 0 && nXFields < 10 && nYFields > 0 && nYFields < 10 &&
       populateXY)
     {
-      CoreMetadata ms0 = core.get(0);
+      CoreMetadata ms0 = core.get(0, 0);
       ms0.sizeX *= nXFields;
       ms0.sizeY *= nYFields;
     }
@@ -641,7 +641,7 @@ public class ND2Handler extends BaseHandler {
 
   public void parseKeyAndValue(String key, String value, String runtype) {
     if (key == null || value == null) return;
-    CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(0, 0);
     metadata.put(key, value);
 
     try {
@@ -692,7 +692,7 @@ public class ND2Handler extends BaseHandler {
         if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
       }
       else if (key.endsWith("dTimeMSec")) {
-        Long v = DataTools.parseLong(value);
+        Long v = DataTools.parseDouble(value).longValue();
         if (!ts.contains(v)) {
           ts.add(v);
           metadata.put("number of timepoints", ts.size());
@@ -722,7 +722,7 @@ public class ND2Handler extends BaseHandler {
           }
           else if (runtype.endsWith("XYPosLoop") && core.size() == 1) {
             int len = Integer.parseInt(value);
-            core = new ArrayList<CoreMetadata>();
+            core = new CoreMetadataList();
             for (int i=0; i<len; i++) {
               core.add(ms0);
             }
@@ -790,7 +790,7 @@ public class ND2Handler extends BaseHandler {
               int tSize = ms0.sizeT;
               int c = ms0.sizeC;
               String order = ms0.dimensionOrder;
-              core = new ArrayList<CoreMetadata>();
+              core = new CoreMetadataList();
               for (int i=0; i<numSeries; i++) {
                 CoreMetadata ms = new CoreMetadata();
                 core.add(ms);
@@ -801,7 +801,7 @@ public class ND2Handler extends BaseHandler {
                 ms.sizeT = tSize == 0 ? 1 : tSize;
                 ms.dimensionOrder = order;
               }
-              ms0 = core.get(0);
+              ms0 = core.get(0, 0);
             }
           }
           else if (dim.startsWith("T")) {
@@ -845,7 +845,11 @@ public class ND2Handler extends BaseHandler {
         String temp = value.replaceAll("[\\D&&[^-.]]", "");
         temperature.add(DataTools.parseDouble(temp));
       }
-      else if (key.equals("Exposure")) {
+      // exposure times are often defined once in a PropertiesFast block,
+      // and again in a PropertiesQuality block
+      else if (key.equals("Exposure") &&
+        (prevElement == null || "no_name".equals(prevElement) || "PropertiesQuality".equals(prevElement)))
+      {
         String[] s = value.trim().split(" ");
         Double time = DataTools.parseDouble(s[0]);
         if (time != null) {
@@ -887,7 +891,7 @@ public class ND2Handler extends BaseHandler {
         exWave.add(new Double(v[0]));
       }
       else if (key.equals("Power")) {
-        power.add(DataTools.parseInteger(value));
+        power.add(DataTools.parseDouble(value).intValue());
       }
       else if (key.equals("CameraUniqueName")) {
         cameraModel = value;
@@ -904,18 +908,18 @@ public class ND2Handler extends BaseHandler {
       else if (key.equals("Z Stack Loop")) {
         int v = Integer.parseInt(value);
         if (v <= nImages || nImages <= 0) {
-          core.get(0).sizeZ = v;
+          core.get(0, 0).sizeZ = v;
         }
       }
       else if (key.equals("Time Loop")) {
         int v = Integer.parseInt(value);
         if (v <= nImages && firstTimeLoop) {
-          core.get(0).sizeT = v;
+          core.get(0, 0).sizeT = v;
           firstTimeLoop = false;
         }
       }
     }
-    catch (NumberFormatException exc) {
+    catch (NumberFormatException | NullPointerException exc) {
       LOGGER.warn("Could not parse {} value: {}", key, value);
     }
   }

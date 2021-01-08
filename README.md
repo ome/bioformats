@@ -1,6 +1,7 @@
 # Bio-Formats
 
-[![Build Status](https://travis-ci.org/openmicroscopy/bioformats.png)](http://travis-ci.org/openmicroscopy/bioformats)
+[![Actions Status](https://github.com/ome/bioformats/workflows/Ant/badge.svg)](https://github.com/ome/bioformats/actions)
+[![Actions Status](https://github.com/ome/bioformats/workflows/Maven/badge.svg)](https://github.com/ome/bioformats/actions)
 
 Bio-Formats is a standalone Java library for reading and writing life sciences
 image file formats. It is capable of parsing both pixels and metadata for a
@@ -57,7 +58,7 @@ following before submitting a pull request:
  * test at least one file in each affected format, using the ```showinf```
    command
  * internal developers only: [run the data
-   tests](docs/sphinx/developers/commit-testing.rst)
+   tests](https://github.com/ome/bio-formats-documentation/blob/master/sphinx/developers/commit-testing.rst)
    against directories corresponding to the affected format(s)
  * make sure that your commits contain the correct authorship information and,
    if necessary, a signed-off-by line

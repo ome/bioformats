@@ -244,47 +244,59 @@ public class FlexReader extends FormatReader {
 
     int imageNumber = file.offsets == null ? getImageCount() * pos[0] + no : 0;
 
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(getFileHandle(file.file));
+    int nBytes = 0;
+    int bpp = 0;
+    double factor = 0;
+    try (RandomAccessInputStream s =
+      new RandomAccessInputStream(getFileHandle(file.file))) {
+        IFD ifd;
+        if (file.offsets == null) {
+          if (imageNumber < file.ifds.size()) {
+            ifd = file.ifds.get(imageNumber);
+            factor = 1d;
+          }
+          else {
+            Arrays.fill(buf, (byte) 0);
+            return buf;
+          }
+        }
+        else {
+          // Only the first IFD was read. Hack the IFD to adjust the offset.
+          final IFD firstIFD = firstFile.ifds.get(0);
+          ifd = new IFD(firstIFD);
+          int tag = IFD.STRIP_OFFSETS;
+          if (firstIFD.isTiled() &&
+            firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
+          {
+            tag = IFD.TILE_OFFSETS;
+          }
+          long [] offsets = ifd.getIFDLongArray(tag);
 
-    IFD ifd;
-    double factor;
-    if (file.offsets == null) {
-      ifd = file.ifds.get(imageNumber);
-      factor = 1d;
+          final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+          ifd.getBitsPerSample()[0] / 8;
+          final int index = getImageCount() * pos[0] + no;
+          long offset = (index == file.offsets.length - 1 ?
+              s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
+
+          for (int i = 0; i < offsets.length; i++) {
+            offsets[i] += offset;
+          }
+          ifd.putIFDValue(tag, offsets);
+        }
+        nBytes = ifd.getBitsPerSample()[0] / 8;
+        bpp = FormatTools.getBytesPerPixel(getPixelType());
+
+        // read pixels from the file
+        TiffParser tp = new TiffParser(s);
+        tp.fillInIFD(ifd);
+
+        // log the first offset used
+        LOGGER.trace("first offset for series={} no={}: {}", getCoreIndex(), no, ifd.getStripOffsets()[0]);
+
+        tp.getSamples(ifd, buf, x, y, w, h);
+        factor = file.factors == null ? 1d : file.factors[imageNumber];
+        LOGGER.trace("  using factor = {}", factor);
     }
-    else {
-      // Only the first IFD was read. Hack the IFD to adjust the offset.
-      final IFD firstIFD = firstFile.ifds.get(0);
-      ifd = new IFD(firstIFD);
-      int tag = IFD.STRIP_OFFSETS;
-      if (firstIFD.isTiled() &&
-        firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
-      {
-        tag = IFD.TILE_OFFSETS;
-      }
-      long [] offsets = ifd.getIFDLongArray(tag);
-
-      final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
-      ifd.getBitsPerSample()[0] / 8;
-      final int index = getImageCount() * pos[0] + no;
-      long offset = (index == file.offsets.length - 1 ?
-          s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
-
-      for (int i = 0; i < offsets.length; i++) {
-        offsets[i] += offset;
-      }
-      ifd.putIFDValue(tag, offsets);
-    }
-    int nBytes = ifd.getBitsPerSample()[0] / 8;
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-
-    // read pixels from the file
-    TiffParser tp = new TiffParser(s);
-    tp.fillInIFD(ifd);
-    tp.getSamples(ifd, buf, x, y, w, h);
-    factor = file.factors == null ? 1d : file.factors[imageNumber];
-    tp.getStream().close();
 
     // expand pixel values with multiplication by factor[no]
     int num = buf.length / bpp;
@@ -297,8 +309,6 @@ public class FlexReader extends FormatReader {
         DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
       }
     }
-
-    s.close();
 
     return buf;
   }
@@ -547,6 +557,13 @@ public class FlexReader extends FormatReader {
         new Timestamp(plateAcqStartTime), 0, 0);
     }
 
+    if (wellRows > 0) {
+      store.setPlateRows(new PositiveInteger(wellRows), 0);
+    }
+    if (wellColumns > 0) {
+      store.setPlateColumns(new PositiveInteger(wellColumns), 0);
+    }
+
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
         int well = row * wellColumns + col;
@@ -596,8 +613,8 @@ public class FlexReader extends FormatReader {
       if (plateName == null) plateName = currentFile.getParentFile().getName();
       if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
       store.setPlateName(plateName, 0);
-      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
-      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
+      store.setPlateRowNamingConvention(MetadataTools.getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention("Number"), 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
         int[] pos = FormatTools.rasterToPosition(lengths, i);
@@ -633,7 +650,7 @@ public class FlexReader extends FormatReader {
               store.setDetectorSettingsID(cameraRefs.get(index), i, c);
               if (index < binnings.size()) {
                 store.setDetectorSettingsBinning(
-                  getBinning(binnings.get(index)), i, c);
+                  MetadataTools.getBinning(binnings.get(index)), i, c);
               }
             }
             if (lightSources != null && c < lightSources.size()) {
@@ -816,12 +833,9 @@ public class FlexReader extends FormatReader {
       ifd = file.ifds.get(0);
     }
     else {
-      RandomAccessInputStream ras = new RandomAccessInputStream(file.file);
-      try {
+      try (RandomAccessInputStream ras = new RandomAccessInputStream(file.file)) {
         TiffParser parser = new TiffParser(ras);
         ifd = parser.getFirstIFD();
-      } finally {
-        ras.close();
       }
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
@@ -967,6 +981,10 @@ public class FlexReader extends FormatReader {
     }
 
     ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
+
+    if (getImageCount() == imageNames.size()) {
+      fieldCount = 1;
+    }
 
     // if the calculated image count is the same as the number of planes
     // in the file, then we can assume one field per file
@@ -1206,20 +1224,39 @@ public class FlexReader extends FormatReader {
     HashMap<String, ArrayList<String>> v = new HashMap<String, ArrayList<String>>();
     Boolean firstCompressed = null;
     int firstIFDCount = 0;
+    String firstBarcode = null;
     for (String file : fileList) {
       LOGGER.warn("parsing {}", file);
-      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
-      TiffParser parser = new TiffParser(s);
-      IFD firstIFD = parser.getFirstIFD();
-      int ifdCount = parser.getIFDOffsets().length;
-      s.close();
+      IFD firstIFD = null;
+      int ifdCount = 0;
+      try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
+        TiffParser parser = new TiffParser(s);
+        firstIFD = parser.getFirstIFD();
+        ifdCount = parser.getIFDOffsets().length;
+      }
       boolean compressed =
         firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
       if (firstCompressed == null) {
         firstCompressed = compressed;
         firstIFDCount = ifdCount;
       }
-      if (compressed == firstCompressed && ifdCount == firstIFDCount) {
+      String xml = XMLTools.sanitizeXML(firstIFD.getIFDStringValue(FLEX));
+      int barcodeIndex = xml.indexOf("Barcode");
+      String barcode = "";
+      if (barcodeIndex >= 0) {
+        int start = xml.indexOf(">", barcodeIndex) + 1;
+        int end = xml.indexOf("<", barcodeIndex);
+        if (start > 0 && end > 0) {
+          barcode = xml.substring(start, end);
+        }
+      }
+      if (firstBarcode == null) {
+        firstBarcode = barcode;
+      }
+
+      if (compressed == firstCompressed && barcode.equals(firstBarcode) &&
+        ifdCount <= firstIFDCount)
+      {
         int[] well = getWell(file);
         int field = getField(file);
         if (well[0] > nRows) nRows = well[0];
@@ -1307,10 +1344,16 @@ public class FlexReader extends FormatReader {
             compressed =
               firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
 
-            if (compressed || firstIFD.getStripOffsets()[0] == 16) {
+            if (compressed || firstIFD.getStripOffsets()[0] == 16 ||
+              firstIFD.getStripOffsets().length == 1)
+            {
               tp.setDoCaching(false);
-              file.ifds = tp.getIFDs();
+              file.ifds = tp.getMainIFDs();
               file.ifds.set(0, firstIFD);
+              if (firstIFD.getStripOffsets().length == 1) {
+                // used to ensure that image offsets are read, not calculated
+                compressed = true;
+              }
             }
             else {
               // if the pixel data is uncompressed and the IFD is stored
@@ -1506,8 +1549,8 @@ public class FlexReader extends FormatReader {
           store.setLaserWavelength(wave, 0, nextLaser);
         }
         try {
-          store.setLaserType(getLaserType("Other"), 0, nextLaser);
-          store.setLaserLaserMedium(getLaserMedium("Other"), 0, nextLaser);
+          store.setLaserType(MetadataTools.getLaserType("Other"), 0, nextLaser);
+          store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, nextLaser);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1527,7 +1570,7 @@ public class FlexReader extends FormatReader {
         else LOGGER.warn("Unknown immersion medium: {}", value);
         try {
           store.setObjectiveImmersion(
-            getImmersion(immersion), 0, nextObjective);
+            MetadataTools.getImmersion(immersion), 0, nextObjective);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);
@@ -1664,7 +1707,7 @@ public class FlexReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
         try {
-          store.setDetectorType(getDetectorType(
+          store.setDetectorType(MetadataTools.getDetectorType(
             attributes.getValue("CameraType")), 0, nextCamera);
         }
         catch (FormatException e) {
@@ -1682,7 +1725,7 @@ public class FlexReader extends FormatReader {
         store.setObjectiveID(objectiveID, 0, nextObjective);
         try {
           store.setObjectiveCorrection(
-            getCorrection("Other"), 0, nextObjective);
+            MetadataTools.getCorrection("Other"), 0, nextObjective);
         }
         catch (FormatException e) {
           LOGGER.warn("", e);

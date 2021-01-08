@@ -35,7 +35,6 @@ import loci.formats.FormatReader;
 import loci.formats.ChannelSeparator;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
-import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
@@ -60,8 +59,8 @@ public class NDPISReader extends FormatReader {
   private String[] ndpiFiles;
   private ChannelSeparator[] readers;
   private int[] bandUsed;
-  private final static int TAG_CHANNEL = 65434;
-  private final static int TAG_EMISSION_WAVELENGTH = 65451;
+  private static final int TAG_CHANNEL = 65434;
+  private static final int TAG_EMISSION_WAVELENGTH = 65451;
 
   // -- Constructor --
 
@@ -206,17 +205,20 @@ public class NDPISReader extends FormatReader {
       // populate channel names based on IFD entry
       try (RandomAccessInputStream in = new RandomAccessInputStream(ndpiFiles[c])) {
         TiffParser tp = new TiffParser(in);
-        ifd = tp.getIFDs().get(0);
+        ifd = tp.getMainIFDs().get(0);
       }
 
       String channelName = ifd.getIFDStringValue(TAG_CHANNEL);
       Float wavelength = (Float) ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
 
       store.setChannelName(channelName, 0, c);
-      store.setChannelEmissionWavelength(new Length(wavelength, UNITS.NANOMETER), 0, c);
+      if (wavelength != null) {
+        store.setChannelEmissionWavelength(FormatTools.getEmissionWavelength(
+          (Double) wavelength.doubleValue()), 0, c);
+      }
 
       bandUsed[c] = 0;
-      if (ifd.getSamplesPerPixel() >= 3) {
+      if (ifd.getSamplesPerPixel() >= 3 && wavelength != null) {
         // define band used based on emission wavelength
         // wavelength = 0  Colour Image
         // 380 =< wavelength <= 490 Blue

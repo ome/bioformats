@@ -46,6 +46,7 @@ import java.nio.file.Path;
 
 import loci.common.Constants;
 import loci.common.Location;
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.in.FakeReader;
 import loci.formats.ome.OMEXMLMetadata;
@@ -56,6 +57,7 @@ import loci.common.services.ServiceFactory;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 import ome.xml.model.primitives.Timestamp;
 
@@ -84,6 +86,11 @@ public class FakeReaderTest {
       {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
       {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
     };
+  }
+
+  @DataProvider(name = "invalid physical sizes")
+  public Object[][] invalidPhysicalSizes() {
+    return new Object[][] {{"0"}, {"0.0"}, {"-0.1"}, {"0mm"}, {"-1m"}};
   }
 
   @DataProvider(name = "annotations")
@@ -189,6 +196,7 @@ public class FakeReaderTest {
     ServiceFactory sf = new ServiceFactory();
     service = sf.getInstance(OMEXMLService.class);
     reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setFlattenedResolutions(false);
   }
 
   @AfterMethod
@@ -361,67 +369,82 @@ public class FakeReaderTest {
     assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
   }
 
+  @Test
+  public void testPlaneMetadata() throws Exception {
+    File fakeIni = mkIni("foo.fake.ini", "sizeC=2",
+      "[series_0]", "ExposureTime_0=100.0", "ExposureTimeUnit_0=ms",
+      "ExposureTime_1=50.0", "ExposureTimeUnit_1=ns",
+      "PositionX_0=10.0", "PositionY_0=20.0", "PositionZ_0=30.0",
+      "PositionXUnit_0=mm", "PositionYUnit_0=mm", "PositionZUnit_0=mm",
+      "PositionX_1=5.0", "PositionY_1=10.0", "PositionZ_1=15.0",
+      "PositionXUnit_1=nm", "PositionYUnit_1=nm", "PositionZUnit_1=nm");
+    reader.setId(fakeIni.getAbsolutePath());
+    m = service.asRetrieve(reader.getMetadataStore());
+
+    assertEquals(m.getPixelsSizeC(0).getNumberValue(), 2);
+    assertEquals(m.getPlaneExposureTime(0, 0), new Time(100.0, UNITS.MILLISECOND));
+    assertEquals(m.getPlaneExposureTime(0, 1), new Time(50.0, UNITS.NANOSECOND));
+    assertEquals(m.getPlanePositionX(0, 0), new Length(10.0, UNITS.MM));
+    assertEquals(m.getPlanePositionY(0, 0), new Length(20.0, UNITS.MM));
+    assertEquals(m.getPlanePositionZ(0, 0), new Length(30.0, UNITS.MM));
+    assertEquals(m.getPlanePositionX(0, 1), new Length(5.0, UNITS.NM));
+    assertEquals(m.getPlanePositionY(0, 1), new Length(10.0, UNITS.NM));
+    assertEquals(m.getPlanePositionZ(0, 1), new Length(15.0, UNITS.NM));
+  }
+
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeX(String value, Length length) throws Exception {
-    reader.setId("foo&physicalSizeX=" + value + ".fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
-    assertEquals(m.getPixelsPhysicalSizeX(0), length);
-    reader.close();
-    testDefaultValues();
-  }
-  
-  @Test(dataProvider = "physical sizes")
-  public void testPhysicalSizeXIni(String value, Length length) throws Exception {
-    mkIni("foo.fake.ini", "physicalSizeX = " + value);
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
-    assertEquals(m.getPixelsPhysicalSizeX(0), length);
-    reader.close();
+    File fakeIni = mkIni("foo.fake.ini", "physicalSizeX = " + value);
+    String[] ids = {fakeIni.getAbsolutePath(), "foo&physicalSizeX=" + value + ".fake"};
+    for (String id: ids) {
+      reader.setId(id);
+      m = service.asRetrieve(reader.getMetadataStore());
+      assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+      assertEquals(m.getPixelsPhysicalSizeX(0), length);
+      reader.close();
+    }
     testDefaultValues();
   }
 
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeY(String value, Length length) throws Exception {
-    reader.setId("foo&physicalSizeY=" + value + ".fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
-    assertEquals(m.getPixelsPhysicalSizeY(0), length);
-    reader.close();
-    testDefaultValues();
-  }
-
-  @Test(dataProvider = "physical sizes")
-  public void testPhysicalSizeYIni(String value, Length length) throws Exception {
-    mkIni("foo.fake.ini", "physicalSizeY = " + value);
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
-    assertEquals(m.getPixelsPhysicalSizeY(0), length);
-    reader.close();
+    File fakeIni = mkIni("foo.fake.ini", "physicalSizeY = " + value);
+    String[] ids = {fakeIni.getAbsolutePath(), "foo&physicalSizeY=" + value + ".fake"};
+    for (String id: ids) {
+      reader.setId(id);
+      m = service.asRetrieve(reader.getMetadataStore());
+      assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+      assertEquals(m.getPixelsPhysicalSizeY(0), length);
+      reader.close();
+    }
     testDefaultValues();
   }
   
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeZ(String value, Length length) throws Exception {
-    reader.setId("foo&physicalSizeZ=" + value + ".fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
-    assertEquals(m.getPixelsPhysicalSizeZ(0), length);
-    reader.close();
+    File fakeIni = mkIni("foo.fake.ini", "physicalSizeZ = " + value);
+    String[] ids = {fakeIni.getAbsolutePath(), "foo&physicalSizeZ=" + value + ".fake"};
+    for (String id: ids) {
+      reader.setId(id);
+      m = service.asRetrieve(reader.getMetadataStore());
+      assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+      assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+      reader.close();
+    }
     testDefaultValues();
   }
 
-  @Test(dataProvider = "physical sizes")
-  public void testPhysicalSizeZIni(String value, Length length) throws Exception {
-    mkIni("foo.fake.ini", "physicalSizeZ = " + value);
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
-    assertEquals(m.getPixelsPhysicalSizeZ(0), length);
-    reader.close();
-    testDefaultValues();
+  @Test(dataProvider = "invalid physical sizes")
+  public void testInvalidPhysicalSize(String value) throws Exception {
+    File fakeIni = mkIni("foo.fake.ini", "physicalSizeX = " + value);
+    String[] ids = {fakeIni.getAbsolutePath(), "foo&physicalSizeX=" + value + ".fake"};
+    for (String id: ids) {
+      reader.setId(id);
+      m = service.asRetrieve(reader.getMetadataStore());
+      assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+      assertEquals(m.getPixelsPhysicalSizeX(0), null);
+      reader.close();
+    }
   }
 
   @Test(expectedExceptions={ RuntimeException.class })
@@ -626,6 +649,51 @@ public class FakeReaderTest {
       specialPixels[i] = lut[0][(int)indices[i]];
     }
     assertEquals(specialPixels, exp);
+  }
+
+  @Test
+  public void testPyramidDefaultScale() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=4.fake");
+    assertEquals(reader.getSeriesCount(), 1);
+    assertEquals(reader.getResolutionCount(), 4);
+    for (int i=1; i<reader.getResolutionCount(); i++) {
+      int x = reader.getSizeX();
+      int y = reader.getSizeY();
+      reader.setResolution(i);
+      assertEquals(x / 2, reader.getSizeX());
+      assertEquals(y / 2, reader.getSizeY());
+    }
+  }
+
+  @Test
+  public void testPyramidValidScale() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=3&resolutionScale=4.fake");
+    assertEquals(reader.getSeriesCount(), 1);
+    assertEquals(reader.getResolutionCount(), 3);
+    for (int i=1; i<reader.getResolutionCount(); i++) {
+      int x = reader.getSizeX();
+      int y = reader.getSizeY();
+      reader.setResolution(i);
+      assertEquals(x / 4, reader.getSizeX());
+      assertEquals(y / 4, reader.getSizeY());
+    }
+  }
+
+  @Test(expectedExceptions={FormatException.class})
+  public void testPyramidInvalidScale() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=4&resolutionScale=0.fake");
+  }
+
+  @Test(expectedExceptions={FormatException.class})
+  public void testPyramidInvalidResolutions() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=0.fake");
+  }
+
+  @Test
+  public void testPyramidNoResolutions() throws Exception {
+    reader.setId("test&sizeX=10000&sizeY=10000&resolutions=1.fake");
+    assertEquals(reader.getSeriesCount(), 1);
+    assertEquals(reader.getResolutionCount(), 1);
   }
 
 }

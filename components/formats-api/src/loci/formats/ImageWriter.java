@@ -96,12 +96,6 @@ public class ImageWriter implements IFormatWriter {
    */
   private String[] suffixes;
 
-  /**
-   * Compression types for all file format writers.
-   * Populated the first time getCompressionTypes() is called.
-   */
-  protected String[] compressionTypes;
-
   /** Name of current file. */
   protected String currentId;
 
@@ -205,6 +199,18 @@ public class ImageWriter implements IFormatWriter {
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     return getWriter().setTileSizeY(tileSize);
+  }
+
+  @Override
+  public void setResolutions(List<Resolution> resolutions) {
+    for (IFormatWriter w : writers) {
+      w.setResolutions(resolutions);
+    }
+  }
+
+  @Override
+  public List<Resolution> getResolutions() {
+    return getWriter().getResolutions();
   }
 
   // -- IMetadataConfigurable API methods --
@@ -366,19 +372,7 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatWriter#getCompressionTypes() */
   @Override
   public String[] getCompressionTypes() {
-    if (compressionTypes == null) {
-      HashSet<String> set = new HashSet<String>();
-      for (int i=0; i<writers.length; i++) {
-        String[] s = writers[i].getCompressionTypes();
-        if (s != null) {
-          for (int j=0; j<s.length; j++) set.add(s[j]);
-        }
-      }
-      compressionTypes = new String[set.size()];
-      set.toArray(compressionTypes);
-      Arrays.sort(compressionTypes);
-    }
-    return compressionTypes;
+    return getWriter().getCompressionTypes();
   }
 
   /* @see IFormatWriter#getPixelTypes() */
@@ -402,19 +396,7 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatWriter#setCompression(String) */
   @Override
   public void setCompression(String compress) throws FormatException {
-    boolean ok = false;
-    for (int i=0; i<writers.length; i++) {
-      String[] s = writers[i].getCompressionTypes();
-      if (s == null) continue;
-      for (int j=0; j<s.length; j++) {
-        if (s[j].equals(compress)) {
-          // valid compression type for this format
-          writers[i].setCompression(compress);
-          ok = true;
-        }
-      }
-    }
-    if (!ok) throw new FormatException("Invalid compression type: " + compress);
+    getWriter().setCompression(compress);
   }
 
   /* @see IFormatWriter#getCompression() */
@@ -485,6 +467,26 @@ public class ImageWriter implements IFormatWriter {
   @Override
   public void close() throws IOException {
     getWriter().close();
+  }
+
+  // -- IPyramidHandler API methods --
+
+  /* @see IPyramidHandler#getResolutionCount() */
+  @Override
+  public int getResolutionCount() {
+    return getWriter().getResolutionCount();
+  }
+
+  /* @see IPyramidHandler#getResolution() */
+  @Override
+  public int getResolution() {
+    return getWriter().getResolution();
+  }
+
+  /* @see IPyramidHandler#setResolution(int) */
+  @Override
+  public void setResolution(int resolution) {
+    getWriter().setResolution(resolution);
   }
 
 }

@@ -494,7 +494,7 @@ public class BDReader extends FormatReader {
           store.setDetectorSettingsID(detectorID, i, c);
           store.setDetectorSettingsGain(gain[c], i, c);
           store.setDetectorSettingsOffset(offset[c], i, c);
-          store.setDetectorSettingsBinning(getBinning(binning), i, c);
+          store.setDetectorSettingsBinning(MetadataTools.getBinning(binning), i, c);
         }
 
         long firstPlane = 0;
@@ -514,8 +514,10 @@ public class BDReader extends FormatReader {
       }
 
       store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
-      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
-      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
+      store.setPlateRows(new PositiveInteger(wellRows), 0);
+      store.setPlateColumns(new PositiveInteger(wellCols), 0);
+      store.setPlateRowNamingConvention(MetadataTools.getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention("Number"), 0);
       store.setPlateName(plateName, 0);
       store.setPlateDescription(plateDescription, 0);
 
@@ -546,45 +548,43 @@ public class BDReader extends FormatReader {
 
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
-    RandomAccessInputStream idStream = new RandomAccessInputStream(id);
-    IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
-      idStream, Constants.ENCODING)));
     IniList plate = null;
     IniList xyz = null;
 
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
-        RandomAccessInputStream stream = new RandomAccessInputStream(filename);
-        plate = parser.parseINI(new BufferedReader(new InputStreamReader(
-          stream, Constants.ENCODING)));
-        stream.close();
+        try (RandomAccessInputStream stream = new RandomAccessInputStream(filename);
+            InputStreamReader isr = new InputStreamReader(stream, Constants.ENCODING);
+            BufferedReader br = new BufferedReader(isr)) {
+          plate = parser.parseINI(br);
+        }
       }
       else if (checkSuffix(filename, "xyz")) {
-        RandomAccessInputStream stream = new RandomAccessInputStream(filename);
-        xyz = parser.parseINI(new BufferedReader(new InputStreamReader(
-          stream, Constants.ENCODING)));
-        stream.close();
+        try (RandomAccessInputStream stream = new RandomAccessInputStream(filename);
+             InputStreamReader isr = new InputStreamReader(stream, Constants.ENCODING);
+             BufferedReader br = new BufferedReader(isr)) {
+          xyz = parser.parseINI(br);
+        }
       }
       else if (filename.endsWith("RoiSummary.txt")) {
         roiFile = filename;
         if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-          RandomAccessInputStream s = new RandomAccessInputStream(filename);
-          String line = s.readLine().trim();
-          while (!line.endsWith(".adf\"")) {
-            line = s.readLine().trim();
-          }
-          plateName = line.substring(line.indexOf(':')).trim();
-          plateName = plateName.replace('/', File.separatorChar);
-          plateName = plateName.replace('\\', File.separatorChar);
-          for (int i=0; i<3; i++) {
+          try (RandomAccessInputStream s = new RandomAccessInputStream(filename)) {
+            String line = s.readLine().trim();
+            while (!line.endsWith(".adf\"")) {
+              line = s.readLine().trim();
+            }
+            plateName = line.substring(line.indexOf(':')).trim();
+            plateName = plateName.replace('/', File.separatorChar);
+            plateName = plateName.replace('\\', File.separatorChar);
+            for (int i=0; i<3; i++) {
+              plateName =
+                plateName.substring(0, plateName.lastIndexOf(File.separator));
+            }
             plateName =
-              plateName.substring(0, plateName.lastIndexOf(File.separator));
+              plateName.substring(plateName.lastIndexOf(File.separator) + 1);
           }
-          plateName =
-            plateName.substring(plateName.lastIndexOf(File.separator) + 1);
-
-          s.close();
         }
       }
     }
@@ -615,6 +615,12 @@ public class BDReader extends FormatReader {
       }
     }
 
+    IniList exp = null;
+    try (RandomAccessInputStream idStream = new RandomAccessInputStream(id);
+        InputStreamReader isr = new InputStreamReader(idStream, Constants.ENCODING);
+        BufferedReader br = new BufferedReader(isr)) {
+        exp = parser.parseINI(br);
+    }
     IniTable imageTable = exp.getTable("Image");
     boolean montage = imageTable.get("Montaged").equals("1");
     if (montage) {
@@ -673,8 +679,6 @@ public class BDReader extends FormatReader {
       }
     }
 
-    idStream.close();
-
     return exp;
   }
 
@@ -687,11 +691,12 @@ public class BDReader extends FormatReader {
 
     for (int c=0; c<channelNames.size(); c++) {
       Location dyeFile = new Location(dir, channelNames.get(c) + ".dye");
-      RandomAccessInputStream stream =
-        new RandomAccessInputStream(dyeFile.getAbsolutePath());
-      IniList dye = new IniParser().parseINI(new BufferedReader(
-        new InputStreamReader(stream, Constants.ENCODING)));
-
+      IniList dye = null;
+      try (RandomAccessInputStream stream = new RandomAccessInputStream(dyeFile.getAbsolutePath());
+           InputStreamReader isr = new InputStreamReader(stream, Constants.ENCODING);
+           BufferedReader br = new BufferedReader(isr)) {
+          dye = new IniParser().parseINI(br);
+      }
       IniTable numerator = dye.getTable("Numerator");
       String em = numerator.get("Emission");
       em = em.substring(0, em.indexOf(' '));
@@ -708,7 +713,6 @@ public class BDReader extends FormatReader {
       gain[c] = Double.parseDouble(numerator.get("Gain"));
       offset[c] = Double.parseDouble(numerator.get("Offset"));
 
-      stream.close();
     }
   }
 
@@ -794,21 +798,20 @@ public class BDReader extends FormatReader {
   }
 
   private long getTimestamp(String file) throws FormatException, IOException {
-    RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
-    TiffParser parser = new TiffParser(s);
-    parser.setDoCaching(false);
-    IFD firstIFD = parser.getFirstIFD();
-    if (firstIFD != null) {
-      TiffIFDEntry timestamp = (TiffIFDEntry) firstIFD.get(IFD.DATE_TIME);
-      if (timestamp != null) {
-        String stamp = parser.getIFDValue(timestamp).toString();
-        s.close();
-        stamp = DateTools.formatDate(stamp, BaseTiffReader.DATE_FORMATS, ".");
-        Timestamp t = Timestamp.valueOf(stamp);
-        return t.asInstant().getMillis(); // NPE if invalid input.
+    try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
+      TiffParser parser = new TiffParser(s);
+      parser.setDoCaching(false);
+      IFD firstIFD = parser.getFirstIFD();
+      if (firstIFD != null) {
+        TiffIFDEntry timestamp = (TiffIFDEntry) firstIFD.get(IFD.DATE_TIME);
+        if (timestamp != null) {
+          String stamp = parser.getIFDValue(timestamp).toString();
+          stamp = DateTools.formatDate(stamp, BaseTiffReader.DATE_FORMATS, ".");
+          Timestamp t = Timestamp.valueOf(stamp);
+          return t.asInstant().getMillis(); // NPE if invalid input.
+        }
       }
     }
-    s.close();
     return new Location(file).lastModified();
   }
 

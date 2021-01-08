@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.7.3-SNAPSHOT</version>
+    <version>6.6.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -34,7 +34,7 @@
       <version>${ome-common.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openmicroscopy</groupId>
+      <groupId>${ome-model.group}</groupId>
       <artifactId>ome-xml</artifactId>
       <version>${ome-model.version}</version>
     </dependency>
@@ -66,7 +66,7 @@
     <dependency>
       <groupId>org.perf4j</groupId>
       <artifactId>perf4j</artifactId>
-      <version>0.9.13</version>
+      <version>0.9.16</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -88,6 +88,19 @@
       <artifactId>assumeng</artifactId>
       <version>1.2.4</version>
     </dependency>
+    <dependency>
+      <groupId>org.kohsuke</groupId>
+      <artifactId>file-leak-detector</artifactId>
+      <version>1.13</version>
+      <!-- the regular jar does not specify a main class -->
+      <classifier>jar-with-dependencies</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <properties>
@@ -96,6 +109,10 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>

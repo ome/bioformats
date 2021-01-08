@@ -1,12 +1,10 @@
 # This document is a configuration file identifying all file format readers
 # available to Bio-Formats, and the order in which they should be used.
-# Please do not edit unless you know what you are doing (see reader-guide.txt).
-
-# generic reader for HCS data
-# disabled for now, as it has been causing no end of problems outside of OMERO
-#loci.formats.in.ScreenReader
+# Please do not edit unless you know what you are doing, see
+# https://docs.openmicroscopy.org/latest/bio-formats/developers/reader-guide.html
 
 loci.formats.in.FilePatternReader     # pattern
+loci.formats.in.URLReader[type=external] # urlreader
 
 # readers for compressed/archive files
 loci.formats.in.ZipReader             # zip
@@ -17,6 +15,8 @@ loci.formats.in.JPEGReader            # jpg, jpeg [javax.imageio]
 
 # external readers with unique file extensions
 loci.formats.in.SlideBook6Reader[type=external]      # sld
+loci.formats.in.ScreenReader[type=external]         # .screen
+loci.formats.in.ZarrReader[type=external]         # .zarr
 
 # standalone readers with unique file extensions
 loci.formats.in.PGMReader             # pgm
@@ -26,6 +26,7 @@ loci.formats.in.GIFReader             # gif
 loci.formats.in.BMPReader             # bmp
 loci.formats.in.IPLabReader           # ipl
 loci.formats.in.IvisionReader         # ipm
+loci.formats.in.RCPNLReader           # rcpnl
 loci.formats.in.DeltavisionReader     # dv, r3d
 loci.formats.in.MRCReader             # mrc, st, ali
 loci.formats.in.GatanReader           # dm3
@@ -70,6 +71,7 @@ loci.formats.in.BioRadGelReader       # 1sc
 loci.formats.in.RHKReader             # sm2, sm3
 loci.formats.in.MolecularImagingReader # stp
 loci.formats.in.CellWorxReader        # pnl, htd
+loci.formats.in.MetaxpressTiffReader      # htd
 loci.formats.in.Ecat7Reader           # v
 loci.formats.in.VarianFDFReader       # fdf
 loci.formats.in.AIMReader             # aim
@@ -98,6 +100,8 @@ loci.formats.in.IM3Reader             # im3
 loci.formats.in.I2IReader             # i2i
 loci.formats.in.SPEReader             # spe
 loci.formats.in.OIRReader             # oir
+loci.formats.in.KLBReader             # klb
+loci.formats.in.MicroCTReader         # vff
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
@@ -117,6 +121,7 @@ loci.formats.in.OperettaReader        # xml, tif, tiff
 loci.formats.in.InveonReader          # hdr, ct.img, cat, ...
 loci.formats.in.CellVoyagerReader     # xml, tif
 loci.formats.in.ColumbusReader        # xml, tif
+loci.formats.in.CV7000Reader          # wpi
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic
@@ -133,6 +138,7 @@ loci.formats.in.ImarisHDFReader       # ims [NetCDF]
 loci.formats.in.CellH5Reader          # ch5 [JHDF]
 loci.formats.in.WlzReader	      # wlz [JWlz]
 loci.formats.in.VeecoReader           # hdf [NetCDF]
+loci.formats.in.TecanReader           # db [SQLite JDBC]
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]
@@ -146,6 +152,7 @@ loci.formats.in.LEOReader             # sxm
 loci.formats.in.JPKReader             # jpk
 loci.formats.in.NDPIReader            # ndpi
 loci.formats.in.PCORAWReader          # pcoraw
+loci.formats.in.VentanaReader         # bif
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.OMETiffReader         # tif
@@ -156,11 +163,12 @@ loci.formats.in.LeicaReader           # lei, tif
 loci.formats.in.NikonReader           # nef, tif
 loci.formats.in.FluoviewReader        # tif
 loci.formats.in.PrairieReader         # xml, cfg, tif
-loci.formats.in.MetamorphReader       # stk, tif, nd
+loci.formats.in.MetamorphReader       # stk, tif, nd, scan
 loci.formats.in.MicromanagerReader    # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
 loci.formats.in.NikonTiffReader       # tif
+loci.formats.in.MikroscanTiffReader   # tif
 loci.formats.in.PhotoshopTiffReader   # tif
 loci.formats.in.FEITiffReader         # tif
 loci.formats.in.SimplePCITiffReader   # tif
@@ -170,7 +178,9 @@ loci.formats.in.SISReader             # tif
 loci.formats.in.DNGReader             # cr2, crw, jpg, thm, wav, tif?
 loci.formats.in.ZeissTIFFReader # tif
 loci.formats.in.LeicaSCNReader        # scn
+loci.formats.in.VectraReader          # tif, tiff, qptiff
 loci.formats.in.SlidebookTiffReader   # tiff
+loci.formats.in.IonpathMIBITiffReader   # tif, tiff
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff
@@ -189,3 +199,4 @@ loci.formats.in.HitachiReader         # txt, tif, jpg, bmp
 loci.formats.in.BrukerReader          # fid, acqp
 loci.formats.in.CanonRawReader        # cr2, crw, jpg, thm, wav
 loci.formats.in.OBFReader             # obf, msr
+loci.formats.in.BDVReader             # xml, h5

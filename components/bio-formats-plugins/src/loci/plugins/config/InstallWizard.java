@@ -142,32 +142,32 @@ public class InstallWizard extends JFrame
   }
 
   public static String download(URLConnection conn) throws IOException {
-    InputStreamReader in =
-      new InputStreamReader(conn.getInputStream(), Constants.ENCODING);
-    char[] buf = new char[65536];
     StringBuffer sb = new StringBuffer();
-    while (true) {
-      int r = in.read(buf);
-      if (r <= 0) break;
-      sb.append(buf, 0, r);
+    try (InputStreamReader in =
+          new InputStreamReader(conn.getInputStream(), Constants.ENCODING)) {
+      char[] buf = new char[65536];
+
+      while (true) {
+        int r = in.read(buf);
+        if (r <= 0) break;
+        sb.append(buf, 0, r);
+      }
     }
-    in.close();
     return sb.toString();
   }
 
   public static void download(URLConnection conn, File dest)
     throws IOException
   {
-    InputStream in = conn.getInputStream();
-    FileOutputStream out = new FileOutputStream(dest);
-    byte[] buf = new byte[65536];
-    while (true) {
-      int r = in.read(buf);
-      if (r <= 0) break;
-      out.write(buf, 0, r);
+    try (InputStream in = conn.getInputStream();
+          FileOutputStream out = new FileOutputStream(dest)) {
+      byte[] buf = new byte[65536];
+      while (true) {
+        int r = in.read(buf);
+        if (r <= 0) break;
+        out.write(buf, 0, r);
+      }
     }
-    out.close();
-    in.close();
   }
 
 }

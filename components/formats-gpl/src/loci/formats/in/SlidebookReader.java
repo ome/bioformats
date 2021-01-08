@@ -668,7 +668,7 @@ public class SlidebookReader extends FormatReader {
           in.seek(in.getFilePointer() - 1);
           long nSkipped = in.getFilePointer() - fp;
           if (nSkipped < 8) {
-            in.skipBytes((int) (8 - nSkipped));
+            in.skipBytes(8 - nSkipped);
           }
           String objective = readCString().trim();
           in.seek(fp + 144);
@@ -1257,8 +1257,8 @@ public class SlidebookReader extends FormatReader {
         if (objective != null) {
           store.setObjectiveModel(objective, 0, objectiveIndex);
           store.setObjectiveCorrection(
-            getCorrection("Other"), 0, objectiveIndex);
-          store.setObjectiveImmersion(getImmersion("Other"), 0, objectiveIndex);
+            MetadataTools.getCorrection("Other"), 0, objectiveIndex);
+          store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, objectiveIndex);
           if (magnifications != null && magnifications.get(i) > 0) {
             store.setObjectiveNominalMagnification(
                 magnifications.get(i).doubleValue(), 0, objectiveIndex);

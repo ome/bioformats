@@ -30,10 +30,9 @@ Type "ant -p" for a list of targets.
       <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
-      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
-      <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
-      <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
+      <link href="http://docs.oracle.com/javase/8/docs/api/"/>
+      <link href="https://imagej.net/developer/api/"
+            offline="true" packagelistLoc="${root.dir}/ant/package-list"/>
     </javadoc>
     <zip destfile="${artifact.dir}/bio-formats-javadocs-${release.version}.zip">
       <zipfileset dir="${merged-docs.dir}" prefix="bio-formats-javadocs-${release.version}"/>
@@ -47,8 +46,6 @@ Type "ant -p" for a list of targets.
         prefix="bftools"/>
       <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
         prefix="bftools" filemode="755"/>
-      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.rst"
-        fullpath="bftools/NEWS.rst"/>
       <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bftools"/>
     </zip>
   </target>
@@ -59,8 +56,6 @@ Type "ant -p" for a list of targets.
       <zipfileset dir="${root.dir}/components/formats-gpl/matlab"
         includes="**/*" prefix="bfmatlab"/>
       <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bfmatlab"/>
-      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.rst"
-        fullpath="bfmatlab/NEWS.rst"/>
     </zip>
   </target>
 </project>

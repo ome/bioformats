@@ -91,11 +91,9 @@ public class AnalyzeReader extends FormatReader {
     }
 
     boolean validHeader = false;
-    try {
-      RandomAccessInputStream headerStream =
-        new RandomAccessInputStream(headerFile);
+    try (RandomAccessInputStream headerStream =
+            new RandomAccessInputStream(headerFile)) {
       validHeader = isThisType(headerStream);
-      headerStream.close();
     }
     catch (IOException e) { }
 

@@ -358,15 +358,15 @@ public class L2DReader extends FormatReader {
             if (wavelength != null) {
               store.setLaserWavelength(wavelength, 0, q);
             }
-            store.setLaserType(getLaserType("Other"), 0, q);
-            store.setLaserLaserMedium(getLaserMedium("Other"), 0, q);
+            store.setLaserType(MetadataTools.getLaserType("Other"), 0, q);
+            store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, q);
             store.setChannelLightSourceSettingsID(laser, i, q);
           }
         }
       }
 
       store.setMicroscopeModel(model, 0);
-      store.setMicroscopeType(getMicroscopeType("Other"), 0);
+      store.setMicroscopeType(MetadataTools.getMicroscopeType("Other"), 0);
     }
   }
 

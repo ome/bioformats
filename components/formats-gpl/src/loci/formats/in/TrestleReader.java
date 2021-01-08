@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,8 +128,10 @@ public class TrestleReader extends BaseTiffReader {
       return files.toArray(new String[files.size()]);
     }
     String[] allFiles = new String[files.size() + 1];
-    files.toArray(allFiles);
-    allFiles[allFiles.length - 1] = currentId;
+    allFiles[0] = new Location(currentId).getAbsolutePath();
+    for (int i=0; i<files.size(); i++) {
+      allFiles[i + 1] = files.get(i);
+    }
     return allFiles;
   }
 
@@ -139,7 +142,7 @@ public class TrestleReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (core.size() == 1) {
+    if (core.size() == 1 && core.size(0) == 1) {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
@@ -211,7 +214,7 @@ public class TrestleReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
     for (IFD ifd : ifds) {
       tiffParser.fillInIFD(ifd);
     }
@@ -239,42 +242,48 @@ public class TrestleReader extends BaseTiffReader {
     for (int i=0; i<seriesCount; i++) {
       CoreMetadata c = new CoreMetadata();
 
-      if (i == 0 && !hasFlattenedResolutions()) {
+      if (i == 0) {
         c.resolutionCount = seriesCount;
+        core.add(c);
       }
-      core.add(c);
+      else {
+        core.add(0, c);
+      }
     }
 
     // repopulate core metadata
 
     for (int s=0; s<core.size(); s++) {
-      CoreMetadata ms = core.get(s);
-      IFD ifd = ifds.get(s);
-      PhotoInterp p = ifd.getPhotometricInterpretation();
-      int samples = ifd.getSamplesPerPixel();
-      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
+      for (int r=0; r<core.size(s); r++) {
+        CoreMetadata ms = core.get(s, r);
+        int index = core.flattenedIndex(s, r);
+        IFD ifd = ifds.get(index);
+        PhotoInterp p = ifd.getPhotometricInterpretation();
+        int samples = ifd.getSamplesPerPixel();
+        ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      long numTileRows = ifd.getTilesPerColumn() - 1;
-      long numTileCols = ifd.getTilesPerRow() - 1;
+        long numTileRows = ifd.getTilesPerColumn() - 1;
+        long numTileCols = ifd.getTilesPerRow() - 1;
 
-      int overlapX = overlaps[s * 2];
-      int overlapY = overlaps[s * 2 + 1];
+        int overlapX = overlaps[index * 2];
+        int overlapY = overlaps[index * 2 + 1];
 
-      ms.sizeX = (int) (ifd.getImageWidth() - (numTileCols * overlapX));
-      ms.sizeY = (int) (ifd.getImageLength() - (numTileRows * overlapY));
-      ms.sizeZ = 1;
-      ms.sizeT = 1;
-      ms.sizeC = ms.rgb ? samples : 1;
-      ms.littleEndian = ifd.isLittleEndian();
-      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
-        (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      ms.imageCount = 1;
-      ms.pixelType = ifd.getPixelType();
-      ms.metadataComplete = true;
-      ms.interleaved = false;
-      ms.falseColor = false;
-      ms.dimensionOrder = "XYCZT";
-      ms.thumbnail = s > 0;
+        ms.sizeX = (int) (ifd.getImageWidth() - (numTileCols * overlapX));
+        ms.sizeY = (int) (ifd.getImageLength() - (numTileRows * overlapY));
+        ms.sizeZ = 1;
+        ms.sizeT = 1;
+        ms.sizeC = ms.rgb ? samples : 1;
+        ms.littleEndian = ifd.isLittleEndian();
+        ms.indexed = p == PhotoInterp.RGB_PALETTE &&
+          (get8BitLookupTable() != null || get16BitLookupTable() != null);
+        ms.imageCount = 1;
+        ms.pixelType = ifd.getPixelType();
+        ms.metadataComplete = true;
+        ms.interleaved = false;
+        ms.falseColor = false;
+        ms.dimensionOrder = "XYCZT";
+        ms.thumbnail = s > 0 || r > 0;
+      }
     }
 
     // look for all of the other associated metadata files
@@ -292,6 +301,7 @@ public class TrestleReader extends BaseTiffReader {
     roiDrawFile = new Location(parent, name + "ROI-draw").getAbsolutePath();
 
     String[] list = parent.list(true);
+    Arrays.sort(list);
     for (String f : list) {
       if (!f.equals(baseFile.getName())) {
         files.add(new Location(parent, f).getAbsolutePath());

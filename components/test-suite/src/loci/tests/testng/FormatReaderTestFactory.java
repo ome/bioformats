@@ -36,7 +36,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 import loci.common.DataTools;
-import loci.formats.FileStitcher;
+import loci.formats.ImageReader;
+import loci.formats.UnknownFormatException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,20 @@ public class FormatReaderTestFactory {
       return new Object[0];
     }
 
+    String cachedFileList = getProperty("testng.file-list");
+    String[] cachedFiles = null;
+    if (cachedFileList != null && new File(cachedFileList).exists()) {
+      try {
+        cachedFiles = DataTools.readFile(cachedFileList).split("\n");
+      }
+      catch (IOException e) {
+        LOGGER.warn("Could not read file: {}", cachedFileList, e);
+      }
+    }
+
     String baseDir = null;
+    String configDir = null;
+    String cacheDir = null;
     String[] validSubdirs = null;
     if (filename == null) {
       // parse base directory
@@ -93,6 +107,9 @@ public class FormatReaderTestFactory {
         catch (IOException e) {
           LOGGER.debug("", e);
         }
+      }
+      if (baseDir == null && cachedFiles != null) {
+        baseDir = cachedFiles[0];
       }
 
       // Return early if no base directory is supplied
@@ -114,16 +131,24 @@ public class FormatReaderTestFactory {
         LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
+      LOGGER.info("testng.directory = {}", baseDir);
 
       // check for an alternate configuration directory
       final String configDirProperty = "testng.configDirectory";
-      String configDir = getProperty(configDirProperty);
-      LOGGER.info("testng.directory = {}", baseDir);
+      configDir = getProperty(configDirProperty);
       if (configDir != null) {
         LOGGER.info("testng.configDirectory = {}", configDir);
       }
 
-      FormatReaderTest.configTree = new ConfigurationTree(baseDir, configDir);
+      // check for an alternate configuration directory
+      final String cacheDirProperty = "testng.cacheDirectory";
+      cacheDir = getProperty(cacheDirProperty);
+      if (cacheDir != null) {
+        LOGGER.info("testng.cacheDirectory = {}", cacheDir);
+      }
+
+      FormatReaderTest.configTree = new ConfigurationTree(
+        baseDir, configDir, cacheDir);
     }
 
     // parse multiplier
@@ -147,7 +172,6 @@ public class FormatReaderTestFactory {
     LOGGER.info("testng.in-memory = {}", inMemory);
 
     // check for an alternate top level configuration file
-
     final String toplevelConfig = "testng.toplevel-config";
     String configFile = getProperty(toplevelConfig);
     if (configFile != null) {
@@ -162,6 +186,12 @@ public class FormatReaderTestFactory {
       configSuffix = "";
     }
 
+    // detect whether or not to ignore missing configuration
+    final String allowMissingProp = "testng.allow-missing";
+    String allowMissingValue = getProperty(allowMissingProp);
+    boolean allowMissing = Boolean.parseBoolean(allowMissingValue);
+    LOGGER.info("testng.allow-missing = {}", allowMissing);
+
     // display local information
     LOGGER.info("user.language = {}", System.getProperty("user.language"));
     LOGGER.info("user.country = {}", System.getProperty("user.country"));
@@ -170,7 +200,7 @@ public class FormatReaderTestFactory {
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
     LOGGER.info("Maximum heap size = {} MB", maxMemory);
 
-    if (filename == null) {
+    if (filename == null && cachedFiles == null) {
       // scan for files
       System.out.println("Scanning for files...");
       long start = System.currentTimeMillis();
@@ -190,7 +220,7 @@ public class FormatReaderTestFactory {
       LOGGER.info("Scan time: {} s ({} ms/file)", time, avg);
       LOGGER.info(TestTools.DIVIDER);
     }
-    else {
+    else if (filename != null) {
       files.add(filename);
     }
 
@@ -209,13 +239,32 @@ public class FormatReaderTestFactory {
       originalPath.put(canonicalPath, s);
     }
     Set<String> minimalFiles = new LinkedHashSet<String>();
-    FileStitcher reader = new FileStitcher();
+    ImageReader reader = new ImageReader();
     Set<String> failingIds = new LinkedHashSet<String>();
     while (!fileSet.isEmpty()) {
       String file = fileSet.iterator().next();
+      ArrayList<String> originalHandles = null;
       try {
+        originalHandles = TestTools.getHandles(true);
         reader.setId(file);
-      } catch (Exception e) {
+      }
+      catch (UnknownFormatException u) {
+        boolean validConfig = false;
+        try {
+          validConfig = FormatReaderTest.configTree.get(file) != null;
+        }
+        catch (IOException e) { }
+        if (validConfig) {
+          LOGGER.error("setId(\"{}\") failed", file, u);
+          failingIds.add(file);
+        }
+        else {
+          LOGGER.debug("Skipping file {} with unknown type", file);
+        }
+        fileSet.remove(file);
+        continue;
+      }
+      catch (Exception e) {
         LOGGER.error("setId(\"{}\") failed", file, e);
         failingIds.add(file);
         fileSet.remove(file);
@@ -243,12 +292,48 @@ public class FormatReaderTestFactory {
           reader.close();
         }
         catch (IOException e) { }
+        try {
+          ArrayList<String> handles = TestTools.getHandles(true);
+          if (originalHandles != null && handles.size() > originalHandles.size()) {
+            String msg = String.format("setId on %s failed to close %s files",
+              file, handles.size() - originalHandles.size());
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+          }
+        }
+        catch (IOException e) { }
       }
     }
     if (!failingIds.isEmpty()) {
-      String msg = String.format("setId failed on %s", failingIds);
-      LOGGER.error(msg);
-      throw new RuntimeException(msg);
+      if (!allowMissing) {
+        String msg = String.format("setId failed on %s", failingIds);
+        LOGGER.error(msg);
+        throw new RuntimeException(msg);
+      }
+      else {
+        for (String id : failingIds) {
+          boolean found = false;
+          try {
+            if (FormatReaderTest.configTree.get(id) != null) {
+              found = true;
+              }
+            }
+          catch (Exception e) {
+            LOGGER.warn("", e);
+          }
+          if (found) {
+            // setId failed and configuration present
+            String msg = String.format("setId failed on %s", id);
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+          }
+          else {
+            // setId failed and configuration missing
+            String msg = String.format("setId failed on %s (skipping)", id);
+            LOGGER.warn(msg);
+          }
+        }
+      }
     }
     files = new ArrayList<String>();
     for (String s: minimalFiles) {
@@ -260,25 +345,44 @@ public class FormatReaderTestFactory {
       files.add(originalPath.get(s));
     }
 
+    // don't remove duplicates if the list of files is pre-defined
+    if (cachedFiles != null) {
+      // assumes a configuration directory is present
+      FormatReaderTest.configTree = new ConfigurationTree(
+        baseDir, configDir, cacheDir);
+      TestTools.parseConfigFiles(configDir, FormatReaderTest.configTree);
+      for (int i=1; i<cachedFiles.length; i++) {
+        files.add(cachedFiles[i]);
+      }
+    }
+
     // create test class instances
     System.out.println("Building list of tests...");
-    Object[] tests = new Object[files.size()];
-    for (int i=0; i<tests.length; i++) {
-      String id = (String) files.get(i);
+    List<Object> tests = new ArrayList<>();
+    for (String id : files) {
       try {
+        boolean found = true;
         if (FormatReaderTest.configTree.get(id) == null) {
-          LOGGER.error("{} not configured.", id);
+          found = false;
+          if (allowMissing) {
+            LOGGER.warn("{} not configured (skipping).", id);
+          }
+          else {
+            LOGGER.error("{} not configured.", id);
+          }
+        }
+        if (found || !allowMissing) {
+          tests.add(new FormatReaderTest(id, multiplier, inMemory));
         }
       }
       catch (Exception e) {
         LOGGER.warn("", e);
       }
-      tests[i] = new FormatReaderTest(id, multiplier, inMemory);
     }
-    if (tests.length == 1) System.out.println("Ready to test " + files.get(0));
-    else System.out.println("Ready to test " + tests.length + " files");
+    if (tests.size() == 1) System.out.println("Ready to test " + files.get(0));
+    else System.out.println("Ready to test " + tests.size() + " files");
 
-    return tests;
+    return tests.toArray(new Object[tests.size()]);
   }
 
 }

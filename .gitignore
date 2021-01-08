@@ -1,7 +1,9 @@
 .classpath
+.idea
 .project
 .settings
 .DS_Store
+.idea
 artifacts
 build
 components/*/utils/*.class
@@ -14,3 +16,6 @@ testng.css
 tools/*.jar
 *.log
 *.xpr
+*.class
+*.iml
+.*.swp

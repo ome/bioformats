@@ -46,6 +46,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -78,6 +79,12 @@ public class TiffSaverTest {
     ifd = new IFD();
     ifd.putIFDValue(IFD.IMAGE_WIDTH, 512);
     ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, "comment");
+  }
+
+  @AfterMethod
+  public void tearDown() throws IOException {
+      in.close();
+      out.close();
   }
 
   @Test(expectedExceptions={ IllegalArgumentException.class })
@@ -161,6 +168,18 @@ public class TiffSaverTest {
     tiffSaver.writeIFD(ifd, 0);
     tiffSaver.overwriteComment(in, "new comment");
     assertTrue("new comment".equals(tiffParser.getComment()));
+  }
+
+  @Test
+  public void testOverwriteCommentEqualLength() throws FormatException, IOException {
+    out.seek(0);
+    tiffSaver.writeHeader();
+    tiffSaver.writeIFD(ifd, 46);
+    tiffSaver.writeIFD(ifd, 0);
+    tiffSaver.overwriteComment(in, "COMMENT");
+    assertEquals("COMMENT", tiffParser.getComment());
+    assertEquals("comment",
+      tiffParser.getIFDs().get(1).getIFDTextValue(IFD.IMAGE_DESCRIPTION));
   }
 
 }

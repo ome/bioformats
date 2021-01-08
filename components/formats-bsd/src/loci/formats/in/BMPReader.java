@@ -119,7 +119,7 @@ public class BMPReader extends FormatReader {
       throw new UnsupportedCompressionException(compression + " not supported");
     }
 
-    int rowsToSkip = invertY ? y : getSizeY() - (h + y);
+    long rowsToSkip = invertY ? y : getSizeY() - (h + y);
     int rowLength = (getSizeX() * (isIndexed() ? 1 : getSizeC()) * bpp) / 8;
 
     in.seek(global + rowsToSkip * rowLength);
@@ -241,9 +241,9 @@ public class BMPReader extends FormatReader {
           }
         }
       }
-      RandomAccessInputStream s = new RandomAccessInputStream(plane);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
+      try (RandomAccessInputStream s = new RandomAccessInputStream(plane)) {
+        readPlane(s, x, y, w, h, buf);
+      }
     }
 
     if (getRGBChannelCount() > 1) {

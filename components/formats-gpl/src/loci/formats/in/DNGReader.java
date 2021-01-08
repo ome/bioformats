@@ -83,6 +83,8 @@ public class DNGReader extends BaseTiffReader {
       new String[] {"cr2", "crw", "jpg", "thm", "wav", "tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    mergeSubIFDs = true;
+    canSeparateSeries = false;
   }
 
   // -- IFormatReader API methods --
@@ -150,13 +152,16 @@ public class DNGReader extends BaseTiffReader {
 
       ByteArrayOutputStream src = new ByteArrayOutputStream();
 
-      for (int i=0; i<byteCounts.length; i++) {
-        byte[] t = new byte[(int) byteCounts[i]];
-
-        in.seek(offsets[i]);
-        in.read(t);
-
-        src.write(t);
+      try {
+        for (int i=0; i<byteCounts.length; i++) {
+          byte[] t = new byte[(int) byteCounts[i]];
+          in.seek(offsets[i]);
+          in.read(t);
+          src.write(t);
+        }
+      } catch (Exception e) {
+        src.close();
+        throw e;
       }
 
       int[] colorMap = {1, 0, 2, 1}; // default color map
@@ -178,34 +183,34 @@ public class DNGReader extends BaseTiffReader {
       }
 
       lastPlane = new byte[FormatTools.getPlaneSize(this)];
+      short[] pix = null;
+      try (RandomAccessInputStream bb =
+        new RandomAccessInputStream(new ByteArrayHandle(src.toByteArray()))) {
+          src.close();
+          pix = new short[getSizeX() * getSizeY() * 3];
 
-      RandomAccessInputStream bb =
-        new RandomAccessInputStream(new ByteArrayHandle(src.toByteArray()));
-      src.close();
-      short[] pix = new short[getSizeX() * getSizeY() * 3];
+          for (int row=0; row<getSizeY(); row++) {
+            int realRow = row;
+            for (int col=0; col<getSizeX(); col++) {
+              short val = (short) (bb.readBits(dataSize) & 0xffff);
+              int mapIndex = (realRow % 2) * 2 + (col % 2);
 
-      for (int row=0; row<getSizeY(); row++) {
-        int realRow = row;
-        for (int col=0; col<getSizeX(); col++) {
-          short val = (short) (bb.readBits(dataSize) & 0xffff);
-          int mapIndex = (realRow % 2) * 2 + (col % 2);
+              int redOffset = realRow * getSizeX() + col;
+              int greenOffset = (getSizeY() + realRow) * getSizeX() + col;
+              int blueOffset = (2 * getSizeY() + realRow) * getSizeX() + col;
 
-          int redOffset = realRow * getSizeX() + col;
-          int greenOffset = (getSizeY() + realRow) * getSizeX() + col;
-          int blueOffset = (2 * getSizeY() + realRow) * getSizeX() + col;
-
-          if (colorMap[mapIndex] == 0) {
-            pix[redOffset] = adjustForWhiteBalance(val, 0);
+              if (colorMap[mapIndex] == 0) {
+                pix[redOffset] = adjustForWhiteBalance(val, 0);
+              }
+              else if (colorMap[mapIndex] == 1) {
+                pix[greenOffset] = adjustForWhiteBalance(val, 1);
+              }
+              else if (colorMap[mapIndex] == 2) {
+                pix[blueOffset] = adjustForWhiteBalance(val, 2);
+              }
+            }
           }
-          else if (colorMap[mapIndex] == 1) {
-            pix[greenOffset] = adjustForWhiteBalance(val, 1);
-          }
-          else if (colorMap[mapIndex] == 2) {
-            pix[blueOffset] = adjustForWhiteBalance(val, 2);
-          }
-        }
       }
-      bb.close();
 
       ImageTools.interpolate(pix, buf, colorMap, getSizeX(), getSizeY(),
         isLittleEndian());
@@ -247,7 +252,7 @@ public class DNGReader extends BaseTiffReader {
     // reset image dimensions
     // the actual image data is stored in IFDs referenced by the SubIFD tag
     // in the 'real' IFD
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     m.imageCount = ifds.size();
 
@@ -294,11 +299,10 @@ public class DNGReader extends BaseTiffReader {
             byte[] buf = new byte[b.length + offset - 8];
             System.arraycopy(b, b.length - 8, buf, 0, 8);
             System.arraycopy(b, 0, buf, offset, b.length - 8);
-            RandomAccessInputStream makerNote =
-              new RandomAccessInputStream(buf);
-            TiffParser tp = new TiffParser(makerNote);
             IFD note = null;
-            try {
+            try (RandomAccessInputStream makerNote =
+                    new RandomAccessInputStream(buf)) {
+              TiffParser tp = new TiffParser(makerNote);
               note = tp.getFirstIFD();
             }
             catch (Exception e) {
@@ -326,7 +330,6 @@ public class DNGReader extends BaseTiffReader {
                 }
               }
             }
-            makerNote.close();
           }
         }
       }
@@ -346,7 +349,7 @@ public class DNGReader extends BaseTiffReader {
     }
     ifds.set(0, original);
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
     m.imageCount = 1;
     m.sizeT = 1;
     if (ifds.get(0).getSamplesPerPixel() == 1) {

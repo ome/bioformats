@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -36,6 +37,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.units.quantity.Length;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
@@ -81,7 +83,31 @@ public class MRCReader extends FormatReader {
   /** @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return FormatTools.validStream(stream, HEADER_SIZE, false);
+    if (!FormatTools.validStream(stream, HEADER_SIZE, false)) {
+      return false;
+    }
+    setLittleEndian(stream);
+    stream.seek(0);
+
+    int x = stream.readInt();
+    if ((x <= 0 || x >= stream.length()) &&
+      (DataTools.swap(x) <= 0 || DataTools.swap(x) >= stream.length()))
+    {
+      return false;
+    }
+    int y = stream.readInt();
+    if ((y <= 0 || y >= stream.length()) &&
+      (DataTools.swap(y) <= 0 || DataTools.swap(y) >= stream.length()))
+    {
+      return false;
+    }
+    int z = stream.readInt();
+    if ((z <= 0 || z >= stream.length()) &&
+      (DataTools.swap(z) <= 0 || DataTools.swap(z) >= stream.length()))
+    {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -139,13 +165,12 @@ public class MRCReader extends FormatReader {
 
     // check endianness
 
-    in.seek(ENDIANNESS_OFFSET);
-    m.littleEndian = in.read() == 68;
+    setLittleEndian(in);
+    m.littleEndian = in.isLittleEndian();
 
     // read dimension information from 1024 byte header
 
     in.seek(0);
-    in.order(isLittleEndian());
 
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
@@ -280,8 +305,13 @@ public class MRCReader extends FormatReader {
 
     extHeaderSize = in.readInt();
 
+    in.skipBytes(8);
+
+    String extType = in.readString(4);
+    addGlobalMeta("Extended header type", extType);
+
     if (level != MetadataLevel.MINIMUM) {
-      in.skipBytes(64);
+      in.skipBytes(52);
 
       int idtype = in.readShort();
 
@@ -306,6 +336,8 @@ public class MRCReader extends FormatReader {
       for (int i=0; i<10; i++) {
         addGlobalMetaList("Label", in.readString(80));
       }
+
+      LOGGER.info("Skipping extended header of type '{}' and size {}", extType, extHeaderSize);
     }
 
     LOGGER.info("Populating metadata");
@@ -322,9 +354,15 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (level != MetadataLevel.MINIMUM) {
-      Length sizeX = FormatTools.getPhysicalSizeX(xSize, UNITS.ANGSTROM);
-      Length sizeY = FormatTools.getPhysicalSizeY(ySize, UNITS.ANGSTROM);
-      Length sizeZ = FormatTools.getPhysicalSizeZ(zSize, UNITS.ANGSTROM);
+      // this is the unit specified by the MRC documentation
+      Unit sizeUnit = UNITS.ANGSTROM;
+      if (extType.equals("AGAR")) {
+        // FEI software typically writes physical sizes in micrometers
+        sizeUnit = UNITS.MICROMETER;
+      }
+      Length sizeX = FormatTools.getPhysicalSizeX(xSize, sizeUnit);
+      Length sizeY = FormatTools.getPhysicalSizeY(ySize, sizeUnit);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(zSize, sizeUnit);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -336,6 +374,24 @@ public class MRCReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
     }
+  }
+
+  /**
+   * Detect the correct endianness and set the stream accordingly.
+   * New-style headers have a value that can be checked, but older
+   * headers do not (and are assumed to be little endian).
+   * See the definition of offsets 196-216 in:
+   * https://bio3d.colorado.edu/imod/doc/mrc_format.txt
+   */
+  private void setLittleEndian(RandomAccessInputStream s) throws IOException {
+    s.seek(ENDIANNESS_OFFSET);
+    int check = s.read();
+    boolean little = check == 68;
+    boolean big = check == 17;
+    if (little == big) {
+      little = true;
+    }
+    s.order(little);
   }
 
 }

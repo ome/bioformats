@@ -139,9 +139,23 @@ public class JPEGReader extends DelegateReader {
     if (getSizeX() > MAX_SIZE && getSizeY() > MAX_SIZE &&
       !legacyReaderInitialized)
     {
+      // this is a large image, so try to open with TileJPEGReader first
+      // TileJPEGReader requires restart markers to be present; if this file
+      // doesn't contain restarts then TileJPEGReader will throw IOException
+      // and we'll try again with DefaultJPEGReader
       close();
       useLegacy = true;
-      super.setId(id);
+      try {
+        super.setId(id);
+      }
+      catch (IOException e) {
+        // this case usually requires a lot of memory as it's a big image
+        // that requires the whole image to be opened for any size tile
+        LOGGER.debug("Initialization with TileJPEGReader failed", e);
+        close();
+        useLegacy = false;
+        super.setId(id);
+      }
     }
     if (currentId.endsWith(".fixed")) {
       currentId = currentId.substring(0, currentId.lastIndexOf("."));

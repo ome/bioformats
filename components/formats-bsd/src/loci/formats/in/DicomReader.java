@@ -151,6 +151,7 @@ public class DicomReader extends FormatReader {
 
   private String originalDate, originalTime, originalInstance;
   private int originalSeries;
+  private int originalX, originalY;
 
   private DicomReader helper;
 
@@ -275,7 +276,7 @@ public class DicomReader extends FormatReader {
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
-    if (fileList.size() > 1) {
+    if (fileList.size() > 1 || fileList.get(keys[getSeries()]).size() > 1) {
       int fileNumber = 0;
       if (fileList.get(keys[getSeries()]).size() > 1) {
         fileNumber = no / imagesPerFile;
@@ -289,6 +290,9 @@ public class DicomReader extends FormatReader {
     int ec = isIndexed() ? 1 : getSizeC();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int bytes = getSizeX() * getSizeY() * bpp * ec;
+    if (in == null) {
+      in = new RandomAccessInputStream(currentId);
+    }
     in.seek(offsets[no]);
 
     if (isRLE) {
@@ -463,6 +467,8 @@ public class DicomReader extends FormatReader {
       date = time = imageType = null;
       originalDate = originalTime = originalInstance = null;
       originalSeries = 0;
+      originalX = 0;
+      originalY = 0;
       helper = null;
       companionFiles.clear();
       positionX.clear();
@@ -477,6 +483,9 @@ public class DicomReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    if (in != null) {
+      in.close();
+    }
     in = new RandomAccessInputStream(id);
     in.order(true);
     CoreMetadata m = core.get(0);
@@ -576,6 +585,7 @@ public class DicomReader extends FormatReader {
           int y = in.readShort();
           if (y > getSizeY()) {
             m.sizeY = y;
+            originalY = y;
           }
           addInfo(tag, getSizeY());
           break;
@@ -583,6 +593,7 @@ public class DicomReader extends FormatReader {
           int x = in.readShort();
           if (x > getSizeX()) {
             m.sizeX = x;
+            originalX = x;
           }
           addInfo(tag, getSizeX());
           break;
@@ -661,15 +672,7 @@ public class DicomReader extends FormatReader {
             if (fileList == null) {
               fileList = new HashMap<Integer, List<String>>();
             }
-            int seriesIndex = 0;
-            if (originalInstance != null) {
-              try {
-                seriesIndex = Integer.parseInt(originalInstance);
-              }
-              catch (NumberFormatException e) {
-                LOGGER.debug("Could not parse instance number: {}", originalInstance);
-              }
-            }
+            int seriesIndex = originalSeries;
             if (fileList.get(seriesIndex) == null) {
               fileList.put(seriesIndex, new ArrayList<String>());
             }
@@ -693,8 +696,9 @@ public class DicomReader extends FormatReader {
 
     if (id.endsWith("DICOMDIR")) {
       String parent = new Location(currentId).getAbsoluteFile().getParent();
+      Integer[] fileKeys = fileList.keySet().toArray(new Integer[0]);
+      Arrays.sort(fileKeys);
       for (int q=0; q<fileList.size(); q++) {
-        Integer[] fileKeys = fileList.keySet().toArray(new Integer[0]);
         for (int i=0; i<fileList.get(fileKeys[q]).size(); i++) {
           String file = fileList.get(fileKeys[q]).get(i);
           file = file.replace('\\', File.separatorChar);
@@ -709,7 +713,7 @@ public class DicomReader extends FormatReader {
         companionFiles.set(i, parent + File.separator + file);
       }
       companionFiles.add(new Location(currentId).getAbsolutePath());
-      initFile(fileList.get(0).get(0));
+      initFile(fileList.get(fileKeys[0]).get(0));
       return;
     }
 
@@ -873,7 +877,7 @@ public class DicomReader extends FormatReader {
         for (int p=0; p<getImageCount(); p++) {
           if (p < positionX.size()) {
             if (positionX.get(p) != null) {
-              Length x = new Length(positionX.get(p), UNITS.MM);
+              Length x = new Length(positionX.get(p), UNITS.MILLIMETER);
               if (x != null) {
                 store.setPlanePositionX(x, 0, p);
               }
@@ -881,7 +885,7 @@ public class DicomReader extends FormatReader {
           }
           if (p < positionY.size()) {
             if (positionY.get(p) != null) {
-              Length y = new Length(positionY.get(p), UNITS.MM);
+              Length y = new Length(positionY.get(p), UNITS.MILLIMETER);
               if (y != null) {
                 store.setPlanePositionY(y, 0, p);
               }
@@ -889,7 +893,7 @@ public class DicomReader extends FormatReader {
           }
           if (p < positionZ.size()) {
             if (positionZ.get(p) != null) {
-              Length z = new Length(positionZ.get(p), UNITS.MM);
+              Length z = new Length(positionZ.get(p), UNITS.MILLIMETER);
               if (z != null) {
                 store.setPlanePositionZ(z, 0, p);
               }
@@ -1096,7 +1100,7 @@ public class DicomReader extends FormatReader {
     if (skip) {
       long skipCount = (long) elementLength;
       if (in.getFilePointer() + skipCount <= in.length()) {
-        in.skipBytes((int) skipCount);
+        in.skipBytes(skipCount);
       }
       location += elementLength;
       value = "";
@@ -1287,18 +1291,7 @@ public class DicomReader extends FormatReader {
       Location currentFile = new Location(currentId).getAbsoluteFile();
       Location directory = currentFile.getParentFile();
 
-      // move up a directory and look for other directories that
-      // could contain matching files
-
-      directory = directory.getParentFile();
-      String[] subdirs = directory.list(true);
-      if (subdirs != null) {
-        for (String subdir : subdirs) {
-          Location f = new Location(directory, subdir).getAbsoluteFile();
-          if (!f.isDirectory()) continue;
-          scanDirectory(f, true);
-        }
-      }
+      scanDirectory(directory, true);
 
       for (final List<String> files : fileList.values()) {
         final Iterator<String> fileIterator = files.iterator();
@@ -1358,47 +1351,72 @@ public class DicomReader extends FormatReader {
   private void addFileToList(String file, boolean checkSeries)
     throws FormatException, IOException
   {
-    RandomAccessInputStream stream = new RandomAccessInputStream(file);
-    if (!isThisType(stream)) {
-      stream.close();
-      return;
-    }
-    stream.order(true);
-
-    stream.seek(128);
-    if (!stream.readString(4).equals("DICM")) stream.seek(0);
-
+    int currentX = 0, currentY = 0;
     int fileSeries = -1;
 
     String date = null, time = null, instance = null;
-    while (date == null || time == null || instance == null ||
-      (checkSeries && fileSeries < 0))
-    {
-      long fp = stream.getFilePointer();
-      if (fp + 4 >= stream.length() || fp < 0) break;
-      int tag = getNextTag(stream);
-      final String key = TYPES.get(tag);
-      if ("Instance Number".equals(key)) {
-        instance = stream.readString(elementLength).trim();
-        if (instance.length() == 0) instance = null;
+    try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
+      if (!isThisType(stream)) {
+        return;
       }
-      else if ("Acquisition Time".equals(key)) {
-        time = stream.readString(elementLength);
+      stream.order(true);
+      stream.seek(128);
+      if (!stream.readString(4).equals("DICM")) {
+        stream.seek(0);
       }
-      else if ("Acquisition Date".equals(key)) {
-        date = stream.readString(elementLength);
+
+      while (date == null || time == null || instance == null ||
+        (checkSeries && fileSeries < 0) || currentX == 0 || currentY == 0)
+      {
+        long fp = stream.getFilePointer();
+        if (fp + 4 >= stream.length() || fp < 0) break;
+        int tag = getNextTag(stream);
+        final String key = TYPES.get(tag);
+        if ("Instance Number".equals(key)) {
+          instance = stream.readString(elementLength).trim();
+          if (instance.length() == 0) instance = null;
+        }
+        else if ("Acquisition Time".equals(key)) {
+          time = stream.readString(elementLength);
+        }
+        else if ("Acquisition Date".equals(key)) {
+          date = stream.readString(elementLength);
+        }
+        else if ("Series Number".equals(key)) {
+          fileSeries = Integer.parseInt(stream.readString(elementLength).trim());
+        }
+        else if (tag == ROWS) {
+          int y = stream.readShort();
+          if (y > currentY) {
+            currentY = y;
+          }
+        }
+        else if (tag == COLUMNS) {
+          int x = stream.readShort();
+          if (x > currentX) {
+            currentX = x;
+          }
+        }
+        else stream.skipBytes(elementLength);
       }
-      else if ("Series Number".equals(key)) {
-        fileSeries = Integer.parseInt(stream.readString(elementLength).trim());
-      }
-      else stream.skipBytes(elementLength);
     }
-    stream.close();
+
+    LOGGER.trace("  date = {}, originalDate = {}", date, originalDate);
+    LOGGER.trace("  time = {}, originalTime = {}", time, originalTime);
+    LOGGER.trace("  instance = {}, originalInstance = {}", instance, originalInstance);
+    LOGGER.trace("  checkSeries = {}", checkSeries);
+    LOGGER.trace("  fileSeries = {}, originalSeries = {}", fileSeries, originalSeries);
+    LOGGER.trace("  currentX = {}, originalX = {}", currentX, originalX);
+    LOGGER.trace("  currentY = {}, originalY = {}", currentY, originalY);
 
     if (date == null || time == null || instance == null ||
-      (checkSeries && fileSeries == originalSeries))
+      (checkSeries && fileSeries != originalSeries))
     {
       return;
+    }
+
+    if (currentX != originalX || currentY != originalY) {
+      fileSeries++;
     }
 
     int stamp = 0;
@@ -1412,6 +1430,9 @@ public class DicomReader extends FormatReader {
       timestamp = Integer.parseInt(originalTime);
     }
     catch (NumberFormatException e) { }
+
+    LOGGER.trace("  stamp = {}", stamp);
+    LOGGER.trace("  timestamp = {}", timestamp);
 
     if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 150)) {
       int position = Integer.parseInt(instance) - 1;
