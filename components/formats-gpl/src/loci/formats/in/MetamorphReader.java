@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.AbstractMap;
 import java.util.Collections;
-import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -53,18 +52,12 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
-import loci.formats.CoreMetadataList;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-import loci.formats.services.OMEXMLService;
-import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -102,11 +95,11 @@ public class MetamorphReader extends BaseTiffReader {
   public static final String SHORT_DATE_FORMAT = "yyyyMMdd HH:mm:ss";
   public static final String LONG_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
-  public static final String[] ND_SUFFIX = {"nd", "scan"};
+  public static final String[] ND_SUFFIX = {"nd"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
   public static final Pattern WELL_COORDS = Pattern.compile(
-      "\\b([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
+      "scan\\s+([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
   );
 
   // IFD tag numbers of important fields
@@ -115,7 +108,7 @@ public class MetamorphReader extends BaseTiffReader {
   private static final int UIC2TAG = 33629;
   private static final int UIC3TAG = 33630;
   private static final int UIC4TAG = 33631;
-
+  
   // NDInfoFile Version Strings
   private static final String NDINFOFILE_VER1 = "Version 1.0";
   private static final String NDINFOFILE_VER2 = "Version 2.0";
@@ -175,24 +168,15 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() {
-    super("Metamorph STK", new String[] {"stk", "nd", "scan", "tif", "tiff"});
+    super("Metamorph STK", new String[] {"stk", "nd", "tif", "tiff"});
     domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
     datasetDescription = "One or more .stk or .tif/.tiff files plus an " +
-      "optional .nd or .scan file";
-    canSeparateSeries = false;
+      "optional .nd file";
   }
 
   // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#getDomains() */
-  @Override
-  public String[] getDomains() {
-    FormatTools.assertId(currentId, true, 1);
-    return isHCS ? new String[] {FormatTools.HCS_DOMAIN} :
-      new String[] {FormatTools.LM_DOMAIN};
-  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   @Override
@@ -201,7 +185,7 @@ public class MetamorphReader extends BaseTiffReader {
     if (!location.exists()) {
         return false;
     }
-    if (checkSuffix(name, ND_SUFFIX)) return true;
+    if (checkSuffix(name, "nd")) return true;
     if (open) {
       location = location.getAbsoluteFile();
       Location parent = location.getParentFile();
@@ -210,17 +194,17 @@ public class MetamorphReader extends BaseTiffReader {
 
       while (baseName.indexOf('_') >= 0) {
         baseName = baseName.substring(0, baseName.lastIndexOf("_"));
-        if (checkSuffix(name, suffixes)) {
-          for (String ext : ND_SUFFIX) {
-            if (new Location(parent, baseName + "." + ext).exists() ||
-                new Location(parent, baseName + "." + ext.toUpperCase()).exists()) {
-              return true;
-            }
-          }
-          if (new Location(parent, baseName + ".htd").exists() ||
-              new Location(parent, baseName + ".HTD").exists()) {
-            return false;
-          }
+        if (checkSuffix(name, suffixes) &&
+          (new Location(parent, baseName + ".nd").exists() ||
+          new Location(parent, baseName + ".ND").exists()))
+        {
+          return true;
+        }
+        if (checkSuffix(name, suffixes) &&
+          (new Location(parent, baseName + ".htd").exists() ||
+          new Location(parent, baseName + ".HTD").exists()))
+        {
+          return false;
         }
       }
     }
@@ -376,7 +360,6 @@ public class MetamorphReader extends BaseTiffReader {
       hasAbsoluteZ = false;
       hasAbsoluteZValid = false;
       stageLabels = null;
-      isHCS = false;
     }
   }
 
@@ -470,7 +453,7 @@ public class MetamorphReader extends BaseTiffReader {
     {
       // parse key/value pairs from .nd file
 
-      int zc = getSizeZ(), cc = getSizeC(), tc = getSizeT();
+      int zc = 1, cc = 1, tc = 1;
       int nstages = 0;
       String z = null, c = null, t = null;
       final List<Boolean> hasZ = new ArrayList<Boolean>();
@@ -483,7 +466,6 @@ public class MetamorphReader extends BaseTiffReader {
 
       boolean globalDoZ = true;
       boolean doTimelapse = false;
-      boolean doWavelength = false;
       String version = NDINFOFILE_VER1;
 
       StringBuilder currentValue = new StringBuilder();
@@ -491,14 +473,13 @@ public class MetamorphReader extends BaseTiffReader {
 
       for (String line : lines) {
         int comma = line.indexOf(',');
-        if (comma <= 0 && line.indexOf("EndFile") < 0) {
+        if (comma <= 0) {
           currentValue.append("\n");
           currentValue.append(line);
           continue;
         }
 
         String value = currentValue.toString();
-        addGlobalMeta(key, value);
         if (key.equals("NDInfoFile")) version = value;
         if (key.equals("NZSteps")) z = value;
         else if (key.equals("DoTimelapse")) {
@@ -535,16 +516,8 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("DoZSeries")) {
           globalDoZ = Boolean.parseBoolean(value);
         }
-        else if (key.equals("DoWave")) {
-          doWavelength = Boolean.parseBoolean(value);
-        }
 
-        if (comma >= 1) {
-          key = line.substring(1, comma - 1).trim();
-        }
-        else {
-          key = "";
-        }
+        key = line.substring(1, comma - 1).trim();
         currentValue.delete(0, currentValue.length());
         currentValue.append(line.substring(comma + 1).trim());
       }
@@ -652,22 +625,21 @@ public class MetamorphReader extends BaseTiffReader {
             if (version.equals(NDINFOFILE_VER1) && ((anyZ && j < hasZ.size() && hasZ.get(j)) || globalDoZ)) {
               formatSuffix = ".STK";
             }
+
             if (j < waveNames.size() && waveNames.get(j) != null) {
-              if (doWavelength) {
-                stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
-                if (useWaveNames) {
-                  String waveName = waveNames.get(j);
-                  // If there are underscores in the wavelength name, translate
-                  // them to hyphens. (See #558)
-                  waveName = waveName.replace('_', '-');
-                  // If there are slashes (forward or backward) in the wavelength
-                  // name, translate them to hyphens. (See #5922)
-                  waveName = waveName.replace('/', '-');
-                  waveName = waveName.replace('\\', '-');
-                  waveName = waveName.replace('(', '-');
-                  waveName = waveName.replace(')', '-');
-                  stks[seriesNdx][pt[seriesNdx]] += waveName;
-                }
+              stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
+              if (useWaveNames) {
+                String waveName = waveNames.get(j);
+                // If there are underscores in the wavelength name, translate
+                // them to hyphens. (See #558)
+                waveName = waveName.replace('_', '-');
+                // If there are slashes (forward or backward) in the wavelength
+                // name, translate them to hyphens. (See #5922)
+                waveName = waveName.replace('/', '-');
+                waveName = waveName.replace('\\', '-');
+                waveName = waveName.replace('(', '-');
+                waveName = waveName.replace(')', '-');
+                stks[seriesNdx][pt[seriesNdx]] += waveName;
               }
             }
             if (nstages > 0) {
@@ -717,12 +689,12 @@ public class MetamorphReader extends BaseTiffReader {
         currentValue.delete(0, currentValue.length());
         currentValue.append(line.substring(comma + 1).trim());
       }
-      IFD ifd = null;
-      try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
-          TiffParser tp = new TiffParser(s);
-          ifd = tp.getFirstIFD();
-      }
-      CoreMetadata ms0 = core.get(0, 0);
+
+      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
+      TiffParser tp = new TiffParser(s);
+      IFD ifd = tp.getFirstIFD();
+      CoreMetadata ms0 = core.get(0);
+      s.close();
       ms0.sizeX = (int) ifd.getImageWidth();
       ms0.sizeY = (int) ifd.getImageLength();
 
@@ -734,14 +706,11 @@ public class MetamorphReader extends BaseTiffReader {
       ms0.sizeC = cc;
       ms0.sizeT = tc;
       ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
-      if (isRGB()) {
-        ms0.sizeC *= 3;
-      }
       ms0.dimensionOrder = "XYZCT";
 
       if (stks != null && stks.length > 1) {
         // Note that core can't be replaced with newCore until the end of this block.
-        CoreMetadataList newCore = new CoreMetadataList();
+        ArrayList<CoreMetadata> newCore = new ArrayList<CoreMetadata>();
         for (int i=0; i<stks.length; i++) {
           CoreMetadata ms = new CoreMetadata();
           newCore.add(ms);
@@ -761,12 +730,12 @@ public class MetamorphReader extends BaseTiffReader {
         if (stks.length > nstages) {
           for (int j=0; j<stagesCount; j++) {
             int idx = j * 2 + 1;
-            CoreMetadata midx = newCore.get(idx, 0);
-            CoreMetadata pmidx = newCore.get(j * 2, 0);
+            CoreMetadata midx = newCore.get(idx);
+            CoreMetadata pmidx = newCore.get(j * 2);
             pmidx.sizeC = stks[j * 2].length / getSizeT();
             midx.sizeC = stks[idx].length / midx.sizeT;
             midx.sizeZ =
-             hasZ.size() > 1 && hasZ.get(1) && core.get(0, 0).sizeZ == 1 ? zc : 1;
+             hasZ.size() > 1 && hasZ.get(1) && core.get(0).sizeZ == 1 ? zc : 1;
             pmidx.imageCount = pmidx.sizeC *
               pmidx.sizeT * pmidx.sizeZ;
             midx.imageCount =
@@ -804,15 +773,9 @@ public class MetamorphReader extends BaseTiffReader {
     Map<String, Integer> rowMap = null;
     Map<String, Integer> colMap = null;
     isHCS = true;
-    if (stageLabels == null && stageNames != null) {
-      stageLabels = stageNames.toArray(new String[stageNames.size()]);
-    }
-
     if (null == stageLabels) {
       isHCS = false;
-    } else if (stks == null ||
-      (stks != null && stageLabels.length == stks.length))
-    {
+    } else {
       Set<Map.Entry<Integer, Integer>> uniqueWells =
         new HashSet<Map.Entry<Integer, Integer>>();
       rowMap = new HashMap<String, Integer>();
@@ -831,32 +794,25 @@ public class MetamorphReader extends BaseTiffReader {
         rowMap.put(label, wellCoords.getKey());
         colMap.put(label, wellCoords.getValue());
       }
-      if (uniqueWells.size() != stageLabels.length ||
-        rowMap.size() == 0)
-      {
+      if (uniqueWells.size() != stageLabels.length) {
         isHCS = false;
       } else {
-        rows = Collections.max(rowMap.values()) + 1;
-        cols = Collections.max(colMap.values()) + 1;
-        if (rows > 0 && cols > 0) {
-          CoreMetadata c = core.get(0, 0);
-          core.clear();
-          c.sizeZ = 1;
-          c.sizeT = 1;
-          c.imageCount = 1;
-          for (int s = 0; s < uniqueWells.size(); s++) {
-            CoreMetadata toAdd = new CoreMetadata(c);
-            if (s > 0) {
-              toAdd.seriesMetadata.clear();
-            }
-            core.add(toAdd);
+        rows = Collections.max(rowMap.values());
+        cols = Collections.max(colMap.values());
+        CoreMetadata c = core.get(0);
+        core.clear();
+        c.sizeZ = 1;
+        c.sizeT = 1;
+        c.imageCount = 1;
+        for (int s = 0; s < uniqueWells.size(); s++) {
+          CoreMetadata toAdd = new CoreMetadata(c);
+          if (s > 0) {
+            toAdd.seriesMetadata.clear();
           }
-          seriesToIFD = true;
+          core.add(toAdd);
         }
+        seriesToIFD = true;
       }
-    }
-    if (rows <= 0 || cols <= 0) {
-      isHCS = false;
     }
 
     List<String> timestamps = null;
@@ -879,7 +835,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     store.setInstrumentID(instrumentID, 0);
     store.setDetectorID(detectorID, 0, 0);
-    store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
+    store.setDetectorType(getDetectorType("Other"), 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
@@ -1014,7 +970,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         if (handler.getBinning() != null) binning = handler.getBinning();
         if (binning != null) {
-          store.setDetectorSettingsBinning(MetadataTools.getBinning(binning), i, c);
+          store.setDetectorSettingsBinning(getBinning(binning), i, c);
         }
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(
@@ -1030,14 +986,6 @@ public class MetamorphReader extends BaseTiffReader {
         }
         store.setDetectorSettingsID(detectorID, i, c);
 
-        if (wave == null && handler.getWavelengths() != null) {
-          Vector<Integer> xmlWavelengths = handler.getWavelengths();
-          wave = new double[xmlWavelengths.size()];
-          for (int w=0; w<wave.length; w++) {
-            wave[w] = xmlWavelengths.get(w);
-          }
-        }
-
         if (wave != null && waveIndex < wave.length) {
           Length wavelength =
             FormatTools.getWavelength(wave[waveIndex]);
@@ -1045,25 +993,15 @@ public class MetamorphReader extends BaseTiffReader {
           if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
             int laserIndex = i * getEffectiveSizeC() + c;
-            try {
-              ServiceFactory factory = new ServiceFactory();
-              OMEXMLService omexmlService = factory.getInstance(OMEXMLService.class);
-              laserIndex = omexmlService.asRetrieve(getMetadataStore()).getLightSourceCount(0);
-            }
-            catch (DependencyException de) {
-              throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
-            }
-
             String lightSourceID =
               MetadataTools.createLSID("LightSource", 0, laserIndex);
             store.setLaserID(lightSourceID, 0, laserIndex);
             store.setChannelLightSourceSettingsID(lightSourceID, i, c);
-            store.setLaserType(MetadataTools.getLaserType("Other"), 0, laserIndex);
-            store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, laserIndex);
+            store.setLaserType(getLaserType("Other"), 0, laserIndex);
+            store.setLaserLaserMedium(getLaserMedium("Other"), 0, laserIndex);
 
             if (wavelength != null) {
               store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
-              store.setChannelEmissionWavelength(wavelength, i, c);
             }
           }
         }
@@ -1092,8 +1030,8 @@ public class MetamorphReader extends BaseTiffReader {
           exposureTimes.add(exposureTime);
         }
       }
-      else if (exposureTimes.size() == 1 && exposureTimes.size() < getEffectiveSizeC()) {
-        for (int c=1; c<getEffectiveSizeC(); c++) {
+      else if (exposureTimes.size() == 1 && exposureTimes.size() < getSizeC()) {
+        for (int c=1; c<getSizeC(); c++) {
           MetamorphHandler channelHandler = new MetamorphHandler();
 
           String channelComment = getComment(i, c);
@@ -1137,7 +1075,7 @@ public class MetamorphReader extends BaseTiffReader {
               stream = new RandomAccessInputStream(file, 16);
               tp = new TiffParser(stream);
               tp.checkHeader();
-              IFDList f = tp.getMainIFDs();
+              IFDList f = tp.getIFDs();
               if (f.size() > 0) {
                 lastFile = fileIndex;
                 lastIFDs = f;
@@ -1256,7 +1194,7 @@ public class MetamorphReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    CoreMetadata ms0 = core.get(0, 0);
+    CoreMetadata ms0 = core.get(0);
 
     ms0.sizeZ = 1;
     ms0.sizeT = 0;
@@ -1288,12 +1226,14 @@ public class MetamorphReader extends BaseTiffReader {
       if (uic2tagEntry != null) {
         parseUIC2Tags(uic2tagEntry.getValueOffset());
       }
-      if (uic4tagEntry != null) {
-        parseUIC4Tags(uic4tagEntry.getValueOffset());
-      }
-      if (uic1tagEntry != null) {
-        parseUIC1Tags(uic1tagEntry.getValueOffset(),
-          uic1tagEntry.getValueCount());
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+        if (uic4tagEntry != null) {
+          parseUIC4Tags(uic4tagEntry.getValueOffset());
+        }
+        if (uic1tagEntry != null) {
+          parseUIC1Tags(uic1tagEntry.getValueOffset(),
+            uic1tagEntry.getValueCount());
+        }
       }
       in.seek(uic4tagEntry.getValueOffset());
     }
@@ -1485,16 +1425,6 @@ public class MetamorphReader extends BaseTiffReader {
               catch (NumberFormatException e) { }
             }
           }
-          else if (key.equalsIgnoreCase("wavelength")) {
-            try {
-              if (wave == null || wave.length == 0) {
-                wave = new double[1];
-              }
-              wave[0] = DataTools.parseDouble(value);
-            }
-            catch (NumberFormatException e) {
-            }
-          }
         }
       }
 
@@ -1609,10 +1539,11 @@ public class MetamorphReader extends BaseTiffReader {
 
   private String getComment(int i, int no) throws IOException {
     if (stks != null && stks[i][no] != null) {
-      try (RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][no], 16)) {
-        TiffParser tp = new TiffParser(stream);
-        return tp.getComment();
-      }
+      RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][no], 16);
+      TiffParser tp = new TiffParser(stream);
+      String comment = tp.getComment();
+      stream.close();
+      return comment;
     }
     return ifds.get(0).getComment();
   }
@@ -1682,7 +1613,7 @@ public class MetamorphReader extends BaseTiffReader {
       zDistances[i] = readRational(in).doubleValue();
       addSeriesMeta("zDistance[" + iAsString + "]", zDistances[i]);
 
-      if (zDistances[i] != 0.0) core.get(0, 0).sizeZ++;
+      if (zDistances[i] != 0.0) core.get(0).sizeZ++;
 
       cDate = decodeDate(in.readInt());
       cTime = decodeTime(in.readInt());
@@ -1695,7 +1626,7 @@ public class MetamorphReader extends BaseTiffReader {
       // modification date and time are skipped as they all seem equal to 0...?
       in.skip(8);
     }
-    if (getSizeZ() == 0) core.get(0, 0).sizeZ = 1;
+    if (getSizeZ() == 0) core.get(0).sizeZ = 1;
 
     in.seek(saveLoc);
   }
@@ -1742,7 +1673,7 @@ public class MetamorphReader extends BaseTiffReader {
           hasAbsoluteZValid = true;
           break;
         case 46:
-          in.skipBytes((long) mmPlanes * 8); // TODO
+          in.skipBytes(mmPlanes * 8); // TODO
           break;
         default:
           in.skipBytes(4);
@@ -1788,7 +1719,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
     if (uniqueZ.size() == mmPlanes) {
-      core.get(0, 0).sizeZ = mmPlanes;
+      core.get(0).sizeZ = mmPlanes;
     }
   }
 
@@ -1988,7 +1919,7 @@ public class MetamorphReader extends BaseTiffReader {
             skipKey = true;
           }
           else if (valOrOffset == 0 && getSizeZ() < mmPlanes) {
-            core.get(0, 0).sizeZ = 1;
+            core.get(0).sizeZ = 1;
           }
           break;
         case 49:
@@ -2086,7 +2017,7 @@ public class MetamorphReader extends BaseTiffReader {
    */
   private String locateFirstValidFile() {
     for (int q = 0; q < stks.length; q++) {
-      for (int f = 0; f < stks[q].length; f++) {
+      for (int f = 0; f < stks.length; f++) {
         if (stks[q][f] != null) {
           return stks[q][f];
         }
@@ -2228,12 +2159,6 @@ public class MetamorphReader extends BaseTiffReader {
   }
 
   private Map.Entry<Integer, Integer> getWellCoords(String label) {
-    if (label.indexOf(",") >= 0) {
-      label = label.substring(0, label.indexOf(","));
-    }
-    if (label.indexOf(":") >= 0) {
-      label = label.substring(label.indexOf(":") + 1);
-    }
     Matcher matcher = WELL_COORDS.matcher(label);
     if (!matcher.find()) return null;
     int nGroups = matcher.groupCount();
