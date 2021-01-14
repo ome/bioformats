@@ -484,7 +484,7 @@ public class MetamorphReader extends BaseTiffReader {
       boolean globalDoZ = true;
       boolean doTimelapse = false;
       boolean doWavelength = false;
-      String version = NDINFOFILE_VER1;
+      String version = "";
 
 
       StringBuilder currentValue = new StringBuilder();
@@ -648,9 +648,15 @@ public class MetamorphReader extends BaseTiffReader {
               continue;
             }
             stks[seriesNdx][pt[seriesNdx]] = prefix;
-            String formatSuffix = ".TIF";
-            if (version.equals(NDINFOFILE_VER1) && ((anyZ && j < hasZ.size() && hasZ.get(j)) || globalDoZ)) {
-              formatSuffix = ".STK";
+            String formatSuffix = ".STK";
+            if (version.equals(NDINFOFILE_VER1)) {
+              formatSuffix = ".TIF";
+              if ((anyZ && j < hasZ.size() && hasZ.get(j)) || globalDoZ) {
+                formatSuffix = ".STK";
+              }
+            }
+            else if (version.equals(NDINFOFILE_VER2)) {
+              formatSuffix = ".TIF";
             }
 
             if (j < waveNames.size() && waveNames.get(j) != null) {
