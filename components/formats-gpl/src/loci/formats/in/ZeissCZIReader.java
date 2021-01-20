@@ -25,6 +25,8 @@
 
 package loci.formats.in;
 
+import io.airlift.compress.zstd.ZstdDecompressor;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +109,7 @@ public class ZeissCZIReader extends FormatReader {
   private static final int JPEG = 1;
   private static final int LZW = 2;
   private static final int JPEGXR = 4;
+  private static final int ZSTD_0 = 5;
 
   /** Pixel type constants. */
   private static final int GRAY8 = 0;
@@ -4042,6 +4045,12 @@ public class ZeissCZIReader extends FormatReader {
               data = new byte[options.maxBytes];
             }
           }
+          break;
+        case ZSTD_0:
+          ZstdDecompressor decompressor = new ZstdDecompressor();
+          byte[] output = new byte[(int) decompressor.getDecompressedSize(data, 0, data.length)];
+          decompressor.decompress(data, 0, data.length, output, 0, output.length);
+          data = output;
           break;
         case 104: // camera-specific packed pixels
           data = decode12BitCamera(data, options.maxBytes);
