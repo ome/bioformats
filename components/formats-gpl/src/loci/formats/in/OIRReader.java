@@ -632,7 +632,7 @@ public class OIRReader extends FormatReader {
         break;
       }
       long fp = s.getFilePointer();
-      String xml = s.readString(length);
+      String xml = s.readString(length).trim();
       if (!xml.startsWith("<?xml")) {
         s.seek(fp - 2);
         continue;
