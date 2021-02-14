@@ -379,7 +379,7 @@ public class CV7000Reader extends FormatReader {
       planeLengths[2] = core.get(p.series).sizeT;
 
       p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {p.channelIndex - m.minC, p.z - m.minZ, p.timepoint - m.minT});
+        new int[] {p.channel - m.minC, p.z - m.minZ, p.timepoint - m.minT});
       if (reversePlaneLookup[p.series][p.no] < 0) {
         reversePlaneLookup[p.series][p.no] = i;
       }
@@ -612,6 +612,7 @@ public class CV7000Reader extends FormatReader {
 
   private Plane lookupPlane(int series, int no) {
     int index = reversePlaneLookup[series][no];
+    LOGGER.trace("lookupPlane(series={}, no={}), index = {}", series, no, index);
     if (index < 0 || index >= planeData.size()) {
       return null;
     }
@@ -720,6 +721,8 @@ public class CV7000Reader extends FormatReader {
           }
 
           p.channelIndex = channelMap.get(p.channel);
+          LOGGER.trace("p.channel = {}, p.channelIndex = {}", p.channel, p.channelIndex);
+          LOGGER.trace("    channelMap = {}", channelMap);
 
           p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
           p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
