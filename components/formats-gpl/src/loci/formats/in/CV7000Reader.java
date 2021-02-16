@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,6 +92,7 @@ public class CV7000Reader extends FormatReader {
   private int fields;
   private String startTime, endTime;
   private ArrayList<String> extraFiles;
+  private Map<Field, Integer[]> fieldChannels = new HashMap<Field, Integer[]>();
 
   // -- Constructor --
 
@@ -206,6 +208,7 @@ public class CV7000Reader extends FormatReader {
       endTime = null;
       reversePlaneLookup = null;
       extraFiles = null;
+      fieldChannels.clear();
     }
   }
 
@@ -271,6 +274,13 @@ public class CV7000Reader extends FormatReader {
       if (settingsPath != null) {
         settingsPath = new Location(parent, settingsPath).getAbsolutePath();
       }
+
+      channels.sort(new Comparator<Channel>() {
+        @Override
+        public int compare(Channel c1, Channel c2) {
+          return c1.index - c2.index;
+        }
+      });
     }
 
     if (settingsPath != null && new Location(settingsPath).exists()) {
@@ -296,7 +306,7 @@ public class CV7000Reader extends FormatReader {
 
     for (Plane p : planeData) {
       if (p != null) {
-        int wellIndex = p.row * plate.getPlateColumns() + p.column;
+        int wellIndex = p.field.row * plate.getPlateColumns() + p.field.column;
         if (!minMax.containsKey(wellIndex)) {
           minMax.put(wellIndex, new MinMax());
         }
@@ -325,8 +335,8 @@ public class CV7000Reader extends FormatReader {
           m.minC = p.channelIndex;
         }
 
-        if (p.field >= fields) {
-          fields = p.field + 1;
+        if (p.field.field >= fields) {
+          fields = p.field.field + 1;
         }
 
         uniqueWells.add(wellIndex);
@@ -364,22 +374,25 @@ public class CV7000Reader extends FormatReader {
     int[] seriesLengths = new int[] {fields, realWells};
     int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
 
-
     extraFiles = new ArrayList<String>();
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
-      int wellNumber = p.row * plate.getPlateColumns() + p.column;
+      Field f = p.field;
+      int wellNumber = f.row * plate.getPlateColumns() + f.column;
       int wellIndex = Arrays.binarySearch(wells, wellNumber);
       p.series = FormatTools.positionToRaster(seriesLengths,
-        new int[] {p.field, wellIndex});
+        new int[] {f.field, wellIndex});
       MinMax m = minMax.get(wellNumber);
 
       planeLengths[0] = core.get(p.series).sizeC / reader.getSizeC();
       planeLengths[1] = core.get(p.series).sizeZ;
       planeLengths[2] = core.get(p.series).sizeT;
 
+      Integer[] validChannels = fieldChannels.get(f);
+      Arrays.sort(validChannels);
       p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {p.channel - m.minC, p.z - m.minZ, p.timepoint - m.minT});
+        new int[] {DataTools.indexOf(validChannels, p.channel), p.z - m.minZ, p.timepoint - m.minT});
+
       if (reversePlaneLookup[p.series][p.no] < 0) {
         reversePlaneLookup[p.series][p.no] = i;
       }
@@ -512,13 +525,7 @@ public class CV7000Reader extends FormatReader {
               // particular plane.  Skip it.
               continue;
             }
-            Channel channel = null;
-            for (Channel ch : channels) {
-              if (ch.index == p.channelIndex) {
-                channel = ch;
-                break;
-              }
-            }
+            Channel channel = lookupChannel(p.channelIndex);
             if (channel == null) {
               continue;
             }
@@ -591,6 +598,15 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
+  private Channel lookupChannel(int index) {
+    for (Channel ch : channels) {
+      if (ch.index == index) {
+        return ch;
+      }
+    }
+    return null;
+  }
+
   private String readSanitizedXML(String filename) throws IOException {
     String xml = DataTools.readFile(filename).trim();
     if (xml.endsWith(">>")) {
@@ -602,7 +618,7 @@ public class CV7000Reader extends FormatReader {
   private boolean isWellAcquired(int row, int col) {
     if (planeData != null) {
       for (Plane p : planeData) {
-        if (p != null && p.file != null && p.row == row && p.column == col) {
+        if (p != null && p.file != null && p.field.row == row && p.field.column == col) {
           return true;
         }
       }
@@ -704,21 +720,23 @@ public class CV7000Reader extends FormatReader {
           // When the instrument is recording an acquisition error the "type"
           // will be "ERR" so we can skip those.
           Plane p = new Plane();
-          p.row = Integer.parseInt(attributes.getValue("bts:Row")) - 1;
-          p.column = Integer.parseInt(attributes.getValue("bts:Column")) - 1;
+          p.field = new Field();
+          p.field.row = Integer.parseInt(attributes.getValue("bts:Row")) - 1;
+          p.field.column = Integer.parseInt(attributes.getValue("bts:Column")) - 1;
           p.timepoint = Integer.parseInt(attributes.getValue("bts:TimePoint")) - 1;
-          p.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
+          p.field.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
           p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
           p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
 
-          if (p.field != currentField) {
-            currentField = p.field;
+          if (p.field.field != currentField) {
+            currentField = p.field.field;
             channelMap.clear();
           }
 
           if (!channelMap.containsKey(p.channel)) {
             channelMap.put(p.channel, channelMap.size());
           }
+          fieldChannels.put(p.field, channelMap.keySet().toArray(new Integer[channelMap.size()]));
 
           p.channelIndex = channelMap.get(p.channel);
           LOGGER.trace("p.channel = {}, p.channelIndex = {}", p.channel, p.channelIndex);
@@ -916,10 +934,8 @@ public class CV7000Reader extends FormatReader {
   class Plane {
     public String file;
     public String timestamp;
-    public int row;
-    public int column;
+    public Field field;
     public int timepoint;
-    public int field;
     public int z;
     // this is the original channel value stored in the XML
     public int channel;
@@ -930,6 +946,27 @@ public class CV7000Reader extends FormatReader {
     public double zpos;
     public int series;
     public int no;
+  }
+
+  class Field {
+    public int row;
+    public int column;
+    public int field;
+
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof Field)) {
+        return false;
+      }
+      Field f = (Field) o;
+      return f.row == row && f.column == column && f.field == field;
+    }
+
+    @Override
+    public int hashCode() {
+      // allows up to 256 rows and columns, up to 65536 fields
+      return (row & 0xff) << 24 | (column & 0xff) << 16 | (field & 0xffff);
+    }
   }
 
   class MinMax {
