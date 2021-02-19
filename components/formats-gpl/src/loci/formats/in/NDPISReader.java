@@ -230,19 +230,21 @@ public class NDPISReader extends FormatReader {
           else if (490 < wavelength && wavelength <= 580) bandUsed[c] = 1;
           else if (580 < wavelength && wavelength <= 780) bandUsed[c] = 0;
         }
-        else {
-          String extraMetadata = ifd.getIFDStringValue(METADATA_TAG);
-          String[] metadataLines = extraMetadata.split("\r\n");
-          for (String line : metadataLines) {
-            if (line.trim().startsWith(";NDP Shading Data")) {
-              String[] pairs = line.split(";");
-              for (String pair : pairs) {
-                int eq = pair.indexOf("=");
-                if (eq < 0) {
-                  continue;
-                }
-                String key = pair.substring(0, eq);
-                String value = pair.substring(eq + 1).trim();
+        String extraMetadata = ifd.getIFDStringValue(METADATA_TAG);
+        String[] metadataLines = extraMetadata.split("\r\n");
+        for (String line : metadataLines) {
+          if (line.trim().startsWith(";NDP Shading Data")) {
+            String[] pairs = line.split(";");
+            for (String pair : pairs) {
+              int eq = pair.indexOf("=");
+              if (eq < 0) {
+                continue;
+              }
+              String key = pair.substring(0, eq);
+              String value = pair.substring(eq + 1).trim();
+              addGlobalMetaList(key, value);
+
+              if (wavelength == null) {
                 if (key.startsWith("Transmittance") && !value.equals("-")) {
                   bandUsed[c] = "RGB".indexOf(key.charAt(key.length() - 1));
                   store.setChannelColor(new Color(
