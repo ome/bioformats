@@ -92,7 +92,6 @@ public class CV7000Reader extends FormatReader {
   private int fields;
   private String startTime, endTime;
   private ArrayList<String> extraFiles;
-  private Map<Field, Integer[]> fieldChannels = new HashMap<Field, Integer[]>();
 
   // -- Constructor --
 
@@ -208,7 +207,6 @@ public class CV7000Reader extends FormatReader {
       endTime = null;
       reversePlaneLookup = null;
       extraFiles = null;
-      fieldChannels.clear();
     }
   }
 
@@ -306,6 +304,8 @@ public class CV7000Reader extends FormatReader {
 
     for (Plane p : planeData) {
       if (p != null) {
+        p.channelIndex = getChannelIndex(p);
+
         int wellIndex = p.field.row * plate.getPlateColumns() + p.field.column;
         if (!minMax.containsKey(wellIndex)) {
           minMax.put(wellIndex, new MinMax());
@@ -388,10 +388,8 @@ public class CV7000Reader extends FormatReader {
       planeLengths[1] = core.get(p.series).sizeZ;
       planeLengths[2] = core.get(p.series).sizeT;
 
-      Integer[] validChannels = fieldChannels.get(f);
-      Arrays.sort(validChannels);
       p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {DataTools.indexOf(validChannels, p.channel), p.z - m.minZ, p.timepoint - m.minT});
+        new int[] {p.channelIndex, p.z - m.minZ, p.timepoint - m.minT});
 
       if (reversePlaneLookup[p.series][p.no] < 0) {
         reversePlaneLookup[p.series][p.no] = i;
@@ -525,7 +523,7 @@ public class CV7000Reader extends FormatReader {
               // particular plane.  Skip it.
               continue;
             }
-            Channel channel = lookupChannel(p.channelIndex);
+            Channel channel = lookupChannel(p.channel);
             if (channel == null) {
               continue;
             }
@@ -548,6 +546,8 @@ public class CV7000Reader extends FormatReader {
               store.setObjectiveSettingsID(objectiveID, i);
             }
 
+            // the index here is the original bts:Ch index in
+            // the *.mes and *.mrf files
             store.setChannelName("Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
 
             if (channel.color != null) {
@@ -596,6 +596,23 @@ public class CV7000Reader extends FormatReader {
       }
       setSeries(0);
     }
+  }
+
+  private int getChannelIndex(Plane p) {
+    int index = -1;
+    for (int action=0; action<=p.actionIndex; action++) {
+      for (Channel ch : channels) {
+        if (ch.timelineIndex == p.timelineIndex &&
+          ch.actionIndex == action)
+        {
+          index++;
+          if (ch.index == p.channel) {
+            return index;
+          }
+        }
+      }
+    }
+    return index;
   }
 
   private Channel lookupChannel(int index) {
@@ -689,7 +706,6 @@ public class CV7000Reader extends FormatReader {
     private String parentDir;
 
     private int currentField = -1;
-    private HashMap<Integer, Integer> channelMap = new HashMap<Integer, Integer>();
 
     public MeasurementDataHandler(String parentDir) {
       super();
@@ -727,20 +743,12 @@ public class CV7000Reader extends FormatReader {
           p.field.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
           p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
           p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
+          p.actionIndex = Integer.parseInt(attributes.getValue("bts:ActionIndex")) - 1;
+          p.timelineIndex = Integer.parseInt(attributes.getValue("bts:TimelineIndex")) - 1;
 
           if (p.field.field != currentField) {
             currentField = p.field.field;
-            channelMap.clear();
           }
-
-          if (!channelMap.containsKey(p.channel)) {
-            channelMap.put(p.channel, channelMap.size());
-          }
-          fieldChannels.put(p.field, channelMap.keySet().toArray(new Integer[channelMap.size()]));
-
-          p.channelIndex = channelMap.get(p.channel);
-          LOGGER.trace("p.channel = {}, p.channelIndex = {}", p.channel, p.channelIndex);
-          LOGGER.trace("    channelMap = {}", channelMap);
 
           p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
           p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
@@ -814,6 +822,8 @@ public class CV7000Reader extends FormatReader {
   class MeasurementSettingsHandler extends BaseHandler {
     private Channel currentChannel = null;
     private StringBuffer currentValue = new StringBuffer();
+    private int timelineIndex = -1;
+    private int actionIndex = -1;
 
     // -- DefaultHandler API methods --
 
@@ -886,6 +896,13 @@ public class CV7000Reader extends FormatReader {
           }
         }
       }
+      else if (qName.equals("bts:Timeline")) {
+        timelineIndex++;
+        actionIndex = -1;
+      }
+      else if (qName.startsWith("bts:ActionAcquire")) {
+        actionIndex++;
+      }
     }
 
     @Override
@@ -903,6 +920,14 @@ public class CV7000Reader extends FormatReader {
           currentChannel.lightSourceRefs.add(index);
         }
       }
+      else if (qName.equals("bts:Ch")) {
+        int channelIndex = Integer.parseInt(value) - 1;
+        if (channelIndex >= 0 && channelIndex < channels.size()) {
+          Channel ch = channels.get(channelIndex);
+          ch.timelineIndex = timelineIndex;
+          ch.actionIndex = actionIndex;
+        }
+      }
     }
 
   }
@@ -915,6 +940,8 @@ public class CV7000Reader extends FormatReader {
   }
 
   class Channel {
+    public int timelineIndex;
+    public int actionIndex;
     public int index;
     public double xSize;
     public double ySize;
@@ -929,6 +956,11 @@ public class CV7000Reader extends FormatReader {
     public Double exposureTime;
     public String binning;
     public Color color;
+
+    @Override
+    public String toString() {
+      return "timelineIndex=" + timelineIndex + ", actionIndex=" + actionIndex + ", index=" + index;
+    }
   }
 
   class Plane {
@@ -946,6 +978,8 @@ public class CV7000Reader extends FormatReader {
     public double zpos;
     public int series;
     public int no;
+    public int actionIndex;
+    public int timelineIndex;
   }
 
   class Field {
