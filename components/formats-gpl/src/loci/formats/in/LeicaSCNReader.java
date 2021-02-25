@@ -370,6 +370,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     for (int s=0; s<core.size(); s++) {
       for (int r = 0; r < core.size(s); r++) {
         int coreIndex = core.flattenedIndex(s, r);
+        setCoreIndex(coreIndex);
         ImageCollection c = handler.collection;
         Image i = handler.imageMap.get(coreIndex);
 
@@ -484,6 +485,7 @@ public class LeicaSCNReader extends BaseTiffReader {
         ++pos;
       }
     }
+    setCoreIndex(0);
   }
 
   private int getParent(int coreIndex) {
