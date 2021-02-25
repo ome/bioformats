@@ -115,7 +115,7 @@ public class MetamorphReader extends BaseTiffReader {
   private static final int UIC2TAG = 33629;
   private static final int UIC3TAG = 33630;
   private static final int UIC4TAG = 33631;
-  
+
   // NDInfoFile Version Strings
   private static final String NDINFOFILE_VER1 = "Version 1.0";
   private static final String NDINFOFILE_VER2 = "Version 2.0";
@@ -414,6 +414,8 @@ public class MetamorphReader extends BaseTiffReader {
         throw new FormatException("STK file not found in " +
           parent.getAbsolutePath() + ".");
       }
+
+      super.initFile(stkFile);
     }
     else super.initFile(id);
 
@@ -470,7 +472,7 @@ public class MetamorphReader extends BaseTiffReader {
     {
       // parse key/value pairs from .nd file
 
-      int zc = 1, cc = 1, tc = 1;
+      int zc = getSizeZ(), cc = getSizeC(), tc = getSizeT();
       int nstages = 0;
       String z = null, c = null, t = null;
       final List<Boolean> hasZ = new ArrayList<Boolean>();
@@ -484,8 +486,7 @@ public class MetamorphReader extends BaseTiffReader {
       boolean globalDoZ = true;
       boolean doTimelapse = false;
       boolean doWavelength = false;
-      String version = "";
-
+      String version = NDINFOFILE_VER1;
 
       StringBuilder currentValue = new StringBuilder();
       String key = "";
@@ -499,6 +500,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         String value = currentValue.toString();
+        addGlobalMeta(key, value);
         if (key.equals("NDInfoFile")) version = value;
         if (key.equals("NZSteps")) z = value;
         else if (key.equals("DoTimelapse")) {
@@ -705,26 +707,6 @@ public class MetamorphReader extends BaseTiffReader {
         throw new FormatException(
             "Unable to locate at least one valid STK file!");
       }
-      super.initFile(file);
-
-      key = "";
-      currentValue = new StringBuilder();
-      for (String line : lines) {
-        int comma = line.indexOf(',');
-        if (comma <= 0) {
-          currentValue.append("\n");
-          currentValue.append(line);
-          continue;
-        }
-
-        String value = currentValue.toString();
-        addGlobalMeta(key, value);
-
-        key = line.substring(1, comma - 1).trim();
-        currentValue.delete(0, currentValue.length());
-        currentValue.append(line.substring(comma + 1).trim());
-      }
-
       IFD ifd = null;
       try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
           TiffParser tp = new TiffParser(s);
@@ -1560,7 +1542,7 @@ public class MetamorphReader extends BaseTiffReader {
       String prefix = name.substring(0, name.indexOf('_'));
       String suffix = name.substring(name.indexOf('_'));
 
-      String basePrefix = new Location(ndFilename).getName();
+      String basePrefix = new Location(currentId).getName();
       int end = basePrefix.indexOf('_');
       if (end < 0) end = basePrefix.indexOf('.');
       basePrefix = basePrefix.substring(0, end);
