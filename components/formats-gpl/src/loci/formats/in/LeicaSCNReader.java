@@ -391,8 +391,8 @@ public class LeicaSCNReader extends BaseTiffReader {
         // Leica units are nanometres; convert to µm
         double sizeX = i.vSizeX / 1000.0;
         double sizeY = i.vSizeY / 1000.0;
-        final Length offsetX = new Length(i.vOffsetX, UNITS.REFERENCEFRAME);
-        final Length offsetY = new Length(i.vOffsetY, UNITS.REFERENCEFRAME);
+        final Length offsetX = new Length(i.vOffsetX, UNITS.NM);
+        final Length offsetY = new Length(i.vOffsetY, UNITS.NM);
         double sizeZ = i.vSpacingZ / 1000.0;
 
         store.setPixelsPhysicalSizeX(
