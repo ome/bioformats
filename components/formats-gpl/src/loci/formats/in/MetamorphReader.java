@@ -385,7 +385,10 @@ public class MetamorphReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
+    Location ndfile = null;
+
     if (checkSuffix(id, ND_SUFFIX)) {
+      ndfile = new Location(id);
       LOGGER.info("Initializing " + id);
       // find an associated STK file
       String stkFile = id.substring(0, id.lastIndexOf("."));
@@ -396,14 +399,14 @@ public class MetamorphReader extends BaseTiffReader {
       LOGGER.info("Looking for STK file in {}", parent.getAbsolutePath());
       String[] dirList = parent.list(true);
       Arrays.sort(dirList);
+      String suffix = getNDVersionSuffix(ndfile);
       for (String f : dirList) {
         int underscore = f.indexOf('_');
         if (underscore < 0) underscore = f.indexOf('.');
         if (underscore < 0) underscore = f.length();
         String prefix = f.substring(0, underscore);
-
         if ((f.equals(stkFile) || stkFile.startsWith(prefix)) &&
-          checkSuffix(f, STK_SUFFIX))
+           checkSuffix(f, suffix))
         {
           stkFile = new Location(parent.getAbsolutePath(), f).getAbsolutePath();
           break;
@@ -419,10 +422,8 @@ public class MetamorphReader extends BaseTiffReader {
     }
     else super.initFile(id);
 
-    Location ndfile = null;
 
-    if (checkSuffix(id, ND_SUFFIX)) ndfile = new Location(id);
-    else if (canLookForND && isGroupFiles()) {
+    if (!checkSuffix(id, ND_SUFFIX) && canLookForND && isGroupFiles()) {
       // an STK file was passed to initFile
       // let's check the parent directory for an .nd file
       Location stk = new Location(id).getAbsoluteFile();
@@ -2247,6 +2248,56 @@ public class MetamorphReader extends BaseTiffReader {
     int i;
     for (i = 0; i < b.length && b[i] != 0; i++) { }
     return new String(b, 0, i, Constants.ENCODING);
+  }
+  
+  /**
+   * Parses the given ND file to determined the version and return 
+   * the expected file suffix
+   * @param ndfile
+   *          The ND file which should be parsed
+   * @return The file suffix to be used for associated files based on the ND version
+   * @throws IOException 
+   */
+  private String getNDVersionSuffix(Location ndfile) throws IOException {
+    ndFilename = ndfile.getAbsolutePath();
+    String[] lines = DataTools.readFile(ndFilename).split("\n");
+    boolean globalDoZ = true;
+    String version = NDINFOFILE_VER1;
+    StringBuilder currentValue = new StringBuilder();
+    String key = "";
+
+    for (String line : lines) {
+      int comma = line.indexOf(',');
+      if (comma <= 0 && line.indexOf("EndFile") < 0) {
+        currentValue.append("\n");
+        currentValue.append(line);
+        continue;
+      }
+      String value = currentValue.toString();
+      if (key.equals("NDInfoFile")) version = value;
+      else if (key.equals("DoZSeries")) {
+        globalDoZ = Boolean.parseBoolean(value);
+      }
+      if (comma >= 1) {
+        key = line.substring(1, comma - 1).trim();
+      }
+      else {
+        key = "";
+      }
+      currentValue.delete(0, currentValue.length());
+      currentValue.append(line.substring(comma + 1).trim());
+    }
+    String formatSuffix = "stk";
+    if (version.equals(NDINFOFILE_VER1)) {
+      formatSuffix = "tif";
+      if (globalDoZ) {
+        formatSuffix = "stk";
+      }
+    }
+    else if (version.equals(NDINFOFILE_VER2)) {
+      formatSuffix = "tif";
+    }
+    return formatSuffix;
   }
 
 }
