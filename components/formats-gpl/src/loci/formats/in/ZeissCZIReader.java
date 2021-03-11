@@ -1044,6 +1044,7 @@ public class ZeissCZIReader extends FormatReader {
             keepMissingPyramid = true;
           }
         }
+        calculateDimensions(s, true);
         s += core.get(s).resolutionCount;
       }
     }
@@ -1707,6 +1708,11 @@ public class ZeissCZIReader extends FormatReader {
     int minPositions = Integer.MAX_VALUE;
     int maxPositions = Integer.MIN_VALUE;
 
+    int minX = Integer.MAX_VALUE;
+    int maxX = Integer.MIN_VALUE;
+    int minY = Integer.MAX_VALUE;
+    int maxY = Integer.MIN_VALUE;
+
     for (SubBlock plane : planes) {
       if (xyOnly && plane.coreIndex != coreIndex) {
         continue;
@@ -1724,6 +1730,8 @@ public class ZeissCZIReader extends FormatReader {
           case 'X':
             plane.x = dimension.size;
             plane.col = dimension.start;
+            minX = (int) Math.min(plane.col, minX);
+            maxX = (int) Math.max(plane.col + plane.x, maxX);
             if ((prestitched == null || prestitched) &&
               getSizeX() > 0 && dimension.size != getSizeX() && allowAutostitching())
             {
@@ -1737,6 +1745,8 @@ public class ZeissCZIReader extends FormatReader {
           case 'Y':
             plane.y = dimension.size;
             plane.row = dimension.start;
+            minY = (int) Math.min(plane.row, minY);
+            maxY = (int) Math.max(plane.row + plane.y, maxY);
             if ((prestitched == null || prestitched) &&
               getSizeY() > 0 && dimension.size != getSizeY() && allowAutostitching())
             {
@@ -1817,6 +1827,12 @@ public class ZeissCZIReader extends FormatReader {
     if (maxPositions > Integer.MIN_VALUE && minPositions < Integer.MAX_VALUE) {
       positions = maxPositions - minPositions + 1;
     }
+
+    if (xyOnly) {
+      ms0.sizeX = maxX - minX;
+      ms0.sizeY = maxY - minY;
+    }
+
     setCoreIndex(previousCoreIndex);
   }
 
