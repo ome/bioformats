@@ -1191,6 +1191,11 @@ public class FakeReader extends FormatReader {
     int s = getSeries();
     setSeries(newSeries);
 
+    for (int c=0; c<getEffectiveSizeC(); c++) {
+      String channelName = table.get("ChannelName_" + c);
+      store.setChannelName(channelName, newSeries, c);
+    }
+
     for (int i=0; i<getImageCount(); i++) {
       String exposureTime = table.get("ExposureTime_" + i);
       String exposureTimeUnit = table.get("ExposureTimeUnit_" + i);
