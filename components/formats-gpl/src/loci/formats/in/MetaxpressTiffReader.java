@@ -253,7 +253,7 @@ public class MetaxpressTiffReader extends CellWorxReader {
                 for (String f : zList) {
                   LOGGER.debug("  checking relative path = {}", f);
                   String path = new Location(file, f).getAbsolutePath();
-                  if (f.startsWith(base) && path.indexOf("_thumb") < 0) {
+                  if (f.startsWith(base) && path.toLowerCase().indexOf("_thumb") < 0) {
                     if (nextFile < files.length) {
                       files[nextFile] = path;
                     }
