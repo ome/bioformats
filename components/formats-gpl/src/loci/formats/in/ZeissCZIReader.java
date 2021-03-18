@@ -90,6 +90,8 @@ public class ZeissCZIReader extends FormatReader {
   public static final String INCLUDE_ATTACHMENTS_KEY =
     "zeissczi.attachments";
   public static final boolean INCLUDE_ATTACHMENTS_DEFAULT = true;
+  public static final String TRIM_DIMENSIONS_KEY = "zeissczi.trim_dimensions";
+  public static final boolean TRIM_DIMENSIONS_DEFAULT = false;
 
   private static final int ALIGNMENT = 32;
   private static final int HEADER_SIZE = 32;
@@ -585,6 +587,7 @@ public class ZeissCZIReader extends FormatReader {
     ArrayList<String> optionsList = super.getAvailableOptions();
     optionsList.add(ALLOW_AUTOSTITCHING_KEY);
     optionsList.add(INCLUDE_ATTACHMENTS_KEY);
+    optionsList.add(TRIM_DIMENSIONS_KEY);
     return optionsList;
   }
 
@@ -1044,7 +1047,9 @@ public class ZeissCZIReader extends FormatReader {
             keepMissingPyramid = true;
           }
         }
-        calculateDimensions(s, true);
+        if (trimDimensions()) {
+          calculateDimensions(s, true);
+        }
         s += core.get(s).resolutionCount;
       }
     }
@@ -1620,6 +1625,15 @@ public class ZeissCZIReader extends FormatReader {
     return INCLUDE_ATTACHMENTS_DEFAULT;
   }
 
+  public boolean trimDimensions() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        TRIM_DIMENSIONS_KEY, TRIM_DIMENSIONS_DEFAULT);
+    }
+    return TRIM_DIMENSIONS_DEFAULT;
+  }
+
   // -- Helper methods --
 
   private void readSegments(String id) throws IOException {
@@ -1828,7 +1842,7 @@ public class ZeissCZIReader extends FormatReader {
       positions = maxPositions - minPositions + 1;
     }
 
-    if (xyOnly) {
+    if (xyOnly && trimDimensions()) {
       ms0.sizeX = maxX - minX;
       ms0.sizeY = maxY - minY;
     }
