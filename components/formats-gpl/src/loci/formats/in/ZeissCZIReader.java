@@ -92,6 +92,8 @@ public class ZeissCZIReader extends FormatReader {
   public static final boolean INCLUDE_ATTACHMENTS_DEFAULT = true;
   public static final String TRIM_DIMENSIONS_KEY = "zeissczi.trim_dimensions";
   public static final boolean TRIM_DIMENSIONS_DEFAULT = false;
+  public static final String RELATIVE_POSITIONS_KEY = "zeissczi.relative_positions";
+  public static final boolean RELATIVE_POSITIONS_DEFAULT = false;
 
   private static final int ALIGNMENT = 32;
   private static final int HEADER_SIZE = 32;
@@ -588,6 +590,7 @@ public class ZeissCZIReader extends FormatReader {
     optionsList.add(ALLOW_AUTOSTITCHING_KEY);
     optionsList.add(INCLUDE_ATTACHMENTS_KEY);
     optionsList.add(TRIM_DIMENSIONS_KEY);
+    optionsList.add(RELATIVE_POSITIONS_KEY);
     return optionsList;
   }
 
@@ -1403,7 +1406,10 @@ public class ZeissCZIReader extends FormatReader {
         // assign the same position to each resolution in a pyramid
 
         Length x = null;
-        if (minStageX != null && maxStageX != null) {
+        if (storeRelativePositions()) {
+          x = new Length(p.col, UNITS.PIXEL);
+        }
+        else if (minStageX != null && maxStageX != null) {
           double diff = (maxStageX - minStageX) / 2;
           x = new Length(minStageX + diff, UNITS.MICROMETER);
           if (positionsX != null) {
@@ -1429,7 +1435,10 @@ public class ZeissCZIReader extends FormatReader {
         }
 
         Length y = null;
-        if (minStageY != null && maxStageY != null) {
+        if (storeRelativePositions()) {
+          y = new Length(p.row, UNITS.PIXEL);
+        }
+        else if (minStageY != null && maxStageY != null) {
           double diff = (maxStageY - minStageY) / 2;
           y = new Length(minStageY + diff, UNITS.MICROMETER);
           if (positionsY != null) {
@@ -1632,6 +1641,15 @@ public class ZeissCZIReader extends FormatReader {
         TRIM_DIMENSIONS_KEY, TRIM_DIMENSIONS_DEFAULT);
     }
     return TRIM_DIMENSIONS_DEFAULT;
+  }
+
+  public boolean storeRelativePositions() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        RELATIVE_POSITIONS_KEY, RELATIVE_POSITIONS_DEFAULT);
+    }
+    return RELATIVE_POSITIONS_DEFAULT;
   }
 
   // -- Helper methods --
