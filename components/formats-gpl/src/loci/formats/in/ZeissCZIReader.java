@@ -1376,7 +1376,15 @@ public class ZeissCZIReader extends FormatReader {
         for (Integer q : index) {
           SubBlock currentPlane = planes.get(q);
           if (currentPlane == null) continue;
-          if (currentPlane.stageX != null) {
+          if (storeRelativePositions()) {
+            if (minStageX == null || currentPlane.col < minStageX) {
+              minStageX = (double) currentPlane.col;
+            }
+            if (maxStageX == null || currentPlane.col > maxStageX) {
+              maxStageX = (double) currentPlane.col;
+            }
+          }
+          else if (currentPlane.stageX != null) {
             if (minStageX == null ||
               currentPlane.stageX.value().doubleValue() < minStageX)
             {
@@ -1388,7 +1396,15 @@ public class ZeissCZIReader extends FormatReader {
               maxStageX = currentPlane.stageX.value().doubleValue();
             }
           }
-          if (currentPlane.stageY != null) {
+          if (storeRelativePositions()) {
+            if (minStageY == null || currentPlane.row < minStageY) {
+              minStageY = (double) currentPlane.row;
+            }
+            if (maxStageY == null || currentPlane.row > maxStageY) {
+              maxStageY = (double) currentPlane.row;
+            }
+          }
+          else if (currentPlane.stageY != null) {
             if (minStageY == null ||
               currentPlane.stageY.value().doubleValue() < minStageY)
             {
@@ -1407,7 +1423,7 @@ public class ZeissCZIReader extends FormatReader {
 
         Length x = null;
         if (storeRelativePositions()) {
-          x = new Length(p.col, UNITS.PIXEL);
+          x = new Length(minStageX, UNITS.PIXEL);
         }
         else if (minStageX != null && maxStageX != null) {
           double diff = (maxStageX - minStageX) / 2;
@@ -1436,7 +1452,7 @@ public class ZeissCZIReader extends FormatReader {
 
         Length y = null;
         if (storeRelativePositions()) {
-          y = new Length(p.row, UNITS.PIXEL);
+          y = new Length(minStageY, UNITS.PIXEL);
         }
         else if (minStageY != null && maxStageY != null) {
           double diff = (maxStageY - minStageY) / 2;
