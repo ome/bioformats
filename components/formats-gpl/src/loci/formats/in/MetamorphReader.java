@@ -401,12 +401,14 @@ public class MetamorphReader extends BaseTiffReader {
       Arrays.sort(dirList);
       String suffix = getNDVersionSuffix(ndfile);
       for (String f : dirList) {
-        int underscore = f.indexOf('_');
-        if (underscore < 0) underscore = f.indexOf('.');
-        if (underscore < 0) underscore = f.length();
-        String prefix = f.substring(0, underscore);
-        if ((f.equals(stkFile) || stkFile.startsWith(prefix)) &&
-           checkSuffix(f, suffix))
+        if (!checkSuffix(f, suffix)) {
+          continue;
+        }
+        if (!f.startsWith(stkFile)) {
+          continue;
+        }
+        String s = f.substring(stkFile.length(), f.lastIndexOf("."));
+        if (s.isEmpty() || s.startsWith("_w") || s.startsWith("_s") || s.startsWith("_t")  )
         {
           stkFile = new Location(parent.getAbsolutePath(), f).getAbsolutePath();
           break;
@@ -414,7 +416,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       if (!checkSuffix(stkFile, STK_SUFFIX)) {
-        throw new FormatException("STK file not found in " +
+        throw new FormatException(suffix + " file not found in " +
           parent.getAbsolutePath() + ".");
       }
 
