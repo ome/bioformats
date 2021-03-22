@@ -407,9 +407,7 @@ public class MetamorphReader extends BaseTiffReader {
         if (!f.startsWith(stkFile)) {
           continue;
         }
-        LOGGER.debug(f);
         String s = f.substring(stkFile.length(), f.lastIndexOf("."));
-        LOGGER.debug(s);
         if (s.isEmpty() || s.startsWith("_w") || s.startsWith("_s") || s.startsWith("_t")  )
         {
           stkFile = new Location(parent.getAbsolutePath(), f).getAbsolutePath();
