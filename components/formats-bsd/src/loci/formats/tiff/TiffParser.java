@@ -814,7 +814,9 @@ public class TiffParser implements Closeable {
     // reverse bits in each byte if FillOrder == 2
 
     if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2 &&
-      compression.getCode() <= TiffCompression.GROUP_4_FAX.getCode())
+      (compression.getCode() <= TiffCompression.GROUP_4_FAX.getCode() ||
+       compression.getCode() == TiffCompression.DEFLATE.getCode() ||
+       compression.getCode() == TiffCompression.PROPRIETARY_DEFLATE.getCode()))
     {
       for (int i=0; i<tile.length; i++) {
         tile[i] = (byte) (Integer.reverse(tile[i]) >> 24);
