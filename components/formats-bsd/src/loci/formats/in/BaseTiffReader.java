@@ -468,7 +468,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       // only look for a unit in the comment if the unit is unclear
       // from the RESOLUTION_UNIT tag
       String unit = null;
-      if (firstIFD.getResolutionMultiplier() == 1) {
+      // "3" indicates cm
+      if (firstIFD.getIFDIntValue(IFD.RESOLUTION_UNIT) != 3) {
         unit = getResolutionUnitFromComment(firstIFD);
       }
 
