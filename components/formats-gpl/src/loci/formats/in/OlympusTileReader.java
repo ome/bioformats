@@ -63,8 +63,7 @@ public class OlympusTileReader extends FormatReader {
   // -- Fields --
 
   private IFormatReader helperReader;
-  private List<String> tileFiles = new ArrayList<String>();
-  private List<Region> tileRegions = new ArrayList<Region>();
+  private List<Tile> tiles = new ArrayList<Tile>();
   private String[] allPixelsFiles;
 
   // -- Constructor --
@@ -112,12 +111,22 @@ public class OlympusTileReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    int pixel = getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
 
     Region imageRegion = new Region(x, y, w, h);
-    for (int r=0; r<tileRegions.size(); r++) {
-      if (tileRegions.get(r).intersects(imageRegion)) {
-        helperReader.setId(tileFiles.get(r));
-        // TODO - tile math
+    for (Tile t : tiles) {
+      if (t.region.intersects(imageRegion)) {
+        helperReader.setId(t.file);
+
+        Region intersection = t.region.intersection(imageRegion);
+        byte[] src = helperReader.openBytes(no,
+          intersection.x - t.region.x, intersection.y - t.region.y,
+          intersection.width, intersection.height);
+        for (int row=0; row<intersection.height; row++) {
+          int srcIndex = row * intersection.width * pixel;
+          int destIndex = pixel * ((intersection.y - y + row) * w + (intersection.x - x));
+          System.arraycopy(src, srcIndex, buf, destIndex, intersection.width * pixel);
+        }
       }
     }
 
@@ -133,15 +142,9 @@ public class OlympusTileReader extends FormatReader {
     if (allPixelsFiles == null) {
       List<String> allFiles = new ArrayList<String>();
       allFiles.add(currentId);
-      for (String file : tileFiles) {
-        try {
-        helperReader.setId(file);
-          for (String f : helperReader.getSeriesUsedFiles()) {
-            allFiles.add(f);
-          }
-        }
-        catch (FormatException|IOException e) {
-          LOGGER.error("Could not read tile file " + file, e);
+      for (Tile t : tiles) {
+        for (String f : t.files) {
+          allFiles.add(f);
         }
       }
       allPixelsFiles = allFiles.toArray(new String[allFiles.size()]);
@@ -164,8 +167,7 @@ public class OlympusTileReader extends FormatReader {
     }
     if (!fileOnly) {
       helperReader = null;
-      tileFiles.clear();
-      tileRegions.clear();
+      tiles.clear();
       allPixelsFiles = null;
     }
   }
@@ -181,15 +183,18 @@ public class OlympusTileReader extends FormatReader {
     xml = XMLTools.sanitizeXML(xml);
     readMetadata(xml);
 
+    tiles.sort(null);
+
     MetadataStore store = makeFilterMetadata();
     helperReader.setMetadataStore(store);
-    helperReader.setId(tileFiles.get(0));
+    helperReader.setId(tiles.get(0).file);
 
     core = new ArrayList<CoreMetadata>(helperReader.getCoreMetadataList());
-    for (int i=0; i<core.size(); i++) {
-      CoreMetadata ms = core.get(i);
-      //ms.sizeX = handler.getImageWidth();
-      //ms.sizeY = handler.getImageHeight();
+    CoreMetadata ms = core.get(0);
+    for (Tile t : tiles) {
+      Region r = t.region;
+      ms.sizeX = (int) Math.max(ms.sizeX, r.width + r.x);
+      ms.sizeY = (int) Math.max(ms.sizeY, r.height + r.y);
     }
 
     MetadataTools.populatePixels(store, this);
@@ -218,6 +223,8 @@ public class OlympusTileReader extends FormatReader {
   }
 
   private void readMetadata(String xml) throws FormatException, IOException {
+    Location parentDir = new Location(getCurrentFile()).getParentFile();
+
     // matl:properties
     Element root = (Element) getMetadataRoot(xml);
 
@@ -236,13 +243,16 @@ public class OlympusTileReader extends FormatReader {
     double physicalTileWidth = stitchedWidth / cols;
     double physicalTileHeight = stitchedHeight / rows;
 
-    NodeList tiles = tileGroup.getElementsByTagName("matl:area");
+    NodeList allTiles = tileGroup.getElementsByTagName("matl:area");
     int adjustWidth = 0;
     int adjustHeight = 0;
-    for (int i=0; i<tiles.getLength(); i++) {
-      Element tile = (Element) tiles.item(i);
+
+    for (int i=0; i<allTiles.getLength(); i++) {
+      Tile currentTile = new Tile();
+      Element tile = (Element) allTiles.item(i);
       String tileFile = getChildNode(tile, "matl:image").getTextContent();
-      tileFiles.add(tileFile);
+      tileFile = new Location(parentDir, tileFile).getAbsolutePath();
+      currentTile.file = tileFile;
 
       if (helperReader == null) {
         if (checkSuffix(tileFile, "oir")) {
@@ -259,26 +269,58 @@ public class OlympusTileReader extends FormatReader {
         helperReader.setMetadataStore(metadata);
         helperReader.setId(tileFile);
 
+        int widthWithOverlaps = helperReader.getSizeX() * cols;
+        int heightWithOverlaps = helperReader.getSizeY() * rows;
+
         Length physicalSizeX = metadata.getPixelsPhysicalSizeX(0);
         Length physicalSizeY = metadata.getPixelsPhysicalSizeY(0);
-        adjustWidth = (int) (physicalTileWidth / physicalSizeX.value(UNITS.NM).doubleValue());
-        adjustHeight = (int) ( physicalTileHeight / physicalSizeY.value(UNITS.NM).doubleValue());
+        int actualWidth = (int) (stitchedWidth / physicalSizeX.value(UNITS.NM).doubleValue());
+        int actualHeight = (int) (stitchedHeight / physicalSizeY.value(UNITS.NM).doubleValue());
+
+        int diffX = widthWithOverlaps - actualWidth;
+        int diffY = heightWithOverlaps - actualHeight;
+
+        adjustWidth = helperReader.getSizeX() - (diffX / (cols - 1));
+        adjustHeight = helperReader.getSizeY() - (diffY / (rows - 1));
       }
-      /* debug */ System.out.println("adjustWidth = " + adjustWidth);
-      /* debug */ System.out.println("adjustHeight = " + adjustHeight);
+      else {
+        helperReader.setId(tileFile);
+      }
+      currentTile.files = helperReader.getUsedFiles();
 
       int xIndex = Integer.parseInt(getChildNode(tile, "matl:xIndex").getTextContent());
       int yIndex = Integer.parseInt(getChildNode(tile, "matl:yIndex").getTextContent());
 
-      Region region = new Region(xIndex * adjustWidth, yIndex * adjustHeight,
+      currentTile.region = new Region(xIndex * adjustWidth, yIndex * adjustHeight,
         helperReader.getSizeX(), helperReader.getSizeY());
-      tileRegions.add(region);
+      tiles.add(currentTile);
     }
     helperReader.close();
 
     Element stage = getChildNode(root, "matl:stage");
     Element cycle = getChildNode(root, "matl:cycle");
     Element map = getChildNode(root, "matl:map");
+
+    // TODO
+  }
+
+  class Tile implements Comparable<Tile> {
+    public String file;
+    public String[] files;
+    public Region region;
+
+    @Override
+    public int compareTo(Tile o) {
+      if (region.equals(o.region)) {
+        return 0;
+      }
+      int yDiff = region.y - o.region.y;
+      if (yDiff != 0) {
+        return yDiff;
+      }
+      return region.x - o.region.x;
+    }
+
   }
 
 }
