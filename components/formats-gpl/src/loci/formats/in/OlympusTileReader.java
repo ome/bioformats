@@ -25,13 +25,10 @@
 
 package loci.formats.in;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.Constants;
@@ -51,7 +48,10 @@ import loci.formats.meta.MetadataStore;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -65,6 +65,7 @@ public class OlympusTileReader extends FormatReader {
   private IFormatReader helperReader;
   private List<Tile> tiles = new ArrayList<Tile>();
   private String[] allPixelsFiles;
+  private List<String> extraFiles = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -137,11 +138,15 @@ public class OlympusTileReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     if (noPixels) {
-      return new String[] {currentId};
+      List<String> allFiles = new ArrayList<String>();
+      allFiles.add(currentId);
+      allFiles.addAll(extraFiles);
+      return allFiles.toArray(new String[allFiles.size()]);
     }
     if (allPixelsFiles == null) {
       List<String> allFiles = new ArrayList<String>();
       allFiles.add(currentId);
+      allFiles.addAll(extraFiles);
       for (Tile t : tiles) {
         for (String f : t.files) {
           allFiles.add(f);
@@ -169,6 +174,7 @@ public class OlympusTileReader extends FormatReader {
       helperReader = null;
       tiles.clear();
       allPixelsFiles = null;
+      extraFiles.clear();
     }
   }
 
@@ -203,25 +209,29 @@ public class OlympusTileReader extends FormatReader {
   }
 
   private Element getMetadataRoot(String xml) throws FormatException, IOException {
-    ByteArrayInputStream s = null;
     try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder parser = factory.newDocumentBuilder();
-      s = new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
-      return parser.parse(s).getDocumentElement();
+      return XMLTools.parseDOM(xml).getDocumentElement();
     }
-    catch (ParserConfigurationException e) {
+    catch (ParserConfigurationException|SAXException e) {
       throw new FormatException(e);
-    }
-    catch (SAXException e) {
-      throw new FormatException(e);
-    } finally {
-        if (s != null) s.close();
     }
   }
 
   private Element getChildNode(Element root, String name) {
     return (Element) root.getElementsByTagName(name).item(0);
+  }
+
+  private String getChildValue(Element root, String name) {
+    Element node = getChildNode(root, name);
+    if (node == null) {
+      return null;
+    }
+    return node.getTextContent();
+  }
+
+  private String getName(Node root) {
+    String name = root.getNodeName();
+    return name.substring(name.indexOf(":") + 1);
   }
 
   private void readMetadata(String xml) throws FormatException, IOException {
@@ -239,8 +249,8 @@ public class OlympusTileReader extends FormatReader {
     double stitchedHeight = DataTools.parseDouble(coordinates.getAttribute("height"));
 
     Element areaInfo = getChildNode(tileGroup, "matl:areaInfo");
-    int rows = Integer.parseInt(getChildNode(areaInfo, "matl:numOfYAreas").getTextContent());
-    int cols = Integer.parseInt(getChildNode(areaInfo, "matl:numOfXAreas").getTextContent());
+    int rows = Integer.parseInt(getChildValue(areaInfo, "matl:numOfYAreas"));
+    int cols = Integer.parseInt(getChildValue(areaInfo, "matl:numOfXAreas"));
 
     double physicalTileWidth = stitchedWidth / cols;
     double physicalTileHeight = stitchedHeight / rows;
@@ -252,7 +262,7 @@ public class OlympusTileReader extends FormatReader {
     for (int i=0; i<allTiles.getLength(); i++) {
       Tile currentTile = new Tile();
       Element tile = (Element) allTiles.item(i);
-      String tileFile = getChildNode(tile, "matl:image").getTextContent();
+      String tileFile = getChildValue(tile, "matl:image");
       tileFile = new Location(parentDir, tileFile).getAbsolutePath();
       currentTile.file = tileFile;
 
@@ -290,8 +300,8 @@ public class OlympusTileReader extends FormatReader {
       }
       currentTile.files = helperReader.getUsedFiles();
 
-      int xIndex = Integer.parseInt(getChildNode(tile, "matl:xIndex").getTextContent());
-      int yIndex = Integer.parseInt(getChildNode(tile, "matl:yIndex").getTextContent());
+      int xIndex = Integer.parseInt(getChildValue(tile, "matl:xIndex"));
+      int yIndex = Integer.parseInt(getChildValue(tile, "matl:yIndex"));
 
       currentTile.region = new Region(xIndex * adjustWidth, yIndex * adjustHeight,
         helperReader.getSizeX(), helperReader.getSizeY());
@@ -300,10 +310,50 @@ public class OlympusTileReader extends FormatReader {
     helperReader.close();
 
     Element stage = getChildNode(root, "matl:stage");
-    Element cycle = getChildNode(root, "matl:cycle");
-    Element map = getChildNode(root, "matl:map");
+    parseOriginalMetadata(stage);
 
-    // TODO
+    Element cycle = getChildNode(root, "matl:cycle");
+    parseOriginalMetadata(cycle);
+
+    Element map = getChildNode(root, "matl:map");
+    String mapFile = getChildValue(map, "matl:image");
+    if (mapFile != null) {
+      mapFile = new Location(parentDir, mapFile).getAbsolutePath();
+      extraFiles.add(mapFile);
+    }
+  }
+
+  private void parseOriginalMetadata(Node root) {
+    String value = root.getNodeValue();
+    if (value != null && value.trim().length() > 0) {
+      value = value.trim();
+      String key = "";
+
+      Node parent = root.getParentNode();
+      if (parent != null) {
+        key = getName(parent);
+      }
+      Node grandparent = parent.getParentNode();
+      if (grandparent != null) {
+        String name = getName(grandparent);
+        key = name + " " + key;
+      }
+      addGlobalMeta(key, value);
+    }
+    else {
+      NamedNodeMap attrs = root.getAttributes();
+      if (attrs != null) {
+        for (int i=0; i<attrs.getLength(); i++) {
+          Attr attr = (Attr) attrs.item(i);
+          addGlobalMeta(getName(root) + " " + attr.getName(), attr.getValue());
+        }
+      }
+
+      NodeList children = root.getChildNodes();
+      for (int i=0; i<children.getLength(); i++) {
+        parseOriginalMetadata(children.item(i));
+      }
+    }
   }
 
   class Tile implements Comparable<Tile> {
@@ -321,6 +371,11 @@ public class OlympusTileReader extends FormatReader {
         return yDiff;
       }
       return region.x - o.region.x;
+    }
+
+    @Override
+    public String toString() {
+      return file + ", region = " + region;
     }
 
   }
