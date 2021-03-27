@@ -189,13 +189,15 @@ public class OlympusTileReader extends FormatReader {
     helperReader.setMetadataStore(store);
     helperReader.setId(tiles.get(0).file);
 
-    core = new ArrayList<CoreMetadata>(helperReader.getCoreMetadataList());
-    CoreMetadata ms = core.get(0);
+    core.clear();
+    CoreMetadata ms = new CoreMetadata(helperReader.getCoreMetadataList().get(0));
+
     for (Tile t : tiles) {
       Region r = t.region;
       ms.sizeX = (int) Math.max(ms.sizeX, r.width + r.x);
       ms.sizeY = (int) Math.max(ms.sizeY, r.height + r.y);
     }
+    core.add(ms);
 
     MetadataTools.populatePixels(store, this);
   }
