@@ -310,16 +310,22 @@ public class OlympusTileReader extends FormatReader {
     helperReader.close();
 
     Element stage = getChildNode(root, "matl:stage");
-    parseOriginalMetadata(stage);
+    if (stage != null) {
+      parseOriginalMetadata(stage);
+    }
 
     Element cycle = getChildNode(root, "matl:cycle");
-    parseOriginalMetadata(cycle);
+    if (cycle != null) {
+      parseOriginalMetadata(cycle);
+    }
 
     Element map = getChildNode(root, "matl:map");
-    String mapFile = getChildValue(map, "matl:image");
-    if (mapFile != null) {
-      mapFile = new Location(parentDir, mapFile).getAbsolutePath();
-      extraFiles.add(mapFile);
+    if (map != null) {
+      String mapFile = getChildValue(map, "matl:image");
+      if (mapFile != null) {
+        mapFile = new Location(parentDir, mapFile).getAbsolutePath();
+        extraFiles.add(mapFile);
+      }
     }
   }
 
