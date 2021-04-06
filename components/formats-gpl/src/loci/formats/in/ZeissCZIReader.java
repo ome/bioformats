@@ -1239,7 +1239,7 @@ public class ZeissCZIReader extends FormatReader {
       store.setPlateColumns(new PositiveInteger(plateColumns), 0);
 
       int nextWell = 0;
-      for (int i=0; i<getSeriesCount(); i++) {
+      for (int i=0, img=0; img<core.size(); i++, img+=core.get(img).resolutionCount) {
         if (i < platePositions.size() && platePositions.get(i) != null) {
           String[] index = platePositions.get(i).split("-");
           if (index.length != 2) {
@@ -1257,12 +1257,13 @@ public class ZeissCZIReader extends FormatReader {
           }
 
           if (row >= 0 && column >= 0) {
+            int imageIndex = coreIndexToSeries(img);
             store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
             store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
             store.setWellColumn(new NonNegativeInteger(column), 0, nextWell);
             store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, nextWell, 0), 0, nextWell, 0);
-            store.setWellSampleImageRef(MetadataTools.createLSID("Image", i), 0, nextWell, 0);
-            store.setWellSampleIndex(new NonNegativeInteger(i), 0, nextWell, 0);
+            store.setWellSampleImageRef(MetadataTools.createLSID("Image", imageIndex), 0, nextWell, 0);
+            store.setWellSampleIndex(new NonNegativeInteger(imageIndex), 0, nextWell, 0);
 
             nextWell++;
           }
@@ -3235,6 +3236,9 @@ public class ZeissCZIReader extends FormatReader {
             }
 
             NodeList wells = sampleHolder.getElementsByTagName("SingleTileRegionArray");
+            if (wells == null || wells.getLength() == 0) {
+              wells = sampleHolder.getElementsByTagName("TileRegion");
+            }
             if (wells != null) {
               for (int i=0; i<wells.getLength(); i++) {
                 Element well = (Element) wells.item(i);
