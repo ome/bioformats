@@ -1233,7 +1233,7 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
 
-    if (plateRows > 0 && plateColumns > 0) {
+    if (plateRows > 0 && plateColumns > 0 && platePositions.size() > 0) {
       store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
       store.setPlateRows(new PositiveInteger(plateRows), 0);
       store.setPlateColumns(new PositiveInteger(plateColumns), 0);
@@ -3243,7 +3243,9 @@ public class ZeissCZIReader extends FormatReader {
               for (int i=0; i<wells.getLength(); i++) {
                 Element well = (Element) wells.item(i);
                 String value = getFirstNodeValue(well, "TemplateShapeId");
-                platePositions.add(value);
+                if (value != null && !value.isEmpty()) {
+                  platePositions.add(value);
+                }
               }
             }
           }
