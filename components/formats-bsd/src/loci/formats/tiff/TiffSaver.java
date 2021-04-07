@@ -373,6 +373,7 @@ public class TiffSaver implements Closeable {
             // This is only sane if the input image width and the output image width are the same.
             int xOffset = (strip % tilesPerRow) * tileWidth;
             int yOffset = (strip / tilesPerRow) * tileHeight;
+            
             for (int row=0; row<tileHeight; row++) {
               for (int col=0; col<tileWidth; col++) {
                 int ndx = ((row+yOffset) * w + col + xOffset) * bytesPerPixel;
@@ -523,18 +524,187 @@ public class TiffSaver implements Closeable {
     ByteArrayHandle extra = new ByteArrayHandle();
     RandomAccessOutputStream extraStream = new RandomAccessOutputStream(extra);
 
+    //phaub 04'2021
+    ByteArrayHandle outByteArray = new ByteArrayHandle();
+    RandomAccessOutputStream outByteArrayStream = new RandomAccessOutputStream(outByteArray);
+
     for (Integer key : keys) {
       if (key.equals(IFD.LITTLE_ENDIAN) || key.equals(IFD.BIG_TIFF) ||
           key.equals(IFD.REUSE)) continue;
 
       Object value = ifd.get(key);
-      writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
+      //phaub 04'2021
+      getIFDValue(outByteArrayStream, extraStream, ifdBytes + fp, key.intValue(), value);
+      //writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
     }
+    
+    //phaub 04'2021
+    out.write(outByteArray.getBytes(), 0, (int) outByteArray.length());
+    
     if (bigTiff) out.seek(out.getFilePointer());
     writeIntValue(out, nextOffset);
     out.write(extra.getBytes(), 0, (int) extra.length());
+     
     extraStream.close();
+    //phaub 04'2021
+    outByteArrayStream.close();
   }
+
+  
+  public void getIFDValue(RandomAccessOutputStream outStream, RandomAccessOutputStream extraOut, long offset,
+		    int tag, Object value)
+		    throws FormatException, IOException
+		  {
+			//phaub  04'2021
+	  		// Performance improvement
+	  		// getIFDValue() is a copy of writeIFDValue()
+	        // out is exchanged by outStream in all places
+			  
+		    extraOut.order(isLittleEndian());
+
+		    // convert singleton objects into arrays, for simplicity
+		    if (value instanceof Short) {
+		      value = new short[] {((Short) value).shortValue()};
+		    }
+		    else if (value instanceof Integer) {
+		      value = new int[] {((Integer) value).intValue()};
+		    }
+		    else if (value instanceof Long) {
+		      value = new long[] {((Long) value).longValue()};
+		    }
+		    else if (value instanceof TiffRational) {
+		      value = new TiffRational[] {(TiffRational) value};
+		    }
+		    else if (value instanceof Float) {
+		      value = new float[] {((Float) value).floatValue()};
+		    }
+		    else if (value instanceof Double) {
+		      value = new double[] {((Double) value).doubleValue()};
+		    }
+
+		    int dataLength = bigTiff ? 8 : 4;
+
+		    // create directory entry to output buffers
+		    outStream.writeShort(tag); // tag
+		    if (value instanceof short[]) {
+		      short[] q = (short[]) value;
+		      outStream.writeShort(IFDType.BYTE.getCode());
+		      writeIntValue(outStream, q.length);
+		      if (q.length <= dataLength) {
+		        for (int i=0; i<q.length; i++) outStream.writeByte(q[i]);
+		        for (int i=q.length; i<dataLength; i++) outStream.writeByte(0);
+		      }
+		      else {
+		        writeIntValue(outStream, offset + extraOut.length());
+		        for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]);
+		      }
+		    }
+		    else if (value instanceof String) { // ASCII
+		      byte[] q = ((String) value).getBytes(Charset.forName(Constants.ENCODING));
+		      outStream.writeShort(IFDType.ASCII.getCode()); // type
+		      writeIntValue(outStream, q.length + 1);
+		      if (q.length < dataLength) {
+		        for (int i=0; i<q.length; i++) outStream.writeByte(q[i]); // value(s)
+		        for (int i=q.length; i<dataLength; i++) outStream.writeByte(0); // padding
+		      }
+		      else {
+		        writeIntValue(outStream, offset + extraOut.length());
+		        for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]); // values
+		        extraOut.writeByte(0); // concluding NULL byte
+		      }
+		    }
+		    else if (value instanceof int[]) { // SHORT
+		      int[] q = (int[]) value;
+		      outStream.writeShort(IFDType.SHORT.getCode()); // type
+		      writeIntValue(outStream, q.length);
+		      if (q.length <= dataLength / 2) {
+		        for (int i=0; i<q.length; i++) {
+		          outStream.writeShort(q[i]); // value(s)
+		        }
+		        for (int i=q.length; i<dataLength / 2; i++) {
+		          outStream.writeShort(0); // padding
+		        }
+		      }
+		      else {
+		        writeIntValue(outStream, offset + extraOut.length());
+		        for (int i=0; i<q.length; i++) {
+		          extraOut.writeShort(q[i]); // values
+		        }
+		      }
+		    }
+		    else if (value instanceof long[]) { // LONG
+		      long[] q = (long[]) value;
+
+		      int type = bigTiff ? IFDType.LONG8.getCode() : IFDType.LONG.getCode();
+		      outStream.writeShort(type);
+		      writeIntValue(outStream, q.length);
+
+		      int div = bigTiff ? 8 : 4;
+
+		      if (q.length <= dataLength / div) {
+		        for (int i=0; i<q.length; i++) {
+		          writeIntValue(outStream, q[0]);
+		        }
+		        for (int i=q.length; i<dataLength / div; i++) {
+		          writeIntValue(outStream, 0);
+		        }
+		      }
+		      else {
+		        writeIntValue(outStream, offset + extraOut.length());
+		        for (int i=0; i<q.length; i++) {
+		          writeIntValue(extraOut, q[i]);
+		        }
+		      }
+		    }
+		    else if (value instanceof TiffRational[]) { // RATIONAL
+		      TiffRational[] q = (TiffRational[]) value;
+		      outStream.writeShort(IFDType.RATIONAL.getCode()); // type
+		      writeIntValue(outStream, q.length);
+		      if (bigTiff && q.length == 1) {
+		        outStream.writeInt((int) q[0].getNumerator());
+		        outStream.writeInt((int) q[0].getDenominator());
+		      }
+		      else {
+		        writeIntValue(outStream, offset + extraOut.length());
+		        for (int i=0; i<q.length; i++) {
+		          extraOut.writeInt((int) q[i].getNumerator());
+		          extraOut.writeInt((int) q[i].getDenominator());
+		        }
+		      }
+		    }
+		    else if (value instanceof float[]) { // FLOAT
+		      float[] q = (float[]) value;
+		      outStream.writeShort(IFDType.FLOAT.getCode()); // type
+		      writeIntValue(outStream, q.length);
+		      if (q.length <= dataLength / 4) {
+		        for (int i=0; i<q.length; i++) {
+		          outStream.writeFloat(q[0]); // value
+		        }
+		        for (int i=q.length; i<dataLength / 4; i++) {
+		          outStream.writeInt(0); // padding
+		        }
+		      }
+		      else {
+		        writeIntValue(outStream, offset + extraOut.length());
+		        for (int i=0; i<q.length; i++) {
+		          extraOut.writeFloat(q[i]); // values
+		        }
+		      }
+		    }
+		    else if (value instanceof double[]) { // DOUBLE
+		      double[] q = (double[]) value;
+		      outStream.writeShort(IFDType.DOUBLE.getCode()); // type
+		      writeIntValue(outStream, q.length);
+		      writeIntValue(outStream, offset + extraOut.length());
+		      for (int i=0; i<q.length; i++) {
+		        extraOut.writeDouble(q[i]); // values
+		      }
+		    }
+		    else {
+		      throw new FormatException("Unknown IFD value type (" +
+		        value.getClass().getName() + "): " + value);
+		    }
+		  }
 
   /**
    * Writes the given IFD value to the given output object.
