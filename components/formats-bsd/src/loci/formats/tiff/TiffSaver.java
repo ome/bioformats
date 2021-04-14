@@ -527,6 +527,7 @@ public class TiffSaver implements Closeable {
     //phaub 04'2021
     ByteArrayHandle outByteArray = new ByteArrayHandle();
     RandomAccessOutputStream outByteArrayStream = new RandomAccessOutputStream(outByteArray);
+    outByteArrayStream.order(out.isLittleEndian());
 
     for (Integer key : keys) {
       if (key.equals(IFD.LITTLE_ENDIAN) || key.equals(IFD.BIG_TIFF) ||
