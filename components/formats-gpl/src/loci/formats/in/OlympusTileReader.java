@@ -292,8 +292,14 @@ public class OlympusTileReader extends FormatReader {
         int diffX = widthWithOverlaps - actualWidth;
         int diffY = heightWithOverlaps - actualHeight;
 
-        adjustWidth = helperReader.getSizeX() - (diffX / (cols - 1));
-        adjustHeight = helperReader.getSizeY() - (diffY / (rows - 1));
+        adjustWidth = helperReader.getSizeX();
+        if (cols > 1) {
+          adjustWidth -= (diffX / (cols -1));
+        }
+        adjustHeight = helperReader.getSizeY();
+        if (rows > 1) {
+          adjustHeight -= (diffY / (rows - 1));
+        }
       }
       else {
         helperReader.setId(tileFile);
