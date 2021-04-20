@@ -244,20 +244,26 @@ public class OlympusTileReader extends FormatReader {
     Element regionInfo = getChildNode(tileGroup, "marker:regionInfo");
     Element coordinates = getChildNode(regionInfo, "marker:coordinates");
 
-    // nanometers
-    double stitchedWidth = DataTools.parseDouble(coordinates.getAttribute("width"));
-    double stitchedHeight = DataTools.parseDouble(coordinates.getAttribute("height"));
-
     Element areaInfo = getChildNode(tileGroup, "matl:areaInfo");
     int rows = Integer.parseInt(getChildValue(areaInfo, "matl:numOfYAreas"));
     int cols = Integer.parseInt(getChildValue(areaInfo, "matl:numOfXAreas"));
 
-    double physicalTileWidth = stitchedWidth / cols;
-    double physicalTileHeight = stitchedHeight / rows;
+    // nanometers
+    Double stitchedWidth = null;
+    Double stitchedHeight = null;
+    if (coordinates != null) {
+      stitchedWidth = DataTools.parseDouble(coordinates.getAttribute("width"));
+      stitchedHeight = DataTools.parseDouble(coordinates.getAttribute("height"));
+    }
 
     NodeList allTiles = tileGroup.getElementsByTagName("matl:area");
     int adjustWidth = 0;
     int adjustHeight = 0;
+    Element stage = getChildNode(root, "matl:stage");
+    int stageOverlap = 0;
+    if (stage != null) {
+      stageOverlap = Integer.parseInt(getChildValue(stage, "matl:overlap"));
+    }
 
     for (int i=0; i<allTiles.getLength(); i++) {
       Tile currentTile = new Tile();
@@ -286,11 +292,17 @@ public class OlympusTileReader extends FormatReader {
 
         Length physicalSizeX = metadata.getPixelsPhysicalSizeX(0);
         Length physicalSizeY = metadata.getPixelsPhysicalSizeY(0);
-        int actualWidth = (int) (stitchedWidth / physicalSizeX.value(UNITS.NM).doubleValue());
-        int actualHeight = (int) (stitchedHeight / physicalSizeY.value(UNITS.NM).doubleValue());
 
-        int diffX = widthWithOverlaps - actualWidth;
-        int diffY = heightWithOverlaps - actualHeight;
+        int diffX = stageOverlap * cols * 4;
+        int diffY = stageOverlap * rows * 4;
+
+        if (stitchedWidth != null && stitchedHeight != null) {
+          int actualWidth = (int) (stitchedWidth / physicalSizeX.value(UNITS.NM).doubleValue());
+          int actualHeight = (int) (stitchedHeight / physicalSizeY.value(UNITS.NM).doubleValue());
+
+          diffX = widthWithOverlaps - actualWidth;
+          diffY = heightWithOverlaps - actualHeight;
+        }
 
         adjustWidth = helperReader.getSizeX();
         if (cols > 1) {
@@ -315,7 +327,6 @@ public class OlympusTileReader extends FormatReader {
     }
     helperReader.close();
 
-    Element stage = getChildNode(root, "matl:stage");
     if (stage != null) {
       parseOriginalMetadata(stage);
     }
