@@ -1461,7 +1461,7 @@ public class FormatReaderTest {
       if (plate >= retrieve.getPlateCount()) {
         result(testName, false, "Plate index" + failureSuffix);
       }
-      else if (plate < 0) {
+      else if (plate < -1) {
         if (retrieve.getPlateCount() > 0) {
           boolean allEmpty = true;
           for (int p=0; p<retrieve.getPlateCount(); p++) {
@@ -1486,82 +1486,87 @@ public class FormatReaderTest {
         continue;
       }
       boolean foundWell = false;
-      for (int w=0; w<retrieve.getWellCount(plate); w++) {
-        int row = config.getWellRow();
-        int col = config.getWellColumn();
-        if (row == retrieve.getWellRow(plate, w).getNumberValue().intValue() &&
-          col == retrieve.getWellColumn(plate, w).getNumberValue().intValue())
-        {
-          foundWell = true;
+      for (int p=0; p<retrieve.getPlateCount(); p++) {
+        if (plate >= 0 && plate != p) {
+          continue;
+        }
 
-          int wellSample = config.getWellSample();
-          String image = retrieve.getImageID(s);
-          if (wellSample >= retrieve.getWellSampleCount(plate, w) ||
-            wellSample < 0 ||
-            !image.equals(retrieve.getWellSampleImageRef(plate, w, wellSample)))
+        for (int w=0; w<retrieve.getWellCount(p); w++) {
+          int row = config.getWellRow();
+          int col = config.getWellColumn();
+          if (row == retrieve.getWellRow(p, w).getNumberValue().intValue() &&
+            col == retrieve.getWellColumn(p, w).getNumberValue().intValue())
           {
-            result(testName, false, "WellSample index" + failureSuffix);
-          }
+            foundWell = true;
 
-          Length positionX = retrieve.getWellSamplePositionX(plate, w, wellSample);
-          Length positionY = retrieve.getWellSamplePositionY(plate, w, wellSample);
-          Length configX = config.getWellSamplePositionX();
-          Length configY = config.getWellSamplePositionY();
-          if (positionX != null || configX != null) {
-            if (positionX == null || !positionX.equals(configX)) {
-              result(testName, false, "WellSample position X" + failureSuffix);
+            int wellSample = config.getWellSample();
+            String image = retrieve.getImageID(s);
+            if (wellSample >= retrieve.getWellSampleCount(p, w) ||
+              wellSample < 0 ||
+              !image.equals(retrieve.getWellSampleImageRef(p, w, wellSample)))
+            {
+              result(testName, false, "WellSample index" + failureSuffix);
             }
-          }
-          if (positionY != null || configY != null) {
-            if (positionY == null || !positionY.equals(configY)) {
-              result(testName, false, "WellSample position Y" + failureSuffix);
-            }
-          }
 
-          int plateAcq = config.getPlateAcquisition();
-          int plateAcqCount = retrieve.getPlateAcquisitionCount(plate);
-          if (plateAcq >= plateAcqCount) {
-            result(testName, false, "PlateAcquisition index" + failureSuffix);
-          }
-          else if (plateAcq < 0 && plateAcqCount > 0) {
-            // special case where this WellSample isn't
-            // linked to a PlateAcquisition,
-            // but multiple PlateAcquisitions exist
-            String wellSampleID =
-              retrieve.getWellSampleID(plate, w, wellSample);
-            for (int pa=0; pa<plateAcqCount; pa++) {
-              int wsCount = retrieve.getWellSampleRefCount(plate, pa);
-              for (int wsRef=0; wsRef<wsCount; wsRef++) {
-                String wellSampleRef =
-                  retrieve.getPlateAcquisitionWellSampleRef(plate, pa, wsRef);
-                if (wellSampleID.equals(wellSampleRef)) {
-                  result(testName, false,
-                    "PlateAcquisition-WellSample link" + failureSuffix);
+            Length positionX = retrieve.getWellSamplePositionX(p, w, wellSample);
+            Length positionY = retrieve.getWellSamplePositionY(p, w, wellSample);
+            Length configX = config.getWellSamplePositionX();
+            Length configY = config.getWellSamplePositionY();
+            if (positionX != null || configX != null) {
+              if (positionX == null || !positionX.equals(configX)) {
+                result(testName, false, "WellSample position X" + failureSuffix);
+              }
+            }
+            if (positionY != null || configY != null) {
+              if (positionY == null || !positionY.equals(configY)) {
+                result(testName, false, "WellSample position Y" + failureSuffix);
+              }
+            }
+
+            int plateAcq = config.getPlateAcquisition();
+            int plateAcqCount = retrieve.getPlateAcquisitionCount(p);
+            if (plateAcq >= plateAcqCount) {
+              result(testName, false, "PlateAcquisition index" + failureSuffix);
+            }
+            else if (plateAcq < 0 && plateAcqCount > 0) {
+              // special case where this WellSample isn't
+              // linked to a PlateAcquisition,
+              // but multiple PlateAcquisitions exist
+              String wellSampleID = retrieve.getWellSampleID(p, w, wellSample);
+              for (int pa=0; pa<plateAcqCount; pa++) {
+                int wsCount = retrieve.getWellSampleRefCount(p, pa);
+                for (int wsRef=0; wsRef<wsCount; wsRef++) {
+                  String wellSampleRef =
+                    retrieve.getPlateAcquisitionWellSampleRef(p, pa, wsRef);
+                  if (wellSampleID.equals(wellSampleRef)) {
+                    result(testName, false,
+                      "PlateAcquisition-WellSample link" + failureSuffix);
+                  }
                 }
               }
             }
-          }
-          else if (plateAcq >= 0 && plateAcqCount > 0) {
-            String wellSampleID = retrieve.getWellSampleID(plate, w, wellSample);
-            boolean foundWellSampleRef = false;
-            for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(plate, plateAcq); wsRef++) {
-              String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
-                plate, plateAcq, wsRef);
-              if (wellSampleID.equals(wellSampleRef)) {
-                foundWellSampleRef = true;
-                break;
+            else if (plateAcq >= 0 && plateAcqCount > 0) {
+              String wellSampleID = retrieve.getWellSampleID(p, w, wellSample);
+              boolean foundWellSampleRef = false;
+              for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(p, plateAcq); wsRef++) {
+                String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
+                  p, plateAcq, wsRef);
+                if (wellSampleID.equals(wellSampleRef)) {
+                  foundWellSampleRef = true;
+                  break;
+                }
+              }
+              if (!foundWellSampleRef) {
+                result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
               }
             }
-            if (!foundWellSampleRef) {
-              result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
-            }
+          }
+          if (foundWell) {
+            break;
           }
         }
-        if (foundWell) {
-          break;
-        }
       }
-      if (!foundWell) {
+      if (!foundWell && plate >= 0) {
         result(testName, false, "Well indexes" + failureSuffix);
       }
     }
