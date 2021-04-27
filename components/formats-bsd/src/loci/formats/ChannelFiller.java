@@ -110,6 +110,17 @@ public class ChannelFiller extends ReaderWrapper {
     return false;
   }
 
+  /* @see IFormatReader#getBitsPerPixel() */
+  @Override
+  public int getBitsPerPixel() {
+    if (isFilled()) {
+      // reader may have set a lower number of bits
+      // but that will apply to the indexes, not the filled values
+      return FormatTools.getBytesPerPixel(reader.getPixelType()) * 8;
+    }
+    return reader.getBitsPerPixel();
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
