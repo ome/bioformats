@@ -1442,8 +1442,8 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       // reset the series count if we're confident that the image count
       // covers all of the offsets; this prevents too much memory being used
       // when the offsets array is allocated
-      if (getImageCount() == imageOffsets.size() && numSeries > 1 &&
-        getSizeC() == 1)
+      if (numSeries > 1 && ((getImageCount() == imageOffsets.size()  &&
+          getSizeC() == 1) || (getImageCount() == imageOffsets.size() * getSizeC()))) 
       {
         CoreMetadata first = core.get(0, 0);
         core.clear();

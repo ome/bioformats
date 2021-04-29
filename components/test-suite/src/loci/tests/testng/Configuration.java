@@ -38,11 +38,11 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.IniWriter;
 import loci.common.Location;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
 
@@ -536,8 +536,9 @@ public class Configuration {
     int seriesCount = reader.getSeriesCount();
     IFormatReader unflattenedReader = reader;
     if (seriesCount > 1) {
-      unflattenedReader = new FileStitcher();
+      unflattenedReader = new ImageReader();
       unflattenedReader.setFlattenedResolutions(false);
+      unflattenedReader.setMetadataOptions(new DynamicMetadataOptions());
       try {
         unflattenedReader.setId(reader.getCurrentFile());
       }
@@ -563,12 +564,8 @@ public class Configuration {
     globalTable.put(TEST, "true");
     globalTable.put(MEMORY, String.valueOf(TestTools.getUsedMemory()));
 
-    long planeSize = (long) FormatTools.getPlaneSize(reader) * 3;
-    boolean canOpenImages =
-      planeSize > 0 && TestTools.canFitInMemory(planeSize);
-
     long t0 = System.currentTimeMillis();
-    if (canOpenImages) {
+    if (canOpenImages(reader)) {
       try {
         reader.openBytes(0);
       }
@@ -615,17 +612,7 @@ public class Configuration {
         seriesTable.put(CHANNEL_COUNT,
           String.valueOf(retrieve.getChannelCount(index)));
 
-        try {
-          planeSize = DataTools.safeMultiply32(reader.getSizeX(),
-            reader.getSizeY(), reader.getEffectiveSizeC(),
-            reader.getRGBChannelCount(),
-            FormatTools.getBytesPerPixel(reader.getPixelType()));
-          canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
-        } catch (IllegalArgumentException e) {
-          canOpenImages = false;
-        }
-
-        if (canOpenImages) {
+        if (canOpenImages(reader)) {
           try {
             byte[] plane = reader.openBytes(0);
             seriesTable.put(MD5, TestTools.md5(plane));
@@ -822,5 +809,25 @@ public class Configuration {
     catch (NumberFormatException e) { }
     catch (EnumerationException e) { }
     return null;
+  }
+
+  /**
+   * Check if a whole plane can be read.
+   *
+   * @param reader initialized reader set to the series to check
+   * @return true if the plane size is smaller than both 2GB
+                  and the amount of free memory
+   */
+  private boolean canOpenImages(IFormatReader reader) {
+    try {
+      long planeSize = DataTools.safeMultiply32(reader.getSizeX(),
+          reader.getSizeY(), reader.getEffectiveSizeC(),
+          reader.getRGBChannelCount(),
+          FormatTools.getBytesPerPixel(reader.getPixelType()));
+      return planeSize > 0 && TestTools.canFitInMemory(planeSize);
+    }
+    catch (IllegalArgumentException e) {
+      return false;
+    }
   }
 }

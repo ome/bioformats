@@ -632,7 +632,7 @@ public final class FormatTools {
 
     // check image count
     if (num <= 0) {
-      throw new IllegalArgumentException("Invalid image count: " + num);
+      throw new IllegalArgumentException("Invalid plane count: " + num);
     }
     if (num != zSize * cSize * tSize) {
       // if this happens, there is probably a bug in metadata population --
@@ -643,7 +643,7 @@ public final class FormatTools {
         ", total=" + num + ")");
     }
     if (index < 0 || index >= num) {
-      throw new IllegalArgumentException("Invalid image index: " +
+      throw new IllegalArgumentException("Invalid plane index: " +
         index + "/" + num);
     }
 

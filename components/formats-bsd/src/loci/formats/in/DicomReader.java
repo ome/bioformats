@@ -1100,7 +1100,7 @@ public class DicomReader extends FormatReader {
     if (skip) {
       long skipCount = (long) elementLength;
       if (in.getFilePointer() + skipCount <= in.length()) {
-        in.skipBytes((int) skipCount);
+        in.skipBytes(skipCount);
       }
       location += elementLength;
       value = "";
@@ -1291,18 +1291,7 @@ public class DicomReader extends FormatReader {
       Location currentFile = new Location(currentId).getAbsoluteFile();
       Location directory = currentFile.getParentFile();
 
-      // move up a directory and look for other directories that
-      // could contain matching files
-
-      directory = directory.getParentFile();
-      String[] subdirs = directory.list(true);
-      if (subdirs != null) {
-        for (String subdir : subdirs) {
-          Location f = new Location(directory, subdir).getAbsoluteFile();
-          if (!f.isDirectory()) continue;
-          scanDirectory(f, true);
-        }
-      }
+      scanDirectory(directory, true);
 
       for (final List<String> files : fileList.values()) {
         final Iterator<String> fileIterator = files.iterator();

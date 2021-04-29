@@ -282,7 +282,7 @@ public class BDVReader extends FormatReader {
     lastChannel = getZCTCoords(no)[1];
 
     // pixel data is stored in XYZ blocks
-    Object image = getImageData(no, y, h);
+    Object image = getImageData(no, x, y, w, h);
 
     boolean little = isLittleEndian();
 
@@ -299,26 +299,26 @@ public class BDVReader extends FormatReader {
         short[][] data = (short[][]) image;
         short[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          DataTools.unpackBytes(rowData[i + x], buf, base + 2 * i, 2, little);
+          DataTools.unpackBytes(rowData[i], buf, base + 2 * i, 2, little);
         }
       } else if (image instanceof int[][]) {
         int[][] data = (int[][]) image;
         int[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          DataTools.unpackBytes(rowData[i + x], buf, base + i * 4, 4, little);
+          DataTools.unpackBytes(rowData[i], buf, base + i * 4, 4, little);
         }
       } else if (image instanceof float[][]) {
         float[][] data = (float[][]) image;
         float[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          int v = Float.floatToIntBits(rowData[i + x]);
+          int v = Float.floatToIntBits(rowData[i]);
           DataTools.unpackBytes(v, buf, base + i * 4, 4, little);
         }
       } else if (image instanceof double[][]) {
         double[][] data = (double[][]) image;
         double[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          long v = Double.doubleToLongBits(rowData[i + x]);
+          long v = Double.doubleToLongBits(rowData[i]);
           DataTools.unpackBytes(v, buf, base + i * 8, 8, little);
         }
       }
@@ -343,6 +343,10 @@ public class BDVReader extends FormatReader {
         }
         jhdf = null;
         lastChannel = 0;
+        channelIndexes.clear();
+        setupAttributeList.clear();
+        setupVoxelSizes.clear();
+        setupResolutionCounts.clear();
       }
     }
   }
@@ -370,13 +374,12 @@ public class BDVReader extends FormatReader {
     }
   }
 
-  private Object getImageData(int no, int y, int height) throws FormatException
+  private Object getImageData(int no, int x, int y, int width, int height) throws FormatException
   {
     int[] zct = getZCTCoords(no);
     int zslice = zct[0];
     int channel = zct[1];
     int time = zct[2];
-    int width = getSizeX();
     
     int seriesIndex = series;
     int requiredResolution = getResolution();
@@ -427,7 +430,7 @@ public class BDVReader extends FormatReader {
 
     int elementSize = jhdf.getElementSize(imagePath.pathToImageData);
 
-    int[] arrayOrigin = new int[] {zslice, y, 0};
+    int[] arrayOrigin = new int[] {zslice, y, x};
     int[] arrayDimension = new int[] {1, height, width};
 
     MDIntArray subBlock = jhdf.readIntBlockArray(imagePath.pathToImageData, arrayOrigin, arrayDimension);
@@ -572,9 +575,9 @@ public class BDVReader extends FormatReader {
             }
 
             if (setupSizes != null && setupSizes.size() == 3) {
-              store.setPixelsPhysicalSizeX(setupSizes.get(0), seriesCount);
-              store.setPixelsPhysicalSizeY(setupSizes.get(1), seriesCount);
-              store.setPixelsPhysicalSizeZ(setupSizes.get(2), seriesCount);
+              store.setPixelsPhysicalSizeX(setupSizes.get(0), coreIndexToSeries(seriesCount));
+              store.setPixelsPhysicalSizeY(setupSizes.get(1), coreIndexToSeries(seriesCount));
+              store.setPixelsPhysicalSizeZ(setupSizes.get(2), coreIndexToSeries(seriesCount));
             }
             if (getResolution() == 0) {
               seriesNames.add(String.format("P_%s, W_%s_%s", coord.timepoint, coord.setup, coord.mipmapLevel));

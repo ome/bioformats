@@ -390,7 +390,7 @@ public class IMODReader extends FormatReader {
         int surface = in.readShort();
 
         // TODO
-        in.skipBytes(12 * vsize + 4 * lsize);
+        in.skipBytes((long) 12 * vsize + (long) 4 * lsize);
       }
     }
 

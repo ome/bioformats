@@ -1051,6 +1051,7 @@ public class FV1000Reader extends FormatReader {
     }
 
     int channelIndex = 0;
+    int filterIndex = 0;
     for (ChannelData channel : channels) {
       if (!channel.active) continue;
       if (channelIndex >= getEffectiveSizeC()) break;
@@ -1092,9 +1093,9 @@ public class FV1000Reader extends FormatReader {
 
       // populate Filter data
       if (channel.barrierFilter != null) {
-        String filterID = MetadataTools.createLSID("Filter", 0, channelIndex);
-        store.setFilterID(filterID, 0, channelIndex);
-        store.setFilterModel(channel.barrierFilter, 0, channelIndex);
+        String filterID = MetadataTools.createLSID("Filter", 0, filterIndex);
+        store.setFilterID(filterID, 0, filterIndex);
+        store.setFilterModel(channel.barrierFilter, 0, filterIndex);
 
         if (channel.barrierFilter.indexOf('-') != -1) {
           String[] emValues = channel.barrierFilter.split("-");
@@ -1109,15 +1110,16 @@ public class FV1000Reader extends FormatReader {
             Length out = FormatTools.getCutOut(cutOut);
 
             if (in != null) {
-              store.setTransmittanceRangeCutIn(in, 0, channelIndex);
+              store.setTransmittanceRangeCutIn(in, 0, filterIndex);
             }
             if (out != null) {
-              store.setTransmittanceRangeCutOut(out, 0, channelIndex);
+              store.setTransmittanceRangeCutOut(out, 0, filterIndex);
             }
           }
           catch (NumberFormatException e) { }
         }
         store.setLightPathEmissionFilterRef(filterID, 0, channelIndex, 0);
+        filterIndex++;
       }
 
       // populate FilterSet data

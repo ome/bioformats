@@ -66,15 +66,15 @@ public class CellWorxReader extends FormatReader {
 
   // -- Constants --
 
-  private static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss yyyy";
+  protected static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss yyyy";
 
   // -- Fields --
 
   private boolean[][] fieldMap;
-  private String[][][] wellFiles;
+  protected String[][][] wellFiles;
   private String[][] logFiles;
-  private int fieldCount = 0;
-  private boolean doChannels = false;
+  protected int fieldCount = 0;
+  protected boolean doChannels = false;
 
   private String plateLogFile;
   private String zMapFile;
@@ -86,8 +86,13 @@ public class CellWorxReader extends FormatReader {
   private HashMap<Integer, Timestamp> timestamps =
     new HashMap<Integer, Timestamp>();
 
-  private String[] directoryList;
-  private boolean subdirectories = false;
+  protected String[] directoryList;
+  protected boolean subdirectories = false;
+
+  protected String[] wavelengths = null;
+  protected int nTimepoints = 1;
+  protected int zSteps = 1;
+  protected int wellCount = 0;
 
   // -- Constructor --
 
@@ -96,33 +101,72 @@ public class CellWorxReader extends FormatReader {
     super("CellWorx", new String[] {"pnl", "htd", "log"});
     domains = new String[] {FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
-    datasetDescription = "One .htd file plus one or more .pnl or " +
-      ".tif files and optionally one or more .log files";
+    datasetDescription = "One .htd file plus one or more .pnl " +
+      "files and optionally one or more .log files";
+    suffixNecessary = true;
+  }
+
+  public CellWorxReader(String name, String[] extensions) {
+    super(name, extensions);
   }
 
   // -- IFormatReader API methods --
 
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   @Override
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, "pnl") || checkSuffix(name, "htd")) {
+    if (!checkSuffix(name, "htd") && !checkSuffix(name, "log")) {
       return super.isThisType(name, open);
     }
     if (!open) return false;
 
-    Location current = new Location(name).getAbsoluteFile();
-    Location parent = current.getParentFile();
+    if (checkSuffix(name, "htd")) {
+      String plate = getPlateName(name);
+      // look for a .pnl file
 
-    String htdName = current.getName();
-    while (htdName.indexOf('_') > 0) {
-      htdName = htdName.substring(0, htdName.lastIndexOf("_"));
-      if (new Location(parent, htdName + ".htd").exists() ||
-        new Location(parent, htdName + ".HTD").exists())
-      {
-        return checkSuffix(name, "log") || isGroupFiles();
+      try {
+        String plateData = DataTools.readFile(name);
+        String[] lines = plateData.split("\n");
+        int xWells = 0;
+        int yWells = 0;
+        for (String line : lines) {
+          int split = line.indexOf("\",");
+          if (split < 1) continue;
+          String key = line.substring(1, split).trim();
+          String value = line.substring(split + 2).trim();
+
+          if (key.equals("XWells")) {
+            xWells = Integer.parseInt(value);
+          }
+          else if (key.equals("YWells")) {
+            yWells = Integer.parseInt(value);
+          }
+          else if (key.startsWith("WellsSelection")) {
+            int row = Integer.parseInt(key.substring(14)) - 1;
+            String[] mapping = value.split(",");
+            for (int col=0; col<xWells; col++) {
+              if (new Boolean(mapping[col].trim()).booleanValue()) {
+                String base = plate + FormatTools.getWellName(row, col);
+                Location pnl = new Location(base + ".pnl");
+                if (pnl.exists()) {
+                  return isThisType(pnl.getAbsolutePath(), open);
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (IOException e) {
+        LOGGER.debug("Could not check file type", e);
+        return false;
       }
     }
-    return false;
+
+    return foundHTDFile(name);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -143,43 +187,11 @@ public class CellWorxReader extends FormatReader {
       files.add(logFiles[row][col]);
     }
     if (!noPixels) {
-      if (checkSuffix(wellFiles[row][col][0], "pnl")) {
-        if (new Location(wellFiles[row][col][0]).exists()) {
-          files.add(wellFiles[row][col][0]);
-        }
-      }
-      else {
-        for (String f : wellFiles[row][col]) {
-          if (new Location(f).exists()) {
-            files.add(f);
-          }
-        }
+      if (new Location(wellFiles[row][col][0]).exists()) {
+        files.add(wellFiles[row][col][0]);
       }
     }
     return files.toArray(new String[files.size()]);
-  }
-
-  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
-  @Override
-  public String[] getUsedFiles(boolean noPixels) {
-    String[] files = super.getUsedFiles(noPixels);
-
-    List<String> allFiles = new ArrayList<String>();
-    for (String f : files) {
-      allFiles.add(f);
-    }
-    if (directoryList != null) {
-      Location root = new Location(currentId).getParentFile();
-      for (String f : directoryList) {
-        if (f.toLowerCase().indexOf("_thumb") > 0) {
-          String path = new Location(root, f).getAbsolutePath();
-          if (!allFiles.contains(path)) {
-            allFiles.add(path);
-          }
-        }
-      }
-    }
-    return allFiles.toArray(new String[allFiles.size()]);
   }
 
   /**
@@ -217,7 +229,7 @@ public class CellWorxReader extends FormatReader {
     }
 
     int planeIndex = no;
-    if (lastReader.getSeriesCount() == fieldCount) {
+    if (lastReader.getSeriesCount() == fieldCount && fieldCount > 1) {
       lastReader.setSeries(fieldIndex);
     }
     else if (lastReader.getImageCount() == getSizeZ()) {
@@ -254,6 +266,10 @@ public class CellWorxReader extends FormatReader {
       timestamps.clear();
       directoryList = null;
       subdirectories = false;
+      wavelengths = null;
+      nTimepoints = 1;
+      zSteps = 1;
+      wellCount = 0;
     }
   }
 
@@ -284,123 +300,26 @@ public class CellWorxReader extends FormatReader {
     }
 
     super.initFile(id);
-    if (directoryList == null) {
-      Location rootDir = new Location(id).getAbsoluteFile().getParentFile();
-      directoryList = rootDir.list(true);
-      Arrays.sort(directoryList);
-    }
 
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      service = factory.getInstance(OMEXMLService.class);
-    }
-    catch (DependencyException exc) {
-      throw new FormatException("Could not create OME-XML store.", exc);
-    }
+    parseHTD();
 
-    String plateData = DataTools.readFile(id);
-    String[] lines = plateData.split("\n");
-    int xWells = 0, yWells = 0;
-    int xFields = 0, yFields = 0;
-    String[] wavelengths = null;
-    int nTimepoints = 1;
-    int zSteps = 1;
+    findPixelsFiles();
 
-    // determine dataset dimensions
-    for (String line : lines) {
-      int split = line.indexOf("\",");
-      if (split < 1) continue;
-      String key = line.substring(1, split).trim();
-      String value = line.substring(split + 2).trim();
+    plateLogFile = getPlateName(currentId) + "scan.log";
 
-      if (key.equals("XWells")) {
-        xWells = Integer.parseInt(value);
-      }
-      else if (key.equals("YWells")) {
-        yWells = Integer.parseInt(value);
-        wellFiles = new String[yWells][xWells][];
-        logFiles = new String[yWells][xWells];
-      }
-      else if (key.startsWith("WellsSelection")) {
-        int row = Integer.parseInt(key.substring(14)) - 1;
-        String[] mapping = value.split(",");
-        for (int col=0; col<xWells; col++) {
-          if (new Boolean(mapping[col].trim()).booleanValue()) {
-            wellFiles[row][col] = new String[1];
-          }
-        }
-      }
-      else if (key.equals("XSites")) {
-        xFields = Integer.parseInt(value);
-      }
-      else if (key.equals("YSites")) {
-        yFields = Integer.parseInt(value);
-        fieldMap = new boolean[yFields][xFields];
-      }
-      else if (key.equals("TimePoints")) {
-        nTimepoints = Integer.parseInt(value);
-      }
-      else if (key.equals("ZSteps")) {
-        zSteps = Integer.parseInt(value);
-      }
-      else if (key.startsWith("SiteSelection")) {
-        int row = Integer.parseInt(key.substring(13)) - 1;
-        String[] mapping = value.split(",");
-        for (int col=0; col<xFields; col++) {
-          fieldMap[row][col] = new Boolean(mapping[col].trim()).booleanValue();
-        }
-      }
-      else if (key.equals("Waves")) {
-        doChannels = new Boolean(value.toLowerCase());
-      }
-      else if (key.equals("NWavelengths")) {
-        wavelengths = new String[Integer.parseInt(value)];
-      }
-      else if (key.startsWith("WaveName")) {
-        int index = Integer.parseInt(key.substring(8)) - 1;
-        wavelengths[index] = value.replaceAll("\"", "");
-      }
-    }
+    populateMetadata();
+  }
 
-    for (int row=0; row<fieldMap.length; row++) {
-      for (int col=0; col<fieldMap[row].length; col++) {
-        if (fieldMap[row][col]) fieldCount++;
-      }
-    }
-
-    // find pixels files
-    String plateName = new Location(id).getAbsolutePath();
-    plateName = plateName.substring(0, plateName.lastIndexOf(".")) + "_";
-    int wellCount = 0;
-    for (int row=0; row<wellFiles.length; row++) {
-      for (int col=0; col<wellFiles[row].length; col++) {
-        if (wellFiles[row][col] != null) {
-          wellCount++;
-          String base = plateName + FormatTools.getWellName(row, col);
-          wellFiles[row][col][0] = base + ".pnl";
-          logFiles[row][col] = base + "_scan.log";
-
-          if (!new Location(wellFiles[row][col][0]).exists()) {
-            // using TIFF files instead
-
-            wellFiles[row][col] = getTiffFiles(
-              plateName, row, col, wavelengths.length, nTimepoints, zSteps);
-          }
-        }
-      }
-    }
-
-    plateLogFile = plateName + "scan.log";
-
+  protected void populateMetadata() throws FormatException, IOException {
     String serialNumber = null;
 
-    if (new Location(plateLogFile).exists()) {
+    if (plateLogFile != null && new Location(plateLogFile).exists()) {
       String[] f = DataTools.readFile(plateLogFile).split("\n");
       for (String line : f) {
         if (line.trim().startsWith("Z Map File")) {
           String file = line.substring(line.indexOf(':') + 1);
           file = file.substring(file.lastIndexOf("/") + 1).trim();
-          String parent = new Location(id).getAbsoluteFile().getParent();
+          String parent = new Location(currentId).getAbsoluteFile().getParent();
           zMapFile = new Location(parent, file).getAbsolutePath();
         }
         else if (line.trim().startsWith("Scanner SN")) {
@@ -427,27 +346,27 @@ public class CellWorxReader extends FormatReader {
       }
       file = getFile(seriesIndex, planeIndex);
     }
-    IFormatReader pnl = getReader(file, true);
+    IFormatReader reader = getReader(file, true);
 
     core.clear();
     for (int i=0; i<seriesCount; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
       setSeries(i);
-      ms.littleEndian = pnl.isLittleEndian();
-      ms.sizeX = pnl.getSizeX();
-      ms.sizeY = pnl.getSizeY();
-      ms.pixelType = pnl.getPixelType();
+      ms.littleEndian = reader.isLittleEndian();
+      ms.sizeX = reader.getSizeX();
+      ms.sizeY = reader.getSizeY();
+      ms.pixelType = reader.getPixelType();
       ms.sizeZ = zSteps;
       ms.sizeT = nTimepoints;
       ms.sizeC = wavelengths.length;
       ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
       ms.dimensionOrder = "XYCZT";
       ms.rgb = false;
-      ms.interleaved = pnl.isInterleaved();
+      ms.interleaved = reader.isInterleaved();
     }
 
-    OMEXMLMetadata readerMetadata = (OMEXMLMetadata) pnl.getMetadataStore();
+    OMEXMLMetadata readerMetadata = (OMEXMLMetadata) reader.getMetadataStore();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) readerMetadata.getRoot();
     Instrument instrument = root.getInstrument(0);
     List<Image> images = root.copyImageList();
@@ -469,7 +388,7 @@ public class CellWorxReader extends FormatReader {
 
     convertMetadata.setRoot(convertRoot);
 
-    pnl.close();
+    reader.close();
 
     MetadataStore store = makeFilterMetadata();
     MetadataConverter.convertMetadata(convertMetadata, store);
@@ -493,10 +412,10 @@ public class CellWorxReader extends FormatReader {
         if (firstFile != null && new Location(firstFile).exists()) {
           try (IFormatReader helper = getReader(firstFile, true)) {
             IMetadata meta = (IMetadata) helper.getMetadataStore();
-            int pnlSeries = s % helper.getSeriesCount();
-            Length posX = meta.getPlanePositionX(pnlSeries, 0);
-            Length posY = meta.getPlanePositionY(pnlSeries, 0);
-            Length posZ = meta.getPlanePositionZ(pnlSeries, 0);
+            int readerSeries = s % helper.getSeriesCount();
+            Length posX = meta.getPlanePositionX(readerSeries, 0);
+            Length posY = meta.getPlanePositionY(readerSeries, 0);
+            Length posZ = meta.getPlanePositionZ(readerSeries, 0);
 
             for (int p=0; p<getImageCount(); p++) {
               if (posX != null) {
@@ -526,11 +445,11 @@ public class CellWorxReader extends FormatReader {
 
     String plateID = MetadataTools.createLSID("Plate", 0);
 
-    Location plate = new Location(id).getAbsoluteFile();
+    Location plate = new Location(currentId).getAbsoluteFile();
 
     store.setPlateID(plateID, 0);
 
-    plateName = plate.getName();
+    String plateName = plate.getName();
     if (plateName.indexOf('.') > 0) {
       plateName = plateName.substring(0, plateName.lastIndexOf('.'));
     }
@@ -613,6 +532,127 @@ public class CellWorxReader extends FormatReader {
 
   // -- Helper methods --
 
+  protected void parseHTD() throws FormatException, IOException {
+    if (directoryList == null) {
+      Location rootDir = new Location(currentId).getAbsoluteFile().getParentFile();
+      directoryList = rootDir.list(true);
+      Arrays.sort(directoryList);
+    }
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMEXMLService.class);
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
+    int xWells = 0, yWells = 0;
+    int xFields = 0, yFields = 0;
+
+    // determine dataset dimensions
+    String plateData = DataTools.readFile(currentId);
+    String[] lines = plateData.split("\n");
+    for (String line : lines) {
+      int split = line.indexOf("\",");
+      if (split < 1) continue;
+      String key = line.substring(1, split).trim();
+      String value = line.substring(split + 2).trim();
+
+      if (key.equals("XWells")) {
+        xWells = Integer.parseInt(value);
+      }
+      else if (key.equals("YWells")) {
+        yWells = Integer.parseInt(value);
+        wellFiles = new String[yWells][xWells][];
+        logFiles = new String[yWells][xWells];
+      }
+      else if (key.startsWith("WellsSelection")) {
+        int row = Integer.parseInt(key.substring(14)) - 1;
+        String[] mapping = value.split(",");
+        for (int col=0; col<xWells; col++) {
+          if (new Boolean(mapping[col].trim()).booleanValue()) {
+            wellFiles[row][col] = new String[1];
+          }
+        }
+      }
+      else if (key.equals("XSites")) {
+        xFields = Integer.parseInt(value);
+      }
+      else if (key.equals("YSites")) {
+        yFields = Integer.parseInt(value);
+        // if no site acquisition ("Sites" == "FALSE"),
+        // don't overwrite the single-site field map
+        if (fieldMap == null) {
+          fieldMap = new boolean[yFields][xFields];
+        }
+      }
+      else if (key.equals("Sites")) {
+        // field acquisition may be turned off with
+        // XSites and YSites both greater than 1
+        if (value.equalsIgnoreCase("false")) {
+          fieldMap = new boolean[][] {{true}};
+        }
+      }
+      else if (key.equals("TimePoints")) {
+        nTimepoints = Integer.parseInt(value);
+      }
+      else if (key.equals("ZSteps")) {
+        zSteps = Integer.parseInt(value);
+      }
+      else if (key.startsWith("SiteSelection")) {
+        int row = Integer.parseInt(key.substring(13)) - 1;
+        String[] mapping = value.split(",");
+        for (int col=0; col<xFields; col++) {
+          fieldMap[row][col] = new Boolean(mapping[col].trim()).booleanValue();
+        }
+      }
+      else if (key.equals("Waves")) {
+        doChannels = new Boolean(value.toLowerCase());
+      }
+      else if (key.equals("NWavelengths")) {
+        wavelengths = new String[Integer.parseInt(value)];
+      }
+      else if (key.startsWith("WaveName")) {
+        int index = Integer.parseInt(key.substring(8)) - 1;
+        wavelengths[index] = value.replaceAll("\"", "");
+      }
+    }
+
+    // If the acquisition only contains one site, the SiteSelection1 key
+    // might be asent. In that case, assume the field was selected.
+    if (xFields == 1 && yFields == 1) {
+      fieldMap[0][0] = true;
+    }
+
+    for (int row=0; row<fieldMap.length; row++) {
+      for (int col=0; col<fieldMap[row].length; col++) {
+        if (fieldMap[row][col]) fieldCount++;
+      }
+    }
+  }
+
+  protected String getPlateName(String id) {
+    String plateName = new Location(id).getAbsolutePath();
+    plateName = plateName.substring(0, plateName.lastIndexOf(".")) + "_";
+    return plateName;
+  }
+
+  protected void findPixelsFiles() throws FormatException {
+    // find pixels files
+    String plateName = getPlateName(currentId);
+    for (int row=0; row<wellFiles.length; row++) {
+      for (int col=0; col<wellFiles[row].length; col++) {
+        if (wellFiles[row][col] != null) {
+          wellCount++;
+          String base = plateName + FormatTools.getWellName(row, col);
+          wellFiles[row][col][0] = base + ".pnl";
+          logFiles[row][col] = base + "_scan.log";
+        }
+      }
+    }
+  }
+
   /** Retrieve the well index corresponding to the given series. */
   private int getWell(int seriesIndex) {
     int wellIndex = seriesIndex / fieldCount;
@@ -627,13 +667,13 @@ public class CellWorxReader extends FormatReader {
   }
 
   /** Retrieve the well row corresponding to the given series. */
-  private int getWellRow(int seriesIndex) {
+  protected int getWellRow(int seriesIndex) {
     int well = getWell(seriesIndex);
     return well / wellFiles[0].length;
   }
 
   /** Retrieve the well column corresponding to the given series. */
-  private int getWellColumn(int seriesIndex) {
+  protected int getWellColumn(int seriesIndex) {
     int well = getWell(seriesIndex);
     return well % wellFiles[0].length;
   }
@@ -669,7 +709,7 @@ public class CellWorxReader extends FormatReader {
   }
 
   /** Parse metadata from a well log file. */
-  private void parseWellLogFile(int wellIndex, MetadataStore store)
+  protected void parseWellLogFile(int wellIndex, MetadataStore store)
     throws IOException
   {
     int seriesIndex = wellIndex * fieldCount;
@@ -680,7 +720,7 @@ public class CellWorxReader extends FormatReader {
     if (!new Location(logFile).exists()) {
       return;
     }
-    LOGGER.debug("Parsing log file for well {}{}", (char) (row + 'A'), col + 1);
+    LOGGER.debug("Parsing log file for well {}", FormatTools.getWellName(row, col));
 
     int oldSeries = getSeries();
     setSeries(seriesIndex);
@@ -810,14 +850,17 @@ public class CellWorxReader extends FormatReader {
     setSeries(oldSeries);
   }
 
-  private IFormatReader getReader(String file, boolean omexml)
+  protected IFormatReader getReader(String file, boolean omexml)
     throws FormatException, IOException
   {
     IFormatReader pnl = new DeltavisionReader();
-    if (checkSuffix(file, "tif")) {
-      pnl = new MetamorphReader();
-    }
+    initReader(pnl, file, omexml);
+    return pnl;
+  }
 
+  protected void initReader(IFormatReader reader, String file, boolean omexml)
+    throws FormatException, IOException
+  {
     if (omexml) {
       IMetadata metadata;
       try {
@@ -826,122 +869,25 @@ public class CellWorxReader extends FormatReader {
       catch (ServiceException exc) {
         throw new FormatException("Could not create OME-XML store.", exc);
       }
-      pnl.setMetadataStore(metadata);
+      reader.setMetadataStore(metadata);
     }
-    pnl.setId(file);
-    return pnl;
+    reader.setId(file);
   }
 
-  private String[] getTiffFiles(String plateName, int row, int col,
-    int channels, int nTimepoints, int zSteps)
-  {
-    String well = FormatTools.getWellName(row, col);
-    String base = plateName + well;
+  protected boolean foundHTDFile(String name) {
+    Location current = new Location(name).getAbsoluteFile();
+    Location parent = current.getParentFile();
 
-    String[] files = new String[fieldCount * channels * nTimepoints * zSteps];
-
-    int nextFile = 0;
-    for (int field=0; field<fieldCount; field++) {
-      for (int channel=0; channel<channels; channel++) {
-        for (int t=0; t<nTimepoints; t++, nextFile++) {
-          String file = base;
-          if (fieldCount > 1) {
-           file += "_s" + (field + 1);
-          }
-          if (doChannels || channels > 1) {
-            file += "_w" + (channel + 1);
-          }
-          if (nTimepoints > 1) {
-            file += "_t" + nTimepoints;
-          }
-          files[nextFile] = file + ".tif";
-
-          if (!new Location(files[nextFile]).exists()) {
-            files[nextFile] = file + ".TIF";
-          }
-        }
+    String htdName = current.getName();
+    while (htdName.indexOf('_') > 0) {
+      htdName = htdName.substring(0, htdName.lastIndexOf("_"));
+      if (new Location(parent, htdName + ".htd").exists() ||
+        new Location(parent, htdName + ".HTD").exists())
+      {
+        return checkSuffix(name, "log") || isGroupFiles();
       }
     }
-
-    boolean noneExist = true;
-    for (String file : files) {
-      if (file != null && new Location(file).exists()) {
-        noneExist = false;
-        break;
-      }
-    }
-
-    if (noneExist) {
-      nextFile = 0;
-      Location parent =
-        new Location(currentId).getAbsoluteFile().getParentFile();
-      if (directoryList == null) {
-        directoryList = parent.list(true);
-        Arrays.sort(directoryList);
-      }
-      for (String f : directoryList) {
-        if (checkSuffix(f, new String [] {"tif", "tiff", "pnl"})) {
-          String path = new Location(parent, f).getAbsolutePath();
-          if (path.startsWith(base) && path.toLowerCase().indexOf("_thumb") < 0)
-          {
-            files[nextFile++] = path;
-            noneExist = false;
-          }
-        }
-      }
-
-      if (noneExist) {
-        subdirectories = true;
-
-        // if all else fails, look for a directory structure:
-        //  * file.htd
-        //  * TimePoint_<t>
-        //    * ZStep_<z>
-        //      * file_<...>.tif
-        base = base.substring(base.lastIndexOf(File.separator) + 1);
-        LOGGER.debug("expected file prefix = {}", base);
-        nextFile = 0;
-        for (int i=0; i<nTimepoints; i++) {
-          Location dir = new Location(parent, "TimePoint_" + (i + 1));
-          if (dir.exists() && dir.isDirectory()) {
-            for (int z=0; z<zSteps; z++) {
-              Location file = new Location(dir, "ZStep_" + (z + 1));
-              String[] zList = null;
-              if (file.exists() && file.isDirectory()) {
-                zList = file.list(true);
-              }
-              else if (zSteps == 1) {
-                // if SizeZ == 1, the TIFF files may be in the
-                // TimePoint_<t> directory
-                file = dir;
-                zList = file.list(true);
-              }
-              LOGGER.debug("parent directory = {}", file);
-
-              if (zList != null) {
-                Arrays.sort(zList);
-                for (String f : zList) {
-                  LOGGER.debug("  checking relative path = {}", f);
-                  String path = new Location(file, f).getAbsolutePath();
-                  if (f.startsWith(base) && path.indexOf("_thumb") < 0) {
-                    if (nextFile < files.length) {
-                      files[nextFile] = path;
-                    }
-                    nextFile++;
-                  }
-                }
-              }
-            }
-          }
-        }
-        if (nextFile != files.length) {
-          LOGGER.warn("Well {} expected {} files; found {}",
-            well, files.length, nextFile);
-        }
-      }
-    }
-
-    return files;
+    return false;
   }
 
 }

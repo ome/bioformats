@@ -1079,7 +1079,7 @@ public class LeicaReader extends FormatReader {
     addSeriesMeta("Maximum voxel intensity", getString(true));
     addSeriesMeta("Minimum voxel intensity", getString(true));
     int len = in.readInt();
-    in.skipBytes(len * 2 + 4);
+    in.skipBytes((long) len * 2 + 4);
 
     len = in.readInt();
     for (int j=0; j<len; j++) {

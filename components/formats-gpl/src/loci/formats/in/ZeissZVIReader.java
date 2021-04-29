@@ -598,7 +598,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       int length = s.readInt();
 
       Shape nshape = new Shape();
-      s.skipBytes(length + 6);
+      s.skipBytes((long) length + 6);
 
       long shapeAttrOffset = s.getFilePointer();
       int shapeAttrLength = s.readInt();

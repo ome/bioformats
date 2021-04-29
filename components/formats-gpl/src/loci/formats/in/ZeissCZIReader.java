@@ -578,6 +578,15 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   // -- Internal FormatReader API methods --
+  
+  /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(ALLOW_AUTOSTITCHING_KEY);
+    optionsList.add(INCLUDE_ATTACHMENTS_KEY);
+    return optionsList;
+  }
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
@@ -1265,7 +1274,8 @@ public class ZeissCZIReader extends FormatReader {
           store.setImageName("", i);
         }
         else {
-          store.setImageName("Scene #" + i, i);
+          int paddingLength = (""+getSeriesCount()).length();
+          store.setImageName("Scene #" + String.format("%0"+paddingLength+"d", (i + 1)), i);
         }
       }
       else if (extraIndex == 0) {
@@ -1694,6 +1704,9 @@ public class ZeissCZIReader extends FormatReader {
 
     ArrayList<Integer> uniqueT = new ArrayList<Integer>();
 
+    int minPositions = Integer.MAX_VALUE;
+    int maxPositions = Integer.MIN_VALUE;
+
     for (SubBlock plane : planes) {
       if (xyOnly && plane.coreIndex != coreIndex) {
         continue;
@@ -1764,8 +1777,11 @@ public class ZeissCZIReader extends FormatReader {
             }
             break;
           case 'S':
-            if (dimension.start >= positions) {
-              positions = dimension.start + 1;
+            if (dimension.start < minPositions) {
+              minPositions = dimension.start;
+            }
+            if (dimension.start > maxPositions) {
+              maxPositions = dimension.start;
             }
             break;
           case 'I':
@@ -1797,6 +1813,9 @@ public class ZeissCZIReader extends FormatReader {
             LOGGER.warn("Unknown dimension '{}'", dimension.dimension);
         }
       }
+    }
+    if (maxPositions > Integer.MIN_VALUE && minPositions < Integer.MAX_VALUE) {
+      positions = maxPositions - minPositions + 1;
     }
     setCoreIndex(previousCoreIndex);
   }
@@ -2654,7 +2673,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String illumination = getFirstNodeValue(channel, "IlluminationType");
 
-          if (illumination != null) {
+          if (illumination != null && (channels.get(i).illumination == null || channels.get(i).illumination == IlluminationType.OTHER)) {
             channels.get(i).illumination = MetadataTools.getIlluminationType(illumination);
           }
         }

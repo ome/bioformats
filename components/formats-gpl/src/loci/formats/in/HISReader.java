@@ -140,8 +140,8 @@ public class HISReader extends FormatReader {
         if (getBitsPerPixel() == 12) {
           core.get(i - 1).bitsPerPixel = 16;
 
-          int prevSkip = (getSizeX() * getSizeY() * getSizeC() * 12) / 8;
-          int totalBytes = FormatTools.getPlaneSize(this);
+          long prevSkip = ((long) getSizeX() * getSizeY() * getSizeC() * 12) / 8;
+          long totalBytes = FormatTools.getPlaneSize(this);
           in.skipBytes(totalBytes - prevSkip);
           adjustedBitDepth = true;
         }

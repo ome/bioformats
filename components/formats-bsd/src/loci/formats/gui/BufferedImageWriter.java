@@ -69,7 +69,7 @@ public class BufferedImageWriter extends WriterWrapper {
   /**
    * Saves the given BufferedImage to the current file.
    *
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param image the BufferedImage to save.
    */
   public void saveImage(int no, BufferedImage image)
@@ -82,7 +82,7 @@ public class BufferedImageWriter extends WriterWrapper {
    * Saves the given BufferedImage to the current file.  The BufferedImage
    * may represent a subsection of the full image to be saved.
    *
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param image the BufferedImage to save.
    * @param x the X coordinate of the upper-left corner of the image.
    * @param y the Y coordinate of the upper-left corner of the image.

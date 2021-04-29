@@ -125,7 +125,7 @@ public class EPSReader extends FormatReader {
       }
 
       byte[] b = new byte[w * h];
-      int bpp = (int) (byteCounts[0] / (getSizeX() * getSizeY()));
+      long bpp = byteCounts[0] / (getSizeX() * getSizeY());
       in.skipBytes(bpp * y * getSizeX());
       for (int row=0; row<h; row++) {
         in.skipBytes(x * bpp);

@@ -919,7 +919,7 @@ public class ND2Handler extends BaseHandler {
         }
       }
     }
-    catch (NumberFormatException exc) {
+    catch (NumberFormatException | NullPointerException exc) {
       LOGGER.warn("Could not parse {} value: {}", key, value);
     }
   }

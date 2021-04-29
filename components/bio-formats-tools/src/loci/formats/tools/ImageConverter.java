@@ -578,10 +578,9 @@ public final class ImageConverter {
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         else {
+          meta.setPixelsSizeX(new PositiveInteger(width), 0);
+          meta.setPixelsSizeY(new PositiveInteger(height), 0);
           for (int i=0; i<reader.getSeriesCount(); i++) {
-            meta.setPixelsSizeX(new PositiveInteger(width), i);
-            meta.setPixelsSizeY(new PositiveInteger(height), i);
-
             if (autoscale) {
               store.setPixelsType(PixelType.UINT8, i);
             }

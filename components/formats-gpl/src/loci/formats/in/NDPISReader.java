@@ -41,9 +41,9 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.xml.model.primitives.Color;
 
 
 /**
@@ -61,6 +61,7 @@ public class NDPISReader extends FormatReader {
   private int[] bandUsed;
   private static final int TAG_CHANNEL = 65434;
   private static final int TAG_EMISSION_WAVELENGTH = 65451;
+  private static final int METADATA_TAG = 65449;
 
   // -- Constructor --
 
@@ -218,15 +219,43 @@ public class NDPISReader extends FormatReader {
       }
 
       bandUsed[c] = 0;
-      if (ifd.getSamplesPerPixel() >= 3 && wavelength != null) {
-        // define band used based on emission wavelength
-        // wavelength = 0  Colour Image
-        // 380 =< wavelength <= 490 Blue
-        // 490 < wavelength <= 580 Green
-        // 580 < wavelength <= 780 Red
-        if (380 < wavelength && wavelength <= 490) bandUsed[c] = 2;
-        else if (490 < wavelength && wavelength <= 580) bandUsed[c] = 1;
-        else if (580 < wavelength && wavelength <= 780) bandUsed[c] = 0;
+      if (ifd.getSamplesPerPixel() >= 3) {
+        if (wavelength != null) {
+          // define band used based on emission wavelength
+          // wavelength = 0  Colour Image
+          // 380 =< wavelength <= 490 Blue
+          // 490 < wavelength <= 580 Green
+          // 580 < wavelength <= 780 Red
+          if (380 < wavelength && wavelength <= 490) bandUsed[c] = 2;
+          else if (490 < wavelength && wavelength <= 580) bandUsed[c] = 1;
+          else if (580 < wavelength && wavelength <= 780) bandUsed[c] = 0;
+        }
+        String extraMetadata = ifd.getIFDStringValue(METADATA_TAG);
+        String[] metadataLines = extraMetadata.split("\r\n");
+        for (String line : metadataLines) {
+          if (line.trim().startsWith(";NDP Shading Data")) {
+            String[] pairs = line.split(";");
+            for (String pair : pairs) {
+              int eq = pair.indexOf("=");
+              if (eq < 0) {
+                continue;
+              }
+              String key = pair.substring(0, eq);
+              String value = pair.substring(eq + 1).trim();
+              addGlobalMetaList(key, value);
+
+              if (wavelength == null) {
+                if (key.startsWith("Transmittance") && !value.equals("-")) {
+                  bandUsed[c] = "RGB".indexOf(key.charAt(key.length() - 1));
+                  store.setChannelColor(new Color(
+                    bandUsed[c] == 0 ? 255 : 0,
+                    bandUsed[c] == 1 ? 255 : 0,
+                    bandUsed[c] == 2 ? 255 : 0, 255), 0, c);
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

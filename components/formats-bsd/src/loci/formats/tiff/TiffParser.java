@@ -363,8 +363,8 @@ public class TiffParser implements Closeable {
     while (offset > 0 && offset < in.length()) {
       in.seek(offset);
       offsets.add(offset);
-      int nEntries = bigTiff ? (int) in.readLong() : in.readUnsignedShort();
-      int entryBytes = nEntries * bytesPerEntry;
+      long nEntries = bigTiff ? in.readLong() : in.readUnsignedShort();
+      long entryBytes = nEntries * bytesPerEntry;
       if (in.getFilePointer() + entryBytes + (bigTiff ? 8 : 4) > in.length()) {
         // this can easily happen when writing multiple planes to a file
         break;
@@ -814,7 +814,9 @@ public class TiffParser implements Closeable {
     // reverse bits in each byte if FillOrder == 2
 
     if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2 &&
-      compression.getCode() <= TiffCompression.GROUP_4_FAX.getCode())
+      (compression.getCode() <= TiffCompression.GROUP_4_FAX.getCode() ||
+       compression.getCode() == TiffCompression.DEFLATE.getCode() ||
+       compression.getCode() == TiffCompression.PROPRIETARY_DEFLATE.getCode()))
     {
       for (int i=0; i<tile.length; i++) {
         tile[i] = (byte) (Integer.reverse(tile[i]) >> 24);
