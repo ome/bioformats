@@ -53,7 +53,7 @@ Type "ant -p" for a list of targets.
   <target name="bfmatlab"
     description="generate the a zip bundle of the MATLAB toolbox">
     <zip destfile="${artifact.dir}/bfmatlab.zip">
-      <zipfileset dir="${root.dir}/components/formats-gpl/matlab"
+      <zipfileset dir="${root.dir}/components/formats-bsd/matlab"
         includes="**/*" prefix="bfmatlab"/>
       <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bfmatlab"/>
     </zip>
