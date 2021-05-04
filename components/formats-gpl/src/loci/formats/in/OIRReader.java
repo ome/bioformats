@@ -86,6 +86,9 @@ public class OIRReader extends FormatReader {
   private int minZ = Integer.MAX_VALUE;
   private int minT = Integer.MAX_VALUE;
 
+  private transient Double zStart;
+  private transient Double zStep;
+
   // -- Constructor --
 
   /** Constructs a new OIR reader. */
@@ -273,6 +276,8 @@ public class OIRReader extends FormatReader {
       lastChannel = -1;
       minZ = Integer.MAX_VALUE;
       minT = Integer.MAX_VALUE;
+      zStart = null;
+      zStep = null;
     }
   }
 
@@ -499,7 +504,7 @@ public class OIRReader extends FormatReader {
     // populate MetadataStore
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, zStart != null && zStep != null);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
@@ -582,6 +587,13 @@ public class OIRReader extends FormatReader {
       if (ch.laserIndex >= 0 && ch.laserIndex < lasers.size()) {
         String laserId = MetadataTools.createLSID("LightSource", 0, ch.laserIndex);
         store.setChannelLightSourceSettingsID(laserId, 0, c);
+      }
+    }
+
+    if (zStart != null && zStep != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        int z = getZCTCoords(i)[0];
+        store.setPlanePositionZ(new Length(zStart + z * zStep, UNITS.MICROMETER), 0, i);
       }
     }
   }
@@ -1264,6 +1276,8 @@ public class OIRReader extends FormatReader {
       if (name.equals("ZSTACK")) {
         if (m.sizeZ <= 1) {
           m.sizeZ = Integer.parseInt(size.getTextContent());
+          zStart = DataTools.parseDouble(start.getTextContent());
+          zStep = DataTools.parseDouble(step.getTextContent());
         }
       }
       else if (name.equals("TIMELAPSE")) {
