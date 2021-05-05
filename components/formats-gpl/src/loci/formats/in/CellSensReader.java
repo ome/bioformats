@@ -1884,7 +1884,7 @@ public class CellSensReader extends FormatReader {
         }
 
         if (nextField == 0 || tag == -494804095) {
-          if (fp + dataSize < vsi.length() && fp + dataSize >= 0) {
+          if (fp + dataSize + 32 < vsi.length() && fp + dataSize >= 0) {
             vsi.seek(fp + dataSize + 32);
           }
           return;
