@@ -354,7 +354,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Matlab -->
-  <target name="dist-matlab"
+  <target name="dist-matlab" depends="jars"
     description="generate a zip bundle of the Matlab toolbox">
     <echo>----------=========== bfmatlab ===========----------</echo>
     <ant dir="components/bundles/bioformats_package" target="bfmatlab"/>
@@ -372,7 +372,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Octave -->
-  <target name="dist-octave" description="generate an Octave package">
+  <target name="dist-octave" depends="jars" description="generate an Octave package">
     <echo>-------=========== Octave package ===========-------</echo>
 
     <tempfile property="temp.file" destDir="${java.io.tmpdir}"/>
