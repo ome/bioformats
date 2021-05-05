@@ -354,7 +354,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Matlab -->
-  <target name="dist-matlab" depends="jars"
+  <target name="dist-matlab" depends="tools"
     description="generate a zip bundle of the Matlab toolbox">
     <echo>----------=========== bfmatlab ===========----------</echo>
     <ant dir="components/bundles/bioformats_package" target="bfmatlab"/>
