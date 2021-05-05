@@ -376,7 +376,7 @@ Type "ant -p" for a list of targets.
     <echo>-------=========== Octave package ===========-------</echo>
 
     <tempfile property="temp.file" destDir="${java.io.tmpdir}"/>
-    <copy file="${root.dir}/components/formats-gpl/octave/DESCRIPTION.in"
+    <copy file="${root.dir}/components/formats-bsd/octave/DESCRIPTION.in"
           toFile="${temp.file}">
       <filterset begintoken="$${" endtoken ="}" >
         <filter token="release.version" value="${release.version}"/>
@@ -386,10 +386,10 @@ Type "ant -p" for a list of targets.
 
     <tar destfile="${artifact.dir}/bioformats-octave-${release.version}.tar.gz"
          compression="gzip">
-      <tarfileset dir="${root.dir}/components/formats-gpl/octave"
+      <tarfileset dir="${root.dir}/components/formats-bsd/octave"
                   prefix="bioformats/" excludes="DESCRIPTION.in"/>
       <tarfileset file="${temp.file}" fullpath="bioformats/DESCRIPTION"/>
-      <tarfileset file="${root.dir}/LICENSE.txt" fullpath="bioformats/COPYING"/>
+      <tarfileset file="${root.dir}/components/formats-bsd/LICENSE.txt" fullpath="bioformats/COPYING"/>
       <tarfileset dir="${root.dir}/components/formats-bsd/matlab"
                   prefix="bioformats/inst/"/>
     </tar>
