@@ -527,10 +527,16 @@ public class OMETiffReader extends SubResolutionFormatReader {
     // if flattened resolutions are requested, remove resolution annotations
     // otherwise, MetadataStore and reader metadata will be inconsistent
     if (hasFlattenedResolutions()) {
-      for (int i=0; i<meta.getMapAnnotationCount(); i++) {
-        if (meta.getMapAnnotationNamespace(i).equals(OMEPyramidStore.NAMESPACE)) {
-          meta.setMapAnnotationValue(new ArrayList<MapPair>(), i);
+      try {
+        for (int i=0; i<meta.getMapAnnotationCount(); i++) {
+          if (meta.getMapAnnotationNamespace(i).equals(OMEPyramidStore.NAMESPACE)) {
+            meta.setMapAnnotationValue(new ArrayList<MapPair>(), i);
+          }
         }
+      }
+      catch (NullPointerException e) {
+        // not unexpected if there are no map annotations
+        LOGGER.trace("Could not remove resolution annotations", e);
       }
     }
 
