@@ -97,7 +97,11 @@
       <version>${mipav-stubs.version}</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>cisd</groupId>
+      <artifactId>jhdf5</artifactId>
+      <version>14.12.6</version>
+    </dependency>
     <dependency>
 	    <groupId>com.drewnoakes</groupId>
 	    <artifactId>metadata-extractor</artifactId>
