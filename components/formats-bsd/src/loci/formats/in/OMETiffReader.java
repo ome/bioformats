@@ -507,6 +507,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
           meta = service.createOMEXMLMetadata(xml);
           // Compute all paths relative to the directory of the metadata file
           dir = path.getParentFile().getCanonicalPath();
+          // Set the current ID to the metadata file
+          currentId = metadataFile;
         }
         catch (ServiceException se) {
           throw new FormatException(se);
