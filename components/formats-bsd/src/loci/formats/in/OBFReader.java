@@ -186,28 +186,26 @@ public class OBFReader extends FormatReader {
             ServiceFactory factory = new ServiceFactory();
             OMEXMLService service = factory.getInstance(OMEXMLService.class);
 
-            if (service.validateOMEXML(ome_xml)) {
-              ome_meta_data = service.createOMEXMLMetadata(ome_xml);
+            ome_meta_data = service.createOMEXMLMetadata(ome_xml);
 
-              for (int image = 0; image != ome_meta_data.getImageCount(); ++ image) {
-                if (ome_meta_data.getPixelsBigEndian(image) == null) {
-                  ome_meta_data.setPixelsBigEndian(Boolean.FALSE, image);
-                }
-                int channels = ome_meta_data.getChannelCount(image);
-                for (int channel = 0; channel != channels; ++ channel) {
-                  if (ome_meta_data.getChannelSamplesPerPixel(image, channel) == null) {
-                    ome_meta_data.setChannelSamplesPerPixel(new PositiveInteger(1), image, channel);
-                  }
+            for (int image = 0; image != ome_meta_data.getImageCount(); ++ image) {
+              if (ome_meta_data.getPixelsBigEndian(image) == null) {
+                ome_meta_data.setPixelsBigEndian(Boolean.FALSE, image);
+              }
+              int channels = ome_meta_data.getChannelCount(image);
+              for (int channel = 0; channel != channels; ++ channel) {
+                if (ome_meta_data.getChannelSamplesPerPixel(image, channel) == null) {
+                  ome_meta_data.setChannelSamplesPerPixel(new PositiveInteger(1), image, channel);
                 }
               }
+            }
 
-              service.convertMetadata(ome_meta_data, metadataStore);
+            service.convertMetadata(ome_meta_data, metadataStore);
 
-              OMEXMLMetadata reference
-                  = service.getOMEMetadata(service.asRetrieve(metadataStore));
-              for (int image = 0; image != reference.getImageCount(); ++ image) {
-                service.addMetadataOnly(reference, image);
-              }
+            OMEXMLMetadata reference
+                = service.getOMEMetadata(service.asRetrieve(metadataStore));
+            for (int image = 0; image != reference.getImageCount(); ++ image) {
+              service.addMetadataOnly(reference, image);
             }
           }
           catch (DependencyException exception) {
