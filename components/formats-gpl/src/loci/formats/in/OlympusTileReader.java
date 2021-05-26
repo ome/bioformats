@@ -324,6 +324,10 @@ public class OlympusTileReader extends FormatReader {
       currentTile.region = new Region(xIndex * adjustWidth, yIndex * adjustHeight,
         helperReader.getSizeX(), helperReader.getSizeY());
       tiles.add(currentTile);
+
+      addGlobalMetaList("tile X index", xIndex);
+      addGlobalMetaList("tile Y index", yIndex);
+      addGlobalMetaList("tile bounding box (pixels)", currentTile.region.toString());
     }
     helperReader.close();
 
