@@ -465,11 +465,17 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      String unit = getResolutionUnitFromComment(firstIFD);
-      
+      // only look for a unit in the comment if the unit is unclear
+      // from the RESOLUTION_UNIT tag
+      String unit = null;
+      // "3" indicates cm
+      if (firstIFD.getIFDIntValue(IFD.RESOLUTION_UNIT) != 3) {
+        unit = getResolutionUnitFromComment(firstIFD);
+      }
+
       Length sizeX = FormatTools.getPhysicalSizeX(pixX, unit);
       Length sizeY = FormatTools.getPhysicalSizeY(pixY, unit);
-      
+
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
