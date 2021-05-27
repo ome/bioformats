@@ -48,6 +48,7 @@ import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.unit.Unit;
 import ome.xml.model.enums.AcquisitionMode;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -587,6 +588,7 @@ public class OperettaReader extends FormatReader {
               store.setChannelContrastMethod(
                 MetadataTools.getContrastMethod(planes[i][c].channelType), i, c);
             }
+            store.setChannelColor(getColor(planes[i][c].emWavelength), i, c);
             store.setChannelEmissionWavelength(
               FormatTools.getEmissionWavelength(planes[i][c].emWavelength), i, c);
             store.setChannelExcitationWavelength(
@@ -910,6 +912,38 @@ public class OperettaReader extends FormatReader {
       positionY = new Length(newValues[1], positionY.unit());
       positionZ = new Length(newValues[2], positionZ.unit());
     }
+  }
+
+  /**
+   * Translate emission wavelength to color, based upon:
+   * https://www.perkinelmer.com/CMSResources/Images/44-6551APP_PhotocellApplicationNotes.pdf
+   */
+  private Color getColor(Double emWavelength) {
+    if (emWavelength == null) {
+      return null;
+    }
+    if (emWavelength < 450) {
+      // magenta (== violet)
+      return new Color(255, 0, 255, 255);
+    }
+    else if (emWavelength < 500) {
+      // blue
+      return new Color(0, 0, 255, 255);
+    }
+    else if (emWavelength < 570) {
+      // green
+      return new Color(0, 255, 0, 255);
+    }
+    else if (emWavelength < 590) {
+      // yellow
+      return new Color(255, 255, 0, 255);
+    }
+    else if (emWavelength < 610) {
+      // orange
+      return new Color(255, 127, 0, 255);
+    }
+    // red
+    return new Color(255, 0, 0, 255);
   }
 
   @Override
