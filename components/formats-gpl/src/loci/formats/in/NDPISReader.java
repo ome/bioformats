@@ -253,6 +253,9 @@ public class NDPISReader extends FormatReader {
                     bandUsed[c] == 2 ? 255 : 0, 255), 0, c);
                 }
               }
+              if (key.equals("Name") && value.length() > 0) {
+                store.setChannelName(value, 0, c);
+              }
             }
           }
         }
