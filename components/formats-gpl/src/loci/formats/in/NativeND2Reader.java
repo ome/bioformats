@@ -937,7 +937,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           int nInts = len / 4;
           long doubleOffset = fp + 8 * (nDoubles - imageOffsets.size());
           long intOffset = fp + 4 * (nInts - imageOffsets.size());
-          if (blockType.startsWith("CustomData|A")) {
+          if (nameAttri.startsWith("CustomData|AcqTimesCache")) {
             customDataOffsets.add(fp);
             customDataLengths.add(new long[] {nameLength, dataLength});
           }
