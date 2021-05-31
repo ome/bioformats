@@ -499,11 +499,16 @@ public class OMETiffReader extends SubResolutionFormatReader {
       // overwrite XML with what is in the companion OME-XML file
       Location path = new Location(dir, metadataPath);
       if (path.exists()) {
-        metadataFile = path.getAbsolutePath();
+        // Since metatadataPath can be relative, use getCanonicalPath()
+        metadataFile = path.getCanonicalPath();
         xml = readMetadataFile();
 
         try {
           meta = service.createOMEXMLMetadata(xml);
+          // Compute all paths relative to the directory of the metadata file
+          dir = path.getParentFile().getCanonicalPath();
+          // Set the current ID to the metadata file
+          currentId = metadataFile;
         }
         catch (ServiceException se) {
           throw new FormatException(se);
@@ -1371,6 +1376,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
   /** Extracts the OME-XML from the current {@link #metadataFile}. */
   private String readMetadataFile() throws IOException {
+    LOGGER.debug("Reading metadata from {}", metadataFile);
     if (checkSuffix(metadataFile, "ome.tiff") ||
         checkSuffix(metadataFile, "ome.tif") ||
         checkSuffix(metadataFile, "ome.tf2") ||
