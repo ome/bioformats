@@ -475,6 +475,14 @@ public class LIFReader extends FormatReader {
 
   // -- Internal FormatReader API methods --
 
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(OLD_PHYSICAL_SIZE_KEY);
+    return optionsList;
+  }
+
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {

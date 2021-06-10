@@ -414,6 +414,16 @@ public class VentanaReader extends BaseTiffReader {
     return super.getOptimalTileHeight();
   }
 
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(SPLIT_TILES_KEY);
+    return optionsList;
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */

@@ -356,6 +356,14 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
   // -- Internal FormatReader API methods --
 
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(USE_CHUNKMAP_KEY);
+    return optionsList;
+  }
+
   static class ChunkMapEntry {
     public String name;
     public long position;
