@@ -855,8 +855,9 @@ public class ZeissCZIReader extends FormatReader {
         angles = 1;
       }
       else {
-        int newX = planes.get(planes.size() - 1).x;
-        int newY = planes.get(planes.size() - 1).y;
+        SubBlock lastPlane = planes.get(planes.size() - 1);
+        int newX = lastPlane.x;
+        int newY = lastPlane.y;
         if (allowAutostitching() && (ms0.sizeX < newX || ms0.sizeY < newY)) {
           prestitched = true;
           mosaics = 1;
@@ -864,8 +865,14 @@ public class ZeissCZIReader extends FormatReader {
         else {
           prestitched = maxResolution > 0;
         }
-        ms0.sizeX = newX;
-        ms0.sizeY = newY;
+
+        // don't shrink the dimensions if prestitching is allowed
+        // implies that the image size is being set to a tile size
+        DimensionEntry mosaicDimension = lastPlane.directoryEntry.getDimensionEntry("M");
+        if (!prestitched || (mosaicDimension != null && mosaicDimension.start == 0)) {
+          ms0.sizeX = newX;
+          ms0.sizeY = newY;
+        }
       }
     }
     else if (!allowAutostitching() && calculatedSeries > seriesCount) {
@@ -4253,6 +4260,17 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+    }
+
+    public DimensionEntry getDimensionEntry(String dimension) {
+      if (dimension != null) {
+        for (DimensionEntry entry : dimensionEntries) {
+          if (entry.dimension != null && entry.dimension.equals(dimension)) {
+            return entry;
+          }
+        }
+      }
+      return null;
     }
 
     @Override
