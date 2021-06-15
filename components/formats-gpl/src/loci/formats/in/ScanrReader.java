@@ -291,6 +291,14 @@ public class ScanrReader extends FormatReader {
 
   // -- Internal FormatReader API methods --
 
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(SKIP_MISSING_WELLS);
+    return optionsList;
+  }
+
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
