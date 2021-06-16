@@ -823,6 +823,12 @@ public final class ImageConverter {
     if (saveTileHeight > 0 && saveTileHeight <= height) {
       h = saveTileHeight;
     }
+    if (w % 16 != 0) {
+      w = (w / 16 + 1) * 16;
+    }
+    if (h % 16 != 0) {
+      h = (h / 16 + 1) * 16;
+    }
 
     if (firstTile) {
       LOGGER.info("Tile size = {} x {}", w, h);
