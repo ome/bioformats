@@ -507,14 +507,13 @@ public class DeltavisionReader extends FormatReader {
     yTiles = uniqueTileY.size();
 
     if (xTiles > 1 || yTiles > 1) {
-      if (hasZeroX) {
+      if (hasZeroX && xTiles == 0) {
         xTiles++;
       }
-      if (hasZeroY) {
+      if (hasZeroY && yTiles == 0) {
         yTiles++;
       }
     }
-
     if (xTiles > 1) {
       final Number x0 = uniqueTileX.get(0).value(UNITS.REFERENCEFRAME);
       final Number x1 = uniqueTileX.get(1).value(UNITS.REFERENCEFRAME);
