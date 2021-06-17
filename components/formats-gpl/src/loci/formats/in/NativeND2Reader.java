@@ -129,6 +129,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
   private boolean textData = false;
   private Double refractiveIndex = null;
+  Boolean imageMetadataLVProcessed = false;
 
   // -- Constructor --
 
@@ -897,8 +898,105 @@ public class NativeND2Reader extends SubResolutionFormatReader {
             isLossless = isLossless && canBeLossless;
           }
           else {
-            if (blockType.startsWith("ImageMetadat")) {
+            if (blockType.startsWith("ImageMetadat") && !imageMetadataLVProcessed) {
               foundMetadata = true;
+              long startFilePointer = in.getFilePointer();
+              in.skipBytes(6);
+              long endFP = in.getFilePointer() + len - 18;
+              while (in.read() == 0);
+
+              boolean canBeLossless = true;
+              int eType = 0;
+              Boolean nextExperiment = true;
+              Boolean currentCountSetted = false;
+              int XYCount = 1;
+              int timeCount = 1;
+              int zCount = 1;
+
+              long currentFilePointer = in.getFilePointer();
+
+              while (true) {
+                in.seek(currentFilePointer);
+
+                int nameLen = in.read();
+                if (nameLen == 0 || nameLen < 0) {
+                  currentFilePointer++;
+                  continue;
+                }
+
+                String attributeName =
+                        DataTools.stripString(in.readString(nameLen * 2));
+
+                if(attributeName.length() != nameLen - 1)
+                {
+                  currentFilePointer++;
+                  continue;
+                }
+
+                if (attributeName.equals("SLxExperiment")) {
+                  currentFilePointer += nameLen * 2;
+                  imageMetadataLVProcessed = true;
+                }
+
+                if (attributeName.equals("eType")) {
+                  currentFilePointer += nameLen * 2;
+                  if(nextExperiment)
+                    eType = in.readInt();
+                  nextExperiment = false;
+                } else
+                if (attributeName.equals("uiCount")) {
+                  currentFilePointer += nameLen * 2;
+
+                  if(!currentCountSetted)
+                  {
+                    if(eType == 2)
+                    {
+                      XYCount = in.readInt();
+                    } else if(eType == 1)
+                    {
+                      timeCount = in.readInt();
+                    } if(eType == 4)
+                    {
+                      zCount = in.readInt();
+                    }
+                    currentCountSetted = true;
+                  }
+                } else
+                if (attributeName.equals("bKeepObject")) {
+                  currentFilePointer += nameLen * 2;
+                } else
+                if (attributeName.equals("uiRepeatCount")) {
+                  currentFilePointer += nameLen * 2;
+                } else
+                  if (attributeName.equals("vectStimulationConfigurationsSize")) {
+                  currentFilePointer += nameLen * 2;
+                } else
+                if (attributeName.equals("uiNextLevelCount")) {
+                  currentFilePointer += nameLen * 2;
+                  int uiNextLevelCount = in.readInt();
+
+                  if(uiNextLevelCount == 0)
+                  {
+                    break;
+                  }
+                  currentCountSetted = false;
+                  nextExperiment = true;
+                }
+
+                if (in.getFilePointer() > endFP) {
+                  in.seek(startFilePointer);
+                  break;
+                }
+
+                currentFilePointer++;
+              }
+
+              if(currentCountSetted)
+                setDimensions(timeCount, zCount, XYCount);
+
+              if (in.getFilePointer() > endFP) {
+                in.seek(endFP);
+              }
             }
 
             int length = len - 12;
@@ -2427,6 +2525,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
       String[] lines = textString.split("\n");
       ND2Handler handler = new ND2Handler(core, offsetCount);
+      handler.imageMetadataLVExists = imageMetadataLVProcessed;
       for (String line : lines) {
         int separator = line.indexOf(':');
         if (separator >= 0) {
@@ -2539,6 +2638,35 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
       }
     }
+  }
+
+  private void setDimensions(int numT, int numZ, int numSeries) {
+    CoreMetadata ms0 = core.get(0, 0);
+    ms0.sizeT = numT;
+    ms0.sizeZ = numZ;
+    if (numSeries > 1) {
+      int x = ms0.sizeX;
+      int y = ms0.sizeY;
+      int z = ms0.sizeZ;
+      int tSize = ms0.sizeT;
+      int c = ms0.sizeC;
+      String order = ms0.dimensionOrder;
+      core = new CoreMetadataList();
+      for (int i=0; i<numSeries; i++) {
+        CoreMetadata ms = new CoreMetadata();
+        core.add(ms);
+        ms.sizeX = x;
+        ms.sizeY = y;
+        ms.sizeZ = z == 0 ? 1 : z;
+        ms.sizeC = c == 0 ? 1 : c;
+        ms.sizeT = tSize == 0 ? 1 : tSize;
+        ms.dimensionOrder = order;
+      }
+      ms0 = core.get(0, 0);
+    }
+
+
+    ms0.imageCount = ms0.sizeZ * ms0.sizeC * ms0.sizeT;
   }
 
 }
