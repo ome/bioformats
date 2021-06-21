@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -487,18 +488,18 @@ public class DeltavisionReader extends FormatReader {
       extHdrFields[i] = hdr;
 
       if (!uniqueTileX.contains(hdr.stageXCoord) &&
-              hdr.stageXCoord.value().floatValue() != 0) {
+          Math.abs(hdr.stageXCoord.value().floatValue()) > Constants.EPSILON) {
         uniqueTileX.add(hdr.stageXCoord);
       }
-      else if (hdr.stageXCoord.value().floatValue() == 0) {
+      else if (Math.abs(hdr.stageXCoord.value().floatValue()) <= Constants.EPSILON) {
         hasZeroX = true;
       }
 
       if (!uniqueTileY.contains(hdr.stageYCoord) &&
-              hdr.stageYCoord.value().floatValue() != 0) {
+          Math.abs(hdr.stageYCoord.value().floatValue()) > Constants.EPSILON) {
         uniqueTileY.add(hdr.stageYCoord);
       }
-      else if (hdr.stageYCoord.value().floatValue() == 0) {
+      else if (Math.abs(hdr.stageYCoord.value().floatValue()) <= Constants.EPSILON) {
         hasZeroY = true;
       }
     }
@@ -507,13 +508,14 @@ public class DeltavisionReader extends FormatReader {
     yTiles = uniqueTileY.size();
 
     if (xTiles > 1 || yTiles > 1) {
-      if (hasZeroX && xTiles == 0) {
+      if (hasZeroX) {
         xTiles++;
       }
-      if (hasZeroY && yTiles == 0) {
+      if (hasZeroY) {
         yTiles++;
       }
     }
+
     if (xTiles > 1) {
       final Number x0 = uniqueTileX.get(0).value(UNITS.REFERENCEFRAME);
       final Number x1 = uniqueTileX.get(1).value(UNITS.REFERENCEFRAME);
