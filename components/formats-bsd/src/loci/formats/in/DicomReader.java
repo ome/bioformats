@@ -645,7 +645,7 @@ public class DicomReader extends FormatReader {
           in.seek(in.getFilePointer() - 4);
           break;
         case DIRECTORY_RECORD_TYPE:
-          currentType = getHeaderInfo(tag, s).trim();
+          currentType = getHeaderInfo(tag, s).toString().trim();
           break;
         case REFERENCED_FILE_ID:
           if (currentType.equals("IMAGE")) {
@@ -656,10 +656,10 @@ public class DicomReader extends FormatReader {
             if (fileList.get(seriesIndex) == null) {
               fileList.put(seriesIndex, new ArrayList<String>());
             }
-            fileList.get(seriesIndex).add(getHeaderInfo(tag, s).trim());
+            fileList.get(seriesIndex).add(getHeaderInfo(tag, s).toString().trim());
           }
           else {
-            companionFiles.add(getHeaderInfo(tag, s).trim());
+            companionFiles.add(getHeaderInfo(tag, s).toString().trim());
           }
           currentType = "";
           break;
@@ -848,7 +848,7 @@ public class DicomReader extends FormatReader {
           }
         }
         if (pixelSizeZ != null) {
-          Length z = FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ), UNITS.MILLIMETER);
+          Length z = FormatTools.getPhysicalSizeZ(pixelSizeZ, UNITS.MILLIMETER);
           if (z != null) {
             store.setPixelsPhysicalSizeZ(z, i);
           }
@@ -886,14 +886,28 @@ public class DicomReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void addInfo(int tag, String value) throws IOException {
-    String oldValue = value;
-    String info = getHeaderInfo(tag, value);
+  private Number getNumber(Object value) {
+    if (value instanceof Number) {
+      return (Number) value;
+    }
+    String v = value.toString().trim();
+    try {
+      return new Double(v);
+    }
+    catch (NumberFormatException e) {
+      return DataTools.parseDouble(v);
+    }
+  }
+
+  private void addInfo(int tag, Object value) throws IOException {
+    Object oldValue = value;
+    Object info = getHeaderInfo(tag, value);
     CoreMetadata m = core.get(0);
 
     if (info != null && tag != ITEM.getTag()) {
-      info = info.trim();
-      if (info.equals("")) info = oldValue == null ? "" : oldValue.trim();
+      String infoString = info.toString().trim();
+      Number infoNumber = getNumber(info);
+      //if (info.equals("")) info = oldValue == null ? "" : oldValue.trim();
 
       DicomAttribute attribute = DicomAttribute.get(tag);
       String key = null;
@@ -906,34 +920,34 @@ public class DicomReader extends FormatReader {
       if (attribute != null) {
         switch (attribute) {
           case SAMPLES_PER_PIXEL:
-            m.sizeC = Integer.parseInt(info);
+            m.sizeC = infoNumber.intValue();
             if (getSizeC() > 1) m.rgb = true;
             break;
           case PHOTOMETRIC_INTERPRETATION:
-            if (info.equals("PALETTE COLOR")) {
+            if (infoString.equals("PALETTE COLOR")) {
               m.indexed = true;
               m.sizeC = 1;
               m.rgb = false;
               lut = new byte[3][];
               shortLut = new short[3][];
             }
-            else if (info.startsWith("MONOCHROME")) {
-              inverted = info.endsWith("1");
+            else if (infoString.startsWith("MONOCHROME")) {
+              inverted = infoString.endsWith("1");
             }
             break;
           case ACQUISITION_DATE:
-            originalDate = info;
+            originalDate = infoString;
             break;
           case ACQUISITION_TIME:
-            originalTime = info;
+            originalTime = infoString;
             break;
           case INSTANCE_NUMBER:
-            if (info.trim().length() > 0) {
-              originalInstance = info;
+            if (infoString.trim().length() > 0) {
+              originalInstance = infoString;
             }
             break;
-          case SERIES_NUMBER: 
-            originalSeries = parseIntValue(info, 0);
+          case SERIES_NUMBER:
+            originalSeries = parseIntValue(infoNumber, 0);
             break;
           case RED_LUT_DATA:
           case GREEN_LUT_DATA:
@@ -954,29 +968,35 @@ public class DicomReader extends FormatReader {
             in.seek(fp);
             break;
           case CONTENT_TIME:
-            time = info;
+            time = infoString;
             break;
           case CONTENT_DATE:
-            date = info;
+            date = infoString;
             break;
           case IMAGE_TYPE:
-            imageType = info;
+            imageType = infoString;
             break;
           case RESCALE_INTERCEPT:
-            rescaleIntercept = Double.parseDouble(info);
+            if (infoNumber != null) {
+              rescaleIntercept = infoNumber.doubleValue();
+            }
             break;
           case RESCALE_SLOPE:
-            rescaleSlope = Double.parseDouble(info);
+            if (infoNumber != null) {
+              rescaleSlope = infoNumber.doubleValue();
+            }
             break;
           case PIXEL_SPACING:
-            pixelSizeY = info.substring(0, info.indexOf("\\"));
-            pixelSizeX = info.substring(info.lastIndexOf("\\") + 1);
+            pixelSizeY = infoString.substring(0, infoString.indexOf("\\"));
+            pixelSizeX = infoString.substring(infoString.lastIndexOf("\\") + 1);
             break;
           case SLICE_SPACING:
-            pixelSizeZ = new Double(info);
+            if (infoNumber != null) {
+              pixelSizeZ = infoNumber.doubleValue();
+            }
             break;
           case IMAGE_POSITION_PATIENT:
-            String[] positions = info.replace('\\', '_').split("_");
+            String[] positions = infoString.replace('\\', '_').split("_");
             if (positions.length > 0) {
               try {
                 positionX.add(Double.valueOf(positions[0]));
@@ -1033,11 +1053,7 @@ public class DicomReader extends FormatReader {
     }
   }
 
-  private void addInfo(int tag, int value) throws IOException {
-    addInfo(tag, Integer.toString(value));
-  }
-
-  private String getHeaderInfo(int tag, String value) throws IOException {
+  private Object getHeaderInfo(int tag, Object value) throws IOException {
     DicomAttribute attribute = DicomAttribute.get(tag);
     String id = null;
 
@@ -1063,7 +1079,6 @@ public class DicomReader extends FormatReader {
       switch (vr) {
         case AE:
         case AS:
-        case AT:
         case CS:
         case DA:
         case DS:
@@ -1075,24 +1090,54 @@ public class DicomReader extends FormatReader {
         case SH:
         case ST:
         case TM:
+        case UC:
         case UI:
+        case UR:
+        case UT:
           value = in.readString(elementLength);
           break;
+        case AT:
+          // TODO
+          break;
+        case FL:
+          value = in.readFloat();
+          break;
+        case FD:
+          value = in.readDouble();
+          break;
+        case OB:
+          value = new byte[elementLength];
+          in.read((byte[]) value);
+          break;
+        case SL:
+          value = in.readInt();
+          break;
+        case SS:
+          value = in.readShort();
+          break;
+        case SV:
+          value = in.readLong();
+          break;
+        case UL:
+          value = in.readInt() & 0xffffffffL;
+          break;
         case US:
-          if (elementLength == 2) value = Integer.toString(in.readShort());
+          if (elementLength == 2) {
+            value = in.readShort();
+          }
           else {
-            StringBuilder sb = new StringBuilder();
-            int n = elementLength / 2;
-            for (int i=0; i<n; i++) {
-              sb.append(in.readShort());
-              sb.append(" ");
+            short[] values = new short[elementLength / 2];
+            for (int i=0; i<values.length; i++) {
+              values[i] = in.readShort();
             }
-            value = sb.toString();
+            value = values;
           }
           break;
         case IMPLICIT:
           value = in.readString(elementLength);
-          if (elementLength <= 4 || elementLength > 44) value = null;
+          if (elementLength <= 4 || elementLength > 44) {
+            value = null;
+          }
           break;
         case SQ:
           value = "";
@@ -1112,15 +1157,7 @@ public class DicomReader extends FormatReader {
       value = "";
     }
 
-    if (value != null && id == null && !value.isEmpty()) {
-      return value;
-    }
-    else if (id == null) {
-      return null;
-    }
-    else {
-      return value;
-    }
+    return value;
   }
 
   private int getLength(RandomAccessInputStream stream, int tag)
@@ -1449,13 +1486,13 @@ public class DicomReader extends FormatReader {
       fileSeries++;
     }
 
-    int stamp = parseIntValue(time, 0);
-    int timestamp = parseIntValue(originalTime, 0);
+    double stamp = getTimestampMicroseconds(time);
+    double timestamp = getTimestampMicroseconds(originalTime);
 
     LOGGER.trace("  stamp = {}", stamp);
     LOGGER.trace("  timestamp = {}", timestamp);
 
-    if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 150)) {
+    if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 150000000)) {
       int position = Integer.parseInt(instance) - 1;
       if (position < 0) position = 0;
       if (fileList.get(fileSeries) == null) {
@@ -1483,9 +1520,37 @@ public class DicomReader extends FormatReader {
     }
   }
 
-  private int parseIntValue(String v, int defaultValue) {
-    Integer parsedValue = DataTools.parseInteger(v);
-    return parsedValue == null ? defaultValue : parsedValue;
+  private int parseIntValue(Number v, int defaultValue) {
+    return v == null ? defaultValue : v.intValue();
+  }
+
+  /**
+   * Convert the timestamp from a TM value to microseconds.
+   * The timestamp format defined in the standard is HHMMSS.FFFFFF
+   * but HH:MM:SS.FFFFFF is supported as well since some files
+   * incorrectly use that format.
+   */
+  private long getTimestampMicroseconds(String v) {
+    if (v == null || v.isEmpty()) {
+      return 0;
+    }
+    v = v.trim();
+    v = v.replaceAll(":", "");
+    int hours = Integer.parseInt(v.substring(0, 2));
+    long total = hours * 60 * 60;
+    if (v.length() > 2) {
+      int minutes = Integer.parseInt(v.substring(2, 4));
+      total += minutes * 60;
+    }
+    if (v.length() > 4) {
+      int seconds = Integer.parseInt(v.substring(4, 6));
+      total += seconds;
+    }
+    total *= 1000000;
+    if (v.length() > 6) {
+      total += Integer.parseInt(v.substring(v.indexOf(".") + 1));
+    }
+    return total;
   }
 
   /**
