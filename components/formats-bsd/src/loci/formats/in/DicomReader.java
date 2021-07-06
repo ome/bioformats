@@ -48,6 +48,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
@@ -89,18 +90,12 @@ public class DicomReader extends FormatReader {
   /** Bits per pixel. */
   private int bitsPerPixel;
 
-  private int location;
-  private int elementLength;
-  private DicomVR vr;
-  private boolean oddLocations;
-  private boolean inSequence;
-  private boolean bigEndianTransferSyntax;
   private byte[][] lut;
   private short[][] shortLut;
   private long[] offsets;
   private int maxPixelRange;
   private int centerPixelValue;
-  
+
   private double rescaleSlope = 1.0, rescaleIntercept = 0.0;
 
   private boolean isJP2K = false;
@@ -126,6 +121,8 @@ public class DicomReader extends FormatReader {
   private DicomReader helper;
 
   private List<String> companionFiles = new ArrayList<String>();
+
+  private List<Region> tilePositions;
 
   // -- Constructor --
 
@@ -162,9 +159,8 @@ public class DicomReader extends FormatReader {
     stream.seek(0);
 
     try {
-      int tag = getNextTag(stream, false);
-      DicomAttribute attribute = DicomAttribute.get(tag);
-      return attribute != null && attribute != INVALID;
+      DicomTag tag = new DicomTag(stream, false, 0, false);
+      return tag.attribute != null && tag.attribute != INVALID;
     }
     catch (NullPointerException e) { }
     catch (FormatException e) { }
@@ -236,6 +232,24 @@ public class DicomReader extends FormatReader {
     return CAN_GROUP;
   }
 
+  @Override
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    if (originalX < getSizeX()) {
+      return originalX;
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  @Override
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    if (originalY < getSizeY()) {
+      return originalY;
+    }
+    return super.getOptimalTileHeight();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -258,134 +272,29 @@ public class DicomReader extends FormatReader {
       return helper.openBytes(no, buf, x, y, w, h);
     }
 
-    int ec = isIndexed() ? 1 : getSizeC();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int bytes = getSizeX() * getSizeY() * bpp * ec;
-    if (in == null) {
-      in = new RandomAccessInputStream(currentId);
-    }
-    in.seek(offsets[no]);
-
-    if (isRLE) {
-      // plane is compressed using run-length encoding
-      CodecOptions options = new CodecOptions();
-      options.maxBytes = getSizeX() * getSizeY();
-      for (int c=0; c<ec; c++) {
-        PackbitsCodec codec = new PackbitsCodec();
-        byte[] t = null;
-
-        if (bpp > 1) {
-          int plane = bytes / (bpp * ec);
-          byte[][] tmp = new byte[bpp][];
-          long start = in.getFilePointer();
-          for (int i=0; i<bpp; i++) {
-            // one or more extra 0 bytes can be inserted between
-            // the planes, but there isn't a good way to know in advance
-            // only way to know is to see if decompressing produces the
-            // correct number of bytes
-            tmp[i] = codec.decompress(in, options);
-            if (i > 0 && tmp[i].length > options.maxBytes) {
-              in.seek(start);
-              tmp[i] = codec.decompress(in, options);
-            }
-            if (no < imagesPerFile - 1 || i < bpp - 1) {
-              start = in.getFilePointer();
-              while (in.read() == 0);
-              long end = in.getFilePointer();
-              in.seek(end - 1);
-            }
-          }
-          t = new byte[bytes / ec];
-          for (int i=0; i<plane; i++) {
-            for (int j=0; j<bpp; j++) {
-              int byteIndex = isLittleEndian() ? bpp - j - 1 : j;
-              if (i < tmp[byteIndex].length) {
-                t[i * bpp + j] = tmp[byteIndex][i];
-              }
-            }
-          }
-        }
-        else {
-          t = codec.decompress(in, options);
-          if (t.length < (bytes / ec)) {
-            byte[] tmp = t;
-            t = new byte[bytes / ec];
-            System.arraycopy(tmp, 0, t, 0, tmp.length);
-          }
-          if (no < imagesPerFile - 1 || c < ec - 1) {
-            while (in.read() == 0);
-            in.seek(in.getFilePointer() - 1);
-          }
-        }
-
-        int rowLen = w * bpp;
-        int srcRowLen = getSizeX() * bpp;
-
-        for (int row=0; row<h; row++) {
-          int src = (row + y) * srcRowLen + x * bpp;
-          int dest = (h * c + row) * rowLen;
-          int len = (int) Math.min(rowLen, t.length - src - 1);
-          if (len < 0) break;
-          System.arraycopy(t, src, buf, dest, len);
-        }
-      }
-    }
-    else if (isJPEG || isJP2K) {
-      // plane is compressed using JPEG or JPEG-2000
-      long end = no < offsets.length - 1 ? offsets[no + 1] : in.length();
-      byte[] b = new byte[(int) (end - in.getFilePointer())];
-      in.read(b);
-
-      if (b[2] != (byte) 0xff) {
-        byte[] tmp = new byte[b.length + 1];
-        tmp[0] = b[0];
-        tmp[1] = b[1];
-        tmp[2] = (byte) 0xff;
-        System.arraycopy(b, 2, tmp, 3, b.length - 2);
-        b = tmp;
-      }
-      if ((b[3] & 0xff) >= 0xf0) {
-        b[3] -= (byte) 0x30;
-      }
-
-      int pt = b.length - 2;
-      while (pt >= 0 && b[pt] != (byte) 0xff || b[pt + 1] != (byte) 0xd9) {
-        pt--;
-      }
-      if (pt < b.length - 2) {
-        byte[] tmp = b;
-        b = new byte[pt + 2];
-        System.arraycopy(tmp, 0, b, 0, b.length);
-      }
-
-      Codec codec = null;
-      CodecOptions options = new CodecOptions();
-      options.littleEndian = isLittleEndian();
-      options.interleaved = isInterleaved();
-      if (isJPEG) codec = new JPEGCodec();
-      else codec = new JPEG2000Codec();
-      b = codec.decompress(b, options);
-
-      int rowLen = w * bpp;
-      int srcRowLen = getSizeX() * bpp;
-
-      int srcPlane = getSizeY() * srcRowLen;
-
-      for (int c=0; c<ec; c++) {
-        for (int row=0; row<h; row++) {
-          System.arraycopy(b, c * srcPlane + (row + y) * srcRowLen + x * bpp,
-            buf, h * rowLen * c + row * rowLen, rowLen);
-        }
-      }
-    }
-    else if (isDeflate) {
-      // TODO
-      throw new UnsupportedCompressionException(
-        "Deflate data is not supported.");
+    if (tilePositions == null) {
+      getTile(no, buf, x, y, w, h);
     }
     else {
-      // plane is not compressed
-      readPlane(in, x, y, w, h, buf);
+      int pixel = bpp * getRGBChannelCount();
+      Region currentRegion = new Region(x, y, w, h);
+      // TODO: assumes single plane
+      byte[] tileBuf = new byte[originalX * originalY * pixel];
+      for (int t=0; t<tilePositions.size(); t++) {
+        Region tile = tilePositions.get(t);
+        if (tile.intersects(currentRegion)) {
+          Region intersection = tile.intersection(currentRegion);
+          getTile(t, tileBuf, intersection.x - tile.x, intersection.y - tile.y,
+            intersection.width, intersection.height);
+
+          for (int row=0; row<intersection.height; row++) {
+            int srcIndex = row * intersection.width * pixel;
+            int destIndex = pixel * ((intersection.y - y + row) * w + (intersection.x - x));
+            System.arraycopy(tileBuf, srcIndex, buf, destIndex, intersection.width * pixel);
+          }
+        }
+      }
     }
 
     if (inverted) {
@@ -420,9 +329,7 @@ public class DicomReader extends FormatReader {
     super.close(fileOnly);
     if (helper != null) helper.close(fileOnly);
     if (!fileOnly) {
-      vr = null;
-      bitsPerPixel = location = elementLength = 0;
-      oddLocations = inSequence = bigEndianTransferSyntax = false;
+      bitsPerPixel = 0;
       isJPEG = isJP2K = isRLE = isDeflate = false;
       lut = null;
       offsets = null;
@@ -446,6 +353,7 @@ public class DicomReader extends FormatReader {
       positionX.clear();
       positionY.clear();
       positionZ.clear();
+      tilePositions = null;
     }
   }
 
@@ -469,15 +377,12 @@ public class DicomReader extends FormatReader {
     helper.setGroupFiles(false);
 
     m.littleEndian = true;
-    location = 0;
+    long location = 0;
     isJPEG = false;
     isRLE = false;
-    bigEndianTransferSyntax = false;
-    oddLocations = false;
-    inSequence = false;
+    boolean bigEndianTransferSyntax = false;
+    boolean oddLocations = false;
     bitsPerPixel = 0;
-    elementLength = 0;
-    vr = null;
     lut = null;
     offsets = null;
     inverted = false;
@@ -507,145 +412,123 @@ public class DicomReader extends FormatReader {
     boolean signed = false;
     String currentType = "";
 
+    List<DicomTag> tags = new ArrayList<DicomTag>();
+
     while (decodingTags) {
       if (in.getFilePointer() + 4 >= in.length()) {
         break;
       }
       LOGGER.debug("Reading tag from {}", in.getFilePointer());
-      int tag = getNextTag(in);
-
-      if (elementLength <= 0) continue;
+      DicomTag tag = new DicomTag(in, bigEndianTransferSyntax, location, oddLocations);
+      LOGGER.debug("  {}", tag);
+      tags.add(tag);
+      ///* debug */ System.out.println("**** PARENT TAG: " + tag.key);
 
       oddLocations = (location & 1) != 0;
 
-      LOGGER.debug("  tag={} len={} fp={}",
-        new Object[] {DicomAttribute.formatTag(tag), elementLength, in.getFilePointer()});
-
-      DicomAttribute attribute = DicomAttribute.get(tag);
-      if (attribute == null) {
-        long oldfp = in.getFilePointer();
-        addInfo(tag, null);
-        in.seek(oldfp + elementLength);
+      if (tag.attribute == null) {
+        in.seek(tag.getEndPointer());
         continue;
       }
 
-      String s = null;
-      switch (attribute) {
+      addInfo(tag);
+
+      switch (tag.attribute) {
         case TRANSFER_SYNTAX_UID:
           // this tag can indicate which compression scheme is used
-          s = in.readString(elementLength);
-          addInfo(tag, s);
-          if (s.startsWith("1.2.840.10008.1.2.4.9")) isJP2K = true;
-          else if (s.startsWith("1.2.840.10008.1.2.4")) isJPEG = true;
-          else if (s.startsWith("1.2.840.10008.1.2.5")) isRLE = true;
-          else if (s.equals("1.2.8.10008.1.2.1.99")) isDeflate = true;
-          else if (s.indexOf("1.2.4") > -1 || s.indexOf("1.2.5") > -1) {
+          String uid = tag.getStringValue();
+          isJP2K = uid.startsWith("1.2.840.10008.1.2.4.9");
+          isJPEG = !isJP2K && uid.startsWith("1.2.840.10008.1.2.4");
+          isRLE = uid.startsWith("1.2.840.10008.1.2.5");
+          isDeflate = uid.startsWith("1.2.8.10008.1.2.1.99");
+          if ((!isJP2K && !isJPEG && !isRLE && !isDeflate) &&
+            (uid.indexOf("1.2.4") > -1 || uid.indexOf("1.2.5") > -1))
+          {
             throw new UnsupportedCompressionException(
-              "Sorry, compression type " + s + " not supported");
+              "Sorry, compression type " + uid + " not supported");
           }
-          if (s.indexOf("1.2.840.10008.1.2.2") >= 0) {
+          if (uid.indexOf("1.2.840.10008.1.2.2") >= 0) {
             bigEndianTransferSyntax = true;
           }
           break;
         case NUMBER_OF_FRAMES:
-          s = in.readString(elementLength);
-          addInfo(tag, s);
-          double frames = Double.parseDouble(s);
-          if (frames > 1.0) imagesPerFile = (int) frames;
-          break;
-        case SAMPLES_PER_PIXEL:
-          addInfo(tag, in.readShort());
+          double frames = tag.getNumberValue().doubleValue();
+          if (frames > 1.0) {
+            imagesPerFile = (int) frames;
+          }
           break;
         case PLANAR_CONFIGURATION:
-          int config = in.readShort();
-          m.interleaved = config == 0;
-          addInfo(tag, config);
+          m.interleaved = tag.getNumberValue().intValue() == 0;
           break;
         case ROWS:
-          int y = in.readShort();
+          int y = tag.getNumberValue().intValue();
           if (y > getSizeY()) {
             m.sizeY = y;
             originalY = y;
           }
-          addInfo(tag, getSizeY());
           break;
         case COLUMNS:
-          int x = in.readShort();
+          int x = tag.getNumberValue().intValue();
           if (x > getSizeX()) {
             m.sizeX = x;
             originalX = x;
           }
-          addInfo(tag, getSizeX());
           break;
-        case PHOTOMETRIC_INTERPRETATION:
-        case PIXEL_SPACING:
-        case SLICE_SPACING:
-        case RESCALE_INTERCEPT:
+        case TOTAL_PIXEL_MATRIX_COLUMNS:
+          m.sizeX = tag.getNumberValue().intValue();
+          break;
+        case TOTAL_PIXEL_MATRIX_ROWS:
+          m.sizeY = tag.getNumberValue().intValue();
+          break;
+        case TOTAL_PIXEL_MATRIX_FOCAL_PLANES:
+          m.sizeZ = tag.getNumberValue().intValue();
+          // TODO?
+          break;
+        //case RESCALE_INTERCEPT:
         case WINDOW_CENTER:
-          String winCenter = in.readString(elementLength);
-          if (winCenter.trim().length() == 0) centerPixelValue = -1;
-          else {
-            try {
-              centerPixelValue = new Double(winCenter).intValue();
-            }
-            catch (NumberFormatException e) {
-              centerPixelValue = -1;
-            }
+          if (tag.getStringValue().isEmpty() || tag.getNumberValue() == null) {
+            centerPixelValue = -1;
           }
-          addInfo(tag, winCenter);
-          break;
-        case RESCALE_SLOPE:
-          addInfo(tag, in.readString(elementLength));
+          else {
+            centerPixelValue = tag.getNumberValue().intValue();
+          }
           break;
         case BITS_ALLOCATED:
-          if (bitsPerPixel == 0) bitsPerPixel = in.readShort();
-          else in.skipBytes(2);
-          addInfo(tag, bitsPerPixel);
+          if (bitsPerPixel == 0) {
+            bitsPerPixel = tag.getNumberValue().intValue();
+          }
           break;
         case PIXEL_REPRESENTATION:
         case PIXEL_SIGN:
-          short ss = in.readShort();
-          signed = ss == 1;
-          addInfo(tag, ss);
+          signed = tag.getNumberValue().intValue() == 1;
           break;
-        //case 537262910:
         case WINDOW_WIDTH:
-          String t = in.readString(elementLength);
-          if (t.trim().length() == 0) maxPixelRange = -1;
-          else {
-            try {
-              maxPixelRange = new Double(t.trim()).intValue();
-            }
-            catch (NumberFormatException e) {
-              maxPixelRange = -1;
-            }
+          if (tag.getStringValue().isEmpty() || tag.getNumberValue() == null) {
+            maxPixelRange = -1;
           }
-          addInfo(tag, t);
+          else {
+            maxPixelRange = tag.getNumberValue().intValue();
+          }
           break;
         case PIXEL_DATA:
         case ITEM:
         case INVALID_PIXEL_DATA:
-          if (elementLength != 0) {
-            baseOffset = in.getFilePointer();
-            addInfo(tag, location);
+          if (tag.getValueStartPointer() < tag.getEndPointer()) {
+            baseOffset = tag.getValueStartPointer();
             decodingTags = false;
           }
-          else addInfo(tag, null);
           break;
         case VARIABLE_PIXEL_DATA:
-          if (elementLength != 0) {
+          if (tag.getValueStartPointer() < tag.getEndPointer()) {
             baseOffset = location + 4;
             decodingTags = false;
           }
           break;
-        case PIXEL_DATA_LENGTH:
-          in.skipBytes(elementLength);
-          break;
         case INVALID:
-          in.seek(in.getFilePointer() - 4);
+          in.seek(tag.getValueStartPointer() - 4);
           break;
         case DIRECTORY_RECORD_TYPE:
-          currentType = getHeaderInfo(tag, s).toString().trim();
+          currentType = tag.getStringValue();
           break;
         case REFERENCED_FILE_ID:
           if (currentType.equals("IMAGE")) {
@@ -656,17 +539,47 @@ public class DicomReader extends FormatReader {
             if (fileList.get(seriesIndex) == null) {
               fileList.put(seriesIndex, new ArrayList<String>());
             }
-            fileList.get(seriesIndex).add(getHeaderInfo(tag, s).toString().trim());
+            fileList.get(seriesIndex).add(tag.getStringValue());
           }
           else {
-            companionFiles.add(getHeaderInfo(tag, s).toString().trim());
+            companionFiles.add(tag.getStringValue());
           }
           currentType = "";
           break;
+        case PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE:
+          tilePositions = new ArrayList<Region>();
+          DicomTag planePositionSequence = tag.lookupChild(PLANE_POSITION_SLIDE_SEQUENCE);
+          if (planePositionSequence != null) {
+            int col = -1;
+            int row = -1;
+            for (DicomTag position : planePositionSequence.children) {
+              // positions are indexed from 1, not 0
+              // values are pixel coordinates, not tile indexes
+              if (position.attribute == ROW_POSITION_IN_MATRIX) {
+                row = position.getNumberValue().intValue() - 1;
+              }
+              else if (position.attribute == COLUMN_POSITION_IN_MATRIX) {
+                col = position.getNumberValue().intValue() - 1;
+              }
+            }
+
+            if (col >= 0 && row >= 0) {
+              tilePositions.add(new Region(col, row, originalX, originalY));
+            }
+          }
+          break;
+        case SHARED_FUNCTIONAL_GROUPS_SEQUENCE:
+          DicomTag pixelSequence = tag.lookupChild(PIXEL_MEASURES_SEQUENCE);
+          if (pixelSequence != null) {
+            DicomTag pixelSpacing = pixelSequence.lookupChild(PIXEL_SPACING);
+            if (pixelSpacing != null) {
+              parsePixelSpacing(pixelSpacing.getStringValue());
+            }
+          }
+
+          break;
         default:
-          long oldfp = in.getFilePointer();
-          addInfo(tag, s);
-          in.seek(oldfp + elementLength);
+          in.seek(tag.getEndPointer());
       }
       if (in.getFilePointer() >= (in.length() - 4)) {
         decodingTags = false;
@@ -750,10 +663,11 @@ public class DicomReader extends FormatReader {
         byte secondCheck = isJPEG ? (byte) 0xd8 : (byte) 0x4f;
 
         in.seek(offsets[i]);
-        byte[] buf = new byte[8192];
+        ///* debug */ System.out.println("looking for magic bytes at " + in.getFilePointer());
+        byte[] buf = new byte[(int) Math.min(8192, in.length() - in.getFilePointer())];
         int n = in.read(buf);
         boolean found = false;
-        while (!found) {
+        while (!found && n > 0) {
           for (int q=0; q<n-2; q++) {
             if (buf[q] == (byte) 0xff && buf[q + 1] == secondCheck &&
               buf[q + 2] == (byte) 0xff)
@@ -792,7 +706,12 @@ public class DicomReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       if (seriesCount == 1) {
         CoreMetadata ms = core.get(i);
-        ms.sizeZ = imagesPerFile * fileList.get(keys[i]).size();
+        if (tilePositions == null) {
+          ms.sizeZ = imagesPerFile * fileList.get(keys[i]).size();
+        }
+        else if (ms.sizeZ == 0) {
+          ms.sizeZ = fileList.get(keys[i]).size();;
+        }
         if (ms.sizeC == 0) ms.sizeC = 1;
         ms.rgb = ms.sizeC > 1;
         ms.sizeT = 1;
@@ -886,39 +805,17 @@ public class DicomReader extends FormatReader {
 
   // -- Helper methods --
 
-  private Number getNumber(Object value) {
-    if (value instanceof Number) {
-      return (Number) value;
-    }
-    String v = value.toString().trim();
-    try {
-      return new Double(v);
-    }
-    catch (NumberFormatException e) {
-      return DataTools.parseDouble(v);
-    }
-  }
-
-  private void addInfo(int tag, Object value) throws IOException {
-    Object oldValue = value;
-    Object info = getHeaderInfo(tag, value);
+  private void addInfo(DicomTag info) throws IOException {
     CoreMetadata m = core.get(0);
+    m.littleEndian = in.isLittleEndian();
 
-    if (info != null && tag != ITEM.getTag()) {
-      String infoString = info.toString().trim();
-      Number infoNumber = getNumber(info);
-      //if (info.equals("")) info = oldValue == null ? "" : oldValue.trim();
+    if (info.attribute != ITEM) {
+      String infoString = info.getStringValue();
+      Number infoNumber = info.getNumberValue();
+      ///* debug */ System.out.println(info.key + ": (" + infoString + "), (" + infoNumber + ")" + ", value = " + info.value);
 
-      DicomAttribute attribute = DicomAttribute.get(tag);
-      String key = null;
-      if (attribute != null) {
-        key = attribute.getDescription();
-      }
-      if (key == null) {
-        key = DicomAttribute.formatTag(tag);
-      }
-      if (attribute != null) {
-        switch (attribute) {
+      if (info.attribute != null) {
+        switch (info.attribute) {
           case SAMPLES_PER_PIXEL:
             m.sizeC = infoNumber.intValue();
             if (getSizeC() > 1) m.rgb = true;
@@ -942,7 +839,8 @@ public class DicomReader extends FormatReader {
             originalTime = infoString;
             break;
           case INSTANCE_NUMBER:
-            if (infoString.trim().length() > 0) {
+            if (infoString != null && !infoString.isEmpty()) {
+              ///* debug */ System.out.println("originalInstance = " + originalInstance);
               originalInstance = infoString;
             }
             break;
@@ -955,17 +853,15 @@ public class DicomReader extends FormatReader {
           case SEGMENTED_RED_LUT_DATA:
           case SEGMENTED_GREEN_LUT_DATA:
           case SEGMENTED_BLUE_LUT_DATA:
-            String color = key.substring(0, key.indexOf(' ')).trim();
-            int ndx = color.equals("Red") ? 0 : color.equals("Green") ? 1 : 2;
-            long fp = in.getFilePointer();
-            in.seek(in.getFilePointer() - elementLength + 1);
-            shortLut[ndx] = new short[elementLength / 2];
-            lut[ndx] = new byte[elementLength / 2];
-            for (int i=0; i<lut[ndx].length; i++) {
-              shortLut[ndx][i] = in.readShort();
-              lut[ndx][i] = (byte) (shortLut[ndx][i] & 0xff);
+            if (info.value != null && shortLut != null) {
+              String color = info.key.substring(0, info.key.indexOf(' ')).trim();
+              int ndx = color.equals("Red") ? 0 : color.equals("Green") ? 1 : 2;
+              shortLut[ndx] = (short[]) info.value;
+              lut[ndx] = new byte[shortLut[ndx].length];
+              for (int i=0; i<lut[ndx].length; i++) {
+                lut[ndx][i] = (byte) (shortLut[ndx][i] & 0xff);
+              }
             }
-            in.seek(fp);
             break;
           case CONTENT_TIME:
             time = infoString;
@@ -987,8 +883,7 @@ public class DicomReader extends FormatReader {
             }
             break;
           case PIXEL_SPACING:
-            pixelSizeY = infoString.substring(0, infoString.indexOf("\\"));
-            pixelSizeX = infoString.substring(infoString.lastIndexOf("\\") + 1);
+            parsePixelSpacing(infoString);
             break;
           case SLICE_SPACING:
             if (infoNumber != null) {
@@ -1037,293 +932,27 @@ public class DicomReader extends FormatReader {
         }
       }
 
+      int tag = info.attribute.getTag();
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
-        key = DicomAttribute.formatTag(tag) + " " + key;
+        String key = DicomAttribute.formatTag(tag);
+        if (info.key != null) {
+          key += " " + info.key;
+        }
         if (metadata.containsKey(key)) {
           // make sure that values are not overwritten
           Object v = getMetadataValue(key);
           metadata.remove(key);
           addSeriesMetaList(key, v);
-          addSeriesMetaList(key, info);
+          addSeriesMetaList(key, info.value);
         }
         else {
-          addSeriesMetaList(key, info);
+          addSeriesMetaList(key, info.value);
+          for (DicomTag child : info.children) {
+            addSeriesMetaList(key + " " + child.key, child.value);
+          }
         }
       }
     }
-  }
-
-  private Object getHeaderInfo(int tag, Object value) throws IOException {
-    DicomAttribute attribute = DicomAttribute.get(tag);
-    String id = null;
-
-    if (attribute != null) {
-      if (attribute == ITEM_DELIMITATION_ITEM || attribute == SEQUENCE_DELIMITATION_ITEM) {
-        inSequence = false;
-      }
-
-      id = attribute.getDescription();
-
-      if (vr == IMPLICIT && id != null) {
-        vr = DicomVR.get((id.charAt(0) << 8) + id.charAt(1));
-      }
-      if (id.length() > 2) id = id.substring(2);
-    }
-
-    if (attribute == ITEM) return id;
-    if (value != null) return value;
-
-    boolean skip = vr == null;
-    LOGGER.debug("    vr = {}", vr);
-    if (vr != null) {
-      switch (vr) {
-        case AE:
-        case AS:
-        case CS:
-        case DA:
-        case DS:
-        case DT:
-        case IS:
-        case LO:
-        case LT:
-        case PN:
-        case SH:
-        case ST:
-        case TM:
-        case UC:
-        case UI:
-        case UR:
-        case UT:
-          value = in.readString(elementLength);
-          break;
-        case AT:
-          // TODO
-          break;
-        case FL:
-          value = in.readFloat();
-          break;
-        case FD:
-          value = in.readDouble();
-          break;
-        case OB:
-          value = new byte[elementLength];
-          in.read((byte[]) value);
-          break;
-        case SL:
-          value = in.readInt();
-          break;
-        case SS:
-          value = in.readShort();
-          break;
-        case SV:
-          value = in.readLong();
-          break;
-        case UL:
-          value = in.readInt() & 0xffffffffL;
-          break;
-        case US:
-          if (elementLength == 2) {
-            value = in.readShort();
-          }
-          else {
-            short[] values = new short[elementLength / 2];
-            for (int i=0; i<values.length; i++) {
-              values[i] = in.readShort();
-            }
-            value = values;
-          }
-          break;
-        case IMPLICIT:
-          value = in.readString(elementLength);
-          if (elementLength <= 4 || elementLength > 44) {
-            value = null;
-          }
-          break;
-        case SQ:
-          value = "";
-          boolean privateTag = ((tag >> 16) & 1) != 0;
-          if (attribute == ICON_IMAGE_SEQUENCE || privateTag) skip = true;
-          break;
-        default:
-          skip = true;
-      }
-    }
-    if (skip) {
-      long skipCount = (long) elementLength;
-      if (in.getFilePointer() + skipCount <= in.length()) {
-        in.skipBytes(skipCount);
-      }
-      location += elementLength;
-      value = "";
-    }
-
-    return value;
-  }
-
-  private int getLength(RandomAccessInputStream stream, int tag)
-    throws IOException
-  {
-    DicomAttribute attribute = DicomAttribute.get(tag);
-    byte[] b = new byte[4];
-    stream.read(b);
-
-    // We cannot know whether the VR is implicit or explicit
-    // without the full DICOM Data Dictionary for public and
-    // private groups.
-
-    // We will assume the VR is explicit if the two bytes
-    // match the known codes. It is possible that these two
-    // bytes are part of a 32-bit length for an implicit VR.
-
-    // see http://dicom.nema.org/medical/dicom/current/output/html/part05.html#sect_7.1.2
-
-    vr = DicomVR.get(((b[0] & 0xff) << 8) | (b[1] & 0xff));
-
-    if (vr == null) {
-      vr = IMPLICIT;
-      int len = DataTools.bytesToInt(b, stream.isLittleEndian());
-      if (len + stream.getFilePointer() > stream.length() || len < 0) {
-        len = DataTools.bytesToInt(b, 2, 2, stream.isLittleEndian());
-        len &= 0xffff;
-      }
-      return len;
-    }
-
-    switch (vr) {
-      case OB:
-      case OW:
-      case SQ:
-      case UN:
-      case UT:
-        // Explicit VR with 32-bit length if other two bytes are zero
-        if ((b[2] == 0) || (b[3] == 0)) {
-          return stream.readInt();
-        }
-        vr = IMPLICIT;
-        return DataTools.bytesToInt(b, stream.isLittleEndian());
-      case AE:
-      case AS:
-      case AT:
-      case CS:
-      case DA:
-      case DS:
-      case DT:
-      case FD:
-      case FL:
-      case IS:
-      case LO:
-      case LT:
-      case PN:
-      case SH:
-      case SL:
-      case SS:
-      case ST:
-      case TM:
-      case UI:
-      case UL:
-      case US:
-      case QQ:
-        // Explicit VR with 16-bit length
-        if (attribute == LUT_DATA) {
-          return DataTools.bytesToInt(b, 2, 2, stream.isLittleEndian());
-        }
-        int n1 = DataTools.bytesToShort(b, 2, 2, stream.isLittleEndian());
-        int n2 = DataTools.bytesToShort(b, 2, 2, !stream.isLittleEndian());
-        n1 &= 0xffff;
-        n2 &= 0xffff;
-        if (n1 < 0 || n1 + stream.getFilePointer() > stream.length()) return n2;
-        if (n2 < 0 || n2 + stream.getFilePointer() > stream.length()) return n1;
-        return n1;
-      case RESERVED:
-        vr = IMPLICIT;
-        return 8;
-      default:
-        throw new IllegalArgumentException(vr.toString());
-    }
-  }
-
-  private int getNextTag(RandomAccessInputStream stream)
-    throws FormatException, IOException
-  {
-    return getNextTag(stream, true);
-  }
-
-  private int getNextTag(RandomAccessInputStream stream, boolean setMetadata)
-    throws FormatException, IOException
-  {
-    long fp = stream.getFilePointer();
-    if (fp >= stream.length() - 2) {
-      return 0;
-    }
-    int groupWord = stream.readShort() & 0xffff;
-    if (groupWord == 0x0800 && bigEndianTransferSyntax) {
-      if (setMetadata) {
-        core.get(0).littleEndian = false;
-      }
-      groupWord = 0x0008;
-      stream.order(false);
-    }
-    else if (groupWord == 0xfeff || groupWord == 0xfffe) {
-      stream.skipBytes(6);
-      return getNextTag(stream, setMetadata);
-    }
-
-    int elementWord = stream.readShort();
-    int tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
-
-    elementLength = getLength(stream, tag);
-    if (elementLength > stream.length()) {
-      stream.seek(fp);
-
-      stream.order(!core.get(0).littleEndian);
-      if (setMetadata) {
-        core.get(0).littleEndian = !core.get(0).littleEndian;
-      }
-
-      groupWord = stream.readShort() & 0xffff;
-      elementWord = stream.readShort();
-      tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
-      elementLength = getLength(stream, tag);
-
-      if (elementLength > stream.length()) {
-        throw new FormatException("Invalid tag length " + elementLength);
-      }
-      return tag;
-    }
-
-    if (elementLength < 0 && groupWord == 0x7fe0) {
-      stream.skipBytes(12);
-      elementLength = stream.readInt();
-      if (elementLength < 0) elementLength = stream.readInt();
-    }
-
-    if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {
-      elementLength = getLength(stream, tag);
-    }
-    else if (elementLength == 0) {
-      stream.seek(stream.getFilePointer() - 4);
-      DicomVR v = DicomVR.get(stream.readShort() & 0xffff);
-      if (v == UT) {
-        stream.skipBytes(2);
-        elementLength = stream.readInt();
-      }
-      else stream.skipBytes(2);
-    }
-
-    // HACK - needed to read some GE files
-    // The element length must be even!
-    if (!oddLocations && (elementLength % 2) == 1) elementLength++;
-
-    // "Undefined" element length.
-    // This is a sort of bracket that encloses a sequence of elements.
-    DicomAttribute attribute = DicomAttribute.get(tag); 
-    if (elementLength == -1 || (attribute != null && attribute != SCANNING_SEQUENCE &&
-      attribute.getDescription().endsWith("Sequence")))
-    {
-      elementLength = 0;
-      inSequence = true;
-    }
-    return tag;
   }
 
   private void makeFileList() throws FormatException, IOException {
@@ -1422,48 +1051,42 @@ public class DicomReader extends FormatReader {
       if (!stream.readString(4).equals("DICM")) {
         stream.seek(0);
       }
+      ///* debug */ System.out.println("checking file : " + file);
 
       while (date == null || time == null || instance == null ||
         (checkSeries && fileSeries < 0) || currentX == 0 || currentY == 0)
       {
         long fp = stream.getFilePointer();
         if (fp + 4 >= stream.length() || fp < 0) break;
-        int tag = getNextTag(stream);
+        DicomTag tag = new DicomTag(stream, false, 0, false);
 
-        DicomAttribute attribute = DicomAttribute.get(tag);
-        if (attribute == null) {
-          stream.skipBytes(elementLength);
+        if (tag.attribute == null || tag.value == null) {
           continue;
         }
 
-        switch (attribute) {
+        switch (tag.attribute) {
           case INSTANCE_NUMBER:
-            instance = stream.readString(elementLength).trim();
+            instance = tag.getStringValue();
             if (instance.length() == 0) instance = null;
             break;
           case ACQUISITION_TIME:
-            time = stream.readString(elementLength);
+            time = tag.getStringValue();
             break;
           case ACQUISITION_DATE:
-            date = stream.readString(elementLength);
+            date = tag.getStringValue();
             break;
           case SERIES_NUMBER:
-            fileSeries = Integer.parseInt(stream.readString(elementLength).trim());
+            fileSeries = tag.getNumberValue().intValue();
             break;
           case ROWS:
-            int y = stream.readShort();
-            if (y > currentY) {
-              currentY = y;
-            }
+            currentY = (int) Math.max(currentY, tag.getNumberValue().intValue());
             break;
           case COLUMNS:
-            int x = stream.readShort();
-            if (x > currentX) {
-              currentX = x;
-            }
+            currentX = (int) Math.max(currentX, tag.getNumberValue().intValue());
             break;
-          default:
-            stream.skipBytes(elementLength);
+          case PIXEL_DATA:
+            stream.seek(stream.length() - 1);
+            break;
         }
       }
     }
@@ -1574,6 +1197,156 @@ public class DicomReader extends FormatReader {
         }
       }
     }
+  }
+
+  private void getTile(int index, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    int ec = isIndexed() ? 1 : getSizeC();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int bytes = originalX * originalY * bpp * ec;
+    if (in == null) {
+      in = new RandomAccessInputStream(currentId);
+    }
+    in.seek(offsets[index]);
+    ///* debug */ System.out.println("offset = " + in.getFilePointer());
+
+    if (isRLE) {
+      // plane is compressed using run-length encoding
+      CodecOptions options = new CodecOptions();
+      options.maxBytes = originalX * originalY;
+      for (int c=0; c<ec; c++) {
+        PackbitsCodec codec = new PackbitsCodec();
+        byte[] t = null;
+
+        if (bpp > 1) {
+          int plane = bytes / (bpp * ec);
+          byte[][] tmp = new byte[bpp][];
+          long start = in.getFilePointer();
+          for (int i=0; i<bpp; i++) {
+            // one or more extra 0 bytes can be inserted between
+            // the planes, but there isn't a good way to know in advance
+            // only way to know is to see if decompressing produces the
+            // correct number of bytes
+            tmp[i] = codec.decompress(in, options);
+            if (i > 0 && tmp[i].length > options.maxBytes) {
+              in.seek(start);
+              tmp[i] = codec.decompress(in, options);
+            }
+            if (index < imagesPerFile - 1 || i < bpp - 1) {
+              start = in.getFilePointer();
+              while (in.read() == 0);
+              long end = in.getFilePointer();
+              in.seek(end - 1);
+            }
+          }
+          t = new byte[bytes / ec];
+          for (int i=0; i<plane; i++) {
+            for (int j=0; j<bpp; j++) {
+              int byteIndex = isLittleEndian() ? bpp - j - 1 : j;
+              if (i < tmp[byteIndex].length) {
+                t[i * bpp + j] = tmp[byteIndex][i];
+              }
+            }
+          }
+        }
+        else {
+          t = codec.decompress(in, options);
+          if (t.length < (bytes / ec)) {
+            byte[] tmp = t;
+            t = new byte[bytes / ec];
+            System.arraycopy(tmp, 0, t, 0, tmp.length);
+          }
+          if (index < imagesPerFile - 1 || c < ec - 1) {
+            while (in.read() == 0);
+            in.seek(in.getFilePointer() - 1);
+          }
+        }
+
+        int rowLen = w * bpp;
+        int srcRowLen = originalX * bpp;
+
+        for (int row=0; row<h; row++) {
+          int src = (row + y) * srcRowLen + x * bpp;
+          int dest = (h * c + row) * rowLen;
+          int len = (int) Math.min(rowLen, t.length - src - 1);
+          if (len < 0) break;
+          System.arraycopy(t, src, buf, dest, len);
+        }
+      }
+    }
+    else if (isJPEG || isJP2K) {
+      ///* debug */ System.out.println("isJPEG = " + isJPEG + ", isJP2K = " + isJP2K);
+      // plane is compressed using JPEG or JPEG-2000
+      long end = index < offsets.length - 1 ? offsets[index + 1] : in.length();
+      byte[] b = new byte[(int) (end - in.getFilePointer())];
+      in.read(b);
+
+      if (b[2] != (byte) 0xff) {
+        byte[] tmp = new byte[b.length + 1];
+        tmp[0] = b[0];
+        tmp[1] = b[1];
+        tmp[2] = (byte) 0xff;
+        System.arraycopy(b, 2, tmp, 3, b.length - 2);
+        b = tmp;
+      }
+      if ((b[3] & 0xff) >= 0xf0) {
+        b[3] -= (byte) 0x30;
+      }
+
+      int pt = b.length - 2;
+      while (pt >= 0 && b[pt] != (byte) 0xff || b[pt + 1] != (byte) 0xd9) {
+        pt--;
+      }
+      if (pt < b.length - 2) {
+        byte[] tmp = b;
+        b = new byte[pt + 2];
+        System.arraycopy(tmp, 0, b, 0, b.length);
+      }
+
+      Codec codec = null;
+      CodecOptions options = new CodecOptions();
+      options.littleEndian = isLittleEndian();
+      options.interleaved = isInterleaved();
+      if (isJPEG) codec = new JPEGCodec();
+      else codec = new JPEG2000Codec();
+      b = codec.decompress(b, options);
+
+      int rowLen = w * bpp;
+      int srcRowLen = originalX * bpp;
+
+      if (isInterleaved()) {
+        rowLen *= ec;
+        srcRowLen *= ec;
+        for (int row=0; row<h; row++) {
+          System.arraycopy(b, (row + y) * srcRowLen + x * bpp * ec,
+            buf, row * rowLen, rowLen);
+        }
+      }
+      else {
+        int srcPlane = originalY * srcRowLen;
+        for (int c=0; c<ec; c++) {
+          for (int row=0; row<h; row++) {
+            System.arraycopy(b, c * srcPlane + (row + y) * srcRowLen + x * bpp,
+              buf, h * rowLen * c + row * rowLen, rowLen);
+          }
+        }
+      }
+    }
+    else if (isDeflate) {
+      // TODO
+      throw new UnsupportedCompressionException(
+        "Deflate data is not supported.");
+    }
+    else {
+      // plane is not compressed
+      readPlane(in, x, y, w, h, buf);
+    }
+  }
+
+  private void parsePixelSpacing(String value) {
+    pixelSizeY = value.substring(0, value.indexOf("\\"));
+    pixelSizeX = value.substring(value.lastIndexOf("\\") + 1);
   }
 
 }

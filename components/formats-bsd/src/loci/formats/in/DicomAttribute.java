@@ -4,6 +4,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import static loci.formats.in.DicomVR.*;
+
 /**
  * Describes a DICOM attribute (integer tag and associated description).
  */
@@ -15,7 +17,7 @@ public enum DicomAttribute {
     IMPLEMENTATION_VERSION(0x00020013, "Implementation Version Name"),
     SOURCE_APPLICATION(0x00020016, "Source Application Entity Title"),
     SPECIFIC_CHARSET(0x00080005, "Specific Character Set"),
-    IMAGE_TYPE(0x00080008, "Image Type"),
+    IMAGE_TYPE(0x00080008, "Image Type", CS),
     RECOGNITION_CODE(0x00080010, "Recognition Code"),
     CREATION_DATE(0x00080012, "Instance Creation Date"),
     CREATION_TIME(0x00080013, "Instance Creation Time"),
@@ -228,7 +230,7 @@ public enum DicomAttribute {
     IMAGED_NUCLEUS(0x00180085, "Imaged Nucleus"),
     ECHO_NUMBER(0x00180086, "Echo Number(s)"),
     MAGNETIC_FIELD_STRENGTH(0x00180087, "Magnetic Field Strength"),
-    SLICE_SPACING(0x00180088, "Spacing Between Slices"),
+    SLICE_SPACING(0x00180088, "Spacing Between Slices", DS),
     NUMBER_OF_PHASE_ENCODING_STEPS(0x00180089, "Number of Phase Encoding Steps"),
     DATA_COLLECTION_DIAMETER(0x00180090, "Data Collection Diameter"),
     ECHO_TRAIN_LENGTH(0x00180091, "Echo Train Length"),
@@ -526,7 +528,7 @@ public enum DicomAttribute {
     SAMPLES_PER_PIXEL_USED(0x00280003, "Samples per pixel used"),
     PHOTOMETRIC_INTERPRETATION(0x00280004, "Photometric Interpretation"),
     PLANAR_CONFIGURATION(0x00280006, "Planar Configuration"),
-    NUMBER_OF_FRAMES(0x00280008, "Number of frames"),
+    NUMBER_OF_FRAMES(0x00280008, "Number of frames", IS),
     FRAME_INCREMENT_POINTER(0x00280009, "Frame Increment Pointer"),
     FRAME_DIMENSION_POINTER(0x0028000a, "Frame Dimension Pointer"),
     ROWS(0x00280010, "Rows"),
@@ -650,8 +652,17 @@ public enum DicomAttribute {
     // remaining whole slide microscopy image module and related attributes
     ACQUISITION_DURATION(0x00189073, "Acquisition Duration"),
     DIMENSION_ORGANIZATION_TYPE(0x00209311, "Dimension Organization Type"),
+    DIMENSION_INDEX_SEQUENCE(0x00209222, "Dimension Index Sequence"),
+    DIMENSION_INDEX_POINTER(0x00209165, "Dimension Index Pointer"),
+    DIMENSION_INDEX_PRIVATE_CREATOR(0x00209213, "Dimension Index Private Creator"),
+    FUNCTIONAL_GROUP_POINTER(0x00209167, "Functional Group Pointer"),
+    FUNCTIONAL_GROUP_PRIVATE_CREATOR(0x00209238, "Functional Group Private Creator"),
+    DIMENSION_ORGANIZATION_UID(0x00209164, "Dimension Organization UID"),
+    DIMENSION_ORGANIZATION_SEQUENCE(0x00209221, "Dimension Organization Sequence"),
+    DIMENSION_DESCRIPTION_LABEL(0x00209421, "Dimension Description Label"),
     X_OFFSET_IN_SLIDE(0x0040072a, "X Offset in Slide Coordinate System"),
     Y_OFFSET_IN_SLIDE(0x0040073a, "Y Offset in Slide Coordinate System"),
+    Z_OFFSET_IN_SLIDE(0x0040074a, "Z Offset in Slide Coordinate System"),
     IMAGED_VOLUME_WIDTH(0x00480001, "Imaged Volume Width (mm)"),
     IMAGED_VOLUME_HEIGHT(0x00480002, "Imaged Volume Height (mm)"),
     IMAGED_VOLUME_DEPTH(0x00480003, "Imaged Volume Depth (mm)"),
@@ -665,8 +676,17 @@ public enum DicomAttribute {
     DISTANCE_BETWEEN_FOCAL_PLANES(0x00480014, "Distance Between Focal Planes"),
     RECOMMENDED_ABSENT_PIXEL_CIELAB_VALUE(0x00480015, "Recommended Absent Pixel CIELab Value"),
     SLIDE_IMAGE_ORIENTATION(0x00480102, "Image Orientation (Slide)"),
-    TOTAL_PIXEL_MATRIX_FOCAL_PLANES(0x00480303, "Total Pixel Matrix Focal Planes"),
+    TOTAL_PIXEL_MATRIX_FOCAL_PLANES(0x00480303, "Total Pixel Matrix Focal Planes", UL),
     PRESENTATION_LUT_SHAPE(0x20500020, "Presentation LUT Shape"),
+
+    PLANE_POSITION_SLIDE_SEQUENCE(0x0048021A, "Plane Position (Slide) Sequence"),
+    COLUMN_POSITION_IN_MATRIX(0x0048021E, "Column Position In Total Image Pixel Matrix"),
+    ROW_POSITION_IN_MATRIX(0x0048021F, "Row Position In Total Image Pixel Matrix"),
+
+    FRAME_CONTENT_SEQUENCE(0x00209111, "Frame Content Sequence"),
+    DIMENSION_INDEX_VALUES(0x00209157, "Dimension Index Values"),
+    SHARED_FUNCTIONAL_GROUPS_SEQUENCE(0x52009229, "Shared Functional Groups Sequence"),
+    PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE(0x52009230, "Per-frame Functional Groups Sequence"),
 
     VARIABLE_PIXEL_DATA(0x7f880010, "Variable Pixel Data"),
     INVALID_PIXEL_DATA(0xffee000, "Invalid pixel data"),
@@ -674,6 +694,7 @@ public enum DicomAttribute {
 
     private int tag;
     private String description;
+    private DicomVR defaultVR;
 
 		private static final Map<Integer,DicomAttribute> lookup =
 			new HashMap<Integer,DicomAttribute>();
@@ -685,8 +706,17 @@ public enum DicomAttribute {
 		}
 
     private DicomAttribute(int tag, String description) {
+      this(tag, description, IMPLICIT);
+    }
+
+    private DicomAttribute(int tag, String description, DicomVR defaultVR) {
       this.tag = tag;
       this.description = description;
+      this.defaultVR = defaultVR;
+    }
+
+    public DicomVR getDefaultVR() {
+      return defaultVR;
     }
 
     public int getTag() {
