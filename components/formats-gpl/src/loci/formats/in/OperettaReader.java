@@ -64,7 +64,7 @@ public class OperettaReader extends FormatReader {
 
   // -- Constants --
 
-  private static final String[] XML_FILES = new String[] {"Index.idx.xml", "Index.ref.xml"};
+  private static final String[] XML_FILES = new String[] {"Index.idx.xml", "Index.ref.xml", "Index.xml"};
   private static final int XML_TAG = 65500;
   private static final String HARMONY_MAGIC = "Harmony";
   // sometimes Operette, sometimes Operetta
