@@ -1924,9 +1924,8 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               in.seek(stop);
               continue;
             }
-            byte[] data = new byte[(int) length];
-            in.read(data);
-            value = new String(data, Constants.ENCODING);
+            value = "ByteArray";
+            iterateIn(in, stop);
             break;
           case (10): // deprecated
             // Its like LEVEL but offset is pointing absolutely not relatively
@@ -2003,7 +2002,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           positionCount++;
         }
 
-        if (type != 11 && type != 10) {    // if not level add global meta
+        if (type != 11 && type != 10 && type != 9) {    // if not level add global meta
           addGlobalMeta(name, value);
         }
       }
