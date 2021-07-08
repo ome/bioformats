@@ -58,6 +58,7 @@ import loci.formats.MissingLibraryException;
 import loci.formats.Modulo;
 import loci.formats.SubResolutionFormatReader;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEPyramidStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
@@ -70,6 +71,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
+import ome.xml.model.MapPair;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plane;
 import ome.xml.model.primitives.NonNegativeInteger;
@@ -525,6 +527,22 @@ public class OMETiffReader extends SubResolutionFormatReader {
     for (int i=0; i<meta.getImageCount(); i++) {
       int sizeC = meta.getPixelsSizeC(i).getValue();
       service.removeChannels(meta, i, sizeC);
+    }
+
+    // if flattened resolutions are requested, remove resolution annotations
+    // otherwise, MetadataStore and reader metadata will be inconsistent
+    if (hasFlattenedResolutions()) {
+      try {
+        for (int i=0; i<meta.getMapAnnotationCount(); i++) {
+          if (meta.getMapAnnotationNamespace(i).equals(OMEPyramidStore.NAMESPACE)) {
+            meta.setMapAnnotationValue(new ArrayList<MapPair>(), i);
+          }
+        }
+      }
+      catch (NullPointerException e) {
+        // not unexpected if there are no map annotations
+        LOGGER.trace("Could not remove resolution annotations", e);
+      }
     }
 
     Hashtable originalMetadata = service.getOriginalMetadata(meta);
