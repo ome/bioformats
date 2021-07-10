@@ -52,9 +52,9 @@ import loci.common.Region;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
-import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.SubResolutionFormatReader;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -74,7 +74,7 @@ import static loci.formats.in.DicomVR.*;
  * Much of this code is adapted from ImageJ's DICOM reader; see
  * http://rsb.info.nih.gov/ij/developer/source/ij/plugin/DICOM.java.html
  */
-public class DicomReader extends FormatReader {
+public class DicomReader extends SubResolutionFormatReader {
 
   // -- Constants --
 
@@ -209,7 +209,7 @@ public class DicomReader extends FormatReader {
     if (noPixels || fileList == null) return null;
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
-    final List<String> files = fileList.get(keys[getSeries()]);
+    final List<String> files = fileList.get(keys[core.flattenedIndexes(getCoreIndex())[0]]);
     if (files == null) {
       return null;
     }
@@ -261,13 +261,20 @@ public class DicomReader extends FormatReader {
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
-    if (fileList.size() > 1 || fileList.get(keys[getSeries()]).size() > 1) {
+    int[] indexes = core.flattenedIndexes(getCoreIndex());
+    if (fileList.size() > 1 || fileList.get(keys[indexes[0]]).size() > 1) {
       int fileNumber = 0;
-      if (fileList.get(keys[getSeries()]).size() > 1) {
-        fileNumber = no / imagesPerFile;
-        no = no % imagesPerFile;
+      if (fileList.get(keys[indexes[0]]).size() > 1) {
+        // TODO: this will need more work for multi-plane pyramids
+        if (getImageCount() > 1) {
+          fileNumber = no / imagesPerFile;
+          no = no % imagesPerFile;
+        }
+        else {
+          fileNumber = indexes[1];
+        }
       }
-      String file = fileList.get(keys[getSeries()]).get(fileNumber);
+      String file = fileList.get(keys[indexes[0]]).get(fileNumber);
       helper.setId(file);
       return helper.openBytes(no, buf, x, y, w, h);
     }
@@ -368,7 +375,7 @@ public class DicomReader extends FormatReader {
     }
     in = new RandomAccessInputStream(id);
     in.order(true);
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     // look for companion files
     attachCompanionFiles();
@@ -411,6 +418,7 @@ public class DicomReader extends FormatReader {
     boolean decodingTags = true;
     boolean signed = false;
     String currentType = "";
+    boolean tiledFull = false;
 
     List<DicomTag> tags = new ArrayList<DicomTag>();
 
@@ -546,6 +554,9 @@ public class DicomReader extends FormatReader {
           }
           currentType = "";
           break;
+        case DIMENSION_ORGANIZATION_TYPE:
+          tiledFull = tag.getStringValue().equals("TILED_FULL");
+          break;
         case PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE:
           tilePositions = new ArrayList<Region>();
           DicomTag planePositionSequence = tag.lookupChild(PLANE_POSITION_SLIDE_SEQUENCE);
@@ -610,6 +621,21 @@ public class DicomReader extends FormatReader {
       return;
     }
 
+    // fill in the implicit tile boundaries so that there doesn't need
+    // to be any more distinct logic for TILED_FULL vs TILED_SPARSE
+    if (tiledFull) {
+      tilePositions = new ArrayList<Region>();
+      for (int z=0; z<m.sizeZ; z++) {
+        for (int y=0; y<m.sizeY; y+=originalY) {
+          for (int x=0; x<m.sizeX; x+=originalX) {
+            tilePositions.add(new Region(x, y,
+              (int) Math.min(originalX, m.sizeX - x),
+              (int) Math.min(originalY, m.sizeY - y)));
+          }
+        }
+      }
+    }
+
     m.bitsPerPixel = bitsPerPixel;
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
     if (bitsPerPixel == 24 || bitsPerPixel == 48) {
@@ -668,7 +694,7 @@ public class DicomReader extends FormatReader {
         int n = in.read(buf);
         boolean found = false;
         while (!found && n > 0) {
-          for (int q=0; q<n-2; q++) {
+          for (int q=0; q<n-3; q++) {
             if (buf[q] == (byte) 0xff && buf[q + 1] == secondCheck &&
               buf[q + 2] == (byte) 0xff)
             {
@@ -705,12 +731,21 @@ public class DicomReader extends FormatReader {
 
     for (int i=0; i<seriesCount; i++) {
       if (seriesCount == 1) {
-        CoreMetadata ms = core.get(i);
+        CoreMetadata ms = core.get(i, 0);
         if (tilePositions == null) {
           ms.sizeZ = imagesPerFile * fileList.get(keys[i]).size();
         }
         else if (ms.sizeZ == 0) {
-          ms.sizeZ = fileList.get(keys[i]).size();;
+          ms.sizeZ = fileList.get(keys[i]).size();
+        }
+        else {
+          for (int r=1; r<fileList.get(keys[i]).size(); r++) {
+            helper.close();
+            helper.setId(fileList.get(keys[i]).get(r));
+            CoreMetadata subres = helper.getCoreMetadataList().get(0);
+            core.add(0, subres);
+            ms.resolutionCount++;
+          }
         }
         if (ms.sizeC == 0) ms.sizeC = 1;
         ms.rgb = ms.sizeC > 1;
@@ -718,7 +753,7 @@ public class DicomReader extends FormatReader {
         ms.dimensionOrder = "XYCZT";
         ms.metadataComplete = true;
         ms.falseColor = false;
-        if (isRLE) core.get(i).interleaved = false;
+        if (isRLE) core.get(i, 0).interleaved = false;
         ms.imageCount = ms.sizeZ;
       }
       else {
@@ -744,13 +779,13 @@ public class DicomReader extends FormatReader {
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
-    for (int i=0; i<core.size(); i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       if (stamp != null) store.setImageAcquisitionDate(new Timestamp(stamp), i);
       store.setImageName("Series " + i, i);
     }
 
     if (level != MetadataLevel.MINIMUM) {
-      for (int i=0; i<core.size(); i++) {
+      for (int i=0; i<getSeriesCount(); i++) {
         store.setImageDescription(imageType, i);
 
         // all physical sizes were stored in mm, so must be converted to um
@@ -806,7 +841,7 @@ public class DicomReader extends FormatReader {
   // -- Helper methods --
 
   private void addInfo(DicomTag info) throws IOException {
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
     m.littleEndian = in.isLittleEndian();
 
     if (info.attribute != ITEM) {
@@ -831,6 +866,10 @@ public class DicomReader extends FormatReader {
             else if (infoString.startsWith("MONOCHROME")) {
               inverted = infoString.endsWith("1");
             }
+            break;
+          case ACQUISITION_TIMESTAMP:
+            originalDate = infoString.substring(0, 8);
+            originalTime = infoString.substring(8);
             break;
           case ACQUISITION_DATE:
             originalDate = infoString;
@@ -1051,16 +1090,21 @@ public class DicomReader extends FormatReader {
       if (!stream.readString(4).equals("DICM")) {
         stream.seek(0);
       }
-      ///* debug */ System.out.println("checking file : " + file);
 
+      boolean bigEndian = false;
+      boolean odd = false;
+      long currentLocation = stream.getFilePointer();
       while (date == null || time == null || instance == null ||
         (checkSeries && fileSeries < 0) || currentX == 0 || currentY == 0)
       {
         long fp = stream.getFilePointer();
         if (fp + 4 >= stream.length() || fp < 0) break;
-        DicomTag tag = new DicomTag(stream, false, 0, false);
+        DicomTag tag = new DicomTag(stream, bigEndian, 0, odd);
+
+        odd = (currentLocation & 1) != 0;
 
         if (tag.attribute == null || tag.value == null) {
+          stream.seek(tag.getEndPointer());
           continue;
         }
 
@@ -1068,6 +1112,10 @@ public class DicomReader extends FormatReader {
           case INSTANCE_NUMBER:
             instance = tag.getStringValue();
             if (instance.length() == 0) instance = null;
+            break;
+          case ACQUISITION_TIMESTAMP:
+            date = tag.getStringValue().substring(0, 8);
+            time = tag.getStringValue().substring(8);
             break;
           case ACQUISITION_TIME:
             time = tag.getStringValue();
@@ -1085,8 +1133,12 @@ public class DicomReader extends FormatReader {
             currentX = (int) Math.max(currentX, tag.getNumberValue().intValue());
             break;
           case PIXEL_DATA:
+          case INVALID_PIXEL_DATA:
+          case VARIABLE_PIXEL_DATA:
             stream.seek(stream.length() - 1);
             break;
+          default:
+            stream.seek(tag.getEndPointer());
         }
       }
     }
