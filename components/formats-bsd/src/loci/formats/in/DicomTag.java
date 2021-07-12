@@ -276,6 +276,7 @@ public class DicomTag {
       case SQ:
       case UN:
       case UT:
+      case UC:
         // Explicit VR with 32-bit length if other two bytes are zero
         if ((b[2] == 0) || (b[3] == 0)) {
           return in.readInt();
@@ -358,6 +359,11 @@ public class DicomTag {
       }
     }
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return key + " = " + value;
   }
 
 }

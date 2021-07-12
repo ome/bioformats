@@ -114,6 +114,7 @@ public class DicomReader extends SubResolutionFormatReader {
   private Map<Integer, List<String>> fileList;
   private int imagesPerFile;
 
+  private String instanceUID;
   private String originalDate, originalTime, originalInstance;
   private int originalSeries;
   private int originalX, originalY;
@@ -352,6 +353,7 @@ public class DicomReader extends SubResolutionFormatReader {
       inverted = false;
       date = time = imageType = null;
       originalDate = originalTime = originalInstance = null;
+      instanceUID = null;
       originalSeries = 0;
       originalX = 0;
       originalY = 0;
@@ -380,8 +382,10 @@ public class DicomReader extends SubResolutionFormatReader {
     // look for companion files
     attachCompanionFiles();
 
-    helper = new DicomReader();
-    helper.setGroupFiles(false);
+    if (isGroupFiles()) {
+      helper = new DicomReader();
+      helper.setGroupFiles(false);
+    }
 
     m.littleEndian = true;
     long location = 0;
@@ -538,20 +542,19 @@ public class DicomReader extends SubResolutionFormatReader {
         case DIRECTORY_RECORD_TYPE:
           currentType = tag.getStringValue();
           break;
+        case DIRECTORY_RECORD_SEQUENCE:
+          for (DicomTag child : tag.children) {
+            if (child.attribute == REFERENCED_FILE_ID) {
+              handleReferencedFile(child, currentType);
+              currentType = "";
+            }
+            else if (child.attribute == DIRECTORY_RECORD_TYPE) {
+              currentType = child.getStringValue();
+            }
+          }
+          break;
         case REFERENCED_FILE_ID:
-          if (currentType.equals("IMAGE")) {
-            if (fileList == null) {
-              fileList = new HashMap<Integer, List<String>>();
-            }
-            int seriesIndex = originalSeries;
-            if (fileList.get(seriesIndex) == null) {
-              fileList.put(seriesIndex, new ArrayList<String>());
-            }
-            fileList.get(seriesIndex).add(tag.getStringValue());
-          }
-          else {
-            companionFiles.add(tag.getStringValue());
-          }
+          handleReferencedFile(tag, currentType);
           currentType = "";
           break;
         case DIMENSION_ORGANIZATION_TYPE:
@@ -868,14 +871,27 @@ public class DicomReader extends SubResolutionFormatReader {
             }
             break;
           case ACQUISITION_TIMESTAMP:
-            originalDate = infoString.substring(0, 8);
+            String timestamp = infoString.substring(0, 8);
+            try {
+              if (Integer.parseInt(timestamp) > 0) {
+                originalDate = timestamp;
+              }
+            }
+            catch (NumberFormatException e) {
+              LOGGER.trace("", e);
+            }
             originalTime = infoString.substring(8);
             break;
           case ACQUISITION_DATE:
-            originalDate = infoString;
+            if (infoNumber != null && infoNumber.intValue() > 0) {
+              originalDate = infoString;
+            }
             break;
           case ACQUISITION_TIME:
             originalTime = infoString;
+            break;
+          case SOP_INSTANCE_UID:
+            instanceUID = infoString;
             break;
           case INSTANCE_NUMBER:
             if (infoString != null && !infoString.isEmpty()) {
@@ -998,7 +1014,7 @@ public class DicomReader extends SubResolutionFormatReader {
     LOGGER.info("Building file list");
 
     if (fileList == null && originalInstance != null && originalDate != null &&
-      originalTime != null && isGroupFiles())
+      originalTime != null && instanceUID != null && isGroupFiles())
     {
       currentId = new Location(currentId).getAbsolutePath();
       fileList = new HashMap<Integer, List<String>>();
@@ -1043,29 +1059,13 @@ public class DicomReader extends SubResolutionFormatReader {
   private void scanDirectory(Location dir, boolean checkSeries)
     throws FormatException, IOException
   {
-    Location currentFile = new Location(currentId).getAbsoluteFile();
-    FilePattern pattern =
-      new FilePattern(currentFile.getName(), dir.getAbsolutePath());
-    String[] patternFiles = pattern.getFiles();
-    if (patternFiles == null) patternFiles = new String[0];
-    Arrays.sort(patternFiles);
-
-    // make sure that the file names are normalized
-    // this prevents files from being missed on Windows if the
-    // path separator normalization is inconsistent
-    for (int i=0; i<patternFiles.length; i++) {
-      patternFiles[i] = new Location(patternFiles[i]).getAbsolutePath();
-    }
-
     String[] files = dir.list(true);
     if (files == null) return;
     Arrays.sort(files);
     for (String f : files) {
       String file = new Location(dir, f).getAbsolutePath();
       LOGGER.debug("Checking file {}", file);
-      if (!f.equals(currentId) && !file.equals(currentId) &&
-        isThisType(file) && Arrays.binarySearch(patternFiles, file) >= 0)
-      {
+      if (!f.equals(currentId) && !file.equals(currentId) && isThisType(file)) {
         addFileToList(file, checkSeries);
       }
     }
@@ -1081,6 +1081,7 @@ public class DicomReader extends SubResolutionFormatReader {
     int fileSeries = -1;
 
     String date = null, time = null, instance = null;
+    String thisInstanceUID = null;
     try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
       if (!isThisType(stream)) {
         return;
@@ -1109,6 +1110,9 @@ public class DicomReader extends SubResolutionFormatReader {
         }
 
         switch (tag.attribute) {
+          case SOP_INSTANCE_UID:
+            thisInstanceUID = tag.getStringValue();
+            break;
           case INSTANCE_NUMBER:
             instance = tag.getStringValue();
             if (instance.length() == 0) instance = null;
@@ -1155,6 +1159,21 @@ public class DicomReader extends SubResolutionFormatReader {
       (checkSeries && fileSeries != originalSeries))
     {
       return;
+    }
+
+    if (tilePositions == null) {
+      if (instanceUID != null && thisInstanceUID != null) {
+        String[] uid = instanceUID.split("\\.");
+        String[] thisUID = thisInstanceUID.split("\\.");
+        for (int i=0; i<Math.min(uid.length, thisUID.length)-2; i++) {
+          if (!uid[i].equals(thisUID[i])) {
+            return;
+          }
+        }
+      }
+      else if (instanceUID != null || thisInstanceUID != null) {
+        return;
+      }
     }
 
     if (currentX != originalX || currentY != originalY) {
@@ -1328,7 +1347,6 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
     else if (isJPEG || isJP2K) {
-      ///* debug */ System.out.println("isJPEG = " + isJPEG + ", isJP2K = " + isJP2K);
       // plane is compressed using JPEG or JPEG-2000
       long end = index < offsets.length - 1 ? offsets[index + 1] : in.length();
       byte[] b = new byte[(int) (end - in.getFilePointer())];
@@ -1347,10 +1365,17 @@ public class DicomReader extends SubResolutionFormatReader {
       }
 
       int pt = b.length - 2;
-      while (pt >= 0 && b[pt] != (byte) 0xff || b[pt + 1] != (byte) 0xd9) {
+      while (pt >= 0 && (b[pt] != (byte) 0xff || b[pt + 1] != (byte) 0xd9)) {
         pt--;
       }
-      if (pt < b.length - 2) {
+      if (pt < 0) {
+        byte[] tmp = b;
+        b = new byte[tmp.length + 2];
+        System.arraycopy(tmp, 0, b, 0, tmp.length);
+        b[b.length - 2] = (byte) 0xff;
+        b[b.length - 1] = (byte) 0xd9;
+      }
+      else if (pt < b.length - 2) {
         byte[] tmp = b;
         b = new byte[pt + 2];
         System.arraycopy(tmp, 0, b, 0, b.length);
@@ -1399,6 +1424,22 @@ public class DicomReader extends SubResolutionFormatReader {
   private void parsePixelSpacing(String value) {
     pixelSizeY = value.substring(0, value.indexOf("\\"));
     pixelSizeX = value.substring(value.lastIndexOf("\\") + 1);
+  }
+
+  private void handleReferencedFile(DicomTag tag, String currentType) {
+    if ("IMAGE".equals(currentType)) {
+      if (fileList == null) {
+        fileList = new HashMap<Integer, List<String>>();
+      }
+      int seriesIndex = originalSeries;
+      if (fileList.get(seriesIndex) == null) {
+        fileList.put(seriesIndex, new ArrayList<String>());
+      }
+      fileList.get(seriesIndex).add(tag.getStringValue());
+    }
+    else {
+      companionFiles.add(tag.getStringValue());
+    }
   }
 
 }
