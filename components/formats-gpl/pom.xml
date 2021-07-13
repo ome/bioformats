@@ -161,11 +161,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>cisd</groupId>
-      <artifactId>jhdf5</artifactId>
-      <version>14.12.6</version>
-    </dependency>
-    <dependency>
     	<groupId>org.json</groupId>
     	<artifactId>json</artifactId>
     	<version>20090211</version>

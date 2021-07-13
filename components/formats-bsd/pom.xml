@@ -97,7 +97,11 @@
       <version>${mipav-stubs.version}</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>cisd</groupId>
+      <artifactId>jhdf5</artifactId>
+      <version>14.12.6</version>
+    </dependency>
     <dependency>
 	    <groupId>com.drewnoakes</groupId>
 	    <artifactId>metadata-extractor</artifactId>
@@ -179,20 +183,42 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>test/loci/formats/utests/testng.xml</suiteXmlFile>
-            <suiteXmlFile>test/spec/testng.xml</suiteXmlFile>
-          </suiteXmlFiles>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
-          </additionalClasspathElements>
-          <systemPropertyVariables>
-            <testng.runWriterSaveBytesTests>2</testng.runWriterSaveBytesTests>
-            <testng.runWriterTilingTests>2</testng.runWriterTilingTests>
-            <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
-          </systemPropertyVariables>
-        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>test/loci/formats/utests/testng.xml</suiteXmlFile>
+                <suiteXmlFile>test/spec/testng.xml</suiteXmlFile>
+              </suiteXmlFiles>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
+              </additionalClasspathElements>
+              <systemPropertyVariables>
+                <testng.runWriterSaveBytesTests>2</testng.runWriterSaveBytesTests>
+                <testng.runWriterTilingTests>2</testng.runWriterTilingTests>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-no-hdf</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>test/loci/formats/utests/testng-no-jhdf.xml</suiteXmlFile>
+              </suiteXmlFiles>
+              <classpathDependencyExcludes>
+                <classpathDependencyExclude>cisd:jhdf5</classpathDependencyExclude>
+              </classpathDependencyExcludes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

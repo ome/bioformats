@@ -16,7 +16,7 @@ Type "ant -p" for a list of targets.
   <property name="testng.runWriterTilingTests" value="2"/>
 
   <target name="test" depends="jar,compile-tests,test-long-running,
-      test-no-ome-xml,test-no-exif,
+      test-no-ome-xml,test-no-exif, test-no-jhdf,
       test-spec"
     description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
@@ -108,6 +108,31 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng-long-running.xml"/>
     <testng failureProperty="failedTest">
       <classpath refid="test.classpath"/>
+      <classpath>
+        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
+  <target name="test-no-jhdf" depends="compile-tests"
+    description="run missing JHDF JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-jhdf.xml"/>
+    <path id="test-no-jhdf.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="jhdf*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
+    <testng failureProperty="failedTest">
+      <classpath refid="test-no-jhdf.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
