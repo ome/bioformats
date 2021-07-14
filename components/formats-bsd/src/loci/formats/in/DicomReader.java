@@ -215,6 +215,7 @@ public class DicomReader extends SubResolutionFormatReader {
       return null;
     }
     final List<String> uniqueFiles = new ArrayList<String>();
+    uniqueFiles.add(new Location(currentId).getAbsolutePath());
     for (String f : files) {
       if (!uniqueFiles.contains(f)) {
         uniqueFiles.add(f);
@@ -692,7 +693,6 @@ public class DicomReader extends SubResolutionFormatReader {
         byte secondCheck = isJPEG ? (byte) 0xd8 : (byte) 0x4f;
 
         in.seek(offsets[i]);
-        ///* debug */ System.out.println("looking for magic bytes at " + in.getFilePointer());
         byte[] buf = new byte[(int) Math.min(8192, in.length() - in.getFilePointer())];
         int n = in.read(buf);
         boolean found = false;
@@ -733,22 +733,51 @@ public class DicomReader extends SubResolutionFormatReader {
     }
 
     for (int i=0; i<seriesCount; i++) {
+      List<String> currentFileList = fileList.get(keys[i]);
       if (seriesCount == 1) {
         CoreMetadata ms = core.get(i, 0);
         if (tilePositions == null) {
-          ms.sizeZ = imagesPerFile * fileList.get(keys[i]).size();
+          ms.sizeZ = imagesPerFile * currentFileList.size();
         }
         else if (ms.sizeZ == 0) {
-          ms.sizeZ = fileList.get(keys[i]).size();
+          ms.sizeZ = currentFileList.size();
         }
         else {
-          for (int r=1; r<fileList.get(keys[i]).size(); r++) {
+          HashMap<CoreMetadata, String> tmpFileMap = new HashMap<CoreMetadata, String>();
+          tmpFileMap.put(core.get(0, 0), currentFileList.get(0));
+          for (int r=1; r<currentFileList.size(); r++) {
             helper.close();
-            helper.setId(fileList.get(keys[i]).get(r));
+            helper.setId(currentFileList.get(r));
             CoreMetadata subres = helper.getCoreMetadataList().get(0);
-            core.add(0, subres);
-            ms.resolutionCount++;
+            String imageType = helper.getImageType();
+            // TODO: might need to clean up this check?
+            if (imageType != null && imageType.indexOf("OVERVIEW") < 0 &&
+              imageType.indexOf("LABEL") < 0 && imageType.indexOf("THUMBNAIL") < 0 &&
+              imageType.indexOf("LOCALIZER") < 0)
+            {
+              core.add(0, subres);
+              ms.resolutionCount++;
+              tmpFileMap.put(subres, currentFileList.get(r));
+            }
+            else {
+              core.add(subres);
+              List<String> extraImageList = new ArrayList<String>();
+              extraImageList.add(currentFileList.get(r));
+              fileList.put(keys[i] + r, extraImageList);
+              currentFileList.set(r, null);
+            }
           }
+          for (int r=0; r<currentFileList.size(); r++) {
+            if (currentFileList.get(r) == null) {
+              currentFileList.remove(r);
+              r--;
+            }
+          }
+          core.reorder();
+          for (int r=0; r<currentFileList.size(); r++) {
+            currentFileList.set(r, tmpFileMap.get(core.get(0, r)));
+          }
+          fileList.put(keys[i], currentFileList);
         }
         if (ms.sizeC == 0) ms.sizeC = 1;
         ms.rgb = ms.sizeC > 1;
@@ -761,9 +790,9 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       else {
         helper.close();
-        helper.setId(fileList.get(keys[i]).get(0));
+        helper.setId(currentFileList.get(0));
         CoreMetadata ms = helper.getCoreMetadataList().get(0);
-        ms.sizeZ *= fileList.get(keys[i]).size();
+        ms.sizeZ *= currentFileList.size();
         ms.imageCount = ms.sizeZ;
         core.add(ms);
       }
@@ -871,16 +900,18 @@ public class DicomReader extends SubResolutionFormatReader {
             }
             break;
           case ACQUISITION_TIMESTAMP:
-            String timestamp = infoString.substring(0, 8);
-            try {
-              if (Integer.parseInt(timestamp) > 0) {
-                originalDate = timestamp;
+            if (infoString.length() >= 8) {
+              String timestamp = infoString.substring(0, 8);
+              try {
+                if (Integer.parseInt(timestamp) > 0) {
+                  originalDate = timestamp;
+                }
               }
+              catch (NumberFormatException e) {
+                LOGGER.trace("", e);
+              }
+              originalTime = infoString.substring(8);
             }
-            catch (NumberFormatException e) {
-              LOGGER.trace("", e);
-            }
-            originalTime = infoString.substring(8);
             break;
           case ACQUISITION_DATE:
             if (infoNumber != null && infoNumber.intValue() > 0) {
@@ -895,7 +926,6 @@ public class DicomReader extends SubResolutionFormatReader {
             break;
           case INSTANCE_NUMBER:
             if (infoString != null && !infoString.isEmpty()) {
-              ///* debug */ System.out.println("originalInstance = " + originalInstance);
               originalInstance = infoString;
             }
             break;
@@ -1047,7 +1077,7 @@ public class DicomReader extends SubResolutionFormatReader {
     else if (fileList == null || !isGroupFiles()) {
       fileList = new HashMap<Integer, List<String>>();
       fileList.put(0, new ArrayList<String>());
-      fileList.get(0).add(currentId);
+      fileList.get(0).add(new Location(currentId).getAbsolutePath());
     }
   }
 
@@ -1118,8 +1148,10 @@ public class DicomReader extends SubResolutionFormatReader {
             if (instance.length() == 0) instance = null;
             break;
           case ACQUISITION_TIMESTAMP:
-            date = tag.getStringValue().substring(0, 8);
-            time = tag.getStringValue().substring(8);
+            if (tag.getStringValue().length() >= 8) {
+              date = tag.getStringValue().substring(0, 8);
+              time = tag.getStringValue().substring(8);
+            }
             break;
           case ACQUISITION_TIME:
             time = tag.getStringValue();
@@ -1438,8 +1470,12 @@ public class DicomReader extends SubResolutionFormatReader {
       fileList.get(seriesIndex).add(tag.getStringValue());
     }
     else {
-      companionFiles.add(tag.getStringValue());
+      companionFiles.add(new Location(tag.getStringValue()).getAbsolutePath());
     }
+  }
+
+  protected String getImageType() {
+    return imageType;
   }
 
 }
