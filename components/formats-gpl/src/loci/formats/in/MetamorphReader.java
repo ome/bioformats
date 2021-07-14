@@ -235,7 +235,8 @@ public class MetamorphReader extends BaseTiffReader {
     if (ifd == null) return false;
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
     boolean validSoftware = software != null &&
-      software.trim().toLowerCase().startsWith("metamorph");
+      (software.trim().toLowerCase().startsWith("metamorph") || 
+          software.trim().toLowerCase().startsWith("visiview"));
     return validSoftware || (ifd.containsKey(UIC1TAG) &&
       ifd.containsKey(UIC3TAG) && ifd.containsKey(UIC4TAG));
   }
