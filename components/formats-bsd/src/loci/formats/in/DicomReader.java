@@ -629,6 +629,7 @@ public class DicomReader extends SubResolutionFormatReader {
     // to be any more distinct logic for TILED_FULL vs TILED_SPARSE
     if (tiledFull) {
       tilePositions = new ArrayList<Region>();
+
       for (int z=0; z<m.sizeZ; z++) {
         for (int y=0; y<m.sizeY; y+=originalY) {
           for (int x=0; x<m.sizeX; x+=originalX) {
@@ -1134,7 +1135,9 @@ public class DicomReader extends SubResolutionFormatReader {
 
         odd = (currentLocation & 1) != 0;
 
-        if (tag.attribute == null || tag.value == null) {
+        if (tag.attribute == null || tag.value == null ||
+          tag.getValueStartPointer() == tag.getEndPointer())
+        {
           stream.seek(tag.getEndPointer());
           continue;
         }
@@ -1206,10 +1209,9 @@ public class DicomReader extends SubResolutionFormatReader {
       else if (instanceUID != null || thisInstanceUID != null) {
         return;
       }
-    }
-
-    if (currentX != originalX || currentY != originalY) {
-      fileSeries++;
+      if (currentX != originalX || currentY != originalY) {
+        fileSeries++;
+      }
     }
 
     double stamp = getTimestampMicroseconds(time);
@@ -1310,6 +1312,10 @@ public class DicomReader extends SubResolutionFormatReader {
     int bytes = originalX * originalY * bpp * ec;
     if (in == null) {
       in = new RandomAccessInputStream(currentId);
+    }
+    if (index >= offsets.length) {
+      LOGGER.error("attempted to read tile #{} of {}", index, offsets.length);
+      return;
     }
     in.seek(offsets[index]);
     ///* debug */ System.out.println("offset = " + in.getFilePointer());
