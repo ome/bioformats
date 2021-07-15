@@ -33,7 +33,6 @@ public class DicomTag {
   {
     bigEndianTransferSyntax = bigEndian;
     this.oddLocations = oddLocations;
-    ///* debug */ System.out.println("DicomTag start @ " + in.getFilePointer());
 
     int tag = getNextTag(in);
     attribute = DicomAttribute.get(tag);
@@ -41,8 +40,6 @@ public class DicomTag {
     if (attribute != null) {
       key = attribute.getDescription();
     }
-    ///* debug */ System.out.println("  key = " + key + " (" + tag + ")");
-    ///* debug */ System.out.println("  elementLength = " + elementLength);
 
     String id = null;
 
@@ -70,7 +67,6 @@ public class DicomTag {
         vr = US;
       }
     }
-    ///* debug */ System.out.println("  vr = " + vr);
 
     if (attribute == ITEM) {
       value = id;
@@ -102,7 +98,10 @@ public class DicomTag {
             value = in.readString(elementLength);
             break;
           case AT:
-            // TODO
+            short[] pair = new short[2];
+            pair[0] = in.readShort();
+            pair[1] = in.readShort();
+            value = pair;
             break;
           case FL:
             value = in.readFloat();
