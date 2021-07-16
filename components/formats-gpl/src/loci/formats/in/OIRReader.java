@@ -50,6 +50,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -88,6 +89,7 @@ public class OIRReader extends FormatReader {
 
   private transient Double zStart;
   private transient Double zStep;
+  private transient Double tStep;
 
   // -- Constructor --
 
@@ -278,6 +280,7 @@ public class OIRReader extends FormatReader {
       minT = Integer.MAX_VALUE;
       zStart = null;
       zStep = null;
+      tStep = null;
     }
   }
 
@@ -504,7 +507,8 @@ public class OIRReader extends FormatReader {
     // populate MetadataStore
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, zStart != null && zStep != null);
+    MetadataTools.populatePixels(store, this,
+      (zStart != null && zStep != null) || tStep != null);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
@@ -594,6 +598,12 @@ public class OIRReader extends FormatReader {
       for (int i=0; i<getImageCount(); i++) {
         int z = getZCTCoords(i)[0];
         store.setPlanePositionZ(new Length(zStart + z * zStep, UNITS.MICROMETER), 0, i);
+      }
+    }
+    if (tStep != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        int t = getZCTCoords(i)[2];
+        store.setPlaneDeltaT(new Time(t * tStep, UNITS.MILLISECOND), 0, i);
       }
     }
   }
@@ -1143,6 +1153,28 @@ public class OIRReader extends FormatReader {
           }
         }
 
+      }
+
+      Element configuration = getFirstChild(acquisition, "commonimage:configuration");
+      NodeList scanners = acquisition.getElementsByTagName("lsmimage:scannerSettings");
+      if (configuration != null && scanners != null) {
+        Element usedScanner = getFirstChild(configuration, "lsmimage:scannerType");
+        // multiple scanners may be defined, pick the one that was actually used
+        if (usedScanner != null) {
+          String scannerType = usedScanner.getTextContent();
+
+          for (int i=0; i<scanners.getLength(); i++) {
+            Element scanner = (Element) scanners.item(i);
+            if (scannerType.equals(scanner.getAttribute("type"))) {
+              Element speed = getFirstChild(getFirstChild(scanner, "lsmimage:param"), "lsmparam:speed");
+              speed = getFirstChild(speed, "commonparam:speedInformation");
+              Element seriesInterval = getFirstChild(speed, "commonparam:seriesInterval");
+              if (seriesInterval != null) {
+                tStep = DataTools.parseDouble(seriesInterval.getTextContent());
+              }
+            }
+          }
+        }
       }
 
       NodeList imagingMainLasers = acquisition.getElementsByTagName("lsmimage:imagingMainLaser");
