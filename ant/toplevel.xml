@@ -354,7 +354,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Matlab -->
-  <target name="dist-matlab"
+  <target name="dist-matlab" depends="tools"
     description="generate a zip bundle of the Matlab toolbox">
     <echo>----------=========== bfmatlab ===========----------</echo>
     <ant dir="components/bundles/bioformats_package" target="bfmatlab"/>
@@ -363,20 +363,20 @@ Type "ant -p" for a list of targets.
   <target name="test-matlab" description="run Matlab tests" depends="tools">
     <property environment="env"/>
     <exec executable="matlab">
-      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>
+      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/formats-bsd/matlab:${artifact.dir}"/>
       <arg value="-nodesktop"/>
       <arg value="-nosplash"/>
       <arg value="-r"/>
-      <arg value="runtests ${root.dir}/components/formats-gpl/test/matlab"/>
+      <arg value="runtests ${root.dir}/components/formats-bsd/test/matlab"/>
     </exec>
   </target>
 
   <!-- Octave -->
-  <target name="dist-octave" description="generate an Octave package">
+  <target name="dist-octave" depends="jars" description="generate an Octave package">
     <echo>-------=========== Octave package ===========-------</echo>
 
     <tempfile property="temp.file" destDir="${java.io.tmpdir}"/>
-    <copy file="${root.dir}/components/formats-gpl/octave/DESCRIPTION.in"
+    <copy file="${root.dir}/components/formats-bsd/octave/DESCRIPTION.in"
           toFile="${temp.file}">
       <filterset begintoken="$${" endtoken ="}" >
         <filter token="release.version" value="${release.version}"/>
@@ -386,11 +386,11 @@ Type "ant -p" for a list of targets.
 
     <tar destfile="${artifact.dir}/bioformats-octave-${release.version}.tar.gz"
          compression="gzip">
-      <tarfileset dir="${root.dir}/components/formats-gpl/octave"
+      <tarfileset dir="${root.dir}/components/formats-bsd/octave"
                   prefix="bioformats/" excludes="DESCRIPTION.in"/>
       <tarfileset file="${temp.file}" fullpath="bioformats/DESCRIPTION"/>
-      <tarfileset file="${root.dir}/LICENSE.txt" fullpath="bioformats/COPYING"/>
-      <tarfileset dir="${root.dir}/components/formats-gpl/matlab"
+      <tarfileset file="${root.dir}/components/formats-bsd/LICENSE.txt" fullpath="bioformats/COPYING"/>
+      <tarfileset dir="${root.dir}/components/formats-bsd/matlab"
                   prefix="bioformats/inst/"/>
     </tar>
     <delete file="${temp.file}"/>

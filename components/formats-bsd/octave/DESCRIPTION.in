@@ -7,6 +7,6 @@ Title: bioformats
 Categories: Image I/O
 Description: Wrapper to the bioformats java library.
 Depends: octave (>= 4.0.0)
-License: GPLv3+
+License: BSD-2-Clause
 SystemRequirements: bioformats_package.jar on java static classpath
 Url: http://www.openmicroscopy.org/
