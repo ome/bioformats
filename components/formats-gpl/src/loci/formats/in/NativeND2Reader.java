@@ -130,6 +130,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
   private boolean textData = false;
   private Double refractiveIndex = null;
   Boolean imageMetadataLVProcessed = false;
+  String  imageMetadataLVOrder = "";
 
   // -- Constructor --
 
@@ -905,7 +906,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               long endFP = in.getFilePointer() + len - 18;
               while (in.read() == 0);
 
-              boolean canBeLossless = true;
               int eType = 0;
               Boolean nextExperiment = true;
               Boolean currentCountSetted = false;
@@ -936,6 +936,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                 if (attributeName.equals("SLxExperiment")) {
                   currentFilePointer += nameLen * 2;
                   imageMetadataLVProcessed = true;
+                  imageMetadataLVOrder = "";
                 }
 
                 if (attributeName.equals("eType")) {
@@ -951,12 +952,15 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                   {
                     if(eType == 2)
                     {
+                      imageMetadataLVOrder = "M" + imageMetadataLVOrder;
                       XYCount = in.readInt();
                     } else if(eType == 1)
                     {
+                      imageMetadataLVOrder = "T" + imageMetadataLVOrder;
                       timeCount = in.readInt();
                     } if(eType == 4)
                     {
+                      imageMetadataLVOrder = "Z" + imageMetadataLVOrder;
                       zCount = in.readInt();
                     }
                     currentCountSetted = true;
@@ -1552,15 +1556,48 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       offsets = new long[numSeries][getImageCount()];
 
       int[] lengths = new int[4];
-      int nextChar = 2;
-      for (int i=0; i<lengths.length; i++) {
-        if (i == fieldIndex) lengths[i] = core.size();
-        else {
-          char axis = getDimensionOrder().charAt(nextChar++);
-          if (axis == 'Z') lengths[i] = getSizeZ();
-          else if (axis == 'C') lengths[i] = 1;
-          else if (axis == 'T') lengths[i] = getSizeT();
+      if(!imageMetadataLVProcessed) {
+        int nextChar = 2;
+        for (int i = 0; i < lengths.length; i++) {
+          if (i == fieldIndex) lengths[i] = core.size();
+          else {
+            char axis = getDimensionOrder().charAt(nextChar++);
+            if (axis == 'Z') lengths[i] = getSizeZ();
+            else if (axis == 'C') lengths[i] = 1;
+            else if (axis == 'T') lengths[i] = getSizeT();
+          }
         }
+      } else
+      {
+        int currPos = 1;
+        lengths[0] = 1;
+        lengths[1] = 1;
+        lengths[2] = 1;
+        lengths[3] = 1;
+        for (char c:
+                imageMetadataLVOrder.toCharArray()) {
+          if(c == 'Z')
+          {
+            lengths[currPos] = getSizeZ();
+          }
+          else if(c == 'M')
+          {
+            fieldIndex = currPos;
+            lengths[currPos] = core.size();
+          }
+          else if(c == 'T')
+          {
+            lengths[currPos] = getSizeT();
+          }
+          else
+          {
+            currPos--;
+          }
+          currPos++;
+        }
+
+        if(!imageMetadataLVOrder.contains("M"))
+          fieldIndex = 3;
       }
       int[] zctLengths = new int[4];
       System.arraycopy(lengths, 0, zctLengths, 0, lengths.length);
