@@ -90,6 +90,7 @@ public class OIRReader extends FormatReader {
   private transient Double zStart;
   private transient Double zStep;
   private transient Double tStep;
+  private transient HashMap<Integer, Double> timestampAdjustments = new HashMap<Integer, Double>();
 
   // -- Constructor --
 
@@ -603,7 +604,13 @@ public class OIRReader extends FormatReader {
     if (tStep != null) {
       for (int i=0; i<getImageCount(); i++) {
         int t = getZCTCoords(i)[2];
-        store.setPlaneDeltaT(new Time(t * tStep, UNITS.MILLISECOND), 0, i);
+        double deltaT = t * tStep;
+        for (Integer frame : timestampAdjustments.keySet()) {
+          if (t >= frame) {
+            deltaT += (timestampAdjustments.get(frame) - tStep);
+          }
+        }
+        store.setPlaneDeltaT(new Time(deltaT, UNITS.MILLISECOND), 0, i);
       }
     }
   }
@@ -1153,6 +1160,16 @@ public class OIRReader extends FormatReader {
           }
         }
 
+        // defined pauses between different time points
+        // so far have only seen one defined, but might be multiple?
+        Element frameInterval = getFirstChild(imagingParam, "fvCommonparam:specifiedFrameInterval");
+        if (frameInterval != null) {
+          Element frameCount = getFirstChild(frameInterval, "commonparam:frameCount");
+          Element interval = getFirstChild(frameInterval, "commonparam:interval");
+          if (frameCount != null && interval != null) {
+            timestampAdjustments.put(Integer.parseInt(frameCount.getTextContent()), DataTools.parseDouble(interval.getTextContent()));
+          }
+        }
       }
 
       Element configuration = getFirstChild(acquisition, "commonimage:configuration");
