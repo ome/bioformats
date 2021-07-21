@@ -44,12 +44,6 @@ public class DicomTag {
     String id = null;
 
     if (attribute != null) {
-      /*
-      if (attribute == ITEM_DELIMITATION_ITEM || attribute == SEQUENCE_DELIMITATION_ITEM) {
-        inSequence = false;
-      }
-      */
-
       id = attribute.getDescription();
 
       if (vr == IMPLICIT && id != null) {
@@ -256,11 +250,9 @@ public class DicomTag {
     // see http://dicom.nema.org/medical/dicom/current/output/html/part05.html#sect_7.1.2
 
     vr = DicomVR.get(((b[0] & 0xff) << 8) | (b[1] & 0xff));
-    ///* debug */ System.out.println("@ 241 vr = " + vr);
 
     if (vr == null) {
       vr = IMPLICIT;
-    ///* debug */ System.out.println("@ 245 vr = " + vr);
       int len = DataTools.bytesToInt(b, in.isLittleEndian());
       if (len + in.getFilePointer() > in.length() || len < 0) {
         len = DataTools.bytesToInt(b, 2, 2, in.isLittleEndian());
