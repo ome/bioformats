@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2021 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -71,8 +71,6 @@ import static loci.formats.in.DicomVR.*;
 
 /**
  * DicomReader is the file format reader for DICOM files.
- * Much of this code is adapted from ImageJ's DICOM reader; see
- * http://rsb.info.nih.gov/ij/developer/source/ij/plugin/DICOM.java.html
  */
 public class DicomReader extends SubResolutionFormatReader {
 
@@ -261,6 +259,9 @@ public class DicomReader extends SubResolutionFormatReader {
     Region currentRegion = new Region(x, y, w, h);
     int z = getZCTCoords(no)[0];
     int c = getZCTCoords(no)[1];
+
+    // look for any tiles that match the requested tile and plane
+    // TODO: Z coordinate checking should maybe be simplified?
     for (int t=0; t<tilePositions.size(); t++) {
       DicomTile tile = tilePositions.get(t);
       if (tile.coreIndex == getCoreIndex() &&
@@ -374,6 +375,8 @@ public class DicomReader extends SubResolutionFormatReader {
 
     in.seek(HEADER_LENGTH);
     if (in.readString(4).equals("DICM")) {
+      // TODO: this should be uncommented, but currently causes invalid characters
+      // to be introduced into OME-XML for some files
     /*
       if (level != MetadataLevel.MINIMUM) {
         // header exists, so we'll read it
@@ -671,7 +674,11 @@ public class DicomReader extends SubResolutionFormatReader {
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
 
+    // at this point, we have a list of all files to be grouped together
+    // and have parsed tags from the current file
+
     if (seriesCount > 1) {
+      // TODO: this case is largely untested at the moment and may need revisiting
       for (int i=0; i<seriesCount; i++) {
         List<String> currentFileList = fileList.get(keys[i]);
         DicomFileInfo fileInfo = createFileInfo(currentFileList.get(0));
@@ -690,6 +697,7 @@ public class DicomReader extends SubResolutionFormatReader {
       List<String> allFiles = fileList.get(keys[0]);
       List<DicomFileInfo> infos = new ArrayList<DicomFileInfo>();
 
+      // parse tags for each file
       for (String file : allFiles) {
         DicomFileInfo info = createFileInfo(file);
         infos.add(info);
@@ -707,12 +715,17 @@ public class DicomReader extends SubResolutionFormatReader {
           tilePositions.add(t);
         }
 
+        // determine what each file is:
+        //  - a separate image (Bio-Formats series), e.g. largest pyramid level, label, overview, etc.
+        //  - a downsampled resolution
+        //  - another Z section or channel in an existing Bio-Formats series
+        // TODO: currently assumes that each file contains a whole plane, this will need updating
         for (int i=1; i<infos.size(); i++) {
           DicomFileInfo info = infos.get(i);
           DicomFileInfo prevInfo = infos.get(i - 1);
           updateCoreMetadata(info.coreMetadata);
 
-          // TODO: probably a better way to do this?
+          // image type is used to distinguish between downsampled resolutions and smaller separate images
           if (!info.imageType.equals(prevInfo.imageType) && !info.imageType.endsWith("VOLUME\\RESAMPLED")) {
             core.add(info.coreMetadata);
           }
@@ -753,6 +766,7 @@ public class DicomReader extends SubResolutionFormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
+    // TODO: some of the metadata mapping pulls from the wrong file for some datasets
     String stamp = null;
 
     if (date != null && time != null) {
@@ -823,6 +837,8 @@ public class DicomReader extends SubResolutionFormatReader {
 
   // -- Helper methods --
 
+  // TODO: target for refactoring, this can possibly be combined with the
+  // tag parsing loop that calls this
   private void addInfo(DicomTag info) throws IOException {
     CoreMetadata m = core.get(0, 0);
     m.littleEndian = in.isLittleEndian();
@@ -973,6 +989,9 @@ public class DicomReader extends SubResolutionFormatReader {
         if (info.key != null) {
           key += " " + info.key;
         }
+        // TODO: this should be uncommented, but needs a little more work to:
+        //   - fully represent the hierarchy
+        //   - not introduce invalid (just null?) characters
         /*
         if (metadata.containsKey(key)) {
           // make sure that values are not overwritten
@@ -992,6 +1011,9 @@ public class DicomReader extends SubResolutionFormatReader {
     }
   }
 
+  /**
+   * Build a list of files that belong with the current file.
+   */
   private void makeFileList() throws FormatException, IOException {
     LOGGER.info("Building file list");
 
@@ -1074,6 +1096,7 @@ public class DicomReader extends SubResolutionFormatReader {
         stream.seek(0);
       }
 
+      // TODO: probably best to remove this tag parsing logic and use a DicomFileInfo
       boolean bigEndian = false;
       boolean odd = false;
       long currentLocation = stream.getFilePointer();
@@ -1263,6 +1286,9 @@ public class DicomReader extends SubResolutionFormatReader {
     }
   }
 
+  /**
+   * Decompress pixel data associated with the given DicomTile.
+   */
   private void getTile(DicomTile tile, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -1357,11 +1383,6 @@ public class DicomReader extends SubResolutionFormatReader {
           System.arraycopy(b, 2, tmp, 3, b.length - 2);
           b = tmp;
         }
-        /*
-        if (isJP2K && (b[3] & 0xff) >= 0xf0) {
-          b[3] -= (byte) 0x30;
-        }
-        */
 
         int pt = b.length - 2;
         while (pt >= 0 && (b[pt] != (byte) 0xff || b[pt + 1] != (byte) 0xd9)) {
@@ -1442,6 +1463,10 @@ public class DicomReader extends SubResolutionFormatReader {
     }
   }
 
+  /**
+   * Calculate offsets to all pixel data (tiles or planes) in the file,
+   * starting from the given offset.
+   */
   private void calculatePixelsOffsets(long baseOffset) throws FormatException, IOException {
     zOffsets = new ArrayList<Double>();
 
@@ -1523,6 +1548,10 @@ public class DicomReader extends SubResolutionFormatReader {
     }
   }
 
+  /**
+   * Construct a DicomFileInfo for the given file.
+   * If the file is the currently initialized file, don't parse it again.
+   */
   private DicomFileInfo createFileInfo(String file) throws FormatException, IOException {
     if (new Location(file).getAbsolutePath().equals(new Location(currentId).getAbsolutePath())) {
       DicomFileInfo info = new DicomFileInfo();

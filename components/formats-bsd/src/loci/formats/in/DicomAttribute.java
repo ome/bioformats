@@ -1,3 +1,35 @@
+/*
+ * #%L
+ * BSD implementations of Bio-Formats readers and writers
+ * %%
+ * Copyright (C) 2005 - 2021 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * #L%
+ */
+
 package loci.formats.in;
 
 import java.util.EnumSet;
@@ -7,7 +39,9 @@ import java.util.Map;
 import static loci.formats.in.DicomVR.*;
 
 /**
- * Describes a DICOM attribute (integer tag and associated description).
+ * Describes a DICOM attribute (integer tag, associated description, and expected VR).
+ *
+ * TODO: fill in missing DICOM dictionary entries and expected VRs
  */
 public enum DicomAttribute {
     MEDIA_SOP_CLASS_UID(0x00020002, "Media Storage SOP Class UID"),
@@ -523,7 +557,6 @@ public enum DicomAttribute {
     ACQUISITIONS_IN_SERIES(0x00201001, "Acquisitions in Series"),
     REFERENCE(0x00201020, "Reference"),
     SLICE_LOCATION(0x00201041, "Slice Location"),
-    // skipped a bunch of stuff here - not used
     SAMPLES_PER_PIXEL(0x00280002, "Samples per pixel"),
     SAMPLES_PER_PIXEL_USED(0x00280003, "Samples per pixel used"),
     PHOTOMETRIC_INTERPRETATION(0x00280004, "Photometric Interpretation"),
@@ -607,7 +640,6 @@ public enum DicomAttribute {
     FRAME_VOI_LUT_SEQUENCE(0x00289132, "Frame VOI LUT Sequence"),
     PIXEL_VALUE_TRANSFORMATION_SEQUENCE(0x00289145, "Pixel Value Transformation Sequence"),
     SIGNAL_DOMAIN_ROWS(0x00289235, "Signal Domain Rows"),
-    // skipping some more stuff
     NUMBER_OF_ENERGY_WINDOWS(0x00540011, "Number of Energy Windows"),
     NUMBER_OF_DETECTORS(0x00540021, "Number of Detectors"),
     NUMBER_OF_ROTATIONS(0x00540051, "Number of Rotations"),
@@ -715,22 +747,54 @@ public enum DicomAttribute {
       this.defaultVR = defaultVR;
     }
 
+    /**
+     * Get the known default VR for this attribute, or IMPLICIT if
+     * our dictionary does not include a default VR.
+     *
+     * @return default VR or IMPLICIT, should not be null
+     */
     public DicomVR getDefaultVR() {
       return defaultVR;
     }
 
+    /**
+     * Get the 4 byte integer tag.
+     *
+     * @return tag
+     */
     public int getTag() {
       return tag;
     }
 
+    /**
+     * Get the human-readable description associated with this attribute.
+     *
+     * @return description
+     */
     public String getDescription() {
       return description;
     }
 
+    /**
+     * Lookup the attribute for the given tag.
+     * May return null if the tag is not defined in our dictionary.
+     *
+     * @param newTag 4 byte DICOM tag
+     * @return corresponding attribute, or null if not defined
+     */
     public static DicomAttribute get(int newTag) {
 			return lookup.get(newTag);
     }
 
+    /**
+     * Format the given tag as a pair of comma-separated hex strings.
+     * For an input integer 0x89abcdef, the return value will be
+     * "89ab,cdef". This is similar to the format used in the DICOM schema.
+     * The tag need not be included in our dictionary.
+     *
+     * @param tag 4 byte DICOM tag
+     * @return corresponding hex string
+     */
     public static String formatTag(int tag) {
       String s = Integer.toHexString(tag);
       while (s.length() < 8) {
