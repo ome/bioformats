@@ -90,6 +90,10 @@ public class ZeissCZIReader extends FormatReader {
   public static final String INCLUDE_ATTACHMENTS_KEY =
     "zeissczi.attachments";
   public static final boolean INCLUDE_ATTACHMENTS_DEFAULT = true;
+  public static final String TRIM_DIMENSIONS_KEY = "zeissczi.trim_dimensions";
+  public static final boolean TRIM_DIMENSIONS_DEFAULT = false;
+  public static final String RELATIVE_POSITIONS_KEY = "zeissczi.relative_positions";
+  public static final boolean RELATIVE_POSITIONS_DEFAULT = false;
 
   private static final int ALIGNMENT = 32;
   private static final int HEADER_SIZE = 32;
@@ -585,6 +589,8 @@ public class ZeissCZIReader extends FormatReader {
     ArrayList<String> optionsList = super.getAvailableOptions();
     optionsList.add(ALLOW_AUTOSTITCHING_KEY);
     optionsList.add(INCLUDE_ATTACHMENTS_KEY);
+    optionsList.add(TRIM_DIMENSIONS_KEY);
+    optionsList.add(RELATIVE_POSITIONS_KEY);
     return optionsList;
   }
 
@@ -1044,6 +1050,9 @@ public class ZeissCZIReader extends FormatReader {
             keepMissingPyramid = true;
           }
         }
+        if (trimDimensions()) {
+          calculateDimensions(s, true);
+        }
         s += core.get(s).resolutionCount;
       }
     }
@@ -1367,7 +1376,15 @@ public class ZeissCZIReader extends FormatReader {
         for (Integer q : index) {
           SubBlock currentPlane = planes.get(q);
           if (currentPlane == null) continue;
-          if (currentPlane.stageX != null) {
+          if (storeRelativePositions()) {
+            if (minStageX == null || currentPlane.col < minStageX) {
+              minStageX = (double) currentPlane.col;
+            }
+            if (maxStageX == null || currentPlane.col > maxStageX) {
+              maxStageX = (double) currentPlane.col;
+            }
+          }
+          else if (currentPlane.stageX != null) {
             if (minStageX == null ||
               currentPlane.stageX.value().doubleValue() < minStageX)
             {
@@ -1379,7 +1396,15 @@ public class ZeissCZIReader extends FormatReader {
               maxStageX = currentPlane.stageX.value().doubleValue();
             }
           }
-          if (currentPlane.stageY != null) {
+          if (storeRelativePositions()) {
+            if (minStageY == null || currentPlane.row < minStageY) {
+              minStageY = (double) currentPlane.row;
+            }
+            if (maxStageY == null || currentPlane.row > maxStageY) {
+              maxStageY = (double) currentPlane.row;
+            }
+          }
+          else if (currentPlane.stageY != null) {
             if (minStageY == null ||
               currentPlane.stageY.value().doubleValue() < minStageY)
             {
@@ -1397,7 +1422,10 @@ public class ZeissCZIReader extends FormatReader {
         // assign the same position to each resolution in a pyramid
 
         Length x = null;
-        if (minStageX != null && maxStageX != null) {
+        if (storeRelativePositions()) {
+          x = new Length(minStageX, UNITS.PIXEL);
+        }
+        else if (minStageX != null && maxStageX != null) {
           double diff = (maxStageX - minStageX) / 2;
           x = new Length(minStageX + diff, UNITS.MICROMETER);
           if (positionsX != null) {
@@ -1423,7 +1451,10 @@ public class ZeissCZIReader extends FormatReader {
         }
 
         Length y = null;
-        if (minStageY != null && maxStageY != null) {
+        if (storeRelativePositions()) {
+          y = new Length(minStageY, UNITS.PIXEL);
+        }
+        else if (minStageY != null && maxStageY != null) {
           double diff = (maxStageY - minStageY) / 2;
           y = new Length(minStageY + diff, UNITS.MICROMETER);
           if (positionsY != null) {
@@ -1619,6 +1650,24 @@ public class ZeissCZIReader extends FormatReader {
     return INCLUDE_ATTACHMENTS_DEFAULT;
   }
 
+  public boolean trimDimensions() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        TRIM_DIMENSIONS_KEY, TRIM_DIMENSIONS_DEFAULT);
+    }
+    return TRIM_DIMENSIONS_DEFAULT;
+  }
+
+  public boolean storeRelativePositions() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        RELATIVE_POSITIONS_KEY, RELATIVE_POSITIONS_DEFAULT);
+    }
+    return RELATIVE_POSITIONS_DEFAULT;
+  }
+
   // -- Helper methods --
 
   private void readSegments(String id) throws IOException {
@@ -1707,6 +1756,11 @@ public class ZeissCZIReader extends FormatReader {
     int minPositions = Integer.MAX_VALUE;
     int maxPositions = Integer.MIN_VALUE;
 
+    int minX = Integer.MAX_VALUE;
+    int maxX = Integer.MIN_VALUE;
+    int minY = Integer.MAX_VALUE;
+    int maxY = Integer.MIN_VALUE;
+
     for (SubBlock plane : planes) {
       if (xyOnly && plane.coreIndex != coreIndex) {
         continue;
@@ -1724,6 +1778,8 @@ public class ZeissCZIReader extends FormatReader {
           case 'X':
             plane.x = dimension.size;
             plane.col = dimension.start;
+            minX = (int) Math.min(plane.col, minX);
+            maxX = (int) Math.max(plane.col + plane.x, maxX);
             if ((prestitched == null || prestitched) &&
               getSizeX() > 0 && dimension.size != getSizeX() && allowAutostitching())
             {
@@ -1737,6 +1793,8 @@ public class ZeissCZIReader extends FormatReader {
           case 'Y':
             plane.y = dimension.size;
             plane.row = dimension.start;
+            minY = (int) Math.min(plane.row, minY);
+            maxY = (int) Math.max(plane.row + plane.y, maxY);
             if ((prestitched == null || prestitched) &&
               getSizeY() > 0 && dimension.size != getSizeY() && allowAutostitching())
             {
@@ -1817,6 +1875,12 @@ public class ZeissCZIReader extends FormatReader {
     if (maxPositions > Integer.MIN_VALUE && minPositions < Integer.MAX_VALUE) {
       positions = maxPositions - minPositions + 1;
     }
+
+    if (xyOnly && trimDimensions()) {
+      ms0.sizeX = maxX - minX;
+      ms0.sizeY = maxY - minY;
+    }
+
     setCoreIndex(previousCoreIndex);
   }
 
