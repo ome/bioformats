@@ -106,7 +106,7 @@ public class DicomTag {
     }
     if (value == null) {
       boolean skip = vr == null;
-      if (vr == IMPLICIT && attribute != null) {
+      if ((vr == IMPLICIT || vr == RESERVED) && attribute != null) {
         vr = attribute.getDefaultVR();
       }
       if (vr != null) {
@@ -137,26 +137,80 @@ public class DicomTag {
             value = pair;
             break;
           case FL:
-            value = in.readFloat();
+            if (elementLength % 4 == 0 && elementLength > 4) {
+              float[] f = new float[elementLength / 4];
+              for (int i=0; i<f.length; i++) {
+                f[i] = in.readFloat();
+              }
+              value = f;
+            }
+            else {
+              value = in.readFloat();
+            }
             break;
           case FD:
-            value = in.readDouble();
+            if (elementLength % 8 == 0 && elementLength > 8) {
+              double[] d = new double[elementLength / 8];
+              for (int i=0; i<d.length; i++) {
+                d[i] = in.readDouble();
+              }
+              value = d;
+            }
+            else {
+              value = in.readDouble();
+            }
             break;
           case OB:
             value = new byte[elementLength];
             in.read((byte[]) value);
             break;
           case SL:
-            value = in.readInt();
+            if (elementLength % 4 == 0 && elementLength > 4) {
+              long[] v = new long[elementLength / 4];
+              for (int i=0; i<v.length; i++) {
+                v[i] = in.readInt();
+              }
+              value = v;
+            }
+            else {
+              value = in.readInt();
+            }
             break;
           case SS:
-            value = in.readShort();
+            if (elementLength == 2) {
+              value = in.readShort();
+            }
+            else {
+              short[] values = new short[elementLength / 2];
+              for (int i=0; i<values.length; i++) {
+                values[i] = in.readShort();
+              }
+              value = values;
+            }
             break;
           case SV:
-            value = in.readLong();
+            if (elementLength % 8 == 0 && elementLength > 8) {
+              long[] v = new long[elementLength / 8];
+              for (int i=0; i<v.length; i++) {
+                v[i] = in.readLong();
+              }
+              value = v;
+            }
+            else {
+              value = in.readLong();
+            }
             break;
           case UL:
-            value = in.readInt() & 0xffffffffL;
+            if (elementLength % 4 == 0 && elementLength > 4) {
+              long[] v = new long[elementLength / 4];
+              for (int i=0; i<v.length; i++) {
+                v[i] = in.readInt() & 0xffffffffL;
+              }
+              value = v;
+            }
+            else {
+              value = in.readInt() & 0xffffffffL;
+            }
             break;
           case US:
             if (elementLength == 2) {
@@ -187,10 +241,29 @@ public class DicomTag {
             break;
           case SQ:
             long stop = in.getFilePointer() + elementLength;
+            if (elementLength == 0xffffffff) {
+              // undefined length sequence, use item tags to determine when to stop
+              stop = in.length();
+              elementLength = 0;
+            }
             while (in.getFilePointer() < stop) {
+              long fp = in.getFilePointer();
               DicomTag child = new DicomTag(in, bigEndian, location, oddLocations);
-              child.parent = this;
-              children.add(child);
+              if (child.attribute == SEQUENCE_DELIMITATION_ITEM) {
+                stop = in.getFilePointer();
+                break;
+              }
+              else if (child.attribute == PIXEL_DATA) {
+                stop = fp;
+                break;
+              }
+              else if (child.attribute != ITEM && child.attribute != ITEM_DELIMITATION_ITEM) {
+                child.parent = this;
+                children.add(child);
+              }
+            }
+            if (elementLength == 0) {
+              elementLength = (int) (stop - start);
             }
             in.seek(stop);
             break;
@@ -198,7 +271,7 @@ public class DicomTag {
             skip = true;
         }
       }
-      if (skip) {
+      if (skip && elementLength > 0) {
         long skipCount = (long) elementLength;
         if (in.getFilePointer() + skipCount <= in.length()) {
           in.skipBytes(skipCount);
@@ -221,10 +294,6 @@ public class DicomTag {
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
       groupWord = 0x0008;
       in.order(false);
-    }
-    else if (groupWord == 0xfeff || groupWord == 0xfffe) {
-      in.skipBytes(6);
-      return getNextTag(in);
     }
 
     int elementWord = in.readShort();
@@ -269,11 +338,6 @@ public class DicomTag {
     // The element length must be even!
     if (!oddLocations && (elementLength % 2) == 1) elementLength++;
 
-    // "Undefined" element length.
-    // This is a sort of bracket that encloses a sequence of elements.
-    if (elementLength < 0) {
-      elementLength = 0;
-    }
     return tag;
   }
 
@@ -353,8 +417,14 @@ public class DicomTag {
         if (n2 < 0 || n2 + in.getFilePointer() > in.length()) return n1;
         return n1;
       case RESERVED:
-        vr = IMPLICIT;
-        return 8;
+        int len = DataTools.bytesToInt(b, 0, 4, in.isLittleEndian());
+        if (len == 0xffffffff) {
+          return len;
+        }
+        else {
+          vr = IMPLICIT;
+          return 8;
+        }
       default:
         throw new IllegalArgumentException(vr.toString());
     }
@@ -397,6 +467,9 @@ public class DicomTag {
    * Get the file pointer at which the value ends (useful for sequences and byte streams).
    */
   public long getEndPointer() {
+    if (elementLength < 0) {
+      return start;
+    }
     return start + elementLength;
   }
 
