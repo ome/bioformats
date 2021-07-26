@@ -47,6 +47,7 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.xml.meta.MetadataConverter;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -74,15 +75,11 @@ public class OlympusTileReader extends FormatReader {
     super("Olympus .omp2info", "omp2info");
     domains = new String[] {FormatTools.LM_DOMAIN};
     datasetDescription = "One .omp2info file and at least one .oir or .vsi file";
+    suffixSufficient = true;
+    suffixNecessary = true;
   }
 
   // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  @Override
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return true;
-  }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   @Override
@@ -192,7 +189,7 @@ public class OlympusTileReader extends FormatReader {
     tiles.sort(null);
 
     MetadataStore store = makeFilterMetadata();
-    helperReader.setMetadataStore(store);
+    helperReader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
     helperReader.setId(tiles.get(0).file);
 
     core.clear();
@@ -205,6 +202,7 @@ public class OlympusTileReader extends FormatReader {
     }
     core.add(ms);
 
+    MetadataConverter.convertMetadata((IMetadata) helperReader.getMetadataStore(), store);
     MetadataTools.populatePixels(store, this);
   }
 
