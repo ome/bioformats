@@ -60,8 +60,10 @@ import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -179,6 +181,10 @@ public class ZeissCZIReader extends FormatReader {
   private int scaleFactor;
 
   private transient Length zStep;
+
+  private transient int plateRows;
+  private transient int plateColumns;
+  private transient ArrayList<String> platePositions = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -546,6 +552,9 @@ public class ZeissCZIReader extends FormatReader {
       tileHeight = null;
       scaleFactor = 0;
       zStep = null;
+      plateRows = 0;
+      plateColumns = 0;
+      platePositions.clear();
     }
   }
 
@@ -852,8 +861,9 @@ public class ZeissCZIReader extends FormatReader {
         angles = 1;
       }
       else {
-        int newX = planes.get(planes.size() - 1).x;
-        int newY = planes.get(planes.size() - 1).y;
+        SubBlock lastPlane = planes.get(planes.size() - 1);
+        int newX = lastPlane.x;
+        int newY = lastPlane.y;
         if (allowAutostitching() && (ms0.sizeX < newX || ms0.sizeY < newY)) {
           prestitched = true;
           mosaics = 1;
@@ -861,8 +871,14 @@ public class ZeissCZIReader extends FormatReader {
         else {
           prestitched = maxResolution > 0;
         }
-        ms0.sizeX = newX;
-        ms0.sizeY = newY;
+
+        // don't shrink the dimensions if prestitching is allowed
+        // implies that the image size is being set to a tile size
+        DimensionEntry mosaicDimension = lastPlane.directoryEntry.getDimensionEntry("M");
+        if (!prestitched || (mosaicDimension != null && mosaicDimension.start == 0)) {
+          ms0.sizeX = newX;
+          ms0.sizeY = newY;
+        }
       }
     }
     else if (!allowAutostitching() && calculatedSeries > seriesCount) {
@@ -1230,6 +1246,44 @@ public class ZeissCZIReader extends FormatReader {
     if (channels.size() > 0 && channels.get(0).color != null && !isRGB()) {
       for (int i=0; i<seriesCount; i++) {
         core.get(i).indexed = true;
+      }
+    }
+
+    if (plateRows > 0 && plateColumns > 0 && platePositions.size() > 0) {
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateRows(new PositiveInteger(plateRows), 0);
+      store.setPlateColumns(new PositiveInteger(plateColumns), 0);
+
+      int nextWell = 0;
+      for (int i=0, img=0; img<core.size(); i++, img+=core.get(img).resolutionCount) {
+        if (i < platePositions.size() && platePositions.get(i) != null) {
+          String[] index = platePositions.get(i).split("-");
+          if (index.length != 2) {
+            continue;
+          }
+          int row = -1;
+          int column = -1;
+
+          try {
+            row = Integer.parseInt(index[0]) - 1;
+            column = Integer.parseInt(index[1]) - 1;
+          }
+          catch (NumberFormatException e) {
+            LOGGER.trace("Could not parse well position", e);
+          }
+
+          if (row >= 0 && column >= 0) {
+            int imageIndex = coreIndexToSeries(img);
+            store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
+            store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
+            store.setWellColumn(new NonNegativeInteger(column), 0, nextWell);
+            store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, nextWell, 0), 0, nextWell, 0);
+            store.setWellSampleImageRef(MetadataTools.createLSID("Image", imageIndex), 0, nextWell, 0);
+            store.setWellSampleIndex(new NonNegativeInteger(imageIndex), 0, nextWell, 0);
+
+            nextWell++;
+          }
+        }
       }
     }
 
@@ -3236,6 +3290,37 @@ public class ZeissCZIReader extends FormatReader {
       if (regionsSetup != null) {
         Element sampleHolder = getFirstNode(regionsSetup, "SampleHolder");
         if (sampleHolder != null) {
+          Element template = getFirstNode(sampleHolder, "Template");
+          if (template != null) {
+            Element templateRows = getFirstNode(template, "ShapeRows");
+            Element templateColumns = getFirstNode(template, "ShapeColumns");
+            try {
+              if (templateRows != null) {
+                plateRows = Integer.parseInt(templateRows.getTextContent());
+              }
+              if (templateColumns != null) {
+                plateColumns = Integer.parseInt(templateColumns.getTextContent());
+              }
+            }
+            catch (NumberFormatException e) {
+              LOGGER.debug("Could not parse sample holder dimensions", e);
+            }
+
+            NodeList wells = sampleHolder.getElementsByTagName("SingleTileRegionArray");
+            if (wells == null || wells.getLength() == 0) {
+              wells = sampleHolder.getElementsByTagName("TileRegion");
+            }
+            if (wells != null) {
+              for (int i=0; i<wells.getLength(); i++) {
+                Element well = (Element) wells.item(i);
+                String value = getFirstNodeValue(well, "TemplateShapeId");
+                if (value != null && !value.isEmpty()) {
+                  platePositions.add(value);
+                }
+              }
+            }
+          }
+
           NodeList regions = getGrandchildren(sampleHolder,
             "SingleTileRegionArray", "SingleTileRegion");
           if (regions != null) {
@@ -4239,6 +4324,17 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+    }
+
+    public DimensionEntry getDimensionEntry(String dimension) {
+      if (dimension != null) {
+        for (DimensionEntry entry : dimensionEntries) {
+          if (entry.dimension != null && entry.dimension.equals(dimension)) {
+            return entry;
+          }
+        }
+      }
+      return null;
     }
 
     @Override
