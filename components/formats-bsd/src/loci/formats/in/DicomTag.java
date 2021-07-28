@@ -63,6 +63,20 @@ public class DicomTag {
   private boolean bigEndianTransferSyntax = false;
   private boolean oddLocations = false;
 
+  public DicomTag(DicomAttribute attribute) {
+    this(attribute, null);
+  }
+
+  public DicomTag(DicomAttribute attribute, DicomVR vr) {
+    this.attribute = attribute;
+    if (vr != null) {
+      this.vr = vr;
+    }
+    else {
+      this.vr = attribute.getDefaultVR();
+    }
+  }
+
   /**
    * Read a complete tag and value from the given input stream.
    */
