@@ -35,6 +35,8 @@ package loci.formats.out;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -179,16 +181,16 @@ public class DicomWriter extends FormatWriter {
       tileHeight = height;
     }
 
-    // TODO: sort tags before writing
+    ArrayList<DicomTag> tags = new ArrayList<DicomTag>();
 
     // see http://dicom.nema.org/dicom/2013/output/chtml/part05/sect_A.4.html
     DicomTag transferSyntax = new DicomTag(TRANSFER_SYNTAX_UID, UI);
     if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
       if (littleEndian) {
-        transferSyntax.value = "1.2.840.10008.1.2.1 ";
+        transferSyntax.value = "1.2.840.10008.1.2.1";
       }
       else {
-        transferSyntax.value = "1.2.840.10008.1.2.2 ";
+        transferSyntax.value = "1.2.840.10008.1.2.2";
       }
     }
     else if (compression.equals(CompressionType.J2K.getCompression())) {
@@ -197,64 +199,74 @@ public class DicomWriter extends FormatWriter {
     else if (compression.equals(CompressionType.JPEG.getCompression())) {
       transferSyntax.value = "1.2.840.10008.1.2.4.50";
     }
-    writeTag(transferSyntax);
+    transferSyntax.value = padString((String) transferSyntax.value);
+    tags.add(transferSyntax);
 
     DicomTag planarConfig = new DicomTag(PLANAR_CONFIGURATION, US);
     planarConfig.value = new short[] {(short) (interleaved ? 1 : 0)};
-    writeTag(planarConfig);
+    tags.add(planarConfig);
 
     DicomTag rows = new DicomTag(ROWS, US);
     rows.value = new short[] {(short) tileWidth};
-    writeTag(rows);
+    tags.add(rows);
 
     DicomTag columns = new DicomTag(COLUMNS, US);
     columns.value = new short[] {(short) tileHeight};
-    writeTag(columns);
+    tags.add(columns);
 
     DicomTag matrixRows = new DicomTag(TOTAL_PIXEL_MATRIX_ROWS, UL);
     matrixRows.value = new long[] {width};
-    writeTag(matrixRows);
+    tags.add(matrixRows);
 
     DicomTag matrixColumns = new DicomTag(TOTAL_PIXEL_MATRIX_COLUMNS, UL);
     matrixColumns.value = new long[] {height};
-    writeTag(matrixColumns);
+    tags.add(matrixColumns);
 
     int tileCountX = (int) Math.ceil((double) width / tileWidth);
     int tileCountY = (int) Math.ceil((double) height / tileHeight);
-    DicomTag numberOfFrames = new DicomTag(NUMBER_OF_FRAMES, SL);
-    numberOfFrames.value = new int[] {tileCountX * tileCountY * sizeZ};
-    writeTag(numberOfFrames);
+    DicomTag numberOfFrames = new DicomTag(NUMBER_OF_FRAMES, IS);
+    numberOfFrames.value = padString(String.valueOf(tileCountX * tileCountY * sizeZ));
+    tags.add(numberOfFrames);
 
-    DicomTag matrixFrames = new DicomTag(TOTAL_PIXEL_MATRIX_FOCAL_PLANES, SL);
-    matrixFrames.value = new int[] {sizeZ};
-    writeTag(matrixFrames);
+    DicomTag matrixFrames = new DicomTag(TOTAL_PIXEL_MATRIX_FOCAL_PLANES, UL);
+    matrixFrames.value = new long[] {sizeZ};
+    tags.add(matrixFrames);
 
     DicomTag bits = new DicomTag(BITS_ALLOCATED, US);
     bits.value = new short[] {(short) (bytesPerPixel * 8)};
-    writeTag(bits);
+    tags.add(bits);
 
-    DicomTag signed = new DicomTag(PIXEL_SIGN, US);
+    DicomTag signed = new DicomTag(PIXEL_SIGN, SS);
     boolean isSigned = FormatTools.isSigned(FormatTools.pixelTypeFromString(pixelType));
     signed.value = new short[] {(short) (isSigned ? 1 : 0)};
-    writeTag(signed);
+    tags.add(signed);
 
     DicomTag samplesPerPixel = new DicomTag(SAMPLES_PER_PIXEL, US);
     samplesPerPixel.value = new short[] {(short) nChannels};
-    writeTag(samplesPerPixel);
+    tags.add(samplesPerPixel);
 
     DicomTag dimensionOrganization = new DicomTag(DIMENSION_ORGANIZATION_TYPE, CS);
-    dimensionOrganization.value = sequential ? "TILED_FULL" : "TILED_SPARSE";
-    writeTag(dimensionOrganization);
+    dimensionOrganization.value = padString(sequential ? "TILED_FULL" : "TILED_SPARSE");
+    tags.add(dimensionOrganization);
 
     DicomTag seriesNumber = new DicomTag(SERIES_NUMBER, IS);
-    seriesNumber.value = "1 ";
+    seriesNumber.value = padString("1");
     DicomTag instanceNumber = new DicomTag(INSTANCE_NUMBER, IS);
-    instanceNumber.value = "1 ";
-    writeTag(seriesNumber);
+    instanceNumber.value = padString("1");
+    tags.add(seriesNumber);
 
     DicomTag photoInterp = new DicomTag(PHOTOMETRIC_INTERPRETATION, CS);
-    photoInterp.value = nChannels == 3 ? "RGB " : "MONOCHROME1 ";
-    writeTag(photoInterp);
+    photoInterp.value = padString(nChannels == 3 ? "RGB" : "MONOCHROME1");
+    tags.add(photoInterp);
+
+    tags.sort(new Comparator<DicomTag>() {
+      public int compare(DicomTag a, DicomTag b) {
+        return a.attribute.getTag() - b.attribute.getTag();
+      }
+    });
+    for (DicomTag tag : tags) {
+      writeTag(tag);
+    }
 
     DicomTag pixelData = new DicomTag(PIXEL_DATA, OB);
     writeTag(pixelData);
@@ -275,10 +287,8 @@ public class DicomWriter extends FormatWriter {
   private int getStoredLength(DicomTag tag) {
     if (tag.value != null) {
       if (tag.value instanceof String) {
-        /* debug */ System.out.println("using string length for " + tag.value);
         return ((String) tag.value).length();
       }
-      /* debug */ System.out.println(tag.vr + " width = " + tag.vr.getWidth());
       return tag.vr.getWidth() * Array.getLength(tag.value);
     }
     int length = 0;
@@ -385,6 +395,13 @@ public class DicomWriter extends FormatWriter {
           throw new IllegalArgumentException(String.valueOf(tag.vr.getCode()));
       }
     }
+  }
+
+  private String padString(String value) {
+    if (value.length() % 2 == 0) {
+      return value;
+    }
+    return value + " ";
   }
 
 }
