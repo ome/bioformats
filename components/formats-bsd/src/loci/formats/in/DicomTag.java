@@ -57,7 +57,7 @@ public class DicomTag {
 
   public Object value = null;
 
-  private int elementLength = 0;
+  public int elementLength = 0;
   private long start = 0;
 
   private boolean bigEndianTransferSyntax = false;

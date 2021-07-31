@@ -509,13 +509,13 @@ public class DicomReader extends SubResolutionFormatReader {
         case PIXEL_DATA:
         case ITEM:
         case INVALID_PIXEL_DATA:
-          if (tag.getValueStartPointer() < tag.getEndPointer()) {
+          if (tag.getValueStartPointer() <= tag.getEndPointer()) {
             baseOffset = tag.getValueStartPointer();
             decodingTags = false;
           }
           break;
         case VARIABLE_PIXEL_DATA:
-          if (tag.getValueStartPointer() < tag.getEndPointer()) {
+          if (tag.getValueStartPointer() <= tag.getEndPointer()) {
             baseOffset = location + 4;
             decodingTags = false;
           }
@@ -1469,6 +1469,10 @@ public class DicomReader extends SubResolutionFormatReader {
    */
   private void calculatePixelsOffsets(long baseOffset) throws FormatException, IOException {
     zOffsets = new ArrayList<Double>();
+
+    if (baseOffset == in.length()) {
+      return;
+    }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int plane = getSizeX() * getSizeY() * (lut == null ? getSizeC() : 1) * bpp;

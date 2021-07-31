@@ -78,14 +78,14 @@ public class DicomFileInfo implements Comparable<DicomFileInfo> {
   public int compareTo(DicomFileInfo info) {
     String[] infoTypeTokens = info.imageType.split("\\\\");
     String[] thisTypeTokens = this.imageType.split("\\\\");
-    int endIndex = (int) Math.min(infoTypeTokens.length, thisTypeTokens.length);
+    int endIndex = (int) Math.min(infoTypeTokens.length, thisTypeTokens.length) - 1;
     for (int i=2; i<endIndex; i++) {
       if (!infoTypeTokens[i].equals(thisTypeTokens[i])) {
         // this logic is intentional, the idea is to sort like this:
         //   ORIGINAL\PRIMARY\VOLUME\NONE
         //   DERIVED\PRIMARY\VOLUME\RESAMPLED
         //   DERIVED\PRIMARY\LABEL\NONE
-        if (i < endIndex - 1) {
+        if (i < endIndex) {
           return infoTypeTokens[i].compareTo(thisTypeTokens[i]);
         }
         else {
