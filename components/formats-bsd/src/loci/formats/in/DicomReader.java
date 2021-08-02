@@ -440,7 +440,7 @@ public class DicomReader extends SubResolutionFormatReader {
           break;
         case NUMBER_OF_FRAMES:
           double frames = tag.getNumberValue().doubleValue();
-          if (frames > 1.0) {
+          if (frames > 1.0 && frames > imagesPerFile) {
             imagesPerFile = (int) frames;
           }
           // this shouldn't take precedence over TOTAL_PIXEL_MATRIX_FOCAL_PLANES
@@ -470,13 +470,19 @@ public class DicomReader extends SubResolutionFormatReader {
           }
           break;
         case TOTAL_PIXEL_MATRIX_COLUMNS:
-          m.sizeX = tag.getNumberValue().intValue();
-          if (m.sizeZ == imagesPerFile) {
-            m.sizeZ = 1;
+          int mx = tag.getNumberValue().intValue();
+          if (m.sizeX == originalX) {
+            m.sizeX = mx;
+            if (m.sizeZ == imagesPerFile) {
+              m.sizeZ = 1;
+            }
           }
           break;
         case TOTAL_PIXEL_MATRIX_ROWS:
-          m.sizeY = tag.getNumberValue().intValue();
+          int my = tag.getNumberValue().intValue();
+          if (m.sizeY == originalY) {
+            m.sizeY = my;
+          }
           break;
         case TOTAL_PIXEL_MATRIX_FOCAL_PLANES:
           m.sizeZ = tag.getNumberValue().intValue();
@@ -511,7 +517,7 @@ public class DicomReader extends SubResolutionFormatReader {
         case INVALID_PIXEL_DATA:
           if (tag.getValueStartPointer() <= tag.getEndPointer()) {
             baseOffset = tag.getValueStartPointer();
-            decodingTags = false;
+            decodingTags = tag.getEndPointer() < in.length() && !isRLE && !isJPEG && !isJP2K;
           }
           break;
         case VARIABLE_PIXEL_DATA:
@@ -726,7 +732,7 @@ public class DicomReader extends SubResolutionFormatReader {
           updateCoreMetadata(info.coreMetadata);
 
           // image type is used to distinguish between downsampled resolutions and smaller separate images
-          if (!info.imageType.equals(prevInfo.imageType) && !info.imageType.endsWith("VOLUME\\RESAMPLED")) {
+          if (!info.imageType.equals(prevInfo.imageType) && info.imageType.indexOf("VOLUME") < 0) {
             core.add(info.coreMetadata);
           }
           else if (info.coreMetadata.sizeX != prevInfo.coreMetadata.sizeX &&
@@ -1437,7 +1443,12 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       else {
         // plane is not compressed
-        readPlane(stream, x, y, w, h, buf);
+        if (originalX > 0 && originalY > 0) {
+          readPlane(stream, x, y, w, h, 0, originalX, originalY, buf);
+        }
+        else {
+          readPlane(stream, x, y, w, h, buf);
+        }
       }
     }
   }
@@ -1475,7 +1486,7 @@ public class DicomReader extends SubResolutionFormatReader {
     }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int plane = getSizeX() * getSizeY() * (lut == null ? getSizeC() : 1) * bpp;
+    int plane = originalX * originalY * (lut == null ? getSizeC() : 1) * bpp;
 
     in.seek(baseOffset - 12);
     int len = in.readInt();
