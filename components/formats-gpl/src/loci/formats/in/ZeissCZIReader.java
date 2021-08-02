@@ -2111,11 +2111,16 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       plane.planeIndex = getIndex(z, c, t);
-      int seriesIndex = FormatTools.positionToRaster(extraLengths, extra);
-      plane.resolutionIndex = plane.coreIndex;
-      plane.coreIndex += seriesIndex * (maxResolution + 1);
-      LOGGER.trace("    assigned plane index = {}; series index = {}; coreIndex = {}",
-        plane.planeIndex, seriesIndex, plane.coreIndex);
+      if (plane.pixelTypeIndex > 0) {
+        plane.coreIndex = plane.pixelTypeIndex;
+      }
+      else {
+        int seriesIndex = FormatTools.positionToRaster(extraLengths, extra);
+        plane.resolutionIndex = plane.coreIndex;
+        plane.coreIndex += seriesIndex * (maxResolution + 1);
+        LOGGER.trace("    assigned plane index = {}; series index = {}; coreIndex = {}",
+          plane.planeIndex, seriesIndex, plane.coreIndex);
+      }
     }
   }
 
