@@ -2043,7 +2043,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       if (channelNames.size() < getEffectiveSizeC() && backupHandler != null) {
         channelNames = backupHandler.getChannelNames();
       }
-      else if (channelNames.size() < getEffectiveSizeC()) {
+      if (channelNames.size() < getEffectiveSizeC()) {
         channelNames = textChannelNames;
       }
       for (int c=0; c<getEffectiveSizeC(); c++) {
