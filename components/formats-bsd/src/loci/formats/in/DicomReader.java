@@ -116,6 +116,7 @@ public class DicomReader extends SubResolutionFormatReader {
   private String originalDate, originalTime, originalInstance;
   private int originalSeries;
   private int originalX, originalY;
+  private String originalSpecimen;
 
   private List<String> companionFiles = new ArrayList<String>();
 
@@ -331,6 +332,7 @@ public class DicomReader extends SubResolutionFormatReader {
       inverted = false;
       date = time = imageType = null;
       originalDate = originalTime = originalInstance = null;
+      originalSpecimen = null;
       instanceUID = null;
       originalSeries = 0;
       originalX = 0;
@@ -594,6 +596,12 @@ public class DicomReader extends SubResolutionFormatReader {
             }
           }
 
+          break;
+        case SPECIMEN_DESCRIPTION_SEQUENCE:
+          DicomTag specimenID = tag.lookupChild(SPECIMEN_ID);
+          if (specimenID != null) {
+            originalSpecimen = specimenID.getStringValue();
+          }
           break;
         default:
           in.seek(tag.getEndPointer());
@@ -1089,6 +1097,7 @@ public class DicomReader extends SubResolutionFormatReader {
   {
     int currentX = 0, currentY = 0;
     int fileSeries = -1;
+    String thisSpecimen = null;
 
     String date = null, time = null, instance = null;
     String thisInstanceUID = null;
@@ -1107,7 +1116,8 @@ public class DicomReader extends SubResolutionFormatReader {
       boolean odd = false;
       long currentLocation = stream.getFilePointer();
       while (date == null || time == null || instance == null ||
-        (checkSeries && fileSeries < 0) || currentX == 0 || currentY == 0)
+        (checkSeries && fileSeries < 0) || currentX == 0 || currentY == 0 ||
+        (originalSpecimen != null && thisSpecimen == null))
       {
         long fp = stream.getFilePointer();
         if (fp + 4 >= stream.length() || fp < 0) break;
@@ -1115,14 +1125,18 @@ public class DicomReader extends SubResolutionFormatReader {
 
         odd = (currentLocation & 1) != 0;
 
-        if (tag.attribute == null || tag.value == null ||
-          tag.getValueStartPointer() == tag.getEndPointer())
-        {
+        if (tag.attribute == null || (tag.value == null && tag.children.size() == 0)) {
           stream.seek(tag.getEndPointer());
           continue;
         }
 
         switch (tag.attribute) {
+          case SPECIMEN_DESCRIPTION_SEQUENCE:
+            DicomTag specimenID = tag.lookupChild(SPECIMEN_ID);
+            if (specimenID != null) {
+              thisSpecimen = specimenID.getStringValue();
+            }
+            break;
           case SOP_INSTANCE_UID:
             thisInstanceUID = tag.getStringValue();
             break;
@@ -1143,7 +1157,7 @@ public class DicomReader extends SubResolutionFormatReader {
             date = tag.getStringValue();
             break;
           case SERIES_NUMBER:
-            fileSeries = tag.getNumberValue().intValue();
+            fileSeries = parseIntValue(tag.getNumberValue(), 0);
             break;
           case ROWS:
             currentY = (int) Math.max(currentY, tag.getNumberValue().intValue());
@@ -1170,12 +1184,17 @@ public class DicomReader extends SubResolutionFormatReader {
     LOGGER.warn("  fileSeries = {}, originalSeries = {}", fileSeries, originalSeries);
     LOGGER.warn("  currentX = {}, originalX = {}", currentX, originalX);
     LOGGER.warn("  currentY = {}, originalY = {}", currentY, originalY);
+    LOGGER.warn("  thisSpecimen = {}, originalSpecimen = {}", thisSpecimen, originalSpecimen);
+
+    boolean noSpecimens = originalSpecimen == null && thisSpecimen == null;
+    boolean oneNullSpecimen = originalSpecimen == null || thisSpecimen == null;
 
     // can't group a different series, or same instance and series as original file
     // unless the file we're checking is a DICOMDIR
     boolean dicomdir = new Location(file).getName().equals("DICOMDIR");
     if (date == null || time == null || instance == null ||
-      (checkSeries && fileSeries != originalSeries))
+      (checkSeries && fileSeries != originalSeries) ||
+      (!noSpecimens && oneNullSpecimen) || (!noSpecimens && !originalSpecimen.equals(thisSpecimen)))
     {
       return;
     }
@@ -1247,11 +1266,20 @@ public class DicomReader extends SubResolutionFormatReader {
    * incorrectly use that format.
    */
   private long getTimestampMicroseconds(String v) {
-    if (v == null || v.isEmpty()) {
+    if (v == null) {
       return 0;
     }
     v = v.trim();
     v = v.replaceAll(":", "");
+    if (v.indexOf("+") >= 0) {
+      v = v.substring(0, v.indexOf("+"));
+    }
+    if (v.indexOf("-") >= 0) {
+      v = v.substring(0, v.indexOf("-"));
+    }
+    if (v.isEmpty()) {
+      return 0;
+    }
     int hours = Integer.parseInt(v.substring(0, 2));
     long total = hours * 60 * 60;
     if (v.length() > 2) {

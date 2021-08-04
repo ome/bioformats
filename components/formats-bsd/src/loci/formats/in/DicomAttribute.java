@@ -692,6 +692,8 @@ public enum DicomAttribute {
     DIMENSION_ORGANIZATION_UID(0x00209164, "Dimension Organization UID"),
     DIMENSION_ORGANIZATION_SEQUENCE(0x00209221, "Dimension Organization Sequence", SQ),
     DIMENSION_DESCRIPTION_LABEL(0x00209421, "Dimension Description Label"),
+    SPECIMEN_ID(0x00400551, "Specimen Identifier", LO),
+    SPECIMEN_DESCRIPTION_SEQUENCE(0x00400560, "Specimen Description Sequence", SQ),
     X_OFFSET_IN_SLIDE(0x0040072a, "X Offset in Slide Coordinate System"),
     Y_OFFSET_IN_SLIDE(0x0040073a, "Y Offset in Slide Coordinate System"),
     Z_OFFSET_IN_SLIDE(0x0040074a, "Z Offset in Slide Coordinate System"),
