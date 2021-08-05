@@ -784,6 +784,7 @@ public final class ImageConverter {
       // this is a "big image" or an output tile size was set, so we will attempt
       // to convert it one tile at a time
 
+      // TODO: once convertTilePlane is fixed, this needs to allow DicomWriter too
       if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
         (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
       {
@@ -839,6 +840,7 @@ public final class ImageConverter {
       nYTiles++;
     }
 
+    // TODO: assumes TIFF, needs to handle DICOM too
     IFD ifd = new IFD();
     ifd.put(IFD.TILE_WIDTH, w);
     ifd.put(IFD.TILE_LENGTH, h);
@@ -911,7 +913,8 @@ public final class ImageConverter {
           outputX = 0;
           outputY = 0;
         }
-        
+
+        // TODO: assumes TIFF
         if (writer instanceof TiffWriter) {
           ((TiffWriter) writer).saveBytes(outputIndex, buf,
             ifd, outputX, outputY, tileWidth, tileHeight);
