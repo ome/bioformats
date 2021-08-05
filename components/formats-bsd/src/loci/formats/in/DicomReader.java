@@ -1364,7 +1364,7 @@ public class DicomReader extends SubResolutionFormatReader {
         return;
       }
       stream.seek(tile.fileOffset);
-      LOGGER.warn("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
+      LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
 
       if (tile.isRLE) {
         // plane is compressed using run-length encoding
