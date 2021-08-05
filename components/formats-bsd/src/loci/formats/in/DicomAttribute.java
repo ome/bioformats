@@ -689,6 +689,8 @@ public enum DicomAttribute {
     DIMENSION_INDEX_PRIVATE_CREATOR(0x00209213, "Dimension Index Private Creator"),
     FUNCTIONAL_GROUP_POINTER(0x00209167, "Functional Group Pointer"),
     FUNCTIONAL_GROUP_PRIVATE_CREATOR(0x00209238, "Functional Group Private Creator"),
+    IN_CONCATENATION_NUMBER(0x00209162, "In-concatenation Number", US),
+    CONCATENATION_FRAME_OFFSET_NUMBER(0x00209228, "Concatenation Frame Offset Number", UL),
     DIMENSION_ORGANIZATION_UID(0x00209164, "Dimension Organization UID"),
     DIMENSION_ORGANIZATION_SEQUENCE(0x00209221, "Dimension Organization Sequence", SQ),
     DIMENSION_DESCRIPTION_LABEL(0x00209421, "Dimension Description Label"),

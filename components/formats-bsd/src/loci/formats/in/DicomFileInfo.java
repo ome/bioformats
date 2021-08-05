@@ -43,6 +43,7 @@ import loci.formats.FormatException;
 public class DicomFileInfo implements Comparable<DicomFileInfo> {
   public CoreMetadata coreMetadata;
   public String file;
+  public int concatenationIndex = 0;
   public List<DicomTile> tiles;
   public String imageType;
   public List<Double> zOffsets;
@@ -71,6 +72,7 @@ public class DicomFileInfo implements Comparable<DicomFileInfo> {
       tiles = reader.getTiles();
       imageType = reader.getImageType();
       zOffsets = reader.getZOffsets();
+      concatenationIndex = reader.getConcatenationIndex();
     }
   }
 
@@ -105,6 +107,10 @@ public class DicomFileInfo implements Comparable<DicomFileInfo> {
     if (infoY != thisY) {
       return infoY - thisY;
     }
-    return 0;
+    if (this.zOffsets.size() > 0 && info.zOffsets.size() > 0) {
+      return this.zOffsets.get(0).compareTo(info.zOffsets.get(0));
+    }
+
+    return this.concatenationIndex - info.concatenationIndex;
   }
 }
