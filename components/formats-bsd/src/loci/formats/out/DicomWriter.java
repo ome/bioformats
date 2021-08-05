@@ -66,6 +66,9 @@ public class DicomWriter extends FormatWriter {
 
   private long pixelDataLengthPointer = 0;
   private int pixelDataSize = 0;
+  private long transferSyntaxPointer = 0;
+  private int tileWidth = 0;
+  private int tileHeight = 0;
 
   // -- Constructor --
 
@@ -95,6 +98,11 @@ public class DicomWriter extends FormatWriter {
       throw new FormatException("Non-sequential writing not yet supported");
     }
 
+    if (no == 0) {
+      out.seek(transferSyntaxPointer);
+      out.writeBytes(getTransferSyntax());
+    }
+
     MetadataRetrieve retrieve = getMetadataRetrieve();
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
@@ -103,6 +111,7 @@ public class DicomWriter extends FormatWriter {
     out.seek(out.length());
     long start = out.getFilePointer();
 
+    // TODO: JPEG and JPEG-2000 not working yet, don't quite conform to transfer syntax
     if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
       out.write(buf);
     }
@@ -112,6 +121,9 @@ public class DicomWriter extends FormatWriter {
       options.width = w;
       options.height = h;
       options.channels = getSamplesPerPixel();
+      options.bitsPerSample = bytesPerPixel * 8;
+      options.littleEndian = out.isLittleEndian();
+      options.interleaved = interleaved;
       out.write(codec.compress(buf, options));
     }
     else if (compression.equals(CompressionType.J2K.getCompression())) {
@@ -129,8 +141,11 @@ public class DicomWriter extends FormatWriter {
 
     long length = out.getFilePointer() - start;
     pixelDataSize += (int) length;
-    out.seek(pixelDataLengthPointer);
-    out.writeInt(pixelDataSize);
+
+    if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
+      out.seek(pixelDataLengthPointer);
+      out.writeInt(pixelDataSize);
+    }
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -151,6 +166,10 @@ public class DicomWriter extends FormatWriter {
   @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
+
+    if (out.length() != 0) {
+      return;
+    }
 
     // TODO: only writes one file, no resolution support yet
 
@@ -185,41 +204,27 @@ public class DicomWriter extends FormatWriter {
 
     // see http://dicom.nema.org/dicom/2013/output/chtml/part05/sect_A.4.html
     DicomTag transferSyntax = new DicomTag(TRANSFER_SYNTAX_UID, UI);
-    if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
-      if (littleEndian) {
-        transferSyntax.value = "1.2.840.10008.1.2.1";
-      }
-      else {
-        transferSyntax.value = "1.2.840.10008.1.2.2";
-      }
-    }
-    else if (compression.equals(CompressionType.J2K.getCompression())) {
-      transferSyntax.value = "1.2.840.10008.1.2.4.91";
-    }
-    else if (compression.equals(CompressionType.JPEG.getCompression())) {
-      transferSyntax.value = "1.2.840.10008.1.2.4.50";
-    }
-    transferSyntax.value = padString((String) transferSyntax.value);
+    transferSyntax.elementLength = 22;
     tags.add(transferSyntax);
 
     DicomTag planarConfig = new DicomTag(PLANAR_CONFIGURATION, US);
-    planarConfig.value = new short[] {(short) (interleaved ? 1 : 0)};
+    planarConfig.value = new short[] {(short) (interleaved ? 0 : 1)};
     tags.add(planarConfig);
 
     DicomTag rows = new DicomTag(ROWS, US);
-    rows.value = new short[] {(short) tileWidth};
+    rows.value = new short[] {(short) tileHeight};
     tags.add(rows);
 
     DicomTag columns = new DicomTag(COLUMNS, US);
-    columns.value = new short[] {(short) tileHeight};
+    columns.value = new short[] {(short) tileWidth};
     tags.add(columns);
 
     DicomTag matrixRows = new DicomTag(TOTAL_PIXEL_MATRIX_ROWS, UL);
-    matrixRows.value = new long[] {width};
+    matrixRows.value = new long[] {height};
     tags.add(matrixRows);
 
     DicomTag matrixColumns = new DicomTag(TOTAL_PIXEL_MATRIX_COLUMNS, UL);
-    matrixColumns.value = new long[] {height};
+    matrixColumns.value = new long[] {width};
     tags.add(matrixColumns);
 
     int tileCountX = (int) Math.ceil((double) width / tileWidth);
@@ -256,7 +261,7 @@ public class DicomWriter extends FormatWriter {
     tags.add(seriesNumber);
 
     DicomTag photoInterp = new DicomTag(PHOTOMETRIC_INTERPRETATION, CS);
-    photoInterp.value = padString(nChannels == 3 ? "RGB" : "MONOCHROME1");
+    photoInterp.value = padString(nChannels == 3 ? "RGB" : "MONOCHROME2");
     tags.add(photoInterp);
 
     tags.sort(new Comparator<DicomTag>() {
@@ -269,6 +274,7 @@ public class DicomWriter extends FormatWriter {
     }
 
     DicomTag pixelData = new DicomTag(PIXEL_DATA, OB);
+    pixelData.elementLength = (int) 0xffffffff;
     writeTag(pixelData);
     pixelDataLengthPointer = out.getFilePointer() - 4;
   }
@@ -280,11 +286,39 @@ public class DicomWriter extends FormatWriter {
 
     pixelDataSize = 0;
     pixelDataLengthPointer = 0;
+    transferSyntaxPointer = 0;
+
+    // intentionally don't reset tile dimensions
+  }
+
+  @Override
+  public int setTileSizeX(int tileSize) throws FormatException {
+    tileWidth = tileSize;
+    return tileWidth;
+  }
+
+  @Override
+  public int getTileSizeX() {
+    return tileWidth;
+  }
+
+  @Override
+  public int setTileSizeY(int tileSize) throws FormatException {
+    tileHeight = tileSize;
+    return tileHeight;
+  }
+
+  @Override
+  public int getTileSizeY() {
+    return tileHeight;
   }
 
   // -- Helper methods --
 
   private int getStoredLength(DicomTag tag) {
+    if (tag.elementLength != 0) {
+      return tag.elementLength;
+    }
     if (tag.value != null) {
       if (tag.value instanceof String) {
         return ((String) tag.value).length();
@@ -299,9 +333,6 @@ public class DicomWriter extends FormatWriter {
   }
 
   private void writeTag(DicomTag tag) throws IOException {
-    if (tag.children.size() == 0 && tag.value == null && tag.attribute != PIXEL_DATA) {
-      return;
-    }
     int tagCode = tag.attribute.getTag();
 
     out.writeShort((short) ((tagCode & 0xffff0000) >> 16));
@@ -320,6 +351,16 @@ public class DicomWriter extends FormatWriter {
     }
     else {
       out.writeShort((short) getStoredLength(tag));
+    }
+
+    if (tag.attribute == TRANSFER_SYNTAX_UID) {
+      transferSyntaxPointer = out.getFilePointer();
+    }
+    if (tag.children.size() == 0 && tag.value == null) {
+      if (tag.attribute != PIXEL_DATA) {
+        out.skipBytes(tag.elementLength);
+      }
+      return;
     }
 
     if (tag.children.size() > 0) {
@@ -402,6 +443,25 @@ public class DicomWriter extends FormatWriter {
       return value;
     }
     return value + " ";
+  }
+
+  private String getTransferSyntax() {
+    String transferSyntax = null;
+    if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
+      if (out.isLittleEndian()) {
+        transferSyntax = "1.2.840.10008.1.2.1";
+      }
+      else {
+        transferSyntax = "1.2.840.10008.1.2.2";
+      }
+    }
+    else if (compression.equals(CompressionType.J2K.getCompression())) {
+      transferSyntax = "1.2.840.10008.1.2.4.91";
+    }
+    else if (compression.equals(CompressionType.JPEG.getCompression())) {
+      transferSyntax = "1.2.840.10008.1.2.4.50";
+    }
+    return padString(transferSyntax);
   }
 
 }
