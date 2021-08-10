@@ -90,6 +90,7 @@ public class SVSReader extends BaseTiffReader {
   private ArrayList<String> dyeNames = new ArrayList<String>();
 
   private transient Color displayColor = null;
+  private transient int extraImages = 0;
 
   // -- Constructor --
 
@@ -218,6 +219,7 @@ public class SVSReader extends BaseTiffReader {
       time = null;
       dyeNames.clear();
       displayColor = null;
+      extraImages = 0;
     }
   }
 
@@ -270,6 +272,8 @@ public class SVSReader extends BaseTiffReader {
 
     HashSet<Double> uniqueZ = new HashSet<Double>();
 
+    int labelIndex = -1;
+    int macroIndex = -1;
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       int index = getIFDIndex(i, 0);
@@ -295,6 +299,12 @@ public class SVSReader extends BaseTiffReader {
               zPosition[index] = DataTools.parseDouble(value);
             }
           }
+          else if (t.toLowerCase().startsWith("label")) {
+            labelIndex = i;
+          }
+          else if (t.toLowerCase().startsWith("macro")) {
+            macroIndex = i;
+          }
         }
       }
       if (zPosition[index] != null) {
@@ -303,11 +313,23 @@ public class SVSReader extends BaseTiffReader {
     }
     setSeries(0);
 
+    // based on whether label and/or macro are present,
+    // determine how many resolutions in pyramid
+
+    int resolutions = getSeriesCount();
+    if (labelIndex >= 0) {
+      resolutions--;
+    }
+    if (macroIndex >= 0) {
+      resolutions--;
+    }
+    extraImages = getSeriesCount() - resolutions;
+
     // repopulate core metadata
 
     // remove any invalid pyramid resolutions
     IFD firstIFD = ifds.get(getIFDIndex(0, 0));
-    for (int s=1; s<getSeriesCount() - 2; s++) {
+    for (int s=1; s<resolutions; s++) {
       int index = getIFDIndex(s, 0);
       IFD ifd = ifds.get(index);
       tiffParser.fillInIFD(ifd);
@@ -328,16 +350,17 @@ public class SVSReader extends BaseTiffReader {
     }
     zPosition = uniqueZ.toArray(new Double[uniqueZ.size()]);
     Arrays.sort(zPosition);
-    seriesCount = ((ifds.size() - 2) / uniqueZ.size()) + 2;
+    seriesCount = ((ifds.size() - extraImages) / uniqueZ.size()) + extraImages;
 
     core.clear();
-    if (seriesCount > 2) {
+    if (seriesCount > extraImages) {
       core.add();
-      for (int r=0; r < seriesCount - 2; r++) {
+      for (int r=0; r < seriesCount - extraImages; r++) {
         core.add(0, new SVSCoreMetadata());
       }
-      core.add(new SVSCoreMetadata());
-      core.add(new SVSCoreMetadata());
+      for (int extra=0; extra<extraImages; extra++) {
+        core.add(new SVSCoreMetadata());
+      }
     }
     else {
       // Should never happen unless the SVS is corrupt?
@@ -352,8 +375,8 @@ public class SVSReader extends BaseTiffReader {
 
       SVSCoreMetadata ms = (SVSCoreMetadata) core.get(pos[0], pos[1]);
 
-      if (s == 0 && seriesCount > 2) {
-        ms.resolutionCount = seriesCount - 2;
+      if (s == 0 && seriesCount > extraImages) {
+        ms.resolutionCount = seriesCount - extraImages;
       }
 
       IFD ifd = ifds.get(getIFDIndex(s, 0));
@@ -364,7 +387,7 @@ public class SVSReader extends BaseTiffReader {
 
       ms.sizeX = (int) ifd.getImageWidth();
       ms.sizeY = (int) ifd.getImageLength();
-      if (s < seriesCount - 2) {
+      if (s < seriesCount - extraImages) {
         ms.sizeZ = uniqueZ.size();
       }
       else {
@@ -472,7 +495,7 @@ public class SVSReader extends BaseTiffReader {
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
 
-      if (hasFlattenedResolutions() || i > 2) {
+      if (hasFlattenedResolutions() || i > extraImages) {
         store.setImageName("Series " + (i + 1), i);
       }
       else {
