@@ -219,10 +219,15 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
     if (restartInterval == 1 && restartMarkers.size() <= 1) {
       // interval and markers are not present or invalid
-      LOGGER.warn("Restart interval and markers invalid, attempting to read as single tile");
-      xTiles = 1;
-      yTiles = 1;
-      tileDim = (int) Math.max(imageWidth, imageHeight);
+      if (imageWidth < 8192 || imageHeight < 8192) {
+        LOGGER.warn("Restart interval and markers invalid, attempting to read as single tile");
+        xTiles = 1;
+        yTiles = 1;
+        tileDim = (int) Math.max(imageWidth, imageHeight);
+      }
+      else {
+        throw new IOException("Restart interval and markers invalid");
+      }
     }
   }
 
