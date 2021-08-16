@@ -74,6 +74,7 @@ import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.out.DicomWriter;
 import loci.formats.ome.OMEPyramidStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
@@ -678,6 +679,9 @@ public final class ImageConverter {
 
         total += numImages;
 
+        writer.setTileSizeX(saveTileWidth);
+        writer.setTileSizeY(saveTileHeight);
+
         int count = 0;
         for (int i=startPlane; i<endPlane; i++) {
           int[] coords = reader.getZCTCoords(i);
@@ -784,10 +788,7 @@ public final class ImageConverter {
       // this is a "big image" or an output tile size was set, so we will attempt
       // to convert it one tile at a time
 
-      // TODO: once convertTilePlane is fixed, this needs to allow DicomWriter too
-      if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
-        (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
-      {
+      if (isTiledWriter(writer, out)) {
         return convertTilePlane(writer, index, outputIndex, currentFile);
       }
     }
@@ -914,7 +915,6 @@ public final class ImageConverter {
           outputY = 0;
         }
 
-        // TODO: assumes TIFF
         if (writer instanceof TiffWriter) {
           ((TiffWriter) writer).saveBytes(outputIndex, buf,
             ifd, outputX, outputY, tileWidth, tileHeight);
@@ -925,6 +925,12 @@ public final class ImageConverter {
             ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
               outputX, outputY, tileWidth, tileHeight);
           }
+          else {
+            writer.saveBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
+          }
+        }
+        else {
+          writer.saveBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
         }
       }
     }
@@ -1088,6 +1094,15 @@ public final class ImageConverter {
       FormatTools.getBytesPerPixel(type), reader.isLittleEndian(),
       FormatTools.isFloatingPoint(type), reader.getRGBChannelCount(),
       reader.isInterleaved());
+  }
+
+  private boolean isTiledWriter(IFormatWriter writer, String outputFile)
+    throws FormatException
+  {
+    if (writer instanceof ImageWriter) {
+      return isTiledWriter(((ImageWriter) writer).getWriter(outputFile), outputFile);
+    }
+    return (writer instanceof TiffWriter) || (writer instanceof DicomWriter);
   }
 
   // -- Main method --

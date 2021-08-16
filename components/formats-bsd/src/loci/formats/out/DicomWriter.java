@@ -111,32 +111,50 @@ public class DicomWriter extends FormatWriter {
     out.seek(out.length());
     long start = out.getFilePointer();
 
+    byte[] paddedBuf = null;
+
+    // pad the last row and column of tiles to match specified tile size
+    if ((x + w == getSizeX() && w < tileWidth) ||
+      (y + h == getSizeY() && h < tileHeight))
+    {
+      int srcRowLen = w * bytesPerPixel * getSamplesPerPixel();
+      int destRowLen = tileWidth * bytesPerPixel * getSamplesPerPixel();
+      paddedBuf = new byte[tileHeight * destRowLen];
+
+      for (int row=0; row<h; row++) {
+        System.arraycopy(buf, row * srcRowLen, paddedBuf, row * destRowLen, srcRowLen);
+      }
+    }
+    else {
+      paddedBuf = buf;
+    }
+
     // TODO: JPEG and JPEG-2000 not working yet, don't quite conform to transfer syntax
     if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
-      out.write(buf);
+      out.write(paddedBuf);
     }
     else if (compression.equals(CompressionType.JPEG.getCompression())) {
       JPEGCodec codec = new JPEGCodec();
       CodecOptions options = new CodecOptions();
-      options.width = w;
-      options.height = h;
+      options.width = tileWidth;
+      options.height = tileHeight;
       options.channels = getSamplesPerPixel();
       options.bitsPerSample = bytesPerPixel * 8;
       options.littleEndian = out.isLittleEndian();
       options.interleaved = interleaved;
-      out.write(codec.compress(buf, options));
+      out.write(codec.compress(paddedBuf, options));
     }
     else if (compression.equals(CompressionType.J2K.getCompression())) {
       JPEG2000CodecOptions options = new JPEG2000CodecOptions();
-      options.width = w;
-      options.height = h;
+      options.width = tileWidth;
+      options.height = tileHeight;
       options.channels = getSamplesPerPixel();
       options.bitsPerSample = bytesPerPixel * 8;
       options.littleEndian = out.isLittleEndian();
       options.interleaved = interleaved;
 
       JPEG2000Codec codec = new JPEG2000Codec();
-      out.write(codec.compress(buf, options));
+      out.write(codec.compress(paddedBuf, options));
     }
 
     long length = out.getFilePointer() - start;
