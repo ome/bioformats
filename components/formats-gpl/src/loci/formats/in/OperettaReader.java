@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -632,6 +633,7 @@ public class OperettaReader extends FormatReader {
 
     private String currentName;
     private Plane activePlane;
+    private Channel activeChannel;
 
     private String displayName;
     private String plateID;
@@ -641,6 +643,7 @@ public class OperettaReader extends FormatReader {
     private String plateDescription;
     private int plateRows, plateCols;
     private ArrayList<Plane> planes = new ArrayList<Plane>();
+    private HashMap<Integer, Channel> channels = new HashMap<Integer, Channel>();
 
     private final StringBuilder currentValue = new StringBuilder();
 
@@ -702,6 +705,11 @@ public class OperettaReader extends FormatReader {
       if (qName.equals("Image") && attributes.getValue("id") == null) {
         activePlane = new Plane();
       }
+      else if (qName.equals("Entry") && attributes.getValue("ChannelID") != null) {
+        int channel = Integer.parseInt(attributes.getValue("ChannelID"));
+        activeChannel = new Channel();
+        channels.put(channel, activeChannel);
+      }
       else if (qName.equals("EvaluationInputData")) {
         isHarmony = attributes.getValue("xmlns").indexOf(HARMONY_MAGIC) > 0;
       }
@@ -734,7 +742,139 @@ public class OperettaReader extends FormatReader {
       else if ("PlateColumns".equals(currentName)) {
         plateCols = Integer.parseInt(value);
       }
-      else if (activePlane != null) {
+      else if (activePlane != null || activeChannel != null) {
+        if ("ImageSizeX".equals(currentName)) {
+          int x = Integer.parseInt(value);
+          if (activePlane != null) {
+            activePlane.x = x;
+          }
+          else if (activeChannel != null) {
+            activeChannel.x = x;
+          }
+        }
+        else if ("ImageSizeY".equals(currentName)) {
+          int y = Integer.parseInt(value);
+          if (activePlane != null) {
+            activePlane.y = y;
+          }
+          else if (activeChannel != null) {
+            activeChannel.y = y;
+          }
+        }
+        else if ("ChannelName".equals(currentName)) {
+          if (activePlane != null) {
+            activePlane.channelName = value;
+          }
+          else if (activeChannel != null) {
+            activeChannel.channelName = value;
+          }
+        }
+        else if ("ImageResolutionX".equals(currentName)) {
+          // resolution stored in meters
+          Double resolution = Double.parseDouble(value) * 1000000;
+          if (activePlane != null) {
+            activePlane.resolutionX = resolution;
+          }
+          else if (activeChannel != null) {
+            activeChannel.resolutionX = resolution;
+          }
+        }
+        else if ("ImageResolutionY".equals(currentName)) {
+          // resolution stored in meters
+          Double resolution = Double.parseDouble(value) * 1000000;
+          if (activePlane != null) {
+            activePlane.resolutionY = resolution;
+          }
+          else if (activeChannel != null) {
+            activeChannel.resolutionY = resolution;
+          }
+        }
+        else if ("ObjectiveMagnification".equals(currentName)) {
+          Double mag = Double.parseDouble(value);
+          if (activePlane != null) {
+            activePlane.magnification = mag;
+          }
+          else if (activeChannel != null) {
+            activeChannel.magnification = mag;
+          }
+        }
+        else if ("ObjectiveNA".equals(currentName)) {
+          Double na = Double.parseDouble(value);
+          if (activePlane != null) {
+            activePlane.lensNA = na;
+          }
+          else if (activeChannel != null) {
+            activeChannel.lensNA = na;
+          }
+        }
+        else if ("MainEmissionWavelength".equals(currentName)) {
+          Double wavelength = Double.parseDouble(value);
+          if (activePlane != null) {
+            activePlane.emWavelength = wavelength;
+          }
+          else if (activeChannel != null) {
+            activeChannel.emWavelength = wavelength;
+          }
+        }
+        else if ("MainExcitationWavelength".equals(currentName)) {
+          Double wavelength = Double.parseDouble(value);
+          if (activePlane != null) {
+            activePlane.exWavelength = wavelength;
+          }
+          else if (activeChannel != null) {
+            activeChannel.exWavelength = wavelength;
+          }
+        }
+        else if ("ExposureTime".equals(currentName)) {
+          Time time = new Time(Double.parseDouble(value), UNITS.SECOND);
+          if (activePlane != null) {
+            activePlane.exposureTime = time;
+          }
+          else if (activeChannel != null) {
+            activeChannel.exposureTime = time;
+          }
+        }
+        else if ("AcquisitionType".equals(currentName)) {
+          if (activePlane != null) {
+            activePlane.acqType = value;
+          }
+          else if (activeChannel != null) {
+            activeChannel.acqType = value;
+          }
+        }
+        else if ("ChannelType".equals(currentName)) {
+          if (activePlane != null) {
+            activePlane.channelType = value;
+          }
+          else if (activeChannel != null) {
+            activeChannel.channelType = value;
+          }
+        }
+        else if ("OrientationMatrix".equals(currentName)) {
+          // matrix that indicates how to interpret plane position values
+          String[] rows = value.split("]");
+          Double[][] matrix = new Double[rows.length][];
+          for (int i=0; i<rows.length; i++) {
+            rows[i] = rows[i].replaceAll("\\[", "").replaceAll(",", " ");
+            String[] values = rows[i].trim().split(" ");
+            matrix[i] = new Double[values.length];
+            for (int j=0; j<matrix[i].length; j++) {
+              matrix[i][j] = DataTools.parseDouble(values[j]);
+            }
+          }
+          if (matrix.length > 2 && matrix[0].length > 0 &&
+            matrix[1].length > 1 && matrix[2].length > 2)
+          {
+            if (activePlane != null) {
+              activePlane.orientationMatrix = matrix;
+            }
+            else if (activeChannel != null) {
+              activeChannel.orientationMatrix = matrix;
+            }
+          }
+        }
+      }
+      if (activePlane != null) {
         if ("URL".equals(currentName)) {
           if (value.length() > 0) {
             if (value.startsWith("http")) {
@@ -759,28 +899,11 @@ public class OperettaReader extends FormatReader {
         else if ("PlaneID".equals(currentName)) {
           activePlane.z = Integer.parseInt(value);
         }
-        else if ("ImageSizeX".equals(currentName)) {
-          activePlane.x = Integer.parseInt(value);
-        }
-        else if ("ImageSizeY".equals(currentName)) {
-          activePlane.y = Integer.parseInt(value);
-        }
         else if ("TimepointID".equals(currentName)) {
           activePlane.t = Integer.parseInt(value);
         }
         else if ("ChannelID".equals(currentName)) {
           activePlane.c = Integer.parseInt(value);
-        }
-        else if ("ChannelName".equals(currentName)) {
-          activePlane.channelName = value;
-        }
-        else if ("ImageResolutionX".equals(currentName)) {
-          // resolution stored in meters
-          activePlane.resolutionX = Double.parseDouble(value) * 1000000;
-        }
-        else if ("ImageResolutionY".equals(currentName)) {
-          // resolution stored in meters
-          activePlane.resolutionY = Double.parseDouble(value) * 1000000;
         }
         else if ("PositionX".equals(currentName)) {
           // position stored in meters
@@ -802,61 +925,71 @@ public class OperettaReader extends FormatReader {
           // see "OrientationMatrix" below
           activePlane.positionZ = new Length(meters, UNITS.METRE);
         }
-        else if ("ObjectiveMagnification".equals(currentName)) {
-          activePlane.magnification = Double.parseDouble(value);
-        }
-        else if ("ObjectiveNA".equals(currentName)) {
-          activePlane.lensNA = Double.parseDouble(value);
-        }
-        else if ("MainEmissionWavelength".equals(currentName)) {
-          activePlane.emWavelength = Double.parseDouble(value);
-        }
-        else if ("MainExcitationWavelength".equals(currentName)) {
-          activePlane.exWavelength = Double.parseDouble(value);
-        }
-        else if ("ExposureTime".equals(currentName)) {
-          activePlane.exposureTime = new Time(Double.parseDouble(value), UNITS.SECOND);
-        }
         else if ("MeasurementTimeOffset".equals(currentName)) {
           activePlane.deltaT = new Time(Double.parseDouble(value), UNITS.SECOND);
         }
         else if ("AbsTime".equals(currentName)) {
           activePlane.absoluteTime = new Timestamp(value);
         }
-        else if ("AcquisitionType".equals(currentName)) {
-          activePlane.acqType = value;
-        }
-        else if ("ChannelType".equals(currentName)) {
-          activePlane.channelType = value;
-        }
-        else if ("OrientationMatrix".equals(currentName)) {
-          // matrix that indicates how to interpret plane position values
-          String[] rows = value.split("]");
-          Double[][] matrix = new Double[rows.length][];
-          for (int i=0; i<rows.length; i++) {
-            rows[i] = rows[i].replaceAll("\\[", "").replaceAll(",", " ");
-            String[] values = rows[i].trim().split(" ");
-            matrix[i] = new Double[values.length];
-            for (int j=0; j<matrix[i].length; j++) {
-              matrix[i][j] = DataTools.parseDouble(values[j]);
-            }
-          }
-          if (matrix.length > 2 && matrix[0].length > 0 &&
-            matrix[1].length > 1 && matrix[2].length > 2)
-          {
-            activePlane.orientationMatrix = matrix;
-          }
-        }
       }
 
       currentName = null;
 
       if (qName.equals("Image") && activePlane != null) {
+        Channel c = channels.get(activePlane.c);
+        if (c != null) {
+          c.copy(activePlane);
+        }
+
         activePlane.applyMatrix();
         planes.add(activePlane);
       }
+      else if (qName.equals("Entry")) {
+        activeChannel = null;
+      }
     }
 
+  }
+
+  // V6 data stores common metadata once per channel
+  class Channel {
+    public int channelID;
+    public String channelName;
+    public String acqType;
+    public String channelType;
+    public double resolutionX;
+    public double resolutionY;
+    public int x;
+    public int y;
+    public double emWavelength;
+    public double exWavelength;
+    public double magnification;
+    public double lensNA;
+    public Time exposureTime;
+    public Double[][] orientationMatrix;
+
+    /**
+     * Copy data from this Channel to the given Plane.
+     */
+    public void copy(Plane p) {
+      // don't copy if it looks like this is an empty channel
+      if (channelID < 0 || x == 0 || y == 0) {
+        return;
+      }
+      p.channelName = channelName;
+      p.acqType = acqType;
+      p.channelType = channelType;
+      p.resolutionX = resolutionX;
+      p.resolutionY = resolutionY;
+      p.x = x;
+      p.y = y;
+      p.emWavelength = emWavelength;
+      p.exWavelength = exWavelength;
+      p.magnification = magnification;
+      p.lensNA = lensNA;
+      p.exposureTime = exposureTime;
+      p.orientationMatrix = orientationMatrix;
+    }
   }
 
   class Plane {
