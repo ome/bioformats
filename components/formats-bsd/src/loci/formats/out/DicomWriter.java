@@ -44,6 +44,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
@@ -98,7 +99,10 @@ public class DicomWriter extends FormatWriter {
       throw new FormatException("Non-sequential writing not yet supported");
     }
 
-    if (no == 0) {
+    boolean first = x == 0 && y == 0;
+    boolean last = x + w == getSizeX() && y + h == getSizeY();
+
+    if (first) {
       out.seek(transferSyntaxPointer);
       out.writeBytes(getTransferSyntax());
     }
@@ -132,9 +136,18 @@ public class DicomWriter extends FormatWriter {
     // TODO: JPEG and JPEG-2000 not working yet, don't quite conform to transfer syntax
     if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
       out.write(paddedBuf);
+      if (paddedBuf.length % 2 == 1) {
+        out.writeByte(0);
+      }
+
+      long length = out.getFilePointer() - start;
+      pixelDataSize += (int) length;
+
+      out.seek(pixelDataLengthPointer);
+      out.writeInt(pixelDataSize);
     }
-    else if (compression.equals(CompressionType.JPEG.getCompression())) {
-      JPEGCodec codec = new JPEGCodec();
+    else {
+      Codec codec = getCodec();
       CodecOptions options = new CodecOptions();
       options.width = tileWidth;
       options.height = tileHeight;
@@ -142,27 +155,31 @@ public class DicomWriter extends FormatWriter {
       options.bitsPerSample = bytesPerPixel * 8;
       options.littleEndian = out.isLittleEndian();
       options.interleaved = interleaved;
-      out.write(codec.compress(paddedBuf, options));
-    }
-    else if (compression.equals(CompressionType.J2K.getCompression())) {
-      JPEG2000CodecOptions options = new JPEG2000CodecOptions();
-      options.width = tileWidth;
-      options.height = tileHeight;
-      options.channels = getSamplesPerPixel();
-      options.bitsPerSample = bytesPerPixel * 8;
-      options.littleEndian = out.isLittleEndian();
-      options.interleaved = interleaved;
+      byte[] compressed = codec.compress(paddedBuf, options);
+      boolean pad = compressed.length % 2 == 1;
 
-      JPEG2000Codec codec = new JPEG2000Codec();
-      out.write(codec.compress(paddedBuf, options));
-    }
+      if (first) {
+        DicomTag bot = new DicomTag(ITEM, IMPLICIT);
+        bot.elementLength = 0;
+        writeTag(bot);
+      }
 
-    long length = out.getFilePointer() - start;
-    pixelDataSize += (int) length;
+      DicomTag item = new DicomTag(ITEM, IMPLICIT);
+      item.elementLength = compressed.length;
+      if (pad) {
+        item.elementLength++;
+      }
+      item.value = compressed;
+      writeTag(item);
+      if (pad) {
+        out.writeByte(0);
+      }
 
-    if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
-      out.seek(pixelDataLengthPointer);
-      out.writeInt(pixelDataSize);
+      if (last) {
+        DicomTag end = new DicomTag(SEQUENCE_DELIMITATION_ITEM, IMPLICIT);
+        end.elementLength = 0;
+        writeTag(end);
+      }
     }
   }
 
@@ -209,11 +226,11 @@ public class DicomWriter extends FormatWriter {
 
     out.order(littleEndian);
 
-    int tileWidth = getTileSizeX();
+    tileWidth = getTileSizeX();
     if (tileWidth <= 0) {
       tileWidth = width;
     }
-    int tileHeight = getTileSizeY();
+    tileHeight = getTileSizeY();
     if (tileHeight <= 0) {
       tileHeight = height;
     }
@@ -356,29 +373,34 @@ public class DicomWriter extends FormatWriter {
     out.writeShort((short) ((tagCode & 0xffff0000) >> 16));
     out.writeShort((short) (tagCode & 0xffff));
 
-    boolean order = out.isLittleEndian();
-    out.order(false);
-    out.writeShort(tag.vr.getCode());
-    out.order(order);
-
-    if (tag.vr == OB || tag.vr == OW || tag.vr == SQ ||
-      tag.vr == UN || tag.vr == UT || tag.vr == UC)
-    {
-      out.writeShort((short) 0);
+    if (tag.vr == IMPLICIT) {
       out.writeInt(getStoredLength(tag));
     }
     else {
-      out.writeShort((short) getStoredLength(tag));
-    }
+      boolean order = out.isLittleEndian();
+      out.order(false);
+      out.writeShort(tag.vr.getCode());
+      out.order(order);
 
-    if (tag.attribute == TRANSFER_SYNTAX_UID) {
-      transferSyntaxPointer = out.getFilePointer();
-    }
-    if (tag.children.size() == 0 && tag.value == null) {
-      if (tag.attribute != PIXEL_DATA) {
-        out.skipBytes(tag.elementLength);
+      if (tag.vr == OB || tag.vr == OW || tag.vr == SQ ||
+        tag.vr == UN || tag.vr == UT || tag.vr == UC)
+      {
+        out.writeShort((short) 0);
+        out.writeInt(getStoredLength(tag));
       }
-      return;
+      else {
+        out.writeShort((short) getStoredLength(tag));
+      }
+
+      if (tag.attribute == TRANSFER_SYNTAX_UID) {
+        transferSyntaxPointer = out.getFilePointer();
+      }
+      if (tag.children.size() == 0 && tag.value == null) {
+        if (tag.attribute != PIXEL_DATA) {
+          out.skipBytes(tag.elementLength);
+        }
+        return;
+      }
     }
 
     if (tag.children.size() > 0) {
@@ -450,6 +472,9 @@ public class DicomWriter extends FormatWriter {
             out.writeShort(s);
           }
           break;
+        case IMPLICIT:
+          out.write((byte[]) tag.value);
+          break;
         default:
           throw new IllegalArgumentException(String.valueOf(tag.vr.getCode()));
       }
@@ -480,6 +505,16 @@ public class DicomWriter extends FormatWriter {
       transferSyntax = "1.2.840.10008.1.2.4.50";
     }
     return padString(transferSyntax);
+  }
+
+  private Codec getCodec() {
+    if (compression.equals(CompressionType.JPEG.getCompression())) {
+      return new JPEGCodec();
+    }
+    else if (compression.equals(CompressionType.J2K.getCompression())) {
+      return new JPEG2000Codec();
+    }
+    return null;
   }
 
 }
