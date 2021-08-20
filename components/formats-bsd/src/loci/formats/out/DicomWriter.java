@@ -40,7 +40,9 @@ import java.util.Comparator;
 
 import loci.common.Constants;
 import loci.common.DataTools;
-import loci.common.RandomAccessInputStream;
+import loci.common.DateTools;
+import loci.common.Location;
+import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -51,6 +53,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.in.DicomTag;
+import loci.formats.meta.IPyramidStore;
 import loci.formats.meta.MetadataRetrieve;
 
 import static loci.formats.in.DicomAttribute.*;
@@ -65,9 +68,9 @@ public class DicomWriter extends FormatWriter {
 
   // -- Fields --
 
-  private long pixelDataLengthPointer = 0;
-  private int pixelDataSize = 0;
-  private long transferSyntaxPointer = 0;
+  private long[] pixelDataLengthPointer;
+  private int[] pixelDataSize;
+  private long[] transferSyntaxPointer;
   private int tileWidth = 0;
   private int tileHeight = 0;
 
@@ -83,6 +86,28 @@ public class DicomWriter extends FormatWriter {
   }
 
   // -- IFormatWriter API methods --
+
+  @Override
+  public void setSeries(int s) throws FormatException {
+    super.setSeries(s);
+    try {
+      openFile(series, resolution);
+    }
+    catch (IOException e) {
+      LOGGER.error("Could not open file for series #" + s, e);
+    }
+  }
+
+  @Override
+  public void setResolution(int r) {
+    super.setResolution(r);
+    try {
+      openFile(series, resolution);
+    }
+    catch (IOException e) {
+      LOGGER.error("Could not open file for series #" + series + ", resolution #" + r, e);
+    }
+  }
 
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
@@ -101,9 +126,10 @@ public class DicomWriter extends FormatWriter {
 
     boolean first = x == 0 && y == 0;
     boolean last = x + w == getSizeX() && y + h == getSizeY();
+    int resolutionIndex = getIndex(series, resolution);
 
     if (first) {
-      out.seek(transferSyntaxPointer);
+      out.seek(transferSyntaxPointer[resolutionIndex]);
       out.writeBytes(getTransferSyntax());
     }
 
@@ -133,7 +159,6 @@ public class DicomWriter extends FormatWriter {
       paddedBuf = buf;
     }
 
-    // TODO: JPEG and JPEG-2000 not working yet, don't quite conform to transfer syntax
     if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
       out.write(paddedBuf);
       if (paddedBuf.length % 2 == 1) {
@@ -141,10 +166,10 @@ public class DicomWriter extends FormatWriter {
       }
 
       long length = out.getFilePointer() - start;
-      pixelDataSize += (int) length;
+      pixelDataSize[resolutionIndex] += (int) length;
 
-      out.seek(pixelDataLengthPointer);
-      out.writeInt(pixelDataSize);
+      out.seek(pixelDataLengthPointer[resolutionIndex]);
+      out.writeInt(pixelDataSize[resolutionIndex]);
     }
     else {
       Codec codec = getCodec();
@@ -200,118 +225,179 @@ public class DicomWriter extends FormatWriter {
   /* @see loci.formats.FormatWriter#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
-    super.setId(id);
-
-    if (out.length() != 0) {
-      return;
+    if (id.equals(currentId)) return;
+    currentId = id;
+    if (out != null) {
+      if (out.length() != 0) {
+        return;
+      }
+      out.close();
     }
-
-    // TODO: only writes one file, no resolution support yet
 
     MetadataRetrieve r = getMetadataRetrieve();
-    int width = r.getPixelsSizeX(series).getValue().intValue();
-    int height = r.getPixelsSizeY(series).getValue().intValue();
-    int sizeZ = r.getPixelsSizeZ(series).getValue().intValue();
-    String pixelType = r.getPixelsType(series).toString();
-    int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    int nChannels = getSamplesPerPixel();
+    resolution = 0;
 
-    boolean littleEndian = false;
-    if (r.getPixelsBigEndian(series) != null) {
-      littleEndian = !r.getPixelsBigEndian(series).booleanValue();
-    }
-    else if (r.getPixelsBinDataCount(series) == 0) {
-      littleEndian = !r.getPixelsBinDataBigEndian(series, 0).booleanValue();
-    }
+    boolean hasPyramid = r instanceof IPyramidStore;
 
-    out.order(littleEndian);
-
-    tileWidth = getTileSizeX();
-    if (tileWidth <= 0) {
-      tileWidth = width;
-    }
-    tileHeight = getTileSizeY();
-    if (tileHeight <= 0) {
-      tileHeight = height;
-    }
-
-    ArrayList<DicomTag> tags = new ArrayList<DicomTag>();
-
-    // see http://dicom.nema.org/dicom/2013/output/chtml/part05/sect_A.4.html
-    DicomTag transferSyntax = new DicomTag(TRANSFER_SYNTAX_UID, UI);
-    transferSyntax.elementLength = 22;
-    tags.add(transferSyntax);
-
-    DicomTag planarConfig = new DicomTag(PLANAR_CONFIGURATION, US);
-    planarConfig.value = new short[] {(short) (interleaved ? 0 : 1)};
-    tags.add(planarConfig);
-
-    DicomTag rows = new DicomTag(ROWS, US);
-    rows.value = new short[] {(short) tileHeight};
-    tags.add(rows);
-
-    DicomTag columns = new DicomTag(COLUMNS, US);
-    columns.value = new short[] {(short) tileWidth};
-    tags.add(columns);
-
-    DicomTag matrixRows = new DicomTag(TOTAL_PIXEL_MATRIX_ROWS, UL);
-    matrixRows.value = new long[] {height};
-    tags.add(matrixRows);
-
-    DicomTag matrixColumns = new DicomTag(TOTAL_PIXEL_MATRIX_COLUMNS, UL);
-    matrixColumns.value = new long[] {width};
-    tags.add(matrixColumns);
-
-    int tileCountX = (int) Math.ceil((double) width / tileWidth);
-    int tileCountY = (int) Math.ceil((double) height / tileHeight);
-    DicomTag numberOfFrames = new DicomTag(NUMBER_OF_FRAMES, IS);
-    numberOfFrames.value = padString(String.valueOf(tileCountX * tileCountY * sizeZ));
-    tags.add(numberOfFrames);
-
-    DicomTag matrixFrames = new DicomTag(TOTAL_PIXEL_MATRIX_FOCAL_PLANES, UL);
-    matrixFrames.value = new long[] {sizeZ};
-    tags.add(matrixFrames);
-
-    DicomTag bits = new DicomTag(BITS_ALLOCATED, US);
-    bits.value = new short[] {(short) (bytesPerPixel * 8)};
-    tags.add(bits);
-
-    DicomTag signed = new DicomTag(PIXEL_SIGN, SS);
-    boolean isSigned = FormatTools.isSigned(FormatTools.pixelTypeFromString(pixelType));
-    signed.value = new short[] {(short) (isSigned ? 1 : 0)};
-    tags.add(signed);
-
-    DicomTag samplesPerPixel = new DicomTag(SAMPLES_PER_PIXEL, US);
-    samplesPerPixel.value = new short[] {(short) nChannels};
-    tags.add(samplesPerPixel);
-
-    DicomTag dimensionOrganization = new DicomTag(DIMENSION_ORGANIZATION_TYPE, CS);
-    dimensionOrganization.value = padString(sequential ? "TILED_FULL" : "TILED_SPARSE");
-    tags.add(dimensionOrganization);
-
-    DicomTag seriesNumber = new DicomTag(SERIES_NUMBER, IS);
-    seriesNumber.value = padString("1");
-    DicomTag instanceNumber = new DicomTag(INSTANCE_NUMBER, IS);
-    instanceNumber.value = padString("1");
-    tags.add(seriesNumber);
-
-    DicomTag photoInterp = new DicomTag(PHOTOMETRIC_INTERPRETATION, CS);
-    photoInterp.value = padString(nChannels == 3 ? "RGB" : "MONOCHROME2");
-    tags.add(photoInterp);
-
-    tags.sort(new Comparator<DicomTag>() {
-      public int compare(DicomTag a, DicomTag b) {
-        return a.attribute.getTag() - b.attribute.getTag();
+    int totalFiles = 0;
+    for (int pyramid=0; pyramid<r.getImageCount(); pyramid++) {
+      if (hasPyramid) {
+        totalFiles += ((IPyramidStore) r).getResolutionCount(pyramid);
       }
-    });
-    for (DicomTag tag : tags) {
-      writeTag(tag);
+      else {
+        totalFiles++;
+      }
     }
+    pixelDataLengthPointer = new long[totalFiles];
+    pixelDataSize = new int[totalFiles];
+    transferSyntaxPointer = new long[totalFiles];
 
-    DicomTag pixelData = new DicomTag(PIXEL_DATA, OB);
-    pixelData.elementLength = (int) 0xffffffff;
-    writeTag(pixelData);
-    pixelDataLengthPointer = out.getFilePointer() - 4;
+    for (int pyramid=0; pyramid<r.getImageCount(); pyramid++) {
+      series = pyramid;
+      int resolutionCount = 1;
+      if (hasPyramid) {
+        resolutionCount = ((IPyramidStore) r).getResolutionCount(pyramid);
+      }
+      for (int res=0; res<resolutionCount; res++) {
+        resolution = res;
+        openFile(series, resolution);
+        int resolutionIndex = getIndex(series, resolution);
+
+        int width = 0;
+        int height = 0;
+        if (hasPyramid && resolution > 0) {
+          width = ((IPyramidStore) r).getResolutionSizeX(pyramid, resolution).getValue().intValue();
+          height = ((IPyramidStore) r).getResolutionSizeY(pyramid, resolution).getValue().intValue();
+        }
+        else {
+          width = r.getPixelsSizeX(pyramid).getValue().intValue();
+          height = r.getPixelsSizeY(pyramid).getValue().intValue();
+        }
+
+        int sizeZ = r.getPixelsSizeZ(pyramid).getValue().intValue();
+        String pixelType = r.getPixelsType(pyramid).toString();
+        int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
+        int nChannels = getSamplesPerPixel();
+
+        tileWidth = getTileSizeX();
+        if (tileWidth <= 0) {
+          tileWidth = width;
+        }
+        tileHeight = getTileSizeY();
+        if (tileHeight <= 0) {
+          tileHeight = height;
+        }
+
+        ArrayList<DicomTag> tags = new ArrayList<DicomTag>();
+
+        // see http://dicom.nema.org/dicom/2013/output/chtml/part05/sect_A.4.html
+        DicomTag transferSyntax = new DicomTag(TRANSFER_SYNTAX_UID, UI);
+        transferSyntax.elementLength = 22;
+        tags.add(transferSyntax);
+
+        DicomTag planarConfig = new DicomTag(PLANAR_CONFIGURATION, US);
+        planarConfig.value = new short[] {(short) (interleaved ? 0 : 1)};
+        tags.add(planarConfig);
+
+        DicomTag rows = new DicomTag(ROWS, US);
+        rows.value = new short[] {(short) tileHeight};
+        tags.add(rows);
+
+        DicomTag columns = new DicomTag(COLUMNS, US);
+        columns.value = new short[] {(short) tileWidth};
+        tags.add(columns);
+
+        DicomTag matrixRows = new DicomTag(TOTAL_PIXEL_MATRIX_ROWS, UL);
+        matrixRows.value = new long[] {height};
+        tags.add(matrixRows);
+
+        DicomTag matrixColumns = new DicomTag(TOTAL_PIXEL_MATRIX_COLUMNS, UL);
+        matrixColumns.value = new long[] {width};
+        tags.add(matrixColumns);
+
+        int tileCountX = (int) Math.ceil((double) width / tileWidth);
+        int tileCountY = (int) Math.ceil((double) height / tileHeight);
+        DicomTag numberOfFrames = new DicomTag(NUMBER_OF_FRAMES, IS);
+        numberOfFrames.value = padString(String.valueOf(tileCountX * tileCountY * sizeZ));
+        tags.add(numberOfFrames);
+
+        DicomTag matrixFrames = new DicomTag(TOTAL_PIXEL_MATRIX_FOCAL_PLANES, UL);
+        matrixFrames.value = new long[] {sizeZ};
+        tags.add(matrixFrames);
+
+        DicomTag bits = new DicomTag(BITS_ALLOCATED, US);
+        bits.value = new short[] {(short) (bytesPerPixel * 8)};
+        tags.add(bits);
+
+        DicomTag signed = new DicomTag(PIXEL_SIGN, SS);
+        boolean isSigned = FormatTools.isSigned(FormatTools.pixelTypeFromString(pixelType));
+        signed.value = new short[] {(short) (isSigned ? 1 : 0)};
+        tags.add(signed);
+
+        DicomTag samplesPerPixel = new DicomTag(SAMPLES_PER_PIXEL, US);
+        samplesPerPixel.value = new short[] {(short) nChannels};
+        tags.add(samplesPerPixel);
+
+        DicomTag dimensionOrganization = new DicomTag(DIMENSION_ORGANIZATION_TYPE, CS);
+        dimensionOrganization.value = padString(sequential ? "TILED_FULL" : "TILED_SPARSE");
+        tags.add(dimensionOrganization);
+
+        DicomTag seriesNumber = new DicomTag(SERIES_NUMBER, IS);
+        seriesNumber.value = padString("1");
+        tags.add(seriesNumber);
+        DicomTag instanceNumber = new DicomTag(INSTANCE_NUMBER, IS);
+        instanceNumber.value = padString(String.valueOf(resolutionIndex + 1));
+        tags.add(instanceNumber);
+        DicomTag instanceUID = new DicomTag(SOP_INSTANCE_UID, UI);
+        instanceUID.value = padString(" ");
+        tags.add(instanceUID);
+
+        DicomTag photoInterp = new DicomTag(PHOTOMETRIC_INTERPRETATION, CS);
+        photoInterp.value = padString(nChannels == 3 ? "RGB" : "MONOCHROME2");
+        tags.add(photoInterp);
+
+        long timestamp = System.currentTimeMillis();
+        DicomTag date = new DicomTag(ACQUISITION_DATE, DA);
+        date.value = DateTools.convertDate(timestamp, DateTools.UNIX, "yyyyMMdd");
+        tags.add(date);
+        DicomTag time = new DicomTag(ACQUISITION_TIME, TM);
+        time.value = DateTools.convertDate(timestamp, DateTools.UNIX, "HHmmss");
+        tags.add(time);
+
+        DicomTag imageType = new DicomTag(IMAGE_TYPE, CS);
+        // TODO: probably need to do something better with MetadataRetrieve image names?
+        String type = "DERIVED\\PRIMARY\\";
+        if (resolutionCount > 1) {
+          type += "VOLUME\\";
+        }
+        else {
+          type += "LABEL\\";
+        }
+        if (res > 0) {
+          type += "RESAMPLED";
+        }
+        else {
+          type += "NONE";
+        }
+        imageType.value = padString(type);
+        tags.add(imageType);
+
+        tags.sort(new Comparator<DicomTag>() {
+          public int compare(DicomTag a, DicomTag b) {
+            return a.attribute.getTag() - b.attribute.getTag();
+          }
+        });
+        for (DicomTag tag : tags) {
+          writeTag(tag);
+        }
+
+        DicomTag pixelData = new DicomTag(PIXEL_DATA, OB);
+        pixelData.elementLength = (int) 0xffffffff;
+        writeTag(pixelData);
+        pixelDataLengthPointer[resolutionIndex] = out.getFilePointer() - 4;
+      }
+    }
+    setSeries(0);
   }
 
   /* @see loci.formats.FormatWriter#close() */
@@ -319,9 +405,9 @@ public class DicomWriter extends FormatWriter {
   public void close() throws IOException {
     super.close();
 
-    pixelDataSize = 0;
-    pixelDataLengthPointer = 0;
-    transferSyntaxPointer = 0;
+    pixelDataSize = null;
+    pixelDataLengthPointer = null;
+    transferSyntaxPointer = null;
 
     // intentionally don't reset tile dimensions
   }
@@ -393,7 +479,7 @@ public class DicomWriter extends FormatWriter {
       }
 
       if (tag.attribute == TRANSFER_SYNTAX_UID) {
-        transferSyntaxPointer = out.getFilePointer();
+        transferSyntaxPointer[getIndex(series, resolution)] = out.getFilePointer();
       }
       if (tag.children.size() == 0 && tag.value == null) {
         if (tag.attribute != PIXEL_DATA) {
@@ -515,6 +601,56 @@ public class DicomWriter extends FormatWriter {
       return new JPEG2000Codec();
     }
     return null;
+  }
+
+  private void openFile(int pyramid, int res) throws IOException {
+    if (pixelDataLengthPointer == null) {
+      // not fully initialized, can't reliably determine
+      // filename for this series/resolution
+      return;
+    }
+    if (out != null) {
+      out.close();
+    }
+    out = new RandomAccessOutputStream(getFilename(pyramid, res));
+
+    MetadataRetrieve r = getMetadataRetrieve();
+    boolean littleEndian = false;
+    if (r.getPixelsBigEndian(pyramid) != null) {
+      littleEndian = !r.getPixelsBigEndian(pyramid).booleanValue();
+    }
+    else if (r.getPixelsBinDataCount(pyramid) == 0) {
+      littleEndian = !r.getPixelsBinDataBigEndian(pyramid, 0).booleanValue();
+    }
+
+    out.order(littleEndian);
+  }
+
+  private String getFilename(int pyramid, int res) {
+    if (pixelDataLengthPointer.length == 1) {
+      return currentId;
+    }
+    String base = new Location(currentId).getAbsolutePath();
+    base = base.substring(0, base.lastIndexOf("."));
+    // TODO: this could be changed, or an option
+    return String.format("%s_%d_%d.dcm", base, pyramid, res);
+  }
+
+  private int getIndex(int pyramid, int res) {
+    MetadataRetrieve r = getMetadataRetrieve();
+    if (r instanceof IPyramidStore) {
+      int index = 0;
+      for (int i=0; i<r.getImageCount(); i++) {
+        int resCount = ((IPyramidStore) r).getResolutionCount(i);
+        if (i < pyramid) {
+          index += resCount;
+        }
+        else {
+          return index + res;
+        }
+      }
+    }
+    return pyramid;
   }
 
 }
