@@ -762,14 +762,13 @@ public class DicomReader extends SubResolutionFormatReader {
         //  - a separate image (Bio-Formats series), e.g. largest pyramid level, label, overview, etc.
         //  - a downsampled resolution
         //  - another Z section or channel in an existing Bio-Formats series
-        // TODO: currently assumes that each file contains a whole plane, this will need updating
         for (int i=1; i<infos.size(); i++) {
           DicomFileInfo info = infos.get(i);
           DicomFileInfo prevInfo = infos.get(i - 1);
           updateCoreMetadata(info.coreMetadata);
 
           // image type is used to distinguish between downsampled resolutions and smaller separate images
-          if (!info.imageType.equals(prevInfo.imageType) && info.imageType.indexOf("VOLUME") < 0) {
+          if (info.imageType.indexOf("VOLUME") < 0) {
             core.add(info.coreMetadata);
           }
           else if (info.coreMetadata.sizeX != prevInfo.coreMetadata.sizeX &&

@@ -365,14 +365,34 @@ public class DicomWriter extends FormatWriter {
         tags.add(time);
 
         DicomTag imageType = new DicomTag(IMAGE_TYPE, CS);
-        // TODO: probably need to do something better with MetadataRetrieve image names?
+
+        String pyramidName = r.getImageName(pyramid);
+
         String type = "DERIVED\\PRIMARY\\";
-        if (resolutionCount > 1) {
+        if (!hasPyramid || resolutionCount > 1) {
           type += "VOLUME\\";
         }
-        else {
-          type += "LABEL\\";
+        else if (pyramidName != null) {
+          pyramidName = pyramidName.toLowerCase();
+          if (pyramidName.indexOf("label") >= 0) {
+            type += "LABEL\\";
+          }
+          else if (pyramidName.indexOf("macro") >= 0 ||
+            pyramidName.indexOf("overview") >= 0)
+          {
+            type += "OVERVIEW\\";
+          }
+          else {
+            // TODO: not sure if there is a better way to handle this case (and below)
+            type += "OVERVIEW\\";
+          }
         }
+        else {
+          // TODO: see a few lines up, does falling back to DERIVED\PRIMARY\OVERVIEW\*
+          // always make sense?
+          type += "OVERVIEW\\";
+        }
+
         if (res > 0) {
           type += "RESAMPLED";
         }
