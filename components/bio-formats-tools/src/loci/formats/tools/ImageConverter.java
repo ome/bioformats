@@ -125,6 +125,7 @@ public final class ImageConverter {
   private boolean useMemoizer = false;
   private String cacheDir = null;
   private boolean originalMetadata = true;
+  private boolean noSequential = false;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -244,6 +245,9 @@ public final class ImageConverter {
           }
           catch (NumberFormatException e) { }
         }
+        else if (args[i].equals("-no-sequential")) {
+          noSequential = true;
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -360,6 +364,7 @@ public final class ImageConverter {
       "              -tiley: image will be converted one tile at a time using the given tile height",
       "      -pyramid-scale: generates a pyramid image with each subsequent resolution level divided by scale",
       "-pyramid-resolutions: generates a pyramid image with the given number of resolution levels ",
+      "      -no-sequential: do not assume that planes are written in sequential order",
       "",
       "The extension of the output file specifies the file format to use",
       "for the conversion. The list of available formats and extensions is:",
@@ -605,7 +610,7 @@ public final class ImageConverter {
         throw new FormatException(e);
       }
     }
-    writer.setWriteSequentially(true);
+    writer.setWriteSequentially(!noSequential);
 
     if (writer instanceof TiffWriter) {
       ((TiffWriter) writer).setBigTiff(bigtiff);
