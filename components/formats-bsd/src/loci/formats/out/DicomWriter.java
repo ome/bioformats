@@ -234,9 +234,12 @@ public class DicomWriter extends FormatWriter {
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   @Override
   public int[] getPixelTypes(String codec) {
-    // TODO : take codec value into consideration
+    if (compression != null && !compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
+      return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+        FormatTools.UINT16};
+    }
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
-      FormatTools.UINT16};
+      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32};
   }
 
   // -- FormatWriter API methods --
@@ -260,6 +263,9 @@ public class DicomWriter extends FormatWriter {
 
     int totalFiles = 0;
     for (int pyramid=0; pyramid<r.getImageCount(); pyramid++) {
+      if (r.getPixelsSizeT(pyramid).getValue().intValue() > 1) {
+        throw new FormatException("Multiple timepoints not supported");
+      }
       if (hasPyramid) {
         totalFiles += ((IPyramidStore) r).getResolutionCount(pyramid);
       }
