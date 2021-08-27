@@ -88,7 +88,9 @@ public class DicomTag {
     this.oddLocations = oddLocations;
 
     int tag = getNextTag(in);
+    /* debug */ System.out.println("elementLength = " + elementLength);
     attribute = DicomAttribute.get(tag);
+    /* debug */ System.out.println("attribute = " + attribute);
     start = in.getFilePointer();
     if (attribute != null) {
       key = attribute.getDescription();

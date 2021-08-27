@@ -56,6 +56,8 @@ import loci.formats.in.DicomTag;
 import loci.formats.meta.IPyramidStore;
 import loci.formats.meta.MetadataRetrieve;
 
+import ome.xml.model.enums.DimensionOrder;
+
 import static loci.formats.in.DicomAttribute.*;
 import static loci.formats.in.DicomVR.*;
 
@@ -73,6 +75,8 @@ public class DicomWriter extends FormatWriter {
   private long[] transferSyntaxPointer;
   private int tileWidth = 0;
   private int tileHeight = 0;
+  private PlaneOffset[][] planeOffsets;
+  private Integer currentPlane = null;
 
   // -- Constructor --
 
@@ -118,12 +122,6 @@ public class DicomWriter extends FormatWriter {
   {
     checkParams(no, buf, x, y, w, h);
 
-    // TODO: non-sequential writing == TILED_SPARSE,
-    // will require placeholder metadata for plane positions
-    if (!sequential) {
-      throw new FormatException("Non-sequential writing not yet supported");
-    }
-
     boolean first = x == 0 && y == 0;
     boolean last = x + w == getSizeX() && y + h == getSizeY();
     int resolutionIndex = getIndex(series, resolution);
@@ -131,6 +129,27 @@ public class DicomWriter extends FormatWriter {
     if (first) {
       out.seek(transferSyntaxPointer[resolutionIndex]);
       out.writeBytes(getTransferSyntax());
+    }
+
+    if (!isReallySequential()) {
+      for (int p=0; p<planeOffsets[resolutionIndex].length; p++) {
+        if (!planeOffsets[resolutionIndex][p].written) {
+          PlaneOffset offset = planeOffsets[resolutionIndex][p];
+          offset.written = true;
+
+          int[] zct = getZCTCoords(no);
+
+          out.seek(offset.cOffset);
+          out.writeBytes(padString(String.valueOf(zct[1])));
+          out.seek(offset.xOffset);
+          out.writeInt(x + 1);
+          out.seek(offset.yOffset);
+          out.writeInt(y + 1);
+          out.seek(offset.zOffset);
+          out.writeBytes(padString(String.valueOf(zct[0])));
+          break;
+        }
+      }
     }
 
     MetadataRetrieve retrieve = getMetadataRetrieve();
@@ -252,6 +271,8 @@ public class DicomWriter extends FormatWriter {
     pixelDataSize = new int[totalFiles];
     transferSyntaxPointer = new long[totalFiles];
 
+    planeOffsets = new PlaneOffset[totalFiles][];
+
     for (int pyramid=0; pyramid<r.getImageCount(); pyramid++) {
       series = pyramid;
       int resolutionCount = 1;
@@ -318,7 +339,8 @@ public class DicomWriter extends FormatWriter {
         int tileCountX = (int) Math.ceil((double) width / tileWidth);
         int tileCountY = (int) Math.ceil((double) height / tileHeight);
         DicomTag numberOfFrames = new DicomTag(NUMBER_OF_FRAMES, IS);
-        numberOfFrames.value = padString(String.valueOf(tileCountX * tileCountY * sizeZ));
+        numberOfFrames.value = padString(String.valueOf(
+          tileCountX * tileCountY * sizeZ * r.getChannelCount(pyramid)));
         tags.add(numberOfFrames);
 
         DicomTag matrixFrames = new DicomTag(TOTAL_PIXEL_MATRIX_FOCAL_PLANES, UL);
@@ -339,7 +361,7 @@ public class DicomWriter extends FormatWriter {
         tags.add(samplesPerPixel);
 
         DicomTag dimensionOrganization = new DicomTag(DIMENSION_ORGANIZATION_TYPE, CS);
-        dimensionOrganization.value = padString(sequential ? "TILED_FULL" : "TILED_SPARSE");
+        dimensionOrganization.value = padString(isReallySequential() ? "TILED_FULL" : "TILED_SPARSE");
         tags.add(dimensionOrganization);
 
         DicomTag seriesNumber = new DicomTag(SERIES_NUMBER, IS);
@@ -402,6 +424,44 @@ public class DicomWriter extends FormatWriter {
         imageType.value = padString(type);
         tags.add(imageType);
 
+        DicomTag opticalSequence = new DicomTag(OPTICAL_PATH_SEQUENCE, SQ);
+        for (int c=0; c<r.getChannelCount(pyramid); c++) {
+          DicomTag opticalID = new DicomTag(OPTICAL_PATH_ID, SH);
+          opticalID.value = padString(String.valueOf(c));
+          opticalSequence.children.add(opticalID);
+        }
+        tags.add(opticalSequence);
+
+        // placeholder tile positions for TILED_SPARSE
+        if (!isReallySequential()) {
+          planeOffsets[resolutionIndex] = new PlaneOffset[getPlaneCount(pyramid) * tileCountX * tileCountY];
+          DicomTag perFrameSequence = new DicomTag(PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE, SQ);
+          for (int p=0; p<planeOffsets[resolutionIndex].length; p++) {
+            DicomTag opticalPath = new DicomTag(OPTICAL_PATH_ID_SEQUENCE, SQ);
+            DicomTag opticalPathID = new DicomTag(OPTICAL_PATH_ID, SH);
+            opticalPathID.value = padString("0");
+            opticalPath.children.add(opticalPathID);
+            perFrameSequence.children.add(opticalPath);
+
+            DicomTag plane = new DicomTag(PLANE_POSITION_SLIDE_SEQUENCE, SQ);
+
+            DicomTag positionX = new DicomTag(COLUMN_POSITION_IN_MATRIX, SL);
+            positionX.value = new int[] {1};
+            plane.children.add(positionX);
+            DicomTag positionY = new DicomTag(ROW_POSITION_IN_MATRIX, SL);
+            positionY.value = new int[] {1};
+            plane.children.add(positionY);
+            DicomTag positionZ = new DicomTag(Z_OFFSET_IN_SLIDE, DS);
+            positionZ.value = padString("0");
+            plane.children.add(positionZ);
+
+            perFrameSequence.children.add(plane);
+          }
+
+          tags.add(perFrameSequence);
+        }
+
+
         tags.sort(new Comparator<DicomTag>() {
           public int compare(DicomTag a, DicomTag b) {
             return a.attribute.getTag() - b.attribute.getTag();
@@ -457,6 +517,9 @@ public class DicomWriter extends FormatWriter {
   // -- Helper methods --
 
   private int getStoredLength(DicomTag tag) {
+    if (tag.vr == SQ) {
+      return (int) 0xffffffff;
+    }
     if (tag.elementLength != 0) {
       return tag.elementLength;
     }
@@ -509,12 +572,57 @@ public class DicomWriter extends FormatWriter {
       }
     }
 
+    if (currentPlane != null && tag.attribute == OPTICAL_PATH_ID) {
+      currentPlane++;
+    }
+
     if (tag.children.size() > 0) {
+      if (tag.attribute == PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE) {
+        currentPlane = -1;
+      }
       for (DicomTag child : tag.children) {
+        if (tag.vr == SQ) {
+          DicomTag item = new DicomTag(ITEM, IMPLICIT);
+          item.elementLength = (int) 0xffffffff;
+          writeTag(item);
+        }
         writeTag(child);
+        if (tag.vr == SQ) {
+          DicomTag item = new DicomTag(ITEM_DELIMITATION_ITEM, IMPLICIT);
+          item.elementLength = 0;
+          writeTag(item);
+        }
+      }
+      if (tag.vr == SQ) {
+        DicomTag finalItem = new DicomTag(SEQUENCE_DELIMITATION_ITEM, IMPLICIT);
+        finalItem.elementLength = 0;
+        writeTag(finalItem);
+      }
+      if (tag.attribute == PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE) {
+        currentPlane = null;
       }
     }
     else if (tag.value != null) {
+      if (currentPlane != null && currentPlane >= 0) {
+        int resolutionIndex = getIndex(series, resolution);
+        if (planeOffsets[resolutionIndex][currentPlane] == null) {
+          planeOffsets[resolutionIndex][currentPlane] = new PlaneOffset();
+        }
+        switch (tag.attribute) {
+          case OPTICAL_PATH_ID:
+            planeOffsets[resolutionIndex][currentPlane].cOffset = out.getFilePointer();
+            break;
+          case ROW_POSITION_IN_MATRIX:
+            planeOffsets[resolutionIndex][currentPlane].yOffset = out.getFilePointer();
+            break;
+          case COLUMN_POSITION_IN_MATRIX:
+            planeOffsets[resolutionIndex][currentPlane].xOffset = out.getFilePointer();
+            break;
+          case Z_OFFSET_IN_SLIDE:
+            planeOffsets[resolutionIndex][currentPlane].zOffset = out.getFilePointer();
+            break;
+        }
+      }
       switch (tag.vr) {
         case AE:
         case AS:
@@ -671,6 +779,36 @@ public class DicomWriter extends FormatWriter {
       }
     }
     return pyramid;
+  }
+
+  private int[] getZCTCoords(int no) {
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
+    int sizeC = retrieve.getChannelCount(series);
+    int sizeT = retrieve.getPixelsSizeT(series).getValue();
+    int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
+    return FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, no);
+  }
+
+  private boolean isReallySequential() {
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
+    int sizeC = retrieve.getChannelCount(series);
+    int sizeT = retrieve.getPixelsSizeT(series).getValue();
+    int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
+    return sequential && (sizeC == 1 || sizeZ == 1 ||
+      order == DimensionOrder.XYZCT ||
+      order == DimensionOrder.XYZTC ||
+      order == DimensionOrder.XYZTC ||
+      order == DimensionOrder.XYTZC);
+  }
+
+  class PlaneOffset {
+    public long xOffset;
+    public long yOffset;
+    public long zOffset;
+    public long cOffset;
+    public boolean written = false;
   }
 
 }

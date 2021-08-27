@@ -47,6 +47,7 @@ public class DicomFileInfo implements Comparable<DicomFileInfo> {
   public List<DicomTile> tiles;
   public String imageType;
   public List<Double> zOffsets;
+  public boolean edf = false;
 
   /**
    * Construct an empty object to be populated later.
@@ -73,11 +74,16 @@ public class DicomFileInfo implements Comparable<DicomFileInfo> {
       imageType = reader.getImageType();
       zOffsets = reader.getZOffsets();
       concatenationIndex = reader.getConcatenationIndex();
+      edf = reader.isExtendedDepthOfField();
     }
   }
 
   @Override
   public int compareTo(DicomFileInfo info) {
+    if (info.edf != edf) {
+      return edf ? 1 : -1;
+    }
+
     String[] infoTypeTokens = info.imageType.split("\\\\");
     String[] thisTypeTokens = this.imageType.split("\\\\");
     int endIndex = (int) Math.min(infoTypeTokens.length, thisTypeTokens.length) - 1;

@@ -123,6 +123,7 @@ public class DicomReader extends SubResolutionFormatReader {
   private List<DicomTile> tilePositions;
   private List<Double> zOffsets;
   private Number concatenationNumber = null;
+  private boolean edf = false;
 
   // -- Constructor --
 
@@ -345,6 +346,7 @@ public class DicomReader extends SubResolutionFormatReader {
       tilePositions = null;
       zOffsets = null;
       concatenationNumber = null;
+      edf = false;
     }
   }
 
@@ -406,6 +408,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
     List<DicomTag> tags = new ArrayList<DicomTag>();
     int frameOffsetNumber = 0;
+    int opticalChannels = 0;
 
     while (decodingTags) {
       if (in.getFilePointer() + 4 >= in.length()) {
@@ -556,9 +559,19 @@ public class DicomReader extends SubResolutionFormatReader {
           tiledFull = tag.getStringValue().equals("TILED_FULL");
           break;
         case PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE:
-          tilePositions = new ArrayList<DicomTile>();
+          int channel = 0;
           for (DicomTag child : tag.children) {
-            if (child.attribute == PLANE_POSITION_SLIDE_SEQUENCE) {
+            if (child.attribute == OPTICAL_PATH_ID_SEQUENCE) {
+              DicomTag opticalPath = child.lookupChild(OPTICAL_PATH_ID);
+              if (opticalPath != null && opticalPath.getStringValue() != null) {
+                String v = opticalPath.getStringValue().replace("#", "");
+                channel = Integer.parseInt(v);
+              }
+            }
+            else if (child.attribute == PLANE_POSITION_SLIDE_SEQUENCE) {
+              if (tilePositions == null) {
+                tilePositions = new ArrayList<DicomTile>();
+              }
               int col = -1;
               int row = -1;
               Double zOffset = null;
@@ -581,6 +594,7 @@ public class DicomReader extends SubResolutionFormatReader {
                 tile.region = new Region(col, row, originalX, originalY);
                 tile.file = new Location(currentId).getAbsolutePath();
                 tile.zOffset = zOffset;
+                tile.channel = channel;
                 tile.isRLE = isRLE;
                 tile.isJPEG = isJPEG;
                 tile.isJP2K = isJP2K;
@@ -613,6 +627,16 @@ public class DicomReader extends SubResolutionFormatReader {
           if (tag.getNumberValue() != null) {
             frameOffsetNumber = tag.getNumberValue().intValue();
           }
+          break;
+        case OPTICAL_PATH_SEQUENCE:
+          for (DicomTag child : tag.children) {
+            if (child.attribute == OPTICAL_PATH_ID) {
+              opticalChannels++;
+            }
+          }
+          break;
+        case EXTENDED_DEPTH_OF_FIELD:
+          edf = tag.getStringValue().equalsIgnoreCase("yes");
           break;
         default:
           in.seek(tag.getEndPointer());
@@ -649,6 +673,11 @@ public class DicomReader extends SubResolutionFormatReader {
       if (m.sizeZ == 0) {
         m.sizeZ = 1;
       }
+      if (opticalChannels == 0 || (concatenationNumber == null && ((imagesPerFile / m.sizeZ) % opticalChannels != 0))) {
+        opticalChannels = 1;
+      }
+      m.sizeC *= opticalChannels;
+      m.imageCount *= opticalChannels;
 
       // fill in the implicit tile boundaries so that there doesn't need
       // to be any more distinct logic for TILED_FULL vs TILED_SPARSE
@@ -658,6 +687,7 @@ public class DicomReader extends SubResolutionFormatReader {
         int cols = (int) Math.ceil((double) getSizeX() / originalX);
         int rows = (int) Math.ceil((double) getSizeY() / originalY);
         int tilesPerPlane = rows * cols;
+        int c = frameOffsetNumber / (tilesPerPlane * getSizeZ());
         int z = frameOffsetNumber / tilesPerPlane;
         int x = originalX * ((frameOffsetNumber % tilesPerPlane) % cols);
         int y = originalY * ((frameOffsetNumber % tilesPerPlane) / cols);
@@ -671,6 +701,7 @@ public class DicomReader extends SubResolutionFormatReader {
           else {
             tile.zOffset = (double) z;
           }
+          tile.channel = c;
           tile.file = new Location(currentId).getAbsolutePath();
           tile.region = new Region(x, y, originalX, originalY);
           tile.isRLE = isRLE;
@@ -690,6 +721,10 @@ public class DicomReader extends SubResolutionFormatReader {
             x = 0;
             y = 0;
             z++;
+            if (z == m.sizeZ) {
+              z = 0;
+              c++;
+            }
           }
         }
       }
@@ -768,7 +803,7 @@ public class DicomReader extends SubResolutionFormatReader {
           updateCoreMetadata(info.coreMetadata);
 
           // image type is used to distinguish between downsampled resolutions and smaller separate images
-          if (info.imageType.indexOf("VOLUME") < 0) {
+          if (info.imageType.indexOf("VOLUME") < 0 || info.edf != prevInfo.edf) {
             core.add(info.coreMetadata);
           }
           else if (info.coreMetadata.sizeX != prevInfo.coreMetadata.sizeX &&
@@ -782,12 +817,11 @@ public class DicomReader extends SubResolutionFormatReader {
             core.add(info.coreMetadata);
           }
           else if (info.concatenationIndex == 0) {
-            // TODO: handle multiple channels
             core.get(core.size() - 1, core.sizes()[core.size() - 1] - 1).sizeZ++;
-            core.get(core.size() - 1, core.sizes()[core.size() - 1] - 1).imageCount++;
+            core.get(core.size() - 1, core.sizes()[core.size() - 1] - 1).imageCount += info.coreMetadata.imageCount;
           }
 
-          int lastCoreIndex = core.flattenedIndex(core.size() -1, core.sizes()[core.size() - 1] - 1);
+          int lastCoreIndex = core.flattenedIndex(core.size() - 1, core.sizes()[core.size() - 1] - 1);
           for (DicomTile tile : info.tiles) {
             tile.coreIndex = lastCoreIndex;
           }
@@ -1354,7 +1388,7 @@ public class DicomReader extends SubResolutionFormatReader {
   private void getTile(DicomTile tile, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    int ec = isIndexed() ? 1 : getSizeC();
+    int ec = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int bytes = tile.region.width * tile.region.height * bpp * ec;
     try (RandomAccessInputStream stream = new RandomAccessInputStream(tile.file)) {
@@ -1363,7 +1397,7 @@ public class DicomReader extends SubResolutionFormatReader {
         return;
       }
       stream.seek(tile.fileOffset);
-      LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
+      //LOGGER.warn("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
 
       if (tile.isRLE) {
         // plane is compressed using run-length encoding
@@ -1542,7 +1576,7 @@ public class DicomReader extends SubResolutionFormatReader {
     }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int plane = originalX * originalY * (lut == null ? getSizeC() : 1) * bpp;
+    int plane = originalX * originalY * (lut == null ? getEffectiveSizeC() : 1) * bpp;
 
     in.seek(baseOffset - 12);
     int len = in.readInt();
@@ -1635,6 +1669,7 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       info.imageType = getImageType();
       info.zOffsets = getZOffsets();
+      info.edf = edf;
       return info;
     }
     return new DicomFileInfo(new Location(file).getAbsolutePath());
@@ -1642,13 +1677,15 @@ public class DicomReader extends SubResolutionFormatReader {
 
   private void updateCoreMetadata(CoreMetadata ms) {
     if (ms.sizeC == 0) ms.sizeC = 1;
-    ms.rgb = ms.sizeC > 1;
     ms.sizeT = 1;
     ms.dimensionOrder = "XYCZT";
     ms.metadataComplete = true;
     ms.falseColor = false;
     if (isRLE) ms.interleaved = false;
     ms.imageCount = ms.sizeZ;
+    if (!ms.rgb) {
+      ms.imageCount *= ms.sizeC;
+    }
   }
 
   protected String getImageType() {
@@ -1668,6 +1705,10 @@ public class DicomReader extends SubResolutionFormatReader {
       return 0;
     }
     return concatenationNumber.intValue() - 1;
+  }
+
+  protected boolean isExtendedDepthOfField() {
+    return edf;
   }
 
 }
