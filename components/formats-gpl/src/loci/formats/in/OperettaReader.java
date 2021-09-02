@@ -70,6 +70,7 @@ public class OperettaReader extends FormatReader {
   private static final String HARMONY_MAGIC = "Harmony";
   // sometimes Operette, sometimes Operetta
   private static final String OPERETTA_MAGIC = "Operett";
+  private static final String PHENIX_MAGIC = "Phenix";
 
   // -- Fields --
 
@@ -648,6 +649,7 @@ public class OperettaReader extends FormatReader {
     private final StringBuilder currentValue = new StringBuilder();
 
     private boolean isHarmony = false;
+    private String instrumentType = null;
 
     // -- OperettaHandler API methods --
 
@@ -687,6 +689,10 @@ public class OperettaReader extends FormatReader {
       return plateCols;
     }
 
+    public String getInstrumentType() {
+      return instrumentType;
+    }
+
     // -- DefaultHandler API methods --
 
     @Override
@@ -720,6 +726,9 @@ public class OperettaReader extends FormatReader {
       String value = currentValue.toString();
       if ("User".equals(currentName)) {
         displayName = value;
+      }
+      else if ("InstrumentType".equals(currentName)) {
+        instrumentType = value;
       }
       else if ("PlateID".equals(currentName)) {
         plateID = value;
@@ -941,7 +950,9 @@ public class OperettaReader extends FormatReader {
           c.copy(activePlane);
         }
 
-        activePlane.applyMatrix();
+        if (!PHENIX_MAGIC.equals(getInstrumentType())) {
+          activePlane.applyMatrix();
+        }
         planes.add(activePlane);
       }
       else if (qName.equals("Entry")) {
