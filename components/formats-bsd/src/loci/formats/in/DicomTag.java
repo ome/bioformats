@@ -51,6 +51,8 @@ public class DicomTag {
   public DicomTag parent = null;
   public List<DicomTag> children = new ArrayList<DicomTag>();
 
+  public int tag;
+
   public DicomAttribute attribute = null;
   public DicomVR vr = null;
   public String key = null;
@@ -75,6 +77,7 @@ public class DicomTag {
     else {
       this.vr = attribute.getDefaultVR();
     }
+    this.tag = attribute.getTag();
   }
 
   /**
@@ -87,13 +90,14 @@ public class DicomTag {
     bigEndianTransferSyntax = bigEndian;
     this.oddLocations = oddLocations;
 
-    int tag = getNextTag(in);
-    /* debug */ System.out.println("elementLength = " + elementLength);
+    tag = getNextTag(in);
     attribute = DicomAttribute.get(tag);
-    /* debug */ System.out.println("attribute = " + attribute);
     start = in.getFilePointer();
     if (attribute != null) {
       key = attribute.getDescription();
+    }
+    else {
+      key = DicomAttribute.getDescription(tag);
     }
 
     String id = null;
@@ -115,6 +119,9 @@ public class DicomTag {
       {
         vr = US;
       }
+    }
+    else if (vr == IMPLICIT) {
+      vr = DicomAttribute.getDefaultVR(tag);
     }
 
     if (attribute == ITEM) {

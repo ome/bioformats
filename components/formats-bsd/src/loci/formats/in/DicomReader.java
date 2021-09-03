@@ -125,6 +125,8 @@ public class DicomReader extends SubResolutionFormatReader {
   private Number concatenationNumber = null;
   private boolean edf = false;
 
+  private List<DicomTag> tags;
+
   // -- Constructor --
 
   /** Constructs a new DICOM reader. */
@@ -347,6 +349,7 @@ public class DicomReader extends SubResolutionFormatReader {
       zOffsets = null;
       concatenationNumber = null;
       edf = false;
+      tags = null;
     }
   }
 
@@ -381,16 +384,12 @@ public class DicomReader extends SubResolutionFormatReader {
 
     in.seek(HEADER_LENGTH);
     if (in.readString(4).equals("DICM")) {
-      // TODO: this should be uncommented, but currently causes invalid characters
-      // to be introduced into OME-XML for some files
-    /*
       if (level != MetadataLevel.MINIMUM) {
         // header exists, so we'll read it
         in.seek(0);
-        addSeriesMeta("Header information", in.readString(HEADER_LENGTH));
+        addSeriesMeta("Header information", in.readString(HEADER_LENGTH).trim());
         in.skipBytes(4);
       }
-      */
       location = HEADER_LENGTH;
     }
     else in.seek(0);
@@ -406,7 +405,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
     Double fileZOffset = null;
 
-    List<DicomTag> tags = new ArrayList<DicomTag>();
+    tags = new ArrayList<DicomTag>();
     int frameOffsetNumber = 0;
     int opticalChannels = 0;
 
@@ -421,12 +420,12 @@ public class DicomReader extends SubResolutionFormatReader {
 
       oddLocations = (location & 1) != 0;
 
+      addInfo(tag);
+
       if (tag.attribute == null) {
         in.seek(tag.getEndPointer());
         continue;
       }
-
-      addInfo(tag);
 
       switch (tag.attribute) {
         case TRANSFER_SYNTAX_UID:
@@ -920,10 +919,10 @@ public class DicomReader extends SubResolutionFormatReader {
     m.littleEndian = in.isLittleEndian();
 
     if (info.attribute != ITEM) {
-      String infoString = info.getStringValue();
-      Number infoNumber = info.getNumberValue();
-
       if (info.attribute != null) {
+        String infoString = info.getStringValue();
+        Number infoNumber = info.getNumberValue();
+
         switch (info.attribute) {
           case SAMPLES_PER_PIXEL:
             m.sizeC = infoNumber.intValue();
@@ -1059,30 +1058,50 @@ public class DicomReader extends SubResolutionFormatReader {
         }
       }
 
-      int tag = info.attribute.getTag();
+      int tag = info.tag;
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
         String key = DicomAttribute.formatTag(tag);
         if (info.key != null) {
           key += " " + info.key;
         }
-        // TODO: this should be uncommented, but needs a little more work to:
-        //   - fully represent the hierarchy
-        //   - not introduce invalid (just null?) characters
-        /*
-        if (metadata.containsKey(key)) {
-          // make sure that values are not overwritten
-          Object v = getMetadataValue(key);
-          metadata.remove(key);
-          addSeriesMetaList(key, v);
-          addSeriesMetaList(key, info.value);
+        addOriginalMetadata(key, info);
+      }
+    }
+  }
+
+  /**
+   * Store the given tag's value (if present) in the original metadata
+   * hashtable using the provided key. Any children of the tag will
+   * be added to the table as well.
+   *
+   * Note that the "Per-Frame Functional Groups Sequence" and
+   * "Referenced Image Navigation Sequence" and any children
+   * will be omitted, as will any values that are byte or short arrays
+   * (e.g. lookup tables). This is necessary to prevent memory exhaustion.
+   * Applications that need to traverse the complete hierarchy of
+   * DICOM tags should use getTags() to access tags directly and not
+   * rely upon the original metadata table.
+   */
+  private void addOriginalMetadata(String key, DicomTag info) {
+    if (info.value != null && !(info.value instanceof byte[]) &&
+      !(info.value instanceof short[]))
+    {
+      if (info.value instanceof String) {
+        addSeriesMetaList(key, ((String) info.value).trim());
+      }
+      else {
+        addSeriesMetaList(key, info.value);
+      }
+    }
+    if (info.attribute != PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE &&
+      info.attribute != REFERENCED_IMAGE_NAVIGATION_SEQUENCE)
+    {
+      for (DicomTag child : info.children) {
+        String childKey = DicomAttribute.formatTag(child.tag);
+        if (child.key != null) {
+          childKey += " " + child.key;
         }
-        else {
-          addSeriesMetaList(key, info.value);
-          for (DicomTag child : info.children) {
-            addSeriesMetaList(key + " " + child.key, child.value);
-          }
-        }
-        */
+        addOriginalMetadata(childKey, child);
       }
     }
   }
@@ -1397,7 +1416,7 @@ public class DicomReader extends SubResolutionFormatReader {
         return;
       }
       stream.seek(tile.fileOffset);
-      //LOGGER.warn("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
+      LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
 
       if (tile.isRLE) {
         // plane is compressed using run-length encoding
@@ -1574,9 +1593,13 @@ public class DicomReader extends SubResolutionFormatReader {
     if (baseOffset == in.length()) {
       return;
     }
+    int channelCount = getRGBChannelCount();
+    if (lut != null || channelCount == 0) {
+      channelCount = 1;
+    }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int plane = originalX * originalY * (lut == null ? getEffectiveSizeC() : 1) * bpp;
+    int plane = originalX * originalY * channelCount * bpp;
 
     in.seek(baseOffset - 12);
     int len = in.readInt();
@@ -1709,6 +1732,16 @@ public class DicomReader extends SubResolutionFormatReader {
 
   protected boolean isExtendedDepthOfField() {
     return edf;
+  }
+
+  /**
+   * Provide the complete hierarchy of DICOM tags.
+   * Applications that need to query or display the complete
+   * tag structure should use this method to retrieve tags
+   * instead of relying upon original metadata.
+   */
+  public List<DicomTag> getTags() {
+    return tags;
   }
 
 }
