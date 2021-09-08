@@ -998,8 +998,8 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               if(currentCountSetted)
                 setDimensions(timeCount, zCount, XYCount);
 
-              if (in.getFilePointer() > endFP) {
-                in.seek(endFP);
+              if (in.getFilePointer() > startFilePointer) {
+                in.seek(startFilePointer);
               }
             }
 
