@@ -755,6 +755,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
           iterateIn(in, startFP + dataLength - 1);
           validDimensions.add(blockCount > 2);
+
+          // make sure the file pointer is at the end of the block
+          in.seek(startFP + dataLength - 1);
+          skip = 0;
         }
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
