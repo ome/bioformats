@@ -85,15 +85,10 @@ public class DicomReader extends SubResolutionFormatReader {
 
   // -- Fields --
 
-  /** Bits per pixel. */
-  private int bitsPerPixel;
-
   private byte[][] lut;
   private short[][] shortLut;
   private int maxPixelRange;
   private int centerPixelValue;
-
-  private double rescaleSlope = 1.0, rescaleIntercept = 0.0;
 
   private boolean inverted;
 
@@ -103,6 +98,7 @@ public class DicomReader extends SubResolutionFormatReader {
   private List<Double> positionX = new ArrayList<Double>();
   private List<Double> positionY = new ArrayList<Double>();
   private List<Double> positionZ = new ArrayList<Double>();
+  private List<String> channelNames = new ArrayList<String>();
 
   private boolean isJPEG = false;
   private boolean isRLE = false;
@@ -235,8 +231,13 @@ public class DicomReader extends SubResolutionFormatReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    if (originalX < getSizeX()) {
+    if (originalX < getSizeX() && originalX > 0) {
       return originalX;
+    }
+    for (DicomTile pos : tilePositions) {
+      if (pos.coreIndex == getCoreIndex()) {
+        return pos.region.width;
+      }
     }
     return super.getOptimalTileWidth();
   }
@@ -244,8 +245,13 @@ public class DicomReader extends SubResolutionFormatReader {
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    if (originalY < getSizeY()) {
+    if (originalY < getSizeY() && originalY > 0) {
       return originalY;
+    }
+    for (DicomTile pos : tilePositions) {
+      if (pos.coreIndex == getCoreIndex()) {
+        return pos.region.height;
+      }
     }
     return super.getOptimalTileHeight();
   }
@@ -322,13 +328,10 @@ public class DicomReader extends SubResolutionFormatReader {
       isRLE = false;
       isJP2K = false;
       isDeflate = false;
-      bitsPerPixel = 0;
       lut = null;
       shortLut = null;
       maxPixelRange = 0;
       centerPixelValue = 0;
-      rescaleSlope = 1.0;
-      rescaleIntercept = 0.0;
       pixelSizeX = pixelSizeY = null;
       pixelSizeZ = null;
       imagesPerFile = 0;
@@ -373,7 +376,7 @@ public class DicomReader extends SubResolutionFormatReader {
     long location = 0;
     boolean bigEndianTransferSyntax = false;
     boolean oddLocations = false;
-    bitsPerPixel = 0;
+    int bitsPerPixel = 0;
     lut = null;
     inverted = false;
 
@@ -387,7 +390,11 @@ public class DicomReader extends SubResolutionFormatReader {
       if (level != MetadataLevel.MINIMUM) {
         // header exists, so we'll read it
         in.seek(0);
-        addSeriesMeta("Header information", in.readString(HEADER_LENGTH).trim());
+        String header = in.readString(HEADER_LENGTH).trim();
+        // ignore the header if it has TIFF magic bytes
+        if (!header.startsWith("II") && !header.startsWith("MM")) {
+          addSeriesMeta("Header information", header);
+        }
         in.skipBytes(4);
       }
       location = HEADER_LENGTH;
@@ -632,6 +639,9 @@ public class DicomReader extends SubResolutionFormatReader {
             if (child.attribute == OPTICAL_PATH_ID) {
               opticalChannels++;
             }
+            else if (child.attribute == OPTICAL_PATH_DESCRIPTION) {
+              channelNames.add(child.getStringValue());
+            }
           }
           break;
         case EXTENDED_DEPTH_OF_FIELD:
@@ -754,6 +764,8 @@ public class DicomReader extends SubResolutionFormatReader {
     // at this point, we have a list of all files to be grouped together
     // and have parsed tags from the current file
 
+    ArrayList<DicomFileInfo> metadataInfo = new ArrayList<DicomFileInfo>();
+
     if (seriesCount > 1) {
       // TODO: this case is largely untested at the moment and may need revisiting
       for (int i=0; i<seriesCount; i++) {
@@ -768,6 +780,7 @@ public class DicomReader extends SubResolutionFormatReader {
         fileInfo.coreMetadata.sizeZ *= currentFileList.size();
         fileInfo.coreMetadata.imageCount = fileInfo.coreMetadata.sizeZ;
         core.add(fileInfo.coreMetadata);
+        metadataInfo.add(fileInfo);
       }
     }
     else {
@@ -782,6 +795,8 @@ public class DicomReader extends SubResolutionFormatReader {
 
       if (infos.size() > 1) {
         infos.sort(null);
+
+        metadataInfo.add(infos.get(0));
 
         core.clear();
         tilePositions.clear();
@@ -802,18 +817,24 @@ public class DicomReader extends SubResolutionFormatReader {
           updateCoreMetadata(info.coreMetadata);
 
           // image type is used to distinguish between downsampled resolutions and smaller separate images
-          if (info.imageType.indexOf("VOLUME") < 0 || info.edf != prevInfo.edf) {
+          if ((info.imageType.indexOf("VOLUME") < 0 || info.edf != prevInfo.edf) &&
+            (!info.imageType.equals(prevInfo.imageType) || info.coreMetadata.sizeX != prevInfo.coreMetadata.sizeX ||
+            info.coreMetadata.sizeY != prevInfo.coreMetadata.sizeY))
+          {
             core.add(info.coreMetadata);
+            metadataInfo.add(info);
           }
           else if (info.coreMetadata.sizeX != prevInfo.coreMetadata.sizeX &&
             info.coreMetadata.sizeY != prevInfo.coreMetadata.sizeY)
           {
             core.add(core.size() - 1, info.coreMetadata);
+            metadataInfo.add(info);
           }
           else if (info.coreMetadata.sizeX != prevInfo.coreMetadata.sizeX ||
             info.coreMetadata.sizeY != prevInfo.coreMetadata.sizeY)
           {
             core.add(info.coreMetadata);
+            metadataInfo.add(info);
           }
           else if (info.concatenationIndex == 0) {
             core.get(core.size() - 1, core.sizes()[core.size() - 1] - 1).sizeZ++;
@@ -834,6 +855,7 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       else {
         updateCoreMetadata(core.get(0, 0));
+        metadataInfo.add(infos.get(0));
       }
     }
 
@@ -841,73 +863,71 @@ public class DicomReader extends SubResolutionFormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
-    // TODO: some of the metadata mapping pulls from the wrong file for some datasets
-    String stamp = null;
-
-    if (date != null && time != null) {
-      stamp = date + " " + time;
-      stamp = DateTools.formatDate(stamp, "yyyy.MM.dd HH:mm:ss", ".");
-    }
-
-    if (stamp == null || stamp.trim().equals("")) stamp = null;
-
     for (int i=0; i<getSeriesCount(); i++) {
-      if (stamp != null) store.setImageAcquisitionDate(new Timestamp(stamp), i);
+      setSeries(i);
+      DicomFileInfo info = metadataInfo.get(seriesToCoreIndex(i));
+
+      // TODO: fix timestamp to use 'info'
+      String stamp = null;
+
+      if (date != null && time != null) {
+        stamp = date + " " + time;
+        stamp = DateTools.formatDate(stamp, "yyyy.MM.dd HH:mm:ss", ".");
+      }
+      if (stamp != null && !stamp.isEmpty()) {
+        store.setImageAcquisitionDate(new Timestamp(stamp), i);
+      }
+
       store.setImageName("Series " + i, i);
-    }
 
-    if (level != MetadataLevel.MINIMUM) {
-      for (int i=0; i<getSeriesCount(); i++) {
-        store.setImageDescription(imageType, i);
+      if (level != MetadataLevel.MINIMUM) {
+        store.setImageDescription(info.imageType, i);
 
-        // all physical sizes were stored in mm, so must be converted to um
-        if (pixelSizeX != null) {
-          Length x = FormatTools.getPhysicalSizeX(new Double(pixelSizeX), UNITS.MILLIMETER);
-          if (x != null) {
-            store.setPixelsPhysicalSizeX(x, i);
-          }
+        if (info.pixelSizeX != null) {
+          store.setPixelsPhysicalSizeX(info.pixelSizeX, i);
         }
-        if (pixelSizeY != null) {
-          Length y = FormatTools.getPhysicalSizeY(new Double(pixelSizeY), UNITS.MILLIMETER);
-          if (y != null) {
-            store.setPixelsPhysicalSizeY(y, i);
-          }
+        if (info.pixelSizeY != null) {
+          store.setPixelsPhysicalSizeY(info.pixelSizeY, i);
         }
-        if (pixelSizeZ != null) {
-          Length z = FormatTools.getPhysicalSizeZ(pixelSizeZ, UNITS.MILLIMETER);
-          if (z != null) {
-            store.setPixelsPhysicalSizeZ(z, i);
+        if (info.pixelSizeZ != null) {
+          store.setPixelsPhysicalSizeZ(info.pixelSizeZ, i);
+        }
+
+        for (int c=0; c<getEffectiveSizeC(); c++) {
+          if (c < info.channelNames.size()) {
+            store.setChannelName(info.channelNames.get(c), i, c);
           }
         }
 
         for (int p=0; p<getImageCount(); p++) {
-          if (p < positionX.size()) {
-            if (positionX.get(p) != null) {
-              Length x = new Length(positionX.get(p), UNITS.MILLIMETER);
+          if (p < info.positionX.size()) {
+            if (info.positionX.get(p) != null) {
+              Length x = new Length(info.positionX.get(p), UNITS.MILLIMETER);
               if (x != null) {
-                store.setPlanePositionX(x, 0, p);
+                store.setPlanePositionX(x, i, p);
               }
             }
           }
-          if (p < positionY.size()) {
-            if (positionY.get(p) != null) {
-              Length y = new Length(positionY.get(p), UNITS.MILLIMETER);
+          if (p < info.positionY.size()) {
+            if (info.positionY.get(p) != null) {
+              Length y = new Length(info.positionY.get(p), UNITS.MILLIMETER);
               if (y != null) {
-                store.setPlanePositionY(y, 0, p);
+                store.setPlanePositionY(y, i, p);
               }
             }
           }
-          if (p < positionZ.size()) {
-            if (positionZ.get(p) != null) {
-              Length z = new Length(positionZ.get(p), UNITS.MILLIMETER);
+          if (p < info.positionZ.size()) {
+            if (info.positionZ.get(p) != null) {
+              Length z = new Length(info.positionZ.get(p), UNITS.MILLIMETER);
               if (z != null) {
-                store.setPlanePositionZ(z, 0, p);
+                store.setPlanePositionZ(z, i, p);
               }
             }
           }
         }
       }
     }
+    setSeries(0);
   }
 
   // -- Helper methods --
@@ -996,16 +1016,8 @@ public class DicomReader extends SubResolutionFormatReader {
             date = infoString;
             break;
           case IMAGE_TYPE:
-            imageType = infoString;
-            break;
-          case RESCALE_INTERCEPT:
-            if (infoNumber != null) {
-              rescaleIntercept = infoNumber.doubleValue();
-            }
-            break;
-          case RESCALE_SLOPE:
-            if (infoNumber != null) {
-              rescaleSlope = infoNumber.doubleValue();
+            if (imageType == null) {
+              imageType = infoString;
             }
             break;
           case PIXEL_SPACING:
@@ -1257,15 +1269,15 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
 
-    LOGGER.warn("file = {}", file);
-    LOGGER.warn("  date = {}, originalDate = {}", date, originalDate);
-    LOGGER.warn("  time = {}, originalTime = {}", time, originalTime);
-    LOGGER.warn("  instance = {}, originalInstance = {}", instance, originalInstance);
-    LOGGER.warn("  checkSeries = {}", checkSeries);
-    LOGGER.warn("  fileSeries = {}, originalSeries = {}", fileSeries, originalSeries);
-    LOGGER.warn("  currentX = {}, originalX = {}", currentX, originalX);
-    LOGGER.warn("  currentY = {}, originalY = {}", currentY, originalY);
-    LOGGER.warn("  thisSpecimen = {}, originalSpecimen = {}", thisSpecimen, originalSpecimen);
+    LOGGER.debug("file = {}", file);
+    LOGGER.debug("  date = {}, originalDate = {}", date, originalDate);
+    LOGGER.debug("  time = {}, originalTime = {}", time, originalTime);
+    LOGGER.debug("  instance = {}, originalInstance = {}", instance, originalInstance);
+    LOGGER.debug("  checkSeries = {}", checkSeries);
+    LOGGER.debug("  fileSeries = {}, originalSeries = {}", fileSeries, originalSeries);
+    LOGGER.debug("  currentX = {}, originalX = {}", currentX, originalX);
+    LOGGER.debug("  currentY = {}, originalY = {}", currentY, originalY);
+    LOGGER.debug("  thisSpecimen = {}, originalSpecimen = {}", thisSpecimen, originalSpecimen);
 
     boolean noSpecimens = originalSpecimen == null && thisSpecimen == null;
     boolean oneNullSpecimen = originalSpecimen == null || thisSpecimen == null;
@@ -1611,7 +1623,7 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
 
-    long offset = -1;
+    long offset = baseOffset;
     for (int i=0; i<imagesPerFile; i++) {
       if (isRLE) {
         if (i == 0) in.seek(baseOffset);
@@ -1631,12 +1643,19 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       else if (isJPEG || isJP2K) {
         // scan for next JPEG magic byte sequence
-        if (i == 0) offset = baseOffset;
-        else offset += 3;
+        // ideally this would use the encapsulated stream data to
+        // efficiently assemble the list of offsets, but we have some
+        // datasets that have incorrect stored block lengths
+        if (i == 0) {
+          offset = baseOffset;
+        }
+        else {
+          offset += 3;
+        }
 
         byte secondCheck = isJPEG ? (byte) 0xd8 : (byte) 0x4f;
-
         in.seek(offset);
+
         byte[] buf = new byte[(int) Math.min(8192, in.length() - in.getFilePointer())];
         int n = in.read(buf);
         boolean found = false;
@@ -1693,6 +1712,13 @@ public class DicomReader extends SubResolutionFormatReader {
       info.imageType = getImageType();
       info.zOffsets = getZOffsets();
       info.edf = edf;
+      info.pixelSizeX = getPixelSizeX();
+      info.pixelSizeY = getPixelSizeY();
+      info.pixelSizeZ = getPixelSizeZ();
+      info.positionX = getPositionX();
+      info.positionY = getPositionY();
+      info.positionZ = getPositionZ();
+      info.channelNames = getChannelNames();
       return info;
     }
     return new DicomFileInfo(new Location(file).getAbsolutePath());
@@ -1728,6 +1754,43 @@ public class DicomReader extends SubResolutionFormatReader {
       return 0;
     }
     return concatenationNumber.intValue() - 1;
+  }
+
+  protected Length getPixelSizeX() {
+    if (pixelSizeX == null) {
+      return null;
+    }
+    return FormatTools.getPhysicalSizeX(new Double(pixelSizeX), UNITS.MILLIMETER);
+  }
+
+  protected Length getPixelSizeY() {
+    if (pixelSizeY == null) {
+      return null;
+    }
+    return FormatTools.getPhysicalSizeY(new Double(pixelSizeY), UNITS.MILLIMETER);
+  }
+
+  protected Length getPixelSizeZ() {
+    if (pixelSizeZ == null) {
+      return null;
+    }
+    return FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ), UNITS.MILLIMETER);
+  }
+
+  protected List<Double> getPositionX() {
+    return positionX;
+  }
+
+  protected List<Double> getPositionY() {
+    return positionY;
+  }
+
+  protected List<Double> getPositionZ() {
+    return positionZ;
+  }
+
+  protected List<String> getChannelNames() {
+    return channelNames;
   }
 
   protected boolean isExtendedDepthOfField() {

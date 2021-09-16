@@ -37,6 +37,9 @@ import java.util.List;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 
+import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
+
 /**
  * Structure containing metadata for one DICOM file (instance).
  */
@@ -48,6 +51,14 @@ public class DicomFileInfo implements Comparable<DicomFileInfo> {
   public String imageType;
   public List<Double> zOffsets;
   public boolean edf = false;
+  public Timestamp timestamp;
+  public Length pixelSizeX;
+  public Length pixelSizeY;
+  public Length pixelSizeZ;
+  public List<Double> positionX;
+  public List<Double> positionY;
+  public List<Double> positionZ;
+  public List<String> channelNames;
 
   /**
    * Construct an empty object to be populated later.
@@ -75,6 +86,13 @@ public class DicomFileInfo implements Comparable<DicomFileInfo> {
       zOffsets = reader.getZOffsets();
       concatenationIndex = reader.getConcatenationIndex();
       edf = reader.isExtendedDepthOfField();
+      pixelSizeX = reader.getPixelSizeX();
+      pixelSizeY = reader.getPixelSizeY();
+      pixelSizeZ = reader.getPixelSizeZ();
+      positionX = reader.getPositionX();
+      positionY = reader.getPositionY();
+      positionZ = reader.getPositionZ();
+      channelNames = reader.getChannelNames();
     }
   }
 
