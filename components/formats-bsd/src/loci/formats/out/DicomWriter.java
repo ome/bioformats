@@ -57,6 +57,8 @@ import loci.formats.meta.IPyramidStore;
 import loci.formats.meta.MetadataRetrieve;
 
 import ome.xml.model.enums.DimensionOrder;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 import static loci.formats.in.DicomAttribute.*;
 import static loci.formats.in.DicomVR.*;
@@ -198,7 +200,7 @@ public class DicomWriter extends FormatWriter {
       options.channels = getSamplesPerPixel();
       options.bitsPerSample = bytesPerPixel * 8;
       options.littleEndian = out.isLittleEndian();
-      options.interleaved = interleaved;
+      options.interleaved = options.channels > 1 && interleaved;
       byte[] compressed = codec.compress(paddedBuf, options);
       boolean pad = compressed.length % 2 == 1;
 
@@ -430,19 +432,50 @@ public class DicomWriter extends FormatWriter {
         imageType.value = padString(type);
         tags.add(imageType);
 
+        // define optical paths (OME Channels)
         DicomTag opticalSequence = new DicomTag(OPTICAL_PATH_SEQUENCE, SQ);
         for (int c=0; c<r.getChannelCount(pyramid); c++) {
           DicomTag opticalID = new DicomTag(OPTICAL_PATH_ID, SH);
           opticalID.value = padString(String.valueOf(c));
           opticalSequence.children.add(opticalID);
+
+          DicomTag opticalDescription = new DicomTag(OPTICAL_PATH_DESCRIPTION, ST);
+          opticalDescription.value = padString(r.getChannelName(pyramid, c));
+          opticalSequence.children.add(opticalDescription);
         }
         tags.add(opticalSequence);
+
+        // define physical pixels sizes
+        DicomTag sharedGroupsSequence = new DicomTag(SHARED_FUNCTIONAL_GROUPS_SEQUENCE, SQ);
+        DicomTag pixelMeasuresSequence = new DicomTag(PIXEL_MEASURES_SEQUENCE, SQ);
+
+        DicomTag sliceThickness = new DicomTag(SLICE_THICKNESS, DS);
+        Length physicalZ = r.getPixelsPhysicalSizeZ(pyramid);
+        if (physicalZ != null) {
+          sliceThickness.value = padString(String.valueOf(physicalZ.value(UNITS.MM)));
+        }
+        else {
+          sliceThickness.value = padString("0");
+        }
+        pixelMeasuresSequence.children.add(sliceThickness);
+
+        DicomTag pixelSpacing = new DicomTag(PIXEL_SPACING, DS);
+        Length physicalX = r.getPixelsPhysicalSizeX(pyramid);
+        Length physicalY = r.getPixelsPhysicalSizeY(pyramid);
+        String px = physicalX == null ? "0" : String.valueOf(physicalX.value(UNITS.MM));
+        String py = physicalY == null ? "0" : String.valueOf(physicalY.value(UNITS.MM));
+        pixelSpacing.value = padString(px + "\\" + py);
+        pixelMeasuresSequence.children.add(pixelSpacing);
+
+        sharedGroupsSequence.children.add(pixelMeasuresSequence);
+        tags.add(sharedGroupsSequence);
 
         // placeholder tile positions for TILED_SPARSE
         if (!isReallySequential()) {
           planeOffsets[resolutionIndex] = new PlaneOffset[getPlaneCount(pyramid) * tileCountX * tileCountY];
           DicomTag perFrameSequence = new DicomTag(PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE, SQ);
           for (int p=0; p<planeOffsets[resolutionIndex].length; p++) {
+            // the values here don't matter, they will be overwritten when saveBytes is called
             DicomTag opticalPath = new DicomTag(OPTICAL_PATH_ID_SEQUENCE, SQ);
             DicomTag opticalPathID = new DicomTag(OPTICAL_PATH_ID, SH);
             opticalPathID.value = padString("0");
@@ -466,7 +499,6 @@ public class DicomWriter extends FormatWriter {
 
           tags.add(perFrameSequence);
         }
-
 
         tags.sort(new Comparator<DicomTag>() {
           public int compare(DicomTag a, DicomTag b) {
@@ -701,13 +733,27 @@ public class DicomWriter extends FormatWriter {
     }
   }
 
+  /**
+   * Pad the given string so that the length is a multiple of 2.
+   * If the input is null, an empty string is returned.
+   * Otherwise, a space is appended if necessary.
+   *
+   * @param value original string
+   * @return padded string whose length is a multiple of 2
+   */
   private String padString(String value) {
+    if (value == null) {
+      return "";
+    }
     if (value.length() % 2 == 0) {
       return value;
     }
     return value + " ";
   }
 
+  /**
+   * @return transfer syntax UID corresponding to the current compression type
+   */
   private String getTransferSyntax() {
     String transferSyntax = null;
     if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
@@ -727,6 +773,9 @@ public class DicomWriter extends FormatWriter {
     return padString(transferSyntax);
   }
 
+  /**
+   * @return Codec instance corresponding to current compression type
+   */
   private Codec getCodec() {
     if (compression.equals(CompressionType.JPEG.getCompression())) {
       return new JPEGCodec();
