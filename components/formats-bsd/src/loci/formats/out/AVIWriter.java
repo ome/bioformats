@@ -42,6 +42,9 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.meta.MetadataRetrieve;
+import ome.units.UNITS;
+import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 
 /**
  * AVIWriter is the file format writer for AVI files.
@@ -280,6 +283,13 @@ public class AVIWriter extends FormatWriter {
     int pixelType = FormatTools.pixelTypeFromString(type);
     bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
     bytesPerPixel *= getSamplesPerPixel();
+    Time timeIncrement = meta.getPixelsTimeIncrement(series);
+    if (timeIncrement != null) {
+      double timeIncValue = timeIncrement.value(UNITS.SECOND).doubleValue();
+      if (timeIncValue != 0) { 
+        fps = new Double(1 / timeIncValue).intValue();
+      }
+    }
 
     xPad = 0;
     int xMod = xDim % 4;
