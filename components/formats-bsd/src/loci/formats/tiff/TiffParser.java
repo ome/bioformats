@@ -1392,10 +1392,7 @@ public class TiffParser implements Closeable {
     // Only adjust the offset if we know that the file is too large for 32-bit
     // offsets to be accurate; otherwise, we're making the incorrect assumption
     // that IFDs are stored sequentially.
-    if (offset < previous && offset != 0 && in.length() > Integer.MAX_VALUE) {
-      if (in.length() <=  Math.pow(2, 32)) {
-        throw new RuntimeException("previous: " + previous + ", offset: " + offset + ", in.length: " + in.length());
-      }
+    if (offset < previous && offset != 0 && in.length() >= Math.pow(2, 32)) {
       offset += 0x100000000L;
     }
     return offset;
