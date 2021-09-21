@@ -93,6 +93,7 @@ public class DicomFileInfo implements Comparable<DicomFileInfo> {
       positionY = reader.getPositionY();
       positionZ = reader.getPositionZ();
       channelNames = reader.getChannelNames();
+      timestamp = reader.getTimestamp();
     }
   }
 

@@ -879,15 +879,8 @@ public class DicomReader extends SubResolutionFormatReader {
       setSeries(i);
       DicomFileInfo info = metadataInfo.get(seriesToCoreIndex(i));
 
-      // TODO: fix timestamp to use 'info'
-      String stamp = null;
-
-      if (date != null && time != null) {
-        stamp = date + " " + time;
-        stamp = DateTools.formatDate(stamp, "yyyy.MM.dd HH:mm:ss", ".");
-      }
-      if (stamp != null && !stamp.isEmpty()) {
-        store.setImageAcquisitionDate(new Timestamp(stamp), i);
+      if (info.timestamp != null) {
+        store.setImageAcquisitionDate(info.timestamp, i);
       }
 
       store.setImageName("Series " + i, i);
@@ -1741,6 +1734,7 @@ public class DicomReader extends SubResolutionFormatReader {
       info.positionY = getPositionY();
       info.positionZ = getPositionZ();
       info.channelNames = getChannelNames();
+      info.timestamp = getTimestamp();
       return info;
     }
     return new DicomFileInfo(new Location(file).getAbsolutePath());
@@ -1817,6 +1811,19 @@ public class DicomReader extends SubResolutionFormatReader {
 
   protected boolean isExtendedDepthOfField() {
     return edf;
+  }
+
+  protected Timestamp getTimestamp() {
+    String stamp = null;
+
+    if (date != null && time != null) {
+      stamp = date + " " + time;
+      stamp = DateTools.formatDate(stamp, "yyyy.MM.dd HH:mm:ss", ".");
+    }
+    if (stamp != null && !stamp.isEmpty()) {
+      return new Timestamp(stamp);
+    }
+    return null;
   }
 
   /**
