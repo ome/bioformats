@@ -46,7 +46,6 @@ public class DicomTile {
   public long endOffset;
   public Double zOffset;
   public int channel;
-  public int coreIndex = 0;
   public boolean last = false;
 
   public boolean isJP2K = false;

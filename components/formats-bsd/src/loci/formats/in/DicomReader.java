@@ -116,7 +116,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
   private List<String> companionFiles = new ArrayList<String>();
 
-  private List<DicomTile> tilePositions;
+  private Map<Integer, List<DicomTile>> tilePositions;
   private Map<Integer, List<Double>> zOffsets;
   private Number concatenationNumber = null;
   private boolean edf = false;
@@ -209,9 +209,11 @@ public class DicomReader extends SubResolutionFormatReader {
     ArrayList<String> uniqueFiles = new ArrayList<String>();
     uniqueFiles.add(new Location(currentId).getAbsolutePath());
     if (tilePositions != null) {
-      for (DicomTile t : tilePositions) {
-        if (!uniqueFiles.contains(t.file)) {
-          uniqueFiles.add(t.file);
+      for (List<DicomTile> tilePos : tilePositions.values()) {
+        for (DicomTile t : tilePos) {
+          if (!uniqueFiles.contains(t.file)) {
+            uniqueFiles.add(t.file);
+          }
         }
       }
     }
@@ -234,10 +236,8 @@ public class DicomReader extends SubResolutionFormatReader {
     if (originalX < getSizeX() && originalX > 0) {
       return originalX;
     }
-    for (DicomTile pos : tilePositions) {
-      if (pos.coreIndex == getCoreIndex()) {
-        return pos.region.width;
-      }
+    if (tilePositions.containsKey(getCoreIndex())) {
+      return tilePositions.get(getCoreIndex()).get(0).region.width;
     }
     return super.getOptimalTileWidth();
   }
@@ -248,10 +248,8 @@ public class DicomReader extends SubResolutionFormatReader {
     if (originalY < getSizeY() && originalY > 0) {
       return originalY;
     }
-    for (DicomTile pos : tilePositions) {
-      if (pos.coreIndex == getCoreIndex()) {
-        return pos.region.height;
-      }
+    if (tilePositions.containsKey(getCoreIndex())) {
+      return tilePositions.get(getCoreIndex()).get(0).region.height;
     }
     return super.getOptimalTileHeight();
   }
@@ -271,13 +269,17 @@ public class DicomReader extends SubResolutionFormatReader {
     int z = getZCTCoords(no)[0];
     int c = getZCTCoords(no)[1];
 
+    if (!tilePositions.containsKey(getCoreIndex())) {
+      LOGGER.warn("No tiles for core index = {}", getCoreIndex());
+      return buf;
+    }
+
     // look for any tiles that match the requested tile and plane
-    // TODO: Z coordinate checking should maybe be simplified?
-    for (int t=0; t<tilePositions.size(); t++) {
-      DicomTile tile = tilePositions.get(t);
-      List<Double> zs = zOffsets.get(getCoreIndex());
-      if (tile.coreIndex == getCoreIndex() &&
-        (getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(z))) || (getSizeZ() == tilePositions.size() && t == z)) &&
+    List<Double> zs = zOffsets.get(getCoreIndex());
+    List<DicomTile> tiles = tilePositions.get(getCoreIndex());
+    for (int t=0; t<tiles.size(); t++) {
+      DicomTile tile = tiles.get(t);
+      if ((getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(z))) || (getSizeZ() == tiles.size() && t == z)) &&
         (tile.channel == c || getEffectiveSizeC() == 1) &&
         tile.region.intersects(currentRegion))
       {
@@ -577,7 +579,8 @@ public class DicomReader extends SubResolutionFormatReader {
             }
             else if (child.attribute == PLANE_POSITION_SLIDE_SEQUENCE) {
               if (tilePositions == null) {
-                tilePositions = new ArrayList<DicomTile>();
+                tilePositions = new HashMap<Integer, List<DicomTile>>();
+                tilePositions.put(0, new ArrayList<DicomTile>());
               }
               int col = -1;
               int row = -1;
@@ -606,7 +609,7 @@ public class DicomReader extends SubResolutionFormatReader {
                 tile.isJPEG = isJPEG;
                 tile.isJP2K = isJP2K;
                 tile.isDeflate = isDeflate;
-                tilePositions.add(tile);
+                tilePositions.get(0).add(tile);
               }
             }
           }
@@ -675,7 +678,7 @@ public class DicomReader extends SubResolutionFormatReader {
         file = file.replaceAll("/", File.separator);
         companionFiles.set(i, parent + File.separator + file);
       }
-      tilePositions = new ArrayList<DicomTile>();
+      tilePositions = new HashMap<Integer, List<DicomTile>>();
       zOffsets = new HashMap<Integer, List<Double>>();
       core.clear();
     }
@@ -692,7 +695,8 @@ public class DicomReader extends SubResolutionFormatReader {
       // fill in the implicit tile boundaries so that there doesn't need
       // to be any more distinct logic for TILED_FULL vs TILED_SPARSE
       if (tiledFull || tilePositions == null) {
-        tilePositions = new ArrayList<DicomTile>();
+        tilePositions = new HashMap<Integer, List<DicomTile>>();
+        tilePositions.put(0, new ArrayList<DicomTile>());
 
         int cols = (int) Math.ceil((double) getSizeX() / originalX);
         int rows = (int) Math.ceil((double) getSizeY() / originalY);
@@ -705,7 +709,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
         for (int p=0; p<imagesPerFile; p++) {
           DicomTile tile = new DicomTile();
-          tile.fileIndex = tilePositions.size();
+          tile.fileIndex = tilePositions.get(0).size();
           if (m.sizeZ == 1 && fileZOffset != null) {
             tile.zOffset = fileZOffset;
           }
@@ -719,7 +723,7 @@ public class DicomReader extends SubResolutionFormatReader {
           tile.isJPEG = isJPEG;
           tile.isJP2K = isJP2K;
           tile.isDeflate = isDeflate;
-          tilePositions.add(tile);
+          tilePositions.get(0).add(tile);
 
           if (x + originalX < getSizeX()) {
             x += originalX;
@@ -773,7 +777,7 @@ public class DicomReader extends SubResolutionFormatReader {
       for (int i=0; i<seriesCount; i++) {
         List<String> currentFileList = fileList.get(keys[i]);
         DicomFileInfo fileInfo = createFileInfo(currentFileList.get(0));
-        tilePositions.addAll(fileInfo.tiles);
+        tilePositions.put(i, fileInfo.tiles);
         zOffsets.put(i, fileInfo.zOffsets);
         fileInfo.coreMetadata.sizeZ *= currentFileList.size();
         fileInfo.coreMetadata.imageCount = fileInfo.coreMetadata.sizeZ;
@@ -800,10 +804,8 @@ public class DicomReader extends SubResolutionFormatReader {
         tilePositions.clear();
         updateCoreMetadata(infos.get(0).coreMetadata);
         core.add(infos.get(0).coreMetadata);
-        for (DicomTile t : infos.get(0).tiles) {
-          t.coreIndex = 0;
-          tilePositions.add(t);
-        }
+
+        tilePositions.put(0, infos.get(0).tiles);
 
         zOffsets.put(0, infos.get(0).zOffsets);
 
@@ -842,10 +844,12 @@ public class DicomReader extends SubResolutionFormatReader {
           }
 
           int lastCoreIndex = core.flattenedIndex(core.size() - 1, core.sizes()[core.size() - 1] - 1);
-          for (DicomTile tile : info.tiles) {
-            tile.coreIndex = lastCoreIndex;
+          if (!tilePositions.containsKey(lastCoreIndex)) {
+            tilePositions.put(lastCoreIndex, info.tiles);
           }
-          tilePositions.addAll(info.tiles);
+          else {
+            tilePositions.get(lastCoreIndex).addAll(info.tiles);
+          }
 
           if (zOffsets.containsKey(lastCoreIndex)) {
             for (Double z : info.zOffsets) {
@@ -860,6 +864,7 @@ public class DicomReader extends SubResolutionFormatReader {
         }
       }
       else {
+        tilePositions.put(0, infos.get(0).tiles);
         updateCoreMetadata(core.get(0, 0));
         metadataInfo.add(infos.get(0));
         zOffsets.put(0, infos.get(0).zOffsets);
@@ -1666,16 +1671,22 @@ public class DicomReader extends SubResolutionFormatReader {
         byte[] buf = new byte[(int) Math.min(8192, in.length() - in.getFilePointer())];
         int n = in.read(buf);
         boolean found = false;
-        while (!found && n > 0) {
+        boolean endFound = false;
+        while (!found && n > 4) {
           for (int q=0; q<n-3; q++) {
             if (buf[q] == (byte) 0xff && buf[q + 1] == secondCheck &&
               buf[q + 2] == (byte) 0xff)
             {
               if (isJPEG || (isJP2K && buf[q + 3] == 0x51)) {
-                found = true;
-                offset = in.getFilePointer() + q - n;
+                if (endFound || i == 0) {
+                  found = true;
+                  offset = in.getFilePointer() + q - n;
+                }
                 break;
               }
+            }
+            else if (buf[q] == (byte) 0xff && buf[q + 1] == (byte) 0xd9) {
+              endFound = true;
             }
           }
           if (!found) {
@@ -1688,19 +1699,20 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       else offset = baseOffset + plane*i;
 
-      tilePositions.get(i).fileOffset = offset;
-      tilePositions.get(i).last = i == imagesPerFile - 1;
+      tilePositions.get(getCoreIndex()).get(i).fileOffset = offset;
+      tilePositions.get(getCoreIndex()).get(i).last = i == imagesPerFile - 1;
       if (i > 0) {
-        tilePositions.get(i - 1).endOffset = tilePositions.get(i).fileOffset;
+        tilePositions.get(getCoreIndex()).get(i - 1).endOffset = tilePositions.get(getCoreIndex()).get(i).fileOffset;
       }
       if (i == imagesPerFile - 1) {
-        tilePositions.get(i).endOffset = in.length();
+        tilePositions.get(getCoreIndex()).get(i).endOffset = in.length();
       }
       if (!zOffsets.containsKey(getCoreIndex())) {
         zOffsets.put(getCoreIndex(), new ArrayList<Double>());
       }
-      if (!zOffsets.get(getCoreIndex()).contains(tilePositions.get(i).zOffset)) {
-        zOffsets.get(getCoreIndex()).add(tilePositions.get(i).zOffset);
+      Double z = tilePositions.get(getCoreIndex()).get(i).zOffset;
+      if (!zOffsets.get(getCoreIndex()).contains(z)) {
+        zOffsets.get(getCoreIndex()).add(z);
       }
     }
   }
@@ -1752,7 +1764,7 @@ public class DicomReader extends SubResolutionFormatReader {
   }
 
   protected List<DicomTile> getTiles() {
-    return tilePositions;
+    return tilePositions.get(0);
   }
 
   protected List<Double> getZOffsets() {
