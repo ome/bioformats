@@ -768,7 +768,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
             }
           }
           else filename = normalizeFilename(dir, filename);
+          // If OME.UUID was not defined, set currentUUID for future searches
+          if (filename.equals(id) && currentUUID == null) {
+            currentUUID = uuid;
+          }
         }
+
         String existing = files.get(uuid);
         if (existing == null) files.put(uuid, filename);
         else if (!existing.equals(filename)) {
