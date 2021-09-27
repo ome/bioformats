@@ -233,11 +233,11 @@ public class DicomReader extends SubResolutionFormatReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    if (originalX < getSizeX() && originalX > 0) {
-      return originalX;
-    }
     if (tilePositions.containsKey(getCoreIndex())) {
       return tilePositions.get(getCoreIndex()).get(0).region.width;
+    }
+    if (originalX < getSizeX() && originalX > 0) {
+      return originalX;
     }
     return super.getOptimalTileWidth();
   }
@@ -245,11 +245,11 @@ public class DicomReader extends SubResolutionFormatReader {
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    if (originalY < getSizeY() && originalY > 0) {
-      return originalY;
-    }
     if (tilePositions.containsKey(getCoreIndex())) {
       return tilePositions.get(getCoreIndex()).get(0).region.height;
+    }
+    if (originalY < getSizeY() && originalY > 0) {
+      return originalY;
     }
     return super.getOptimalTileHeight();
   }
