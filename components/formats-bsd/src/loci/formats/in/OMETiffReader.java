@@ -738,7 +738,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
     // compile list of file/UUID mappings
     Hashtable<String, String> files = new Hashtable<>();
-    boolean needSearch = false;
     for (int i=0; i<seriesCount; i++) {
       int tiffDataCount = meta.getTiffDataCount(i);
       for (int td=0; td<tiffDataCount; td++) {
@@ -762,9 +761,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
               filename = id;
             }
             else {
-              // will need to search for this UUID
               filename = "";
-              needSearch = true;
             }
           }
           else filename = normalizeFilename(dir, filename);
@@ -775,24 +772,16 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
 
         String existing = files.get(uuid);
-        if (existing == null) files.put(uuid, filename);
-        else if (!existing.equals(filename)) {
-          throw new FormatException("Inconsistent UUID filenames");
-        }
-      }
-    }
-
-    // search for missing filenames
-    if (needSearch) {
-      Enumeration en = files.keys();
-      while (en.hasMoreElements()) {
-        String uuid = (String) en.nextElement();
-        String filename = files.get(uuid);
-        if (filename.equals("")) {
-          // TODO search...
-          // should scan only other .ome.tif files
-          // to make this work with OME server may be a little tricky?
-          throw new FormatException("Unmatched UUID: " + uuid);
+        if (existing == null) {
+          if (filename != "") {
+            files.put(uuid, filename);
+          } else {
+           throw new FormatException(
+             "Could not find file associated with UUID: " + uuid +
+             " (expected filename: " + meta.getUUIDFileName(i, td) + ")");
+          }
+        } else if (!existing.equals(filename)) {
+          throw new FormatException("Inconsistent UUID filenames for: " + uuid);
         }
       }
     }
