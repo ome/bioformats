@@ -88,6 +88,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
   public static final String[] OME_TIFF_SUFFIXES =
     {"ome.tiff", "ome.tif", "ome.tf2", "ome.tf8", "ome.btf", "companion.ome"};
 
+  public static final String FAIL_ON_MISSING_KEY = "ometiff.fail_on_missing_tiff";
+  public static final boolean FAIL_ON_MISSING_DEFAULT = true;
+
   // -- Fields --
 
   /** Mapping from series and plane numbers to files and IFD entries. */
@@ -118,6 +121,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(FAIL_ON_MISSING_KEY);
+    return optionsList;
+  }
 
   /* @see loci.formats.SubResolutionFormatReader#isSingleFile(String) */
   @Override
@@ -759,8 +770,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
             if (uuid.equals(currentUUID) || currentUUID == null) {
               // UUID references this file
               filename = id;
-            }
-            else {
+            } else {
               filename = "";
             }
           }
@@ -776,12 +786,20 @@ public class OMETiffReader extends SubResolutionFormatReader {
           if (!filename.isEmpty()) {
             files.put(uuid, filename);
           } else {
-           throw new FormatException(
-             "Could not find file associated with UUID: " + uuid +
-             " (expected filename: " + meta.getUUIDFileName(i, td) + ")");
+            String msg = "Missing file " + meta.getUUIDFileName(i, td) +
+             " associated with UUID " + uuid + ".";
+            if (failOnMissingTIFF()) {
+              throw new FormatException(msg);
+            } else {
+              LOGGER.error(msg + " Corresponding planes will be black.");
+              filename = normalizeFilename(dir, meta.getUUIDFileName(i, td));
+              files.put(uuid, filename);
+            }
           }
         } else if (!existing.equals(filename)) {
-          throw new FormatException("Inconsistent UUID filenames for: " + uuid);
+          throw new FormatException("Inconsistent filenames for UUID " + uuid +
+            ": " + meta.getUUIDFileName(i, td) + "does not match " + existing +
+            ".");
         }
       }
     }
@@ -1429,6 +1447,15 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
     }
   }
+
+  public boolean failOnMissingTIFF() {
+      MetadataOptions options = getMetadataOptions();
+      if (options instanceof DynamicMetadataOptions) {
+        return ((DynamicMetadataOptions) options).getBoolean(
+         FAIL_ON_MISSING_KEY, FAIL_ON_MISSING_DEFAULT);
+      }
+      return FAIL_ON_MISSING_DEFAULT;
+    }
 
   // -- Helper classes --
 
