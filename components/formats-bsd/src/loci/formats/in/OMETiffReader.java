@@ -773,7 +773,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
         String existing = files.get(uuid);
         if (existing == null) {
-          if (filename != "") {
+          if (!filename.isEmpty()) {
             files.put(uuid, filename);
           } else {
            throw new FormatException(
