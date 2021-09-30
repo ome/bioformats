@@ -1978,7 +1978,12 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               continue;
             }
             value = "ByteArray";
-            iterateIn(in, stop);
+            if (length > 2) {
+              iterateIn(in, stop);
+            }
+            else {
+              in.skipBytes(length);
+            }
             break;
           case (10): // deprecated
             // Its like LEVEL but offset is pointing absolutely not relatively
