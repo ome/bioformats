@@ -59,6 +59,7 @@ import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.reader.ReaderException;
 
 import loci.common.Location;
 import loci.common.Constants;
@@ -794,7 +795,12 @@ public class SlideBook7Reader  extends FormatReader {
             ArrayList <CAnnotation70> mBaseAnnotationList;
             ArrayList <CFRAPRegionAnnotation70> mFRAPRegionAnnotationList;
             ArrayList <CUnknownAnnotation70> mUnknownAnnotationList;
-
+            public CAnnotations() {
+                mCubeAnnotationList = new ArrayList <CCubeAnnotation70>();
+                mBaseAnnotationList = new ArrayList <CAnnotation70>();
+                mFRAPRegionAnnotationList = new ArrayList <CFRAPRegionAnnotation70>();
+                mUnknownAnnotationList = new ArrayList <CUnknownAnnotation70>();
+            }
         }
 
         class CAuxFloatData {
@@ -2216,6 +2222,7 @@ public class SlideBook7Reader  extends FormatReader {
             mPathToStreamMap = new HashMap<String,RandomAccessInputStream>();
             mCounterToPathMap = new TreeMap <Integer,String>();
             mCurrentFileCounter = 0;
+            mErrorMessage = "";
         }
 
         public Boolean LoadMetadata()
@@ -2244,17 +2251,21 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean ReadSld() throws FileNotFoundException
         {
-            Yaml yaml = new Yaml();
-            InputStream inputStream = new FileInputStream(mSlidePath);
-            Reader inputStreamReader = new InputStreamReader(inputStream);
-            MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
-
-            mSlideRecord = new CSlideRecord70();
             try {
+                Yaml yaml = new Yaml();
+                InputStream inputStream = new FileInputStream(mSlidePath);
+                Reader inputStreamReader = new InputStreamReader(inputStream);
+                MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
+
+                mSlideRecord = new CSlideRecord70();
                 inputStream.close();
                 int theLastIndex = mSlideRecord.Decode(theNode);
                 SlideBook7Reader.LOGGER.info("ReadSld(): mByteOrdering: " + mSlideRecord.mByteOrdering);
                 return true;
+            } catch (final ReaderException e) {
+                mErrorMessage += "Could not decode file: " + mSlidePath;
+                SlideBook7Reader.LOGGER.info("ReadSld(): " +mErrorMessage);
+                return false;
             } catch (Exception e) {
                 mErrorMessage += "Could not load file: " + mSlidePath;
                 return false;
@@ -2417,7 +2428,7 @@ public class SlideBook7Reader  extends FormatReader {
 	public boolean isThisType(String file, boolean open) {
         //Logger.getLogger("SlideBook7Reader").log(Level.SEVERE, null, "isThisType - file: " + file);
         try {
-            String mytestfile = file; //"e:/Data/Slides/Slide1a.sldy";
+            String mytestfile = file;
             SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - open: " + open);
             // Check the first few bytes to determine if the file can be read by this reader.
             if (!open) return super.isThisType(mytestfile, open); // no file system access
