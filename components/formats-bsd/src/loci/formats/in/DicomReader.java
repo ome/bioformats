@@ -53,6 +53,8 @@ import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.Codec;
@@ -153,7 +155,7 @@ public class DicomReader extends FormatReader {
   private int originalSeries;
   private int originalX, originalY;
 
-  private DicomReader helper;
+  private IFormatReader helper;
 
   private List<String> companionFiles = new ArrayList<String>();
 
@@ -494,6 +496,7 @@ public class DicomReader extends FormatReader {
     attachCompanionFiles();
 
     helper = new DicomReader();
+    helper = Memoizer.wrap(getMetadataOptions(), helper);
     helper.setGroupFiles(false);
 
     m.littleEndian = true;

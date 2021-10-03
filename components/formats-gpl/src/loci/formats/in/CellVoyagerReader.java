@@ -44,6 +44,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
@@ -146,7 +148,7 @@ public class CellVoyagerReader extends FormatReader
     final int areaIndex = indices[ 1 ];
     final WellInfo well = wells.get( wellIndex );
     final AreaInfo area = well.areas.get( areaIndex );
-    final MinimalTiffReader tiffReader = new MinimalTiffReader();
+    final IFormatReader tiffReader = Memoizer.wrap(getMetadataOptions(), new MinimalTiffReader());
 
     imageFolder = new Location(currentId).getAbsoluteFile().getParentFile();
     imageFolder = new Location(imageFolder, "Image");

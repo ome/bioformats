@@ -118,6 +118,8 @@ import loci.common.Location;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -143,7 +145,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   ArrayList<Plane> planes;
 
   /** Helper reader for TIFF files. */
-  private MinimalTiffReader tiffReader;
+  private IFormatReader tiffReader;
 
   private transient HashMap<String, String[]> directoryCache =
     new HashMap<String, String[]>();
@@ -451,7 +453,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
       planes.add(np);
       if (bpp == 0) {
         tiffReader.setId(np.filename);
-        IFDList ifds = tiffReader.getIFDs();
+        IFDList ifds = ((MinimalTiffReader)tiffReader).getIFDs();
         tiffReader.close();
         IFD firstIFD = ifds.get(0);
         int bits = firstIFD.getBitsPerSample()[0];
@@ -499,6 +501,8 @@ public class ZeissTIFFReader extends BaseZeissReader {
     int total = tileIndices.size() * channelIndices.size() * zIndices.size() * timepointIndices.size();
     if(total != planes.size())
       LOGGER.warn("Number of image planes not detected correctly: total={} planes.size={}", total, planes.size());
+    
+    tiffReader = Memoizer.wrap(getMetadataOptions(), tiffReader);
 
   }
 

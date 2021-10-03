@@ -43,6 +43,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
@@ -148,7 +150,8 @@ public class HamamatsuVMSReader extends FormatReader {
     }
 
     if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE) {
-      JPEGReader reader = new JPEGReader();
+      IFormatReader reader = new JPEGReader();
+      reader = Memoizer.wrap(getMetadataOptions(), reader);
       reader.setId(file);
       reader.openBytes(0, buf, x, y, w, h);
       reader.close();

@@ -44,6 +44,8 @@ import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -114,7 +116,7 @@ public class LeicaReader extends FormatReader {
   protected IFDList headerIFDs;
 
   /** Helper readers. */
-  protected MinimalTiffReader tiff;
+  protected IFormatReader tiff;
 
   /** Array of image file names. */
   protected List<String>[] files;
@@ -385,6 +387,7 @@ public class LeicaReader extends FormatReader {
         files = new List[] {new ArrayList<String>()};
         files[0].add(id);
         tiff = new MinimalTiffReader();
+        tiff = Memoizer.wrap(getMetadataOptions(), tiff);
 
         return;
       }
@@ -539,6 +542,7 @@ public class LeicaReader extends FormatReader {
     }
 
     tiff = new MinimalTiffReader();
+    tiff = Memoizer.wrap(getMetadataOptions(), tiff);
 
     LOGGER.info("Populating metadata");
 

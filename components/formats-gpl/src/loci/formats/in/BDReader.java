@@ -48,6 +48,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -81,7 +83,7 @@ public class BDReader extends FormatReader {
   private List<String> wellLabels = new ArrayList<String>();
   private String plateName, plateDescription;
   private String[][] tiffs;
-  private MinimalTiffReader reader;
+  private IFormatReader reader;
 
   private String roiFile;
   private double[] emWave, exWave;
@@ -344,6 +346,7 @@ public class BDReader extends FormatReader {
     tiffs = getTiffs();
 
     reader = new MinimalTiffReader();
+    reader = Memoizer.wrap(getMetadataOptions(), reader);
     reader.setId(tiffs[0][0]);
 
     int sizeX = reader.getSizeX();

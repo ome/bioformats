@@ -38,6 +38,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -73,7 +75,7 @@ public class OperettaReader extends FormatReader {
   // -- Fields --
 
   private Plane[][] planes;
-  private MinimalTiffReader reader;
+  private IFormatReader reader;
   private ArrayList<String> metadataFiles = new ArrayList<String>();
 
   // -- Constructor --
@@ -226,7 +228,7 @@ public class OperettaReader extends FormatReader {
 
       if (p != null && p.filename != null && new Location(p.filename).exists()) {
         if (reader == null) {
-          reader = new MinimalTiffReader();
+          reader = Memoizer.wrap(getMetadataOptions(), new MinimalTiffReader());
         }
         reader.setId(p.filename);
         if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
@@ -406,7 +408,7 @@ public class OperettaReader extends FormatReader {
       }
     }
 
-    reader = new MinimalTiffReader();
+    reader = Memoizer.wrap(getMetadataOptions(), new MinimalTiffReader());
 
     for (int i=0; i<seriesCount; i++) {
       CoreMetadata ms = new CoreMetadata();

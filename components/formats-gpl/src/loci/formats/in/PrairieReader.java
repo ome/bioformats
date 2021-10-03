@@ -40,6 +40,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.in.PrairieMetadata.Frame;
 import loci.formats.in.PrairieMetadata.PFile;
@@ -88,7 +90,7 @@ public class PrairieReader extends FormatReader {
   // -- Fields --
 
   /** Helper reader for opening images. */
-  private TiffReader tiff;
+  private IFormatReader tiff;
 
   /** The associated XML files. */
   private Location xmlFile, cfgFile, envFile;
@@ -316,7 +318,7 @@ public class PrairieReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    tiff = new TiffReader();
+    tiff = Memoizer.wrap(getMetadataOptions(), new TiffReader());
 
     if (checkSuffix(id, XML_SUFFIX)) {
       xmlFile = new Location(id);

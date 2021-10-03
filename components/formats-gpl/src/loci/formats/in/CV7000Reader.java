@@ -43,6 +43,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -80,7 +82,7 @@ public class CV7000Reader extends FormatReader {
 
   private String[] allFiles;
   private Location parent;
-  private MinimalTiffReader reader;
+  private IFormatReader reader;
   private String wppPath;
   private String detailPath;
   private String measurementPath;
@@ -344,6 +346,7 @@ public class CV7000Reader extends FormatReader {
     }
 
     reader = new MinimalTiffReader();
+    reader = Memoizer.wrap(getMetadataOptions(), reader);
     reader.setId(firstFile);
     core.clear();
     core.add(new CoreMetadata(reader.getCoreMetadataList().get(0)));

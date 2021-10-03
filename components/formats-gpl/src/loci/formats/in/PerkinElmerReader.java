@@ -39,6 +39,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -74,7 +76,7 @@ public class PerkinElmerReader extends FormatReader {
   // -- Fields --
 
   /** Helper reader. */
-  protected MinimalTiffReader tiff;
+  protected IFormatReader tiff;
 
   /** List of files to open. */
   protected PixelsFile[] files;
@@ -441,7 +443,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
-    tiff = new MinimalTiffReader();
+    tiff = Memoizer.wrap(getMetadataOptions(), new MinimalTiffReader());
 
     // we always parse the .tim and .htm files if they exist, along with
     // either the .csv file or the .zpo file

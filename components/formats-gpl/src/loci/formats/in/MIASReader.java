@@ -45,7 +45,9 @@ import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
 import loci.formats.ImageTools;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
 import loci.formats.meta.MetadataStore;
@@ -74,7 +76,7 @@ public class MIASReader extends FormatReader {
   private String[][] tiffs;
 
   /** Delegate readers. */
-  private MinimalTiffReader[][] readers;
+  private IFormatReader[][] readers;
 
   /** Path to file containing analysis results for all plates. */
   private String resultFile = null;
@@ -320,8 +322,8 @@ public class MIASReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (readers != null) {
-      for (MinimalTiffReader[] images : readers) {
-        for (MinimalTiffReader r : images) {
+      for (IFormatReader[] images : readers) {
+        for (IFormatReader r : images) {
           if (r != null) r.close(fileOnly);
         }
       }
@@ -424,7 +426,7 @@ public class MIASReader extends FormatReader {
     if (!isGroupFiles()) {
       tiffs = new String[][] {{id}};
       readers = new MinimalTiffReader[1][1];
-      readers[0][0] = new MinimalTiffReader();
+      readers[0][0] = Memoizer.wrap(getMetadataOptions(), new MinimalTiffReader());
 
       TiffReader r = new TiffReader();
       r.setMetadataStore(getMetadataStore());
@@ -675,7 +677,7 @@ public class MIASReader extends FormatReader {
       LOGGER.debug("Well {} has {} files.", j, tiffFiles.length);
       readers[j] = new MinimalTiffReader[tiffFiles.length];
       for (int k=0; k<tiffFiles.length; k++) {
-        readers[j][k] = new MinimalTiffReader();
+        readers[j][k] = Memoizer.wrap(getMetadataOptions(), new MinimalTiffReader());
       }
     }
 

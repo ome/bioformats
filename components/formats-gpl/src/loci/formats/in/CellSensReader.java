@@ -42,6 +42,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -1084,12 +1085,13 @@ public class CellSensReader extends FormatReader {
         case PNG:
           file = "tile.png";
           reader = new APNGReader();
+          reader = Memoizer.wrap(getMetadataOptions(), reader);
         case BMP:
           if (reader == null) {
             file = "tile.bmp";
             reader = new BMPReader();
+            reader = Memoizer.wrap(getMetadataOptions(), reader);
           }
-
           byte[] b = new byte[(int) (end - offset)];
           ets.read(b);
           Location.mapFile(file, new ByteArrayHandle(b));

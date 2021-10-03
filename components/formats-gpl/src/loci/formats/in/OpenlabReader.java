@@ -38,6 +38,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.LZOCodec;
@@ -87,7 +88,7 @@ public class OpenlabReader extends FormatReader {
   // -- Static fields --
 
   /** Helper reader to read PICT data. */
-  private PictReader pict = new PictReader();
+  private IFormatReader pict = Memoizer.wrap(getMetadataOptions(), new PictReader());
 
   // -- Fields --
 

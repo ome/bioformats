@@ -41,6 +41,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
@@ -80,7 +82,7 @@ public class InCellReader extends FormatReader {
   private boolean[][] plateMap;
 
   private Image[][][][] imageFiles;
-  private MinimalTiffReader tiffReader;
+  private IFormatReader tiffReader;
   private List<Double> emWaves, exWaves;
   private List<String> channelNames;
   private int totalImages;
@@ -508,6 +510,7 @@ public class InCellReader extends FormatReader {
 
     if (isTiff && filename != null) {
       tiffReader = new MinimalTiffReader();
+      tiffReader = Memoizer.wrap(getMetadataOptions(), tiffReader);
       tiffReader.setId(filename);
       for (int i=0; i<seriesCount; i++) {
         CoreMetadata ms = core.get(i);

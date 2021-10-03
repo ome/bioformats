@@ -43,6 +43,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -80,7 +82,7 @@ public class ColumbusReader extends FormatReader {
 
   private ArrayList<String> metadataFiles = new ArrayList<String>();
   private ArrayList<Plane> planes = new ArrayList<Plane>();
-  private MinimalTiffReader reader;
+  private IFormatReader reader;
 
   private int nFields = 0;
   private String acquisitionDate;
@@ -296,6 +298,7 @@ public class ColumbusReader extends FormatReader {
     planes.clear();
 
     reader = new MinimalTiffReader();
+    reader = Memoizer.wrap(getMetadataOptions(), reader);
     reader.setId(tmpPlanes[0].file);
     core = reader.getCoreMetadataList();
 

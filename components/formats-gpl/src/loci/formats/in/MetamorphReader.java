@@ -60,6 +60,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.CoreMetadataList;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
@@ -152,7 +154,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   private int mmPlanes; //number of metamorph planes
 
-  private MetamorphReader[][] stkReaders;
+  private IFormatReader[][] stkReaders;
 
   /** List of STK files in the dataset. */
   private String[][] stks;
@@ -341,9 +343,9 @@ public class MetamorphReader extends BaseTiffReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (stkReaders != null) {
-      for (MetamorphReader[] s : stkReaders) {
+      for (IFormatReader[] s : stkReaders) {
         if (s != null) {
-          for (MetamorphReader reader : s) {
+          for (IFormatReader reader : s) {
             if (reader != null) reader.close(fileOnly);
           }
         }
@@ -771,17 +773,19 @@ public class MetamorphReader extends BaseTiffReader {
     }
 
     if (stks == null) {
-      stkReaders = new MetamorphReader[1][1];
+      stkReaders = new IFormatReader[1][1];
       stkReaders[0][0] = new MetamorphReader();
-      stkReaders[0][0].setCanLookForND(false);
+      ((MetamorphReader)stkReaders[0][0]).setCanLookForND(false);
+      stkReaders[0][0] = Memoizer.wrap(getMetadataOptions(), stkReaders[0][0]);
     }
     else {
-      stkReaders = new MetamorphReader[stks.length][];
+      stkReaders = new IFormatReader[stks.length][];
       for (int i=0; i<stks.length; i++) {
-        stkReaders[i] = new MetamorphReader[stks[i].length];
+        stkReaders[i] = new IFormatReader[stks[i].length];
         for (int j=0; j<stkReaders[i].length; j++) {
           stkReaders[i][j] = new MetamorphReader();
-          stkReaders[i][j].setCanLookForND(false);
+          ((MetamorphReader)stkReaders[i][j]).setCanLookForND(false);
+          stkReaders[i][j] = Memoizer.wrap(getMetadataOptions(), stkReaders[i][j]);
           if (j > 0) {
             stkReaders[i][j].setMetadataOptions(
               new DefaultMetadataOptions(MetadataLevel.MINIMUM));

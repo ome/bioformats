@@ -46,6 +46,8 @@ import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -430,6 +432,7 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer() {
     this(DEFAULT_MINIMUM_ELAPSED);
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -444,6 +447,7 @@ public class Memoizer extends ReaderWrapper {
   public Memoizer(long minimumElapsed) {
     this(minimumElapsed, null);
     this.doInPlaceCaching = true;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -462,6 +466,7 @@ public class Memoizer extends ReaderWrapper {
     super();
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -474,6 +479,7 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(IFormatReader r) {
     this(r, DEFAULT_MINIMUM_ELAPSED);
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -490,6 +496,7 @@ public class Memoizer extends ReaderWrapper {
   public Memoizer(IFormatReader r, long minimumElapsed) {
     this(r, minimumElapsed, null);
     this.doInPlaceCaching = true;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -509,8 +516,57 @@ public class Memoizer extends ReaderWrapper {
     super(r);
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
+    configure(reader.getMetadataOptions());
   }
 
+  /**
+   * Used to inject all the properties necessary for {@link Memoizer}
+   * creation into {@link MetadataOptions}. This is called by every
+   * constructor so that {@link IFormatReader} instances created
+   * internally can also make use of memoization.
+   *
+   * @param options
+   */
+  public void configure(MetadataOptions options) {
+    String k = Memoizer.class.getName();
+    if (options instanceof DynamicMetadataOptions) {
+      ((DynamicMetadataOptions) options).setFile(k + ".cacheDirectory", this.directory);
+      ((DynamicMetadataOptions) options).setBoolean(k + ".inPlace", this.doInPlaceCaching);
+      ((DynamicMetadataOptions) options).setLong(k + ".minimumElapsed", this.minimumElapsed);
+    }
+  }
+
+  /**
+   * If {@link MetadataOptions} have been configured per
+   * {@link #configure(MetadataOptions)}, then wrap the given
+   * {@link IFormatReader} with a {@link Memoizer} instance and return.
+   * Otherwise, return the {@link IFormatReader} unchanged.
+   *
+   * @param options If null, return the reader
+   * @param r
+   * @return Either a {@link Memoizer} or the {@link IFormatReader} argument.
+   */
+  public static IFormatReader wrap(MetadataOptions options, IFormatReader r) {
+    if (options == null || !(options instanceof DynamicMetadataOptions)) {
+      return r;
+    }
+    String k = Memoizer.class.getName();
+    Long elapsed = ((DynamicMetadataOptions) options).getLong(k + ".minimumElapsed");
+    Boolean inplace = ((DynamicMetadataOptions) options).getBoolean(k + ".inPlace");
+    File cachedir = ((DynamicMetadataOptions) options).getFile(k + ".cacheDirectory");
+    if (elapsed == null || inplace == null) {
+      LOGGER.warn("config: memoizer options not found, reader will not be wrapped");
+      return r;
+    }
+    if (inplace) {
+      return new Memoizer(r, elapsed);
+    } else if (cachedir != null) {
+      return new Memoizer(r, elapsed, cachedir);
+    }
+    else {
+      return r;
+    }
+  }
 
   /**
    *  Returns whether the {@link #reader} instance currently active was loaded
