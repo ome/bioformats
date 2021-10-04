@@ -883,7 +883,13 @@ public class DicomReader extends SubResolutionFormatReader {
         store.setImageAcquisitionDate(info.timestamp, i);
       }
 
-      store.setImageName("Series " + i, i);
+      if (info.imageType != null) {
+        String[] typeTokens = info.imageType.split("\\\\");
+        int tokenIndex = typeTokens.length > 2 ? 2 : typeTokens.length - 1;
+        if (tokenIndex >= 0) {
+          store.setImageName(typeTokens[tokenIndex], i);
+        }
+      }
 
       if (level != MetadataLevel.MINIMUM) {
         store.setImageDescription(info.imageType, i);
