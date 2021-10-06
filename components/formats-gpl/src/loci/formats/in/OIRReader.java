@@ -1224,7 +1224,7 @@ public class OIRReader extends FormatReader {
           if (laserId != null) {
             for (int l=0; l<lasers.size(); l++) {
               Laser laser = lasers.get(l);
-              if (laser.dataId.equals(laserId.getTextContent())) {
+              if (laser.dataId != null && laser.dataId.equals(laserId.getTextContent())) {
                 ch.laserIndex = l;
                 break;
               }
@@ -1239,7 +1239,7 @@ public class OIRReader extends FormatReader {
         if (laserId != null) {
           for (int l=0; l<lasers.size(); l++) {
             Laser laser = lasers.get(l);
-            if (laser.dataId.equals(laserId.getTextContent())) {
+            if (laser.dataId != null && laser.dataId.equals(laserId.getTextContent())) {
               c.laserIndex = l;
               break;
             }
