@@ -1010,6 +1010,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                 in.seek(startFilePointer);
               }
             }
+            if (imageMetadataLVOrder.length() == 0) {
+              imageMetadataLVProcessed = false;
+            }
 
             int length = len - 12;
             byte[] b = new byte[length];
