@@ -74,6 +74,7 @@ import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.meta.IPyramidStore;
 import loci.formats.out.DicomWriter;
 import loci.formats.ome.OMEPyramidStore;
 import loci.formats.out.TiffWriter;
@@ -786,10 +787,7 @@ public final class ImageConverter {
     String currentFile)
     throws FormatException, IOException
   {
-    if (DataTools.safeMultiply64(width, height) >=
-      DataTools.safeMultiply64(4096, 4096) ||
-      saveTileWidth > 0 || saveTileHeight > 0)
-    {
+    if (doTileConversion(writer, currentFile)) {
       // this is a "big image" or an output tile size was set, so we will attempt
       // to convert it one tile at a time
 
@@ -1108,6 +1106,19 @@ public final class ImageConverter {
       return isTiledWriter(((ImageWriter) writer).getWriter(outputFile), outputFile);
     }
     return (writer instanceof TiffWriter) || (writer instanceof DicomWriter);
+  }
+
+  private boolean doTileConversion(IFormatWriter writer, String outputFile)
+    throws FormatException
+  {
+    if (writer instanceof DicomWriter ||
+      (writer instanceof ImageWriter && ((ImageWriter) writer).getWriter(outputFile) instanceof DicomWriter))
+    {
+      MetadataStore r = reader.getMetadataStore();
+      return !(r instanceof IPyramidStore) || ((IPyramidStore) r).getResolutionCount(reader.getSeries()) > 1;
+    }
+    return DataTools.safeMultiply64(width, height) >= DataTools.safeMultiply64(4096, 4096) ||
+      saveTileWidth > 0 || saveTileHeight > 0;
   }
 
   // -- Main method --
