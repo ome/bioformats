@@ -72,6 +72,8 @@ import static loci.formats.in.DicomVR.*;
 
 /**
  * DicomWriter is the file format writer for DICOM files.
+ * This is designed for whole slide images, and may not produce
+ * schema-compliant files for other modalities.
  */
 public class DicomWriter extends FormatWriter {
 
@@ -158,6 +160,10 @@ public class DicomWriter extends FormatWriter {
     boolean last = x + w == getSizeX() && y + h == getSizeY();
     int resolutionIndex = getIndex(series, resolution);
 
+    // the compression type isn't supplied to the writer until
+    // after setId is called, so metadata that indicates or
+    // depends on the compression type needs to be set in
+    // the first call to saveBytes for each file
     if (first) {
       out.seek(transferSyntaxPointer[resolutionIndex]);
       out.writeBytes(getTransferSyntax());
@@ -166,6 +172,7 @@ public class DicomWriter extends FormatWriter {
       out.writeBytes(getCompressionMethod());
     }
 
+    // TILED_SPARSE, so the tile coordinates must be written
     if (!isReallySequential()) {
       for (int p=0; p<planeOffsets[resolutionIndex].length; p++) {
         if (!planeOffsets[resolutionIndex][p].written) {
@@ -213,6 +220,7 @@ public class DicomWriter extends FormatWriter {
       paddedBuf = buf;
     }
 
+    // now we actually compress and write the pixel data
     if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
       out.write(paddedBuf);
       if (paddedBuf.length % 2 == 1) {
@@ -319,6 +327,7 @@ public class DicomWriter extends FormatWriter {
     tileWidth = new int[totalFiles];
     tileHeight = new int[totalFiles];
 
+    // create UIDs that must be consistent across all files in the dataset
     String specimenUIDValue = uids.getUID();
     instanceUIDValue = uids.getUID();
     implementationUID = uids.getUID();
@@ -373,6 +382,7 @@ public class DicomWriter extends FormatWriter {
           tileHeight[resolutionIndex] = height;
         }
 
+        // not valid to store planar configuration for single-channel images
         if (nChannels > 1) {
           DicomTag planarConfig = new DicomTag(PLANAR_CONFIGURATION, US);
           planarConfig.value = new short[] {(short) (interleaved ? 0 : 1)};
@@ -442,6 +452,7 @@ public class DicomWriter extends FormatWriter {
         lossyRatio.value = padString("1");
         tags.add(lossyRatio);
 
+        // this is a placeholder since the compression type won't be set until after setId
         DicomTag lossyMethod = new DicomTag(LOSSY_IMAGE_COMPRESSION_METHOD, CS);
         lossyMethod.elementLength = 12;
         tags.add(lossyMethod);
@@ -486,6 +497,7 @@ public class DicomWriter extends FormatWriter {
 
         if (nChannels != 3) {
           // when MONOCHROME2 is set, need to add more metadata
+          // for pixel value interpretation
 
           DicomTag rescaleSlope = new DicomTag(RESCALE_SLOPE, DS);
           rescaleSlope.value = padString("1");
@@ -635,6 +647,8 @@ public class DicomWriter extends FormatWriter {
         volumeHeight.value = new float[] {physicalY == null ? 0f : physicalY.value(UNITS.MM).floatValue() * height};
         tags.add(volumeHeight);
 
+        // as with slice thickness above, when the physical Z size is missing
+        // we don't know the volume depth, and setting it to 0 is invalid
         DicomTag volumeDepth = new DicomTag(IMAGED_VOLUME_DEPTH, FL);
         volumeDepth.value = new float[] {physicalZ == null ? 1f : physicalZ.value(UNITS.MM).floatValue() * sizeZ};
         tags.add(volumeDepth);
@@ -1062,6 +1076,7 @@ public class DicomWriter extends FormatWriter {
    * Pad the given string so that the length is a multiple of 2.
    * If the input is null, an empty string is returned.
    * Otherwise, a space is appended if necessary.
+   * This should not be used for UID values.
    *
    * @param value original string
    * @return padded string whose length is a multiple of 2
@@ -1070,6 +1085,15 @@ public class DicomWriter extends FormatWriter {
     return padString(value, " ");
   }
 
+  /**
+   * Pad the given string so that the length is a multiple of 2.
+   * If the input is null, an empty string is returned.
+   * Otherwise, a null character is appended if necessary.
+   * This should not be used for non-UID values.
+   *
+   * @param value original string
+   * @return padded string whose length is a multiple of 2
+   */
   private String padUID(String value) {
     return padString(value, "\0");
   }
@@ -1106,6 +1130,9 @@ public class DicomWriter extends FormatWriter {
     return padString(transferSyntax);
   }
 
+  /**
+   * @return compression method corresponding to the current compression type
+   */
   private String getCompressionMethod() {
     if (compression != null) {
       if (compression.equals(CompressionType.J2K.getCompression())) {
@@ -1186,6 +1213,7 @@ public class DicomWriter extends FormatWriter {
     mediaStorageInstanceUID.value = padUID(instanceUIDValue);
     writeTag(mediaStorageInstanceUID);
 
+    // placeholder, will be overwritten on the first call to saveBytes
     DicomTag transferSyntaxUID = new DicomTag(TRANSFER_SYNTAX_UID, UI);
     transferSyntaxUID.elementLength = 22;
     writeTag(transferSyntaxUID);
@@ -1291,12 +1319,18 @@ public class DicomWriter extends FormatWriter {
     return type;
   }
 
+  /**
+   * @return item tag with an undefined length
+   */
   private DicomTag makeItem() {
     DicomTag item = new DicomTag(ITEM, IMPLICIT);
     item.elementLength = (int) 0xffffffff;
     return item;
   }
 
+  /**
+   * @return item delimitation tag with 0 length
+   */
   private DicomTag makeItemDelimitation() {
     DicomTag item = new DicomTag(ITEM_DELIMITATION_ITEM, IMPLICIT);
     item.elementLength = 0;
@@ -1311,6 +1345,9 @@ public class DicomWriter extends FormatWriter {
     public boolean written = false;
   }
 
+  /**
+   * Helper class for creating UIDs.
+   */
   class UIDCreator {
     private static final int MAX_LEN = 64;
     private String vmid = String.valueOf(new VMID().hashCode() & 0xffffffffL);
