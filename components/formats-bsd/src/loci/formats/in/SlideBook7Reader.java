@@ -2453,6 +2453,7 @@ public class SlideBook7Reader  extends FormatReader {
 	public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
 			throws FormatException, IOException
 	{
+        if(mDataLoader == null) return buf;
         int theSeries = getSeries();
         SlideBook7Reader.LOGGER.info("openBytes: theSeries: " + theSeries);
         SlideBook7Reader.LOGGER.info("openBytes: no: " + no);
@@ -2505,6 +2506,7 @@ public class SlideBook7Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
+        if(mDataLoader == null) return;
         mDataLoader.CloseFile();
 	}
 
@@ -2513,6 +2515,7 @@ public class SlideBook7Reader  extends FormatReader {
 		super.initFile(id);
 
 		try {
+            if(mDataLoader == null) return;
             Boolean res; 
             res = mDataLoader.LoadMetadata();
             if(!res)
