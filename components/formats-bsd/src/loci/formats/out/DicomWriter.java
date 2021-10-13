@@ -208,12 +208,27 @@ public class DicomWriter extends FormatWriter {
     if ((x + w == getSizeX() && w < tileWidth[resolutionIndex]) ||
       (y + h == getSizeY() && h < tileHeight[resolutionIndex]))
     {
-      int srcRowLen = w * bytesPerPixel * getSamplesPerPixel();
-      int destRowLen = tileWidth[resolutionIndex] * bytesPerPixel * getSamplesPerPixel();
-      paddedBuf = new byte[tileHeight[resolutionIndex] * destRowLen];
+      if (interleaved || getSamplesPerPixel() == 1) {
+        int srcRowLen = w * bytesPerPixel * getSamplesPerPixel();
+        int destRowLen = tileWidth[resolutionIndex] * bytesPerPixel * getSamplesPerPixel();
+        paddedBuf = new byte[tileHeight[resolutionIndex] * destRowLen];
 
-      for (int row=0; row<h; row++) {
-        System.arraycopy(buf, row * srcRowLen, paddedBuf, row * destRowLen, srcRowLen);
+        for (int row=0; row<h; row++) {
+          System.arraycopy(buf, row * srcRowLen, paddedBuf, row * destRowLen, srcRowLen);
+        }
+      }
+      else {
+        int srcRowLen = w * bytesPerPixel;
+        int destRowLen = tileWidth[resolutionIndex] * bytesPerPixel;
+        paddedBuf = new byte[tileHeight[resolutionIndex] * destRowLen * getSamplesPerPixel()];
+
+        for (int c=0; c<getSamplesPerPixel(); c++) {
+          for (int row=0; row<h; row++) {
+            int src = srcRowLen * ((c * h) + row);
+            int dest = destRowLen * ((c * tileHeight[resolutionIndex]) + row);
+            System.arraycopy(buf, src, paddedBuf, dest, srcRowLen);
+          }
+        }
       }
     }
     else {
@@ -385,7 +400,7 @@ public class DicomWriter extends FormatWriter {
         // not valid to store planar configuration for single-channel images
         if (nChannels > 1) {
           DicomTag planarConfig = new DicomTag(PLANAR_CONFIGURATION, US);
-          planarConfig.value = new short[] {(short) (interleaved ? 0 : 1)};
+          planarConfig.value = new short[] {(short) 0};
           tags.add(planarConfig);
         }
 
