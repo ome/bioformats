@@ -635,8 +635,8 @@ public class DicomWriter extends FormatWriter {
         DicomTag pixelSpacing = new DicomTag(PIXEL_SPACING, DS);
         Length physicalX = r.getPixelsPhysicalSizeX(pyramid);
         Length physicalY = r.getPixelsPhysicalSizeY(pyramid);
-        String px = physicalX == null ? "0" : String.valueOf(physicalX.value(UNITS.MM));
-        String py = physicalY == null ? "0" : String.valueOf(physicalY.value(UNITS.MM));
+        String px = physicalX == null ? "1" : String.valueOf(physicalX.value(UNITS.MM));
+        String py = physicalY == null ? "1" : String.valueOf(physicalY.value(UNITS.MM));
         pixelSpacing.value = padString(px + "\\" + py);
         pixelMeasuresSequence.children.add(pixelSpacing);
 
@@ -655,11 +655,11 @@ public class DicomWriter extends FormatWriter {
         tags.add(sharedGroupsSequence);
 
         DicomTag volumeWidth = new DicomTag(IMAGED_VOLUME_WIDTH, FL);
-        volumeWidth.value = new float[] {physicalX == null ? 0f : physicalX.value(UNITS.MM).floatValue() * width};
+        volumeWidth.value = new float[] {physicalX == null ? 1f : physicalX.value(UNITS.MM).floatValue() * width};
         tags.add(volumeWidth);
 
         DicomTag volumeHeight = new DicomTag(IMAGED_VOLUME_HEIGHT, FL);
-        volumeHeight.value = new float[] {physicalY == null ? 0f : physicalY.value(UNITS.MM).floatValue() * height};
+        volumeHeight.value = new float[] {physicalY == null ? 1f : physicalY.value(UNITS.MM).floatValue() * height};
         tags.add(volumeHeight);
 
         // as with slice thickness above, when the physical Z size is missing
