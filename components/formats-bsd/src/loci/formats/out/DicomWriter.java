@@ -344,9 +344,9 @@ public class DicomWriter extends FormatWriter {
 
     // create UIDs that must be consistent across all files in the dataset
     String specimenUIDValue = uids.getUID();
-    instanceUIDValue = uids.getUID();
     implementationUID = uids.getUID();
     String seriesInstanceUID = uids.getUID();
+    String studyInstanceUID = uids.getUID();
 
     for (int pyramid=0; pyramid<r.getImageCount(); pyramid++) {
       series = pyramid;
@@ -355,6 +355,8 @@ public class DicomWriter extends FormatWriter {
         resolutionCount = ((IPyramidStore) r).getResolutionCount(pyramid);
       }
       for (int res=0; res<resolutionCount; res++) {
+        instanceUIDValue = uids.getUID();
+
         resolution = res;
         openFile(series, resolution);
         int resolutionIndex = getIndex(series, resolution);
@@ -498,9 +500,9 @@ public class DicomWriter extends FormatWriter {
         DicomTag sopClassUID = new DicomTag(SOP_CLASS_UID, UI);
         sopClassUID.value = padUID(SOP_CLASS_UID_VALUE);
         tags.add(sopClassUID);
-        DicomTag studyInstanceUID = new DicomTag(STUDY_INSTANCE_UID, UI);
-        studyInstanceUID.value = instanceUID.value;
-        tags.add(studyInstanceUID);
+        DicomTag studyUID = new DicomTag(STUDY_INSTANCE_UID, UI);
+        studyUID.value = padUID(studyInstanceUID);
+        tags.add(studyUID);
 
         DicomTag seriesInstance = new DicomTag(SERIES_INSTANCE_UID, UI);
         seriesInstance.value = padUID(seriesInstanceUID);
@@ -1195,7 +1197,9 @@ public class DicomWriter extends FormatWriter {
       littleEndian = !r.getPixelsBinDataBigEndian(pyramid, 0).booleanValue();
     }
 
-    writeHeader();
+    if (out.length() == 0) {
+      writeHeader();
+    }
 
     out.order(littleEndian);
   }
