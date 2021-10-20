@@ -1003,7 +1003,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                 currentFilePointer++;
               }
 
-              if(currentCountSetted)
+              if(currentCountSetted && timeCount * zCount * XYCount == imageOffsets.size())
                 setDimensions(timeCount, zCount, XYCount);
 
               if (in.getFilePointer() > startFilePointer) {
