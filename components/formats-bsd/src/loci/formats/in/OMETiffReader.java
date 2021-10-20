@@ -345,8 +345,11 @@ public class OMETiffReader extends SubResolutionFormatReader {
     try (RandomAccessInputStream s = new RandomAccessInputStream(info[series][no].id, 16)) {
       TiffParser p = new TiffParser(s);
       if (resolution > 0) {
-        IFDList subifds = p.getSubIFDs(ifd);
-        ifd = subifds.get(((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset);
+        p.setDoCaching(false);
+        long offset = ifd.getIFDLongArray(IFD.SUB_IFD)[((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset];
+        ifd = p.getIFD(offset);
+        ifd.remove(IFD.IMAGE_DESCRIPTION);
+        p.fillInIFD(ifd);
       }
       p.getSamples(ifd, buf, x, y, w, h);
     }
