@@ -345,6 +345,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
     try (RandomAccessInputStream s = new RandomAccessInputStream(info[series][no].id, 16)) {
       TiffParser p = new TiffParser(s);
       if (resolution > 0) {
+        // read the required SubIFD, but don't attempt to read the ImageDescription
+        // the ImageDescription will be completely ignored anyway
+        // it may be quite large (> 10 MB) in which case this has a significant
+        // impact on read time and memory usage
         p.setDoCaching(false);
         long offset = ifd.getIFDLongArray(IFD.SUB_IFD)[((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset];
         ifd = p.getIFD(offset);
