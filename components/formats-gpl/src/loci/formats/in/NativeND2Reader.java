@@ -540,6 +540,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       }
 
       int chunkmapSkips = 0;
+      Boolean currentCountSetted = false;
+      int XYCount = 1;
+      int timeCount = 1;
+      int zCount = 1;
 
       in.seek(0);
 
@@ -916,10 +920,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
               int eType = 0;
               Boolean nextExperiment = true;
-              Boolean currentCountSetted = false;
-              int XYCount = 1;
-              int timeCount = 1;
-              int zCount = 1;
 
               long currentFilePointer = in.getFilePointer();
 
@@ -1003,15 +1003,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                 currentFilePointer++;
               }
 
-              if(currentCountSetted && (imageOffsets.size() == 0 || timeCount * zCount * XYCount == imageOffsets.size()))
-                setDimensions(timeCount, zCount, XYCount);
-
               if (in.getFilePointer() > startFilePointer) {
                 in.seek(startFilePointer);
               }
-            }
-            if (imageMetadataLVOrder.length() == 0) {
-              imageMetadataLVProcessed = false;
             }
 
             int length = len - 12;
@@ -1078,6 +1072,12 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         if (skip > 0 && skip + in.getFilePointer() <= in.length()) {
           in.skipBytes(skip);
         }
+      }
+      
+      if(currentCountSetted && (imageOffsets.size() == 0 || timeCount * zCount * XYCount == imageOffsets.size()))
+        setDimensions(timeCount, zCount, XYCount);
+      if (imageMetadataLVOrder.length() == 0) {
+        imageMetadataLVProcessed = false;
       }
 
       // parse text blocks
