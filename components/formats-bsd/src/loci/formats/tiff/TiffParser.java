@@ -1162,13 +1162,6 @@ public class TiffParser implements Closeable {
           }
         }
       }
-
-      // this tile is completely below the requested image
-      // all subsequent tile rows will also be below the image,
-      // so don't bother checking them
-      if (tileBounds.y > imageBounds.y + imageBounds.height) {
-        break;
-      }
     }
 
     return buf;
