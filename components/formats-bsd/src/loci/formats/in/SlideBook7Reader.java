@@ -2251,10 +2251,9 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean ReadSld() throws FileNotFoundException
         {
-            try {
+          try (InputStream inputStream = new FileInputStream(mSlidePath);
+              Reader inputStreamReader = new InputStreamReader(inputStream)) {
                 Yaml yaml = new Yaml();
-                InputStream inputStream = new FileInputStream(mSlidePath);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
 
                 mSlideRecord = new CSlideRecord70();
