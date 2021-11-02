@@ -1074,9 +1074,11 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
       }
       
-      if(currentCountSetted && (imageOffsets.size() == 0 || timeCount * zCount * XYCount == imageOffsets.size()))
+      if(currentCountSetted && imageMetadataLVOrder.length() > 0 && 
+          (imageOffsets.size() == 0 || timeCount * zCount * XYCount == imageOffsets.size())) {
         setDimensions(timeCount, zCount, XYCount);
-      if (imageMetadataLVOrder.length() == 0) {
+      }
+      else {
         imageMetadataLVProcessed = false;
       }
 
