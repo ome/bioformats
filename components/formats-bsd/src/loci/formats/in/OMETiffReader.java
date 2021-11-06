@@ -781,25 +781,28 @@ public class OMETiffReader extends SubResolutionFormatReader {
           }
         }
 
+        // If no valid file has been identified for the TiffData element,
+        // either throw an exception or register the none-existing path with
+        // an ERROR statement
+        if (filename.isEmpty()) {
+          String msg = "Missing file " + meta.getUUIDFileName(i, td) +
+            " associated with UUID " + uuid + ".";
+          if (failOnMissingTIFF()) {
+            throw new FormatException(msg);
+          } else {
+            LOGGER.error(msg + " Corresponding planes will be black.");
+            filename = normalizeFilename(dir, meta.getUUIDFileName(i, td));
+          }
+        }
+
+        // Run some sanity check on the UUID/filename mapping
         String existing = files.get(uuid);
         if (existing == null) {
-          if (!filename.isEmpty()) {
-            files.put(uuid, filename);
-          } else {
-            String msg = "Missing file " + meta.getUUIDFileName(i, td) +
-             " associated with UUID " + uuid + ".";
-            if (failOnMissingTIFF()) {
-              throw new FormatException(msg);
-            } else {
-              LOGGER.error(msg + " Corresponding planes will be black.");
-              filename = normalizeFilename(dir, meta.getUUIDFileName(i, td));
-              files.put(uuid, filename);
-            }
-          }
+          files.put(uuid, filename);
         } else if (!existing.equals(filename)) {
           throw new FormatException("Inconsistent filenames for UUID " + uuid +
-            ": " + meta.getUUIDFileName(i, td) + "does not match " + existing +
-            ".");
+            ": " + meta.getUUIDFileName(i, td) + " does not match " +
+            existing + ".");
         }
       }
     }
