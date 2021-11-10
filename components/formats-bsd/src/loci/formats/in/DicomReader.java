@@ -558,6 +558,9 @@ public class DicomReader extends SubResolutionFormatReader {
             else if (child.attribute == DIRECTORY_RECORD_TYPE) {
               currentType = child.getStringValue();
             }
+            else if (child.attribute == SERIES_NUMBER) {
+              originalSeries = parseIntValue(child.getNumberValue(), 0);
+            }
           }
           break;
         case REFERENCED_FILE_ID:
@@ -676,7 +679,7 @@ public class DicomReader extends SubResolutionFormatReader {
         String file = companionFiles.get(i);
         file = file.replace('\\', File.separatorChar);
         file = file.replaceAll("/", File.separator);
-        companionFiles.set(i, parent + File.separator + file);
+        companionFiles.set(i, file);
       }
       tilePositions = new HashMap<Integer, List<DicomTile>>();
       zOffsets = new HashMap<Integer, List<Double>>();
@@ -773,16 +776,30 @@ public class DicomReader extends SubResolutionFormatReader {
     ArrayList<DicomFileInfo> metadataInfo = new ArrayList<DicomFileInfo>();
 
     if (seriesCount > 1) {
-      // TODO: this case is largely untested at the moment and may need revisiting
       for (int i=0; i<seriesCount; i++) {
         List<String> currentFileList = fileList.get(keys[i]);
         DicomFileInfo fileInfo = createFileInfo(currentFileList.get(0));
-        tilePositions.put(i, fileInfo.tiles);
         zOffsets.put(i, fileInfo.zOffsets);
         fileInfo.coreMetadata.sizeZ *= currentFileList.size();
         fileInfo.coreMetadata.imageCount = fileInfo.coreMetadata.sizeZ;
         core.add(fileInfo.coreMetadata);
+
+        List<DicomTile> positions = new ArrayList<DicomTile>();
+        List<Double> x = new ArrayList<Double>();
+        List<Double> y = new ArrayList<Double>();
+        List<Double> z = new ArrayList<Double>();
+        for (String f : currentFileList) {
+          DicomFileInfo inf = f.equals(currentFileList.get(0)) ? fileInfo : createFileInfo(f);
+          positions.addAll(inf.tiles);
+          x.addAll(inf.positionX);
+          y.addAll(inf.positionY);
+          z.addAll(inf.positionZ);
+        }
+        fileInfo.positionX = x;
+        fileInfo.positionY = y;
+        fileInfo.positionZ = z;
         metadataInfo.add(fileInfo);
+        tilePositions.put(i, positions);
       }
     }
     else {
@@ -1800,15 +1817,21 @@ public class DicomReader extends SubResolutionFormatReader {
   }
 
   protected List<Double> getPositionX() {
-    return positionX;
+    List<Double> rtn = new ArrayList<Double>();
+    rtn.addAll(positionX);
+    return rtn;
   }
 
   protected List<Double> getPositionY() {
-    return positionY;
+    List<Double> rtn = new ArrayList<Double>();
+    rtn.addAll(positionY);
+    return rtn;
   }
 
   protected List<Double> getPositionZ() {
-    return positionZ;
+    List<Double> rtn = new ArrayList<Double>();
+    rtn.addAll(positionZ);
+    return rtn;
   }
 
   protected List<String> getChannelNames() {
