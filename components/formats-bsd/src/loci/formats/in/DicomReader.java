@@ -162,6 +162,7 @@ public class DicomReader extends SubResolutionFormatReader {
       return tag.attribute != null && tag.attribute != INVALID;
     }
     catch (NullPointerException e) { }
+    catch (IllegalArgumentException e) { }
     catch (FormatException e) { }
     return false;
   }
