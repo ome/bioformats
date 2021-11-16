@@ -552,7 +552,7 @@ public class OperettaReader extends FormatReader {
           store.setImageInstrumentRef(instrument, imageIndex);
           store.setObjectiveSettingsID(objective, imageIndex);
 
-          String name = "Well " + (well + 1) + ", Field " + (field + 1);
+          String name = "Well " + FormatTools.getWellName(row, col) + ", Field " + (field + 1);
           store.setImageName(name, imageIndex);
           store.setPlateAcquisitionWellSampleRef(
             wellSampleID, 0, 0, imageIndex);
