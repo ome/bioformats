@@ -87,6 +87,16 @@ public class DicomTag {
     long location, boolean oddLocations)
     throws FormatException, IOException
   {
+    this(in, bigEndian, location, oddLocations, true);
+  }
+
+  /**
+   * Read a complete tag and optionally a value from the given input stream.
+   */
+  public DicomTag(RandomAccessInputStream in, boolean bigEndian,
+    long location, boolean oddLocations, boolean readValue)
+    throws FormatException, IOException
+  {
     bigEndianTransferSyntax = bigEndian;
     this.oddLocations = oddLocations;
 
@@ -122,6 +132,10 @@ public class DicomTag {
     }
     else if (vr == IMPLICIT) {
       vr = DicomAttribute.getDefaultVR(tag);
+    }
+
+    if (!readValue) {
+      return;
     }
 
     if (attribute == ITEM) {

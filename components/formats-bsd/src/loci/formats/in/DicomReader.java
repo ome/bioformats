@@ -158,11 +158,18 @@ public class DicomReader extends SubResolutionFormatReader {
     stream.seek(0);
 
     try {
-      DicomTag tag = new DicomTag(stream, false, 0, false);
-      return tag.attribute != null && tag.attribute != INVALID;
+      DicomTag tag = new DicomTag(stream, false, 0, false, false);
+      if (tag.attribute == null || tag.attribute == INVALID) {
+        return false;
+      }
+      else if (tag.attribute != FILE_META_INFO_GROUP_LENGTH) {
+        return true;
+      }
+      stream.seek(0);
+      tag = new DicomTag(stream, false, 0, false);
+      return tag.getNumberValue() != null && tag.getNumberValue().longValue() < stream.length();
     }
-    catch (NullPointerException e) { }
-    catch (IllegalArgumentException e) { }
+    catch (RuntimeException e) { }
     catch (FormatException e) { }
     return false;
   }
