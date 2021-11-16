@@ -78,7 +78,6 @@ import loci.formats.ome.OMEPyramidStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
-import loci.formats.tiff.IFD;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
@@ -823,12 +822,6 @@ public final class ImageConverter {
     if (saveTileHeight > 0 && saveTileHeight <= height) {
       h = saveTileHeight;
     }
-    if (w % 16 != 0) {
-      w = (w / 16 + 1) * 16;
-    }
-    if (h % 16 != 0) {
-      h = (h / 16 + 1) * 16;
-    }
 
     if (firstTile) {
       LOGGER.info("Tile size = {} x {}", w, h);
@@ -845,9 +838,9 @@ public final class ImageConverter {
       nYTiles++;
     }
 
-    IFD ifd = new IFD();
-    ifd.put(IFD.TILE_WIDTH, w);
-    ifd.put(IFD.TILE_LENGTH, h);
+    IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
+    baseWriter.setTileSizeX(w);
+    baseWriter.setTileSizeY(h);
 
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
@@ -890,11 +883,11 @@ public final class ImageConverter {
 
           if (nTileRows > 1) {
             tileY = 0;
-            ifd.put(IFD.TILE_LENGTH, tileHeight);
+            baseWriter.setTileSizeY(tileHeight);
           }
           if (nTileCols > 1) {
             tileX = 0;
-            ifd.put(IFD.TILE_WIDTH, tileWidth);
+            baseWriter.setTileSizeX(tileWidth);
           }
         }
 
@@ -920,12 +913,11 @@ public final class ImageConverter {
         
         if (writer instanceof TiffWriter) {
           ((TiffWriter) writer).saveBytes(outputIndex, buf,
-            ifd, outputX, outputY, tileWidth, tileHeight);
+            outputX, outputY, tileWidth, tileHeight);
         }
         else if (writer instanceof ImageWriter) {
-          IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
           if (baseWriter instanceof TiffWriter) {
-            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
+            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf,
               outputX, outputY, tileWidth, tileHeight);
           }
         }
