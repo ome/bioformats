@@ -230,7 +230,16 @@ public class OperettaReader extends FormatReader {
         if (reader == null) {
           reader = new MinimalTiffReader();
         }
-        reader.setId(p.filename);
+
+        // return an empty plane if an invalid TIFF file is encountered
+        try {
+          reader.setId(p.filename);
+        }
+        catch (FormatException|IOException e) {
+          LOGGER.error("Invalid file " + p.filename, e);
+          return buf;
+        }
+
         if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
           reader.openBytes(0, buf, x, y, w, h);
         }
@@ -441,32 +450,39 @@ public class OperettaReader extends FormatReader {
         ms.sizeX = planes[i][planeIndex].x;
         ms.sizeY = planes[i][planeIndex].y;
         String filename = planes[i][planeIndex].filename;
-        while ((filename == null || !new Location(filename).exists()) &&
+        boolean validFile = false;
+        while ((filename == null || !new Location(filename).exists() || !validFile) &&
           planeIndex < planes[i].length - 1)
         {
           LOGGER.debug("Missing TIFF file: {}", filename);
           planeIndex++;
           filename = planes[i][planeIndex].filename;
-        }
 
-        if (filename != null && new Location(filename).exists()) {
-          try (RandomAccessInputStream s =
-            new RandomAccessInputStream(filename, 16)) {
+          if (filename != null && new Location(filename).exists()) {
+            try (RandomAccessInputStream s =
+              new RandomAccessInputStream(filename, 16)) {
               TiffParser parser = new TiffParser(s);
               parser.setDoCaching(false);
 
               IFD firstIFD = parser.getFirstIFD();
-              ms.littleEndian = firstIFD.isLittleEndian();
-              ms.pixelType = firstIFD.getPixelType();
+              if (firstIFD != null) {
+                ms.littleEndian = firstIFD.isLittleEndian();
+                ms.pixelType = firstIFD.getPixelType();
+                validFile = true;
+              }
+            }
           }
         }
-        else if (i > 0) {
-          LOGGER.warn("Could not find valid TIFF file for series {}", i);
-          ms.littleEndian = core.get(0).littleEndian;
-          ms.pixelType = core.get(0).pixelType;
-        }
-        else {
-          LOGGER.warn("Could not find valid TIFF file for series 0; pixel type may be wrong");
+
+        if (!validFile) {
+          if (i > 0) {
+            LOGGER.warn("Could not find valid TIFF file for series {}", i);
+            ms.littleEndian = core.get(0).littleEndian;
+            ms.pixelType = core.get(0).pixelType;
+          }
+          else {
+            LOGGER.warn("Could not find valid TIFF file for series 0; pixel type may be wrong");
+          }
         }
       }
     }
