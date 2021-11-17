@@ -30,7 +30,7 @@
  * #L%
  */
 
-package loci.formats.in;
+package loci.formats.dicom;
 
 import java.util.EnumSet;
 import java.util.HashMap;

@@ -30,7 +30,7 @@
  * #L%
  */
 
-package loci.formats.in;
+package loci.formats.dicom;
 
 import loci.common.Region;
 

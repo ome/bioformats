@@ -30,7 +30,7 @@
  * #L%
  */
 
-package loci.formats.in;
+package loci.formats.dicom;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,8 +40,8 @@ import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
-import static loci.formats.in.DicomAttribute.*;
-import static loci.formats.in.DicomVR.*;
+import static loci.formats.dicom.DicomAttribute.*;
+import static loci.formats.dicom.DicomVR.*;
 
 /**
  * Represents a complete DICOM tag, including the dictionary attribute,

@@ -30,7 +30,7 @@
  * #L%
  */
 
-package loci.formats.in;
+package loci.formats.dicom;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ import java.util.Map;
 
 import loci.common.Constants;
 
-import static loci.formats.in.DicomVR.*;
+import static loci.formats.dicom.DicomVR.*;
 
 /**
  * Describes a DICOM attribute (integer tag, associated description, and expected VR).

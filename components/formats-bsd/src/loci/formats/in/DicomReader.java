@@ -66,8 +66,12 @@ import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 
-import static loci.formats.in.DicomAttribute.*;
-import static loci.formats.in.DicomVR.*;
+import loci.formats.dicom.DicomAttribute;
+import loci.formats.dicom.DicomFileInfo;
+import loci.formats.dicom.DicomTag;
+import loci.formats.dicom.DicomTile;
+import static loci.formats.dicom.DicomAttribute.*;
+import static loci.formats.dicom.DicomVR.*;
 
 /**
  * DicomReader is the file format reader for DICOM files.
@@ -1784,73 +1788,73 @@ public class DicomReader extends SubResolutionFormatReader {
     }
   }
 
-  protected String getImageType() {
+  public String getImageType() {
     return imageType;
   }
 
-  protected List<DicomTile> getTiles() {
+  public List<DicomTile> getTiles() {
     return tilePositions.get(0);
   }
 
-  protected List<Double> getZOffsets() {
+  public List<Double> getZOffsets() {
     return zOffsets.get(0);
   }
 
-  protected int getConcatenationIndex() {
+  public int getConcatenationIndex() {
     if (concatenationNumber == null) {
       return 0;
     }
     return concatenationNumber.intValue() - 1;
   }
 
-  protected Length getPixelSizeX() {
+  public Length getPixelSizeX() {
     if (pixelSizeX == null) {
       return null;
     }
     return FormatTools.getPhysicalSizeX(new Double(pixelSizeX), UNITS.MILLIMETER);
   }
 
-  protected Length getPixelSizeY() {
+  public Length getPixelSizeY() {
     if (pixelSizeY == null) {
       return null;
     }
     return FormatTools.getPhysicalSizeY(new Double(pixelSizeY), UNITS.MILLIMETER);
   }
 
-  protected Length getPixelSizeZ() {
+  public Length getPixelSizeZ() {
     if (pixelSizeZ == null) {
       return null;
     }
     return FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ), UNITS.MILLIMETER);
   }
 
-  protected List<Double> getPositionX() {
+  public List<Double> getPositionX() {
     List<Double> rtn = new ArrayList<Double>();
     rtn.addAll(positionX);
     return rtn;
   }
 
-  protected List<Double> getPositionY() {
+  public List<Double> getPositionY() {
     List<Double> rtn = new ArrayList<Double>();
     rtn.addAll(positionY);
     return rtn;
   }
 
-  protected List<Double> getPositionZ() {
+  public List<Double> getPositionZ() {
     List<Double> rtn = new ArrayList<Double>();
     rtn.addAll(positionZ);
     return rtn;
   }
 
-  protected List<String> getChannelNames() {
+  public List<String> getChannelNames() {
     return channelNames;
   }
 
-  protected boolean isExtendedDepthOfField() {
+  public boolean isExtendedDepthOfField() {
     return edf;
   }
 
-  protected Timestamp getTimestamp() {
+  public Timestamp getTimestamp() {
     String stamp = null;
 
     if (date != null && time != null) {

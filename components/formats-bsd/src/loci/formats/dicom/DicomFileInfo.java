@@ -30,12 +30,13 @@
  * #L%
  */
 
-package loci.formats.in;
+package loci.formats.dicom;
 
 import java.io.IOException;
 import java.util.List;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.in.DicomReader;
 
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;

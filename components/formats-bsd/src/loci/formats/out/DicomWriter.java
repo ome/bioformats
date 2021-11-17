@@ -57,7 +57,7 @@ import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
-import loci.formats.in.DicomTag;
+import loci.formats.dicom.DicomTag;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.IPyramidStore;
@@ -67,8 +67,8 @@ import ome.xml.model.enums.DimensionOrder;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
-import static loci.formats.in.DicomAttribute.*;
-import static loci.formats.in.DicomVR.*;
+import static loci.formats.dicom.DicomAttribute.*;
+import static loci.formats.dicom.DicomVR.*;
 
 /**
  * DicomWriter is the file format writer for DICOM files.
