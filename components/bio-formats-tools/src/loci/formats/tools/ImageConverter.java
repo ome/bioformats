@@ -839,8 +839,8 @@ public final class ImageConverter {
     }
 
     IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
-    baseWriter.setTileSizeX(w);
-    baseWriter.setTileSizeY(h);
+    w = baseWriter.setTileSizeX(w);
+    h = baseWriter.setTileSizeY(h);
 
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
@@ -883,11 +883,11 @@ public final class ImageConverter {
 
           if (nTileRows > 1) {
             tileY = 0;
-            baseWriter.setTileSizeY(tileHeight);
+            tileHeight = baseWriter.setTileSizeY(tileHeight);
           }
           if (nTileCols > 1) {
             tileX = 0;
-            baseWriter.setTileSizeX(tileWidth);
+            tileWidth = baseWriter.setTileSizeX(tileWidth);
           }
         }
 
