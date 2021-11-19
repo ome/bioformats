@@ -44,7 +44,6 @@ import loci.formats.FormatWriter;
 import loci.formats.meta.MetadataRetrieve;
 import ome.units.UNITS;
 import ome.units.quantity.Time;
-import ome.units.unit.Unit;
 
 /**
  * AVIWriter is the file format writer for AVI files.
