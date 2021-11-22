@@ -823,6 +823,10 @@ public final class ImageConverter {
       h = saveTileHeight;
     }
 
+    IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
+    w = baseWriter.setTileSizeX(w);
+    h = baseWriter.setTileSizeY(h);
+
     if (firstTile) {
       LOGGER.info("Tile size = {} x {}", w, h);
       firstTile = false;
@@ -837,10 +841,6 @@ public final class ImageConverter {
     if (nYTiles * h != height) {
       nYTiles++;
     }
-
-    IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
-    w = baseWriter.setTileSizeX(w);
-    h = baseWriter.setTileSizeY(h);
 
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
