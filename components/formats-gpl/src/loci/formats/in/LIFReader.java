@@ -577,7 +577,6 @@ public class LIFReader extends FormatReader {
       offsets.clear();
       int index = 0;
       for (int i=0; i<getSeriesCount(); i++) {
-        if (index > getSeriesCount() - 1) break;
         setSeries(i);
         long nBytes = (long) FormatTools.getPlaneSize(this) * getImageCount();
         long start = storedOffsets[index];
