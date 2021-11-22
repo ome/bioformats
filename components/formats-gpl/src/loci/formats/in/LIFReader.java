@@ -197,7 +197,13 @@ public class LIFReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 1;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
-    return stream.read() == LIF_MAGIC_BYTE;
+    if (stream.read() != LIF_MAGIC_BYTE) return false;
+    stream.skipBytes(7);
+    if (stream.readByte() != LIF_MEMORY_BYTE) return false;
+    int nc = stream.readInt();
+    String desc = DataTools.stripString(stream.readString(nc * 2));
+    if (desc.equals("LMS_Object_File")) return false; //LOF file
+    return true;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -571,6 +577,7 @@ public class LIFReader extends FormatReader {
       offsets.clear();
       int index = 0;
       for (int i=0; i<getSeriesCount(); i++) {
+        if (index > getSeriesCount() - 1) break;
         setSeries(i);
         long nBytes = (long) FormatTools.getPlaneSize(this) * getImageCount();
         long start = storedOffsets[index];

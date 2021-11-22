@@ -102,6 +102,8 @@ loci.formats.in.SPEReader             # spe
 loci.formats.in.OIRReader             # oir
 loci.formats.in.KLBReader             # klb
 loci.formats.in.MicroCTReader         # vff
+loci.formats.in.LOFReader	          # lof
+loci.formats.in.XLEFReader            # xlef
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
