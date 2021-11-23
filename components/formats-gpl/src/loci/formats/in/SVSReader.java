@@ -283,6 +283,7 @@ public class SVSReader extends BaseTiffReader {
       if (comment == null) {
         continue;
       }
+      comments[i] = comment;
       String[] lines = comment.split("\n");
       String[] tokens;
       String key, value;
@@ -299,10 +300,10 @@ public class SVSReader extends BaseTiffReader {
               zPosition[index] = DataTools.parseDouble(value);
             }
           }
-          else if (t.toLowerCase().startsWith("label")) {
+          else if (t.toLowerCase().indexOf("label") >= 0) {
             labelIndex = i;
           }
-          else if (t.toLowerCase().startsWith("macro")) {
+          else if (t.toLowerCase().indexOf("macro") >= 0) {
             macroIndex = i;
           }
         }
