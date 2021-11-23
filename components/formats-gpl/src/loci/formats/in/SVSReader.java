@@ -90,7 +90,9 @@ public class SVSReader extends BaseTiffReader {
   private ArrayList<String> dyeNames = new ArrayList<String>();
 
   private transient Color displayColor = null;
-  private transient int extraImages = 0;
+  private int labelIndex = -1;
+  private int macroIndex = -1;
+  private int extraImages = 0;
 
   // -- Constructor --
 
@@ -182,11 +184,11 @@ public class SVSReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    if (core.size() == 1 || getSeries() >= getSeriesCount() - 2) {
-      return super.openThumbBytes(no);
+    if (core.size() == 1 || getSeries() >= getSeriesCount() - extraImages) {
+      return FormatTools.openThumbBytes(this, no);
     }
 
-    int smallestSeries = getSeriesCount() - 3;
+    int smallestSeries = getSeriesCount() - extraImages - 1;
     if (smallestSeries >= 0) {
       int thisSeries = getSeries();
       int resolution = getResolution();
@@ -220,6 +222,8 @@ public class SVSReader extends BaseTiffReader {
       dyeNames.clear();
       displayColor = null;
       extraImages = 0;
+      labelIndex = -1;
+      macroIndex = -1;
     }
   }
 
@@ -272,8 +276,6 @@ public class SVSReader extends BaseTiffReader {
 
     HashSet<Double> uniqueZ = new HashSet<Double>();
 
-    int labelIndex = -1;
-    int macroIndex = -1;
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       int index = getIFDIndex(i, 0);
@@ -500,22 +502,14 @@ public class SVSReader extends BaseTiffReader {
         store.setImageName("Series " + (i + 1), i);
       }
       else {
-        switch (i) {
-          case 0:
-            store.setImageName("", i);
-            break;
-          case 1:
-            // if there are only two images, assume that there is no label
-            if (lastImage == 1) {
-              store.setImageName("macro image", i);
-            }
-            else {
-              store.setImageName("label image", i);
-            }
-            break;
-          case 2:
-            store.setImageName("macro image", i);
-            break;
+        if (i == 0) {
+          store.setImageName("", i);
+        }
+        else if (i == labelIndex) {
+          store.setImageName("label image", i);
+        }
+        else if (i == macroIndex) {
+          store.setImageName("macro image", i);
         }
       }
       String comment = ((SVSCoreMetadata) getCurrentCore()).comment;
@@ -562,7 +556,7 @@ public class SVSReader extends BaseTiffReader {
 
   private int getIFDIndex(int coreIndex, int no) {
     int index = coreIndex;
-    int coreCount = core.flattenedSize() - 2;
+    int coreCount = core.flattenedSize() - extraImages;
     if (coreIndex > 0 && coreIndex < coreCount) {
       if (core.get(0, 0).imageCount > 1) {
         index++;
