@@ -245,7 +245,7 @@ public class AmiraParameters {
 
   protected String readKey() throws IOException {
     StringBuilder result = new StringBuilder();
-    while (c >= '0' || c == '-') {
+    while (c >= '0' || c == '-' || c == '&') {
       result.append(c);
       readByte();
     }

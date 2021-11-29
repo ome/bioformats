@@ -80,7 +80,6 @@ import loci.formats.ome.OMEPyramidStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
-import loci.formats.tiff.IFD;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
@@ -829,6 +828,10 @@ public final class ImageConverter {
       h = saveTileHeight;
     }
 
+    IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
+    w = baseWriter.setTileSizeX(w);
+    h = baseWriter.setTileSizeY(h);
+
     if (firstTile) {
       LOGGER.info("Tile size = {} x {}", w, h);
       firstTile = false;
@@ -843,11 +846,6 @@ public final class ImageConverter {
     if (nYTiles * h != height) {
       nYTiles++;
     }
-
-    // TODO: assumes TIFF, needs to handle DICOM too
-    IFD ifd = new IFD();
-    ifd.put(IFD.TILE_WIDTH, w);
-    ifd.put(IFD.TILE_LENGTH, h);
 
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
@@ -890,11 +888,11 @@ public final class ImageConverter {
 
           if (nTileRows > 1) {
             tileY = 0;
-            ifd.put(IFD.TILE_LENGTH, tileHeight);
+            tileHeight = baseWriter.setTileSizeY(tileHeight);
           }
           if (nTileCols > 1) {
             tileX = 0;
-            ifd.put(IFD.TILE_WIDTH, tileWidth);
+            tileWidth = baseWriter.setTileSizeX(tileWidth);
           }
         }
 
@@ -920,12 +918,11 @@ public final class ImageConverter {
 
         if (writer instanceof TiffWriter) {
           ((TiffWriter) writer).saveBytes(outputIndex, buf,
-            ifd, outputX, outputY, tileWidth, tileHeight);
+            outputX, outputY, tileWidth, tileHeight);
         }
         else if (writer instanceof ImageWriter) {
-          IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
           if (baseWriter instanceof TiffWriter) {
-            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
+            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf,
               outputX, outputY, tileWidth, tileHeight);
           }
           else {

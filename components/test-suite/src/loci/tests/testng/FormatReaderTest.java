@@ -1997,6 +1997,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          // .omp2info datasets can only be detected with the .omp2info file
+          if (reader.getFormat().equals("Olympus .omp2info") &&
+            !base[i].toLowerCase().endsWith(".omp2info"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2760,6 +2767,19 @@ public class FormatReaderTest {
             // OK for other readers to flag Tecan files other than .db
             if (result && r instanceof TecanReader &&
               !used[i].toLowerCase().endsWith(".db"))
+            {
+              continue;
+            }
+
+            // OK for OIRReader to flag .oir files in .omp2info dataset
+            // expected that .oir files not picked up by .omp2info reader
+            if (result && r instanceof OlympusTileReader &&
+              readers[j] instanceof OIRReader)
+            {
+              continue;
+            }
+            else if (!result && r instanceof OlympusTileReader &&
+              !used[i].toLowerCase().endsWith(".omp2info"))
             {
               continue;
             }
