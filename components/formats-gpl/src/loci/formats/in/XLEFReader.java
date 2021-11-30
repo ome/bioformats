@@ -215,19 +215,23 @@ public class XLEFReader extends LMSFileReader {
       }
       rgbBuffer = reader.openBytes(no, rgbBuffer, x, y, w, h);
 
-      // for mono, we only need data from one rgb channel
-      byte[] rBuf = getRgbChannel(0, rgbBuffer);
-
-      // resolution in metadata might be different to 8bit from JPEGs --> upscaling to
-      // 9 - 16bit required
-      int bppXlef = FormatTools.getBytesPerPixel(getPixelType());
-      if (bppXlef > bppJpeg) {
-        int targetRes = (int) ((Long) getSeriesMetadataValue("Bits per Sample")).longValue();
-        byte[] rBufUpscaled = new byte[rBuf.length * 2];
-        transformBytes8To16(rBuf, rBufUpscaled, targetRes);
-        System.arraycopy(rBufUpscaled, 0, buf, 0, buf.length);
+      if (rgbBuffer.length == buf.length){ //hotfix
+        buf = rgbBuffer;
       } else {
-        System.arraycopy(rBuf, 0, buf, 0, buf.length);
+        // for mono, we only need data from one rgb channel
+        byte[] rBuf = getRgbChannel(0, rgbBuffer);
+
+        // resolution in metadata might be different to 8bit from JPEGs --> upscaling to
+        // 9 - 16bit required
+        int bppXlef = FormatTools.getBytesPerPixel(getPixelType());
+        if (bppXlef > bppJpeg) {
+          int targetRes = (int) ((Long) getSeriesMetadataValue("Bits per Sample")).longValue();
+          byte[] rBufUpscaled = new byte[rBuf.length * 2];
+          transformBytes8To16(rBuf, rBufUpscaled, targetRes);
+          System.arraycopy(rBufUpscaled, 0, buf, 0, buf.length);
+        } else {
+          System.arraycopy(rBuf, 0, buf, 0, buf.length);
+        }
       }
     } else {
       buf = reader.openBytes(no, buf, x, y, w, h);

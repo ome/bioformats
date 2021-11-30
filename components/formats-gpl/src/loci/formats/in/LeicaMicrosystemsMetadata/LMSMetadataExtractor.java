@@ -167,8 +167,11 @@ public class LMSMetadataExtractor {
       }
     }
 
-    r.metaTemp.inverseRgb[i] = channels.getLength() >= 3 && ((Element)channels.item(0)).getAttribute("LUTName").equals("Blue") && 
-    ((Element)channels.item(2)).getAttribute("LUTName").equals("Red");
+    //BGR order is assumed when no LUT names exist, RGB order is only assumed when explicitly described //hotfix
+    r.metaTemp.inverseRgb[i] = !(channels.getLength() >= 3 && 
+      ((Element)channels.item(0)).getAttribute("LUTName").equals("Red") && 
+      ((Element)channels.item(1)).getAttribute("LUTName").equals("Green") &&
+      ((Element)channels.item(2)).getAttribute("LUTName").equals("Blue"));
 
     translateLuts(luts, i);
   }
