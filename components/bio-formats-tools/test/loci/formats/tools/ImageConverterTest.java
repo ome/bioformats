@@ -51,6 +51,7 @@ import loci.formats.tools.ImageConverter;
 import loci.formats.in.ICSReader;
 import loci.formats.in.OMETiffReader;
 import loci.formats.in.TiffDelegateReader;
+import loci.formats.in.TiffReader;
 import loci.formats.out.OMETiffWriter;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -143,12 +144,35 @@ public class ImageConverterTest {
     r.close();
   }
 
+  public void checkImage(String outFileToCheck, int expectedWidth, int expectedTileWidth) throws FormatException, IOException {
+    ClassList<IFormatReader> readerClasses = new ClassList<IFormatReader>(IFormatReader.class);
+    readerClasses.addClass(TiffReader.class);
+    readerClasses.addClass(OMETiffReader.class);
+
+    IFormatReader r = new ImageReader(readerClasses);
+    r.setFlattenedResolutions(false);
+    r.setId(outFileToCheck);
+    assertEquals(r.getOptimalTileWidth(), expectedTileWidth);
+    assertEquals(r.getOptimalTileHeight(), expectedTileWidth);
+    r.close();
+  }
+
   public void checkImage() throws FormatException, IOException {
     checkImage(outFile.getAbsolutePath(), width);
   }
 
   public void assertConversion(String[] args) throws FormatException, IOException {
     assertConversion(args, outFile.getAbsolutePath(), width);
+  }
+
+  public void assertConversion(String[] args, String outFileToCheck, int expectedWidth, int expectedTileWidth) throws FormatException, IOException {
+    try {
+      ImageConverter.main(args);
+    } catch (ExitException e) {
+      outFile.deleteOnExit();
+      assertEquals(e.status, 0);
+      checkImage(outFileToCheck, expectedWidth, expectedTileWidth);
+    }
   }
 
   public void assertConversion(String[] args, String outFileToCheck, int expectedWidth) throws FormatException, IOException {
@@ -320,6 +344,20 @@ public class ImageConverterTest {
     String [] args = new String[argsList.size()];
     File outFileToCheck = outFile = tempDir.resolve("seperate-tiles_0_0_0.ome.tiff").toFile();
     assertConversion(argsList.toArray(args), outFileToCheck.getAbsolutePath(), 256);
+  }
+
+  @Test(dataProvider = "options")
+  public void testTileGranularity(String options) throws FormatException, IOException {
+    outFile = tempDir.resolve("tile-options.tiff").toFile();
+    String[] optionsArgs = options.split(" ");
+    String[] tileArgs = {"-tilex", "42", "-tiley", "42"};
+    ArrayList<String> argsList = new ArrayList<String>();
+    argsList.add("test&sizeZ=3&sizeC=2&sizeT=4&series=3&sizeX=512&sizeY=512.fake");
+    argsList.addAll(Arrays.asList(optionsArgs));
+    argsList.addAll(Arrays.asList(tileArgs));
+    argsList.add(outFile.getAbsolutePath());
+    String [] args = new String[argsList.size()];
+    assertConversion(argsList.toArray(args), outFile.getAbsolutePath(), 512, 48);
   }
   
   @Test

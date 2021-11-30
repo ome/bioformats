@@ -25,6 +25,8 @@
 
 package loci.formats.in;
 
+import io.airlift.compress.zstd.ZstdDecompressor;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +109,8 @@ public class ZeissCZIReader extends FormatReader {
   private static final int JPEG = 1;
   private static final int LZW = 2;
   private static final int JPEGXR = 4;
+  private static final int ZSTD_0 = 5;
+  private static final int ZSTD_1 = 6;
 
   /** Pixel type constants. */
   private static final int GRAY8 = 0;
@@ -2107,11 +2111,16 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       plane.planeIndex = getIndex(z, c, t);
-      int seriesIndex = FormatTools.positionToRaster(extraLengths, extra);
-      plane.resolutionIndex = plane.coreIndex;
-      plane.coreIndex += seriesIndex * (maxResolution + 1);
-      LOGGER.trace("    assigned plane index = {}; series index = {}; coreIndex = {}",
-        plane.planeIndex, seriesIndex, plane.coreIndex);
+      if (plane.pixelTypeIndex > 0) {
+        plane.coreIndex = plane.pixelTypeIndex;
+      }
+      else {
+        int seriesIndex = FormatTools.positionToRaster(extraLengths, extra);
+        plane.resolutionIndex = plane.coreIndex;
+        plane.coreIndex += seriesIndex * (maxResolution + 1);
+        LOGGER.trace("    assigned plane index = {}; series index = {}; coreIndex = {}",
+          plane.planeIndex, seriesIndex, plane.coreIndex);
+      }
     }
   }
 
@@ -4043,6 +4052,55 @@ public class ZeissCZIReader extends FormatReader {
             }
           }
           break;
+        case ZSTD_0:
+          ZstdDecompressor decompressor = new ZstdDecompressor();
+          byte[] output = new byte[(int) decompressor.getDecompressedSize(data, 0, data.length)];
+          decompressor.decompress(data, 0, data.length, output, 0, output.length);
+          data = output;
+          break;
+        case ZSTD_1:
+          boolean highLowUnpacking = false;
+          int pointer = 0;
+          try (RandomAccessInputStream stream = new RandomAccessInputStream(data)) {
+            int sizeOfHeader = readVarint(stream);
+            while (stream.getFilePointer() < sizeOfHeader) {
+              int chunkID = readVarint(stream);
+              // only one chunk ID defined so far
+              switch (chunkID) {
+                case 1:
+                  int payload = stream.read();
+                  highLowUnpacking = (payload & 1) == 1;
+                  break;
+                default:
+                  throw new FormatException("Invalid chunk ID: " + chunkID);
+              }
+            }
+            // safe cast because stream wraps a byte array
+            pointer = (int) stream.getFilePointer();
+          }
+
+          ZstdDecompressor zstd = new ZstdDecompressor();
+          long decompressedSize = zstd.getDecompressedSize(data, pointer, data.length - pointer);
+          byte[] decoded = new byte[(int) decompressedSize];
+          zstd.decompress(data, pointer, data.length - pointer, decoded, 0, decoded.length);
+
+          // ZSTD_1 implies high/low byte unpacking, so it would be weird
+          // if this flag were unset
+          if (highLowUnpacking) {
+            data = new byte[decoded.length];
+            int secondHalf = decoded.length / 2;
+            for (int i=0; i<decoded.length; i++) {
+              boolean even = i % 2 == 0;
+              int offset = i / 2;
+              data[i] = even ? decoded[offset] : decoded[secondHalf + offset];
+            }
+          }
+          else {
+            LOGGER.warn("ZSTD-1 compression used, but no high/low byte unpacking");
+            data = decoded;
+          }
+
+          break;
         case 104: // camera-specific packed pixels
           data = decode12BitCamera(data, options.maxBytes);
           // reverse column ordering
@@ -4186,6 +4244,21 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     return decoded;
+  }
+
+  private int readVarint(RandomAccessInputStream stream) throws IOException {
+    byte a = stream.readByte();
+    // if high bit set, read next byte
+    // at most 3 bytes read
+    if ((a & 0x80) == 0x80) {
+      byte b = stream.readByte();
+      if ((b & 0x80) == 0x80) {
+        byte c = stream.readByte();
+        return (c << 14) | ((b & 0x7f) << 7) | (a & 0x7f);
+      }
+      return (b << 7) | (a & 0x7f);
+    }
+    return a & 0xff;
   }
 
   /** Segment with ID "ZISRAWDIRECTORY". */

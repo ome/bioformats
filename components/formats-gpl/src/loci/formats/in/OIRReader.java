@@ -50,6 +50,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -85,6 +86,11 @@ public class OIRReader extends FormatReader {
 
   private int minZ = Integer.MAX_VALUE;
   private int minT = Integer.MAX_VALUE;
+
+  private transient Double zStart;
+  private transient Double zStep;
+  private transient Double tStep;
+  private transient HashMap<Integer, Double> timestampAdjustments = new HashMap<Integer, Double>();
 
   // -- Constructor --
 
@@ -273,6 +279,9 @@ public class OIRReader extends FormatReader {
       lastChannel = -1;
       minZ = Integer.MAX_VALUE;
       minT = Integer.MAX_VALUE;
+      zStart = null;
+      zStep = null;
+      tStep = null;
     }
   }
 
@@ -499,7 +508,8 @@ public class OIRReader extends FormatReader {
     // populate MetadataStore
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this,
+      (zStart != null && zStep != null) || tStep != null);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
@@ -582,6 +592,25 @@ public class OIRReader extends FormatReader {
       if (ch.laserIndex >= 0 && ch.laserIndex < lasers.size()) {
         String laserId = MetadataTools.createLSID("LightSource", 0, ch.laserIndex);
         store.setChannelLightSourceSettingsID(laserId, 0, c);
+      }
+    }
+
+    if (zStart != null && zStep != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        int z = getZCTCoords(i)[0];
+        store.setPlanePositionZ(new Length(zStart + z * zStep, UNITS.MICROMETER), 0, i);
+      }
+    }
+    if (tStep != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        int t = getZCTCoords(i)[2];
+        double deltaT = t * tStep;
+        for (Integer frame : timestampAdjustments.keySet()) {
+          if (t >= frame) {
+            deltaT += (timestampAdjustments.get(frame) - tStep);
+          }
+        }
+        store.setPlaneDeltaT(new Time(deltaT, UNITS.MILLISECOND), 0, i);
       }
     }
   }
@@ -1131,6 +1160,38 @@ public class OIRReader extends FormatReader {
           }
         }
 
+        // defined pauses between different time points
+        // so far have only seen one defined, but might be multiple?
+        Element frameInterval = getFirstChild(imagingParam, "fvCommonparam:specifiedFrameInterval");
+        if (frameInterval != null) {
+          Element frameCount = getFirstChild(frameInterval, "commonparam:frameCount");
+          Element interval = getFirstChild(frameInterval, "commonparam:interval");
+          if (frameCount != null && interval != null) {
+            timestampAdjustments.put(Integer.parseInt(frameCount.getTextContent()), DataTools.parseDouble(interval.getTextContent()));
+          }
+        }
+      }
+
+      Element configuration = getFirstChild(acquisition, "commonimage:configuration");
+      NodeList scanners = acquisition.getElementsByTagName("lsmimage:scannerSettings");
+      if (configuration != null && scanners != null) {
+        Element usedScanner = getFirstChild(configuration, "lsmimage:scannerType");
+        // multiple scanners may be defined, pick the one that was actually used
+        if (usedScanner != null) {
+          String scannerType = usedScanner.getTextContent();
+
+          for (int i=0; i<scanners.getLength(); i++) {
+            Element scanner = (Element) scanners.item(i);
+            if (scannerType.equals(scanner.getAttribute("type"))) {
+              Element speed = getFirstChild(getFirstChild(scanner, "lsmimage:param"), "lsmparam:speed");
+              speed = getFirstChild(speed, "commonparam:speedInformation");
+              Element seriesInterval = getFirstChild(speed, "commonparam:seriesInterval");
+              if (seriesInterval != null) {
+                tStep = DataTools.parseDouble(seriesInterval.getTextContent());
+              }
+            }
+          }
+        }
       }
 
       NodeList imagingMainLasers = acquisition.getElementsByTagName("lsmimage:imagingMainLaser");
@@ -1264,6 +1325,8 @@ public class OIRReader extends FormatReader {
       if (name.equals("ZSTACK")) {
         if (m.sizeZ <= 1) {
           m.sizeZ = Integer.parseInt(size.getTextContent());
+          zStart = DataTools.parseDouble(start.getTextContent());
+          zStep = DataTools.parseDouble(step.getTextContent());
         }
       }
       else if (name.equals("TIMELAPSE")) {
