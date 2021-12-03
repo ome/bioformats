@@ -396,7 +396,16 @@ public abstract class FormatReader extends FormatHandler
   protected void addMetaList(String key, Object value,
     Hashtable<String, Object> meta)
   {
-    Vector list = (Vector) meta.remove(key);
+    Object v = meta.remove(key);
+    Vector list = null;
+    if (v != null && v instanceof Vector) {
+      list = (Vector) v;
+    }
+    else if (v != null) {
+      list = new Vector();
+      list.add(v);
+    }
+
     addMeta(key, value, meta);
     Object newValue = meta.remove(key);
     if (newValue != null) {
@@ -458,17 +467,23 @@ public abstract class FormatReader extends FormatHandler
       Object v = meta.get(key);
       if (v instanceof Vector) {
         Vector list = (Vector) v;
-        int digits = String.valueOf(list.size()).length();
 
-        for (int i=0; i<list.size(); i++) {
-          String index = String.valueOf(i + 1);
-          while (index.length() < digits) {
-            index = "0" + index;
-          }
-          meta.put(key + " #" + index, list.get(i));
+        if (list.size() == 1) {
+          meta.put(key, list.get(0));
         }
+        else {
+          int digits = String.valueOf(list.size()).length();
 
-        meta.remove(key);
+          for (int i=0; i<list.size(); i++) {
+            String index = String.valueOf(i + 1);
+            while (index.length() < digits) {
+              index = "0" + index;
+            }
+            meta.put(key + " #" + index, list.get(i));
+          }
+
+          meta.remove(key);
+        }
       }
     }
   }
@@ -534,14 +549,21 @@ public abstract class FormatReader extends FormatHandler
   protected byte[] readPlane(RandomAccessInputStream s, int x, int y,
     int w, int h, int scanlinePad, byte[] buf) throws IOException
   {
+    return readPlane(s, x, y, w, h, scanlinePad, getSizeX(), getSizeY(), buf);
+  }
+
+  protected byte[] readPlane(RandomAccessInputStream s, int x, int y,
+    int w, int h, int scanlinePad, int imageWidth, int imageHeight, byte[] buf)
+    throws IOException
+  {
     int c = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY() &&
+    if (x == 0 && y == 0 && w == imageWidth && h == imageHeight &&
       scanlinePad == 0)
     {
       s.read(buf);
     }
-    else if (x == 0 && w == getSizeX() && scanlinePad == 0) {
+    else if (x == 0 && w == imageWidth && scanlinePad == 0) {
       if (isInterleaved()) {
         s.skipBytes((long) y * w * bpp * c);
         s.read(buf, 0, h * w * bpp * c);
@@ -553,13 +575,13 @@ public abstract class FormatReader extends FormatHandler
           s.read(buf, channel * h * rowLen, h * rowLen);
           if (channel < c - 1) {
             // no need to skip bytes after reading final channel
-            s.skipBytes((long) (getSizeY() - y - h) * rowLen);
+            s.skipBytes((long) (imageHeight - y - h) * rowLen);
           }
         }
       }
     }
     else {
-      long scanlineWidth = getSizeX() + scanlinePad;
+      long scanlineWidth = imageWidth + scanlinePad;
       if (isInterleaved()) {
         s.skipBytes(y * scanlineWidth * bpp * c);
         for (int row=0; row<h; row++) {
@@ -584,7 +606,7 @@ public abstract class FormatReader extends FormatHandler
           }
           if (channel < c - 1) {
             // no need to skip bytes after reading final channel
-            s.skipBytes(scanlineWidth * bpp * (getSizeY() - y - h));
+            s.skipBytes(scanlineWidth * bpp * (imageHeight - y - h));
           }
         }
       }

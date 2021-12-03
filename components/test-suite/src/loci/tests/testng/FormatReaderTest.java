@@ -966,7 +966,6 @@ public class FormatReaderTest {
   }
 
   private boolean isAlmostEqual(Quantity q1, Quantity q2) {
-
     if (q1 == null && q2 == null) {
       return true;
     } else if (q1 == null || q2 == null) {
@@ -1757,7 +1756,7 @@ public class FormatReaderTest {
 
       String newFile = null;
       for (int i=0; i<usedFiles.length; i++) {
-        newFiles[i] = usedFiles[i].replaceAll(toRemove.toString(), "");
+        newFiles[i] = usedFiles[i].replace(toRemove.toString(), "");
         LOGGER.debug("mapping {} to {}", newFiles[i], usedFiles[i]);
         Location.mapId(newFiles[i], usedFiles[i]);
 
@@ -2920,7 +2919,7 @@ public class FormatReaderTest {
       String configDir = configTree.getConfigDirectory();
       String rootDir = configTree.getRootDirectory();
       if (configDir != null) {
-        parent = parent.replaceAll(rootDir, configDir);
+        parent = parent.replace(rootDir, configDir);
         File parentDir = new File(parent);
         if (!parentDir.exists()) {
           parentDir.mkdirs();

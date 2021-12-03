@@ -183,6 +183,9 @@ loci.formats.in.VectraReader          # tif, tiff, qptiff
 loci.formats.in.SlidebookTiffReader   # tiff
 loci.formats.in.IonpathMIBITiffReader   # tif, tiff
 
+# DICOM reader must go before standard TIFF reader to correctly handle DICOM-TIFF files
+loci.formats.in.DicomReader           # dcm, dicom
+
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff
 
@@ -192,7 +195,6 @@ loci.formats.in.TextReader            # txt, csv
 # non-TIFF readers with slow isThisType
 loci.formats.in.BurleighReader        # img
 loci.formats.in.OpenlabReader         # liff
-loci.formats.in.DicomReader           # dcm, dicom
 loci.formats.in.SMCameraReader        # (no extension)
 loci.formats.in.SBIGReader            # (no extension)
 loci.formats.in.HRDGDFReader          # (no extension)
