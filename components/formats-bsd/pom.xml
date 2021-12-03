@@ -74,6 +74,11 @@
      <version>${kryo.version}</version>
     </dependency>
     <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+    </dependency>
+    <dependency>
       <groupId>org.perf4j</groupId>
       <artifactId>perf4j</artifactId>
       <version>0.9.16</version>
@@ -100,7 +105,7 @@
     <dependency>
       <groupId>cisd</groupId>
       <artifactId>jhdf5</artifactId>
-      <version>14.12.6</version>
+      <version>19.04.0</version>
     </dependency>
     <dependency>
 	    <groupId>com.drewnoakes</groupId>
