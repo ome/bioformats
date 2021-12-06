@@ -118,7 +118,7 @@ public class OperettaReader extends FormatReader {
     String localName = new Location(name).getName();
     boolean exists = false;
     for (String XML_FILE : XML_FILES) {
-      if (localName.equals(XML_FILE)) {
+      if (localName.equalsIgnoreCase(XML_FILE)) {
         exists = true;
         break;
       }
