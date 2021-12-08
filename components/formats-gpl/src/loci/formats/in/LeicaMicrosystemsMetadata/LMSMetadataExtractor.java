@@ -66,7 +66,7 @@ public class LMSMetadataExtractor {
 
     // -- Fields --
     private LMSFileReader r;
-    private HashMap<Long, String> bytesIncPerAxis = new HashMap<Long, String>();
+    private HashMap<Long, String> bytesIncPerAxis;
     int extras = 1;
 
     // -- Constructor --
@@ -89,6 +89,7 @@ public class LMSMetadataExtractor {
       //create CoreMetadata for each xml referenced image (=series)
       for (int i = 0; i < docs.size(); i++) {
           CoreMetadata ms = new CoreMetadata();
+          bytesIncPerAxis = new HashMap<Long, String>();
           r.getCore().add(ms);
           r.setSeries(i);
 

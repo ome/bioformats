@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.*;
@@ -128,6 +129,7 @@ public class XLEFReader extends LMSFileReader {
     }
 
     translateMetadata((List<LMSImageXmlDocument>)(List<? extends LMSImageXmlDocument>) xlifs);
+    sortMultipleImagesReaders();
   }
 
   /* @see IFormatReader#isSingleFile(String) */
@@ -237,6 +239,18 @@ public class XLEFReader extends LMSFileReader {
       buf = reader.openBytes(no, buf, x, y, w, h);
     }
     return buf;
+  }
+  
+  /** Sorts frames of all MultipleImagesReaders as per core dimension sizes and order */
+  private void sortMultipleImagesReaders(){
+    for (int i = 0; i < core.size(); i++){
+      CoreMetadata cmd = core.get(i);
+      LMSFileReader reader = readers.get(getReaderIndex(i));
+      if (reader instanceof MultipleImagesReader && 
+        reader.getImageFormat() != ImageFormat.LOF){
+        ((MultipleImagesReader)reader).swapDimensions(cmd); 
+      }
+    }
   }
 
   // -- Helper functions --

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.in.LOFReader;
@@ -46,6 +47,7 @@ public class MultipleImagesReader extends LMSFileReader {
   private List<FormatReader> readers = new ArrayList<>();
   public final ImageFormat imageFormat;
   public final int tileCount;
+  private boolean dimensionsSwapped = false;
   private int series = 0; //this value is only needed for plane index calculation, if this reader refers to multiple series
 
   // -- Constructor --
@@ -156,5 +158,54 @@ public class MultipleImagesReader extends LMSFileReader {
 
   public ImageFormat getImageFormat() {
     return imageFormat;
+  }
+
+  /**
+   * Rearranges frame order, since XLIFs refer frames in ZTSC order
+   * @param cmd corresponding CoreMetadata (expecting that all tiles have the same dimension sizes)
+   */
+  public void swapDimensions(CoreMetadata cmd){
+    //only implemented for XY... images with XYCZTS and XYZCTS dimension order. TODO: check for other dimension orders
+    if (!dimensionsSwapped){
+      int sizeC = cmd.rgb ? cmd.sizeC / 3 : cmd.sizeC;
+      int sizeZ = cmd.sizeZ;
+      int sizeT = cmd.sizeT;
+      int sizeS = tileCount;
+      List<FormatReader> newOrder = new ArrayList<FormatReader>();
+  
+      if (cmd.dimensionOrder.equals("XYZCT")){
+        //XYZTSC --> XYZCTS
+        for (int indexS = 0; indexS < sizeS; indexS++){
+          for (int indexT = 0; indexT < sizeT; indexT++){
+            for (int indexC = 0; indexC < sizeC; indexC++){
+              for (int indexZ = 0; indexZ < sizeZ; indexZ++){
+                int index = indexZ + 
+                  sizeZ * indexT + 
+                  sizeZ * sizeT * indexS + 
+                  sizeZ * sizeT * sizeS * indexC;
+                newOrder.add(readers.get(index));
+              }
+            }
+          }
+        }
+      } else if (cmd.dimensionOrder.equals("XYCZT")){
+        //XYZTSC --> XYCZTS
+        for (int indexS = 0; indexS < sizeS; indexS++){
+          for (int indexT = 0; indexT < sizeT; indexT++){
+            for (int indexZ = 0; indexZ < sizeZ; indexZ++){
+              for (int indexC = 0; indexC < sizeC; indexC++){
+                int index = indexZ + 
+                  sizeZ * indexT + 
+                  sizeZ * sizeT * indexS + 
+                  sizeZ * sizeT * sizeS * indexC;
+                  newOrder.add(readers.get(index));
+              }
+            }
+          }
+        }
+      }
+      readers = newOrder;
+      dimensionsSwapped = true;
+    }
   }
 }
