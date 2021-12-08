@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
-import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -75,6 +74,7 @@ public class LOFReader extends LMSFileReader {
   public LOFReader() {
     super("Leica Object Format", "lof");
     suffixNecessary = false;
+    suffixSufficient = false;
     hasCompanionFiles = true;
     domains = new String[] { FormatTools.LM_DOMAIN };
   }
@@ -92,18 +92,25 @@ public class LOFReader extends LMSFileReader {
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 1;
-    if (!FormatTools.validStream(stream, blockLen, true))
+    if (!FormatTools.validStream(stream, blockLen, true)) return false;
+    try {
+      checkForLofLayout(stream, "");
+    } catch (Exception e){
       return false;
-    if (stream.read() != LOF_MAGIC_BYTE)
+    }
+    
+    int xmlLength = stream.readInt();
+    String lofXml = "";
+      for (int i = 0; i < xmlLength; i++) {
+        lofXml += stream.readChar();
+      }
+    LofXmlDocument doc = new LofXmlDocument(lofXml, "");
+    if (doc.getImageNode() != null) {
+      return true;
+    } else {
+      LOGGER.info("This LOF does not contain image data, it cannot be opened directly.");
       return false;
-    stream.skipBytes(7);
-    if (stream.readByte() != LOF_MEMORY_BYTE)
-      return false;
-    int nc = stream.readInt();
-    String desc = DataTools.stripString(stream.readString(nc * 2));
-    if (desc.equals("LMS_Object_File"))
-      return true; // LOF file
-    return false; // LIF file
+    }
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -319,85 +326,11 @@ public class LOFReader extends LMSFileReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.setEncoding(ENCODING);
-    offsets = new ArrayList<Long>();
 
     in.order(true);
 
-    // read the header
-
-    LOGGER.info("Reading LOF header");
-
-    // ------------------ 1. Part: Header ------------------
-    // test value: 0x70
-    if (in.readInt() != LOF_MAGIC_BYTE) {
-      throw new FormatException(id + " is not a valid Leica LOF file (error at header section)");
-    }
-
-    // length of the following binary chunk to read (1.1)
-    in.readInt();
-
-    // --------- 1.1 Type Content ---------
-    // test value: 0x2A
-    if (in.readByte() != LOF_MEMORY_BYTE) {
-      throw new FormatException(id + " is not a valid Leica LOF file (error at header section)");
-    }
-
-    // number of unicode characters (NC)
-    int nc = in.readInt();
-    String typeName = "";
-    for (int i = 0; i < nc; i++) {
-      typeName += in.readChar();
-    }
-    if (!typeName.equals("LMS_Object_File")) {
-      throw new FormatException(id + " is not a valid Leica LOF file (typename=" + typeName + ")");
-    }
-
-    // --------- 1.2 Major version ---------
-    // test value: 0x2A
-    if (in.readByte() != LOF_MEMORY_BYTE) {
-      throw new FormatException(id + " is not a valid Leica LOF file (error at header section)");
-    }
-    in.readInt();
-
-    // --------- 1.3 Minor version ---------
-    // test value: 0x2A
-    if (in.readByte() != LOF_MEMORY_BYTE) {
-      throw new FormatException(id + " is not a valid Leica LOF file (error at header section)");
-    }
-    in.readInt();
-
-    // --------- 1.4 Memory size ---------
-    // test value: 0x2A
-    if (in.readByte() != LOF_MEMORY_BYTE) {
-      throw new FormatException(id + " is not a valid Leica LOF file (error at header section)");
-    }
-    // memory size (MS)
-    long memorySize = in.readLong();
-
-    if (memorySize > 0) {
-      offsets.add(in.getFilePointer());
-    }
-
-    // ------------------ 2. Part: Memory ------------------
-    in.skipBytes(memorySize);
-
-    if (in.getFilePointer() >= in.length()) {
-      throw new FormatException(id + "is not a valid Leica LOF file (xml section not found)");
-    }
-    // ------------------ 3. Part: XML ------------------
-    // test value: 0x70
-    if (in.readInt() != LOF_MAGIC_BYTE) {
-      throw new FormatException(id + " is not a valid Leica LOF file (error at xml section)");
-    }
-    // length of the following binary chunk to read (3.1)
-    in.readInt();
-
-    // --------- 3.1 XML Content ---------
-    // test value: 0x2A
-    if (in.readByte() != LOF_MEMORY_BYTE) {
-      throw new FormatException(id + " is not a valid Leica LOF file (error at xml section)");
-    }
-
+    checkForLofLayout(in, id);
+    
     if (metadataSource == MetadataSource.LOF) {
       // number of unicode characters
       int xmlLength = in.readInt();
@@ -427,6 +360,89 @@ public class LOFReader extends LMSFileReader {
   }
 
   // -- Helper methods --
+
+  /**
+   * Checks if file layout meets lof file specifications
+   * @param in lof file stream
+   * @param filename name of the lof file
+   * @throws FormatException
+   * @throws IOException
+   */
+  private void checkForLofLayout(RandomAccessInputStream in, String filename) throws FormatException, IOException {
+    offsets = new ArrayList<Long>();
+
+    // ------------------ 1. Part: Header ------------------
+    // test value: 0x70
+    if (in.readInt() != LOF_MAGIC_BYTE) {
+      throw new FormatException(filename + " is not a valid Leica LOF file (error at header section)");
+    }
+
+    // length of the following binary chunk to read (1.1)
+    in.readInt();
+
+    // --------- 1.1 Type Content ---------
+    // test value: 0x2A
+    if (in.readByte() != LOF_MEMORY_BYTE) {
+      throw new FormatException(filename + " is not a valid Leica LOF file (error at header section)");
+    }
+
+    // number of unicode characters (NC)
+    int nc = in.readInt();
+    String typeName = "";
+    for (int i = 0; i < nc; i++) {
+      typeName += in.readChar();
+    }
+    if (!typeName.equals("LMS_Object_File")) { 
+      //if we land here it's probably a LIF file
+      throw new FormatException(filename + " is not a valid Leica LOF file (typename=" + typeName + ")");
+    }
+
+    // --------- 1.2 Major version ---------
+    // test value: 0x2A
+    if (in.readByte() != LOF_MEMORY_BYTE) {
+      throw new FormatException(filename + " is not a valid Leica LOF file (error at header section)");
+    }
+    in.readInt();
+
+    // --------- 1.3 Minor version ---------
+    // test value: 0x2A
+    if (in.readByte() != LOF_MEMORY_BYTE) {
+      throw new FormatException(filename + " is not a valid Leica LOF file (error at header section)");
+    }
+    in.readInt();
+
+    // --------- 1.4 Memory size ---------
+    // test value: 0x2A
+    if (in.readByte() != LOF_MEMORY_BYTE) {
+      throw new FormatException(filename + " is not a valid Leica LOF file (error at header section)");
+    }
+    // memory size (MS)
+    long memorySize = in.readLong();
+
+    if (memorySize > 0) {
+      offsets.add(in.getFilePointer());
+    }
+
+    // ------------------ 2. Part: Memory ------------------
+    in.skipBytes(memorySize);
+
+    if (in.getFilePointer() >= in.length()) {
+      throw new FormatException(filename + "is not a valid Leica LOF file (xml section not found)");
+    }
+    // ------------------ 3. Part: XML ------------------
+    // test value: 0x70
+    if (in.readInt() != LOF_MAGIC_BYTE) {
+      throw new FormatException(filename + " is not a valid Leica LOF file (error at xml section)");
+    }
+    // length of the following binary chunk to read (3.1)
+    in.readInt();
+
+    // --------- 3.1 XML Content ---------
+    // test value: 0x2A
+    if (in.readByte() != LOF_MEMORY_BYTE) {
+      throw new FormatException(filename + " is not a valid Leica LOF file (error at xml section)");
+    }
+  }
 
   private void seekStartOfPlane(int no, long dataOffset, long planeSize) throws IOException {
     int index = getTileIndex(series);
