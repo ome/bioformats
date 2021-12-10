@@ -37,7 +37,6 @@ import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
@@ -83,7 +82,7 @@ public class TiffSaver implements Closeable {
   private boolean sequentialWrite = false;
   
   /** Store tile offsets and original file pointer when writing sequentially. */
-  private List<Long> sequentialTileOffsets;
+  private long[] sequentialTileOffsets;
   private Long sequentialTileFilePointer;
 
   /** The codec options if set. */
@@ -501,6 +500,10 @@ public class TiffSaver implements Closeable {
       }
     }
   }
+  
+  // Retain a record of the longest byte array needed for an IFD,
+  // so this can be used to define the initial capacity later
+  private long longestIfd = 0L;
 
   public void writeIFD(IFD ifd, long nextOffset)
     throws FormatException, IOException
@@ -508,9 +511,9 @@ public class TiffSaver implements Closeable {
     TreeSet<Integer> keys = new TreeSet<Integer>(ifd.keySet());
     int keyCount = keys.size();
 
-    if (ifd.containsKey(new Integer(IFD.LITTLE_ENDIAN))) keyCount--;
-    if (ifd.containsKey(new Integer(IFD.BIG_TIFF))) keyCount--;
-    if (ifd.containsKey(new Integer(IFD.REUSE))) keyCount--;
+    if (ifd.containsKey(Integer.valueOf(IFD.LITTLE_ENDIAN))) keyCount--;
+    if (ifd.containsKey(Integer.valueOf(IFD.BIG_TIFF))) keyCount--;
+    if (ifd.containsKey(Integer.valueOf(IFD.REUSE))) keyCount--;
 
     long fp = out.getFilePointer();
     int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY :
@@ -519,8 +522,12 @@ public class TiffSaver implements Closeable {
 
     if (bigTiff) out.writeLong(keyCount);
     else out.writeShort(keyCount);
-
-    ByteArrayHandle extra = new ByteArrayHandle();
+    
+    // Preallocate byte array according to previous longest byte array
+    long initialLength = Math.min(Math.max(longestIfd + 1024, 1000000), Integer.MAX_VALUE-32);
+    ByteArrayHandle extra = new ByteArrayHandle((int)initialLength);
+    extra.getByteBuffer().limit(0);
+    
     RandomAccessOutputStream extraStream = new RandomAccessOutputStream(extra);
 
     for (Integer key : keys) {
@@ -533,6 +540,7 @@ public class TiffSaver implements Closeable {
     if (bigTiff) out.seek(out.getFilePointer());
     writeIntValue(out, nextOffset);
     out.write(extra.getBytes(), 0, (int) extra.length());
+    longestIfd = Math.max(extra.length(), longestIfd);
     extraStream.close();
   }
 
@@ -1031,8 +1039,8 @@ public class TiffSaver implements Closeable {
     boolean isTiled = ifd.isTiled();
 
     // record strip byte counts and offsets
-    List<Long> byteCounts = new ArrayList<Long>();
-    List<Long> offsets = new ArrayList<Long>();
+    long[] byteCounts;
+    long[] offsets;
     long totalTiles = tilesPerRow * tilesPerColumn;
 
     if (!interleaved) {
@@ -1044,14 +1052,17 @@ public class TiffSaver implements Closeable {
     {
       long[] ifdByteCounts = isTiled ?
         ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS) : ifd.getStripByteCounts();
-      for (long stripByteCount : ifdByteCounts) {
-        byteCounts.add(stripByteCount);
-      }
+      byteCounts = ifdByteCounts;
+//      for (long stripByteCount : ifdByteCounts) {
+//        byteCounts.add(stripByteCount);
+//      }
     }
     else {
-      while (byteCounts.size() < totalTiles) {
-        byteCounts.add(defaultByteCount);
-      }
+    	byteCounts = new long[(int)totalTiles];
+    	Arrays.fill(byteCounts, defaultByteCount);
+//      while (byteCounts.size() < totalTiles) {
+//        byteCounts.add(defaultByteCount);
+//      }
     }
     int tileOrStripOffsetX = x / (int) ifd.getTileWidth();
     int tileOrStripOffsetY = y / (int) ifd.getTileLength();
@@ -1060,14 +1071,16 @@ public class TiffSaver implements Closeable {
         || ifd.containsKey(IFD.TILE_OFFSETS)) {
       long[] ifdOffsets = isTiled ?
         ifd.getIFDLongArray(IFD.TILE_OFFSETS) : ifd.getStripOffsets();
-      for (int i = 0; i < ifdOffsets.length; i++) {
-        offsets.add(ifdOffsets[i]);
-      }
+      	offsets = ifdOffsets.clone();
+//      for (int i = 0; i < ifdOffsets.length; i++) {
+//        offsets.add(ifdOffsets[i]);
+//      }
     }
     else {
-      while (offsets.size() < totalTiles) {
-        offsets.add(0L);
-      }
+//      while (offsets.size() < totalTiles) {
+//        offsets.add(0L);
+//      }
+      offsets = new long[(int)totalTiles];
       if (isTiled && tileOrStripOffsetX == 0 && tileOrStripOffsetY == 0) {
         sequentialTileOffsets = offsets;
       }
@@ -1077,12 +1090,12 @@ public class TiffSaver implements Closeable {
     }
 
     if (isTiled) {
-      ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
-      ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
+      ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, byteCounts);
+      ifd.putIFDValue(IFD.TILE_OFFSETS, offsets);
     }
     else {
-      ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
-      ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
+      ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, byteCounts);
+      ifd.putIFDValue(IFD.STRIP_OFFSETS, offsets);
     }
 
     long fp = out.getFilePointer();
@@ -1134,23 +1147,25 @@ public class TiffSaver implements Closeable {
       int index = interleaved ? i : (i / nChannels) * nChannels;
       int c = interleaved ? 0 : i % nChannels;
       int thisOffset = firstOffset + index + (c * tileCount);
-      offsets.set(thisOffset, out.getFilePointer());
-      byteCounts.set(thisOffset, new Long(strips[i].length));
+      offsets[thisOffset] = out.getFilePointer();
+//      byteCounts.set(thisOffset, new Long(strips[i].length));
+      byteCounts[thisOffset] = strips[i].length;
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(String.format(
             "Writing tile/strip %d/%d size: %d offset: %d",
-            thisOffset + 1, totalTiles, byteCounts.get(thisOffset),
-            offsets.get(thisOffset)));
+//            thisOffset + 1, totalTiles, byteCounts.get(thisOffset),
+            thisOffset + 1, totalTiles, byteCounts[thisOffset],
+            offsets[thisOffset]));
       }
       out.write(strips[i]);
     }
     if (isTiled) {
-      ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
-      ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
+      ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, byteCounts);
+      ifd.putIFDValue(IFD.TILE_OFFSETS, offsets);
     }
     else {
-      ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
-      ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
+      ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, byteCounts);
+      ifd.putIFDValue(IFD.STRIP_OFFSETS, offsets);
     }
     long endFP = out.getFilePointer();
     if (LOGGER.isDebugEnabled()) {
@@ -1161,9 +1176,9 @@ public class TiffSaver implements Closeable {
 
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Writing tile/strip offsets: {}",
-          Arrays.toString(toPrimitiveArray(offsets)));
+          Arrays.toString(offsets));
       LOGGER.debug("Writing tile/strip byte counts: {}",
-          Arrays.toString(toPrimitiveArray(byteCounts)));
+          Arrays.toString(byteCounts));
     }
     writeIFD(ifd, last ? 0 : endFP);
     if (LOGGER.isDebugEnabled()) {
