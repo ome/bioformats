@@ -917,6 +917,7 @@ public class CellSensReader extends FormatReader {
                   FormatTools.createLength(pyramid.zStart + (z * pyramid.zIncrement),
                   UNITS.MICROMETER), ii, nextPlane);
               }
+              store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pyramid.zIncrement), ii);
             }
           }
         }
