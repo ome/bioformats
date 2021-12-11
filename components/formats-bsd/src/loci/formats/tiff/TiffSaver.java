@@ -38,7 +38,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.List;
 import java.util.TreeSet;
 
 import loci.common.ByteArrayHandle;
@@ -83,6 +82,7 @@ public class TiffSaver implements Closeable {
   
   /** Store tile offsets and original file pointer when writing sequentially. */
   private long[] sequentialTileOffsets;
+  private long[] sequentialTileByteCounts;
   private Long sequentialTileFilePointer;
 
   /** The codec options if set. */
@@ -508,6 +508,7 @@ public class TiffSaver implements Closeable {
   public void writeIFD(IFD ifd, long nextOffset)
     throws FormatException, IOException
   {
+
     TreeSet<Integer> keys = new TreeSet<Integer>(ifd.keySet());
     int keyCount = keys.size();
 
@@ -951,20 +952,6 @@ public class TiffSaver implements Closeable {
   // -- Helper methods --
 
   /**
-   * Coverts a list to a primitive array.
-   * @param l The list of <code>Long</code> to convert.
-   * @return A primitive array of type <code>long[]</code> with the values from
-   * </code>l</code>.
-   */
-  private long[] toPrimitiveArray(List<Long> l) {
-    long[] toReturn = new long[l.size()];
-    for (int i = 0; i < l.size(); i++) {
-      toReturn[i] = l.get(i);
-    }
-    return toReturn;
-  }
-
-  /**
    * Write the given value to the given RandomAccessOutputStream.
    * If the 'bigTiff' flag is set, then the value will be written as an 8 byte
    * long; otherwise, it will be written as a 4 byte integer.
@@ -1083,9 +1070,11 @@ public class TiffSaver implements Closeable {
       offsets = new long[(int)totalTiles];
       if (isTiled && tileOrStripOffsetX == 0 && tileOrStripOffsetY == 0) {
         sequentialTileOffsets = offsets;
+        sequentialTileByteCounts = byteCounts;
       }
       else if (isTiled) {
         offsets = sequentialTileOffsets;
+        byteCounts = sequentialTileByteCounts;
       }
     }
 
