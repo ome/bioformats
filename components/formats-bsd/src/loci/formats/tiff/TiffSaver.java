@@ -36,6 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.TreeSet;
@@ -501,20 +502,19 @@ public class TiffSaver implements Closeable {
     }
   }
   
-  // Retain a record of the longest byte array needed for an IFD,
-  // so this can be used to define the initial capacity later
-  private long longestIfd = 0L;
+  // Retain the buffer used by writeIFD to 1) avoid reallocation, and 2) reduce expensive setLength() calls
+  // Note synchronization here is via writeImage
+  private ByteArrayHandle ifdBuffer = new ByteArrayHandle();
 
   public void writeIFD(IFD ifd, long nextOffset)
     throws FormatException, IOException
   {
 
     TreeSet<Integer> keys = new TreeSet<Integer>(ifd.keySet());
+    keys.remove(Integer.valueOf(IFD.LITTLE_ENDIAN));
+    keys.remove(Integer.valueOf(IFD.BIG_TIFF));
+    keys.remove(Integer.valueOf(IFD.REUSE));
     int keyCount = keys.size();
-
-    if (ifd.containsKey(Integer.valueOf(IFD.LITTLE_ENDIAN))) keyCount--;
-    if (ifd.containsKey(Integer.valueOf(IFD.BIG_TIFF))) keyCount--;
-    if (ifd.containsKey(Integer.valueOf(IFD.REUSE))) keyCount--;
 
     long fp = out.getFilePointer();
     int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY :
@@ -525,23 +525,19 @@ public class TiffSaver implements Closeable {
     else out.writeShort(keyCount);
     
     // Preallocate byte array according to previous longest byte array
-    long initialLength = Math.min(Math.max(longestIfd + 1024, 1000000), Integer.MAX_VALUE-32);
-    ByteArrayHandle extra = new ByteArrayHandle((int)initialLength);
-    extra.getByteBuffer().limit(0);
+    ByteArrayHandle extra = ifdBuffer;
+    extra.setLength(0);
     
     RandomAccessOutputStream extraStream = new RandomAccessOutputStream(extra);
 
     for (Integer key : keys) {
-      if (key.equals(IFD.LITTLE_ENDIAN) || key.equals(IFD.BIG_TIFF) ||
-          key.equals(IFD.REUSE)) continue;
-
       Object value = ifd.get(key);
       writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
     }
     if (bigTiff) out.seek(out.getFilePointer());
     writeIntValue(out, nextOffset);
     out.write(extra.getBytes(), 0, (int) extra.length());
-    longestIfd = Math.max(extra.length(), longestIfd);
+
     extraStream.close();
   }
 
