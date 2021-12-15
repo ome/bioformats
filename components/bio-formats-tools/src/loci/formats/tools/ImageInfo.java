@@ -1071,7 +1071,7 @@ public class ImageInfo {
   }
 
   /**
-   * Log the size of the given dimension, using log4j.
+   * Log the size of the given dimension.
    * @param dim the name of the dimension to log
    * @param size the total size of the dimension
    * @param effectiveSize the effective size of the dimension (e.g. 1 for RGB channels)
