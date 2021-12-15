@@ -2,7 +2,7 @@
 
 rem cachegen.bat: a batch file for generating cache (memo) files
 
-rem Required JARs: loci_tools.jar or bioformats_package.jar
+rem Required JARs: bioformats_package.jar
 
 setlocal
 set BF_DIR=%~dp0
