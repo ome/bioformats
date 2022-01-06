@@ -283,6 +283,12 @@ public class SVSReader extends BaseTiffReader {
 
       String comment = ifds.get(index).getComment();
       if (comment == null) {
+        if (labelIndex == -1) {
+          labelIndex = i;
+        }
+        else if (macroIndex == -1) {
+          macroIndex = i;
+        }
         continue;
       }
       comments[i] = comment;
