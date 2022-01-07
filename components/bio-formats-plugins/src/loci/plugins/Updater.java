@@ -55,7 +55,7 @@ public class Updater implements PlugIn {
   /** Flag indicating whether last operation was canceled. */
   public boolean canceled;
 
-  /** Path to ueber-jar whether bioformats_package.jar. */
+  /** Path to bioformats_package.jar uber-jar. */
   private String urlPath;
 
   // -- PlugIn API methods --
