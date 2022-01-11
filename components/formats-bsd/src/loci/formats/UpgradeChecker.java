@@ -93,7 +93,11 @@ public class UpgradeChecker {
   /** Name of the ueber tools JAR. */
   public static final String TOOLS = "bioformats_package.jar";
 
-  /** Name of the previous versions' tools JAR. */
+  /**
+   * Name of the previous versions' tools JAR.
+   *
+   * @deprecated Removed in Bio-Formats 6.9.0
+   */
   public static final String OLD_TOOLS = "loci_tools.jar";
 
   /** Name of the OME tools JAR. */

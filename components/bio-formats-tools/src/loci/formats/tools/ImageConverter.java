@@ -310,7 +310,7 @@ public final class ImageConverter {
   }
 
   /**
-   * Output usage information, using log4j.
+   * Output usage information
    */
   private void printUsage() {
     String[] s = {

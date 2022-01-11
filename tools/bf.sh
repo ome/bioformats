@@ -58,9 +58,6 @@ else
   if [ -e "$BF_JAR_DIR/bioformats_package.jar" ]
   then
     BF_CP="$BF_JAR_DIR/bioformats_package.jar:$BF_CP"
-  elif [ -e "$BF_JAR_DIR/loci_tools.jar" ]
-  then
-    BF_CP="$BF_JAR_DIR/loci_tools.jar:$BF_CP"
   elif [ -e "$BF_JAR_DIR/formats-gpl.jar" ]
   then
     BF_CP="$BF_JAR_DIR/formats-gpl.jar:$BF_JAR_DIR/bio-formats-tools.jar:$BF_CP"

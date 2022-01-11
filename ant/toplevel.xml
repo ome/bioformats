@@ -333,7 +333,6 @@ Type "ant -p" for a list of targets.
   <target name="clean-bundles"
     description="remove build files in bundles component">
     <ant dir="components/bundles/bioformats_package" target="bioformats_package.clean"/>
-    <ant dir="components/bundles/loci_tools" target="loci_tools.clean"/>
   </target>
 
   <target name="tools" depends="jars"
@@ -341,9 +340,6 @@ Type "ant -p" for a list of targets.
 
     <echo>----------=========== bioformats_package ===========----------</echo>
     <ant dir="components/bundles/bioformats_package" target="bundle"/>
-
-    <echo>----------=========== loci_tools ===========----------</echo>
-    <ant dir="components/bundles/loci_tools" target="bundle"/>
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->

@@ -22,7 +22,6 @@
     <module>components/formats-gpl</module>
     <module>components/bundles/bioformats_package</module>
     <module>components/bio-formats-plugins</module>
-    <module>components/bundles/loci_tools</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
   </modules>
@@ -41,7 +40,6 @@
     <project.rootdir>${basedir}</project.rootdir>
     <imagej1.version>1.51r</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
-    <log4j.version>1.2.17</log4j.version>
     <logback.version>1.2.0</logback.version>
     <ome-stubs.version>5.3.2</ome-stubs.version>
     <lwf-stubs.version>${ome-stubs.version}</lwf-stubs.version>
