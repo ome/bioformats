@@ -126,11 +126,15 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
   private ArrayList<String> textChannelNames = new ArrayList<String>();
   private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
+  private transient ArrayList<Double> textExcitationWavelengths = new ArrayList<Double>();
 
   private boolean textData = false;
   private Double refractiveIndex = null;
   Boolean imageMetadataLVProcessed = false;
   String  imageMetadataLVOrder = "";
+  private transient Double lensNA = null;
+  private transient Double objectiveMag = null;
+  private transient String objectiveModel = null;
 
   // -- Constructor --
 
@@ -348,9 +352,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       trueSizeZ = null;
       textChannelNames.clear();
       textEmissionWavelengths.clear();
+      textExcitationWavelengths.clear();
       useZ = null;
       textData = false;
       refractiveIndex = null;
+      lensNA = null;
+      objectiveMag = null;
+      objectiveModel = null;
       exposureTime.clear();
       positionCount = 0;
     }
@@ -1522,7 +1530,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         in.seek(xOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
           final Double number = Double.valueOf(in.readDouble());
-          final Length x = new Length(number, UNITS.REFERENCEFRAME);
+          final Length x = new Length(number, UNITS.MICROMETER);
           if (!posX.contains(x)) {
             uniqueX++;
           }
@@ -1533,7 +1541,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         in.seek(yOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
           final Double number = Double.valueOf(in.readDouble());
-          final Length y = new Length(number, UNITS.REFERENCEFRAME);
+          final Length y = new Length(number, UNITS.MICROMETER);
           if (!posY.contains(y)) {
             uniqueY++;
           }
@@ -1544,13 +1552,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         in.seek(zOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
           final Double number = Double.valueOf(in.readDouble());
-          final Length z = new Length(number, UNITS.REFERENCEFRAME);
+          final Length z = new Length(number, UNITS.MICROMETER);
           if (!posZ.contains(z)) {
             boolean unique = true;
             for (int q=0; q<posZ.size(); q++) {
               // account for potential stage drift
-              final double z1 = z.value(UNITS.REFERENCEFRAME).doubleValue();
-              final double z2 = posZ.get(q).value(UNITS.REFERENCEFRAME).doubleValue();
+              final double z1 = z.value(UNITS.MICROMETER).doubleValue();
+              final double z2 = posZ.get(q).value(UNITS.MICROMETER).doubleValue();
               if (Math.abs(z1 - z2) <= 0.05) {
                 unique = false;
                 break;
@@ -2191,6 +2199,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           Double wave = Double.parseDouble(value.toString());
           textEmissionWavelengths.add(wave);
         }
+        else if (name.equals("ExWavelength")) {
+          Double wave = DataTools.parseDouble(value.toString());
+          textExcitationWavelengths.add(wave);
+        }
         else if (name.equals("dZStep")) {
           trueSizeZ = new Double(value.toString());
         }
@@ -2202,6 +2214,15 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
         else if (name.equals("dPosX")) {
           positionCount++;
+        }
+        else if (name.equals("dObjectiveMag")) {
+          Double mag = DataTools.parseDouble(value.toString());
+          if (mag != null && mag > 0) {
+            objectiveMag = mag;
+          }
+        }
+        else if (name.equals("sObjective")) {
+          objectiveModel = value.toString();
         }
 
         if (type != 11 && type != 10 && type != 9) {    // if not level add global meta
@@ -2491,9 +2512,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         else if (emWave.size() > 0 || textEmissionWavelengths.size() > 0) {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
-        if (index < exWave.size()) {
-          Length excitation =
-            FormatTools.getExcitationWavelength(exWave.get(index));
+        if (index < exWave.size() || index < textExcitationWavelengths.size()) {
+          Double value = index < exWave.size() ? exWave.get(index) :
+            textExcitationWavelengths.get(index);
+          Length excitation = FormatTools.getExcitationWavelength(value);
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, i, c);
           }
@@ -2529,15 +2551,22 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     }
 
     // populate Objective
-    Double na = handler.getNumericalAperture();
-    if (na != null) {
-      store.setObjectiveLensNA(na, 0, 0);
+    if (lensNA == null) {
+      lensNA = handler.getNumericalAperture();
     }
-    Double mag = handler.getMagnification();
-    if (mag != null) {
-      store.setObjectiveCalibratedMagnification(mag, 0, 0);
+    if (lensNA != null) {
+      store.setObjectiveLensNA(lensNA, 0, 0);
     }
-    store.setObjectiveModel(handler.getObjectiveModel(), 0, 0);
+    if (objectiveMag == null) {
+      objectiveMag = handler.getMagnification();
+    }
+    if (objectiveMag != null) {
+      store.setObjectiveCalibratedMagnification(objectiveMag, 0, 0);
+    }
+    if (objectiveModel == null) {
+      objectiveModel = handler.getObjectiveModel();
+    }
+    store.setObjectiveModel(objectiveModel, 0, 0);
 
     String immersion = handler.getImmersion();
     if (immersion == null) immersion = "Other";
@@ -2731,6 +2760,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
         else if (key.equals("Refractive Index")) {
           refractiveIndex = DataTools.parseDouble(value);
+        }
+        else if (key.equals("Numerical Aperture")) {
+          lensNA = DataTools.parseDouble(value);
         }
 
         if (metadata.containsKey(key)) {
