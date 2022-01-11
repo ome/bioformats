@@ -35,6 +35,7 @@ import loci.formats.FormatReader;
 import loci.formats.in.LOFReader;
 import loci.formats.in.JPEGReader;
 import loci.formats.in.TiffDelegateReader;
+import loci.formats.in.LeicaMicrosystemsMetadata.Dimension.DimensionKey;
 import loci.formats.in.BMPReader;
 import loci.formats.in.APNGReader;
 
@@ -49,13 +50,16 @@ public class MultipleImagesReader extends LMSFileReader {
   public final int tileCount;
   private boolean dimensionsSwapped = false;
   private int series = 0; //this value is only needed for plane index calculation, if this reader refers to multiple series
+  private int imageIndex;
 
   // -- Constructor --
-  public MultipleImagesReader(XlifDocument xlif) throws FormatException, IOException {
+  public MultipleImagesReader(XlifDocument xlif, int imageIndex) throws FormatException, IOException {
     super("Multiple images", ".*");
     imageFormat = xlif.getImageFormat();
     tileCount = xlif.getTileCount();
+    associatedXmlDoc = xlif;
     initReaders(xlif.getImagePaths());
+    this.imageIndex = imageIndex;
   }
 
   // -- IFormatReader API methods --
@@ -160,46 +164,53 @@ public class MultipleImagesReader extends LMSFileReader {
     return imageFormat;
   }
 
+  public void setMetadataTempBuffer(MetadataTempBuffer metaTemp){
+    this.metaTemp = metaTemp;
+  }
+
+  public void setCoreMetadata(CoreMetadata cmd){
+    if (core == null){
+      core = new ArrayList<CoreMetadata>();
+    }
+    core.add(cmd);
+  }
+
   /**
-   * Rearranges frame order, since XLIFs refer frames in ZTSC order
+   * Rearranges frame order from ZSTC order (used in XLIFs) to desired CoreMetadata.dimensionOrder
    * @param cmd corresponding CoreMetadata (expecting that all tiles have the same dimension sizes)
    */
-  public void swapDimensions(CoreMetadata cmd){
-    //only implemented for XY... images with XYCZTS and XYZCTS dimension order. TODO: check for other dimension orders
+  public void swapDimensions() throws FormatException{
+    CoreMetadata cmd = core.get(0);
+    
     if (!dimensionsSwapped){
-      int sizeC = cmd.rgb ? cmd.sizeC / 3 : cmd.sizeC;
       int sizeZ = cmd.sizeZ;
       int sizeT = cmd.sizeT;
       int sizeS = tileCount;
+
       List<FormatReader> newOrder = new ArrayList<FormatReader>();
-  
-      if (cmd.dimensionOrder.equals("XYZCT")){
-        //XYZTSC --> XYZCTS
-        for (int indexS = 0; indexS < sizeS; indexS++){
-          for (int indexT = 0; indexT < sizeT; indexT++){
-            for (int indexC = 0; indexC < sizeC; indexC++){
-              for (int indexZ = 0; indexZ < sizeZ; indexZ++){
-                int index = indexZ + 
-                  sizeZ * indexT + 
-                  sizeZ * sizeT * indexS + 
-                  sizeZ * sizeT * sizeS * indexC;
-                newOrder.add(readers.get(index));
-              }
-            }
-          }
-        }
-      } else if (cmd.dimensionOrder.equals("XYCZT")){
-        //XYZTSC --> XYCZTS
-        for (int indexS = 0; indexS < sizeS; indexS++){
-          for (int indexT = 0; indexT < sizeT; indexT++){
-            for (int indexZ = 0; indexZ < sizeZ; indexZ++){
-              for (int indexC = 0; indexC < sizeC; indexC++){
-                int index = indexZ + 
-                  sizeZ * indexT + 
-                  sizeZ * sizeT * indexS + 
-                  sizeZ * sizeT * sizeS * indexC;
-                  newOrder.add(readers.get(index));
-              }
+      List<Dimension> dimensions = metaTemp.getDimensions(imageIndex);
+
+      Dimension dimZ = metaTemp.getDimension(imageIndex, DimensionKey.Z);
+      Dimension dimC = metaTemp.getDimension(imageIndex, DimensionKey.C);
+      Dimension dimT = metaTemp.getDimension(imageIndex, DimensionKey.T);
+      Dimension dimS = metaTemp.getDimension(imageIndex, DimensionKey.S);
+
+      //iterating through dimensions in desired order
+      for (int indexDim5 = 0; indexDim5 < dimensions.get(5).size; indexDim5++){
+        dimensions.get(5).frameIndex = indexDim5;
+        for (int indexDim4 = 0; indexDim4 < dimensions.get(4).size; indexDim4++){
+          dimensions.get(4).frameIndex = indexDim4;
+          for (int indexDim3 = 0; indexDim3 < dimensions.get(3).size; indexDim3++){
+            dimensions.get(3).frameIndex = indexDim3;
+            for (int indexDim2 = 0; indexDim2 < dimensions.get(2).size; indexDim2++){
+              dimensions.get(2).frameIndex = indexDim2;
+
+              //offsetting dimensions in order they are listed by xlifs (ZSTC)
+              int index = dimZ.frameIndex + 
+              sizeZ * dimS.frameIndex + 
+              sizeZ * sizeS * dimT.frameIndex + 
+              sizeZ * sizeS * sizeT * dimC.frameIndex;
+              newOrder.add(readers.get(index));
             }
           }
         }

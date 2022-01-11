@@ -53,6 +53,7 @@ public abstract class LMSFileReader extends FormatReader {
   // -- Fields --
   public static Logger log;
   public MetadataTempBuffer metaTemp;
+  public LMSXmlDocument associatedXmlDoc; //an optional LMS xml file that references the file(s) that are read by this reader
 
   /** file format in which actual image bytes are stored */
   public enum ImageFormat {

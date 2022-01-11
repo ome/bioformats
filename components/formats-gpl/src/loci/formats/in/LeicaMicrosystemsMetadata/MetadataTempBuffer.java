@@ -26,6 +26,9 @@
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
 import java.util.List;
+
+import loci.formats.in.LeicaMicrosystemsMetadata.Dimension.DimensionKey;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
@@ -78,13 +81,14 @@ public class MetadataTempBuffer {
   public int[] tileCount;
   public long[] tileBytesInc;
   public boolean[] inverseRgb; // true if channels are in BGR order
+  private ArrayList<ArrayList<Dimension>> dimensions;
+  public ArrayList<ArrayList<Channel>> channels;
 
   // -- Constructor --
   /**
    * Constructs a MetadataTempBuffer for a given number of images.
    * 
-   * @param len Number of images and corresponding CoreMetadata / MetadataStore in
-   *            a reader
+   * @param len Number of images (one per XLIF)
    */
   public MetadataTempBuffer(int len) {
     tileCount = new int[len];
@@ -130,13 +134,157 @@ public class MetadataTempBuffer {
     laserIntensity = ArrayListOfArrayLists(len, Double.class);
     laserActive = ArrayListOfArrayLists(len, Boolean.class);
     laserFrap = ArrayListOfArrayLists(len, Boolean.class);
+    dimensions = ArrayListOfArrayLists(len, Dimension.class);
+    channels = ArrayListOfArrayLists(len, Channel.class);
+  }
+
+  // -- Methods --
+  public Dimension getDimension(int imageIndex, DimensionKey key){
+    for (Dimension dimension : dimensions.get(imageIndex)){
+      if (dimension.key == key)
+        return dimension;
+    }
+    return null;
+  }
+
+  /**
+   * Inserts dimension to buffer and optionally adapts other dimension-dependent values
+   * @param imageIndex
+   * @param dimension
+   */
+  public void addDimension(int imageIndex, Dimension dimension){
+    dimensions.get(imageIndex).add(dimension);
+    if (dimension.key == DimensionKey.X){
+      physicalSizeXs.add(dimension.getLength());
+    } else if (dimension.key == DimensionKey.Y) {
+      physicalSizeYs.add(dimension.getLength());
+    } else if (dimension.key == DimensionKey.Z){
+      if (zSteps[imageIndex] == null && dimension.getLength() != null) {
+        zSteps[imageIndex] = Math.abs(dimension.getLength());
+      }
+    } else if (dimension.key == DimensionKey.S){
+        tileCount[imageIndex] *= dimension.size;
+        tileBytesInc[imageIndex] = dimension.bytesInc;
+    }
+  }
+
+  /**
+   * Returns the dimension order as a string
+   * @param imageIndex
+   * @return dimension order string, as it is expected in CoreMetadata.dimensionOrder
+   */
+  public String getDimensionOrder(int imageIndex){
+    sortDimensions(imageIndex);
+
+    String dimensionOrder = "";
+    List<DimensionKey> standardDimensions = new ArrayList<>(Arrays.asList(DimensionKey.X, DimensionKey.Y, DimensionKey.Z,
+     DimensionKey.C, DimensionKey.T));
+
+    for (Dimension dimension : dimensions.get(imageIndex)){
+      if (standardDimensions.contains(dimension.key)){
+        dimensionOrder += dimension.key.token;
+      }
+    }
+    return dimensionOrder;
+  }
+
+  /**
+   * Sorts list of existing dimensions by increasing bytesInc, beginning with X and Y, ending with stage position
+   * @param coreIndex
+   */
+  private void sortDimensions(int coreIndex){
+    List<Dimension> dims = dimensions.get(coreIndex);
+    dims.sort((Dimension dim1, Dimension dim2) -> Long.compare(dim1.bytesInc, dim2.bytesInc));
+
+    //move X and Y to the start
+    Dimension dimX = getDimension(coreIndex, DimensionKey.X);
+    Dimension dimY = getDimension(coreIndex, DimensionKey.Y);
+    dimensions.get(coreIndex).remove(dimX);
+    dimensions.get(coreIndex).remove(dimY);
+
+    //XY
+    if (dimX.bytesInc < dimY.bytesInc){
+      dimensions.get(coreIndex).add(0, dimX);
+      dimensions.get(coreIndex).add(1, dimY);
+    } else {
+      //YX
+      dimensions.get(coreIndex).add(0, dimY);
+      dimensions.get(coreIndex).add(1, dimX);
+    }
+
+    //move dimension S to the end to sort images by stage position, since tiles are accessed as separate series
+    Dimension dimS = getDimension(coreIndex, DimensionKey.S);
+    dimensions.get(coreIndex).remove(dimS);
+    dimensions.get(coreIndex).add(dimS);
+  }
+
+  public ArrayList<Dimension> getDimensions(int imageIndex){
+    sortDimensions(imageIndex);
+    return dimensions.get(imageIndex);
+  } 
+
+  /**
+   * Adds Z, T and S dimension if they haven't been added already
+   * @param imageIndex
+   */
+  public void addMissingDimensions(int imageIndex){
+    dimensions.get(imageIndex).sort((dim1, dim2) -> Long.compare(dim1.bytesInc, dim2.bytesInc));
+    Dimension lastDimension = dimensions.get(imageIndex).get(dimensions.get(imageIndex).size() - 1);
+    if (getDimension(imageIndex, DimensionKey.Z) == null){
+      addDimension(imageIndex, new Dimension(DimensionKey.Z, 1, lastDimension.bytesInc, "m", 1.0, lastDimension.oldPhysicalSize));
+    }
+    if (getDimension(imageIndex, DimensionKey.T) == null){
+      addDimension(imageIndex, new Dimension(DimensionKey.T, 1, lastDimension.bytesInc, "s", 1.0, lastDimension.oldPhysicalSize));
+    }
+    if (getDimension(imageIndex, DimensionKey.S) == null){
+      addDimension(imageIndex, new Dimension(DimensionKey.S, 1, lastDimension.bytesInc, "", 1.0, lastDimension.oldPhysicalSize));
+    }
+  }
+
+  /**
+   * Adds channel dimension
+   * @param coreIndex
+   * @param sizeC total number of channels
+   * @param bytesInc 
+   */
+  public void addChannelDimension(int coreIndex){
+    boolean rgb = (getDimension(coreIndex, DimensionKey.X).bytesInc % 3) == 0;
+    int sizeC = rgb ? channels.get(coreIndex).size() / 3 : channels.get(coreIndex).size();
+
+    long channelBytesInc = getChannelDimensionBytesInc(coreIndex);
+    
+    addDimension(coreIndex, Dimension.createChannelDimension(sizeC, channelBytesInc));
+  }
+
+  private long getChannelDimensionBytesInc(int coreIndex){
+    boolean rgb = (getDimension(coreIndex, DimensionKey.X).bytesInc % 3) == 0;
+    long maxBytesInc = 0;
+
+    if (rgb){
+      for (int i = 0; i < channels.get(coreIndex).size(); i++){
+        Channel channel = channels.get(coreIndex).get(i);
+        if (channel.channelTag == 3){
+          maxBytesInc = channel.bytesInc > maxBytesInc ? channel.bytesInc : maxBytesInc;
+        }
+      }
+    } else {
+      for (Channel channel : channels.get(coreIndex)){
+        maxBytesInc = channel.bytesInc > maxBytesInc ? channel.bytesInc : maxBytesInc;
+      }
+    }
+
+    if (maxBytesInc == 0){
+      Dimension yDim = getDimension(coreIndex, DimensionKey.Y);
+      maxBytesInc = yDim.bytesInc * yDim.size;
+    }
+    return maxBytesInc;
   }
 
   // -- Helper functions --
   private <T> ArrayList<ArrayList<T>> ArrayListOfArrayLists(int rows, Class<T> type) {
     ArrayList<ArrayList<T>> lst = new ArrayList<>();
     for (int i = 0; i < rows; i++) {
-      lst.add(null);
+      lst.add(new ArrayList<T>());
     }
     return lst;
   }
@@ -144,7 +292,7 @@ public class MetadataTempBuffer {
   private <T, S> ArrayList<HashMap<T, S>> ArrayListOfHashMaps(int rows, Class<T> key, Class<S> value) {
     ArrayList<HashMap<T, S>> lst = new ArrayList<>();
     for (int i = 0; i < rows; i++) {
-      lst.add(null);
+      lst.add(new HashMap<T,S>());
     }
     return lst;
   }

@@ -36,7 +36,7 @@ public class LofXmlDocument extends LMSImageXmlDocument {
   private String name;
 
   public LofXmlDocument(String xml, String name) {
-    super(xml, InitFrom.XML);
+    super(xml);
     this.name = name;
   }
 

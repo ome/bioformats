@@ -25,11 +25,15 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import loci.formats.CoreMetadata;
+import org.apache.commons.io.comparator.PathFileComparator;
+
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.*;
@@ -96,20 +100,20 @@ public class XLEFReader extends LMSFileReader {
     super.initFile(id);
 
     // XLEF
-    XlefDocument xlef = new XlefDocument(id);
-    xlef.printXlefInfo();
-    xlef.printReferences();
+    associatedXmlDoc = new XlefDocument(id);
+    ((XlefDocument)associatedXmlDoc).printReferences();
 
     // XLIFs: create reader for each xlif referenced "image"
-    List<XlifDocument> xlifs = xlef.getValidXlifs();
+    List<XlifDocument> xlifs = ((XlefDocument)associatedXmlDoc).getXlifs();
     if (xlifs.size() == 0) {
       throw new FormatException("Cannot open project: project has no valid image references");
     }
     LMSFileReader reader;
-    for (XlifDocument xlif : xlifs) {
+    for (int i = 0; i < xlifs.size(); i++) {
+      XlifDocument xlif = xlifs.get(i);
       switch (xlif.getImageFormat()) {
         case LOF:
-          reader = new LOFReader();
+          reader = new LOFReader(xlif);
           // we assume that an xlif always references only one lof file.
           // otherwise we would require a MultipleImagesReader here as well.
           // metadata from the xlif shall be used for LOFs in XLEF projects
@@ -119,7 +123,7 @@ public class XLEFReader extends LMSFileReader {
         case BMP:
         case JPEG:
         case PNG:
-          reader = new MultipleImagesReader(xlif);
+          reader = new MultipleImagesReader(xlif, i);
           break;
         case UNKNOWN:
         default:
@@ -129,6 +133,7 @@ public class XLEFReader extends LMSFileReader {
     }
 
     translateMetadata((List<LMSImageXmlDocument>)(List<? extends LMSImageXmlDocument>) xlifs);
+    setMetadataOfMultipleImagesReaders();
     sortMultipleImagesReaders();
   }
 
@@ -142,6 +147,38 @@ public class XLEFReader extends LMSFileReader {
   @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  @Override
+  public String[] getUsedFiles(boolean noPixels) {
+
+    FormatTools.assertId(currentId, true, 1);
+    final List<String> files = new ArrayList<String>();
+    files.add(currentId);
+    files.addAll(((XlefDocument)associatedXmlDoc).getChildrenFiles(!noPixels));
+    sortPaths(files);
+
+    return files.toArray(new String[files.size()]);
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+
+    FormatTools.assertId(currentId, true, 1);
+    final List<String> files = new ArrayList<String>();
+
+    LMSFileReader reader = readers.get(getReaderIndex(getSeries()));
+    XlifDocument xlif = (XlifDocument)reader.associatedXmlDoc;
+    files.add(xlif.getFilepath());
+    files.addAll(xlif.getParentFiles());
+    if (!noPixels){
+      files.addAll(xlif.getImagePaths());
+    }
+    sortPaths(files);
+
+    return files.toArray(new String[files.size()]);
   }
 
   // -- Methods --
@@ -242,13 +279,22 @@ public class XLEFReader extends LMSFileReader {
   }
   
   /** Sorts frames of all MultipleImagesReaders as per core dimension sizes and order */
-  private void sortMultipleImagesReaders(){
+  private void sortMultipleImagesReaders() throws FormatException {
     for (int i = 0; i < core.size(); i++){
-      CoreMetadata cmd = core.get(i);
       LMSFileReader reader = readers.get(getReaderIndex(i));
       if (reader instanceof MultipleImagesReader && 
-        reader.getImageFormat() != ImageFormat.LOF){
-        ((MultipleImagesReader)reader).swapDimensions(cmd); 
+      reader.getImageFormat() != ImageFormat.LOF){
+        ((MultipleImagesReader)reader).swapDimensions(); 
+      }
+    }
+  }
+
+  private void setMetadataOfMultipleImagesReaders(){
+    for (int i = 0; i < core.size(); i++){
+      LMSFileReader reader = readers.get(getReaderIndex(i));
+      if (reader instanceof MultipleImagesReader){
+        ((MultipleImagesReader)reader).setCoreMetadata(core.get(i));
+        ((MultipleImagesReader)reader).setMetadataTempBuffer(metaTemp);
       }
     }
   }
@@ -309,10 +355,10 @@ public class XLEFReader extends LMSFileReader {
   }
 
   /**
-   * Summarizes all values of an array, from index start to (including) index end
+   * Sums up all values of an array, from start index to (including) end index
    * @param arr
-   * @param start first array position whose value shall be summarized
-   * @param end last array position whose value shall be summarized
+   * @param start first array position whose value shall be added
+   * @param end last array position whose value shall be added
    * @return
    */
   private int sum(int[] arr, int start, int end){
@@ -323,5 +369,31 @@ public class XLEFReader extends LMSFileReader {
       sum += arr[i];
     }
     return sum;
+  }
+
+  /**
+   * Sorts file paths by name and depth and moves current file path to the beginning
+   * @param paths
+   */
+  private void sortPaths(List<String> paths){
+    List<File> files = new ArrayList<File>();
+    for (String path : paths){
+      files.add(new File(path));
+    }
+    Collections.sort(files, new PathComparator());
+    paths.clear();
+    for (File file : files){
+      paths.add(file.getAbsolutePath());
+    }
+    paths.remove(currentId);
+    paths.add(0, currentId);
+  }
+
+  /** Helper class to sort file paths by name and depth */
+  static class PathComparator implements Comparator<File> {
+    public int compare(File file1, File file2){
+      PathFileComparator comp = new PathFileComparator();
+      return comp.compare(file1, file2);
+    }
   }
 }

@@ -32,6 +32,8 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -67,14 +69,16 @@ public abstract class LMSXmlDocument {
     XML,
     FILEPATH
   }
+  LMSCollectionXmlDocument parent;
 
   // -- Constructors --
-  public LMSXmlDocument(String str, InitFrom initType) {
-    if (initType == InitFrom.XML){
-      initFromXmlString(str);
-    } else {
-      initFromFilepath(str);
-    }
+  public LMSXmlDocument(String xml) {
+    initFromXmlString(xml);
+  }
+
+  public LMSXmlDocument(String filepath, LMSCollectionXmlDocument parent){
+    initFromFilepath(filepath);
+    this.parent = parent;
   }
 
   // -- Getters --
@@ -119,7 +123,7 @@ public abstract class LMSXmlDocument {
     }
 
     this.dir = Paths.get(filepath).getParent().toString();
-    this.filepath = filepath;
+    this.filepath = Paths.get(filepath).normalize().toString();
   }
 
   /**
@@ -196,7 +200,8 @@ public abstract class LMSXmlDocument {
       e.printStackTrace();
       urlDecoded = refPath.replace("%5C", "\\").replace("%5c", "\\").replace("%20", " ");
     }
-    return dir + "\\" + urlDecoded;
+    String path = dir + "\\" + urlDecoded;
+    return Paths.get(path).normalize().toString();
   }
 
   public String nodeToString(Node node){
@@ -224,5 +229,18 @@ public abstract class LMSXmlDocument {
       }
     }
     return null;
+  }
+
+   /**
+   * Returns all files which directly or indirectly reference this LMS xml file.
+   * @return list of LMS xml documents (xlef and optionally xlcfs)
+   */
+  public List<String> getParentFiles(){
+    List<String> parents = new ArrayList<>();
+    if (parent != null){
+      parents.add(parent.filepath);
+      parents.addAll(parent.getParentFiles());
+    }
+    return parents;
   }
 }

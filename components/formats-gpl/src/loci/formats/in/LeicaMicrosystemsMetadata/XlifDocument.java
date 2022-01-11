@@ -44,8 +44,8 @@ public class XlifDocument extends LMSImageXmlDocument {
   List<String> imagePaths = new ArrayList<>();
 
   // -- Constructor
-  public XlifDocument(String filepath) {
-    super(filepath, InitFrom.FILEPATH);
+  public XlifDocument(String filepath, LMSCollectionXmlDocument parent) {
+    super(filepath, parent);
     initImagePaths();
     imageFormat = checkImageFormat();
   }
@@ -65,6 +65,45 @@ public class XlifDocument extends LMSImageXmlDocument {
 
   public Node getElementNode() {
     return xPath("//Element").item(0);
+  }
+
+  @Override
+  public Node getImageNode() {
+    for (int i = 0; i < doc.getDocumentElement().getChildNodes().getLength(); i++){
+      Node child = doc.getDocumentElement().getChildNodes().item(i);
+      if (child.getNodeName().equals("Element")){
+        for (int k = 0; k < child.getChildNodes().getLength(); k++){
+          Node elementChild = child.getChildNodes().item(k);
+          if (elementChild.getNodeName().equals("Data")){
+            for (int m = 0; m < elementChild.getChildNodes().getLength(); m++){
+              Node dataChild = elementChild.getChildNodes().item(m);
+              if (dataChild.getNodeName().equals("Image")){
+                return dataChild;
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public String getImageName(){
+    return getAttr(xPath("//Element").item(0), "Name");
+  }
+
+  /**
+   * Returns the number of tiles referenced by this xlif
+   */
+  public int getTileCount(){
+    NodeList dimDescs = xPath("//DimensionDescription");
+    for (int i = 0; i < dimDescs.getLength(); i++){
+      if (getAttr(dimDescs.item(i), "DimID").equals("10")){
+        return Integer.parseInt(getAttr(dimDescs.item(i), "NumberOfElements"));
+      }
+    }
+    return 1;
   }
 
   // -- Methods --
@@ -98,49 +137,14 @@ public class XlifDocument extends LMSImageXmlDocument {
     }
   }
 
-  /**
-   * Returns the number of tiles referenced by this xlif
-   */
-  public int getTileCount(){
-    NodeList dimDescs = xPath("//DimensionDescription");
-    for (int i = 0; i < dimDescs.getLength(); i++){
-      if (getAttr(dimDescs.item(i), "DimID").equals("10")){
-        return Integer.parseInt(getAttr(dimDescs.item(i), "NumberOfElements"));
-      }
-    }
-    return 1;
-  }
-
   public void printXlifInfo() {
     String name = getAttr(xPath("//Element").item(0), "Name");
-    System.out.println("---- XLIF INFO: Image name: " + name + ", references: " + imagePaths.size()
+    System.out.println("---- Image name: " + name + ", references: " + imagePaths.size()
         + ", image format: " + imageFormat + " ----");
     System.out.println("path: " + filepath);
   }
 
-  @Override
-  public Node getImageNode() {
-    for (int i = 0; i < doc.getDocumentElement().getChildNodes().getLength(); i++){
-      Node child = doc.getDocumentElement().getChildNodes().item(i);
-      if (child.getNodeName().equals("Element")){
-        for (int k = 0; k < child.getChildNodes().getLength(); k++){
-          Node elementChild = child.getChildNodes().item(k);
-          if (elementChild.getNodeName().equals("Data")){
-            for (int m = 0; m < elementChild.getChildNodes().getLength(); m++){
-              Node dataChild = elementChild.getChildNodes().item(m);
-              if (dataChild.getNodeName().equals("Image")){
-                return dataChild;
-              }
-            }
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  @Override
-  public String getImageName(){
-    return getAttr(xPath("//Element").item(0), "Name");
+  public boolean isValid(){
+    return imagePaths.size() > 0;
   }
 }

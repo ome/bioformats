@@ -25,26 +25,21 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
- * This class loads and represents a Leica Microsystems XLEF xml document
+ * This class represents a Leica Microsystems XLEF xml document,
+ * a project file which references xlifs and optionally xlcfs
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class XlefDocument extends LMSXmlDocument {
-
-  // -- Fields --
-  private List<XlifDocument> xlifs = new ArrayList<>();
-  private List<XlifDocument> validXlifs = new ArrayList<>(); // xlifs which actually point to image files
+public class XlefDocument extends LMSCollectionXmlDocument {
 
   // -- Constructor --
   public XlefDocument(String filepath) {
-    super(filepath, InitFrom.FILEPATH);
-    initXlifs();
+    super(filepath, null);
+    initChildren();
   }
 
   // -- Getters --
@@ -55,74 +50,23 @@ public class XlefDocument extends LMSXmlDocument {
    * @return image number
    */
   public int getImageCount() {
+    List<XlifDocument> xlifs = getXlifs();
+
     int imgCount = 0;
-    for (XlifDocument xlif : xlifs) {
-      imgCount += xlif.getImagePaths().size();
+    for (LMSXmlDocument xlif : xlifs) {
+      imgCount += ((XlifDocument)xlif).getImagePaths().size();
     }
     return imgCount;
   }
 
-  /**
-   * Returns xlifs found in the xlef and in referenced xlcfs
-   * 
-   * @return list of xlifs as XlifDocuments
-   */
-  public List<XlifDocument> getXlifs() {
-    return xlifs;
-  }
-
-  /**
-   * Returns xlifs found in the xlef and in referenced xlcfs, which actually point
-   * to image files
-   * 
-   * @return list of xlifs as XlifDocuments
-   */
-  public List<XlifDocument> getValidXlifs() {
-    return validXlifs;
-  }
-
   // -- Methods --
 
-  /**
-   * Initializes xlifs found in the xlef and in referenced xlcfs, as
-   * XlifDocuments.
-   */
-  private void initXlifs() {
-    NodeList references = xPath("//Reference");
-    for (int i = 0; i < references.getLength(); i++) {
-      String path = parseFilePath(getAttr(references.item(i), "File"));
-      if (LMSFileReader.fileExists(path)) {
-        if (path.endsWith(".xlif") && !path.endsWith("iomanagerconfiguation.xlif")) {
-          XlifDocument newXlif = new XlifDocument(path);
-          xlifs.add(newXlif);
-        } else if (path.endsWith(".xlcf")) {
-          XlcfDocument xlcf = new XlcfDocument(path);
-          xlifs.addAll(xlcf.getXlifs());
-        }
-      }
-    }
-    for (XlifDocument xlif : xlifs) {
-      if (xlif.getImagePaths().size() > 0) {
-        validXlifs.add(xlif);
-      }
-    }
-  }
-
-  public void printXlefInfo() {
-    Node root = getDoc().getDocumentElement();
-    System.out.println("---------- XLEF INFO: ----------");
-    System.out.println("Root Element: \t" + root.getNodeName());
-
-    Node exp = xPath("//Experiment").item(0);
-    System.out.println("Path: \t\t" + getAttr(exp, "Path"));
-    System.out.println("Is saved: \t" + getAttr(exp, "IsSavedFlag"));
-  }
-
   public void printReferences() {
-    System.out.println("-------- " + validXlifs.size() + " images found: -------- ");
-    for (XlifDocument xlif : validXlifs) {
+    List<XlifDocument> xlifs = getXlifs();
+    System.out.println("-------- XLEF INFO: " + xlifs.size() + " images found -------- ");
+    for (XlifDocument xlif : xlifs) {
       xlif.printXlifInfo();
     }
-    System.out.println("---------------------------------");
+    System.out.println("-------------------------------------------");
   }
 }

@@ -33,9 +33,14 @@ import org.w3c.dom.Node;
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
 public abstract class LMSImageXmlDocument extends LMSXmlDocument {
-  public LMSImageXmlDocument(String str, InitFrom initType) {
-    super(str, initType);
+  public LMSImageXmlDocument(String xml) {
+    super(xml);
   }
+
+  public LMSImageXmlDocument(String filepath, LMSCollectionXmlDocument parent){
+    super(filepath, parent);
+  }
+
 
   /**
    * Returns the image node of the xml document which contains image metadata

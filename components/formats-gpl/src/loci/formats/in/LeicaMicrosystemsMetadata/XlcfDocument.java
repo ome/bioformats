@@ -25,45 +25,16 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.w3c.dom.NodeList;
-
 /**
  * This class loads and represents a Leica Microsystems XLCF xml document
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class XlcfDocument extends LMSXmlDocument {
+public class XlcfDocument extends LMSCollectionXmlDocument {
 
   // -- Constructor --
-  public XlcfDocument(String filepath) {
-    super(filepath, InitFrom.FILEPATH);
-  }
-
-  // -- Getters --
-
-  /**
-   * Returns XlifDocuments for all xlif references found in the xlcf and in
-   * referenced xlcfs
-   * 
-   * @return list of xlif documents
-   */
-  public List<XlifDocument> getXlifs() {
-    List<XlifDocument> xlifDocs = new ArrayList<>();
-    NodeList references = xPath("//Reference");
-    for (int i = 0; i < references.getLength(); i++) {
-      String path = parseFilePath(getAttr(references.item(i), "File"));
-      if (LMSFileReader.fileExists(path)) {
-        if (path.endsWith(".xlif") && !path.endsWith("iomanagerconfiguation.xlif")) {
-          xlifDocs.add(new XlifDocument(path));
-        } else if (path.endsWith(".xlcf")) {
-          XlcfDocument xlcf = new XlcfDocument(path);
-          xlifDocs.addAll(xlcf.getXlifs());
-        }
-      }
-
-    }
-    return xlifDocs;
+  public XlcfDocument(String filepath, LMSCollectionXmlDocument parent) {
+    super(filepath, parent);
+    initChildren();
   }
 }

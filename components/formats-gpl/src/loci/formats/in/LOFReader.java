@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
-import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -51,8 +50,6 @@ public class LOFReader extends LMSFileReader {
 
   /** The encoding used in this file. */
   private static final String ENCODING = "ISO-8859-1";
-  private static final String LOGO_FILE = "LeicaLogo.jpg";
-  private static final String STYLESHEET_FILE = "LASAF_CIP.xsl";
 
   // -- Fields --
 
@@ -66,7 +63,6 @@ public class LOFReader extends LMSFileReader {
     XLIF
   }
   private MetadataSource metadataSource = MetadataSource.LOF;
-  private XlifDocument xlifXml;
 
   // -- Constructor --
 
@@ -75,8 +71,14 @@ public class LOFReader extends LMSFileReader {
     super("Leica Object Format", "lof");
     suffixNecessary = false;
     suffixSufficient = false;
-    hasCompanionFiles = true;
     domains = new String[] { FormatTools.LM_DOMAIN };
+  }
+  public LOFReader(XlifDocument xlif){
+    super("Leica Object Format", "lof");
+    suffixNecessary = false;
+    suffixSufficient = false;
+    domains = new String[] { FormatTools.LM_DOMAIN };
+    associatedXmlDoc = xlif;
   }
 
   // -- IFormatReader API methods --
@@ -93,11 +95,55 @@ public class LOFReader extends LMSFileReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 1;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
-    try {
-      checkForLofLayout(stream, "");
-    } catch (Exception e){
-      return false;
+    
+    // ------------------ 1. Part: Header ------------------
+    // test value: 0x70
+    if (stream.readInt() != LOF_MAGIC_BYTE) return false;
+
+    // length of the following binary chunk to read (1.1)
+    stream.readInt();
+
+    // --------- 1.1 Type Content ---------
+    // test value: 0x2A
+    if (stream.readByte() != LOF_MEMORY_BYTE) return false;
+
+    // number of unicode characters (NC)
+    int nc = stream.readInt();
+    String typeName = "";
+    for (int i = 0; i < nc; i++) {
+      typeName += stream.readChar();
     }
+    if (!typeName.equals("LMS_Object_File")) return false;
+
+    // --------- 1.2 Major version ---------
+    // test value: 0x2A
+    if (stream.readByte() != LOF_MEMORY_BYTE) return false;
+    stream.readInt();
+
+    // --------- 1.3 Minor version ---------
+    // test value: 0x2A
+    if (stream.readByte() != LOF_MEMORY_BYTE) return false;
+    stream.readInt();
+
+    // --------- 1.4 Memory size ---------
+    // test value: 0x2A
+    if (stream.readByte() != LOF_MEMORY_BYTE) return false;
+    // memory size (MS)
+    long memorySize = stream.readLong();
+
+    // ------------------ 2. Part: Memory ------------------
+    stream.skipBytes(memorySize);
+
+    if (stream.getFilePointer() >= stream.length()) return false;
+    // ------------------ 3. Part: XML ------------------
+    // test value: 0x70
+    if (stream.readInt() != LOF_MAGIC_BYTE) return false;
+    // length of the following binary chunk to read (3.1)
+    stream.readInt();
+
+    // --------- 3.1 XML Content ---------
+    // test value: 0x2A
+    if (stream.readByte() != LOF_MEMORY_BYTE) return false;
     
     int xmlLength = stream.readInt();
     String lofXml = "";
@@ -283,27 +329,6 @@ public class LOFReader extends LMSFileReader {
     FormatTools.assertId(currentId, true, 1);
     final List<String> files = new ArrayList<String>();
     files.add(currentId);
-
-    Location currentFile = new Location(currentId).getAbsoluteFile();
-    Location parent = currentFile.getParentFile();
-    if (parent != null && getSeries() < metaTemp.imageNames.length && metaTemp.imageNames[getSeries()] != null) {
-      // look for an XML file with the same name as this series
-      Location xmlFile = new Location(parent, metaTemp.imageNames[getSeries()].trim() + ".xml");
-      if (xmlFile.exists()) {
-        files.add(xmlFile.getAbsolutePath());
-      }
-
-      Location logoFile = new Location(parent, LOGO_FILE);
-      if (logoFile.exists()) {
-        files.add(logoFile.getAbsolutePath());
-      }
-
-      Location stylesheetFile = new Location(parent, STYLESHEET_FILE);
-      if (stylesheetFile.exists()) {
-        files.add(stylesheetFile.getAbsolutePath());
-      }
-    }
-
     return files.toArray(new String[files.size()]);
   }
 
@@ -345,7 +370,7 @@ public class LOFReader extends LMSFileReader {
       LofXmlDocument doc = new LofXmlDocument(lofXml, name);
       translateMetadata(doc);
     } else {
-      translateMetadata(xlifXml);
+      translateMetadata((XlifDocument)associatedXmlDoc);
     }
 
     if (endPointer == 0) {
@@ -501,7 +526,7 @@ public class LOFReader extends LMSFileReader {
    */
   public void setIdWithMetadata(String id, XlifDocument xml) throws FormatException, IOException {
     metadataSource = MetadataSource.XLIF;
-    xlifXml = xml;
+    associatedXmlDoc = xml;
     super.setId(id);
   }
 }

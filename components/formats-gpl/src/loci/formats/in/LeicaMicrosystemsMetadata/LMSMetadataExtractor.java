@@ -27,7 +27,6 @@ package loci.formats.in.LeicaMicrosystemsMetadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -47,6 +46,7 @@ import org.w3c.dom.Attr;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.in.LeicaMicrosystemsMetadata.Dimension.DimensionKey;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -66,7 +66,7 @@ public class LMSMetadataExtractor {
 
     // -- Fields --
     private LMSFileReader r;
-    private HashMap<Long, String> bytesIncPerAxis;
+    List<Long> channelBytesIncs = new ArrayList<Long>();
     int extras = 1;
 
     // -- Constructor --
@@ -89,7 +89,6 @@ public class LMSMetadataExtractor {
       //create CoreMetadata for each xml referenced image (=series)
       for (int i = 0; i < docs.size(); i++) {
           CoreMetadata ms = new CoreMetadata();
-          bytesIncPerAxis = new HashMap<Long, String>();
           r.getCore().add(ms);
           r.setSeries(i);
 
@@ -99,10 +98,8 @@ public class LMSMetadataExtractor {
       }
       r.setSeries(0);
 
-      // int totalSeries = 0;
-      // for (int count : rawMetadata.tileCount) {
-      //     totalSeries += count;
-      // }
+      //after this section, we don't have 1 CoreMetadata per xlif-referenced image,
+      //but 1 CoreMetadata per series ( = tile )!
       ArrayList<CoreMetadata> newCore = new ArrayList<CoreMetadata>();
       for (int i = 0; i < r.getCore().size(); i++) {
           for (int tile = 0; tile < r.metaTemp.tileCount[i]; tile++) {
@@ -144,13 +141,13 @@ public class LMSMetadataExtractor {
   /***
    * Extracts i.a. channel number and luts from channel descriptions and writes it to reader's {@link CoreMetadata} and {@link MetadataTempBuffer}
    * @param imageNode Image node from Leica xml
-   * @param i image / core index
+   * @param coreIndex 
    * @throws FormatException
    */
-  public void translateChannelDescriptions(Element imageNode, int i)
+  public void translateChannelDescriptions(Element imageNode, int coreIndex)
     throws FormatException
   {
-    CoreMetadata ms = r.getCore().get(i);
+    CoreMetadata ms = r.getCore().get(coreIndex);
 
     NodeList channels = getChannelDescriptionNodes(imageNode);
     ms.sizeC = channels.getLength();
@@ -159,22 +156,28 @@ public class LMSMetadataExtractor {
     r.metaTemp.channelPrios = new int[r.metaTemp.tileCount.length][];
 
     for (int ch=0; ch<channels.getLength(); ch++) {
-      Element channel = (Element) channels.item(ch);
+      Element channelElement = (Element) channels.item(ch);
 
-      luts.add(channel.getAttribute("LUTName"));
-      long bytesInc = parseLong(channel.getAttribute("BytesInc"));
-      if (bytesInc > 0) {
-        bytesIncPerAxis.put(bytesInc, "C");
-      }
+      luts.add(channelElement.getAttribute("LUTName"));
+      int channelTag = Integer.parseInt(channelElement.getAttribute("ChannelTag"));
+      int resolution = Integer.parseInt(channelElement.getAttribute("Resolution"));
+      double min = parseDouble(channelElement.getAttribute("Min"));
+      double max = parseDouble(channelElement.getAttribute("Max"));
+      String unit = channelElement.getAttribute("Unit");
+      String lutName = channelElement.getAttribute("LUTName");
+      long bytesInc = parseLong(channelElement.getAttribute("BytesInc"));
+
+      Channel channel = new Channel(channelTag, resolution, min, max, unit, lutName, bytesInc);
+      r.metaTemp.channels.get(coreIndex).add(channel);
     }
 
-    //BGR order is assumed when no LUT names exist, RGB order is only assumed when explicitly described //hotfix
-    r.metaTemp.inverseRgb[i] = !(channels.getLength() >= 3 && 
+    //BGR order is assumed when no LUT names exist, RGB order is only assumed when explicitly described
+    r.metaTemp.inverseRgb[coreIndex] = !(channels.getLength() >= 3 && 
       ((Element)channels.item(0)).getAttribute("LUTName").equals("Red") && 
       ((Element)channels.item(1)).getAttribute("LUTName").equals("Green") &&
       ((Element)channels.item(2)).getAttribute("LUTName").equals("Blue"));
 
-    translateLuts(luts, i);
+    translateLuts(luts, coreIndex);
   }
 
   /***
@@ -255,166 +258,91 @@ public class LMSMetadataExtractor {
   /**
    * Extracts information from dimension descriptions and writes it to reader's {@link CoreMetadata} and {@link MetadataTempBuffer}
    * @param imageNode Image node from Leica xml
-   * @param image image / core index
+   * @param coreIndex
    * @throws FormatException
    */
-  private void translateDimensionDescriptions(Element imageNode, int image) throws FormatException{
-    CoreMetadata ms = r.getCore().get(image);
+  private void translateDimensionDescriptions(Element imageNode, int coreIndex) throws FormatException{
+    CoreMetadata cmd = r.getCore().get(coreIndex);
     NodeList dimensions = getDimensionDescriptionNodes(imageNode);
 
-    Double physicalSizeX = null;
-    Double physicalSizeY = null;
-    Double physicalSizeZ = null;
+    //add dimensions
+    for (int i=0; i<dimensions.getLength(); i++) {
+      Element dimensionElement = (Element) dimensions.item(i);
 
-    for (int dim=0; dim<dimensions.getLength(); dim++) {
-      Element dimension = (Element) dimensions.item(dim);
-
-      int dimId = parseInt(dimension.getAttribute("DimID"));
-      int dimSize = parseInt(dimension.getAttribute("NumberOfElements"));
-      long bytesInc = parseLong(dimension.getAttribute("BytesInc"));
-      Double physicalLenPp = parseDouble(dimension.getAttribute("Length"));
-      String unit = dimension.getAttribute("Unit");
-
-      double offByOnePhysicalLenPp = 0d;
-      if (dimSize > 1) {
-        offByOnePhysicalLenPp = physicalLenPp / dimSize;
-        physicalLenPp /= (dimSize - 1); //length per pixel
-      }
-      else {
-        physicalLenPp = 0d;
-      }
-      
-      if (unit.equals("Ks")) {
-        physicalLenPp /= 1000;
-        offByOnePhysicalLenPp /= 1000;
-      }
-      else if (unit.equals("m")) {
-        physicalLenPp *= METER_MULTIPLY;
-        offByOnePhysicalLenPp *= METER_MULTIPLY;
-      }
-
+      int id = parseInt(dimensionElement.getAttribute("DimID"));
+      int size = parseInt(dimensionElement.getAttribute("NumberOfElements"));
+      long bytesInc = parseLong(dimensionElement.getAttribute("BytesInc"));
+      Double length = parseDouble(dimensionElement.getAttribute("Length"));
+      String unit = dimensionElement.getAttribute("Unit");
       boolean oldPhysicalSize = r.useOldPhysicalSizeCalculation();
-      switch (dimId) {
-        case 1: // X axis
-          ms.sizeX = dimSize;
-          ms.rgb = (bytesInc % 3) == 0;
-          if (ms.rgb) bytesInc /= 3;
-          ms.pixelType =
-            FormatTools.pixelTypeFromBytes((int) bytesInc, false, true);
-          physicalSizeX = oldPhysicalSize ? offByOnePhysicalLenPp : physicalLenPp;
-          break;
-        case 2: // Y axis
-          if (ms.sizeY != 0) {
-            if (ms.sizeZ == 1) {
-              ms.sizeZ = dimSize;
-              bytesIncPerAxis.put(bytesInc, "Z");
-              physicalSizeZ = physicalLenPp;
-            }
-            else if (ms.sizeT == 1) {
-              ms.sizeT = dimSize;
-              bytesIncPerAxis.put(bytesInc, "T");
-            }
-          }
-          else {
-            ms.sizeY = dimSize;
-            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLenPp : physicalLenPp;
-          }
-          break;
-        case 3: // Z axis
-          if (ms.sizeY == 0) {
-            // XZ scan - swap Y and Z
-            ms.sizeY = dimSize;
-            ms.sizeZ = 1;
-            bytesIncPerAxis.put(bytesInc, "Y");
-            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLenPp : physicalLenPp;
-          }
-          else {
-            ms.sizeZ = dimSize;
-            bytesIncPerAxis.put(bytesInc, "Z");
-            physicalSizeZ = physicalLenPp;
-          }
-          break;
-        case 4: // T axis
-          if (ms.sizeY == 0) {
-            // XT scan - swap Y and T
-            ms.sizeY = dimSize;
-            ms.sizeT = 1;
-            bytesIncPerAxis.put(bytesInc, "Y");
-            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLenPp : physicalLenPp;
-          }
-          else {
-            ms.sizeT = dimSize;
-            bytesIncPerAxis.put(bytesInc, "T");
-          }
-          break;
-        case 10: // tile axis
-          r.metaTemp.tileCount[image] *= dimSize;
-          r.metaTemp.tileBytesInc[image] = bytesInc;
-          break;
-        default:
-          extras *= dimSize;
-      }
+
+      Dimension dimension = new Dimension(DimensionKey.with(id), size, bytesInc, unit, length, oldPhysicalSize);
+      r.metaTemp.addDimension(coreIndex, dimension);
+
+      if (DimensionKey.with(id) == null)
+        extras *= dimension.size;
     }
 
-    r.metaTemp.physicalSizeXs.add(physicalSizeX);
-    r.metaTemp.physicalSizeYs.add(physicalSizeY);
-
-    if (r.metaTemp.zSteps[image] == null && physicalSizeZ != null) {
-      r.metaTemp.zSteps[image] = Math.abs(physicalSizeZ);
-    }
-
-    if (extras > 1) {
-      if (ms.sizeZ == 1) ms.sizeZ = extras;
-      else {
-        if (ms.sizeT == 0) ms.sizeT = extras;
-        else ms.sizeT *= extras;
-      }
-    }
-
-    if (ms.sizeC == 0) ms.sizeC = 1;
-    if (ms.sizeZ == 0) ms.sizeZ = 1;
-    if (ms.sizeT == 0) ms.sizeT = 1;
-
-    if (ms.sizeX == 0) ms.sizeX = 1;
-    if (ms.sizeY == 0) ms.sizeY = 1;
+    r.metaTemp.addChannelDimension(coreIndex);
+    r.metaTemp.addMissingDimensions(coreIndex);
+    setCoreDimensionSizes(coreIndex);
+    
+    setPixelType(coreIndex);
 
     //TIFF and JPEG files not interleaved
     if (r.getImageFormat() == ImageFormat.TIF || r.getImageFormat() == ImageFormat.JPEG){
-      ms.interleaved = false;
+      cmd.interleaved = false;
     } else {
-      ms.interleaved = ms.rgb;
+      cmd.interleaved = cmd.rgb;
     }
-    ms.indexed = !ms.rgb;
-    ms.imageCount = ms.sizeZ * ms.sizeT;
-    if (!ms.rgb) ms.imageCount *= ms.sizeC;
+    cmd.indexed = !cmd.rgb;
+    cmd.imageCount = cmd.sizeZ * cmd.sizeT;
+    if (!cmd.rgb) cmd.imageCount *= cmd.sizeC;
     else {
-      ms.imageCount *= (ms.sizeC / 3);
+      cmd.imageCount *= (cmd.sizeC / 3);
     }
 
-    Long[] bytesIncs = bytesIncPerAxis.keySet().toArray(new Long[0]);
-    Arrays.sort(bytesIncs);
-    ms.dimensionOrder = "XY";
-    if (r.getRGBChannelCount() == 1 || r.getRGBChannelCount() == r.getSizeC()) {
-      if (r.getRGBChannelCount() > 1) {
-        ms.dimensionOrder += 'C';
-      }
-      for (Long bytesInc : bytesIncs) {
-        String axis = bytesIncPerAxis.get(bytesInc);
-        if (ms.dimensionOrder.indexOf(axis) == -1) {
-          ms.dimensionOrder += axis;
-        }
+    cmd.dimensionOrder = r.metaTemp.getDimensionOrder(coreIndex);
+  }
+
+  /**
+   * Writes extracted dimension sizes to CoreMetadata
+   * @param coreIndex
+   */
+  private void setCoreDimensionSizes(int coreIndex){
+    CoreMetadata cmd = r.getCore().get(coreIndex);
+    cmd.sizeX = r.metaTemp.getDimension(coreIndex, DimensionKey.X).size;
+    cmd.sizeY = r.metaTemp.getDimension(coreIndex, DimensionKey.Y).size;
+    cmd.sizeZ = r.metaTemp.getDimension(coreIndex, DimensionKey.Z).size;
+    cmd.sizeT = r.metaTemp.getDimension(coreIndex, DimensionKey.T).size;
+    cmd.rgb = (r.metaTemp.getDimension(coreIndex, DimensionKey.X).bytesInc % 3) == 0;
+    if (cmd.rgb) r.metaTemp.getDimension(coreIndex, DimensionKey.X).bytesInc /= 3;
+
+    if (extras > 1) {
+      if (cmd.sizeZ == 1) cmd.sizeZ = extras;
+      else {
+        if (cmd.sizeT == 0) cmd.sizeT = extras;
+        else cmd.sizeT *= extras;
       }
     }
 
-    if (ms.dimensionOrder.indexOf('Z') == -1) {
-      ms.dimensionOrder += 'Z';
-    }
-    if (ms.dimensionOrder.indexOf('C') == -1) {
-      ms.dimensionOrder += 'C';
-    }
-    if (ms.dimensionOrder.indexOf('T') == -1) {
-      ms.dimensionOrder += 'T';
-    }
+    if (cmd.sizeX == 0) cmd.sizeX = 1;
+    if (cmd.sizeY == 0) cmd.sizeY = 1;
+    if (cmd.sizeC == 0) cmd.sizeC = 1;
+    if (cmd.sizeZ == 0) cmd.sizeZ = 1;
+    if (cmd.sizeT == 0) cmd.sizeT = 1;
+  }
+
+  /**
+   * Sets CoreMetadata.pixelType depending on extracted x bytesInc
+   * @param coreIndex
+   * @throws FormatException
+   */
+  private void setPixelType(int coreIndex) throws FormatException {
+    CoreMetadata cmd = r.getCore().get(coreIndex);
+    long xBytesInc = r.metaTemp.getDimension(coreIndex, DimensionKey.X).bytesInc;
+    cmd.pixelType =
+    FormatTools.pixelTypeFromBytes((int) xBytesInc, false, true);
   }
 
   /**
@@ -546,7 +474,6 @@ public class LMSMetadataExtractor {
     r.metaTemp.detectorOffsets[image] = new Double[r.getEffectiveSizeC()];
     r.metaTemp.channelNames[image] = new String[r.getEffectiveSizeC()];
     r.metaTemp.exWaves[image] = new Double[r.getEffectiveSizeC()];
-    r.metaTemp.detectorModels.set(image, new ArrayList<String>());
 
     if (scannerSettings != null) {
       for (int i=0; i<scannerSettings.getLength(); i++) {
@@ -677,12 +604,6 @@ public class LMSMetadataExtractor {
   {
     NodeList filterSettings = getNodes(imageNode, "FilterSettingRecord");
     if (filterSettings == null) return;
-
-    r.metaTemp.activeDetector.set(image, new ArrayList<Boolean>());
-    r.metaTemp.cutIns.set(image, new ArrayList<Length>());
-    r.metaTemp.cutOuts.set(image, new ArrayList<Length>());
-    r.metaTemp.filterModels.set(image, new ArrayList<String>());
-    r.metaTemp.detectorIndexes.set(image, new HashMap<Integer, String>());
 
     int nextChannel = 0;
 
@@ -871,10 +792,6 @@ public class LMSMetadataExtractor {
   {
     NodeList aotfLists = getNodes(imageNode, "AotfList");
     if (aotfLists == null || aotfLists.getLength() == 0) return;
-
-    r.metaTemp.laserWavelength.set(image, new ArrayList<Double>());
-    r.metaTemp.laserIntensity.set(image, new ArrayList<Double>());
-    r.metaTemp.laserFrap.set(image, new ArrayList<Boolean>());
 
     int baseIntensityIndex = 0;
 
@@ -1140,7 +1057,6 @@ public class LMSMetadataExtractor {
     if (definitions == null) return;
 
     final List<String> channels = new ArrayList<String>();
-    r.metaTemp.laserActive.set(image, new ArrayList<Boolean>());
     int nextChannel = 0;
     for (int definition=0; definition<definitions.getLength(); definition++) {
       Element definitionNode = (Element) definitions.item(definition);
@@ -1192,9 +1108,6 @@ public class LMSMetadataExtractor {
             Double cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
             Double cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
             if (cutIn != null && cutIn.intValue() > 0) {
-              if (r.metaTemp.cutIns.get(image) == null) {
-                r.metaTemp.cutIns.set(image, new ArrayList<Length>());
-              }
               Length in =
                 FormatTools.getCutIn((double) Math.round(cutIn));
               if (in != null) {
@@ -1202,9 +1115,6 @@ public class LMSMetadataExtractor {
               }
             }
             if (cutOut != null && cutOut.intValue() > 0) {
-              if (r.metaTemp.cutOuts.get(image) == null) {
-                r.metaTemp.cutOuts.set(image, new ArrayList<Length>());
-              }
               Length out =
                 FormatTools.getCutOut((double) Math.round(cutOut));
               if (out != null) {
