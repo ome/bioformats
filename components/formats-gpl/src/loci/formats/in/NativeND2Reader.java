@@ -554,6 +554,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       int zCount = 1;
 
       in.seek(0);
+      int validBits = 0;
 
       while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
       {
@@ -895,6 +896,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                   valueOrLength / 8, false, true);
               }
               else if (attributeName.equals("uiBpcSignificant")) {
+                validBits = valueOrLength;
                 core.get(0, 0).bitsPerPixel = valueOrLength;
               }
               else if (attributeName.equals("dCompressionParam")) {
@@ -1391,6 +1393,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       }
       else if (getPixelType() == FormatTools.INT8) {
         core.get(0, 0).pixelType = FormatTools.UINT8;
+      }
+
+      // now that pixel type is est, restore number of valid bits per pixel
+      if (core.get(0, 0).bitsPerPixel == 0 && validBits > 0 &&
+        validBits <= 8 * FormatTools.getBytesPerPixel(core.get(0, 0).pixelType))
+      {
+        core.get(0, 0).bitsPerPixel = validBits;
       }
 
       if (getSizeX() == 0) {
