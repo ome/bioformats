@@ -221,7 +221,7 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Gets the given directory entry value from this IFD. */
   public Object getIFDValue(int tag) {
-    return get(new Integer(tag));
+    return get(Integer.valueOf(tag));
   }
 
   /**
@@ -229,7 +229,7 @@ public class IFD extends HashMap<Integer, Object> {
    * performing some error checking.
    */
   public Object getIFDValue(int tag, Class checkClass) throws FormatException {
-    Object value = get(new Integer(tag));
+    Object value = get(Integer.valueOf(tag));
     if (checkClass != null && value != null && !checkClass.isInstance(value)) {
       // wrap object in array of length 1, if appropriate
       Class cType = checkClass.getComponentType();
@@ -523,8 +523,8 @@ public class IFD extends HashMap<Integer, Object> {
   }
 
   public boolean isTiled() throws FormatException {
-    Object offsets = get(new Integer(STRIP_OFFSETS));
-    Object tileWidth = get(new Integer(TILE_WIDTH));
+    Object offsets = get(Integer.valueOf(STRIP_OFFSETS));
+    Object tileWidth = get(Integer.valueOf(TILE_WIDTH));
     return offsets == null && tileWidth != null;
   }
 
@@ -934,22 +934,22 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Adds a directory entry to this IFD. */
   public void putIFDValue(int tag, Object value) {
-    put(new Integer(tag), value);
+    put(Integer.valueOf(tag), value);
   }
 
   /** Adds a directory entry of type BYTE to this IFD. */
   public void putIFDValue(int tag, short value) {
-    putIFDValue(tag, new Short(value));
+    putIFDValue(tag, Short.valueOf(value));
   }
 
   /** Adds a directory entry of type SHORT to this IFD. */
   public void putIFDValue(int tag, int value) {
-    putIFDValue(tag, new Integer(value));
+    putIFDValue(tag, Integer.valueOf(value));
   }
 
   /** Adds a directory entry of type LONG to this IFD. */
   public void putIFDValue(int tag, long value) {
-    putIFDValue(tag, new Long(value));
+    putIFDValue(tag, Long.valueOf(value));
   }
 
   // -- Debugging --
