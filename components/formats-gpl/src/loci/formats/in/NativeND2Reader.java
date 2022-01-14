@@ -1508,7 +1508,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
       if (getSizeC() > 1 && getDimensionOrder().indexOf('C') == -1) {
         core.get(0, 0).dimensionOrder = "C" + getDimensionOrder();
-        fieldIndex++;
+        if (getSizeZ() > 1 && getSizeT() > 1) {
+          fieldIndex++;
+        }
       }
 
       core.get(0, 0).dimensionOrder = "XY" + getDimensionOrder();
