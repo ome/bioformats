@@ -1364,6 +1364,10 @@ public final class FormatTools {
    * @return a well name of the format described above
    */
   public static String getWellName(int row, int col) {
+    if (col < 0) {
+      // negative row index will be checked when getting the row name
+      throw new IllegalArgumentException("Negative column index not allowed: " + col);
+    }
     String name = String.valueOf(col + 1);
     if (name.length() == 1) {
       name = "0" + name;
@@ -1385,6 +1389,9 @@ public final class FormatTools {
    * @return a well row name of the format described above
    */
   public static String getWellRowName(int row) {
+    if (row < 0) {
+      throw new IllegalArgumentException("Negative row index not allowed: " + row);
+    }
     String name = String.valueOf((char) ('A' + (row % 26)));
     if (row >= 26) {
       name = (char) ('A' + ((row / 26) - 1)) + name;
