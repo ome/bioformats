@@ -280,14 +280,15 @@ public class SVSReader extends BaseTiffReader {
       setSeries(i);
       int index = getIFDIndex(i, 0);
       tiffParser.fillInIFD(ifds.get(index));
-
+      long rowsPerStrip = ifds.get(index).getRowsPerStrip()[0];
+      long tileLength = ifds.get(index).getIFDLongValue(IFD.TILE_LENGTH, 0);
       String comment = ifds.get(index).getComment();
-      if (comment == null) {
+      if (comment == null || (tileLength == 0 && rowsPerStrip >=1)) {
         if (labelIndex == -1) {
-          labelIndex = i;
+          labelIndex = index;
         }
         else if (macroIndex == -1) {
-          macroIndex = i;
+          macroIndex = index;
         }
         continue;
       }
@@ -345,6 +346,16 @@ public class SVSReader extends BaseTiffReader {
       if (ifd.getPixelType() != firstIFD.getPixelType()) {
         ifds.set(index, null);
       }
+    }
+    if (labelIndex >= 0) {
+      IFD labelIfd = ifds.get(labelIndex);
+      ifds.set(labelIndex, null);
+      ifds.add(labelIfd);
+    }
+    if (macroIndex >= 0) {
+      IFD macroIfd = ifds.get(macroIndex);
+      ifds.set(macroIndex, null);
+      ifds.add(macroIfd);
     }
     for (int s=0; s<ifds.size(); ) {
       if (ifds.get(s) != null) {
