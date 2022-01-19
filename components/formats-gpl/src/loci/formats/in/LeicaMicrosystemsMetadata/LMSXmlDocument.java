@@ -198,9 +198,11 @@ public abstract class LMSXmlDocument {
       urlDecoded = java.net.URLDecoder.decode(refPath, StandardCharsets.UTF_8.name());
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
-      urlDecoded = refPath.replace("%5C", "\\").replace("%5c", "\\").replace("%20", " ");
+      urlDecoded = refPath.replace("%5C", File.separator).replace("%5c", File.separator).replace("%20", " ");
     }
-    String path = dir + "\\" + urlDecoded;
+    urlDecoded = urlDecoded.replace('\\', File.separatorChar);
+    urlDecoded = urlDecoded.replaceAll("/", File.separator);
+    String path = dir + File.separator + urlDecoded;
     return Paths.get(path).normalize().toString();
   }
 
