@@ -66,6 +66,18 @@ public abstract class LMSFileReader extends FormatReader {
     LMSFileReader.log = LOGGER;
   }
 
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+
+    if (!fileOnly){
+      metaTemp = null;
+    }
+  }
+
   // -- Methods --
 
   /**

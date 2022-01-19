@@ -47,8 +47,6 @@ import loci.common.DataTools;
  */
 public class XLEFReader extends LMSFileReader {
   // -- Fields --
-  /** Offsets to memory blocks, paired with their corresponding description. */
-  public List<Long> offsets;
   private List<LMSFileReader> readers = new ArrayList<LMSFileReader>();
 
   // -- Constructor --
@@ -179,6 +177,22 @@ public class XLEFReader extends LMSFileReader {
     sortPaths(files);
 
     return files.toArray(new String[files.size()]);
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    
+    if (!fileOnly){
+      for (LMSFileReader reader : readers){
+        if (reader instanceof LOFReader)
+          ((LOFReader)reader).close(fileOnly);
+        else if (reader instanceof MultipleImagesReader)
+          ((MultipleImagesReader)reader).close(fileOnly);
+      }
+      readers.clear();
+    }
   }
 
   // -- Methods --

@@ -46,8 +46,8 @@ import loci.formats.in.APNGReader;
  */
 public class MultipleImagesReader extends LMSFileReader {
   private List<FormatReader> readers = new ArrayList<>();
-  public final ImageFormat imageFormat;
-  public final int tileCount;
+  private ImageFormat imageFormat;
+  private int tileCount;
   private boolean dimensionsSwapped = false;
   private int series = 0; //this value is only needed for plane index calculation, if this reader refers to multiple series
   private int imageIndex;
@@ -109,6 +109,25 @@ public class MultipleImagesReader extends LMSFileReader {
   @Override
   public boolean isRGB() {
     return readers.get(0).isRGB(); // assuming that all images of a series have the same format
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+
+    if (!fileOnly){
+      imageFormat = null;
+      tileCount = 0;
+      dimensionsSwapped = false;
+      series = 0;
+      imageIndex = 0;
+  
+      for (FormatReader reader : readers){
+          reader.close(fileOnly);
+      }
+      readers.clear();
+    }
   }
 
   // -- Methods --
