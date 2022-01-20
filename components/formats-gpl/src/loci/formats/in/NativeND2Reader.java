@@ -2829,4 +2829,21 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     ms0.imageCount = ms0.sizeZ * ms0.sizeC * ms0.sizeT;
   }
 
+  /**
+   * @return offsets to pixel data
+   */
+  public long[][] getOffsets() {
+    return offsets;
+  }
+
+  /**
+   * Change the underlying file path and pixel data offsets,
+   * keeping all other metadata the same.
+   */
+  public void setOffsets(String file, long[][] newOffsets) throws IOException {
+    close(true);
+    in = new RandomAccessInputStream(file);
+    offsets = newOffsets;
+  }
+
 }
