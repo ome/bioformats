@@ -53,6 +53,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 /**
  * This class loads and represents a Leica Microsystems XML document (from
  * file or xml string)
@@ -66,6 +69,9 @@ public abstract class LMSXmlDocument {
   protected XPath xPath;
   protected String dir;
   protected String filepath;
+  protected static final Logger LOGGER =
+      LoggerFactory.getLogger(LMSXmlDocument.class);
+  
   public enum InitFrom {
     XML,
     FILEPATH
@@ -204,6 +210,7 @@ public abstract class LMSXmlDocument {
     urlDecoded = urlDecoded.replace('\\', File.separatorChar);
     urlDecoded = urlDecoded.replaceAll("/", File.separator);
     String path = dir + File.separator + urlDecoded;
+    LOGGER.info("Parsed path: " + path);
     return Paths.get(path).normalize().toString();
   }
 
