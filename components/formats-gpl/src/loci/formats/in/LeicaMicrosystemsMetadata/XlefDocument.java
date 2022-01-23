@@ -63,10 +63,10 @@ public class XlefDocument extends LMSCollectionXmlDocument {
 
   public void printReferences() {
     List<XlifDocument> xlifs = getXlifs();
-    System.out.println("-------- XLEF INFO: " + xlifs.size() + " images found -------- ");
+    LOGGER.info("-------- XLEF INFO: " + xlifs.size() + " images found -------- ");
     for (XlifDocument xlif : xlifs) {
       xlif.printXlifInfo();
     }
-    System.out.println("-------------------------------------------");
+    LOGGER.info("-------------------------------------------");
   }
 }

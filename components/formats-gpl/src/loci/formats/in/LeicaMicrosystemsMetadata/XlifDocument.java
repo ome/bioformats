@@ -131,6 +131,7 @@ public class XlifDocument extends LMSImageXmlDocument {
       // LOF references
       references = xPath("//Block");
     }
+    LOGGER.info("References Found: " + references.getLength());
     for (int i = 0; i < references.getLength(); i++) {
       String path = parseFilePath(getAttr(references.item(i), "File").toLowerCase());
       imagePaths.add(path);
@@ -139,9 +140,9 @@ public class XlifDocument extends LMSImageXmlDocument {
 
   public void printXlifInfo() {
     String name = getAttr(xPath("//Element").item(0), "Name");
-    System.out.println("---- Image name: " + name + ", references: " + imagePaths.size()
+    LOGGER.info("---- Image name: " + name + ", references: " + imagePaths.size()
         + ", image format: " + imageFormat + " ----");
-    System.out.println("path: " + filepath);
+    LOGGER.info("path: " + filepath);
   }
 
   public boolean isValid(){

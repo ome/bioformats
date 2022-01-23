@@ -91,6 +91,7 @@ public class LMSCollectionXmlDocument extends LMSXmlDocument {
   /** Adds all referenced xlcfs and valid xlifs as children */
   protected void initChildren() {
     NodeList references = xPath("//Reference");
+    LOGGER.info("References Found: " + references.getLength());
     for (int i = 0; i < references.getLength(); i++) {
       String path = parseFilePath(getAttr(references.item(i), "File"));
       if (LMSFileReader.fileExists(path)) {
