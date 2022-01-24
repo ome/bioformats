@@ -294,11 +294,23 @@ public class OperettaReader extends FormatReader {
     // assemble list of other metadata/analysis results files
     Location currentFile = new Location(currentId).getAbsoluteFile();
     metadataFiles.add(currentFile.getAbsolutePath());
-    Location parent = currentFile.getParentFile().getParentFile();
+    Location parent = currentFile.getParentFile();
+
+    // only scan for additional files outside the current directory
+    // if the directory structure is like
+    // /path/plate_name/Images/Index.idx.xml, i.e. we can expect
+    // /path/plate_name/Assaylayout/ or similar to exist
+    // if the XML file's parent directory is something else, don't scan
+    // so that we don't accidentally pick up other plates or unrelated files
+    if (parent.getName().equalsIgnoreCase("images")) {
+      parent = parent.getParentFile();
+    }
+
     String[] list = parent.list(true);
     Arrays.sort(list);
     for (String f : list) {
       Location path = new Location(parent, f);
+      String pathName = path.getAbsolutePath();
       if (path.isDirectory()) {
         // the current file's parent directory will usually be "Images",
         // but may have been renamed especially if there are no
@@ -328,9 +340,11 @@ public class OperettaReader extends FormatReader {
           }
         }
       }
-      else {
-        metadataFiles.add(path.getAbsolutePath());
-        LOGGER.trace("Adding metadata file {}", path.getAbsolutePath());
+      else if (!checkSuffix(pathName, "tiff") &&
+        !pathName.equals(currentFile.getAbsolutePath()))
+      {
+        metadataFiles.add(pathName);
+        LOGGER.trace("Adding metadata file {}", pathName);
       }
     }
 
