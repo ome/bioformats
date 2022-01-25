@@ -104,6 +104,9 @@ public class LMSCollectionXmlDocument extends LMSXmlDocument {
           children.add(new XlcfDocument(path, this));
         }
       }
+      else {
+        LOGGER.error("Expected file at image path does not exist: " + path);
+      }
     }
   }
 }

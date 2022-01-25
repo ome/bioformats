@@ -110,6 +110,7 @@ public class LOFReader extends LMSFileReader {
     // number of unicode characters (NC)
     int nc = stream.readInt();
     String typeName = "";
+    if (nc != 15) return false;
     for (int i = 0; i < nc; i++) {
       typeName += stream.readChar();
     }
