@@ -134,7 +134,8 @@ public class XlifDocument extends LMSImageXmlDocument {
     LOGGER.info("References Found: " + references.getLength());
     for (int i = 0; i < references.getLength(); i++) {
       String path = parseFilePath(getAttr(references.item(i), "File").toLowerCase());
-      imagePaths.add(path);
+      String correctedPath = fileExists(path);
+      imagePaths.add(correctedPath);
     }
   }
 

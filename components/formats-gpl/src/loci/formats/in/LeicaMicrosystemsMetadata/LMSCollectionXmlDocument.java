@@ -25,6 +25,7 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,14 +95,15 @@ public class LMSCollectionXmlDocument extends LMSXmlDocument {
     LOGGER.info("References Found: " + references.getLength());
     for (int i = 0; i < references.getLength(); i++) {
       String path = parseFilePath(getAttr(references.item(i), "File"));
-      if (LMSFileReader.fileExists(path)) {
-        if (path.endsWith(".xlif")) {
-          XlifDocument xlif = new XlifDocument(path, this);
+      String correctedPath = fileExists(path);
+      if (correctedPath != null) {
+        if (correctedPath.endsWith(".xlif")) {
+          XlifDocument xlif = new XlifDocument(correctedPath, this);
           if (xlif.isValid()) {
             children.add(xlif);
           }
-        } else if (path.endsWith(".xlcf")) {
-          children.add(new XlcfDocument(path, this));
+        } else if (correctedPath.endsWith(".xlcf")) {
+          children.add(new XlcfDocument(correctedPath, this));
         }
       }
       else {
@@ -109,4 +111,5 @@ public class LMSCollectionXmlDocument extends LMSXmlDocument {
       }
     }
   }
+  
 }

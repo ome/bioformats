@@ -40,6 +40,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -252,5 +253,34 @@ public abstract class LMSXmlDocument {
       parents.addAll(parent.getParentFiles());
     }
     return parents;
+  }
+  
+  /**
+   * Checks if file at path exists and corrects paths to be case sensitive
+   * 
+   * @param path whole file path
+   */
+  protected static String fileExists(String path) {
+    if (path != null && !path.trim().isEmpty()) {
+      try {
+        File f = new File(path);
+        if (f.exists()) {
+          return path;
+        }
+        String parent = fileExists(f.getParent());
+        if (parent != null) {
+         f = new File(parent + File.separator + f.getName());
+         for (File file: f.getParentFile().listFiles()) {
+           if (file.getName().toLowerCase().equals(f.getName().toLowerCase())) {
+             return parent + File.separator + file.getName();
+           }
+         }
+          
+        }
+      } catch (Exception e) {
+        return null;
+      }
+    }
+    return null;
   }
 }
