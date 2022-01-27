@@ -102,6 +102,9 @@ public class LMSCollectionXmlDocument extends LMSXmlDocument {
           if (xlif.isValid()) {
             children.add(xlif);
           }
+          else {
+            LOGGER.error("XLIF file is invalid: " + correctedPath);
+          }
         } else if (correctedPath.endsWith(".xlcf")) {
           children.add(new XlcfDocument(correctedPath, this));
         }
