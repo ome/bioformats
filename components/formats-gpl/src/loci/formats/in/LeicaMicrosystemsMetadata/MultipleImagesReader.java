@@ -122,14 +122,14 @@ public class MultipleImagesReader extends LMSFileReader {
       dimensionsSwapped = false;
       series = 0;
       imageIndex = 0;
-  
+
       for (FormatReader reader : readers){
           reader.close(fileOnly);
       }
       readers.clear();
     }
   }
-
+  
   // -- Methods --
   /**
    * Creates an internal reader for each image file
@@ -236,6 +236,14 @@ public class MultipleImagesReader extends LMSFileReader {
       }
       readers = newOrder;
       dimensionsSwapped = true;
+    }
+  }
+  
+  /* @see IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    for (FormatReader reader : readers){
+      reader.reopenFile();
     }
   }
 }

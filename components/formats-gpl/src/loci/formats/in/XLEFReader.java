@@ -38,6 +38,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.*;
 import loci.common.DataTools;
+import loci.common.RandomAccessInputStream;
 
 /**
  * XLEFReader is the file format reader for Leica Microsystems' XLEF files.
@@ -183,7 +184,6 @@ public class XLEFReader extends LMSFileReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    
     if (!fileOnly){
       for (LMSFileReader reader : readers){
         if (reader instanceof LOFReader)
@@ -192,6 +192,15 @@ public class XLEFReader extends LMSFileReader {
           ((MultipleImagesReader)reader).close(fileOnly);
       }
       readers.clear();
+    }
+  }
+
+  /* @see IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    for (LMSFileReader reader : readers){
+      reader.reopenFile();
     }
   }
 
