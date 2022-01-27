@@ -41,6 +41,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import loci.common.Location;
+
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -118,7 +120,7 @@ public abstract class LMSXmlDocument {
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     try {
       DocumentBuilder db = dbf.newDocumentBuilder();
-      FileInputStream fi = new FileInputStream(filepath);
+      FileInputStream fi = new FileInputStream(Location.getMappedId(filepath));
       Document doc = db.parse(fi);
       fi.close();
       doc.getDocumentElement().normalize();
@@ -211,8 +213,9 @@ public abstract class LMSXmlDocument {
     urlDecoded = urlDecoded.replace('\\', File.separatorChar);
     urlDecoded = urlDecoded.replaceAll("/", File.separator);
     String path = dir + File.separator + urlDecoded;
+    path = Paths.get(path).normalize().toString();
     LOGGER.info("Parsed path: " + path);
-    return Paths.get(path).normalize().toString();
+    return Location.getMappedId(path);
   }
 
   public String nodeToString(Node node){
