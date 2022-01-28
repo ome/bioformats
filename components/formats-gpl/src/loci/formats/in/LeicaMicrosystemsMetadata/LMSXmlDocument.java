@@ -266,6 +266,7 @@ public abstract class LMSXmlDocument {
   protected static String fileExists(String path) {
     if (path != null && !path.trim().isEmpty()) {
       try {
+        path = Location.getMappedId(path);
         File f = new File(path);
         if (f.exists()) {
           return path;
