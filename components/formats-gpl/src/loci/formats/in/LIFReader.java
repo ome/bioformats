@@ -1290,7 +1290,7 @@ public class LIFReader extends FormatReader {
           if (!attr.getName().equals("HighInteger") &&
             !attr.getName().equals("LowInteger"))
           {
-            addSeriesMetaList(key.toString() + attr.getName(), attr.getValue());
+            addSeriesMeta(key.toString() + attr.getName(), attr.getValue());
           }
         }
       }
