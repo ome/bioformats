@@ -1227,7 +1227,7 @@ public class LIFReader extends FormatReader {
       translateDetectors(image, index);
 
       final Deque<String> nameStack = new ArrayDeque<String>();
-      populateOriginalMetadata(image, nameStack);
+      populateOriginalMetadata(image, nameStack, null, -1);
       addUserCommentMeta(image, i);
     }
     setSeries(0);
@@ -1245,8 +1245,18 @@ public class LIFReader extends FormatReader {
     core = newCore;
   }
 
-  private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
+  private void populateOriginalMetadata(Element root, Deque<String> nameStack, int key_index[], int jj) {
     String name = root.getNodeName();
+
+    // keep track of number of elements at each level
+    // reset count of each level >= jj
+    if (key_index == null) {
+      key_index = new int[20];
+      jj = -1;
+    }
+    if (jj > -1) { key_index[jj] = 0; }
+    int j = 0;
+
     if (root.hasAttributes() && !name.equals("Element") &&
       !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
     {
@@ -1259,10 +1269,13 @@ public class LIFReader extends FormatReader {
       }
       final StringBuilder key = new StringBuilder();
       final Iterator<String> nameStackIterator = nameStack.descendingIterator();
+      j = 0;
       while (nameStackIterator.hasNext()) {
         final String k = nameStackIterator.next();
         key.append(k);
+        key.append(" #" + key_index[j]);
         key.append("|");
+        j++;
       }
       if (suffix != null && value != null && suffix.length() > 0 &&
         value.length() > 0 && !suffix.equals("HighInteger") &&
@@ -1287,7 +1300,7 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<children.getLength(); i++) {
       Object child = children.item(i);
       if (child instanceof Element) {
-        populateOriginalMetadata((Element) child, nameStack);
+        populateOriginalMetadata((Element) child, nameStack, key_index, j);
       }
     }
 
@@ -1296,6 +1309,8 @@ public class LIFReader extends FormatReader {
     {
       nameStack.pop();
     }
+
+    if (j > 0) { key_index[j-1]++; }
   }
 
   private void translateImageNames(Element imageNode, int image) {
