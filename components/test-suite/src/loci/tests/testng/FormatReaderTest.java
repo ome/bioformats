@@ -2004,6 +2004,13 @@ public class FormatReaderTest {
           {
             continue;
           }
+          
+          // XLef datasets not detected from xlif/lof file
+          if (reader.getFormat().equals("Extended leica file") &&
+            (base[i].toLowerCase().endsWith("xlif") || base[i].toLowerCase().endsWith("lof")))
+          {
+            continue;
+          }
 
           r.setId(base[i]);
 
