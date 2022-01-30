@@ -34,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -264,6 +265,12 @@ public abstract class LMSXmlDocument {
    * @param path whole file path
    */
   protected static String fileExists(String path) {
+    HashMap<String, Object> idMap = Location.getIdMap();
+    if (idMap != null) {
+      for (String key: idMap.keySet()) {
+        if (key.equalsIgnoreCase(path)) path = idMap.get(key).toString();
+      }
+    }
     if (path != null && !path.trim().isEmpty()) {
       try {
         path = Location.getMappedId(path);
