@@ -2007,7 +2007,9 @@ public class FormatReaderTest {
           
           // XLef datasets not detected from xlif/lof file
           if (reader.getFormat().equals("Extended leica file") &&
-            (base[i].toLowerCase().endsWith("xlif") || base[i].toLowerCase().endsWith("lof")))
+            (base[i].toLowerCase().endsWith("xlif") || base[i].toLowerCase().endsWith("lof") 
+                || base[i].toLowerCase().endsWith("xlcf") || base[i].toLowerCase().endsWith("jpeg")
+                || base[i].toLowerCase().endsWith("tif") || base[i].toLowerCase().endsWith("tiff")))
           {
             continue;
           }
@@ -2788,6 +2790,20 @@ public class FormatReaderTest {
             }
             else if (!result && r instanceof OlympusTileReader &&
               !used[i].toLowerCase().endsWith(".omp2info"))
+            {
+              continue;
+            }
+            
+            // XLEF data can only be detected from xlef file
+            if (!result && readers[j] instanceof XLEFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif")))
+            {
+              continue;
+            }
+            if (!result && readers[j] instanceof LOFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif")))
             {
               continue;
             }
