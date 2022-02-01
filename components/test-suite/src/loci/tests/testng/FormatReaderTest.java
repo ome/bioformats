@@ -2797,7 +2797,8 @@ public class FormatReaderTest {
             // XLEF data can only be detected from xlef file
             if (!result && readers[j] instanceof XLEFReader &&
                 (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
-                used[i].endsWith(".tif")))
+                used[i].endsWith(".tif") || used[i].endsWith(".tiff") ||
+                used[i].endsWith(".lof") || used[i].endsWith(".jpg")))
             {
               continue;
             }
