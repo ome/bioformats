@@ -2809,6 +2809,13 @@ public class FormatReaderTest {
               continue;
             }
 
+            if (result && r instanceof XLEFReader &&
+                (readers[j] instanceof LOFReader || readers[j] instanceof APNGReader
+                || readers[j] instanceof BMPReader || readers[j] instanceof JPEGReader))
+              {
+                continue;
+              }   
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
