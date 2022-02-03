@@ -78,7 +78,7 @@ public class XLEFReader extends LMSFileReader {
   public byte[] openBytes(int no, int x, int y, int w, int h) throws FormatException, IOException {
     LMSFileReader reader = readers.get(getReaderIndex(getSeries()));
     
-    int ch = reader.getRGBChannelCount();
+    int ch = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     byte[] newBuffer;
     try {
