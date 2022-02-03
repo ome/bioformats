@@ -281,6 +281,27 @@ public class OMETiffReader extends SubResolutionFormatReader {
       FormatTools.NON_SPECIAL_DOMAINS;
   }
 
+  @Override
+  public void setSeries(int series) {
+    super.setSeries(series);
+
+    // don't keep inactive series' files open
+    for (int i=0; i<info.length; i++) {
+      if (i != series && info[i] != null) {
+        for (OMETiffPlane p : info[i]) {
+          if (p != null && p.reader != null) {
+            try {
+              p.reader.close();
+            }
+            catch (IOException e) {
+              LOGGER.warn("Could not close " + p.id, e);
+            }
+          }
+        }
+      }
+    }
+  }
+
   /* @see loci.formats.SubResolutionFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
@@ -1248,7 +1269,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
     // helper readers' IFDs
     for (OMETiffPlane[] s : info) {
       for (OMETiffPlane p : s) {
-        removeIFDComments(p.reader);
+        if (p != null && p.reader != null) {
+          removeIFDComments(p.reader);
+          p.reader.close();
+        }
       }
     }
 
@@ -1401,6 +1425,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         core.add(s, c);
       }
+      r.close();
     }
     core.reorder();
 
