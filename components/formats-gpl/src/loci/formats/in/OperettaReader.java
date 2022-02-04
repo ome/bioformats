@@ -327,9 +327,10 @@ public class OperettaReader extends FormatReader {
 
     // parse plate layout and image dimensions from the XML file
 
-    String xmlData = DataTools.readFile(id);
     OperettaHandler handler = new OperettaHandler();
-    XMLTools.parseXML(xmlData, handler);
+    try (RandomAccessInputStream xml = new RandomAccessInputStream(id)) {
+      XMLTools.parseXML(xml, handler);
+    }
 
     // sort the list of images by well and field indices
 
