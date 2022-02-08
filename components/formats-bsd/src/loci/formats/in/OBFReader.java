@@ -740,13 +740,26 @@ public class OBFReader extends FormatReader {
           throw new FormatException("Unsupported zlib compression");
         }
 
+        long bytesWrittenBefore = inflater.getBytesWritten();
+
         try {
           int decompressedBytes = inflater.inflate(buffer, bufferOffset, remainingBytes);
           bufferOffset += decompressedBytes;
           remainingBytes -= decompressedBytes;
         }
         catch (DataFormatException exception) {
-          throw new FormatException(exception.getMessage());
+          long bytesWrittenAfter = inflater.getBytesWritten();
+
+          long decompressedBytes = bytesWrittenAfter - bytesWrittenBefore;
+
+          bufferOffset += decompressedBytes;
+          remainingBytes -= decompressedBytes;
+
+          if(remainingBytes != 0) {
+            throw new FormatException(exception.getMessage());
+          } else {
+            LOGGER.warn("Error past the end of deflated stream", exception);
+          }
         }
       }
     }
