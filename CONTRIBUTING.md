@@ -20,7 +20,7 @@ please ensure you read these.
 * Make sure you include details of the problem you are fixing and how to test
   your changes.
 * We may need you to submit some test data. We recommend uploading files to
-  `Zenodo <https://zenodo.org/>`_. However, if files are particularly large
+  [Zenodo](https://zenodo.org/). However, if files are particularly large
   (> 50 GB), contact the [mailing list](https://www.openmicroscopy.org/support)
   and we will get back to you with secure upload details.
 
