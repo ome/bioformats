@@ -753,11 +753,46 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           long startFP = in.getFilePointer();
           in.seek(startFP - 1);
 
-          String textString = DataTools.stripString(in.readString((int) dataLength));
-          textStrings.add(textString);
-          validDimensions.add(blockCount > 2);
+          // text block can contain XML (which may be cut off)
+          // or sequence of string objects
 
-          if (!textString.startsWith("<")) {
+          int typeByte = in.read();
+
+          // 11 is the max object type code (see iterateIn case statement)
+          // don't look for '<' because old ND2s might have
+          // cut off or incorrectly aligned XML
+
+          if (typeByte > 11) {
+            in.seek(startFP - 1);
+            String textString = DataTools.stripString(in.readString((int) dataLength));
+            textStrings.add(textString);
+            validDimensions.add(blockCount > 2);
+            if (!textString.startsWith("<")) {
+              skip = 0;
+            }
+          }
+          else {
+            int charCount = in.read();
+            textStrings.add(DataTools.stripString(in.readString(charCount * 2)));
+            validDimensions.add(blockCount > 2);
+            int numTextInfos = in.readInt();
+            long remainingBytes = in.readLong();
+
+            // reassemble sequence of strings into single multi-line string
+            // that will be parsed once so that the same ND2Handler is
+            // used for the whole block
+            // this should maybe be refactored at some point?
+            ArrayList<String> text = iterateIn(in, startFP + dataLength - 1, true);
+            StringBuffer b = new StringBuffer();
+            for (int t=0; t<text.size(); t++) {
+              b.append(text.get(t));
+              b.append("\n");
+            }
+            textStrings.add(b.toString());
+            validDimensions.add(blockCount > 2);
+
+            // make sure the file pointer is at the end of the block
+            in.seek(startFP + dataLength - 1);
             skip = 0;
           }
         }
@@ -2010,10 +2045,24 @@ public class NativeND2Reader extends SubResolutionFormatReader {
    * Function for iterating through ND2 metaAttributes
    * @param in    stream of bytes from file
    * @param stop position where to stop
+   * @return text info values, if found
    */
-  private void iterateIn(RandomAccessInputStream in, Long stop) {
+  private ArrayList<String> iterateIn(RandomAccessInputStream in, Long stop) {
+    return iterateIn(in, stop, false);
+  }
+
+  /**
+   * Function for iterating through ND2 metaAttributes
+   * @param in    stream of bytes from file
+   * @param stop position where to stop
+   * @param minimal true if values should be read with no additional metadata parsing
+   * @return text info values, if found
+   */
+  private ArrayList<String> iterateIn(RandomAccessInputStream in, Long stop, boolean minimal) {
     Object value; // We don't know if attribute will be int, double, string....
     Double zHigh = null, zLow = null;
+
+    ArrayList<String> textInfos = new ArrayList<String>();
 
     try {
       Integer currentColor = null;
@@ -2057,6 +2106,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                 resultString.append(currentChar);
             }
             value = resultString.toString();
+
+            if (name.startsWith("TextInfoItem")) {
+              textInfos.add((String) value);
+            }
             break;
           case (9): // ByteArray
             long length = in.readLong();
@@ -2064,9 +2117,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               in.seek(stop);
               continue;
             }
-            byte[] data = new byte[(int) length];
-            in.read(data);
-            value = new String(data, Constants.ENCODING);
+            value = "ByteArray";
+            if (length > 2) {
+              iterateIn(in, stop);
+            }
+            else {
+              in.skipBytes(length);
+            }
             break;
           case (10): // deprecated
             // Its like LEVEL but offset is pointing absolutely not relatively
@@ -2107,6 +2164,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
             continue;
         }
 
+        if (minimal) {
+          continue;
+        }
+
         name = name.trim();
 
         if (name.equals("bUseZ")) {
@@ -2143,7 +2204,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           positionCount++;
         }
 
-        if (type != 11 && type != 10) {    // if not level add global meta
+        if (type != 11 && type != 10 && type != 9) {    // if not level add global meta
           addGlobalMeta(name, value);
         }
       }
@@ -2155,6 +2216,8 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     if (zHigh != null && zLow != null && trueSizeZ != null && trueSizeZ > 0) {
       core.get(0, 0).sizeZ = (int) (Math.ceil(Math.abs(zHigh - zLow) / trueSizeZ)) + 1;
     }
+
+    return textInfos;
   }
 
   private void populateMetadataStore(ND2Handler handler) throws FormatException
