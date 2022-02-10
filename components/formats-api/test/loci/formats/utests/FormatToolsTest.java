@@ -235,6 +235,15 @@ public class FormatToolsTest {
     };
   }
 
+  @DataProvider(name = "wellNames")
+  public Object[][] createWells() {
+    return new Object[][] {
+        {0, 0, "A", "A01"},
+        {10, 5, "K", "K06"},
+        {30, 99, "AE", "AE100"}
+    };
+  }
+
   @Test(dataProvider = "stagePositionStringUnit")
   public void testGetStagePositionStringUnit(Double value, String unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
@@ -261,7 +270,7 @@ public class FormatToolsTest {
     assertEquals(length, FormatTools.parseLength(" " + value + unit));
     assertEquals(length, FormatTools.parseLength(value + unit + " "));
   }
-  
+
   @Test(dataProvider = "fileLists")
   public void testGetRequiredDirectories(String[] files, int number) {
     String[] newfiles = null;
@@ -272,5 +281,21 @@ public class FormatToolsTest {
       }
     }
     assertEquals(number, FormatTools.getRequiredDirectories(newfiles));
+  }
+
+  @Test(dataProvider = "wellNames")
+  public void testWellNames(Integer row, Integer column, String rowName, String wellName) {
+    assertEquals(FormatTools.getWellRowName(row), rowName);
+    assertEquals(FormatTools.getWellName(row, column), wellName);
+  }
+
+  @Test(expectedExceptions=IllegalArgumentException.class)
+  public void testInvalidWellRow() {
+    FormatTools.getWellRowName(-1);
+  }
+
+  @Test(expectedExceptions=IllegalArgumentException.class)
+  public void testInvalidWellColumn() {
+    FormatTools.getWellName(0, -1);
   }
 }

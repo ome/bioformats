@@ -450,7 +450,8 @@ public class CV7000Reader extends FormatReader {
           store.setImageID(imageID, nextImage);
           store.setWellSampleImageRef(imageID, 0, nextWell, field);
 
-          String name = "Well " + ((char) ('A' + row)) + (col + 1) + ", Field " + (field + 1);
+          String name = "Well " + FormatTools.getWellRowName(row) +
+            (col + 1) + ", Field " + (field + 1);
           store.setImageName(name, nextImage);
           store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
 

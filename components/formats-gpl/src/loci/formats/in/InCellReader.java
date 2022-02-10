@@ -397,7 +397,8 @@ public class InCellReader extends FormatReader {
                 // be omitted
                 int channel = getZCTCoords(image)[1];
                 Image plane = new Image();
-                String filename = (char) ('A' + row) + " - " + (col + 1) + "(fld " + (field + 1) +
+                String filename = FormatTools.getWellRowName(row) + " - " +
+                  (col + 1) + "(fld " + (field + 1) +
                   " wv " + exFilters.get(channel) + " - " + emFilters.get(channel) + ").tif";
                 Location path = new Location(parent, filename);
                 if (path.exists()) {

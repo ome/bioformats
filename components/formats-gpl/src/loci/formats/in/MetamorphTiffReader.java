@@ -463,8 +463,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
       String name = handler.getImageName();
       if (seriesCount > 1) {
-        name = "Field " + (char) (well.fieldRow + 'A') + (well.fieldCol + 1) +
-          ", Well " + (well.well + 1) + ": " + name;
+        name = "Field " + FormatTools.getWellRowName(well.fieldRow) +
+          (well.fieldCol + 1) + ", Well " + (well.well + 1) + ": " + name;
       }
 
       store.setImageName(name, s);

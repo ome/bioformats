@@ -493,9 +493,8 @@ public class CellomicsReader extends FormatReader {
 
       int fieldIndex = uniqueFields.indexOf(field);
       store.setImageName(
-        String.format("Well %s%02d, Field #%02d",
-                  new String(Character.toChars(row+'A')),
-                  col + 1, field), image);
+        String.format("Well %s, Field #%02d",
+                      FormatTools.getWellName(row, col), field), image);
 
       if (getSeriesCount() == 1) {
         row = 0;
