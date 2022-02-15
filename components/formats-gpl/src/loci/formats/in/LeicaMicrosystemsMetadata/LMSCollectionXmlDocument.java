@@ -25,7 +25,6 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,14 +102,14 @@ public class LMSCollectionXmlDocument extends LMSXmlDocument {
             children.add(xlif);
           }
           else {
-            LOGGER.error("XLIF file is invalid: " + correctedPath);
+            LOGGER.warn("XLIF file is invalid: " + correctedPath);
           }
         } else if (correctedPath.endsWith(".xlcf")) {
           children.add(new XlcfDocument(correctedPath, this));
         }
       }
       else {
-        LOGGER.error("Expected file at image path does not exist: " + path);
+        LOGGER.warn("Expected file at image path does not exist: " + path);
       }
     }
   }
