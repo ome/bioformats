@@ -2003,6 +2003,17 @@ public class FormatReaderTest {
           {
             continue;
           }
+          
+          // XLef datasets not detected from xlif/lof file
+          if (reader.getFormat().equals("Extended leica file") &&
+            (base[i].toLowerCase().endsWith("xlif") || base[i].toLowerCase().endsWith("lof") 
+                || base[i].toLowerCase().endsWith("xlcf") || base[i].toLowerCase().endsWith("jpeg")
+                || base[i].toLowerCase().endsWith("tif") || base[i].toLowerCase().endsWith("tiff")
+                || base[i].toLowerCase().endsWith("bmp") || base[i].toLowerCase().endsWith("jpg")
+                || base[i].toLowerCase().endsWith("png")))
+          {
+            continue;
+          }
 
           r.setId(base[i]);
 
@@ -2783,6 +2794,29 @@ public class FormatReaderTest {
             {
               continue;
             }
+            
+            // XLEF data can only be detected from xlef file
+            if (!result && readers[j] instanceof XLEFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif") || used[i].endsWith(".tiff") ||
+                used[i].endsWith(".lof") || used[i].endsWith(".jpg")
+                || used[i].endsWith(".png") || used[i].endsWith(".bmp")))
+            {
+              continue;
+            }
+            if (!result && readers[j] instanceof LOFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif")))
+            {
+              continue;
+            }
+
+            if (result && r instanceof XLEFReader &&
+                (readers[j] instanceof LOFReader || readers[j] instanceof APNGReader
+                || readers[j] instanceof BMPReader || readers[j] instanceof JPEGReader))
+              {
+                continue;
+              }   
 
             boolean expected = r == readers[j];
             if (result != expected) {
