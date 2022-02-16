@@ -748,6 +748,11 @@ public class OBFReader extends FormatReader {
           remainingBytes -= decompressedBytes;
         }
         catch (DataFormatException exception) {
+          /* For older OBF files a zlib error may occur after all bytes have been decompressed.
+           In this scenario we will attempt to ignore the error if no bytes remain and output a warning.
+           This will only work for Java versions 11 and upwards, prior versions will still throw a FormatException.
+           See https://github.com/openjdk/jdk/commit/883d41fefc2b5da40b159b24e7387f3bdbd22a5a for more details */
+
           long bytesWrittenAfter = inflater.getBytesWritten();
 
           long decompressedBytes = bytesWrittenAfter - bytesWrittenBefore;
@@ -756,7 +761,8 @@ public class OBFReader extends FormatReader {
           remainingBytes -= decompressedBytes;
 
           if(remainingBytes != 0) {
-            throw new FormatException(exception.getMessage());
+            throw new FormatException(
+                "Error while deflating stream, upgrading to Java 11 or later may help", exception);
           } else {
             LOGGER.warn("Error past the end of deflated stream", exception);
           }
