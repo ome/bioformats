@@ -1104,6 +1104,13 @@ public class TiffParser implements Closeable {
           tileBounds.y = (int) ((row % nrows) * (tileLength - overlapY));
         }
 
+        // this tile is completely to the right of the requested image
+        // all subsequent tile columns will also be to the right of the image,
+        // so don't bother checking them
+        if (tileBounds.x > imageBounds.x + imageBounds.width) {
+          break;
+        }
+
         if (!imageBounds.intersects(tileBounds)) continue;
 
         getTile(ifd, cachedTileBuffer, row, col);
