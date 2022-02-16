@@ -118,7 +118,7 @@ public class OperettaReader extends FormatReader {
     String localName = new Location(name).getName();
     boolean exists = false;
     for (String XML_FILE : XML_FILES) {
-      if (localName.equals(XML_FILE)) {
+      if (localName.equalsIgnoreCase(XML_FILE)) {
         exists = true;
         break;
       }
@@ -578,42 +578,47 @@ public class OperettaReader extends FormatReader {
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageExperimenterRef(experimenterID, i);
 
+        Plane first = planes[i][0];
         for (int c=0; c<getSizeC(); c++) {
-          if (planes[i][c] != null && planes[i][c].channelName != null) {
-            store.setChannelName(planes[i][c].channelName, i, c);
+          // try to get a non-null plane for this channel
+          // if not every channel was acquired at every Z and T,
+          // then the first plane for this channel may be null
+          // which means some channel metadata would not be
+          // stored in OME-XML
+
+          Plane plane = planes[i][c];
+          if (plane == null) {
+            int start = c;
+            while (plane == null && start < planes[i].length) {
+              plane = planes[i][start];
+              start += getSizeC();
+            }
           }
-          if (planes[i][c] != null) {
-            if (planes[i][c].acqType != null) {
+
+          if (plane != null) {
+            if (first == null) {
+              first = plane;
+            }
+            if (plane.channelName != null) {
+              store.setChannelName(plane.channelName, i, c);
+            }
+            if (plane.acqType != null) {
               store.setChannelAcquisitionMode(
-                MetadataTools.getAcquisitionMode(planes[i][c].acqType), i, c);
+                MetadataTools.getAcquisitionMode(plane.acqType), i, c);
             }
-            if (planes[i][c].channelType != null) {
+            if (plane.channelType != null) {
               store.setChannelContrastMethod(
-                MetadataTools.getContrastMethod(planes[i][c].channelType), i, c);
+                MetadataTools.getContrastMethod(plane.channelType), i, c);
             }
-            store.setChannelColor(getColor(planes[i][c].emWavelength), i, c);
+            store.setChannelColor(getColor(plane.emWavelength), i, c);
             store.setChannelEmissionWavelength(
-              FormatTools.getEmissionWavelength(planes[i][c].emWavelength), i, c);
+              FormatTools.getEmissionWavelength(plane.emWavelength), i, c);
             store.setChannelExcitationWavelength(
-              FormatTools.getExcitationWavelength(planes[i][c].exWavelength), i, c);
+              FormatTools.getExcitationWavelength(plane.exWavelength), i, c);
           }
         }
 
-        if (planes[i][0] != null) {
-          store.setPixelsPhysicalSizeX(
-            FormatTools.getPhysicalSizeX(planes[i][0].resolutionX), i);
-          store.setPixelsPhysicalSizeY(
-            FormatTools.getPhysicalSizeY(planes[i][0].resolutionY), i);
-
-          if (getSizeZ() > 1) {
-            Unit<Length> firstZUnit = planes[i][0].positionZ.unit();
-            double firstZ = planes[i][0].positionZ.value().doubleValue();
-            double lastZ = planes[i][planes[i].length - 1].positionZ.value(firstZUnit).doubleValue();
-            double averageStep = (lastZ - firstZ) / (getSizeZ() - 1);
-            store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(averageStep, firstZUnit), i);
-          }
-        }
-
+        Plane last = null;
         for (int p=0; p<getImageCount(); p++) {
           if (planes[i][p] != null) {
             store.setPlanePositionX(planes[i][p].positionX, i, p);
@@ -621,6 +626,24 @@ public class OperettaReader extends FormatReader {
             store.setPlanePositionZ(planes[i][p].positionZ, i, p);
             store.setPlaneExposureTime(planes[i][p].exposureTime, i, p);
             store.setPlaneDeltaT(planes[i][p].deltaT, i, p);
+            if (getZCTCoords(p)[0] == getSizeZ() - 1) {
+              last = planes[i][p];
+            }
+          }
+        }
+
+        if (first != null) {
+          store.setPixelsPhysicalSizeX(
+            FormatTools.getPhysicalSizeX(first.resolutionX), i);
+          store.setPixelsPhysicalSizeY(
+            FormatTools.getPhysicalSizeY(first.resolutionY), i);
+
+          if (getSizeZ() > 1 && last != null) {
+            Unit<Length> firstZUnit = first.positionZ.unit();
+            double firstZ = first.positionZ.value().doubleValue();
+            double lastZ = last.positionZ.value(firstZUnit).doubleValue();
+            double averageStep = (lastZ - firstZ) / (getSizeZ() - 1);
+            store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(averageStep, firstZUnit), i);
           }
         }
       }
