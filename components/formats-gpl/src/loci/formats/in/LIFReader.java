@@ -1657,7 +1657,7 @@ public class LIFReader extends FormatReader {
           lineIndex == null || lineIndex.trim().isEmpty() ? 0 :
           Integer.parseInt(lineIndex.trim());
         int qualifier =
-          qual == null || qual.trim().isEmpty() ? 20:
+          qual == null || qual.trim().isEmpty() ? 0:
           Integer.parseInt(qual.trim());
 
         index += (2 - (qualifier / 10));
