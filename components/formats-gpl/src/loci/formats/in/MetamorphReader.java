@@ -105,6 +105,8 @@ public class MetamorphReader extends BaseTiffReader {
   public static final String[] ND_SUFFIX = {"nd", "scan"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
+  public static final String[] validSoftware = {"metamorph", "visiview"};
+
   public static final Pattern WELL_COORDS = Pattern.compile(
       "\\b([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
   );
@@ -234,10 +236,7 @@ public class MetamorphReader extends BaseTiffReader {
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
-    boolean validSoftware = software != null &&
-      (software.trim().toLowerCase().startsWith("metamorph") || 
-          software.trim().toLowerCase().startsWith("visiview"));
-    return validSoftware || (ifd.containsKey(UIC1TAG) &&
+    return isValidSoftware(software) || (ifd.containsKey(UIC1TAG) &&
       ifd.containsKey(UIC3TAG) && ifd.containsKey(UIC4TAG));
   }
 
@@ -2301,6 +2300,14 @@ public class MetamorphReader extends BaseTiffReader {
       formatSuffix = "tif";
     }
     return formatSuffix;
+  }
+
+  private static boolean isValidSoftware(String software) {
+    if (software == null) return false;
+    for (int i = 0; i < validSoftware.length; i++) {
+      if (software.trim().toLowerCase().startsWith(validSoftware[i])) return true;
+    }
+    return false;
   }
 
 }
