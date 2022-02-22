@@ -105,7 +105,7 @@ public class MetamorphReader extends BaseTiffReader {
   public static final String[] ND_SUFFIX = {"nd", "scan"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
-  public static final String[] validSoftware = {"metamorph", "visiview"};
+  public static final String[] VALID_SOFTWARE = {"metamorph", "visiview"};
 
   public static final Pattern WELL_COORDS = Pattern.compile(
       "\\b([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
