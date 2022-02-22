@@ -2304,7 +2304,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   private static boolean isValidSoftware(String software) {
     if (software == null) return false;
-    for (int i = 0; i < validSoftware.length; i++) {
+    for (int i = 0; i < VALID_SOFTWARE.length; i++) {
       if (software.trim().toLowerCase().startsWith(validSoftware[i])) return true;
     }
     return false;
