@@ -2391,7 +2391,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     else if (validHandler && (backupHandler == null || backupHandler.getExposureTimes().size() == 0)) {
       exposureTime = handler.getExposureTimes();
     }
-    else if (backupHandler != null && backupHandler.getExposureTimes().size() % exposureTime.size() == 0) {
+    else if (backupHandler != null && exposureTime.size() > 0 && backupHandler.getExposureTimes().size() % exposureTime.size() == 0) {
       exposureTime = backupHandler.getExposureTimes();
     }
     int zcPlanes = getImageCount() / ((split ? getSizeC() : 1) * getSizeT());
