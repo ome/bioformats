@@ -65,8 +65,8 @@
     </dependency>
     <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>cdm</artifactId>
-      <version>4.6.13</version>
+      <artifactId>cdm-core</artifactId>
+      <version>5.5.3</version>
       <exclusions>
         <exclusion>
           <groupId>com.amazonaws</groupId>
