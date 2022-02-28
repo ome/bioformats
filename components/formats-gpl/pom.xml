@@ -275,7 +275,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>edu.ucar:cdm</classpathDependencyExclude>
+                <classpathDependencyExclude>edu.ucar:cdm-core</classpathDependencyExclude>
               </classpathDependencyExcludes>
               <systemPropertyVariables>
                 <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
