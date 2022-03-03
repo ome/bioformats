@@ -2401,8 +2401,8 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         for (int n=0; n<getImageCount(); n++) {
           int[] coords = getZCTCoords(n);
           int stampIndex = coords[0];
-          if (!split) {
-            stampIndex = getIndex(coords[0], coords[1], 0);
+          if (!split || getSeriesCount() == 1) {
+            stampIndex = getIndex(coords[0], !split ? coords[1] : 0, 0);
           }
           stampIndex += (coords[2] * getSeriesCount() + i) * zcPlanes;
           if (tsT.size() == getImageCount()) stampIndex = n;
