@@ -157,9 +157,11 @@ public class MINCReader extends FormatReader {
       boolean signed = false;
       if (isMINC2) {
         Hashtable<String, Object> attrs = netcdf.getVariableAttributes("/minc-2.0/image/0/image");
-        String unsigned = attrs.get("_Unsigned").toString();
-        if (unsigned != null && !unsigned.startsWith("true")) {
-          signed = true;
+        if (attrs.get("_Unsigned") != null) {
+          String unsigned = attrs.get("_Unsigned").toString();
+          if (!unsigned.startsWith("true")) {
+            signed = true;
+          }
         }
       }
       else {
