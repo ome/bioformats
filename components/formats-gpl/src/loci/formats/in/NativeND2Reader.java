@@ -2209,7 +2209,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
         else if (name.equals("ExWavelength")) {
           Double wave = DataTools.parseDouble(value.toString());
-          textExcitationWavelengths.add(wave);
+          // TODO: text excitation wavelengths are sometimes present
+          // even though Elements doesn't display them (so not clear if they are correct)
+          // it's not obvious when existing wavelengths should be ignored
+          //textExcitationWavelengths.add(wave);
         }
         else if (name.equals("dZStep")) {
           trueSizeZ = new Double(value.toString());
