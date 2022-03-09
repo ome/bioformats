@@ -65,8 +65,8 @@
     </dependency>
     <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>cdm</artifactId>
-      <version>4.6.13</version>
+      <artifactId>cdm-core</artifactId>
+      <version>5.3.3</version>
       <exclusions>
         <exclusion>
           <groupId>com.amazonaws</groupId>
@@ -275,7 +275,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>edu.ucar:cdm</classpathDependencyExclude>
+                <classpathDependencyExclude>edu.ucar:cdm-core</classpathDependencyExclude>
               </classpathDependencyExcludes>
               <systemPropertyVariables>
                 <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
