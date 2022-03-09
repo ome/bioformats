@@ -2409,14 +2409,17 @@ public class SlideBook7Reader  extends FormatReader {
 	public boolean isThisType(RandomAccessInputStream stream) throws IOException {
         //Logger.getLogger("SlideBook7Reader").log(Level.SEVERE, null, "isThisType - stream");
         try {
+            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - stream: entering" );
             if(mDataLoader == null) return false;
             Boolean res = mDataLoader.ReadSld(stream);
             mDataLoader.CloseFile();
+            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - stream: returning " + res );
             return res;
         } catch (FileNotFoundException e) {
 
             e.printStackTrace();
         }
+        SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - stream: returning false");
 
 		return false;
 	}
@@ -2426,7 +2429,17 @@ public class SlideBook7Reader  extends FormatReader {
         //Logger.getLogger("SlideBook7Reader").log(Level.SEVERE, null, "isThisType - file: " + file);
         try {
             String mytestfile = file;
-            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - open: " + open);
+            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String - open: " + open);
+            if(open)
+            {
+                boolean suffixMatch = file.endsWith(".sldy");  
+                SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: suffixMatch " + suffixMatch );
+                if(!suffixMatch)
+                {
+                    SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: suffix mismath, returning false");
+                    return false;
+                }
+            }
             // Check the first few bytes to determine if the file can be read by this reader.
             if (!open) return super.isThisType(mytestfile, open); // no file system access
 
@@ -2434,12 +2447,15 @@ public class SlideBook7Reader  extends FormatReader {
             mDataLoader  = new DataLoader(theFileLocation.getAbsolutePath());
             Boolean res = mDataLoader.ReadSld();
             mDataLoader.CloseFile();
+            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: returning " + res );
             return res;
         } catch (FileNotFoundException e) {
 
+            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: printStackTrace " );
             e.printStackTrace();
         }
 
+        SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: return false " );
 
 		return false;
 	}
