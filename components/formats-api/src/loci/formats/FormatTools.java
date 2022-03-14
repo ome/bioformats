@@ -697,6 +697,21 @@ public final class FormatTools {
     };
   }
 
+  public static int[] getXYZCTIndexes(String order, int[] values) {
+    int xIndex = order.indexOf("X");
+    int yIndex = order.indexOf("Y");
+    int zIndex = order.indexOf("Z");
+    int tIndex = order.indexOf("T");
+    int cIndex = order.indexOf("C");
+      return new int[] {
+          values[xIndex],
+          values[yIndex],
+          values[zIndex],
+          values[tIndex],
+          values[cIndex],
+      };
+  }
+
   /**
    * Converts index from the given dimension order to the reader's native one.
    * This method is useful for shuffling the planar order around
@@ -1003,6 +1018,20 @@ public final class FormatTools {
     if (bufLength >= 0) checkBufferSize(r, bufLength, w, h);
   }
 
+  /**
+   * Convenience method for checking that the chunk shape, chunk offsets and
+   * buffer sizes are all valid for the given reader.
+   * If 'bufLength' is less than 0, then the buffer length check is not
+   * performed.
+   */
+  public static void checkParameters(IFormatReader r, int bufLength,
+    int[] shape, int[] offsets) throws FormatException
+  {
+    assertId(r.getCurrentFile(), true, 2);
+    checkChunkSize(r, shape, offsets);
+    if (bufLength >= 0) checkBufferSize(r, bufLength, shape);
+  }
+
   /** Checks that the given plane number is valid for the given reader. */
   public static void checkPlaneNumber(IFormatReader r, int no)
     throws FormatException
@@ -1028,6 +1057,22 @@ public final class FormatTools {
     }
   }
 
+  /** Checks that the given chunk size is valid for the given reader. */
+  public static void checkChunkSize(IFormatReader r, int[] shape, int[] offsets)
+    throws FormatException
+  {
+    int[] dimensionSizes = {r.getSizeX(), r.getSizeY(), r.getSizeZ(), r.getSizeT(), r.getSizeC()};
+    int[] XYZTCshape = getXYZCTIndexes(r.getDimensionOrder(), shape);
+    int[] XYZTCoffsets = getXYZCTIndexes(r.getDimensionOrder(), offsets);
+    for (int i = 0; i < XYZTCoffsets.length; i++) {
+      if (XYZTCoffsets[i] < 0 || (XYZTCoffsets[i] + XYZTCshape[i]) > dimensionSizes[i]) {
+        char dim = DimensionOrder.XYZCT.toString().charAt(i);
+        throw new FormatException("Invalid chunk size: " + dim + " shape = " + XYZTCshape[i] + " " + dim +
+            " offset = " + XYZTCoffsets[i] + " " + dim + " maxSize = " + dimensionSizes[i]);
+      }
+    }
+  }
+
   public static void checkBufferSize(IFormatReader r, int len)
     throws FormatException
   {
@@ -1043,6 +1088,21 @@ public final class FormatTools {
     throws FormatException
   {
     int size = getPlaneSize(r, w, h);
+    if (size > len) {
+      throw new FormatException("Buffer too small (got " + len +
+        ", expected " + size + ").");
+    }
+  }
+
+  /**
+   * Checks that the given buffer size is large enough to hold a 5D chunk
+   * image as returned by the given reader.
+   * @throws FormatException if the buffer is too small
+   */
+  public static void checkBufferSize(IFormatReader r, int len, int[] shape)
+    throws FormatException
+  {
+    int size = getChunkSize(r, shape);
     if (size > len) {
       throw new FormatException("Buffer too small (got " + len +
         ", expected " + size + ").");
@@ -1069,6 +1129,15 @@ public final class FormatTools {
   /** Returns the size in bytes of a w * h tile. */
   public static int getPlaneSize(IFormatReader r, int w, int h) {
     return w * h * r.getRGBChannelCount() * getBytesPerPixel(r.getPixelType());
+  }
+
+  /** Returns the size in bytes of a w * h tile. */
+  public static int getChunkSize(IFormatReader r, int[] shape) {
+    int size = r.getRGBChannelCount() * getBytesPerPixel(r.getPixelType());
+    for (int i = 0; i < shape.length; i++) {
+      size *= shape[i];
+    }
+    return size;
   }
 
   // -- Utility methods -- export

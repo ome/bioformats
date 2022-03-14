@@ -283,6 +283,19 @@ public interface IFormatReader extends IFormatHandler, IPyramidHandler {
    */
   byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException;
+  
+  /**
+   * Obtains a chunk of the specified image into a pre-allocated byte array.
+   * 
+   * @param buf a pre-allocated buffer.
+   * @param shape the shape of the chunk consisting of the size of each dimension
+   * @param offsets the offset of each dimension for the chunk
+   * @return the pre-allocated buffer <code>buf</code> for convenience.
+   * @throws FormatException if there was a problem parsing the metadata of the
+   *   file.
+   * @throws IOException if there was a problem reading the file.
+   */
+  byte[] openBytes(byte[] buf, int[] shape, int[] offsets) throws FormatException, IOException;
 
   /**
    * Obtains the specified image plane (or sub-image thereof) in the reader's
@@ -590,6 +603,9 @@ public interface IFormatReader extends IFormatHandler, IPyramidHandler {
 
   /** Returns the optimal sub-image height for use with openBytes. */
   int getOptimalTileHeight();
+
+  /** Returns the optimal chunk size for use with openBytes. */
+  int[] getOptimalChunkSize();
 
   // -- Sub-resolution API methods --
 

@@ -35,8 +35,10 @@ package loci.formats;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.primitives.PositiveInteger;
 
 import loci.common.DataTools;
@@ -160,6 +162,36 @@ public abstract class FormatWriter extends FormatHandler
       throw new IllegalArgumentException("Object to save must be a byte[]");
     }
     saveBytes(no, (byte[]) plane, x, y, w, h);
+  }
+
+  /* @see IFormatWriter#savePlane(byte[], int[], int[]) */
+  @Override
+  public void saveBytes(byte[] buf, int[] shape, int[] offsets)
+    throws FormatException, IOException
+  {
+    checkParams(buf, shape, offsets);
+    MetadataRetrieve r = getMetadataRetrieve();
+    String order = r.getPixelsDimensionOrder(series).toString();
+    int[] XYZTCshape = FormatTools.getXYZCTIndexes(order, shape);
+    int[] XYZTCoffsets = FormatTools.getXYZCTIndexes(order, offsets);
+    int num = r.getPixelsSizeZ(series).getValue() * r.getPixelsSizeC(series).getValue() * r.getPixelsSizeT(series).getValue();
+    int bufOffset = 0;
+    for (int z = 0; z < XYZTCshape[2]; z++) {
+      for (int t = 0; t < XYZTCshape[3]; t++) {
+        for (int c = 0; c < XYZTCshape[4]; c++) {
+          int no = FormatTools.getIndex(order, r.getPixelsSizeZ(series).getValue(), r.getPixelsSizeC(series).getValue(), 
+              r.getPixelsSizeT(series).getValue(), num, XYZTCoffsets[2] + z, XYZTCoffsets[4] + c, XYZTCoffsets[3] + t);
+          int pixelType = FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());
+          int bpp = FormatTools.getBytesPerPixel(pixelType);
+          PositiveInteger samples = r.getChannelSamplesPerPixel(series, 0);
+          if (samples == null) samples = new PositiveInteger(1);
+          int planeSize =  bpp * XYZTCshape[0] * XYZTCshape[1] * samples.getValue();
+          byte[] plane = Arrays.copyOfRange(buf, bufOffset, planeSize);
+          saveBytes(no, plane, XYZTCoffsets[0], XYZTCoffsets[1], XYZTCshape[0], XYZTCshape[1]);
+          bufOffset += planeSize;
+        }
+      }
+    }
   }
 
   /* @see IFormatWriter#savePlane(int, Object, Region) */
@@ -330,6 +362,20 @@ public abstract class FormatWriter extends FormatHandler
     return height;
   }
 
+  /* @see IFormatWriter#getChunkSize() */
+  @Override
+  public int[] getChunkSize() throws FormatException {
+    int[] defaultChunkSize = {getTileSizeX(), getTileSizeY(), 1, 1, 1};
+    return defaultChunkSize;
+  }
+
+  /* @see IFormatWriter#setChunkSize(int[]) */
+  @Override
+  public int[] setChunkSize(int[] chunkSize) throws FormatException {
+    int[] returnChunkSize = {setTileSizeX(chunkSize[0]), setTileSizeY(chunkSize[1]), 1, 1, 1};
+    return returnChunkSize;
+  }  
+
   /* @see IFormatWriter#setResolutions(List<Resolution>) */
   @Override
   public void setResolutions(List<Resolution> resolutions) {
@@ -475,6 +521,51 @@ public abstract class FormatWriter extends FormatHandler
     if (buf.length < minSize) {
       throw new FormatException("Buffer is too small; expected " + minSize +
         " bytes, got " + buf.length + " bytes.");
+    }
+
+    if (!DataTools.containsValue(getPixelTypes(compression), pixelType)) {
+      throw new FormatException("Unsupported image type '" +
+        FormatTools.getPixelTypeString(pixelType) + "'.");
+    }
+  }
+
+  /**
+   * Ensure that the arguments that are being passed to saveBytes(...) are
+   * valid.
+   * @throws FormatException if any of the arguments is invalid.
+   */
+  protected void checkParams(byte[] buf, int[] shape, int[] offsets)
+    throws FormatException
+  {
+    MetadataRetrieve r = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(r, series);
+
+    int pixelType =
+        FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());
+    PositiveInteger samples = r.getChannelSamplesPerPixel(series, 0);
+    if (samples == null) samples = new PositiveInteger(1);
+    int minSize = samples.getValue() * FormatTools.getBytesPerPixel(pixelType);
+    for (int i = 0; i < shape.length; i++) {
+      minSize *= shape[i];
+    }
+    if (buf.length < minSize) {
+      throw new FormatException("Buffer is too small; expected " + minSize +
+        " bytes, got " + buf.length + " bytes.");
+    }
+    
+    String order = r.getPixelsDimensionOrder(series).toString();
+    int sizeZ = r.getPixelsSizeZ(series).getValue().intValue();
+    int sizeT = r.getPixelsSizeT(series).getValue().intValue();
+    int sizeC = r.getChannelCount(series);
+    int[] dimensionSizes = {getSizeX(), getSizeY(), sizeZ, sizeT, sizeC};
+    int[] XYZTCshape = FormatTools.getXYZCTIndexes(order, shape);
+    int[] XYZTCoffsets = FormatTools.getXYZCTIndexes(order, offsets);
+    for (int i = 0; i < XYZTCoffsets.length; i++) {
+      if (XYZTCoffsets[i] < 0 || (XYZTCoffsets[i] + XYZTCshape[i]) > dimensionSizes[i]) {
+        char dim = DimensionOrder.XYZCT.toString().charAt(i);
+        throw new FormatException("Invalid chunk size: " + dim + " shape = " + XYZTCshape[i] + " " + dim +
+            " offset = " + XYZTCoffsets[i] + " " + dim + " maxSize = " + dimensionSizes[i]);
+      }
     }
 
     if (!DataTools.containsValue(getPixelTypes(compression), pixelType)) {

@@ -465,6 +465,12 @@ public class ImageReader implements IFormatReader {
     return getReader().openBytes(no, buf, x, y, w, h);
   }
 
+  /* @see IFormatReader#openBytes(byte[] buf, int[] shape, int[] offsets) */
+  @Override
+  public byte[] openBytes(byte[] buf, int[] shape, int[] offsets) throws FormatException, IOException {
+    return getReader().openBytes(buf, shape, offsets);
+  }
+
   /* @see IFormatReader#openPlane(int, int, int, int, int) */
   @Override
   public Object openPlane(int no, int x, int y, int w, int h)
@@ -745,6 +751,12 @@ public class ImageReader implements IFormatReader {
   @Override
   public int getOptimalTileHeight() {
     return getReader().getOptimalTileHeight();
+  }
+
+  /* @see IFormatReader#getOptimalChunkSize() */
+  @Override
+  public int[] getOptimalChunkSize() {
+    return getReader().getOptimalChunkSize();
   }
 
   /* @see IFormatReader#getCoreIndex() */
