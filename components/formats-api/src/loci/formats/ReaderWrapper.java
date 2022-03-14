@@ -349,6 +349,13 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   @Override
+  public byte[] openBytes(byte[] buf, int [] shape, int [] offsets)
+    throws FormatException, IOException
+  {
+    return reader.openBytes(buf, shape, offsets);
+  }
+
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -576,6 +583,11 @@ public abstract class ReaderWrapper implements IFormatReader {
   @Override
   public int getOptimalTileHeight() {
     return reader.getOptimalTileHeight();
+  }
+
+  @Override
+  public int[] getOptimalChunkSize() {
+    return reader.getOptimalChunkSize();
   }
 
   @Override
