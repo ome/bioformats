@@ -85,7 +85,7 @@ public class CellomicsReader extends FormatReader {
   private static final Pattern PATTERN_O = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(o\\d+)?[^_]+$");
   private static final Pattern PATTERN_D = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(d\\d+)?[^_]+$");
 
-  private Pattern cellomicsPattern;
+  private transient Pattern cellomicsPattern;
 
   private ArrayList<ChannelFile> files = new ArrayList<ChannelFile>();
 
