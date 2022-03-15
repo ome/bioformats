@@ -177,10 +177,10 @@ public abstract class FormatWriter extends FormatHandler
     int num = r.getPixelsSizeZ(series).getValue() * r.getPixelsSizeC(series).getValue() * r.getPixelsSizeT(series).getValue();
     int bufOffset = 0;
     for (int z = 0; z < XYZTCshape[2]; z++) {
-      for (int t = 0; t < XYZTCshape[3]; t++) {
-        for (int c = 0; c < XYZTCshape[4]; c++) {
+      for (int c = 0; c < XYZTCshape[3]; c++) {
+        for (int t = 0; t < XYZTCshape[4]; t++) {
           int no = FormatTools.getIndex(order, r.getPixelsSizeZ(series).getValue(), r.getPixelsSizeC(series).getValue(), 
-              r.getPixelsSizeT(series).getValue(), num, XYZTCoffsets[2] + z, XYZTCoffsets[4] + c, XYZTCoffsets[3] + t);
+              r.getPixelsSizeT(series).getValue(), num, XYZTCoffsets[2] + z, XYZTCoffsets[3] + c, XYZTCoffsets[4] + t);
           int pixelType = FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());
           int bpp = FormatTools.getBytesPerPixel(pixelType);
           PositiveInteger samples = r.getChannelSamplesPerPixel(series, 0);
@@ -557,7 +557,7 @@ public abstract class FormatWriter extends FormatHandler
     int sizeZ = r.getPixelsSizeZ(series).getValue().intValue();
     int sizeT = r.getPixelsSizeT(series).getValue().intValue();
     int sizeC = r.getChannelCount(series);
-    int[] dimensionSizes = {getSizeX(), getSizeY(), sizeZ, sizeT, sizeC};
+    int[] dimensionSizes = {getSizeX(), getSizeY(), sizeZ, sizeC, sizeT};
     int[] XYZTCshape = FormatTools.getXYZCTIndexes(order, shape);
     int[] XYZTCoffsets = FormatTools.getXYZCTIndexes(order, offsets);
     for (int i = 0; i < XYZTCoffsets.length; i++) {

@@ -701,14 +701,14 @@ public final class FormatTools {
     int xIndex = order.indexOf("X");
     int yIndex = order.indexOf("Y");
     int zIndex = order.indexOf("Z");
-    int tIndex = order.indexOf("T");
     int cIndex = order.indexOf("C");
+    int tIndex = order.indexOf("T");
       return new int[] {
           values[xIndex],
           values[yIndex],
           values[zIndex],
-          values[tIndex],
           values[cIndex],
+          values[tIndex],
       };
   }
 
@@ -1061,7 +1061,7 @@ public final class FormatTools {
   public static void checkChunkSize(IFormatReader r, int[] shape, int[] offsets)
     throws FormatException
   {
-    int[] dimensionSizes = {r.getSizeX(), r.getSizeY(), r.getSizeZ(), r.getSizeT(), r.getSizeC()};
+    int[] dimensionSizes = {r.getSizeX(), r.getSizeY(), r.getSizeZ(), r.getSizeC(), r.getSizeT()};
     int[] XYZTCshape = getXYZCTIndexes(r.getDimensionOrder(), shape);
     int[] XYZTCoffsets = getXYZCTIndexes(r.getDimensionOrder(), offsets);
     for (int i = 0; i < XYZTCoffsets.length; i++) {

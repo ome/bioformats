@@ -934,10 +934,10 @@ public abstract class FormatReader extends FormatHandler
     int num = getSizeZ() * getSizeC() * getSizeT();
     int bufOffset = 0;
     for (int z = 0; z < XYZTCshape[2]; z++) {
-      for (int t = 0; t < XYZTCshape[3]; t++) {
-        for (int c = 0; c < XYZTCshape[4]; c++) {
+      for (int c = 0; c < XYZTCshape[3]; c++) {
+        for (int t = 0; t < XYZTCshape[4]; t++) {
           int no = FormatTools.getIndex(order, getSizeZ(), getSizeC(), getSizeT(), num, 
-              XYZTCoffsets[2] + z, XYZTCoffsets[4] + c, XYZTCoffsets[3] + t);
+              XYZTCoffsets[2] + z, XYZTCoffsets[3] + c, XYZTCoffsets[4] + t);
           byte[] plane = openBytes(no, XYZTCoffsets[0], XYZTCoffsets[1], XYZTCshape[0], XYZTCshape[1]);
           System.arraycopy(plane, 0, buf, bufOffset, plane.length);
           bufOffset += plane.length;
