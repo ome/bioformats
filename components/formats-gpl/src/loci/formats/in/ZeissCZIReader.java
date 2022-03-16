@@ -356,7 +356,7 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     byte fillColor = (byte) 0;
-    if (isRGB() && getResolutionCount() > 1) {
+    if (isRGB() && maxResolution > 0) {
       fillColor = (byte) 255;
     }
     Arrays.fill(buf, fillColor);
