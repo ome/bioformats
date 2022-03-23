@@ -2367,29 +2367,28 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     for (Double time : exposureTime) {
       addGlobalMetaList("Exposure time (text)", time);
     }
-    boolean validHandler = handler != null && handler.getExposureTimes().size() > 0;
-    if (validHandler) {
+    if (handler != null && handler.getExposureTimes().size() > 0) {
       for (Double time : handler.getExposureTimes()) {
         addGlobalMetaList("Exposure time (primary XML)", time);
       }
-    }
-    if (backupHandler != null) {
-      for (Double time : backupHandler.getExposureTimes()) {
-        addGlobalMetaList("Exposure time (secondary XML)", time);
+      if (backupHandler != null) {
+        for (Double time : backupHandler.getExposureTimes()) {
+          addGlobalMetaList("Exposure time (secondary XML)", time);
+        }
       }
-    }
 
-    if (validHandler && (exposureTime.size() == 0 || handler.getExposureTimes().size() == 1 || exposureTime.size() % getSizeC() != 0)) {
-      exposureTime = handler.getExposureTimes();
-      if (backupHandler != null && backupHandler.getExposureTimes().size() > exposureTime.size()) {
+      if (exposureTime.size() == 0 || handler.getExposureTimes().size() == 1 || exposureTime.size() % getSizeC() != 0) {
+        exposureTime = handler.getExposureTimes();
+        if (backupHandler != null && backupHandler.getExposureTimes().size() > exposureTime.size()) {
+          exposureTime = backupHandler.getExposureTimes();
+        }
+      }
+      else if (backupHandler == null || backupHandler.getExposureTimes().size() == 0) {
+        exposureTime = handler.getExposureTimes();
+      }
+      else if (backupHandler != null && backupHandler.getExposureTimes().size() == exposureTime.size()) {
         exposureTime = backupHandler.getExposureTimes();
       }
-    }
-    else if (validHandler && (backupHandler == null || backupHandler.getExposureTimes().size() == 0)) {
-      exposureTime = handler.getExposureTimes();
-    }
-    else if (backupHandler != null && backupHandler.getExposureTimes().size() % exposureTime.size() == 0) {
-      exposureTime = backupHandler.getExposureTimes();
     }
     int zcPlanes = getImageCount() / ((split ? getSizeC() : 1) * getSizeT());
     for (int i=0; i<getSeriesCount(); i++) {
