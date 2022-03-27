@@ -126,7 +126,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
   private ArrayList<String> textChannelNames = new ArrayList<String>();
   private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
-  private transient ArrayList<Double> textExcitationWavelengths = new ArrayList<Double>();
 
   private boolean textData = false;
   private Double refractiveIndex = null;
@@ -352,7 +351,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       trueSizeZ = null;
       textChannelNames.clear();
       textEmissionWavelengths.clear();
-      textExcitationWavelengths.clear();
       useZ = null;
       textData = false;
       refractiveIndex = null;
@@ -2207,10 +2205,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           Double wave = Double.parseDouble(value.toString());
           textEmissionWavelengths.add(wave);
         }
-        else if (name.equals("ExWavelength")) {
-          Double wave = DataTools.parseDouble(value.toString());
-          textExcitationWavelengths.add(wave);
-        }
         else if (name.equals("dZStep")) {
           trueSizeZ = new Double(value.toString());
         }
@@ -2523,10 +2517,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         else if (emWave.size() > 0 || textEmissionWavelengths.size() > 0) {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
-        if (index < exWave.size() || index < textExcitationWavelengths.size()) {
-          Double value = index < exWave.size() ? exWave.get(index) :
-            textExcitationWavelengths.get(index);
-          Length excitation = FormatTools.getExcitationWavelength(value);
+        if (index < exWave.size()) {
+          Length excitation =
+            FormatTools.getExcitationWavelength(exWave.get(index));
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, i, c);
           }
