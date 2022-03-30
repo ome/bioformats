@@ -229,13 +229,25 @@ public class DeltavisionReader extends FormatReader {
 
     int[] coords = getZCTCoords(no);
     long offset = getPlaneByteOffset(coords[0], coords[1], coords[2]);
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
     if (offset < in.length()) {
       in.seek(offset);
-      readPlane(in, x, getSizeY() - h - y, w, h, buf);
+      boolean wholePlane = in.length() - in.getFilePointer() >= getSizeX() * getSizeY() * bpp;
+      try {
+        readPlane(in, x, getSizeY() - h - y, w, h, buf);
+      }
+      catch (IllegalArgumentException|IOException e) {
+        if (wholePlane) {
+          throw e;
+        }
+        else {
+          LOGGER.warn("Could not finish reading truncated plane", e);
+        }
+      }
 
       // reverse the order of the rows
       // planes are stored with the origin in the lower-left corner
-      byte[] tmp = new byte[w * FormatTools.getBytesPerPixel(getPixelType())];
+      byte[] tmp = new byte[w * bpp];
       for (int row=0; row<h/2; row++) {
         int src = row * tmp.length;
         int dest = (h - row - 1) * tmp.length;
