@@ -535,9 +535,6 @@ public class FakeReader extends FormatReader {
 
   @Override
   protected void initFile(String id) throws FormatException, IOException {
-
-    sleep("initFile", sleepInitFile);
-
     if (!checkSuffix(id, "fake")) {
       if (checkSuffix(id, "fake.ini")) {
         id = id.substring(0, id.lastIndexOf("."));
@@ -911,6 +908,7 @@ public class FakeReader extends FormatReader {
       }
       // NB: Other pixel types will have null LUTs.
     }
+    sleep("initFile", sleepInitFile);
   }
 
   @Override
