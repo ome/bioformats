@@ -161,7 +161,7 @@ public class FormatReaderTest {
 
   // -- Setup/teardown methods --
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setup() throws IOException {
     initFile();
   }
