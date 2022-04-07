@@ -268,8 +268,8 @@ public class HitachiReader extends FormatReader {
     final Length stagePosYl = new Length(stagePosYn, UNITS.REFERENCEFRAME);
     final Length stagePosZl = new Length(stagePosZn, UNITS.REFERENCEFRAME);
 
-    Length sizeX = FormatTools.getPhysicalSizeX(pixelSize);
-    Length sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+    Length sizeX = FormatTools.getPhysicalSizeX(pixelSize, UNITS.NANOMETER);
+    Length sizeY = FormatTools.getPhysicalSizeY(pixelSize, UNITS.NANOMETER);
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }
