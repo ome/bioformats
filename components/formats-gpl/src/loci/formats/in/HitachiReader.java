@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -121,7 +122,13 @@ public class HitachiReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = MAGIC.length();
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return (stream.readString(blockLen)).indexOf(MAGIC) >= 0;
+    if ((stream.readString(blockLen)).indexOf(MAGIC) >= 0) {
+      return true;
+    }
+    stream.seek(stream.getFilePointer() - blockLen);
+    stream.setEncoding("UTF-16");
+    String check = stream.readString((blockLen + 1) * 2);
+    return check.indexOf(MAGIC) >= 0;
   }
 
   /**
@@ -192,7 +199,20 @@ public class HitachiReader extends FormatReader {
 
     super.initFile(id);
 
-    String data = DataTools.readFile(id);
+    String data = null;
+    try (RandomAccessInputStream in = new RandomAccessInputStream(id)) {
+      long idLen = in.length();
+      if (idLen > Integer.MAX_VALUE) {
+        throw new IOException("File too large");
+      }
+      int len = (int) idLen;
+      byte[] b = new byte[len];
+      in.readFully(b);
+      data = new String(b, Constants.ENCODING);
+      if (data.indexOf(MAGIC) < 0) {
+        data = new String(b, "UTF-16");
+      }
+    }
 
     IniParser parser = new IniParser();
     parser.setBackslashContinuesLine(false);
