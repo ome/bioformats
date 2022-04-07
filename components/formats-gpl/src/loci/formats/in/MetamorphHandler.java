@@ -255,7 +255,7 @@ public class MetamorphHandler extends BaseHandler {
         }
       }
     }
-    else if (key.equals("wavelength")) {
+    if (key.equals("wavelength")) {
       wavelengths.add(new Integer(value));
     }
     else if (key.equals("acquisition-time-local")) {
