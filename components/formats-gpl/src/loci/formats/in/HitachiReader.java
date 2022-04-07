@@ -235,8 +235,36 @@ public class HitachiReader extends FormatReader {
     String date = image.get("Date");
     String time = image.get("Time");
 
-    Location parent = new Location(id).getAbsoluteFile().getParentFile();
-    pixelsFile = new Location(parent, pixelsFile).getAbsolutePath();
+    Location baseFile = new Location(id).getAbsoluteFile();
+    Location parent = baseFile.getParentFile();
+    Location pixels = new Location(parent, pixelsFile);
+    if (pixels.exists()) {
+      pixelsFile = pixels.getAbsolutePath();
+    }
+    else {
+      LOGGER.warn("Stored file name {} not found, attempting to find pixels file", pixelsFile);
+
+      String base = baseFile.getAbsolutePath();
+      if (base.indexOf('.') >= 0) {
+        base = base.substring(0, base.lastIndexOf("."));
+      }
+
+      Location bmp = new Location(base + ".bmp");
+      Location jpg = new Location(base + ".jpg");
+      Location tif = new Location(base + ".tif");
+      if (tif.exists()) {
+        pixelsFile = tif.getAbsolutePath();
+      }
+      else if (jpg.exists()) {
+        pixelsFile = jpg.getAbsolutePath();
+      }
+      else if (bmp.exists()) {
+        pixelsFile = bmp.getAbsolutePath();
+      }
+      else {
+        throw new FormatException("Could not find pixels file");
+      }
+    }
 
     ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
     Class<? extends IFormatReader>[] classArray = classes.getClasses();
