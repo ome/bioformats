@@ -163,7 +163,14 @@ public class FormatReaderTest {
 
   @BeforeClass(alwaysRun = true)
   public void setup() throws IOException {
-    initFile();
+    try {
+      initFile();
+    }
+    catch (RuntimeException e) {
+      // implies that the configuration does not exist
+      // this is expected if the "config" group is run
+      LOGGER.trace("File initialization failed", e);
+    }
   }
 
   @AfterClass(alwaysRun = true)
