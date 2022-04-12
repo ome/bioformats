@@ -187,6 +187,7 @@ loci.formats.in.IonpathMIBITiffReader   # tif, tiff
 
 # DICOM reader must go before standard TIFF reader to correctly handle DICOM-TIFF files
 loci.formats.in.DicomReader           # dcm, dicom
+loci.formats.in.HitachiReader         # txt, tif, jpg, bmp
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff
@@ -200,7 +201,6 @@ loci.formats.in.OpenlabReader         # liff
 loci.formats.in.SMCameraReader        # (no extension)
 loci.formats.in.SBIGReader            # (no extension)
 loci.formats.in.HRDGDFReader          # (no extension)
-loci.formats.in.HitachiReader         # txt, tif, jpg, bmp
 loci.formats.in.BrukerReader          # fid, acqp
 loci.formats.in.CanonRawReader        # cr2, crw, jpg, thm, wav
 loci.formats.in.OBFReader             # obf, msr
