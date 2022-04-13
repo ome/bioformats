@@ -216,7 +216,7 @@ public class MetamorphHandler extends BaseHandler {
 
   /** Check if the value needs to be saved. */
   private void checkKey(String key, String value) {
-    Double doubleValue = DataTools.parseDouble(value);
+    Double doubleValue = parseDouble(value);
     if (doubleValue != null) {
       if (key.equals("Temperature")) {
         temperature = doubleValue;
@@ -271,7 +271,7 @@ public class MetamorphHandler extends BaseHandler {
       if (space > 0) {
         value = value.substring(0, space);
       }
-      Double rate = DataTools.parseDouble(value.trim());
+      Double rate = parseDouble(value.trim());
       if (rate != null) {
         readOutRate = rate;
       }
@@ -281,7 +281,7 @@ public class MetamorphHandler extends BaseHandler {
         value = value.substring(0, value.indexOf(' '));
       }
       // exposure times are stored in milliseconds, we want them in seconds
-      Double exposure = DataTools.parseDouble(value);
+      Double exposure = parseDouble(value);
       if (exposure != null) {
         exposure /= 1000;
       }
@@ -297,7 +297,7 @@ public class MetamorphHandler extends BaseHandler {
       stageLabel = value;
     }
     else if (key.endsWith("Gain") && gain == null) {
-      Double v = DataTools.parseDouble(value.replaceAll("[xX]", ""));
+      Double v = parseDouble(value.replaceAll("[xX]", ""));
       if (v != null) {
         gain = v;
       }
@@ -328,6 +328,15 @@ public class MetamorphHandler extends BaseHandler {
           }
       }
     }
+  }
+
+  /**
+   * Remove '+' before parsing doubles.
+   * Scientific notation values may be stored as
+   * -1e+006 or similar.
+   */
+  private Double parseDouble(String v) {
+    return DataTools.parseDouble(v.replaceAll("\\+", ""));
   }
 
 }
