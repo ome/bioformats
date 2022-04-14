@@ -361,6 +361,7 @@ public class OperettaReader extends FormatReader {
 
     ArrayList<Integer> uniqueRows = new ArrayList<Integer>();
     ArrayList<Integer> uniqueCols = new ArrayList<Integer>();
+    ArrayList<String> uniqueWells = new ArrayList<String>();
     ArrayList<Integer> uniqueFields = new ArrayList<Integer>();
     ArrayList<Integer> uniqueZs = new ArrayList<Integer>();
     ArrayList<Integer> uniqueTs = new ArrayList<Integer>();
@@ -385,6 +386,10 @@ public class OperettaReader extends FormatReader {
       if (!uniqueTs.contains(p.t)) {
         uniqueTs.add(p.t);
       }
+      String well = FormatTools.getWellName(p.row, p.col);
+      if (!uniqueWells.contains(well)) {
+        uniqueWells.add(well);
+      }
     }
 
     Integer[] rows = uniqueRows.toArray(new Integer[uniqueRows.size()]);
@@ -401,7 +406,7 @@ public class OperettaReader extends FormatReader {
     Arrays.sort(ts);
     Arrays.sort(cs);
 
-    int seriesCount = rows.length * cols.length * fields.length;
+    int seriesCount = uniqueWells.size() * fields.length;
     core.clear();
 
     planes = new Plane[seriesCount][zs.length * cs.length * ts.length];
@@ -409,6 +414,10 @@ public class OperettaReader extends FormatReader {
     int nextSeries = 0;
     for (int row=0; row<rows.length; row++) {
       for (int col=0; col<cols.length; col++) {
+        String well = FormatTools.getWellName(rows[row], cols[col]);
+        if (!uniqueWells.contains(well)) {
+          continue;
+        }
         for (int field=0; field<fields.length; field++) {
           int nextPlane = 0;
           for (int t=0; t<ts.length; t++) {
@@ -562,9 +571,14 @@ public class OperettaReader extends FormatReader {
       store.setPlateAcquisitionStartTime(new Timestamp(startTime), 0, 0);
     }
 
+    int well = 0;
     for (int row=0; row<rows.length; row++) {
       for (int col=0; col<cols.length; col++) {
-        int well = row * cols.length + col;
+        String wellName = FormatTools.getWellName(rows[row], cols[col]);
+        if (!uniqueWells.contains(wellName)) {
+          continue;
+        }
+
         store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
         store.setWellRow(new NonNegativeInteger(rows[row]), 0, well);
         store.setWellColumn(new NonNegativeInteger(cols[col]), 0, well);
@@ -582,7 +596,7 @@ public class OperettaReader extends FormatReader {
           store.setImageInstrumentRef(instrument, imageIndex);
           store.setObjectiveSettingsID(objective, imageIndex);
 
-          String name = "Well " + FormatTools.getWellName(rows[row], cols[col]) + ", Field " + (field + 1);
+          String name = "Well " + wellName + ", Field " + (field + 1);
           store.setImageName(name, imageIndex);
           store.setPlateAcquisitionWellSampleRef(
             wellSampleID, 0, 0, imageIndex);
@@ -593,6 +607,7 @@ public class OperettaReader extends FormatReader {
             store.setWellSamplePositionY(planes[imageIndex][0].positionY, 0, well, field);
           }
         }
+        well++;
       }
     }
 
