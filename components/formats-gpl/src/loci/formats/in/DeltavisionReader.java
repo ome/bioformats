@@ -899,6 +899,19 @@ public class DeltavisionReader extends FormatReader {
         yTiles = 1;
       }
     }
+    else if (xTiles * yTiles < getSeriesCount() && (backwardsStageX || backwardsStageY)) {
+      if (backwardsStageX && yTiles == 1) {
+        xTiles = getSeriesCount();
+      }
+      else if (backwardsStageY && xTiles == 1) {
+        yTiles = getSeriesCount();
+      }
+      else {
+        LOGGER.warn("Could not determine stage position ordering");
+        backwardsStageX = false;
+        backwardsStageY = false;
+      }
+    }
 
     if (getSeriesCount() == 1) {
       xTiles = 1;
