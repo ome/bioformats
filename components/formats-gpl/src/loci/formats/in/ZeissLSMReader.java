@@ -726,6 +726,16 @@ public class ZeissLSMReader extends FormatReader {
     ms.interleaved = false;
     ms.sizeC = isRGB() ? samples : 1;
     ms.pixelType = ifd.getPixelType();
+
+    // Known DataType values suggest that uint32 data is not possible.
+    // We know that some TIFF metadata (e.g. RowsPerStrip) is missing
+    // or incorrect for many .lsm files, and a uint32 pixel type here
+    // suggests that the SampleFormat tag is missing.
+    // For now, assume that all 32 bit data is floating point.
+    if (ms.pixelType == FormatTools.UINT32) {
+      ms.pixelType = FormatTools.FLOAT;
+    }
+
     ms.imageCount = ifds.size();
     ms.sizeZ = getImageCount();
     ms.sizeT = 1;
