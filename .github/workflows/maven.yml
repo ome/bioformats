@@ -33,7 +33,7 @@ jobs:
       - name: Build
         run: mvn ${{ env.maven_commands }}
   deploy:
-    if: contains('refs/heads/develop', github.ref)
+    if: ${{ github.ref == 'refs/heads/develop' && github.repository_owner == 'ome' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
