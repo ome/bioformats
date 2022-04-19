@@ -452,8 +452,12 @@ public class MetamorphTiffReader extends BaseTiffReader {
         addGlobalMetaList("timestamp", timestamp);
       }
       for (int i=0; i<exposures.size(); i++) {
-        addGlobalMetaList("exposure time (ms)",
-          exposures.get(i).floatValue() * 1000);
+        Double exp = exposures.get(i);
+        if (exp != null) {
+          exp *= 1000;
+        }
+
+        addGlobalMetaList("exposure time (ms)", exp);
       }
     }
 
