@@ -355,7 +355,11 @@ public class ZeissCZIReader extends FormatReader {
       validScanDim = false;
     }
 
-    Arrays.fill(buf, (byte) 0);
+    byte fillColor = (byte) 0;
+    if (isRGB() && maxResolution > 0) {
+      fillColor = (byte) 255;
+    }
+    Arrays.fill(buf, fillColor);
     boolean emptyTile = true;
     int compression = -1;
     try {
