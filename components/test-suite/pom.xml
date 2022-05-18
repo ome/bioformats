@@ -165,4 +165,22 @@
       <timezone>-6</timezone>
     </developer>
   </developers>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>ome</id>
+      <name>OME Artifactory</name>
+      <url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
+    </repository>
+    <repository>
+      <id>imagej.public</id>
+      <name>Jenkins repository</name>
+      <url>https://repo.jenkins-ci.org/releases/</url>
+    </repository>
+  </repositories>
 </project>
