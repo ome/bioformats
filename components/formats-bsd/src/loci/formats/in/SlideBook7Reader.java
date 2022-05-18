@@ -3,7 +3,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2022 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,12 +26,8 @@
 
 package loci.formats.in;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Vector;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -39,31 +35,21 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Constructor; 
 import java.lang.reflect.Field; 
-import java.lang.reflect.Method; 
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.List;
-import java.util.logging.Level;
-//import java.util.logging.Logger;
 import static java.lang.Integer.max;
 
-import org.yaml.snakeyaml.events.*;
-import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.reader.ReaderException;
 
 import loci.common.Location;
-import loci.common.Constants;
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -71,14 +57,10 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import loci.formats.MissingLibraryException;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
-
-import org.scijava.nativelib.NativeLibraryUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +80,6 @@ public class SlideBook7Reader  extends FormatReader {
             mStr = theStr;
             mInt = theInt;
         }
-
     }
 
     static class IntIntPair
@@ -110,13 +91,9 @@ public class SlideBook7Reader  extends FormatReader {
             mInt1 = theInt1;
             mInt2 = theInt2;
         }
-
     }
 
     class ClassDecoder {
-
-
-
 
         public int Decode(MappingNode inNode)
         {
@@ -125,7 +102,7 @@ public class SlideBook7Reader  extends FormatReader {
 
         public int Decode(MappingNode inNode, int inStartIndex)
         {
-            Class cls = getClass(); 
+            Class<? extends ClassDecoder> cls = getClass(); 
             String myName = cls.getName();
             String sbName = GetSBClassName();
             Class<?> theTypeInteger = Integer.class;
@@ -135,11 +112,7 @@ public class SlideBook7Reader  extends FormatReader {
             Class<?> theTypeString = String.class;
             Class<?> theTypeIntegerVector = Integer[].class;
             Class<?> theTypeFloatVector = Float[].class;
-            //SlideBook7Reader.LOGGER.info("Decode: sbName: " + sbName);
-            //SlideBook7Reader.LOGGER.info("Decode: myName: " + myName);
             myName = myName.replaceAll(".*\\$","");
-            //SlideBook7Reader.LOGGER.info("Decode: after replacement myName: " + myName);
-
 
             Field[] fields =  cls.getDeclaredFields();
             HashMap <String,Field> nameToFieldMap = new HashMap<String, Field>();
@@ -147,7 +120,6 @@ public class SlideBook7Reader  extends FormatReader {
             for (Field theField:fields) 
             {
                 nameToFieldMap.put(theField.getName(),theField);
-                //SlideBook7Reader.LOGGER.info("nameToFieldMap.put theField.getName(): " + theField.getName());
             }
 
             List<NodeTuple> theValueClassList = inNode.getValue();
@@ -166,9 +138,7 @@ public class SlideBook7Reader  extends FormatReader {
                     ScalarNode theAttrKeyNode = (ScalarNode)theValueAttributeList.get(theAttrIndex).getKeyNode();
                     Node theAttrValueNode  =  theValueAttributeList.get(theAttrIndex).getValueNode();
                     String theAttrName = theAttrKeyNode.getValue();
-                    //SlideBook7Reader.LOGGER.info("theAttrName: " + theAttrName);
                     Field theField = nameToFieldMap.get(theAttrName);
-                    String theFieldName;
                     if(theField == null && theAttrIndex > 0)
                     {
                         DecodeUnknownString(theAttrName,theAttrValueNode);
@@ -185,17 +155,15 @@ public class SlideBook7Reader  extends FormatReader {
                             if(!theAttrValue.equals(sbName)) break;   // not this class
                             continue;
                         }
-                        //if(theTypeName.equals("java.lang.Integer"))
                         if(theField.getType().isAssignableFrom(theTypeInteger))
                         {
                             Integer theVal = Integer.valueOf(theAttrValue);
-                            //SlideBook7Reader.LOGGER.info("name: " + theField.getName() + " - value: " + theVal);
                             try {
                                 theField.set(this,theVal);
                             } catch (IllegalArgumentException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             } catch (IllegalAccessException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             }
                         }
                         else if(theField.getType().isAssignableFrom(theTypeDouble))
@@ -204,9 +172,9 @@ public class SlideBook7Reader  extends FormatReader {
                             try {
                                 theField.set(this,theVal);
                             } catch (IllegalArgumentException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             } catch (IllegalAccessException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             }
                         }
                         else if(theField.getType().isAssignableFrom(theTypeFloat))
@@ -215,9 +183,9 @@ public class SlideBook7Reader  extends FormatReader {
                             try {
                                 theField.set(this,theVal);
                             } catch (IllegalArgumentException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             } catch (IllegalAccessException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             }
                         }
                         else if(theField.getType().isAssignableFrom(theTypeBoolean))
@@ -228,22 +196,20 @@ public class SlideBook7Reader  extends FormatReader {
                                 else
                                     theField.set(this,false);
                             } catch (IllegalArgumentException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             } catch (IllegalAccessException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             }
                         }
-
-                        //else if(theTypeName.equals("java.lang.String"))
                         else if(theField.getType().isAssignableFrom(theTypeString))
                         {
                             theAttrValue = RestoreSpecialCharacters(theAttrValue);
                             try {
                                 theField.set(this,theAttrValue);
                             } catch (IllegalArgumentException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             } catch (IllegalAccessException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             }
                         }
                     }
@@ -265,10 +231,10 @@ public class SlideBook7Reader  extends FormatReader {
                                 {
                                     if(Integer.valueOf(theAttrValue) != theListSize-1)
                                     {
-                                        SlideBook7Reader.LOGGER.info("theAttrName: " + theAttrName);
-                                        SlideBook7Reader.LOGGER.info("theAttrValue: " + theAttrValue);
-                                        SlideBook7Reader.LOGGER.info("theListSize: " + theListSize);
-                                        SlideBook7Reader.LOGGER.info("Integer.valueOf(theAttrValue) != theListSize");
+                                        SlideBook7Reader.LOGGER.trace("theAttrName: " + theAttrName);
+                                        SlideBook7Reader.LOGGER.trace("theAttrValue: " + theAttrValue);
+                                        SlideBook7Reader.LOGGER.trace("theListSize: " + theListSize);
+                                        SlideBook7Reader.LOGGER.trace("Integer.valueOf(theAttrValue) != theListSize");
                                     }
                                     continue;
                                 }
@@ -277,9 +243,9 @@ public class SlideBook7Reader  extends FormatReader {
                             try {
                                 theField.set(this,theArray);
                             } catch (IllegalArgumentException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             } catch (IllegalAccessException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             }
 
                         }
@@ -294,7 +260,7 @@ public class SlideBook7Reader  extends FormatReader {
                                 {
                                     if(Integer.valueOf(theAttrValue) != theListSize-1)
                                     {
-                                        SlideBook7Reader.LOGGER.info("Integer.valueOf(theAttrValue) != theListSize");
+                                        SlideBook7Reader.LOGGER.trace("Integer.valueOf(theAttrValue) != theListSize");
                                     }
                                     continue;
                                 }
@@ -304,9 +270,9 @@ public class SlideBook7Reader  extends FormatReader {
                             try {
                                 theField.set(this,theArray);
                             } catch (IllegalArgumentException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             } catch (IllegalAccessException ex) {
-                                SlideBook7Reader.LOGGER.info(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
                             }
 
                         }
@@ -352,7 +318,7 @@ public class SlideBook7Reader  extends FormatReader {
 
         public String GetSBClassName()
         {
-            Class cls = getClass(); 
+            Class<? extends ClassDecoder> cls = getClass(); 
             String myName = cls.getName();
             myName = myName.replaceAll(".*\\$","");
             String sbName = myName.replaceAll(".*\\.","");
@@ -368,14 +334,12 @@ public class SlideBook7Reader  extends FormatReader {
                 return new IntIntPair(theVal,theStrIntPair.mInt);
             }
             return new IntIntPair(-1,-1);
-
         }
 
         StrIntPair GetStringValue(MappingNode inNode, int inStartIndex,String inKeyname,Boolean inRestoreSpecialValues)
         {
             ScalarNode theKeyNode;
             ScalarNode theValueNode;
-            Node theCurrentNode;
             String theKey;
             String theValue;
 
@@ -433,7 +397,6 @@ public class SlideBook7Reader  extends FormatReader {
                 theIntegerArray[theI] = Integer.valueOf(theStringArray[theI]);
             }
             return theIntegerArray;
-
         }
 
         Long [] GetLongArray(Node inNode,String inLogName, Boolean inFirstIsSize)
@@ -448,7 +411,6 @@ public class SlideBook7Reader  extends FormatReader {
                 theLongArray[theI] = Long.valueOf(theStringArray[theI]);
             }
             return theLongArray;
-
         }
 
 
@@ -500,7 +462,7 @@ public class SlideBook7Reader  extends FormatReader {
                 {
                     if(Integer.valueOf(theAttrValue) != theListSize)
                     {
-                        SlideBook7Reader.LOGGER.info("GetStringArray: List Size mismatch");
+                        SlideBook7Reader.LOGGER.debug("GetStringArray: List Size mismatch");
                     }
                     continue;
                 }
@@ -570,7 +532,6 @@ public class SlideBook7Reader  extends FormatReader {
             for(int theDir=0;theDir<theDirectories.length;theDir++)
             {
                 String thePath = theDirectories[theDir].getAbsolutePath();
-                //thePath = thePath.replaceAll(".*"+File.separator,"");
                 thePath = thePath.replaceAll("\\\\","/");
                 thePath = thePath.replaceAll(".*/","");
                 thePath = thePath.replaceAll("\\"+kImageDirSuffix,"");
@@ -637,8 +598,6 @@ public class SlideBook7Reader  extends FormatReader {
             return theTimepoint;
         }
 
-
-
         public String [] GetListOfImageDataFiles(String inTitle)
         {
             return getListOfNpyDataFiles(inTitle,"ImageData");
@@ -647,14 +606,12 @@ public class SlideBook7Reader  extends FormatReader {
         public String [] GetListOfMaskDataFiles(String inTitle)
         {
             return getListOfNpyDataFiles(inTitle,"MaskData");
-
         }
 
         public String [] GetListOfHistogramDataFiles(String inTitle)
         {
             return getListOfNpyDataFiles(inTitle,"HistogramData");
         }
-
 
         public String [] GetListOfHistogramSummaryFiles(String inTitle)
         {
@@ -665,7 +622,7 @@ public class SlideBook7Reader  extends FormatReader {
         {
             String theImageGroupDirectory =  GetImageGroupDirectory(inTitle);
 
-            LOGGER.info("getListOfNpyDataFiles: theImageGroupDirectory " + theImageGroupDirectory);
+            LOGGER.trace("getListOfNpyDataFiles: theImageGroupDirectory " + theImageGroupDirectory);
 
             File [] theFiles = new File(theImageGroupDirectory).listFiles(new FileFilter() {
                 @Override
@@ -679,11 +636,11 @@ public class SlideBook7Reader  extends FormatReader {
             });
 
             String []theFilePaths = new String[theFiles.length];
-            LOGGER.info("getListOfNpyDataFiles: theFiles.length " + theFiles.length);
+            LOGGER.trace("getListOfNpyDataFiles: theFiles.length " + theFiles.length);
             for(int theFil=0;theFil<theFiles.length;theFil++)
             {
                 theFilePaths[theFil] = theFiles[theFil].getAbsolutePath();
-                LOGGER.info("getListOfNpyDataFiles: theFile " + theFil + theFilePaths[theFil]);
+                LOGGER.trace("getListOfNpyDataFiles: theFile " + theFil + theFilePaths[theFil]);
             }
 
             return theFilePaths;
@@ -717,14 +674,14 @@ public class SlideBook7Reader  extends FormatReader {
 
                 if(!theEOL)
                 {
-                    LOGGER.info("No carriage return");
+                    LOGGER.trace("No carriage return");
                     return false;
                 }
                 short theHeaderLen;
                 theHeaderLen = ByteArrayToShort(theBuffer,8);
-                LOGGER.info("Header length: " + theHeaderLen);
+                LOGGER.trace("Header length: " + theHeaderLen);
                 String theHeader = new String(theBuffer,10,theHeaderLen);
-                LOGGER.info("Header : " + theHeader);
+                LOGGER.trace("Header : " + theHeader);
                 int loc1,loc2;
                 loc1 = theHeader.indexOf("descr") + 9;
                 String theEndianess = theHeader.substring(loc1,loc1+1);
@@ -751,7 +708,6 @@ public class SlideBook7Reader  extends FormatReader {
                     mShape[theI] = Integer.valueOf(theTrim);
                 }
             } catch (IOException ex) {
-                //Logger.getLogger(CNpyHeader.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
             return true;
@@ -781,7 +737,6 @@ public class SlideBook7Reader  extends FormatReader {
     class CImageData {
         
     }
-
 
     class CImageGroup extends ClassDecoder {
 
@@ -827,8 +782,6 @@ public class SlideBook7Reader  extends FormatReader {
             String mXmlData;
         }
 
-
-
         ArrayList <CImageData>  mImageDataList; // one per time point
         ArrayList <CMaskPositions>  mMaskPosList; // one per time point
         ArrayList <CAnnotations>  mAnnotationList; // one per time point
@@ -865,31 +818,31 @@ public class SlideBook7Reader  extends FormatReader {
             Boolean theResult = false;
 
             // load ImageRecord
-            SlideBook7Reader.LOGGER.info("CImageGroup: Load");
+            SlideBook7Reader.LOGGER.trace("CImageGroup: Load");
             theResult = LoadImageRecord();
-            SlideBook7Reader.LOGGER.info("LoadImageRecord: result " + theResult);
+            SlideBook7Reader.LOGGER.trace("LoadImageRecord: result " + theResult);
             if(!theResult) return false;
             
             theResult = LoadChannelRecord();
-            SlideBook7Reader.LOGGER.info("LoadChannelRecord: result " + theResult);
+            SlideBook7Reader.LOGGER.trace("LoadChannelRecord: result " + theResult);
             if(!theResult) return false;
             theResult = LoadMaks();
-            SlideBook7Reader.LOGGER.info("LoadMaks: result " + theResult);
+            SlideBook7Reader.LOGGER.trace("LoadMaks: result " + theResult);
             if(!theResult) return false;
             theResult = LoadAnnotations();
-            SlideBook7Reader.LOGGER.info("LoadAnnotations: result " + theResult);
+            SlideBook7Reader.LOGGER.trace("LoadAnnotations: result " + theResult);
             if(!theResult) return false;
             theResult = LoadElapsedTimes();
-            SlideBook7Reader.LOGGER.info("LoadElapsedTimes: result " + theResult);
+            SlideBook7Reader.LOGGER.trace("LoadElapsedTimes: result " + theResult);
             if(!theResult) return false;
             theResult = LoadSAPositions();
-            SlideBook7Reader.LOGGER.info("LoadSAPositions: result " + theResult);
+            SlideBook7Reader.LOGGER.trace("LoadSAPositions: result " + theResult);
             if(!theResult) return false;
             theResult = LoadStagePosition();
-            SlideBook7Reader.LOGGER.info("LoadStagePosition: result " + theResult);
+            SlideBook7Reader.LOGGER.trace("LoadStagePosition: result " + theResult);
             if(!theResult) return false;
             theResult = LoadAuxData();
-            SlideBook7Reader.LOGGER.info("LoadAuxData: result " + theResult);
+            SlideBook7Reader.LOGGER.trace("LoadAuxData: result " + theResult);
             if(!theResult) return false;
 
             return true;
@@ -905,15 +858,15 @@ public class SlideBook7Reader  extends FormatReader {
 
                 mImageRecord = new CImageRecord70();
                 int theLastIndex = mImageRecord.Decode(theNode);
-                LOGGER.info("LoadImageRecord: theLastIndex " + theLastIndex);
+                LOGGER.trace("LoadImageRecord: theLastIndex " + theLastIndex);
 
                 // verify correct number of timepoints/channels in image record
                 if(!CountImageDataFiles())
                 {
-                  LOGGER.info("CountImageDataFiles: Did not succeed " );
-                    return false;
+                  LOGGER.trace("CountImageDataFiles: Did not succeed " );
+                  return false;
                 }
-                LOGGER.info("CountImageDataFiles: OK " );
+                LOGGER.trace("CountImageDataFiles: OK " );
 
             } catch (FileNotFoundException e) {
 
@@ -927,9 +880,9 @@ public class SlideBook7Reader  extends FormatReader {
         public Boolean CountImageDataFiles()
         {
             String [] theImageFileNames = mFile.GetListOfImageDataFiles(mImageTitle);
-            LOGGER.info("CountImageDataFiles: theImageFileNames.length " + theImageFileNames.length);
-            LOGGER.info("CountImageDataFiles: mImageRecord.mNumChannels " + mImageRecord.mNumChannels);
-            LOGGER.info("CountImageDataFiles: mImageRecord.mNumTimepoints " + mImageRecord.mNumTimepoints);
+            LOGGER.trace("CountImageDataFiles: theImageFileNames.length " + theImageFileNames.length);
+            LOGGER.trace("CountImageDataFiles: mImageRecord.mNumChannels " + mImageRecord.mNumChannels);
+            LOGGER.trace("CountImageDataFiles: mImageRecord.mNumTimepoints " + mImageRecord.mNumTimepoints);
             if(theImageFileNames.length == mImageRecord.mNumChannels*mImageRecord.mNumTimepoints) return true; // all in order
             Integer theMaxChannel = 0;
             Integer theMaxTimepoint = 0;
@@ -940,10 +893,10 @@ public class SlideBook7Reader  extends FormatReader {
                 theMaxChannel = max(theMaxChannel,theChannel+1);
                 theMaxTimepoint = max(theMaxTimepoint,theTimepoint+1);
             }
-            LOGGER.info("CountImageDataFiles: theMaxChannel + theMaxTimepoint " + theMaxChannel + " " + theMaxTimepoint);
+            LOGGER.trace("CountImageDataFiles: theMaxChannel + theMaxTimepoint " + theMaxChannel + " " + theMaxTimepoint);
             if(theMaxChannel == 0 || theMaxTimepoint ==0)
             {
-                LOGGER.info("CountImageDataFiles: theMaxChannel + theMaxTimepoint " + theMaxChannel + theMaxTimepoint);
+                LOGGER.trace("CountImageDataFiles: theMaxChannel + theMaxTimepoint " + theMaxChannel + theMaxTimepoint);
                 //error
                 return false;
             }
@@ -955,7 +908,7 @@ public class SlideBook7Reader  extends FormatReader {
             {
                 mImageDataList.add(new CImageData());
             }
-            LOGGER.info("CountImageDataFiles: mImageDataList.length " + mImageDataList.size());
+            LOGGER.trace("CountImageDataFiles: mImageDataList.length " + mImageDataList.size());
             return true;
 
         }
@@ -993,7 +946,7 @@ public class SlideBook7Reader  extends FormatReader {
 
 
                     theLastIndex = theChannelRecord.Decode(theNode,theLastIndex);
-                    LOGGER.info("theLastIndex: " + theLastIndex);
+                    LOGGER.trace("theLastIndex: " + theLastIndex);
                     for(;;)
                     {
                         thePair = FindNextClass(theNode,theLastIndex);
@@ -1035,15 +988,11 @@ public class SlideBook7Reader  extends FormatReader {
                                 mHistogramRecordList.add(theHistogramRecord70);
                                 // Read the Histograms here
                             }
-
                         }
                         else break;
-
                     }
                 }
-
             } catch (FileNotFoundException e) {
-
                 e.printStackTrace();
             }
             return true;
@@ -1057,7 +1006,6 @@ public class SlideBook7Reader  extends FormatReader {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 int theLastIndex = 0;
-                StrIntPair thePair;
                 List<NodeTuple> theValueClassList = theNode.getValue();
                 ScalarNode theKeyNode;
                 ScalarNode theValueNode;
@@ -1090,7 +1038,6 @@ public class SlideBook7Reader  extends FormatReader {
                     for(;theLastIndex< theValueClassList.size();)
                     {
                         IntIntPair theIIPair = GetIntegerValue(theNode,theLastIndex,"theTimepointIndex");
-                        Integer theTimePointIndex = theIIPair.mInt1;
                         theLastIndex = theIIPair.mInt2;
                         if(theLastIndex < 0) break;
 
@@ -1129,14 +1076,12 @@ public class SlideBook7Reader  extends FormatReader {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 int theLastIndex = 0;
-                StrIntPair thePair;
                 CDataTableHeaderRecord70 theDataTableHeaderRecord70 = new CDataTableHeaderRecord70();
                 theLastIndex = theDataTableHeaderRecord70.Decode(theNode);
                 mAnnotationList = new ArrayList<CAnnotations>();
                 for(;;)
                 {
                     IntIntPair theIIPair = GetIntegerValue(theNode,theLastIndex,"theTimepointIndex");
-                    Integer theTimePointIndex = theIIPair.mInt1;
                     theLastIndex = theIIPair.mInt2;
                     if(theLastIndex < 0) break;
 
@@ -1187,13 +1132,11 @@ public class SlideBook7Reader  extends FormatReader {
                 }
 
             } catch (FileNotFoundException e) {
-
-                SlideBook7Reader.LOGGER.info("LoadAnnotations: FileNotFoundException loading error: " + e.getMessage());
+                SlideBook7Reader.LOGGER.trace("LoadAnnotations: FileNotFoundException loading error: " + e.getMessage());
                 e.printStackTrace();
                 return false;
             } catch (Exception e) {
-
-                SlideBook7Reader.LOGGER.info("LoadAnnotations: Exception loading error: " + e.getMessage());
+                SlideBook7Reader.LOGGER.trace("LoadAnnotations: Exception loading error: " + e.getMessage());
                 e.printStackTrace();
                 return false;
             }
@@ -1209,10 +1152,8 @@ public class SlideBook7Reader  extends FormatReader {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 ScalarNode theKeyNode;
-                ScalarNode theValueNode;
                 Node theCurrentNode;
                 String theKey;
-                String theValue;
                 int theLastIndex = 0;
                 List<NodeTuple> theValueClassList = theNode.getValue();
 
@@ -1236,10 +1177,8 @@ public class SlideBook7Reader  extends FormatReader {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 ScalarNode theKeyNode;
-                ScalarNode theValueNode;
                 Node theCurrentNode;
                 String theKey;
-                String theValue;
                 List<NodeTuple> theValueClassList = theNode.getValue();
                 int theLastIndex = 0;
 
@@ -1268,22 +1207,18 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean LoadStagePosition()
         {
-
             try {
                 InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kStagePositionDataFilename);
                 Reader inputStreamReader = new InputStreamReader(inputStream);
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 ScalarNode theKeyNode;
-                ScalarNode theValueNode;
                 Node theCurrentNode;
                 String theKey;
-                String theValue;
                 List<NodeTuple> theValueClassList = theNode.getValue();
                 int theLastIndex = 0;
 
                 IntIntPair theIIPair = GetIntegerValue(theNode,theLastIndex,"StructArraySize");
-                Integer thePositionCount = theIIPair.mInt1;
                 theLastIndex = theIIPair.mInt2;
                 if(theLastIndex < 0) return true;
                 mStagePositions = new ArrayList<CSBPoint <Float>>();
@@ -1317,10 +1252,8 @@ public class SlideBook7Reader  extends FormatReader {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 ScalarNode theKeyNode;
-                ScalarNode theValueNode;
                 Node theCurrentNode;
                 String theKey;
-                String theValue;
                 List<NodeTuple> theValueClassList = theNode.getValue();
                 int theLastIndex = 0;
 
@@ -1405,7 +1338,6 @@ public class SlideBook7Reader  extends FormatReader {
                     mAuxSInt32DataList.add(theAux);
                 }
 
-                
                 // SINT64
                 theIIPair = GetIntegerValue(theNode,theLastIndex,"theAuxSInt64DataTablesSize");
                 theTableCount = theIIPair.mInt1;
@@ -1445,7 +1377,6 @@ public class SlideBook7Reader  extends FormatReader {
                     CDataTableHeaderRecord70 theAuxDataTable70 = new CDataTableHeaderRecord70();
                     theLastIndex = theAuxDataTable70.Decode(theNode,theLastIndex);
                     StrIntPair theSIPair =  GetStringValue(theNode,theLastIndex,"theXMLDescriptor",true);
-                    String theXMLDescriptor = theSIPair.mStr;
                     theLastIndex = theSIPair.mInt;
 
                     theIIPair = GetIntegerValue(theNode,theLastIndex,"theXmlAuxDataSize"); // always 1
@@ -1455,17 +1386,13 @@ public class SlideBook7Reader  extends FormatReader {
                     theAux.mXmlData = theSIPair.mStr;
                     theLastIndex = theSIPair.mInt;
                     mAuxXmlDataList.add(theAux);
-
                 }
-
-
             } catch (FileNotFoundException e) {
-
                 e.printStackTrace();
             }
         return true;
         }
-        
+
         public int GetNumChannels()
         {
             return mImageRecord.mNumChannels;
@@ -1491,18 +1418,18 @@ public class SlideBook7Reader  extends FormatReader {
             int theNumStagePositions = mStagePositions.size();
             if(theNumStagePositions <= 1) return 1;
             CSBPoint <Float> thePoint0 = mStagePositions.get(0);
-            SlideBook7Reader.LOGGER.info("GetNumPositions: thePoint0 mX=" + thePoint0.mX + ", mY=" + thePoint0.mY);
+            SlideBook7Reader.LOGGER.trace("GetNumPositions: thePoint0 mX=" + thePoint0.mX + ", mY=" + thePoint0.mY);
             int theNumUniquePositions = 1;
             for(int thePosition = 1; thePosition < theNumStagePositions; thePosition++)
             {
                 CSBPoint <Float> thePoint1 = mStagePositions.get(thePosition);
-                SlideBook7Reader.LOGGER.info("GetNumPositions: thePoint1 mX=" + thePoint1.mX + ", mY=" + thePoint1.mY);
+                SlideBook7Reader.LOGGER.trace("GetNumPositions: thePoint1 mX=" + thePoint1.mX + ", mY=" + thePoint1.mY);
                 if(thePoint0.mX.equals(thePoint1.mX) &&
                    thePoint0.mY.equals(thePoint1.mY)) break;
 
                 theNumUniquePositions++;
             }
-            SlideBook7Reader.LOGGER.info("GetNumPositions: theNumUniquePositions=" + theNumUniquePositions);
+            SlideBook7Reader.LOGGER.trace("GetNumPositions: theNumUniquePositions=" + theNumUniquePositions);
 
             return theNumUniquePositions;
         }
@@ -1546,7 +1473,6 @@ public class SlideBook7Reader  extends FormatReader {
         {
             return mImageRecord.mLensDef.mActualMagnification * mImageRecord.mOptovarDef.mMagnification ;
         }
-
 
         public float GetVoxelSize()
         {
@@ -1597,7 +1523,6 @@ public class SlideBook7Reader  extends FormatReader {
         public Float mXOffset;
         public Float mYOffset;
         public Float mZOffset;
-        
     }
 
     class CAnnotation70 extends ClassDecoder {
@@ -1631,14 +1556,12 @@ public class SlideBook7Reader  extends FormatReader {
         {
             mFieldOffsetMicrons = new CSBPoint<Double>();
             mStageOffsetMicrons = new CSBPoint<Double>();
-
-
         }
 
         @Override
         protected void DecodeUnknownString(String inUnknownString, Node inAttrValueNode)
         {
-            LOGGER.info("inUnknownString: "+inUnknownString);
+            LOGGER.trace("inUnknownString: "+inUnknownString);
             if(inAttrValueNode  instanceof ScalarNode)
             {
                 ScalarNode theAttrValueScalarNode = (ScalarNode)inAttrValueNode ;
@@ -1650,7 +1573,6 @@ public class SlideBook7Reader  extends FormatReader {
             }
             else if(inAttrValueNode  instanceof SequenceNode)
             {
-                SequenceNode theAttrValueSequenceNode = (SequenceNode)inAttrValueNode ;
                 Integer [] thePoints = GetIntegerArray(inAttrValueNode,"inUnknownString",false);
                 mVertexes = new ArrayList<CSBPoint<Integer>>();
                 for(int theP=0; theP < thePoints.length - 2; theP += 3)
@@ -1704,7 +1626,7 @@ public class SlideBook7Reader  extends FormatReader {
         public CExposureRecord70 mExposureRecord;
         public CChannelDef70 mChannelDef;
 
-            @Override
+        @Override
         public int Decode(MappingNode inNode, int inStartIndex)
         {
             mExposureRecord = new CExposureRecord70();
@@ -1807,7 +1729,6 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mAuxCaptureFlags;
         public Integer mMoveFieldRightSign; // negative if moving stage right decreases stage x values
         public Integer mMoveFieldDownSign;  // negative if moving stage down decreases stage y values
-        
     }
 
     class CFluorDef70 extends ClassDecoder {
@@ -1859,7 +1780,6 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mAuxNDPos;
         public Integer mAuxFilterWheel2Pos;
         public Integer mAuxFilterWheel3Pos;
-        
     }
 
     class CFRAPRegionAnnotation70 extends ClassDecoder {
@@ -1882,7 +1802,6 @@ public class SlideBook7Reader  extends FormatReader {
             for(int theRegionIndex = 0; theRegionIndex < theNumRegions; theRegionIndex++)
             {
                 CCubeAnnotation70 theCubeAnnotation70 = new CCubeAnnotation70() ;
-                //theCubeAnnotation70.SetDataExtent(mDataExtents);
                 theLastIndex = theCubeAnnotation70.Decode(inNode,theLastIndex);
                 mRegions.add(theCubeAnnotation70);
             }
@@ -1919,7 +1838,6 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mDarkValue;
         public Integer mFRETMethod;
         public Float mFRETAddParameter;
-        
     }
 
 
@@ -1987,7 +1905,7 @@ public class SlideBook7Reader  extends FormatReader {
         CMainViewRecord70 mMainViewRecord;
         COptovarDef70 mOptovarDef;
 
-            @Override
+        @Override
         public int Decode(MappingNode inNode)
         {
             mLensDef = new CLensDef70();
@@ -2000,10 +1918,8 @@ public class SlideBook7Reader  extends FormatReader {
             theLastIndex = mMainViewRecord.Decode(inNode,theLastIndex);
 
             return theLastIndex;
-
         }
     }
-
 
     class CLensDef70 extends ClassDecoder {
         public Integer mStructID;
@@ -2037,7 +1953,6 @@ public class SlideBook7Reader  extends FormatReader {
         public Float mCameraMagnificationChange;
         public Float mActualMagnification;
     }
-
 
     class CMainViewRecord70 extends ClassDecoder {
         public Integer mStructID;
@@ -2091,7 +2006,6 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mTurretPosition;
     }
 
-
     class CRatioManipRecord70 extends ClassDecoder {
         public Integer mStructID;
         public Integer mStructVersion;
@@ -2117,7 +2031,6 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mDenMax;
     }
 
-
     class CRemapChannelLUT70 extends ClassDecoder{
         public Double[] mCoefficients;
         public Float[] mValues;
@@ -2133,7 +2046,6 @@ public class SlideBook7Reader  extends FormatReader {
         public CRemapPoint[] mPoints;
     }
 
-
     class CRemapManipRecord70 extends ClassDecoder {
         public Integer mStructID;
         public Integer mStructVersion;
@@ -2147,7 +2059,6 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mCalibDataPtrHigh;
     }
 
-
     class CRemapPoint extends ClassDecoder {
         public Float mGivenValue;
         public Float mDesiredValue;
@@ -2155,11 +2066,7 @@ public class SlideBook7Reader  extends FormatReader {
         public CCube mCube;
     }
 
-
-
-
     class CSlideRecord70 extends ClassDecoder {
-
         public Integer mStructVersion;
         public Integer mByteOrdering;
         public Integer mStructLen;
@@ -2187,8 +2094,6 @@ public class SlideBook7Reader  extends FormatReader {
     }
 
     class CUnknownAnnotation70 extends ClassDecoder {
-        
-
         CAnnotation70 mAnn;
 
         @Override
@@ -2201,9 +2106,7 @@ public class SlideBook7Reader  extends FormatReader {
         }
     }
 
-
     class DataLoader {
-        
         public String mSlidePath;
         public String mErrorMessage;
         public CSBFile70 mFile;
@@ -2229,7 +2132,7 @@ public class SlideBook7Reader  extends FormatReader {
         {
             try {
                 Boolean theResult = ReadSld();
-                LOGGER.info("LoadMetadata: ReadSld result: " + theResult);
+                LOGGER.trace("LoadMetadata: ReadSld result: " + theResult);
                 if(!theResult) return false;
 
                 // get list of image directories
@@ -2238,52 +2141,44 @@ public class SlideBook7Reader  extends FormatReader {
                 {
                     CImageGroup theImageGroup = new CImageGroup(mFile,theImageTitles[theImageGroupIndex]);
                     theResult = theImageGroup.Load();
-                    LOGGER.info("LoadMetadata: theImageGroupIndex: " + theImageGroupIndex + "Load:  result: " + theResult);
+                    LOGGER.trace("LoadMetadata: theImageGroupIndex: " + theImageGroupIndex + "Load:  result: " + theResult);
                     if(theResult) mCImageGroupList.add(theImageGroup);
                 }
                 return true;
             } catch (Exception e) {
-                LOGGER.info("Could not load file: " + mSlidePath);
+                LOGGER.warn("Could not load file: " + mSlidePath, e);
                 return false;
             }
         }
-
 
         public Boolean ReadSld() throws FileNotFoundException
         {
           try (InputStream inputStream = new FileInputStream(mSlidePath);
               Reader inputStreamReader = new InputStreamReader(inputStream)) {
-                Yaml yaml = new Yaml();
-                MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
-
                 mSlideRecord = new CSlideRecord70();
                 inputStream.close();
-                int theLastIndex = mSlideRecord.Decode(theNode);
-                SlideBook7Reader.LOGGER.info("ReadSld(): mByteOrdering: " + mSlideRecord.mByteOrdering);
+                SlideBook7Reader.LOGGER.trace("ReadSld(): mByteOrdering: " + mSlideRecord.mByteOrdering);
                 return true;
             } catch (final ReaderException e) {
                 mErrorMessage += "Could not decode file: " + mSlidePath;
-                SlideBook7Reader.LOGGER.info("ReadSld(): " +mErrorMessage);
+                SlideBook7Reader.LOGGER.error("ReadSld(): " + mErrorMessage, e);
                 return false;
             } catch (Exception e) {
                 mErrorMessage += "Could not load file: " + mSlidePath;
+                SlideBook7Reader.LOGGER.error("ReadSld(): " + mErrorMessage, e);
                 return false;
             }
         }
 
         public Boolean ReadSld(InputStream inInputStream) throws FileNotFoundException
         {
-            Yaml yaml = new Yaml();
-            Reader inputStreamReader = new InputStreamReader(inInputStream);
-            MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
-
             mSlideRecord = new CSlideRecord70();
             try {
-                int theLastIndex = mSlideRecord.Decode(theNode);
-                SlideBook7Reader.LOGGER.info("ReadSld(stream): mByteOrdering: " + mSlideRecord.mByteOrdering);
+                SlideBook7Reader.LOGGER.trace("ReadSld(stream): mByteOrdering: " + mSlideRecord.mByteOrdering);
                 return true;
             } catch (Exception e) {
                 mErrorMessage += "Could not load file: " + mSlidePath;
+                SlideBook7Reader.LOGGER.error("ReadSld(): " + mErrorMessage, e);
                 return false;
             }
         }
@@ -2299,10 +2194,10 @@ public class SlideBook7Reader  extends FormatReader {
         public boolean ReadPlane(int inCaptureId, byte[] ouBuf,
             int inPositionIndex, int inTimepointIndex, int inZPlaneIndex, int inChannelIndex) throws IOException
         {
-            SlideBook7Reader.LOGGER.info("ReadPlane: inPositionIndex: " + inPositionIndex);
-            SlideBook7Reader.LOGGER.info("ReadPlane: inTimepointIndex: " + inTimepointIndex);
-            SlideBook7Reader.LOGGER.info("ReadPlane: inZPlaneIndex: " + inZPlaneIndex);
-            SlideBook7Reader.LOGGER.info("ReadPlane: inChannelIndex: " + inChannelIndex);
+            SlideBook7Reader.LOGGER.trace("ReadPlane: inPositionIndex: " + inPositionIndex);
+            SlideBook7Reader.LOGGER.trace("ReadPlane: inTimepointIndex: " + inTimepointIndex);
+            SlideBook7Reader.LOGGER.trace("ReadPlane: inZPlaneIndex: " + inZPlaneIndex);
+            SlideBook7Reader.LOGGER.trace("ReadPlane: inChannelIndex: " + inChannelIndex);
             CImageGroup theImageGroup = GetImageGroup(inCaptureId);
             // because the format is XYCZT , the inPositionIndex is always 0, so we must ignore GetNumPositions
             int theSbTimepointIndex = inTimepointIndex;// inPositionIndex + theImageGroup.GetNumPositions() * inTimepointIndex;
@@ -2338,14 +2233,12 @@ public class SlideBook7Reader  extends FormatReader {
                 mCurrentFileCounter++;
             }
             long thePlaneSize = theImageGroup.GetNumColumns() * theImageGroup.GetNumRows() * theImageGroup.mNpyHeader.mBytesPerPixel;
-            SlideBook7Reader.LOGGER.info("ReadPlane: thePlaneSize: " + thePlaneSize);
+            SlideBook7Reader.LOGGER.trace("ReadPlane: thePlaneSize: " + thePlaneSize);
             long theSeekOffset = theImageGroup.mNpyHeader.mHeaderSize + thePlaneSize * inZPlaneIndex;
-            SlideBook7Reader.LOGGER.info("ReadPlane: theSeekOffset: " + theSeekOffset);
+            SlideBook7Reader.LOGGER.trace("ReadPlane: theSeekOffset: " + theSeekOffset);
             theStream.seek(theSeekOffset);
             theStream.read(ouBuf,0,(int)thePlaneSize);
 
-            int theMax=0;
-            int theMin = 1000000;
             /*
             for(int theI=0; theI < thePlaneSize ; theI += 2)
             {
@@ -2382,17 +2275,7 @@ public class SlideBook7Reader  extends FormatReader {
 
     }
 
-
-//public class SlideBook7Reader  extends FormatReader {
-
-	// -- Constants --
-
-	private static final String URL_3I_SLD =
-			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook7.html";
-
-
     DataLoader mDataLoader;
-
 
 	// -- Constructor --
 
@@ -2400,43 +2283,39 @@ public class SlideBook7Reader  extends FormatReader {
 		super("SlideBook 7 SLD (native)", new String[] {"sldy"});
 		domains = new String[] {FormatTools.LM_DOMAIN};
 		suffixSufficient = false;
-        LOGGER.info(" LOGGER.info SlideBook7Reader: Constructed\n");
+        LOGGER.trace(" LOGGER.trace SlideBook7Reader: Constructed\n");
 	}
 
 	// -- IFormatReader API methods --
 
 	/* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
 	public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-        //Logger.getLogger("SlideBook7Reader").log(Level.SEVERE, null, "isThisType - stream");
         try {
-            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - stream: entering" );
             if(mDataLoader == null) return false;
             Boolean res = mDataLoader.ReadSld(stream);
             mDataLoader.CloseFile();
-            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - stream: returning " + res );
             return res;
         } catch (FileNotFoundException e) {
 
             e.printStackTrace();
         }
-        SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - stream: returning false");
+        SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - stream: returning false");
 
 		return false;
 	}
 
 	/* @see loci.formats.IFormatReader#isThisType(String, boolean) */
 	public boolean isThisType(String file, boolean open) {
-        //Logger.getLogger("SlideBook7Reader").log(Level.SEVERE, null, "isThisType - file: " + file);
         try {
             String mytestfile = file;
-            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String - open: " + open);
+            SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String - open: " + open);
             if(open)
             {
                 boolean suffixMatch = file.endsWith(".sldy");  
-                SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: suffixMatch " + suffixMatch );
+                SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String: suffixMatch " + suffixMatch );
                 if(!suffixMatch)
                 {
-                    SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: suffix mismath, returning false");
+                    SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String: suffix mismath, returning false");
                     return false;
                 }
             }
@@ -2447,15 +2326,14 @@ public class SlideBook7Reader  extends FormatReader {
             mDataLoader  = new DataLoader(theFileLocation.getAbsolutePath());
             Boolean res = mDataLoader.ReadSld();
             mDataLoader.CloseFile();
-            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: returning " + res );
+            SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String: returning " + res );
             return res;
         } catch (FileNotFoundException e) {
-
-            SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: printStackTrace " );
+            SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String: printStackTrace ", e);
             e.printStackTrace();
         }
 
-        SlideBook7Reader.LOGGER.info("SlideBook7Reader: isThisType - String: return false " );
+        SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String: return false " );
 
 		return false;
 	}
@@ -2466,39 +2344,23 @@ public class SlideBook7Reader  extends FormatReader {
 	public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
 			throws FormatException, IOException
 	{
-        if(mDataLoader == null) return buf;
-        int theSeries = getSeries();
-        SlideBook7Reader.LOGGER.info("openBytes: theSeries: " + theSeries);
-        SlideBook7Reader.LOGGER.info("openBytes: no: " + no);
-        SlideBook7Reader.LOGGER.info("openBytes: x: " + x);
-        SlideBook7Reader.LOGGER.info("openBytes: y: " + y);
-        SlideBook7Reader.LOGGER.info("openBytes: w: " + w);
-        SlideBook7Reader.LOGGER.info("openBytes: h: " + h);
+    if(mDataLoader == null) return buf;
 		FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
 		int[] zct = FormatTools.getZCTCoords(this, no);
 		int bpc = FormatTools.getBytesPerPixel(getPixelType());
         int thePlaneSize = FormatTools.getPlaneSize(this);
-        //long thePlaneSize = theImageGroup.GetNumColumns() * theImageGroup.GetNumRows() * theImageGroup.mNpyHeader.mBytesPerPixel;
-        //SlideBook7Reader.LOGGER.info("openBytes: thePlaneSize: " + thePlaneSize);
-        //SlideBook7Reader.LOGGER.info("openBytes: bpc: " + bpc);
 		byte[] b = new byte[thePlaneSize*2];
 
 		mDataLoader.ReadPlane(getSeries(),b, 0, zct[2], zct[0], zct[1]);
 
 		int pixel = bpc * getRGBChannelCount();
 		int rowLen = w * pixel;
-        //SlideBook7Reader.LOGGER.info("openBytes: pixel: " + pixel);
-        //SlideBook7Reader.LOGGER.info("openBytes: rowLen: " + rowLen);
-        int width = getSizeX();
-        //SlideBook7Reader.LOGGER.info("openBytes: width: " + width);
 		for (int row=0; row<h; row++) {
 			System.arraycopy(b, pixel * ((row + y) * getSizeX() + x), buf,
 					row * rowLen, rowLen);
 		}
 
-        //SlideBook7Reader.LOGGER.info("openBytes: b: " + b[1000]);
-        //SlideBook7Reader.LOGGER.info("openBytes: isRGB: " + isRGB());
 		if (isRGB()) {
 			int bpp = getSizeC() * bpc;
 			int line = w * bpp;
@@ -2550,11 +2412,11 @@ public class SlideBook7Reader  extends FormatReader {
 				numTimepoints[capture] = theCurrentImageGroup.GetNumTimepoints() / numPositions[capture];
 				numZPlanes[capture] = theCurrentImageGroup.GetNumPlanes();
 				numChannels[capture] = theCurrentImageGroup.GetNumChannels();
-                SlideBook7Reader.LOGGER.info("capture: "+capture);
-                SlideBook7Reader.LOGGER.info("numPositions[capture]: "+numPositions[capture]);
-                SlideBook7Reader.LOGGER.info("numTimepoints[capture]: "+numTimepoints[capture]);
-                SlideBook7Reader.LOGGER.info("numZPlanes[capture]: "+numZPlanes[capture]);
-                SlideBook7Reader.LOGGER.info("numChannels[capture]: "+numChannels[capture]);
+                SlideBook7Reader.LOGGER.trace("capture: "+capture);
+                SlideBook7Reader.LOGGER.trace("numPositions[capture]: "+numPositions[capture]);
+                SlideBook7Reader.LOGGER.trace("numTimepoints[capture]: "+numTimepoints[capture]);
+                SlideBook7Reader.LOGGER.trace("numZPlanes[capture]: "+numZPlanes[capture]);
+                SlideBook7Reader.LOGGER.trace("numChannels[capture]: "+numChannels[capture]);
 			}
 
 			core.clear();
@@ -2568,15 +2430,15 @@ public class SlideBook7Reader  extends FormatReader {
 				ms.sizeX = theCurrentImageGroup.GetNumColumns();
 				//if (ms.sizeX % 2 != 0) ms.sizeX++;
 				ms.sizeY = theCurrentImageGroup.GetNumRows();
-                SlideBook7Reader.LOGGER.info("ms.sizeX: "+ms.sizeX);
-                SlideBook7Reader.LOGGER.info("ms.sizeY: "+ms.sizeY);
+                SlideBook7Reader.LOGGER.trace("ms.sizeX: "+ms.sizeX);
+                SlideBook7Reader.LOGGER.trace("ms.sizeY: "+ms.sizeY);
 				ms.sizeZ = numZPlanes[capture];
 				ms.sizeT = numTimepoints[capture] * numPositions[capture]; 
 				ms.sizeC = numChannels[capture];
-                SlideBook7Reader.LOGGER.info("ms.sizeT: "+ms.sizeT);
-                SlideBook7Reader.LOGGER.info("ms.sizeC: "+ms.sizeC);
+                SlideBook7Reader.LOGGER.trace("ms.sizeT: "+ms.sizeT);
+                SlideBook7Reader.LOGGER.trace("ms.sizeC: "+ms.sizeC);
 				int bytes = theCurrentImageGroup.GetBytesPerPixel();
-                SlideBook7Reader.LOGGER.info("initFile: bytes: " + bytes);
+                SlideBook7Reader.LOGGER.trace("initFile: bytes: " + bytes);
 				if (bytes % 3 == 0) {
 					ms.sizeC *= 3;
 					bytes /= 3;
@@ -2585,7 +2447,7 @@ public class SlideBook7Reader  extends FormatReader {
 				else ms.rgb = false;
 
 				ms.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, true);
-                SlideBook7Reader.LOGGER.info("initFile: ms.pixelType: " + ms.pixelType);
+                SlideBook7Reader.LOGGER.trace("initFile: ms.pixelType: " + ms.pixelType);
 				ms.imageCount = ms.sizeZ * ms.sizeT;
 				if (!ms.rgb) 
 					ms.imageCount *= ms.sizeC;
@@ -2610,14 +2472,13 @@ public class SlideBook7Reader  extends FormatReader {
 
 				// set up extended meta data
 				for (int capture=0; capture < numCaptures; capture++) {
-                    CImageGroup theCurrentImageGroup = mDataLoader.GetImageGroup(capture);
+          CImageGroup theCurrentImageGroup = mDataLoader.GetImageGroup(capture);
 					// link Instrument and Image
 					store.setImageInstrumentRef(instrumentID, capture);
 
 					// set image name
 					String imageName = theCurrentImageGroup.GetName();
 					store.setImageName(imageName, capture);
-					// store.setImageName("Image " + (capture + 1), capture);
 
 					// set description
 					String imageDescription = theCurrentImageGroup.GetInfo();
@@ -2625,7 +2486,7 @@ public class SlideBook7Reader  extends FormatReader {
 
 					// set voxel size per image (microns)
 					double voxelsize = theCurrentImageGroup.GetVoxelSize();
-                    SlideBook7Reader.LOGGER.info("initFile: voxelsize: " + voxelsize);
+          SlideBook7Reader.LOGGER.trace("initFile: voxelsize: " + voxelsize);
 					Length physicalSizeX = FormatTools.getPhysicalSizeX(voxelsize);
 					Length physicalSizeY = FormatTools.getPhysicalSizeY(voxelsize);
 					if (physicalSizeX != null) {
@@ -2634,13 +2495,13 @@ public class SlideBook7Reader  extends FormatReader {
 					if (physicalSizeY != null) {
 						store.setPixelsPhysicalSizeY(physicalSizeY, capture);
 					}
-                    SlideBook7Reader.LOGGER.info("initFile: physicalSizeX: " + physicalSizeX);
-                    SlideBook7Reader.LOGGER.info("initFile: physicalSizeY: " + physicalSizeY);
+          SlideBook7Reader.LOGGER.trace("initFile: physicalSizeX: " + physicalSizeX);
+          SlideBook7Reader.LOGGER.trace("initFile: physicalSizeY: " + physicalSizeY);
 					double stepSize = 0;
 					if (numZPlanes[capture] > 1) {
 						stepSize = theCurrentImageGroup.GetInterplaneSpacing();
 					}
-                    SlideBook7Reader.LOGGER.info("initFile: stepSize: " + stepSize);
+          SlideBook7Reader.LOGGER.trace("initFile: stepSize: " + stepSize);
 
 					Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
 					if (physicalSizeZ != null) {
@@ -2655,27 +2516,27 @@ public class SlideBook7Reader  extends FormatReader {
 							for (int zplane = 0; zplane < numZPlanes[capture]; zplane++) {
 								for (int channel = 0; channel < numChannels[capture]; channel++, imageIndex++) {
 									// set elapsed time
-									store.setPlaneDeltaT(new Time(deltaT, UNITS.MS), capture, imageIndex);
+									store.setPlaneDeltaT(new Time(deltaT, UNITS.MILLISECOND), capture, imageIndex);
 
 									// set exposure time
 									int expTime = theCurrentImageGroup.GetExposureTime(channel);
-									store.setPlaneExposureTime(new Time(expTime, UNITS.MS), capture, imageIndex);
+									store.setPlaneExposureTime(new Time(expTime, UNITS.MILLISECOND), capture, imageIndex);
 
 									// set tile xy position
 									double numberX = theCurrentImageGroup.GetXPosition( position);
-									Length positionX = new Length(numberX, UNITS.MICROM);
-                                    SlideBook7Reader.LOGGER.info("initFile: positionX: " + numberX);
+									Length positionX = new Length(numberX, UNITS.MICROMETRE);
+                  SlideBook7Reader.LOGGER.trace("initFile: positionX: " + numberX);
 									store.setPlanePositionX(positionX, capture, imageIndex);
 									double numberY = theCurrentImageGroup.GetYPosition(position);
-									Length positionY = new Length(numberY, UNITS.MICROM);
+									Length positionY = new Length(numberY, UNITS.MICROMETRE);
 									store.setPlanePositionY(positionY, capture, imageIndex);
-                                    SlideBook7Reader.LOGGER.info("initFile: positionY: " + numberY);
+                  SlideBook7Reader.LOGGER.trace("initFile: positionY: " + numberY);
 
 									// set tile z position
 									double positionZ = theCurrentImageGroup.GetZPosition(position, zplane);
-									Length zPos = new Length(positionZ, UNITS.MICROM);
+									Length zPos = new Length(positionZ, UNITS.MICROMETRE);
 									store.setPlanePositionZ(zPos, capture, imageIndex);
-                                    SlideBook7Reader.LOGGER.info("initFile: positionZ: " + positionZ);
+                  SlideBook7Reader.LOGGER.trace("initFile: positionZ: " + positionZ);
 								}
 							}
 						}
@@ -2691,7 +2552,7 @@ public class SlideBook7Reader  extends FormatReader {
 				// populate Objective data
 				int objectiveIndex = 0;
 				for (int capture = 0; capture < numCaptures; capture++) {
-                    CImageGroup theCurrentImageGroup = mDataLoader.GetImageGroup(capture);
+          CImageGroup theCurrentImageGroup = mDataLoader.GetImageGroup(capture);
 					// link Objective to Image
 					String objectiveID = MetadataTools.createLSID("Objective", 0, objectiveIndex);
 					store.setObjectiveID(objectiveID, 0, objectiveIndex);
@@ -2701,8 +2562,8 @@ public class SlideBook7Reader  extends FormatReader {
 					if (objective != null) {
 						store.setObjectiveModel(objective, 0, objectiveIndex);
 					}
-					store.setObjectiveCorrection(getCorrection("Other"), 0, objectiveIndex);
-					store.setObjectiveImmersion(getImmersion("Other"), 0, objectiveIndex);
+					store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, objectiveIndex);
+					store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, objectiveIndex);
 					double magnification = theCurrentImageGroup.GetMagnification();
 					if (magnification > 0) {
 						store.setObjectiveNominalMagnification(magnification, 0, objectiveIndex);
@@ -2712,7 +2573,7 @@ public class SlideBook7Reader  extends FormatReader {
 			}
 		}
 		catch (Exception e) {
-            e.printStackTrace();
+      e.printStackTrace();
 		}
 	}
 }
