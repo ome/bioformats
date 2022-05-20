@@ -2323,9 +2323,9 @@ public class SlideBook7Reader  extends FormatReader {
             if (!open) return super.isThisType(mytestfile, open); // no file system access
 
             Location theFileLocation = new Location(mytestfile).getAbsoluteFile();
-            mDataLoader  = new DataLoader(theFileLocation.getAbsolutePath());
-            Boolean res = mDataLoader.ReadSld();
-            mDataLoader.CloseFile();
+            DataLoader dataLoader = new DataLoader(theFileLocation.getAbsolutePath());
+            Boolean res = dataLoader.ReadSld();
+            dataLoader.CloseFile();
             SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String: returning " + res );
             return res;
         } catch (FileNotFoundException e) {
@@ -2381,16 +2381,17 @@ public class SlideBook7Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
-        if(mDataLoader == null) return;
-        mDataLoader.CloseFile();
-	}
+    if(mDataLoader == null) return;
+    mDataLoader.CloseFile();
+    mDataLoader = null;
+  }
 
 	/* @see loci.formats.FormatReader#initFile(String) */
 	protected void initFile(String id) throws FormatException, IOException {
 		super.initFile(id);
 
 		try {
-            if(mDataLoader == null) mDataLoader  = new DataLoader(id);
+            if(mDataLoader == null) mDataLoader  = new DataLoader(Location.getMappedId(id));
             Boolean res; 
             res = mDataLoader.LoadMetadata();
             if(!res)
@@ -2520,7 +2521,7 @@ public class SlideBook7Reader  extends FormatReader {
 
 									// set exposure time
 									int expTime = theCurrentImageGroup.GetExposureTime(channel);
-									store.setPlaneExposureTime(new Time(expTime, UNITS.MILLISECOND), capture, imageIndex);
+									store.setPlaneExposureTime(new Time(new Double(expTime), UNITS.MILLISECOND), capture, imageIndex);
 
 									// set tile xy position
 									double numberX = theCurrentImageGroup.GetXPosition( position);
