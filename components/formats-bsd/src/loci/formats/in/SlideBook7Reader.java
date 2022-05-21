@@ -2268,9 +2268,12 @@ public class SlideBook7Reader  extends FormatReader {
             return (short)theVal;
         }
 
-        public void CloseFile()
+        public void CloseFile() throws IOException
         {
-
+          for (String key : mPathToStreamMap.keySet()) {
+            RandomAccessInputStream stream = mPathToStreamMap.get(key);
+            stream.close();
+          }
         }
 
     }
@@ -2328,7 +2331,7 @@ public class SlideBook7Reader  extends FormatReader {
             dataLoader.CloseFile();
             SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String: returning " + res );
             return res;
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             SlideBook7Reader.LOGGER.trace("SlideBook7Reader: isThisType - String: printStackTrace ", e);
             e.printStackTrace();
         }
