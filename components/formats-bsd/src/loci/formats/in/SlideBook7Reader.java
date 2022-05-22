@@ -1212,6 +1212,7 @@ public class SlideBook7Reader  extends FormatReader {
                 Reader inputStreamReader = new InputStreamReader(inputStream);
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
+                inputStreamReader.close();
                 ScalarNode theKeyNode;
                 Node theCurrentNode;
                 String theKey;
@@ -1238,7 +1239,7 @@ public class SlideBook7Reader  extends FormatReader {
                 }
 
                 theLastIndex++;
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
 
                 e.printStackTrace();
             }
@@ -1251,6 +1252,7 @@ public class SlideBook7Reader  extends FormatReader {
                 Reader inputStreamReader = new InputStreamReader(inputStream);
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
+                inputStreamReader.close();
                 ScalarNode theKeyNode;
                 Node theCurrentNode;
                 String theKey;
@@ -1387,7 +1389,7 @@ public class SlideBook7Reader  extends FormatReader {
                     theLastIndex = theSIPair.mInt;
                     mAuxXmlDataList.add(theAux);
                 }
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         return true;
