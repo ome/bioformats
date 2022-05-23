@@ -850,9 +850,8 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean LoadImageRecord()
         {
-            try {
-                InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kImageRecordFilename);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
+            try (InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kImageRecordFilename); 
+                Reader inputStreamReader = new InputStreamReader(inputStream);) {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
 
@@ -868,7 +867,7 @@ public class SlideBook7Reader  extends FormatReader {
                 }
                 LOGGER.trace("CountImageDataFiles: OK " );
 
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
 
                 e.printStackTrace();
             }
@@ -915,9 +914,8 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean LoadChannelRecord() 
         {
-            try {
-                InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kChannelRecordFilename);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
+            try (InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kChannelRecordFilename);
+                Reader inputStreamReader = new InputStreamReader(inputStream);) {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 int theLastIndex = 0;
@@ -992,7 +990,7 @@ public class SlideBook7Reader  extends FormatReader {
                         else break;
                     }
                 }
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return true;
@@ -1000,9 +998,8 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean LoadMaks()
         {
-            try {
-                InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kMaskRecordFilename);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
+            try (InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kMaskRecordFilename);
+                Reader inputStreamReader = new InputStreamReader(inputStream);) {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 int theLastIndex = 0;
@@ -1061,7 +1058,7 @@ public class SlideBook7Reader  extends FormatReader {
 
                     }
                 }
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
 
                 e.printStackTrace();
             }
@@ -1070,9 +1067,8 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean LoadAnnotations()
         {
-            try {
-                InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kAnnotationRecordFilename);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
+            try (InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kAnnotationRecordFilename);
+                Reader inputStreamReader = new InputStreamReader(inputStream);) {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 int theLastIndex = 0;
@@ -1146,9 +1142,8 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean LoadElapsedTimes()
         {
-            try {
-                InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kElapsedTimesFilename);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
+            try (InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kElapsedTimesFilename);
+                Reader inputStreamReader = new InputStreamReader(inputStream);) {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 ScalarNode theKeyNode;
@@ -1162,7 +1157,7 @@ public class SlideBook7Reader  extends FormatReader {
                 if(!theKey.equals("theElapsedTimes")) return false ;//something wrong
                 theCurrentNode =  theValueClassList.get(theLastIndex).getValueNode();
                 mElapsedTimes = GetIntegerArray(theCurrentNode,"theElapsedTimesVector",true);
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
 
                 e.printStackTrace();
             }
@@ -1171,9 +1166,8 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean LoadSAPositions()
         {
-            try {
-                InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kSAPositionDataFilename);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
+            try (InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kSAPositionDataFilename);
+                Reader inputStreamReader = new InputStreamReader(inputStream);) {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
                 ScalarNode theKeyNode;
@@ -1198,7 +1192,7 @@ public class SlideBook7Reader  extends FormatReader {
                     mSAPositionList.add(theSAPositionsvector);
                     theLastIndex++;
                 }
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
 
                 e.printStackTrace();
             }
@@ -1207,12 +1201,10 @@ public class SlideBook7Reader  extends FormatReader {
 
         public Boolean LoadStagePosition()
         {
-            try {
-                InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kStagePositionDataFilename);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
+            try (InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kStagePositionDataFilename);
+                Reader inputStreamReader = new InputStreamReader(inputStream);) {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
-                inputStreamReader.close();
                 ScalarNode theKeyNode;
                 Node theCurrentNode;
                 String theKey;
@@ -1247,12 +1239,10 @@ public class SlideBook7Reader  extends FormatReader {
         }
         public Boolean LoadAuxData()
         {
-            try {
-                InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kAuxDataFilename);
-                Reader inputStreamReader = new InputStreamReader(inputStream);
+            try (InputStream inputStream = new FileInputStream(mFile.GetImageGroupDirectory(mImageTitle) + CSBFile70.kAuxDataFilename);
+                Reader inputStreamReader = new InputStreamReader(inputStream);) {
                 Yaml yaml = new Yaml();
                 MappingNode theNode = (MappingNode)yaml.compose(inputStreamReader);
-                inputStreamReader.close();
                 ScalarNode theKeyNode;
                 Node theCurrentNode;
                 String theKey;
