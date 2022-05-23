@@ -390,6 +390,35 @@ public class CellWorxReader extends FormatReader {
 
     reader.close();
 
+    for (int c=1; c<wavelengths.length; c++) {
+      seriesIndex = 0;
+      planeIndex = c;
+      file = getFile(seriesIndex, planeIndex);
+      while (!new Location(file).exists()) {
+        if (planeIndex < zSteps * nTimepoints * wavelengths.length) {
+          planeIndex += (zSteps * nTimepoints);
+        }
+        else if (seriesIndex < seriesCount - 1) {
+          planeIndex = c;
+          seriesIndex++;
+        }
+        else {
+          break;
+        }
+        file = getFile(seriesIndex, planeIndex);
+      }
+      reader = getReader(file, true);
+
+      OMEXMLMetadata channelMetadata = (OMEXMLMetadata) reader.getMetadataStore();
+      OMEXMLMetadataRoot channelRoot = (OMEXMLMetadataRoot) channelMetadata.getRoot();
+
+      reader.close();
+
+      for (int i=0; i<convertRoot.sizeOfImageList(); i++) {
+        MetadataConverter.convertChannels(channelMetadata, 0, 0, convertMetadata, i, c, false);
+      }
+    }
+
     MetadataStore store = makeFilterMetadata();
     MetadataConverter.convertMetadata(convertMetadata, store);
     MetadataTools.populatePixels(store, this, true);
