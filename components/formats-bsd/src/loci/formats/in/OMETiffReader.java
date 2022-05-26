@@ -851,6 +851,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     // process TiffData elements
     Hashtable<String, IFormatReader> readers = new Hashtable<>();
     boolean adjustedSamples = false;
+    boolean hasSubIFDs = false;
     for (int i=0; i<seriesCount; i++) {
       int s = i;
       LOGGER.debug("Image[{}] {", i);
@@ -928,6 +929,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         else if (t == 0) {
           tOneIndexed = false;
+        }
+
+        // in the common case where there is a TiffData with all 0 indices,
+        // don't scan every TiffData
+        if (c == 0 && z == 0 && t == 0) {
+          break;
         }
       }
 
@@ -1028,16 +1035,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
             LOGGER.trace("      Plane[{}]: FILLED", no);
           }
         }
-        else {
-          // known number of planes; clear anything subsequently filled
-          for (int no=index+count; no<num; no++) {
-            if (planes[no].certain) break;
-            planes[no].reader = null;
-            planes[no].id = null;
-            planes[no].ifd = -1;
-            LOGGER.trace("      Plane[{}]: CLEARED", no);
-          }
-        }
         LOGGER.debug("    }");
       }
 
@@ -1099,6 +1096,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
             info[s][0].ifd = 0;
           }
         }
+        TiffParser tp = new TiffParser(testFile);
+        tp.setDoCaching(false);
+        IFD checkIFD = tp.getIFD(tp.getIFDOffsets()[info[s][0].ifd]);
+        hasSubIFDs = hasSubIFDs || checkIFD.containsKey(IFD.SUB_IFD);
         if (testFile != null) {
           testFile.close();
         }
@@ -1124,9 +1125,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
           }
         }
 
-        initializeReader(info[s][0].reader, info[s][0].id);
-        m.tileWidth = info[s][0].reader.getOptimalTileWidth();
-        m.tileHeight = info[s][0].reader.getOptimalTileHeight();
+        m.tileWidth = (int) checkIFD.getTileWidth();
+        m.tileHeight = (int) checkIFD.getTileLength();
 
         m.sizeX = meta.getPixelsSizeX(i).getValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
@@ -1315,7 +1315,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
     }
 
-    addSubResolutions();
+    if (hasSubIFDs) {
+      addSubResolutions();
+    }
   }
 
   // -- OMETiffReader API methods --
