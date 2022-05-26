@@ -1096,10 +1096,15 @@ public class OMETiffReader extends SubResolutionFormatReader {
             info[s][0].ifd = 0;
           }
         }
-        TiffParser tp = new TiffParser(testFile);
-        tp.setDoCaching(false);
-        IFD checkIFD = tp.getIFD(tp.getIFDOffsets()[info[s][0].ifd]);
-        hasSubIFDs = hasSubIFDs || checkIFD.containsKey(IFD.SUB_IFD);
+        else {
+          try (TiffParser tp = new TiffParser(firstFile)) {
+            tp.setDoCaching(false);
+            IFD checkIFD = tp.getIFD(tp.getIFDOffsets()[info[s][0].ifd]);
+            hasSubIFDs = hasSubIFDs || checkIFD.containsKey(IFD.SUB_IFD);
+            m.tileWidth = (int) checkIFD.getTileWidth();
+            m.tileHeight = (int) checkIFD.getTileLength();
+          }
+        }
         if (testFile != null) {
           testFile.close();
         }
@@ -1124,9 +1129,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
             }
           }
         }
-
-        m.tileWidth = (int) checkIFD.getTileWidth();
-        m.tileHeight = (int) checkIFD.getTileLength();
 
         m.sizeX = meta.getPixelsSizeX(i).getValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
