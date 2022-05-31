@@ -58,7 +58,7 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
     // check for metadata-extractor.jar
     checkClassDependency(ImageMetadataReader.class);
     // check for xmpcore.jar
-    checkClassDependency(com.adobe.xmp.XMPMeta.class);
+    checkClassDependency(com.adobe.internal.xmp.XMPMeta.class);
   }
 
   // -- EXIFService API methods --
