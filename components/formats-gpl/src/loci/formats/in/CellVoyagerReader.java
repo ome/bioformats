@@ -111,8 +111,7 @@ public class CellVoyagerReader extends FormatReader
 
   private static final String SINGLE_TIFF_PATH_BUILDER = "W%dF%03dT%04dZ%02dC%d.tif";
 
-  private Location measurementFolder;
-  private Location imageFolder;
+  private String imageFolder;
 
   private List< ChannelInfo > channelInfos;
 
@@ -120,9 +119,9 @@ public class CellVoyagerReader extends FormatReader
 
   private List< Integer > timePoints;
 
-  private Location measurementResultFile;
+  private String measurementResultFile;
 
-  private Location omeMeasurementFile;
+  private String omeMeasurementFile;
 
   public CellVoyagerReader()
   {
@@ -148,8 +147,6 @@ public class CellVoyagerReader extends FormatReader
     final AreaInfo area = well.areas.get( areaIndex );
     final MinimalTiffReader tiffReader = new MinimalTiffReader();
 
-    imageFolder = new Location(currentId).getAbsoluteFile().getParentFile();
-    imageFolder = new Location(imageFolder, "Image");
     for ( final FieldInfo field : area.fields )
     {
 
@@ -274,7 +271,7 @@ public class CellVoyagerReader extends FormatReader
   {
     super.initFile( id );
 
-    measurementFolder = new Location( id ).getAbsoluteFile();
+    Location measurementFolder = new Location( id ).getAbsoluteFile();
     if ( !measurementFolder.exists() ) { throw new IOException( "File " + id + " does not exist." ); }
     if ( !measurementFolder.isDirectory() )
     {
@@ -283,20 +280,26 @@ public class CellVoyagerReader extends FormatReader
         measurementFolder = measurementFolder.getParentFile();
       }
     }
-    imageFolder = new Location(measurementFolder, "Image");
+    imageFolder = new Location(measurementFolder, "Image").getAbsolutePath();
 
-    measurementResultFile = new Location( measurementFolder, "MeasurementResult.xml" );
-    if ( !measurementResultFile.exists() ) { throw new IOException( "Could not find " + measurementResultFile + " in folder." ); }
+    Location measurementResult = new Location( measurementFolder, "MeasurementResult.xml" );
+    if ( !measurementResult.exists() ) { throw new IOException( "Could not find " + measurementResult + " in folder." ); }
+    else {
+      measurementResultFile = measurementResult.getAbsolutePath();
+    }
 
-    omeMeasurementFile = new Location( measurementFolder, "MeasurementResult.ome.xml" );
-    if ( !omeMeasurementFile.exists() ) { throw new IOException( "Could not find " + omeMeasurementFile + " in folder." ); }
+    Location omeMeasurement = new Location( measurementFolder, "MeasurementResult.ome.xml" );
+    if ( !omeMeasurement.exists() ) { throw new IOException( "Could not find " + omeMeasurement + " in folder." ); }
+    else {
+      omeMeasurementFile = omeMeasurement.getAbsolutePath();
+    }
 
     /*
      * Open MeasurementSettings file
      */
 
     RandomAccessInputStream result =
-      new RandomAccessInputStream(measurementResultFile.getAbsolutePath());
+      new RandomAccessInputStream(measurementResultFile);
     Document msDocument = null;
     try {
       msDocument = XMLTools.parseDOM(result);
@@ -330,7 +333,7 @@ public class CellVoyagerReader extends FormatReader
      */
 
     RandomAccessInputStream measurement =
-      new RandomAccessInputStream(omeMeasurementFile.getAbsolutePath());
+      new RandomAccessInputStream(omeMeasurementFile);
     Document omeDocument = null;
     try {
       omeDocument = XMLTools.parseDOM(measurement);
@@ -361,7 +364,7 @@ public class CellVoyagerReader extends FormatReader
 
     if ( noPixels )
     {
-      return new String[] { measurementResultFile.getAbsolutePath(), omeMeasurementFile.getAbsolutePath() };
+      return new String[] { measurementResultFile, omeMeasurementFile };
     }
     else
     {
@@ -371,8 +374,8 @@ public class CellVoyagerReader extends FormatReader
       final AreaInfo area = wells.get( wellIndex ).areas.get( areaIndex );
       final int nFields = area.fields.size();
       ArrayList<String> images = new ArrayList<String>();
-      images.add(measurementResultFile.getAbsolutePath());
-      images.add(omeMeasurementFile.getAbsolutePath());
+      images.add(measurementResultFile);
+      images.add(omeMeasurementFile);
 
       for ( final Integer timepoint : timePoints )
       {
