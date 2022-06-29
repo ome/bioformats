@@ -289,7 +289,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
     for (int i=0; i<info.length; i++) {
       if (i != series && info[i] != null) {
         for (OMETiffPlane p : info[i]) {
-          if (p != null && p.reader != null) {
+          if (p != null && p.reader != null &&
+            !getCurrentFile().equals(p.reader.getCurrentFile()))
+          {
             try {
               p.reader.close();
             }
@@ -1432,7 +1434,13 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         core.add(s, c);
       }
-      r.close();
+      // if we have multiple OME-TIFF files, close to reduce the
+      // number of open file handles
+      // keep the "main" file's handle open though, to improve
+      // performance when there is only one file
+      if (!getCurrentFile().equals(r.getCurrentFile())) {
+        r.close();
+      }
     }
     core.reorder();
 
