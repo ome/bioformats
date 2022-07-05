@@ -46,7 +46,7 @@
     <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
     <ome-metakit.version>5.3.4</ome-metakit.version>
     <metakit.version>${ome-metakit.version}</metakit.version>
-    <slf4j.version>1.7.6</slf4j.version>
+    <slf4j.version>1.7.30</slf4j.version>
     <kryo.version>4.0.2</kryo.version>
     <testng.version>6.8</testng.version>
     <ome-common.version>6.0.9</ome-common.version>
