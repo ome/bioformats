@@ -377,7 +377,7 @@ public class NDPIReader extends BaseTiffReader {
                   entry.getValueCount(), newOffset);
                 ifd.put(tag[t], newEntry);
               }
-              else {
+              else if (value instanceof Number) {
                 ifd.put(tag[t], ((Number) value).longValue() + highOrder[t]);
               }
             }
