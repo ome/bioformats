@@ -47,17 +47,17 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import com.github.jaiimageio.jpeg2000.J2KImageReadParam;
+import com.github.jaiimageio.jpeg2000.J2KImageWriteParam;
+import com.github.jaiimageio.jpeg2000.impl.J2KImageReader;
+import com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi;
+import com.github.jaiimageio.jpeg2000.impl.J2KImageWriter;
+import com.github.jaiimageio.jpeg2000.impl.J2KImageWriterSpi;
+
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.FormatTools;
-
-import com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam;
-import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
-import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader;
-import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi;
-import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriter;
-import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
 
 /**
  * Implementation of JAIIIOService for reading and writing JPEG-2000 data.
