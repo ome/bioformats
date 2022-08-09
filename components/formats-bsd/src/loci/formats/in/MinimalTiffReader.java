@@ -481,7 +481,7 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
     subResolutionIFDs = new ArrayList<IFDList>();
     for (IFD ifd : allIFDs) {
       tiffParser.fillInIFD(ifd);
-      Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
+      Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE, Number.class);
       int subfileType = subfile == null ? 0 : subfile.intValue();
       if (subfileType != 1 || allIFDs.size() <= 1) {
         ifds.add(ifd);
