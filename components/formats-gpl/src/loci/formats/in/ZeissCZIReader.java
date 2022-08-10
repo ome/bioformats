@@ -189,6 +189,7 @@ public class ZeissCZIReader extends FormatReader {
   private transient int plateRows;
   private transient int plateColumns;
   private transient ArrayList<String> platePositions = new ArrayList<String>();
+  private transient ArrayList<String> imageNames = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -563,6 +564,7 @@ public class ZeissCZIReader extends FormatReader {
       plateRows = 0;
       plateColumns = 0;
       platePositions.clear();
+      imageNames.clear();
     }
   }
 
@@ -1342,11 +1344,21 @@ public class ZeissCZIReader extends FormatReader {
           store.setImageName(name + " #" + imageIndex, i);
         }
         else if (positions == 1) {
-          store.setImageName("", i);
+          if (imageNames.size() == 1) {
+            store.setImageName(imageNames.get(0), i);
+          }
+          else {
+            store.setImageName("", i);
+          }
         }
         else {
-          int paddingLength = (""+getSeriesCount()).length();
-          store.setImageName("Scene #" + String.format("%0"+paddingLength+"d", (i + 1)), i);
+          if (i < imageNames.size()) {
+            store.setImageName(imageNames.get(i), i);
+          }
+          else {
+            int paddingLength = (""+getSeriesCount()).length();
+            store.setImageName("Scene #" + String.format("%0"+paddingLength+"d", (i + 1)), i);
+          }
         }
       }
       else if (extraIndex == 0) {
@@ -3330,6 +3342,8 @@ public class ZeissCZIReader extends FormatReader {
                 if (value != null && !value.isEmpty()) {
                   platePositions.add(value);
                 }
+                String name = well.getAttribute("Name");
+                imageNames.add(name);
               }
             }
           }
