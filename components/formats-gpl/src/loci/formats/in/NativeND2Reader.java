@@ -545,7 +545,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
       }
 
-      int chunkmapSkips = 0;
       Boolean currentCountSetted = false;
       int XYCount = 1;
       int timeCount = 1;
@@ -677,7 +676,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
             useLastText = true;
           }
 
-          if(useChunkMap && chunkmapSkips == 0) {
+          if(useChunkMap) {
             ChunkMapEntry lastImage = null;
 
             // sanity check: see if the chunk we just found is actually in the chunkmap ...
@@ -700,13 +699,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
               if(!entry.name.startsWith("ImageDataSeq")) {
                 continue;
-              }
-
-              if(lastImage!=null) {
-                chunkmapSkips = (int)(((entry.position - lastImage.position) / entry.length) - 1);
-                if(chunkmapSkips > 0) {
-                  break;
-                }
               }
 
               lastImage = entry;
@@ -733,10 +725,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
             continue;
 
-          }
-
-          if(chunkmapSkips > 0) {
-            chunkmapSkips -= 1;
           }
 
           dataLength -= 31;
