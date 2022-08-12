@@ -338,6 +338,7 @@ public class ImageConverterTest {
     String[] tileArgs = {"-tilex", "256", "-tiley", "256"};
     ArrayList<String> argsList = new ArrayList<String>();
     argsList.add("test&sizeZ=3&sizeC=2&sizeT=4&series=3&sizeX=512&sizeY=512.fake");
+    argsList.add("-overwrite");
     argsList.addAll(Arrays.asList(optionsArgs));
     argsList.addAll(Arrays.asList(tileArgs));
     argsList.add(outFile.getAbsolutePath());
