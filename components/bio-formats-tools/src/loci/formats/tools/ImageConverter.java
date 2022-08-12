@@ -1143,6 +1143,10 @@ public final class ImageConverter {
     if (checkedPaths.containsKey(path)) {
       return checkedPaths.get(path);
     }
+    if (!new Location(path).exists()) {
+      checkedPaths.put(path, true);
+      return true;
+    }
     if (overwrite == null) {
       LOGGER.warn("Output file {} exists.", path);
       LOGGER.warn("Do you want to overwrite it? ([y]/n)");
