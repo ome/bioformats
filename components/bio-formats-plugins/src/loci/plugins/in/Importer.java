@@ -72,32 +72,37 @@ public class Importer {
 
       ImportProcess process = new ImportProcess(options);
 
-      BF.debug("display option dialogs");
-      showDialogs(process);
-      if (plugin.canceled) return;
-
-      BF.debug("display metadata");
-      DisplayHandler displayHandler = new DisplayHandler(process);
-      displayHandler.displayOriginalMetadata();
-      displayHandler.displayOMEXML();
-
-      BF.debug("read pixel data");
-      ImagePlusReader reader = new ImagePlusReader(process);
-      ImagePlus[] imps = readPixels(reader, options, displayHandler);
-
-      BF.debug("display pixels");
-      displayHandler.displayImages(imps);
-
-      BF.debug("display ROIs");
-      displayHandler.displayROIs(imps);
-
-      BF.debug("finish");
-      finish(process);
-    }
-    catch (FormatException exc) {
-      boolean quiet = options == null ? false : options.isQuiet();
-      WindowTools.reportException(exc, quiet,
-        "Sorry, there was a problem during import.");
+      try {
+        BF.debug("display option dialogs");
+        showDialogs(process);
+        if (plugin.canceled) return;
+  
+        BF.debug("display metadata");
+        DisplayHandler displayHandler = new DisplayHandler(process);
+        displayHandler.displayOriginalMetadata();
+        displayHandler.displayOMEXML();
+  
+        BF.debug("read pixel data");
+        ImagePlusReader reader = new ImagePlusReader(process);
+        ImagePlus[] imps = readPixels(reader, options, displayHandler);
+  
+        BF.debug("display pixels");
+        displayHandler.displayImages(imps);
+  
+        BF.debug("display ROIs");
+        displayHandler.displayROIs(imps);
+  
+        BF.debug("finish");
+        finish(process);
+      }
+      catch (FormatException exc) {
+        if (!process.getOptions().isVirtual() && process.getReader() != null) {
+          process.getReader().close();
+        }
+        boolean quiet = options == null ? false : options.isQuiet();
+        WindowTools.reportException(exc, quiet,
+          "Sorry, there was a problem during import.");
+      }
     }
     catch (IOException exc) {
       boolean quiet = options == null ? false : options.isQuiet();
