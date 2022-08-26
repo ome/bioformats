@@ -1835,9 +1835,16 @@ public class ZeissCZIReader extends FormatReader {
     int minY = Integer.MAX_VALUE;
     int maxY = Integer.MIN_VALUE;
 
+    int dimensionCount = 0;
     for (SubBlock plane : planes) {
       if (xyOnly && plane.coreIndex != coreIndex) {
         continue;
+      }
+      boolean moreDimensions = plane.directoryEntry.dimensionEntries.length > dimensionCount;
+      if (moreDimensions) {
+        dimensionCount = plane.directoryEntry.dimensionEntries.length;
+        ms0.sizeX = 0;
+        ms0.sizeY = 0;
       }
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
         if (dimension == null) {
