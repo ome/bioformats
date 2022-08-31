@@ -188,6 +188,13 @@ public class TiffCompressionCompressTest {
     compression.compress(data, options);
   }
 
+  @Test(expectedExceptions={ FormatException.class })
+  public void testJETRAW() throws FormatException, IOException {
+    TiffCompression compression = TiffCompression.JETRAW;
+    CodecOptions options = compression.getCompressionCodecOptions(ifd);
+    compression.compress(data, options);
+  }
+
   @Test(enabled=true)
   public void testJPEG_2000_ResetQuality() throws FormatException, IOException {
     TiffCompression compression = TiffCompression.JPEG_2000;

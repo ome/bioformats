@@ -55,7 +55,8 @@ public enum CompressionType implements CodedEnum {
   LZW(9, "LZW"),
   J2K(10, "JPEG-2000"),
   J2K_LOSSY(11, "JPEG-2000 Lossy"),
-  JPEG(12, "JPEG");
+  JPEG(12, "JPEG"),
+  JETRAW(13, "Jetraw");
   
   /** Code for the compression. */
   private int code;
