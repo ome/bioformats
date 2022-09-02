@@ -850,6 +850,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
     // process TiffData elements
     Hashtable<String, IFormatReader> readers = new Hashtable<>();
+    Hashtable<String, long[]> ifdOffsets = new Hashtable<String, long[]>();
     boolean adjustedSamples = false;
     boolean hasSubIFDs = false;
     for (int i=0; i<seriesCount; i++) {
@@ -1099,10 +1100,16 @@ public class OMETiffReader extends SubResolutionFormatReader {
         else {
           try (TiffParser tp = new TiffParser(firstFile)) {
             tp.setDoCaching(false);
-            IFD checkIFD = tp.getIFD(tp.getIFDOffsets()[info[s][0].ifd]);
+            long[] offsets = ifdOffsets.get(firstFile);
+            if (offsets == null) {
+              offsets = tp.getIFDOffsets();
+            }
+            IFD checkIFD = tp.getIFD(offsets[info[s][0].ifd]);
             hasSubIFDs = hasSubIFDs || checkIFD.containsKey(IFD.SUB_IFD);
             m.tileWidth = (int) checkIFD.getTileWidth();
             m.tileHeight = (int) checkIFD.getTileLength();
+
+            ifdOffsets.put(firstFile, offsets);
           }
         }
         if (testFile != null) {
