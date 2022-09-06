@@ -1098,7 +1098,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
           }
         }
         else {
-          try (TiffParser tp = new TiffParser(firstFile)) {
+          try (TiffParser tp = new TiffParser(testFile)) {
             tp.setDoCaching(false);
             long[] offsets = ifdOffsets.get(firstFile);
             if (offsets == null) {
