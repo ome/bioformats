@@ -108,10 +108,9 @@ public class JetrawCodec extends BaseCodec {
 
     int pixels = options.width*options.height;
     short[] decomp = new short[pixels];
-    int ok = performDecoding(buf, buf.length, decomp, pixels);
-    if (ok == 0) {
-      throw new FormatException("[ERROR] Jetraw performDecoding exited with error.");
-    }
+    
+    // native call encode buffer with Jetraw
+    performDecoding(buf, buf.length, decomp, pixels);
 
     int short_index = 0;
     int byte_index = 0;
