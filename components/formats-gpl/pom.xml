@@ -130,11 +130,6 @@
       <artifactId>kryo</artifactId>
       <version>${kryo.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.airlift</groupId>
-      <artifactId>aircompressor</artifactId>
-      <version>0.18</version>
-    </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
 
