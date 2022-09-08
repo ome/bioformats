@@ -54,6 +54,7 @@ import loci.formats.codec.NikonCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.codec.PassthroughCodec;
 import loci.formats.codec.ZlibCodec;
+import loci.formats.codec.ZstdCodec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,7 +196,8 @@ public enum TiffCompression implements CodedEnum {
   },
   NIKON(34713, new NikonCodec(), "Nikon"),
   LURAWAVE(65535, new LuraWaveCodec(), "LuraWave"),
-  JPEGXR(22610, new JPEGXRCodec(), "JPEG-XR");
+  JPEGXR(22610, new JPEGXRCodec(), "JPEG-XR"),
+  ZSTD(50000, new ZstdCodec(), "Zstandard");
 
   // -- Constants --
 
