@@ -241,7 +241,11 @@ public class OperettaReader extends FormatReader {
           return buf;
         }
 
-        if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
+        if (reader.getPixelType() != getPixelType()) {
+          throw new FormatException("Pixel type mismatch in " + p.filename +
+            " (got " + FormatTools.getPixelTypeString(reader.getPixelType()) + ")");
+        }
+        else if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
           reader.openBytes(0, buf, x, y, w, h);
         }
         else {
