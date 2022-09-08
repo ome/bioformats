@@ -38,9 +38,22 @@ public class ZstdCodec extends BaseCodec {
         catch (EOFException ignored) { }
 
         byte[] data = bytes.toByteArray();
+        return decompress(data);
+    }
+    
+    @Override
+    public byte[] decompress(byte[] data)
+        throws FormatException
+    {
+        return decompress(data, 0, data.length);
+    }
+    
+    public byte[] decompress(byte[] data, int inputOffset, int length)
+        throws FormatException
+    {
         ZstdDecompressor decompressor = new ZstdDecompressor();
-        byte[] output = new byte[(int) ZstdDecompressor.getDecompressedSize(data, 0, data.length)];
-        decompressor.decompress(data, 0, data.length, output, 0, output.length);
+        byte[] output = new byte[(int) ZstdDecompressor.getDecompressedSize(data, inputOffset, length)];
+        decompressor.decompress(data, inputOffset, length, output, 0, output.length);
         return output;
     }
 }
