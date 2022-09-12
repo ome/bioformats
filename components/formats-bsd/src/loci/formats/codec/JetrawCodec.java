@@ -34,10 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import loci.common.RandomAccessInputStream;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.UnsupportedCompressionException;
 
@@ -82,8 +79,8 @@ public class JetrawCodec extends BaseCodec {
     }
   }
 
-  public native int performDecoding(byte[] buf, int bufSize, short[] out, int outSize);
-  // -- Fields --
+  // native JNI calls to jetraw
+  public native void performDecoding(byte[] buf, int bufSize, short[] out, int outSize);
 
   // -- Codec API methods --
 
@@ -109,7 +106,7 @@ public class JetrawCodec extends BaseCodec {
     int pixels = options.width*options.height;
     short[] decomp = new short[pixels];
     
-    // native call encode buffer with Jetraw
+    // native call encode buffer with jetraw
     performDecoding(buf, buf.length, decomp, pixels);
 
     int short_index = 0;
