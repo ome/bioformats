@@ -1253,12 +1253,12 @@ public class TiffParser implements Closeable {
     int[] reference = {0, 0, 0, 0, 0, 0};
     try {
       int[] value = ifd.getIFDIntArray(IFD.REFERENCE_BLACK_WHITE);
-      if (value != null) {
+      if (value != null && value.length == 6) {
         reference = value;
       }
     } catch (FormatException e) {
       float[] value = (float[]) ifd.getIFDValue(IFD.REFERENCE_BLACK_WHITE);
-      if (value != null) {
+      if (value != null && value.length == 6) {
         LOGGER.debug("ReferenceBlackWhite tag stored as float array.");
         for (int i = 0 ; i < 5; i++) {
           reference[i] = (int) value[i];
