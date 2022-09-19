@@ -1253,7 +1253,8 @@ public class TiffParser implements Closeable {
     int[] reference = {0, 0, 0, 0, 0, 0};
     try {
       int[] value = ifd.getIFDIntArray(IFD.REFERENCE_BLACK_WHITE);
-      if (value != null && value.length == 6) {
+      // TODO: Run extra validation on the value
+      if (value != null) {
         reference = value;
       }
     } catch (FormatException e) {
