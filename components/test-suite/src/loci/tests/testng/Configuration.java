@@ -185,8 +185,22 @@ public class Configuration {
     return Integer.parseInt(memory);
   }
 
+  public String getTestComment() {
+    String test = globalTable.get(TEST);
+    int delim = test.indexOf("#");
+    if (delim >= 0) {
+      return test.substring(delim + 1);
+    }
+    return null;
+  }
+
   public boolean doTest() {
-    return new Boolean(globalTable.get(TEST)).booleanValue();
+    String test = globalTable.get(TEST);
+    int delim = test.indexOf("#");
+    if (delim >= 0) {
+      test = test.substring(0, delim);
+    }
+    return new Boolean(test.trim()).booleanValue();
   }
 
   public boolean hasValidXML() {

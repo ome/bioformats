@@ -260,6 +260,14 @@ public class TestTools {
     final ConfigurationTree config, String toplevelConfig, String[] subdirs,
     String configFileSuffix)
   {
+    getFiles(root, files, config, toplevelConfig, subdirs, configFileSuffix, true);
+  }
+
+  /** Recursively generate a list of files to test. */
+  public static void getFiles(String root, List files,
+    final ConfigurationTree config, String toplevelConfig, String[] subdirs,
+    String configFileSuffix, boolean ignoreDoTest)
+  {
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
@@ -348,13 +356,13 @@ public class TestTools {
       if (isConfigFile(file, configFileSuffix)) {
         continue;
       }
-      else if (isIgnoredFile(subsList.get(i), config)) {
+      else if (isIgnoredFile(subsList.get(i), config, ignoreDoTest)) {
         LOGGER.debug("\tignored");
         continue;
       }
       else if (file.isDirectory()) {
         LOGGER.debug("\tdirectory");
-        getFiles(subsList.get(i), files, config, null, null, configFileSuffix);
+        getFiles(subsList.get(i), files, config, null, null, configFileSuffix, ignoreDoTest);
       }
       else if (!subsList.get(i).endsWith("readme.txt") &&
                !subsList.get(i).endsWith("test_setup.ini")) {
@@ -389,12 +397,16 @@ public class TestTools {
 
   /** Determines if the given file should be ignored by the test suite. */
   public static boolean isIgnoredFile(String file, ConfigurationTree config) {
+    return isIgnoredFile(file, config, true);
+  }
+
+  public static boolean isIgnoredFile(String file, ConfigurationTree config, boolean ignoreDoTest) {
     if (file.indexOf(File.separator + ".") >= 0) return true; // hidden file
 
     try {
       Configuration c = config.get(file);
       if (c == null) return false;
-      if (!c.doTest()) return true;
+      if (ignoreDoTest && !c.doTest()) return true;
     }
     catch (IOException e) { }
     catch (Exception e) { }
