@@ -476,6 +476,11 @@ public class VectraReader extends BaseTiffReader {
 
           if (name.equals("Name")) {
             for (int series=0; series<omeImageCount; series++) {
+              store.setChannelFluor(value, series, c);
+            }
+          }
+          else if (name.equals("Biomarker")) {
+            for (int series=0; series<omeImageCount; series++) {
               store.setChannelName(value, series, c);
             }
           }
