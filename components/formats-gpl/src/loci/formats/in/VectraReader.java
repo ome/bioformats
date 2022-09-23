@@ -366,6 +366,9 @@ public class VectraReader extends BaseTiffReader {
     int omeImageCount = hasFlattenedResolutions() ? pyramidDepth : 1;
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
+      String storedChannelName = null;
+      String biomarker = null;
+
       String xml = getIFDComment(c);
       try {
         Element root = XMLTools.parseDOM(xml).getDocumentElement();
@@ -475,14 +478,10 @@ public class VectraReader extends BaseTiffReader {
           }
 
           if (name.equals("Name")) {
-            for (int series=0; series<omeImageCount; series++) {
-              store.setChannelFluor(value, series, c);
-            }
+            storedChannelName = value;
           }
           else if (name.equals("Biomarker")) {
-            for (int series=0; series<omeImageCount; series++) {
-              store.setChannelName(value, series, c);
-            }
+            biomarker = value;
           }
           else if (name.equals("SampleDescription")) {
             for (int series=0; series<omeImageCount; series++) {
@@ -542,6 +541,25 @@ public class VectraReader extends BaseTiffReader {
       catch (ParserConfigurationException|SAXException|IOException e) {
         LOGGER.warn("Could not parse XML for channel {}", c);
         LOGGER.debug("", e);
+      }
+
+      // set channel names based on "Name" and "Biomarker" attributes
+      // the "Biomarker" is preferred, in which case "Name" (if present) will be
+      // stored in the Channel.Fluor attribute
+      // if "Biomarker" is not present, then Channel.Name will be set to "Name"
+
+      boolean validBiomarker = biomarker != null && !biomarker.isEmpty();
+      boolean validName = storedChannelName != null && !storedChannelName.isEmpty();
+      for (int series=0; series<omeImageCount; series++) {
+        if (validBiomarker) {
+          store.setChannelName(biomarker, series, c);
+          if (validName) {
+            store.setChannelFluor(storedChannelName, series, c);
+          }
+        }
+        else {
+          store.setChannelName(storedChannelName, series, c);
+        }
       }
     }
   }
