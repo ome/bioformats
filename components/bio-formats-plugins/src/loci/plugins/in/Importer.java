@@ -95,7 +95,7 @@ public class Importer {
         BF.debug("finish");
         finish(process);
       }
-      catch (FormatException exc) {
+      catch (Exception exc) {
         if (!process.getOptions().isVirtual() && process.getReader() != null) {
           process.getReader().close();
         }
