@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -208,6 +209,7 @@ public class PCIReader extends FormatReader {
     initPOIService();
 
     double scaleFactor = 1;
+    double magnification = 1;
 
     final List<String> allFiles = poi.getDocumentList();
     if (allFiles.isEmpty()) {
@@ -327,7 +329,14 @@ public class PCIReader extends FormatReader {
                     if (value.indexOf(';') != -1) {
                       value = value.substring(0, value.indexOf(';'));
                     }
-                    scaleFactor = Double.parseDouble(value.trim());
+                    scaleFactor = DataTools.parseDouble(value.trim());
+                  }
+
+                  if (key.equals("magnification")) {
+                    if (value.indexOf(';') != -1) {
+                      value = value.substring(0, value.indexOf(';'));
+                    }
+                    magnification = DataTools.parseDouble(value.trim());
                   }
                 }
               }
@@ -399,8 +408,8 @@ public class PCIReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      Length sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
-      Length sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
+      Length sizeX = FormatTools.getPhysicalSizeX(scaleFactor * magnification);
+      Length sizeY = FormatTools.getPhysicalSizeY(scaleFactor * magnification);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
