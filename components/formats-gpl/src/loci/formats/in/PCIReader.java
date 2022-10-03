@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -328,14 +329,14 @@ public class PCIReader extends FormatReader {
                     if (value.indexOf(';') != -1) {
                       value = value.substring(0, value.indexOf(';'));
                     }
-                    scaleFactor = Double.parseDouble(value.trim());
+                    scaleFactor = DataTools.parseDouble(value.trim());
                   }
 
                   if (key.equals("magnification")) {
                     if (value.indexOf(';') != -1) {
                       value = value.substring(0, value.indexOf(';'));
                     }
-                    magnification = Double.parseDouble(value.trim());
+                    magnification = DataTools.parseDouble(value.trim());
                   }
                 }
               }
