@@ -431,6 +431,8 @@ public class DicomReader extends SubResolutionFormatReader {
     int frameOffsetNumber = 0;
     int opticalChannels = 0;
 
+    List<Integer> opticalPathIDs = new ArrayList<Integer>();
+
     while (decodingTags) {
       if (in.getFilePointer() + 4 >= in.length()) {
         break;
@@ -656,6 +658,7 @@ public class DicomReader extends SubResolutionFormatReader {
         case OPTICAL_PATH_SEQUENCE:
           for (DicomTag child : tag.children) {
             if (child.attribute == OPTICAL_PATH_ID) {
+              opticalPathIDs.add(child.getNumberValue().intValue());
               opticalChannels++;
             }
             else if (child.attribute == OPTICAL_PATH_DESCRIPTION) {
@@ -732,6 +735,9 @@ public class DicomReader extends SubResolutionFormatReader {
             tile.zOffset = (double) z;
           }
           tile.channel = c;
+          if (c < opticalPathIDs.size()) {
+            tile.channel = opticalPathIDs.get(c);
+          }
           tile.file = new Location(currentId).getAbsolutePath();
           tile.region = new Region(x, y, originalX, originalY);
           tile.isRLE = isRLE;
@@ -838,6 +844,9 @@ public class DicomReader extends SubResolutionFormatReader {
 
         zOffsets.put(0, infos.get(0).zOffsets);
 
+        channelNames.clear();
+        channelNames.addAll(infos.get(0).channelNames);
+
         // determine what each file is:
         //  - a separate image (Bio-Formats series), e.g. largest pyramid level, label, overview, etc.
         //  - a downsampled resolution
@@ -867,6 +876,9 @@ public class DicomReader extends SubResolutionFormatReader {
             core.add(info.coreMetadata);
             metadataInfo.add(info);
           }
+          else if (info.channelNames.size() == 1 && !channelNames.contains(info.channelNames.get(0))) {
+            channelNames.add(info.channelNames.get(0));
+          }
           else if (info.concatenationIndex == 0) {
             core.get(core.size() - 1, core.sizes()[core.size() - 1] - 1).sizeZ++;
             core.get(core.size() - 1, core.sizes()[core.size() - 1] - 1).imageCount += info.coreMetadata.imageCount;
@@ -889,6 +901,18 @@ public class DicomReader extends SubResolutionFormatReader {
           }
           else {
             zOffsets.put(lastCoreIndex, info.zOffsets);
+          }
+        }
+
+        if (core.get(0, 0).sizeC <= 1) {
+          for (int i=0; i<core.size(); i++) {
+            for (int r=0; r<core.size(i); r++) {
+              core.get(i, r).sizeC = channelNames.size();
+              if (core.get(i, r).imageCount == core.get(i, r).sizeC) {
+                core.get(i, r).sizeZ = 1;
+              }
+              updateCoreMetadata(core.get(i, r));
+            }
           }
         }
       }
@@ -934,8 +958,8 @@ public class DicomReader extends SubResolutionFormatReader {
         }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
-          if (c < info.channelNames.size()) {
-            store.setChannelName(info.channelNames.get(c), i, c);
+          if (c < channelNames.size()) {
+            store.setChannelName(channelNames.get(c), i, c);
           }
         }
 
