@@ -1628,7 +1628,7 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       else {
         // plane is not compressed
-        if (originalX > 0 && originalY > 0) {
+        if (originalX > 0 && originalY > 0 && originalX <= getSizeX() && originalY <= getSizeY()) {
           readPlane(stream, x, y, w, h, 0, originalX, originalY, buf);
         }
         else {
