@@ -67,6 +67,7 @@
       <artifactId>logback-core</artifactId>
       <version>${logback.version}</version>
       <scope>runtime</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <!-- NB: We want this, despite warning from dependency:analyze. -->
@@ -74,6 +75,7 @@
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
       <scope>runtime</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <!-- NB: We want this, despite warning from dependency:analyze. -->
