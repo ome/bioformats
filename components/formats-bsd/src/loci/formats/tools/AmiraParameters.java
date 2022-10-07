@@ -387,7 +387,7 @@ public class AmiraParameters {
       String key = readKey();
       if (key.equals("")) {
         LOGGER.warn("Syntax warning:" + row + ":" + column + ": " + "Invalid key");
-        skipWhiteSpace();
+        skipComment();
         continue;
       }
 
