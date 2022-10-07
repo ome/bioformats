@@ -165,7 +165,7 @@
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.29</version>
+      <version>1.31</version>
     </dependency>
     <dependency>
       <groupId>io.airlift</groupId>
