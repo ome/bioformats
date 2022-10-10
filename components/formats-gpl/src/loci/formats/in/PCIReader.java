@@ -347,8 +347,8 @@ public class PCIReader extends FormatReader {
                   if (key.equals("units")) {
                     if (value.indexOf(';') != -1) {
                       value = value.substring(0, value.indexOf(';'));
-                      if (value.toLowerCase().equals("pixels")) {
-                        value = UNITS.PIXEL.toString();
+                      if (value.toLowerCase().trim().equals("pixels")) {
+                        value = UNITS.PIXEL.getSymbol();
                       }
                       try {
                         units = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(value));
