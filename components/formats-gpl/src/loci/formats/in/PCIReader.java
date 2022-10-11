@@ -431,8 +431,8 @@ public class PCIReader extends FormatReader {
       if (!units.equals(UNITS.PIXEL)) {
         scaleFactor *= magnification;
       }
-      Length sizeX = FormatTools.getPhysicalSizeX(scaleFactor, units);
-      Length sizeY = FormatTools.getPhysicalSizeY(scaleFactor, units);
+      Length sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
+      Length sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
