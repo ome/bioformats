@@ -32,8 +32,20 @@
 
 package loci.formats.codec;
 
+import loci.formats.FormatException;
+
 public class ZstdCodec extends WrappedCodec {
   public ZstdCodec() {
     super(new ome.codecs.ZstdCodec());
+  }
+
+  public byte[] decompress(byte[] data, int pointer, int length) 
+      throws FormatException {
+    try {
+      return ((ome.codecs.ZstdCodec)codec).decompress(data, pointer, length);
+    }
+    catch (ome.codecs.CodecException e) {
+      throw unwrapCodecException(e);
+    }
   }
 }
