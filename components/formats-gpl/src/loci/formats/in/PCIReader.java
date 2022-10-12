@@ -48,10 +48,14 @@ import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.enums.Binning;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
@@ -210,6 +214,7 @@ public class PCIReader extends FormatReader {
 
     double scaleFactor = 1;
     double magnification = 1;
+    Unit<Length> units = UNITS.MICROMETER;
 
     final List<String> allFiles = poi.getDocumentList();
     if (allFiles.isEmpty()) {
@@ -338,6 +343,20 @@ public class PCIReader extends FormatReader {
                     }
                     magnification = DataTools.parseDouble(value.trim());
                   }
+
+                  if (key.equals("units")) {
+                    if (value.indexOf(';') != -1) {
+                      value = value.substring(0, value.indexOf(';'));
+                      if (value.toLowerCase().trim().equals("pixels")) {
+                        value = UNITS.PIXEL.getSymbol();
+                      }
+                      try {
+                        units = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(value));
+                      } catch (EnumerationException e) {
+                        LOGGER.info("Failed to parse calibration units", e);
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -408,8 +427,12 @@ public class PCIReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      Length sizeX = FormatTools.getPhysicalSizeX(scaleFactor * magnification);
-      Length sizeY = FormatTools.getPhysicalSizeY(scaleFactor * magnification);
+      
+      if (!units.equals(UNITS.PIXEL)) {
+        scaleFactor *= magnification;
+      }
+      Length sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
+      Length sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
