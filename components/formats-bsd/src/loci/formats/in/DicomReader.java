@@ -658,7 +658,10 @@ public class DicomReader extends SubResolutionFormatReader {
         case OPTICAL_PATH_SEQUENCE:
           for (DicomTag child : tag.children) {
             if (child.attribute == OPTICAL_PATH_ID) {
-              opticalPathIDs.add(child.getNumberValue().intValue());
+              Number v = child.getNumberValue();
+              if (v != null) {
+                opticalPathIDs.add(v.intValue());
+              }
               opticalChannels++;
             }
             else if (child.attribute == OPTICAL_PATH_DESCRIPTION) {
