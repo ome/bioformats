@@ -1631,12 +1631,10 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       else {
         // plane is not compressed
-        if (originalX > 0 && originalY > 0) {
-          readPlane(stream, x, y, w, h, 0, originalX, originalY, buf);
-        }
-        else {
-          readPlane(stream, x, y, w, h, buf);
-        }
+
+        int width = tile.region.width;
+        int height = tile.region.height;
+        readPlane(stream, x, y, w, h, 0, width, height, buf);
       }
     }
   }
