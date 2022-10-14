@@ -1874,7 +1874,9 @@ public class DicomReader extends SubResolutionFormatReader {
   }
 
   public List<String> getChannelNames() {
-    return channelNames;
+    List<String> rtn = new ArrayList<String>();
+    rtn.addAll(channelNames);
+    return rtn;
   }
 
   public boolean isExtendedDepthOfField() {
