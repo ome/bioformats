@@ -927,4 +927,27 @@ public final class MetadataTools {
     }
   }
 
+  /**
+   * Get a valid LSID based on a stored ID.
+   * The returned ID is expected to match the "(\S+):(\S+)" pattern.
+   * If the srcID matches this pattern already, it is returned intact.
+   * If the srcID is null or empty, the altID (expected to be the result of
+   * calling createLSID(...)) is returned instead.
+   * If the srcID is not valid but also not empty, then the srcID is appended
+   * to the altID and separated by ":".
+   *
+   * This is mainly intended for use with formats that store metadata in a
+   * structure similar to OME-XML. The ID recorded in the metadata may not be
+   * quite valid, but is worth saving if possible.
+   */
+  public static String sanitizeID(String srcID, String altID) {
+    if (srcID == null || srcID.isEmpty()) {
+      return altID;
+    }
+    if (srcID.indexOf(":") >= 0) {
+      return srcID;
+    }
+    return altID + ":" + srcID;
+  }
+
 }
