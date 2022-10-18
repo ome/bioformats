@@ -2707,7 +2707,7 @@ public class ZeissCZIReader extends FormatReader {
           String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
 
           String dichroicID = dichroic.getAttribute("Id");
-          dichroicID = MetadataTools.sanitizeID(dichroicID, MetadataTools.createLSID("Dichroic", 0, i));
+          dichroicID = MetadataTools.createLSID(dichroicID, "Dichroic", 0, i);
 
           store.setDichroicID(dichroicID, 0, i);
           store.setDichroicManufacturer(manufacturer, 0, i);
