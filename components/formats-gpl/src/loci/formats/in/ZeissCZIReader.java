@@ -1266,6 +1266,9 @@ public class ZeissCZIReader extends FormatReader {
       store.setPlateColumns(new PositiveInteger(plateColumns), 0);
 
       int fieldsPerWell = fieldNames.size() / platePositions.size();
+      if (fieldNames.size() == 0) {
+        fieldsPerWell = 1;
+      }
 
       int nextWell = 0;
       int nextField = 0;
@@ -1286,13 +1289,15 @@ public class ZeissCZIReader extends FormatReader {
             LOGGER.trace("Could not parse well position", e);
           }
 
-          String fieldName = fieldNames.get(i);
           int field = 0;
-          try {
-            field = Integer.parseInt(fieldName.substring(1)) - 1; // name starts with "P"
-          }
-          catch (NumberFormatException e) {
-            LOGGER.warn("Could not parse field name {}; plate layout may be incorrect", fieldName);
+          if (i < fieldNames.size()) {
+            String fieldName = fieldNames.get(i);
+            try {
+              field = Integer.parseInt(fieldName.substring(1)) - 1; // name starts with "P"
+            }
+            catch (NumberFormatException e) {
+              LOGGER.warn("Could not parse field name {}; plate layout may be incorrect", fieldName);
+            }
           }
 
           if (row >= 0 && column >= 0) {
