@@ -3378,10 +3378,11 @@ public class ZeissCZIReader extends FormatReader {
 
           NodeList regionArrays = sampleHolder.getElementsByTagName("SingleTileRegionArray");
           if (regionArrays != null) {
+            int positionIndex = 0;
             for (int r=0; r<regionArrays.getLength(); r++) {
               NodeList regions = ((Element) regionArrays.item(r)).getElementsByTagName("SingleTileRegion");
               if (regions != null) {
-                for (int i=0; i<regions.getLength(); i++) {
+                for (int i=0; i<regions.getLength(); i++, positionIndex++) {
                   Element region = (Element) regions.item(i);
 
                   String x = getFirstNode(region, "X").getTextContent();
@@ -3390,24 +3391,24 @@ public class ZeissCZIReader extends FormatReader {
                   String name = region.getAttribute("Name");
 
                   // safe to assume all 3 arrays have the same length
-                  if (i < positionsX.length) {
+                  if (positionIndex < positionsX.length) {
                     if (x == null) {
-                      positionsX[i] = null;
+                      positionsX[positionIndex] = null;
                     } else {
                       final Double number = Double.valueOf(x);
-                      positionsX[i] = new Length(number, UNITS.MICROMETER);
+                      positionsX[positionIndex] = new Length(number, UNITS.MICROMETER);
                     }
                     if (y == null) {
-                      positionsY[i] = null;
+                      positionsY[positionIndex] = null;
                     } else {
                       final Double number = Double.valueOf(y);
-                      positionsY[i] = new Length(number, UNITS.MICROMETER);
+                      positionsY[positionIndex] = new Length(number, UNITS.MICROMETER);
                     }
                     if (z == null) {
-                      positionsZ[i] = null;
+                      positionsZ[positionIndex] = null;
                     } else {
                       final Double number = Double.valueOf(z);
-                      positionsZ[i] = new Length(number, UNITS.MICROMETER);
+                      positionsZ[positionIndex] = new Length(number, UNITS.MICROMETER);
                     }
                   }
 
