@@ -298,10 +298,8 @@ public class CellVoyagerReader extends FormatReader
      * Open MeasurementSettings file
      */
 
-    RandomAccessInputStream result =
-      new RandomAccessInputStream(measurementResultFile);
     Document msDocument = null;
-    try {
+    try (RandomAccessInputStream result = new RandomAccessInputStream(measurementResultFile)) {
       msDocument = XMLTools.parseDOM(result);
     }
     catch (ParserConfigurationException e) {
@@ -309,9 +307,6 @@ public class CellVoyagerReader extends FormatReader
     }
     catch (SAXException e) {
       throw new IOException(e);
-    }
-    finally {
-      result.close();
     }
 
     msDocument.getDocumentElement().normalize();
@@ -332,10 +327,9 @@ public class CellVoyagerReader extends FormatReader
      * Open OME metadata file
      */
 
-    RandomAccessInputStream measurement =
-      new RandomAccessInputStream(omeMeasurementFile);
+
     Document omeDocument = null;
-    try {
+    try (RandomAccessInputStream measurement = new RandomAccessInputStream(omeMeasurementFile)) {
       omeDocument = XMLTools.parseDOM(measurement);
     }
     catch (ParserConfigurationException e) {
@@ -343,9 +337,6 @@ public class CellVoyagerReader extends FormatReader
     }
     catch (SAXException e) {
       throw new IOException(e);
-    }
-    finally {
-      measurement.close();
     }
     omeDocument.getDocumentElement().normalize();
 
