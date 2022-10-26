@@ -551,7 +551,7 @@ public class TiffParser implements Closeable {
 
     if (type == IFDType.BYTE) {
       // 8-bit unsigned integer
-      if (count == 1) return Short.valueOf(in.readByte());
+      if (count == 1) return in.readUnsignedByte();
       byte[] bytes = new byte[count];
       in.readFully(bytes);
       // bytes are unsigned, so use shorts

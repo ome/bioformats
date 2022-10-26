@@ -289,7 +289,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
     for (int i=0; i<info.length; i++) {
       if (i != series && info[i] != null) {
         for (OMETiffPlane p : info[i]) {
-          if (p != null && p.reader != null) {
+          if (p != null && p.reader != null &&
+            !getCurrentFile().equals(p.reader.getCurrentFile()))
+          {
             try {
               p.reader.close();
             }
@@ -611,11 +613,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
     if (!isGroupFiles() && !isSingleFile(currentId)) {
       IFormatReader reader = new MinimalTiffReader();
       initializeReader(reader, currentId);
-      core.set(0, 0, new OMETiffCoreMetadata(reader.getCoreMetadataList().get(0)));
+
+      OMETiffCoreMetadata baseCore = new OMETiffCoreMetadata(reader.getCoreMetadataList().get(0));
+      core.clear();
+
       int ifdCount = reader.getImageCount();
       reader.close();
       int maxSeries = 0;
-      info = new OMETiffPlane[meta.getImageCount()][];
+      ArrayList<OMETiffPlane[]> tmpInfo = new ArrayList<OMETiffPlane[]>();
       ArrayList<Integer> imagesToRemove = new ArrayList<>();
       ArrayList<int[]> cBounds = new ArrayList<>();
       for (int i=0; i<meta.getImageCount(); i++) {
@@ -631,11 +636,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
         int sizeT = meta.getPixelsSizeT(i).getValue();
         String order = meta.getPixelsDimensionOrder(i).getValue();
         int num = sizeZ * sizeC * sizeT;
-        OMETiffCoreMetadata m = (OMETiffCoreMetadata) (i < core.size() ? core.get(i, 0) : new OMETiffCoreMetadata(core.get(0, 0)));
+        OMETiffCoreMetadata m = new OMETiffCoreMetadata(baseCore);
         m.dimensionOrder = order;
 
-        info[i] = new OMETiffPlane[meta.getTiffDataCount(i)];
+        OMETiffPlane[] thisInfo = new OMETiffPlane[meta.getTiffDataCount(i)];
         int next = 0;
+        boolean hasAnyPlanes = false;
         for (int td=0; td<meta.getTiffDataCount(i); td++) {
           String uuid = null;
           try {
@@ -653,6 +659,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
             // this plane doesn't appear to be in the current file
             continue;
           }
+          hasAnyPlanes = true;
 
           if (i > maxSeries) {
             maxSeries = i;
@@ -675,7 +682,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
               p.ifd += ifd.getValue();
             }
             p.reader = reader;
-            info[i][next++] = p;
+            thisInfo[next++] = p;
             int z = firstZ == null ? 0 : firstZ.getValue();
             int c = firstC == null ? 0 : firstC.getValue();
             int t = firstT == null ? 0 : firstT.getValue();
@@ -709,21 +716,26 @@ public class OMETiffReader extends SubResolutionFormatReader {
             }
           }
         }
+        if (!hasAnyPlanes) {
+          imagesToRemove.add(i);
+          continue;
+        }
         if (i <= maxSeries) {
           m.sizeZ = (maxZ - minZ) + 1;
           m.sizeC = (maxC - minC) + 1;
           m.sizeT = (maxT - minT) + 1;
           m.imageCount = m.sizeZ * m.sizeC * m.sizeT;
           m.sizeC *= meta.getChannelSamplesPerPixel(i, 0).getValue();
-          if (i >= core.size()) {
-            core.add(m);
-          }
+          core.add(m);
           cBounds.add(new int[] {minC, maxC});
+          tmpInfo.add(thisInfo);
         }
         else {
           imagesToRemove.add(i);
         }
       }
+
+      info = tmpInfo.toArray(new OMETiffPlane[tmpInfo.size()][]);
 
       // remove extra Images, Channels, and Planes
 
@@ -731,7 +743,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
       List<Image> images = root.copyImageList();
       for (int i=imagesToRemove.size()-1; i>=0; i--) {
-        images.remove(imagesToRemove.get(i));
+        images.remove(images.get(imagesToRemove.get(i)));
       }
       for (int i=0; i<images.size(); i++) {
         Image img = images.get(i);
@@ -850,7 +862,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
     // process TiffData elements
     Hashtable<String, IFormatReader> readers = new Hashtable<>();
+    Hashtable<String, long[]> ifdOffsets = new Hashtable<String, long[]>();
     boolean adjustedSamples = false;
+    boolean hasSubIFDs = false;
     for (int i=0; i<seriesCount; i++) {
       int s = i;
       LOGGER.debug("Image[{}] {", i);
@@ -928,6 +942,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         else if (t == 0) {
           tOneIndexed = false;
+        }
+
+        // in the common case where there is a TiffData with all 0 indices,
+        // don't scan every TiffData
+        if (c == 0 && z == 0 && t == 0) {
+          break;
         }
       }
 
@@ -1028,16 +1048,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
             LOGGER.trace("      Plane[{}]: FILLED", no);
           }
         }
-        else {
-          // known number of planes; clear anything subsequently filled
-          for (int no=index+count; no<num; no++) {
-            if (planes[no].certain) break;
-            planes[no].reader = null;
-            planes[no].id = null;
-            planes[no].ifd = -1;
-            LOGGER.trace("      Plane[{}]: CLEARED", no);
-          }
-        }
         LOGGER.debug("    }");
       }
 
@@ -1099,6 +1109,21 @@ public class OMETiffReader extends SubResolutionFormatReader {
             info[s][0].ifd = 0;
           }
         }
+        else {
+          try (TiffParser tp = new TiffParser(testFile)) {
+            tp.setDoCaching(false);
+            long[] offsets = ifdOffsets.get(firstFile);
+            if (offsets == null) {
+              offsets = tp.getIFDOffsets();
+            }
+            IFD checkIFD = tp.getIFD(offsets[info[s][0].ifd]);
+            hasSubIFDs = hasSubIFDs || checkIFD.containsKey(IFD.SUB_IFD);
+            m.tileWidth = (int) checkIFD.getTileWidth();
+            m.tileHeight = (int) checkIFD.getTileLength();
+
+            ifdOffsets.put(firstFile, offsets);
+          }
+        }
         if (testFile != null) {
           testFile.close();
         }
@@ -1123,10 +1148,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
             }
           }
         }
-
-        initializeReader(info[s][0].reader, info[s][0].id);
-        m.tileWidth = info[s][0].reader.getOptimalTileWidth();
-        m.tileHeight = info[s][0].reader.getOptimalTileHeight();
 
         m.sizeX = meta.getPixelsSizeX(i).getValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
@@ -1315,7 +1336,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
     }
 
-    addSubResolutions();
+    if (hasSubIFDs) {
+      addSubResolutions();
+    }
   }
 
   // -- OMETiffReader API methods --
@@ -1432,7 +1455,13 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         core.add(s, c);
       }
-      r.close();
+      // if we have multiple OME-TIFF files, close to reduce the
+      // number of open file handles
+      // keep the "main" file's handle open though, to improve
+      // performance when there is only one file
+      if (!getCurrentFile().equals(r.getCurrentFile())) {
+        r.close();
+      }
     }
     core.reorder();
 

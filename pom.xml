@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>6.10.0-SNAPSHOT</version>
+  <version>6.11.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -34,7 +34,7 @@
          When possible, we advise using the relevant groupId and version
          properties for your dependencies rather than hardcoding them. -->
 
-    <release.version>6.10.0-SNAPSHOT</release.version>
+    <release.version>6.11.1-SNAPSHOT</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2017</year>
     <project.rootdir>${basedir}</project.rootdir>
@@ -46,16 +46,16 @@
     <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
     <ome-metakit.version>5.3.4</ome-metakit.version>
     <metakit.version>${ome-metakit.version}</metakit.version>
-    <slf4j.version>1.7.6</slf4j.version>
+    <slf4j.version>1.7.30</slf4j.version>
     <kryo.version>4.0.2</kryo.version>
     <testng.version>6.8</testng.version>
-    <ome-common.version>6.0.9</ome-common.version>
+    <ome-common.version>6.0.13</ome-common.version>
     <ome-model.group>org.openmicroscopy</ome-model.group>
     <ome-model.version>6.3.1</ome-model.version>
-    <ome-poi.version>5.3.6</ome-poi.version>
+    <ome-poi.version>5.3.7</ome-poi.version>
     <ome-mdbtools.version>5.3.2</ome-mdbtools.version>
     <ome-jai.version>0.1.3</ome-jai.version>
-    <ome-codecs.version>0.3.2</ome-codecs.version>
+    <ome-codecs.version>0.4.1</ome-codecs.version>
     <jxrlib.version>0.2.4</jxrlib.version>
     <xalan.version>2.7.2</xalan.version>
     <sqlite.version>3.28.0</sqlite.version>
