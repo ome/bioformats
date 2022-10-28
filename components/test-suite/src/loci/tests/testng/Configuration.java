@@ -102,6 +102,8 @@ public class Configuration {
   private static final String CHANNEL_NAME = "ChannelName_";
   private static final String EXPOSURE_TIME = "ExposureTime_";
   private static final String EXPOSURE_TIME_UNIT = "ExposureTimeUnit_";
+  private static final String PLANE_EXPOSURE_TIME = "PlaneExposureTime_";
+  private static final String PLANE_EXPOSURE_TIME_UNIT = "PlaneExposureTimeUnit_";
   private static final String EMISSION_WAVELENGTH = "EmissionWavelength_";
   private static final String EMISSION_WAVELENGTH_UNIT = "EmissionWavelengthUnit_";
   private static final String EXCITATION_WAVELENGTH = "ExcitationWavelength_";
@@ -339,6 +341,21 @@ public class Configuration {
     }
     catch (NumberFormatException e) { 
       return null; 
+    }
+  }
+
+  public boolean hasPlaneExposureTime(int plane) {
+    return currentTable.containsKey(PLANE_EXPOSURE_TIME + plane);
+  }
+
+  public Time getPlaneExposureTime(int plane) {
+    String exposure = currentTable.get(PLANE_EXPOSURE_TIME + plane);
+    String exposureUnits = currentTable.get(PLANE_EXPOSURE_TIME_UNIT + plane);
+    try {
+      return exposure == null ? null : FormatTools.getTime(new Double(exposure), exposureUnits);
+    }
+    catch (NumberFormatException e) {
+      return null;
     }
   }
 
