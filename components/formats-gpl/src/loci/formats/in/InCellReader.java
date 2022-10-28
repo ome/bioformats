@@ -898,7 +898,7 @@ public class InCellReader extends FormatReader {
           lastImage.max = DataTools.parseDouble(attributes.getValue("max"));
         }
       }
-      else if (qName.equals("offset_point")) {
+      else if (qName.equals("offset_point") || qName.equals("Point")) {
         fieldCount++;
       }
       else if (qName.equals("TimePoint") && doT) {
