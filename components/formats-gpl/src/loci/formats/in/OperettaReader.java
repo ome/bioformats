@@ -512,7 +512,12 @@ public class OperettaReader extends FormatReader {
               parser.setDoCaching(false);
 
               IFD firstIFD = parser.getFirstIFD();
-              if (firstIFD != null) {
+
+              // ignore any files with a 32-bit pixel type
+              // we expect valid files to be uint16
+              // as noted in openBytes above, uint32 data should be ignored because
+              // it indicates a failure to process images with bright spots
+              if (firstIFD != null && firstIFD.getPixelType() != FormatTools.UINT32) {
                 ms.littleEndian = firstIFD.isLittleEndian();
                 ms.pixelType = firstIFD.getPixelType();
                 validFile = true;
