@@ -7,7 +7,13 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+<project xmlns:resolver="antlib:org.apache.maven.resolver.ant">
+  <taskdef uri="antlib:org.apache.maven.resolver.ant" resource="org/apache/maven/resolver/ant/antlib.xml">
+    <classpath>
+      <fileset dir="${root.dir}/jar" includes="maven-resolver-ant-tasks-*.jar"/>
+    </classpath>
+  </taskdef>
+
   <property file="${root.dir}/ant/java.properties"/>
   <import file="${root.dir}/ant/common.xml"/>
 
@@ -23,64 +29,58 @@ Type "ant -p" for a list of targets.
     <available file="${tests.dir}"/>
   </condition>
 
-  <path id="maven-ant-tasks.classpath"
-    path="${lib.dir}/maven-ant-tasks-2.1.3.jar"/>
-  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
-    uri="antlib:org.apache.maven.artifact.ant"
-    classpathref="maven-ant-tasks.classpath"/>
+  <resolver:pom file="pom.xml" id="pom"/>
 
-   <artifact:pom file="pom.xml" id="maven.pom"/>
-
-   <target name="mvn-init" unless="compile.classpath">
-     <mkdir dir="${build.dir}"/>
-     <condition property="maven.repo.local" value="${maven.repo.local}"
-         else="${user.home}/.m2/repository">
-       <isset property="maven.repo.local"/>
-     </condition>
-     <artifact:localRepository id="local.repository"
-       path="${maven.repo.local}"/>
-     <artifact:dependencies pathId="compile.classpath" useScope="compile"
-         cacheDependencyRefs="true"
-         dependencyRefsBuildFile="${build.dir}/compile-dependencies.xml">
-       <pom refid="maven.pom"/>
-       <localRepository refid="local.repository"/>
-     </artifact:dependencies>
-     <artifact:dependencies pathId="test.classpath" useScope="test"
-         cacheDependencyRefs="true"
-         dependencyRefsBuildFile="${build.dir}/test-dependencies.xml">
-       <pom refid="maven.pom"/>
-       <localRepository refid="local.repository"/>
-     </artifact:dependencies>
-     <artifact:dependencies pathId="runtime.classpath"
-         filesetId="runtime.fileset"
-         useScope="runtime" cacheDependencyRefs="true"
-         dependencyRefsBuildFile="${build.dir}/runtime-dependencies.xml">
-       <pom refid="maven.pom"/>
-       <localRepository refid="local.repository"/>
-     </artifact:dependencies>
-   </target>
-
-
+  <resolver:remoterepo id="ome" url="https://artifacts.openmicroscopy.org/artifactory/maven/" type="default" releases="true" snapshots="false"/>
+  <resolver:remoterepo id="unidata" url="https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases" type="default" releases="true"/>
+  <resolver:remoterepos id="resolver.repositories">
+    <resolver:remoterepo refid="central"/>
+    <resolver:remoterepo refid="ome"/>
+    <resolver:remoterepo refid="unidata"/>
+  </resolver:remoterepos>
   <!-- Main build targets -->
 
-  <target name="compile" depends="mvn-init, copy-resources" description="compile classes">
+  <target name="compile" depends="copy-resources" description="compile classes">
     <mkdir dir="${classes.dir}"/>
-    <javac debug="true" includeantruntime="false" fork="true"
+
+    <resolver:resolve>
+      <dependencies>
+        <pom refid="pom"/>
+      </dependencies>
+      <path refid="compile.classpath" classpath="compile"/>
+      <path refid="runtime.classpath" classpath="runtime"/>
+    </resolver:resolve>
+
+    <javac
+      classpathref="compile.classpath"
+      debug="true"
+      includeAntRuntime="false"
+      fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
       encoding="UTF-8"
       srcdir="${src.dir}" destdir="${classes.dir}"
-      includes="${component.source}">
-      <classpath refid="compile.classpath" />
+      includes="${component.source}"/>
       <!--<compilerarg value="-Xlint:unchecked"/>-->
-    </javac>
   </target>
 
-  <target name="compile-tests" depends="compile, mvn-init, copy-test-resources"
+  <target name="compile-tests" depends="compile"
     description="compile test classes" if="doTests">
     <mkdir dir="${test-classes.dir}"/>
-    <javac debug="true" includeantruntime="false" fork="true"
+
+    <resolver:resolve>
+      <dependencies>
+        <pom refid="pom"/>
+      </dependencies>
+      <path refid="test.classpath" classpath="test"/>
+    </resolver:resolve>
+
+    <javac
+      classpathref="alltest.classpath"
+      debug="true"
+      includeantruntime="false"
+      fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
@@ -89,7 +89,7 @@ Type "ant -p" for a list of targets.
       includes="${component.source}">
       <classpath refid="test.classpath"/>
       <classpath path="${classes.dir}"/>
-      </javac>
+    </javac>
   </target>
 
   <target name="exec" depends="compile" description="execute package">
@@ -194,17 +194,25 @@ your FindBugs installation's lib directory. E.g.:
         <attribute name="Implementation-URL" value="https://www.openmicroscopy.org/bio-formats/"/>
       </manifest>
     </jar>
-    <artifact:install file="${artifact.dir}/${component.jar}">
-      <artifact:localRepository id="local.repository"
-        path="${maven.repo.local}"/>
-      <pom refid="maven.pom"/>
-    </artifact:install>
+    <resolver:artifacts id="jar">
+      <artifact file="${artifact.dir}/${component.jar}" type="jar" />
+    </resolver:artifacts>
+    <resolver:install artifactsref="jar"/>
   </target>
 
-  <target name="bundle" depends="init-timestamp,mvn-init" description="create bundle JAR">
+  <target name="bundle" depends="init-timestamp" description="create bundle JAR">
     <mkdir dir="${artifact.dir}"/>
+    <resolver:resolve>
+      <dependencies>
+        <pom refid="pom"/>
+      </dependencies>
+      <path refid="runtime.classpath" classpath="runtime"/>
+      <files refid="runtime.fileset"/>
+    </resolver:resolve>
+
     <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
-      <zipgroupfileset refid="runtime.fileset"/>
+      <!-- TODO: need to convert the above into a fileset for creating the uberJAR -->
+      <!-- <zipgroupfileset refid="runtime.fileset"/> -->
       <manifest>
         <attribute name="Main-Class" value="${bundle.main-class}"/>
         <attribute name="Implementation-Title" value="${bundle.name}"/>
@@ -216,11 +224,10 @@ your FindBugs installation's lib directory. E.g.:
         <attribute name="Implementation-URL" value="https://www.openmicroscopy.org/bio-formats/"/>
       </manifest>
     </jar>
-    <artifact:install file="${artifact.dir}/${bundle.jar}">
-      <pom refid="maven.pom"/>
-      <artifact:localRepository id="local.repository"
-        path="${maven.repo.local}"/>
-    </artifact:install>
+    <resolver:artifacts id="bundle">
+      <artifact file="${artifact.dir}/${bundle.jar}"  type="jar" />
+    </resolver:artifacts>
+    <resolver:install artifactsref="bundle"/>
   </target>
 
   <target name="utils" depends="jar"
@@ -293,7 +300,7 @@ your FindBugs installation's lib directory. E.g.:
     <!-- copy source files and text resources with filtering -->
   </target>
 
-  <target name="copy-test-resources" depends="init" if="doTests">
+  <target name="copy-test-resources" depends="compile" if="doTests">
     <!-- copy binary resources -->
     <mkdir dir="${test.dir}"/>
     <copy todir="${test.dir}" preservelastmodified="true">
