@@ -778,6 +778,20 @@ public class FakeReader extends FormatReader {
         sizeC + "/" + rgb);
     }
     MetadataTools.getDimensionOrder(dimOrder);
+
+    if (rgb > 1 && !dimOrder.startsWith("XYC")) {
+      String newDimOrder = "XYC";
+      if (dimOrder.indexOf("Z") < dimOrder.indexOf("T")) {
+        newDimOrder += "ZT";
+      }
+      else {
+        newDimOrder += "TZ";
+      }
+      LOGGER.warn("Dimension order {} incorrect for rgb={}; corrected to {}",
+        dimOrder, rgb, newDimOrder);
+      dimOrder = newDimOrder;
+    }
+
     if (falseColor && !indexed) {
       throw new FormatException("False color images must be indexed");
     }
