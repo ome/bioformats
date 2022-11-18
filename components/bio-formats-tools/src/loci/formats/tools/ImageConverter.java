@@ -624,11 +624,17 @@ public final class ImageConverter {
       ((TiffWriter) writer).setBigTiff(bigtiff);
       ((TiffWriter) writer).setCanDetectBigTiff(!nobigtiff);
     }
+    else if (writer instanceof DicomWriter) {
+      ((DicomWriter) writer).setBigTiff(bigtiff);
+    }
     else if (writer instanceof ImageWriter) {
       IFormatWriter w = ((ImageWriter) writer).getWriter(out);
       if (w instanceof TiffWriter) {
         ((TiffWriter) w).setBigTiff(bigtiff);
         ((TiffWriter) w).setCanDetectBigTiff(!nobigtiff);
+      }
+      else if (w instanceof DicomWriter) {
+        ((DicomWriter) w).setBigTiff(bigtiff);
       }
     }
 
