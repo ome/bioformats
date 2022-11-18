@@ -56,6 +56,13 @@ public final class TiffConstants {
   public static final int LITTLE = 0x49;
   public static final int BIG = 0x4d;
 
+  /**
+   * Number of bytes at which to automatically switch to BigTIFF
+   * This is approximately 3.9 GB instead of 4 GB,
+   * to allow space for the IFDs.
+   */
+  public static final long BIG_TIFF_CUTOFF = (long) 1024 * 1024 * 3990;
+
   // -- Constructor --
 
   private TiffConstants() { }
