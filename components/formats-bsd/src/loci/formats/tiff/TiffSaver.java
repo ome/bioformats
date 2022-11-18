@@ -506,10 +506,38 @@ public class TiffSaver implements Closeable {
   // Note synchronization here is via writeImage
   private ByteArrayHandle ifdBuffer = new ByteArrayHandle();
 
+  /**
+   * Write the given IFD to the open stream.
+   * The provided offset will be used as the offset to the next IFD,
+   * and can be a placeholder value.
+   *
+   * @param ifd the complete IFD to be written
+   * @param nextOffset the offset of the next IFD to be written
+   */
   public void writeIFD(IFD ifd, long nextOffset)
     throws FormatException, IOException
   {
+    writeIFD(ifd, nextOffset, false);
+  }
 
+  /**
+   * Write the given IFD to the open stream.
+   * The provided offset will be used as the offset to the next IFD,
+   * unless offset calculation is requested.
+   * If offset calculation is requested, the next IFD's offset will be
+   * set so that it immediately follows the current IFD.
+   * Don't enable offset calculation when writing the last IFD,
+   * unless the offset will later be overwritten with 0.
+   *
+   * @param ifd the complete IFD to be written
+   * @param nextOffset the offset of the next IFD to be written (if known)
+   * @param calculateOffset true if nextOffset should be ignored, and the
+   *                        next IFD should be assumed to immediately follow
+   *                        this one
+   */
+  public void writeIFD(IFD ifd, long nextOffset, boolean calculateOffset)
+    throws FormatException, IOException
+  {
     TreeSet<Integer> keys = new TreeSet<Integer>(ifd.keySet());
     keys.remove(Integer.valueOf(IFD.LITTLE_ENDIAN));
     keys.remove(Integer.valueOf(IFD.BIG_TIFF));
@@ -535,6 +563,11 @@ public class TiffSaver implements Closeable {
       writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
     }
     if (bigTiff) out.seek(out.getFilePointer());
+
+    if (calculateOffset) {
+      nextOffset = fp + ifdBytes + extra.length();
+    }
+
     writeIntValue(out, nextOffset);
     out.write(extra.getBytes(), 0, (int) extra.length());
 
