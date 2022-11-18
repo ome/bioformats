@@ -670,6 +670,7 @@ public enum DicomAttribute {
     ITEM(0xFFFEE000),
     ITEM_DELIMITATION_ITEM(0xFFFEE00D),
     SEQUENCE_DELIMITATION_ITEM(0xFFFEE0DD),
+    TRAILING_PADDING(0xFFFCFFFC),
 
     // directory structuring elements
     FILE_SET_ID(0x00041130),
