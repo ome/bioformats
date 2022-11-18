@@ -899,6 +899,9 @@ public class CellSensReader extends FormatReader {
               if (c < pyramid.exposureTimes.size()) {
                 exp = pyramid.exposureTimes.get(c);
               }
+              else if (c < pyramid.otherExposureTimes.size()) {
+                exp = pyramid.otherExposureTimes.get(c);
+              }
               if (exp != null) {
                 store.setPlaneExposureTime(
                   FormatTools.createTime(exp / 1000000.0, UNITS.SECOND), ii, nextPlane);
@@ -1737,6 +1740,7 @@ public class CellSensReader extends FormatReader {
               }
               else if (tag == EXPOSURE_TIME) {
                 pyramid.defaultExposureTime = new Long(value);
+                pyramid.otherExposureTimes.add(pyramid.defaultExposureTime);
               }
               else if (tag == CREATION_TIME && pyramid.acquisitionTime == null) {
                 pyramid.acquisitionTime = new Long(value);
@@ -2494,6 +2498,7 @@ public class CellSensReader extends FormatReader {
     public ArrayList<String> channelNames = new ArrayList<String>();
     public ArrayList<Double> channelWavelengths = new ArrayList<Double>();
     public ArrayList<Long> exposureTimes = new ArrayList<Long>();
+    public transient ArrayList<Long> otherExposureTimes = new ArrayList<Long>();
     public Long defaultExposureTime;
 
     public ArrayList<String> objectiveNames = new ArrayList<String>();
