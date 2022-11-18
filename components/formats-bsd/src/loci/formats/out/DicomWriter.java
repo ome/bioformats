@@ -1044,8 +1044,10 @@ public class DicomWriter extends FormatWriter {
 
         // write the extra DICOM tag?
         DicomTag trailingPadding = new DicomTag(TRAILING_PADDING, OB);
+        trailingPadding.elementLength = (int) 0xffffffff;
         writeTag(trailingPadding);
 
+        out.seek(out.length());
         long fp = out.getFilePointer();
         writeIFDs(resolutionIndex);
         long length = out.getFilePointer() - fp;
