@@ -18,3 +18,9 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Build with Ant
         run: ./tools/test-build ant
+      - uses: actions/upload-artifact@v3
+        # upload just one set of artifacts for easier PR review
+        if: ${{ matrix.java }} == 1.8 && ${{ matrix.os }} == "ubuntu-latest"
+        with:
+          path: artifacts/
+          retention-days: 30
