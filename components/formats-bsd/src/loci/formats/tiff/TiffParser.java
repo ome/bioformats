@@ -1250,10 +1250,23 @@ public class TiffParser implements Closeable {
     float lumaRed = PhotoInterp.LUMA_RED;
     float lumaGreen = PhotoInterp.LUMA_GREEN;
     float lumaBlue = PhotoInterp.LUMA_BLUE;
-    int[] reference = ifd.getIFDIntArray(IFD.REFERENCE_BLACK_WHITE);
-    if (reference == null) {
-      reference = new int[] {0, 0, 0, 0, 0, 0};
+    int[] reference = {0, 0, 0, 0, 0, 0};
+    try {
+      int[] value = ifd.getIFDIntArray(IFD.REFERENCE_BLACK_WHITE);
+      // TODO: Run extra validation on the value
+      if (value != null) {
+        reference = value;
+      }
+    } catch (FormatException e) {
+      float[] value = (float[]) ifd.getIFDValue(IFD.REFERENCE_BLACK_WHITE);
+      if (value != null && value.length == 6) {
+        LOGGER.debug("ReferenceBlackWhite tag stored as float array.");
+        for (int i = 0 ; i < 5; i++) {
+          reference[i] = (int) value[i];
+        }
+      }
     }
+
     int[] subsampling = ifd.getIFDIntArray(IFD.Y_CB_CR_SUB_SAMPLING);
     TiffRational[] coefficients = (TiffRational[])
       ifd.getIFDValue(IFD.Y_CB_CR_COEFFICIENTS);
