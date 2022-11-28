@@ -128,6 +128,7 @@ public class FakeReader extends FormatReader {
   public static final int DEFAULT_PIXEL_TYPE = FormatTools.UINT8;
   public static final int DEFAULT_RGB_CHANNEL_COUNT = 1;
   public static final String DEFAULT_DIMENSION_ORDER = "XYZCT";
+  public static final String DEFAULT_RGB_DIMENSION_ORDER = "XYCZT";
 
   public static final int DEFAULT_RESOLUTION_SCALE = 2;
 
@@ -597,7 +598,7 @@ public class FakeReader extends FormatReader {
     int pixelType = DEFAULT_PIXEL_TYPE;
     int bitsPerPixel = 0; // default
     int rgb = DEFAULT_RGB_CHANNEL_COUNT;
-    String dimOrder = DEFAULT_DIMENSION_ORDER;
+    String dimOrder = null;
     boolean orderCertain = true;
     boolean little = true;
     boolean interleaved = false;
@@ -777,20 +778,29 @@ public class FakeReader extends FormatReader {
       throw new FormatException("Invalid sizeC/rgb combination: " +
         sizeC + "/" + rgb);
     }
-    MetadataTools.getDimensionOrder(dimOrder);
 
-    if (rgb > 1 && !dimOrder.startsWith("XYC")) {
-      String newDimOrder = "XYC";
-      if (dimOrder.indexOf("Z") < dimOrder.indexOf("T")) {
-        newDimOrder += "ZT";
+    // make sure the dimension order is correct for RGB data
+    // and set to the correct default if not explicitly specified
+    if (rgb > 1) {
+      String newDimOrder = dimOrder == null ? DEFAULT_RGB_DIMENSION_ORDER : dimOrder;
+      if (!newDimOrder.startsWith("XYC")) {
+        if (newDimOrder.indexOf("Z") < newDimOrder.indexOf("T")) {
+          newDimOrder = "XYCZT";
+        }
+        else {
+          newDimOrder = "XYCTZ";
+        }
+        LOGGER.warn("Dimension order {} incorrect for rgb={}; corrected to {}",
+          dimOrder, rgb, newDimOrder);
       }
-      else {
-        newDimOrder += "TZ";
-      }
-      LOGGER.warn("Dimension order {} incorrect for rgb={}; corrected to {}",
-        dimOrder, rgb, newDimOrder);
       dimOrder = newDimOrder;
     }
+    else if (dimOrder == null) {
+      dimOrder = DEFAULT_DIMENSION_ORDER;
+    }
+
+    // validate the dimension order
+    MetadataTools.getDimensionOrder(dimOrder);
 
     if (falseColor && !indexed) {
       throw new FormatException("False color images must be indexed");
