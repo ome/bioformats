@@ -696,4 +696,30 @@ public class FakeReaderTest {
     assertEquals(reader.getResolutionCount(), 1);
   }
 
+  @Test
+  public void testValidDimensionOrders() throws Exception {
+    // check defaults are as expected for RGB and non-RGB data
+    reader.setId("test&sizeC=3&rgb=3.fake");
+    assertEquals(reader.getDimensionOrder(), "XYCZT");
+    reader.setId("test&sizeC=3&rgb=1.fake");
+    assertEquals(reader.getDimensionOrder(), "XYZCT");
+
+    // check that the provided dimension order is unchanged for non-RGB data
+    reader.setId("test&dimOrder=XYZTC.fake");
+    assertEquals(reader.getDimensionOrder(), "XYZTC");
+
+    // check that the provided dimension order is unchanged if valid for RGB data
+    reader.setId("test&sizeC=3&rgb=3&dimOrder=XYCTZ.fake");
+    assertEquals(reader.getDimensionOrder(), "XYCTZ");
+
+    // check that the dimension order is changed if not valid for RGB data
+    reader.setId("test&sizeC=3&rgb=3&dimOrder=XYZTC.fake");
+    assertEquals(reader.getDimensionOrder(), "XYCZT");
+  }
+
+  @Test(expectedExceptions={FormatException.class})
+  public void testInvalidDimensionOrder() throws Exception {
+    reader.setId("test&dimOrder=CXYZT.fake");
+  }
+
 }
