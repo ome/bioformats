@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 
@@ -71,6 +72,8 @@ public class LeicaSCNReader extends BaseTiffReader {
     "http://www.leica-microsystems.com/scn/2010/03/10";
   private static final String SCHEMA_2010_10 =
     "http://www.leica-microsystems.com/scn/2010/10/01";
+
+  private static final String[] MODELS_WITHOUT_CORRECTION = {"versa", "leica scn400"};
 
   // -- Fields --
   LeicaSCNHandler handler;
@@ -230,7 +233,8 @@ public class LeicaSCNReader extends BaseTiffReader {
     // newer files from Versa systems do not
     if (handler != null) {
       Image i = handler.imageMap.get(0);
-      tiffParser.setYCbCrCorrection(!("versa".equalsIgnoreCase(i.devModel) || "leica scn400".equalsIgnoreCase(i.devModel)));
+      String model = i.devModel == null ? i.devModel : i.devModel.toLowerCase();
+      tiffParser.setYCbCrCorrection(!Arrays.asList(MODELS_WITHOUT_CORRECTION).contains(model));
     }
   }
 
