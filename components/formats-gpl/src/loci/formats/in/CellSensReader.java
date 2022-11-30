@@ -376,6 +376,8 @@ public class CellSensReader extends FormatReader {
   // -- Fields --
 
   private String[] usedFiles;
+  // non-pixels files that are included in the directory (e.g. "blobs")
+  private ArrayList<String> extraFiles = new ArrayList<String>();
   private HashMap<Integer, String> fileMap = new HashMap<Integer, String>();
 
   private TiffParser parser;
@@ -451,7 +453,15 @@ public class CellSensReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     // all files contain pixels
-    return noPixels ? null : usedFiles;
+    if (noPixels) {
+      return extraFiles.toArray(new String[extraFiles.size()]);
+    }
+    String[] allFiles = new String[extraFiles.size() + usedFiles.length];
+    System.arraycopy(usedFiles, 0, allFiles, 0, usedFiles.length);
+    for (int i=0; i<extraFiles.size(); i++) {
+      allFiles[usedFiles.length + i] = extraFiles.get(i);
+    }
+    return allFiles;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
@@ -591,6 +601,7 @@ public class CellSensReader extends FormatReader {
       parser = null;
       ifds = null;
       usedFiles = null;
+      extraFiles.clear();
       fileMap.clear();
       tileOffsets.clear();
       jpeg = false;
@@ -673,8 +684,11 @@ public class CellSensReader extends FormatReader {
         if (pixelsFiles != null) {
           Arrays.sort(pixelsFiles);
           for (String pixelsFile : pixelsFiles) {
-            if (checkSuffix(pixelsFile, "ets")) {
+            if (checkSuffix(pixelsFile, "ets") && pixelsFile.startsWith("frame_")) {
               files.add(new Location(stackDir, pixelsFile).getAbsolutePath());
+            }
+            else {
+              extraFiles.add(new Location(stackDir, pixelsFile).getAbsolutePath());
             }
           }
         }
