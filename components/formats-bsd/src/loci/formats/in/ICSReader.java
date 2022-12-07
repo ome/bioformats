@@ -32,6 +32,7 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -1477,7 +1478,7 @@ public class ICSReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     // populate Image data
-
+    imageName = imageName.substring(imageName.lastIndexOf(File.separator) + 1);
     store.setImageName(imageName, 0);
 
     if (date != null) store.setImageAcquisitionDate(new Timestamp(date), 0);
