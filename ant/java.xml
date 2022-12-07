@@ -43,6 +43,8 @@ Type "ant -p" for a list of targets.
   <target name="compile" depends="copy-resources" description="compile classes">
     <mkdir dir="${classes.dir}"/>
 
+    <path id="compile.classpath"/>
+    <path id="runtime.classpath"/>
     <resolver:resolve>
       <dependencies>
         <pom refid="pom"/>
@@ -69,6 +71,7 @@ Type "ant -p" for a list of targets.
     description="compile test classes" if="doTests">
     <mkdir dir="${test-classes.dir}"/>
 
+    <path id="test.classpath"/>
     <resolver:resolve>
       <dependencies>
         <pom refid="pom"/>
@@ -77,7 +80,7 @@ Type "ant -p" for a list of targets.
     </resolver:resolve>
 
     <javac
-      classpathref="alltest.classpath"
+      classpathref="test.classpath"
       debug="true"
       includeantruntime="false"
       fork="true"
