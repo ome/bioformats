@@ -210,16 +210,15 @@ your FindBugs installation's lib directory. E.g.:
         <pom refid="pom"/>
       </dependencies>
       <path refid="runtime.classpath" classpath="runtime"/>
-      <files refid="runtime.files"/>
     </resolver:resolve>
 
+    <!-- Unzip the content of the runtime classpath to create the uberJAR -->
+    <unzip dest="${build.dir}/unzip">
+      <path refid="runtime.classpath"/>
+    </unzip>
+
     <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
-      <!-- TODO: need to convert the above into a fileset for creating the uberJAR -->
-      <archives>
-        <zips>
-            <path refid="runtime.classpath"/>
-        </zips>
-      </archives>
+      <zipfileset dir="${build.dir}/unzip"/>
       <manifest>
         <attribute name="Main-Class" value="${bundle.main-class}"/>
         <attribute name="Implementation-Title" value="${bundle.name}"/>
@@ -231,6 +230,7 @@ your FindBugs installation's lib directory. E.g.:
         <attribute name="Implementation-URL" value="https://www.openmicroscopy.org/bio-formats/"/>
       </manifest>
     </jar>
+    <delete dir="${build.dir}/unzip"/>
     <resolver:artifacts id="bundle">
       <artifact file="${artifact.dir}/${bundle.jar}"  type="jar" />
     </resolver:artifacts>
