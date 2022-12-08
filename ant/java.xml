@@ -210,12 +210,16 @@ your FindBugs installation's lib directory. E.g.:
         <pom refid="pom"/>
       </dependencies>
       <path refid="runtime.classpath" classpath="runtime"/>
-      <files refid="runtime.fileset"/>
+      <files refid="runtime.files"/>
     </resolver:resolve>
 
     <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
       <!-- TODO: need to convert the above into a fileset for creating the uberJAR -->
-      <!-- <zipgroupfileset refid="runtime.fileset"/> -->
+      <archives>
+        <zips>
+            <path refid="runtime.classpath"/>
+        </zips>
+      </archives>
       <manifest>
         <attribute name="Main-Class" value="${bundle.main-class}"/>
         <attribute name="Implementation-Title" value="${bundle.name}"/>
