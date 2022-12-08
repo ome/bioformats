@@ -1478,6 +1478,8 @@ public class ICSReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     // populate Image data
+    imageName = imageName.replace('/', File.separatorChar);
+    imageName = imageName.replace('\\', File.separatorChar);
     imageName = imageName.substring(imageName.lastIndexOf(File.separator) + 1);
     store.setImageName(imageName, 0);
 
