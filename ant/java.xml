@@ -77,6 +77,7 @@ Type "ant -p" for a list of targets.
         <pom refid="pom"/>
       </dependencies>
       <path refid="test.classpath" classpath="test"/>
+      <properties prefix="dep." classpath="test"/>
     </resolver:resolve>
 
     <javac
