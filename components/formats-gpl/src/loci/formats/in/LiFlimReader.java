@@ -681,10 +681,10 @@ public class LiFlimReader extends FormatReader {
       return new byte[0];
 
     for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) {
-      image16[idx16] = (byte)(image[idx]);
+      image16[idx16] = (byte)(image[idx] & 0xff);
       image16[idx16 + 1] = (byte)((image[idx + 1] & 0x0f));
-      image16[idx16 + 2] = (byte)(((image[idx + 1]) >> 4) | ((image[idx + 2]) << 4));
-      image16[idx16 + 3] = (byte)((image[idx + 2]) >> 4);
+      image16[idx16 + 2] = (byte)(((image[idx + 1] & 0xf0) >> 4) | ((image[idx + 2] & 0x0f) << 4));
+      image16[idx16 + 3] = (byte)((image[idx + 2] & 0xf0) >> 4);
     }
    
     return image16;
