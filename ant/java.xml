@@ -33,10 +33,12 @@ Type "ant -p" for a list of targets.
 
   <resolver:remoterepo id="ome" url="https://artifacts.openmicroscopy.org/artifactory/maven/" type="default" releases="true" snapshots="false"/>
   <resolver:remoterepo id="unidata" url="https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases" type="default" releases="true"/>
+  <resolver:remoterepo id="jenkins" url="https://repo.jenkins-ci.org/releases/" type="default" releases="true"/>
   <resolver:remoterepos id="resolver.repositories">
     <resolver:remoterepo refid="central"/>
     <resolver:remoterepo refid="ome"/>
     <resolver:remoterepo refid="unidata"/>
+    <resolver:remoterepo refid="jenkins"/>
   </resolver:remoterepos>
   <!-- Main build targets -->
 
