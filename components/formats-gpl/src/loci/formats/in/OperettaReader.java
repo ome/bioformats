@@ -438,6 +438,9 @@ public class OperettaReader extends FormatReader {
                 String key = rows[row]+":"+cols[col]+":"+fields[field]+":"+cs[c]+":"+zs[z]+":"+ts[t];
                 if (hashToPlane.containsKey(key)) {
                   planes[nextSeries][nextPlane] = hashToPlane.get(key);
+                } else {
+                  LOGGER.warn("No plane found for key {}",key);
+                  planes[nextSeries][nextPlane] = new Plane();
                 }
                 nextPlane++;
               }
