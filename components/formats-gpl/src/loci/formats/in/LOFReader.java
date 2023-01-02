@@ -152,12 +152,20 @@ public class LOFReader extends LMSFileReader {
         lofXml += stream.readChar();
       }
     LofXmlDocument doc = new LofXmlDocument(lofXml, "");
-    if (doc.getImageNode() != null) {
-      return true;
-    } else {
+    
+    if (!doc.isValid()){
+      LOGGER.error("LOF file cannot be opened due to invalid XML. "+
+      "Please try opening the corresponding XLEF file instead, or try "+
+      "opening and re-saving this image with a current LASX version.");
+      return false;
+    }
+
+    if (doc.getImageNode() == null){
       LOGGER.info("This LOF does not contain image data, it cannot be opened directly.");
       return false;
     }
+    
+    return true;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

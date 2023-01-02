@@ -69,6 +69,7 @@ import org.slf4j.Logger;
 public abstract class LMSXmlDocument {
 
   // -- Fields --
+  private boolean isValid = false;
   protected Document doc;
   protected XPath xPath;
   protected String dir;
@@ -110,10 +111,10 @@ public abstract class LMSXmlDocument {
       doc.getDocumentElement().normalize();
       this.doc = doc;
       this.xPath = XPathFactory.newInstance().newXPath();
+      isValid = true;
       LMSFileReader.log.trace(this.toString());
     } catch (ParserConfigurationException | SAXException | IOException e) {
-      LMSFileReader.log.error(e.getMessage());
-      e.printStackTrace();
+      LMSFileReader.log.error("LMSXmlDocument: XML document could not be parsed.");
     }
   }
 
@@ -257,6 +258,10 @@ public abstract class LMSXmlDocument {
       parents.addAll(parent.getParentFiles());
     }
     return parents;
+  }
+
+  public boolean isValid(){
+    return isValid;
   }
   
   /**

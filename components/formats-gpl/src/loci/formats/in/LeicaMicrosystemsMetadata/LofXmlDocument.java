@@ -42,6 +42,9 @@ public class LofXmlDocument extends LMSImageXmlDocument {
 
   @Override
   public Node getImageNode() {
+    if (doc == null)
+      return null;
+
     Node child = GetChildWithName(doc.getDocumentElement(), "Image");
     if (child != null) return child;
     child = GetChildWithName(doc.getDocumentElement(), "Element");
