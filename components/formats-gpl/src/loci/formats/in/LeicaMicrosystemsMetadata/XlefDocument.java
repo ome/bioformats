@@ -26,7 +26,6 @@
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
 import java.util.List;
-import org.w3c.dom.Node;
 
 /**
  * This class represents a Leica Microsystems XLEF xml document,

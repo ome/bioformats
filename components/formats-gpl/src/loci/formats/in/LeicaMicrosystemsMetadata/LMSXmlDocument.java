@@ -75,7 +75,8 @@ public abstract class LMSXmlDocument {
   protected String dir;
   protected String filepath;
   protected static final Logger LOGGER =
-      LoggerFactory.getLogger(LMSXmlDocument.class);
+
+  LoggerFactory.getLogger(LMSXmlDocument.class);
   
   public enum InitFrom {
     XML,
@@ -91,6 +92,10 @@ public abstract class LMSXmlDocument {
   public LMSXmlDocument(String filepath, LMSCollectionXmlDocument parent){
     initFromFilepath(filepath);
     this.parent = parent;
+  }
+
+  public LMSXmlDocument(Node root){
+    initFromNode(root);
   }
 
   // -- Getters --
@@ -109,10 +114,7 @@ public abstract class LMSXmlDocument {
       DocumentBuilder db = dbf.newDocumentBuilder();
       Document doc = db.parse(new InputSource(new StringReader(xml)));
       doc.getDocumentElement().normalize();
-      this.doc = doc;
-      this.xPath = XPathFactory.newInstance().newXPath();
-      isValid = true;
-      LMSFileReader.log.trace(this.toString());
+      init(doc);
     } catch (ParserConfigurationException | SAXException | IOException e) {
       LMSFileReader.log.error("LMSXmlDocument: XML document could not be parsed.");
     }
@@ -126,16 +128,34 @@ public abstract class LMSXmlDocument {
       Document doc = db.parse(fi);
       fi.close();
       doc.getDocumentElement().normalize();
-      this.doc = doc;
-      this.xPath = XPathFactory.newInstance().newXPath();
-      LMSFileReader.log.trace(this.toString());
+      init(doc);
     } catch (ParserConfigurationException | SAXException | IOException e) {
-      LMSFileReader.log.error(e.getMessage());
-      e.printStackTrace();
+      LMSFileReader.log.error("LMSXmlDocument: XML document could not be read.");
     }
 
     this.dir = Paths.get(filepath).getParent().toString();
     this.filepath = Paths.get(filepath).normalize().toString();
+  }
+
+  private void initFromNode(Node root){
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    dbf.setNamespaceAware(true);
+    try {
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document doc = db.newDocument();
+      Node importedNode = doc.importNode(root, true);
+      doc.appendChild(importedNode);
+      init(doc);
+    } catch (Exception e){
+      LMSFileReader.log.error("LMSXmlDocument: XML document could not be created from node.");
+    }
+  }
+
+  private void init(Document doc){
+    this.doc = doc;
+    this.xPath = XPathFactory.newInstance().newXPath();
+    isValid = true;
+    LMSFileReader.log.trace(this.toString());
   }
 
   /**

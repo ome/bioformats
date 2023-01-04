@@ -85,6 +85,7 @@ public class LMSMetadataExtractor {
       int len = docs.size();
       r.setCore(new ArrayList<CoreMetadata>(len));
       r.getCore().clear();
+      r.metaTemp.channelPrios = new int[r.metaTemp.tileCount.length][];
 
       //create CoreMetadata for each xml referenced image (=series)
       for (int i = 0; i < docs.size(); i++) {
@@ -153,7 +154,6 @@ public class LMSMetadataExtractor {
     ms.sizeC = channels.getLength();
 
     List<String> luts = new ArrayList<String>();
-    r.metaTemp.channelPrios = new int[r.metaTemp.tileCount.length][];
 
     for (int ch=0; ch<channels.getLength(); ch++) {
       Element channelElement = (Element) channels.item(ch);
@@ -171,11 +171,9 @@ public class LMSMetadataExtractor {
       r.metaTemp.channels.get(coreIndex).add(channel);
     }
 
-    //BGR order is assumed when no LUT names exist, RGB order is only assumed when explicitly described
-    r.metaTemp.inverseRgb[coreIndex] = !(channels.getLength() >= 3 && 
-      ((Element)channels.item(0)).getAttribute("LUTName").equals("Red") && 
-      ((Element)channels.item(1)).getAttribute("LUTName").equals("Green") &&
-      ((Element)channels.item(2)).getAttribute("LUTName").equals("Blue"));
+    //RGB order is defined by ChannelTag order (1,2,3 = RGB, 3,2,1=BGR)
+    r.metaTemp.inverseRgb[coreIndex] = channels.getLength() >= 3 && 
+      ((Element)channels.item(0)).getAttribute("ChannelTag").equals("3");
 
     translateLuts(luts, coreIndex);
   }

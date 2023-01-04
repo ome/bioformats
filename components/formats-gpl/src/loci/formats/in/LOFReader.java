@@ -513,17 +513,6 @@ public class LOFReader extends LMSFileReader {
     in.seek(posInFile);
   }
 
-  private int getTileIndex(int coreIndex) {
-    int count = 0;
-    for (int tile = 0; tile < metaTemp.tileCount.length; tile++) {
-      if (coreIndex < count + metaTemp.tileCount[tile]) {
-        return tile;
-      }
-      count += metaTemp.tileCount[tile];
-    }
-    return -1;
-  }
-
   /**
    * Inits the LOFReader using passed xml (from XLIF) for metadata initiation,
    * instead of reading the LOF's included xml

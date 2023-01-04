@@ -57,7 +57,7 @@ public abstract class LMSFileReader extends FormatReader {
 
   /** file format in which actual image bytes are stored */
   public enum ImageFormat {
-    LOF, TIF, BMP, JPEG, PNG, UNKNOWN
+    LOF, TIF, BMP, JPEG, PNG, LIF, UNKNOWN
   }
 
   // -- Constructor --
@@ -157,5 +157,16 @@ public abstract class LMSFileReader extends FormatReader {
       }
     }
     return false;
+  }
+  
+  protected int getTileIndex(int coreIndex) {
+    int count = 0;
+    for (int tile = 0; tile < metaTemp.tileCount.length; tile++) {
+      if (coreIndex < count + metaTemp.tileCount[tile]) {
+        return tile;
+      }
+      count += metaTemp.tileCount[tile];
+    }
+    return -1;
   }
 }

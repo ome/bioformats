@@ -28,30 +28,34 @@ package loci.formats.in.LeicaMicrosystemsMetadata;
 import org.w3c.dom.Node;
 
 /**
- * This class loads and represents a Leica Microsystems image XML document that contains image metadata
+ * This class loads and represents a Leica Microsystems XML document for one
+ * image that has
+ * been extracted from a LIF file
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public abstract class LMSImageXmlDocument extends LMSXmlDocument {
-  public LMSImageXmlDocument(String xml) {
-    super(xml);
-  }
+public class LifImageXmlDocument extends LMSImageXmlDocument {
 
-  public LMSImageXmlDocument(String filepath, LMSCollectionXmlDocument parent){
-    super(filepath, parent);
-  }
-
-  public LMSImageXmlDocument(Node root){
+  public LifImageXmlDocument(Node root) {
     super(root);
   }
 
-  /**
-   * Returns the image node of the xml document which contains image metadata
-   */
-  public abstract Node getImageNode();
+  @Override
+  public Node getImageNode() {
+    if (doc == null)
+      return null;
 
-  /**
-   * Returns the name of the image (it might be contained in the XML or otherwise e.g. in the file name)
-   */
-  public abstract String getImageName();
+    Node data = GetChildWithName(doc.getDocumentElement(), "Data");
+    if (data != null){
+      Node image = GetChildWithName(data, "Image");
+      return image;
+    }
+
+    return null;
+  }
+
+  @Override
+  public String getImageName() {
+    return getAttr(doc.getDocumentElement(), "Name");
+  }
 }

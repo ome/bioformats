@@ -25,33 +25,40 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
- * This class loads and represents a Leica Microsystems image XML document that contains image metadata
+ * This class loads and represents a Leica Microsystems XML document that has
+ * been extracted from a LIF file
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public abstract class LMSImageXmlDocument extends LMSXmlDocument {
-  public LMSImageXmlDocument(String xml) {
+public class LifXmlDocument extends LMSXmlDocument {
+
+  public LifXmlDocument(String xml) {
     super(xml);
   }
 
-  public LMSImageXmlDocument(String filepath, LMSCollectionXmlDocument parent){
-    super(filepath, parent);
+  public List<LifImageXmlDocument> getImageXmlDocuments() {
+    List<LifImageXmlDocument> imageXmlDocs = new ArrayList<LifImageXmlDocument>();
+    
+    if (doc == null)
+      return null;
+
+    Node rootElement = GetChildWithName(doc.getDocumentElement(), "Element");
+    Node children = GetChildWithName(rootElement, "Children");
+    for (int i = 0; i < children.getChildNodes().getLength(); i++) {
+      Node child = children.getChildNodes().item(i);
+      if (child.getNodeName().equals("Element")) {
+        LifImageXmlDocument imageXml = new LifImageXmlDocument(child);
+        imageXmlDocs.add(imageXml);
+      }
+    }
+
+    return imageXmlDocs;
   }
-
-  public LMSImageXmlDocument(Node root){
-    super(root);
-  }
-
-  /**
-   * Returns the image node of the xml document which contains image metadata
-   */
-  public abstract Node getImageNode();
-
-  /**
-   * Returns the name of the image (it might be contained in the XML or otherwise e.g. in the file name)
-   */
-  public abstract String getImageName();
 }
