@@ -877,10 +877,12 @@ public class ZeissCZIReader extends FormatReader {
         int newY = lastPlane.y;
         if (allowAutostitching() && (ms0.sizeX < newX || ms0.sizeY < newY)) {
           prestitched = true;
-          mosaics = 1;
+          if (maxResolution > 0) {
+            mosaics = 1;
+          }
         }
         else {
-          prestitched = maxResolution > 0;
+          prestitched = true;
         }
 
         // don't shrink the dimensions if prestitching is allowed
