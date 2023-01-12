@@ -90,7 +90,9 @@ Type "ant -p" for a list of targets.
   <!-- API -->
 
   <target name="deps-formats-api"
-    depends="copy-jars"/>
+    depends="copy-jars">
+    <ant dir="${root.dir}" target="install-pom"/>
+  </target>
 
   <target name="compile-formats-api" depends="deps-formats-api"
     description="compile classes for reader and writer APIs">

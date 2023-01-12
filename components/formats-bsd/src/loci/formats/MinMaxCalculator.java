@@ -268,7 +268,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     super.openBytes(no, buf, x, y, w, h);
     
-    updateMinMax(no, buf, FormatTools.getBytesPerPixel(getPixelType()) * w * h);
+    updateMinMax(no, buf, FormatTools.getBytesPerPixel(getPixelType()) * w * h * getRGBChannelCount());
     return buf;
   }
 
