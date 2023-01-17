@@ -31,7 +31,16 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -68,6 +77,7 @@ public class LMSMetadataExtractor {
     private LMSFileReader r;
     List<Long> channelBytesIncs = new ArrayList<Long>();
     int extras = 1;
+    Node hardwareSetting;
 
     // -- Constructor --
     public LMSMetadataExtractor(LMSFileReader reader){
@@ -82,32 +92,14 @@ public class LMSMetadataExtractor {
      * @throws IOException
      */
     public void translateMetadata(List<LMSImageXmlDocument> docs) throws FormatException, IOException{
-      int len = docs.size();
-      r.setCore(new ArrayList<CoreMetadata>(len));
-      r.getCore().clear();
-      r.metaTemp.channelPrios = new int[r.metaTemp.tileCount.length][];
-
       //create CoreMetadata for each xml referenced image (=series)
       for (int i = 0; i < docs.size(); i++) {
-          CoreMetadata ms = new CoreMetadata();
-          r.getCore().add(ms);
           r.setSeries(i);
-
           Node image = docs.get(i).getImageNode();
           r.metaTemp.imageNames[i] = docs.get(i).getImageName();
           translateImage((Element)image, i);
       }
       r.setSeries(0);
-
-      //after this section, we don't have 1 CoreMetadata per xlif-referenced image,
-      //but 1 CoreMetadata per series ( = tile )!
-      ArrayList<CoreMetadata> newCore = new ArrayList<CoreMetadata>();
-      for (int i = 0; i < r.getCore().size(); i++) {
-          for (int tile = 0; tile < r.metaTemp.tileCount[i]; tile++) {
-              newCore.add(r.getCore().get(i));
-          }
-      }
-      r.setCore(newCore);
     }
 
   /**
@@ -117,22 +109,22 @@ public class LMSMetadataExtractor {
    * @throws FormatException
    */
   public void translateImage(Element image, int i) throws FormatException{
-    CoreMetadata ms = r.getCore().get(i);
-    ms.orderCertain = true;
-    ms.metadataComplete = true;
-    ms.littleEndian = true;
-    ms.falseColor = true;
+    NodeList attachments = getDescendantNodesWithName(image, "Attachment");
+    hardwareSetting = getNodeWithAttribute(attachments, "Name", "HardwareSetting");
 
     translateChannelDescriptions(image, i);
     translateDimensionDescriptions(image, i);
+    translatePhysicalChannelInfo(image, i);
     translateAttachmentNodes(image, i);
     translateScannerSettings(image, i);
     translateFilterSettings(image, i);
     translateTimestamps(image, i);
     translateLaserLines(image, i);
+    translateLaserLines2(image, i);
     translateROIs(image, i);
     translateSingleROIs(image, i);
     translateDetectors(image, i);
+    translateDetectors2(image, i);
 
     final Deque<String> nameStack = new ArrayDeque<String>();
     populateOriginalMetadata(image, nameStack);
@@ -353,7 +345,7 @@ public class LMSMetadataExtractor {
     throws FormatException
   {
     boolean tilesAttachmentFound = false;
-    NodeList attachmentNodes = getNodes(imageNode, "Attachment");
+    NodeList attachmentNodes = getDescendantNodesWithName(imageNode, "Attachment");
     if (attachmentNodes == null) return;
     for (int i=0; i<attachmentNodes.getLength(); i++) {
       Element attachment = (Element) attachmentNodes.item(i);
@@ -364,7 +356,7 @@ public class LMSMetadataExtractor {
         r.metaTemp.descriptions[image] = attachment.getAttribute("Content");
       }
       else if ("TileScanInfo".equals(attachmentName)) {
-        NodeList tiles = getNodes(attachment, "Tile");
+        NodeList tiles = getDescendantNodesWithName(attachment, "Tile");
 
         for (int tile=0; tile<tiles.getLength(); tile++) {
           Element tileNode = (Element) tiles.item(tile);
@@ -411,7 +403,7 @@ public class LMSMetadataExtractor {
         String attachmentName = attachment.getAttribute("Name");
 
         if ("HardwareSetting".equals(attachmentName)) {
-          confocalSettings = getNodes(attachment, "ATLConfocalSettingDefinition");
+          confocalSettings = getDescendantNodesWithName(attachment, "ATLConfocalSettingDefinition");
           break;
         }
       }
@@ -449,8 +441,8 @@ public class LMSMetadataExtractor {
   public void translateScannerSettings(Element imageNode, int image)
     throws FormatException
   {
-    NodeList scannerSettings = getNodes(imageNode, "ScannerSettingRecord");
-    NodeList attachmentNodes = getNodes(imageNode, "Attachment");
+    NodeList scannerSettings = getDescendantNodesWithName(imageNode, "ScannerSettingRecord");
+    NodeList attachmentNodes = getDescendantNodesWithName(imageNode, "Attachment");
     if (attachmentNodes == null) {
       return;
     }
@@ -461,7 +453,7 @@ public class LMSMetadataExtractor {
       String attachmentName = attachment.getAttribute("Name");
 
       if ("HardwareSetting".equals(attachmentName)) {
-        confocalSettings = getNodes(attachment, "ATLConfocalSettingDefinition");
+        confocalSettings = getDescendantNodesWithName(attachment, "ATLConfocalSettingDefinition");
       }
     }
 
@@ -600,7 +592,7 @@ public class LMSMetadataExtractor {
   public void translateFilterSettings(Element imageNode, int image)
     throws FormatException
   {
-    NodeList filterSettings = getNodes(imageNode, "FilterSettingRecord");
+    NodeList filterSettings = getDescendantNodesWithName(imageNode, "FilterSettingRecord");
     if (filterSettings == null) return;
 
     int nextChannel = 0;
@@ -740,7 +732,7 @@ public class LMSMetadataExtractor {
   public void translateTimestamps(Element imageNode, int image)
     throws FormatException
   {
-    NodeList timeStampLists = getNodes(imageNode, "TimeStampList");
+    NodeList timeStampLists = getDescendantNodesWithName(imageNode, "TimeStampList");
     if (timeStampLists == null) return;
 
     Element timeStampList = (Element)timeStampLists.item(0);
@@ -761,7 +753,7 @@ public class LMSMetadataExtractor {
     }
     else {
       // probe if timestamps are saved in the format of LAS AF 3.0 or older
-      NodeList timestampNodes = getNodes(imageNode, "TimeStamp");
+      NodeList timestampNodes = getDescendantNodesWithName(imageNode, "TimeStamp");
       if (timestampNodes != null) {
         // LAS AF 3.0 (or older) timestamps are available
         for (int stamp = 0; stamp < timestampNodes.getLength(); stamp++) {
@@ -779,23 +771,58 @@ public class LMSMetadataExtractor {
     r.metaTemp.acquiredDate[image] = r.metaTemp.timestamps[image][0];
   }
 
+  public void translateLaserLines(Element imageNode, int image){
+    if (hardwareSetting == null) return;
+
+    Node confocalSettings = getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
+    if (confocalSettings == null) return;
+    Node laserArray = getChildNodeWithName(confocalSettings, "LaserArray");
+    if (laserArray == null) return;
+    NodeList lasers = laserArray.getChildNodes();
+
+    for (int i = 0; i < lasers.getLength(); i++){
+      Element laserNode;
+      try {
+        laserNode = (Element)lasers.item(i);
+      } catch (Exception e){
+        continue;
+      }
+      String powerState = laserNode.getAttribute("PowerState");
+      String outputPowerWatt = laserNode.getAttribute("OutputPowerWatt");
+      Laser laser = new Laser();
+      laser.isActive = powerState.equals("On") && !outputPowerWatt.equals("0");
+      laser.wavelength = parseDouble(laserNode.getAttribute("Wavelength"));
+      laser.name = laserNode.getAttribute("LaserName");
+      laser.wavelengthUnit = "nm";
+      r.metaTemp.lasers.get(image).add(laser);
+    }
+
+    Node aotfList = getChildNodeWithName(confocalSettings, "AotfList");
+    if (aotfList == null) return;
+    NodeList aotfs = aotfList.getChildNodes();
+    for (int i = 0; i < aotfs.getLength(); i++){
+
+    }
+  }
+
   /**
    * Extracts laser information and writes it to reader's {@link MetadataTempBuffer}
    * @param imageNode Image node from Leica xml
    * @param image image / core index
    * @throws FormatException
    */
-  public void translateLaserLines(Element imageNode, int image)
+  public void translateLaserLines2(Element imageNode, int image)
     throws FormatException
   {
-    NodeList aotfLists = getNodes(imageNode, "AotfList");
+
+    NodeList aotfLists = getDescendantNodesWithName(imageNode, "AotfList");
     if (aotfLists == null || aotfLists.getLength() == 0) return;
 
     int baseIntensityIndex = 0;
 
     for (int channel=0; channel<aotfLists.getLength(); channel++) {
       Element aotf = (Element) aotfLists.item(channel);
-      NodeList laserLines = getNodes(aotf, "LaserLineSetting");
+      NodeList laserLines = getDescendantNodesWithName(aotf, "LaserLineSetting");
       if (laserLines == null) return;
       String gpName = aotf.getParentNode().getParentNode().getNodeName();
       //might need parent for attachment
@@ -808,17 +835,16 @@ public class LMSMetadataExtractor {
         if (isMaster) {
           continue;
         }
-        String lineIndex = laserLine.getAttribute("LineIndex");
+        String lineIndexS = laserLine.getAttribute("LineIndex");
         String qual = laserLine.getAttribute("Qualifier");
-        int index =
-          lineIndex == null || lineIndex.trim().isEmpty() ? 0 :
-          Integer.parseInt(lineIndex.trim());
+        int lineIndex =
+          lineIndexS == null || lineIndexS.trim().isEmpty() ? 0 :
+          Integer.parseInt(lineIndexS.trim());
         int qualifier =
-          qual == null || qual.trim().isEmpty() ? 0:
-          Integer.parseInt(qual.trim());
+          qual == null || qual.trim().isEmpty() ? 0 : Integer.parseInt(qual.trim());
 
-        index += (2 - (qualifier / 10));
-        if (index < 0) {
+        lineIndex += (2 - (qualifier / 10));
+        if (lineIndex < 0) {
             continue;
             //index = 0;
         }
@@ -828,15 +854,15 @@ public class LMSMetadataExtractor {
         if (v != null && !v.trim().isEmpty()) {
             wavelength = DataTools.parseDouble(v.trim());
         }
-        if (index < r.metaTemp.laserWavelength.get(image).size()) {
-          r.metaTemp.laserWavelength.get(image).set(index, wavelength);
-        }
-        else {
-          for (int i=r.metaTemp.laserWavelength.get(image).size(); i<index; i++) {
-            r.metaTemp.laserWavelength.get(image).add(Double.valueOf(0));
-          }
-          r.metaTemp.laserWavelength.get(image).add(wavelength);
-        }
+        // if (lineIndex < r.metaTemp.laserWavelength.get(image).size()) {
+        // r.metaTemp.laserWavelength.get(image).set(lineIndex, wavelength);
+        // }
+        // else {
+        // for (int i=r.metaTemp.laserWavelength.get(image).size(); i<lineIndex; i++) {
+        // r.metaTemp.laserWavelength.get(image).add(Double.valueOf(0));
+        // }
+        r.metaTemp.laserWavelength.get(image).add(wavelength);
+        // }
 
         String intensity = laserLine.getAttribute("IntensityDev");
         Double realIntensity = 0d;
@@ -848,7 +874,7 @@ public class LMSMetadataExtractor {
         }
         realIntensity = 100d - realIntensity;
 
-        int realIndex = baseIntensityIndex + index;
+        int realIndex = baseIntensityIndex + lineIndex;
 
         if (realIndex < r.metaTemp.laserIntensity.get(image).size()) {
           r.metaTemp.laserIntensity.get(image).set(realIndex, realIntensity);
@@ -874,7 +900,7 @@ public class LMSMetadataExtractor {
   public void translateROIs(Element imageNode, int image)
     throws FormatException
   {
-    NodeList rois = getNodes(imageNode, "Annotation");
+    NodeList rois = getDescendantNodesWithName(imageNode, "Annotation");
     if (rois == null) return;
     r.metaTemp.imageROIs[image] = new ROI[rois.getLength()];
 
@@ -925,7 +951,7 @@ public class LMSMetadataExtractor {
 
       roi.text = roiNode.getAttribute("text");
 
-      NodeList vertices = getNodes(roiNode, "Vertex");
+      NodeList vertices = getDescendantNodesWithName(roiNode, "Vertex");
       if (vertices == null) {
         continue;
       }
@@ -944,7 +970,7 @@ public class LMSMetadataExtractor {
       }
       this.r.metaTemp.imageROIs[image][r] = roi;
 
-      if (getNodes(imageNode, "ROI") != null) {
+      if (getDescendantNodesWithName(imageNode, "ROI") != null) {
         this.r.metaTemp.alternateCenter = true;
       }
     }
@@ -960,16 +986,16 @@ public class LMSMetadataExtractor {
     throws FormatException
   {
     if (r.metaTemp.imageROIs[image] != null) return;
-    NodeList children = getNodes(imageNode, "ROI");
+    NodeList children = getDescendantNodesWithName(imageNode, "ROI");
     if (children == null) return;
-    children = getNodes((Element) children.item(0), "Children");
+    children = getDescendantNodesWithName((Element) children.item(0), "Children");
     if (children == null) return;
-    children = getNodes((Element) children.item(0), "Element");
+    children = getDescendantNodesWithName((Element) children.item(0), "Element");
     if (children == null) return;
     r.metaTemp.imageROIs[image] = new ROI[children.getLength()];
 
     for (int r=0; r<children.getLength(); r++) {
-      NodeList rois = getNodes((Element) children.item(r), "ROISingle");
+      NodeList rois = getDescendantNodesWithName((Element) children.item(r), "ROISingle");
 
       Element roiNode = (Element) rois.item(0);
       ROI roi = new ROI();
@@ -986,7 +1012,7 @@ public class LMSMetadataExtractor {
       parent = (Element) parent.getParentNode();
       roi.name = parent.getAttribute("Name");
 
-      NodeList vertices = getNodes(roiNode, "P");
+      NodeList vertices = getDescendantNodesWithName(roiNode, "P");
 
       double sizeX = this.r.metaTemp.physicalSizeXs.get(image);
       double sizeY = this.r.metaTemp.physicalSizeYs.get(image);
@@ -1010,14 +1036,14 @@ public class LMSMetadataExtractor {
         }
       }
 
-      Element transform = (Element) getNodes(roiNode, "Transformation").item(0);
+      Element transform = (Element) getDescendantNodesWithName(roiNode, "Transformation").item(0);
 
       Double rotation = DataTools.parseDouble(transform.getAttribute("Rotation"));
       if (rotation != null) {
         roi.rotation = rotation;
       }
 
-      Element scaling = (Element) getNodes(transform, "Scaling").item(0);
+      Element scaling = (Element) getDescendantNodesWithName(transform, "Scaling").item(0);
       Double scaleX = DataTools.parseDouble(scaling.getAttribute("XScale"));
       Double scaleY = DataTools.parseDouble(scaling.getAttribute("YScale"));
       if (scaleX != null) {
@@ -1028,7 +1054,7 @@ public class LMSMetadataExtractor {
       }
 
       Element translation =
-        (Element) getNodes(transform, "Translation").item(0);
+        (Element) getDescendantNodesWithName(transform, "Translation").item(0);
       Double transX = DataTools.parseDouble(translation.getAttribute("X"));
       Double transY = DataTools.parseDouble(translation.getAttribute("Y"));
       if (transX != null) {
@@ -1042,34 +1068,160 @@ public class LMSMetadataExtractor {
     }
   }
 
+    private void translatePhysicalChannelInfo(Element imageNode, int image) {
+      if (hardwareSetting == null)
+          return;
+
+      Node definition = getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
+      if (definition == null)
+          return;
+
+      // add multiband cutin/out information to channel
+      Node spectro = getChildNodeWithName(definition, "Spectro");
+      NodeList multibands = spectro.getChildNodes();
+      for (int i = 0; i < multibands.getLength(); i++) {
+          Element multiband;
+          try {
+            multiband = (Element) multibands.item(i);
+          } catch (Exception e){
+            continue;
+          }
+          int channelIndex = Integer.parseInt(multiband.getAttribute("Channel"));
+          if (channelIndex >= r.metaTemp.channels.get(image).size())
+            continue;
+
+          Double cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
+          Double cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
+          if (cutIn != null && cutIn.intValue() > 0) {
+              Length in = FormatTools.getCutIn((double) Math.round(cutIn));
+              if (in != null) {
+                r.metaTemp.channels.get(image).get(channelIndex).cutIn = in;
+              }
+          }
+          if (cutOut != null && cutOut.intValue() > 0) {
+              Length out = FormatTools.getCutOut((double) Math.round(cutOut));
+              if (out != null) {
+                  r.metaTemp.channels.get(image).get(channelIndex).cutOut = out;
+              }
+          }
+          String dye = multiband.getAttribute("DyeName");
+          r.metaTemp.channels.get(image).get(channelIndex).dye = dye;
+      }
+    }
+
+    private void printNode(Node node){
+      try
+    {
+      // Set up the output transformer
+      TransformerFactory transfac = TransformerFactory.newInstance();
+      Transformer trans = transfac.newTransformer();
+      trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+      // Print the DOM node
+
+      StringWriter sw = new StringWriter();
+      StreamResult result = new StreamResult(sw);
+      DOMSource source = new DOMSource(node);
+      trans.transform(source, result);
+      String xmlString = sw.toString();
+
+      System.out.println(xmlString);
+    }
+    catch (TransformerException e)
+    {
+      e.printStackTrace();
+    }
+    }
+
+    /**
+     * Extracts detector information and writes it to reader's
+     * {@link MetadataTempBuffer}
+     * 
+     * @param imageNode
+     *            Image node from Leica xml
+     * @param image
+     *            image / core index
+     * @throws FormatException
+     */
+    public void translateDetectors(Element imageNode, int image)
+            throws FormatException {
+        if (hardwareSetting == null)
+            return;
+
+        Node definition = getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
+        if (definition == null)
+            return;
+
+        String zoomS = getAttributeValue(definition, "Zoom");
+        double zoom = parseDouble(zoomS);
+
+        // create detectors from detector list
+        Node detectorList = getChildNodeWithName(definition, "DetectorList");
+        NodeList detectors = detectorList.getChildNodes();
+        for (int i = 0; i < detectors.getLength(); i++) {
+            Element detectorNode;
+            try {
+              detectorNode = (Element) detectors.item(i);
+            } catch (Exception e){
+              continue;
+            }
+
+            String gainS = detectorNode.getAttribute("Gain");
+            double gain = parseDouble(gainS.trim());
+
+            String offsetS = detectorNode.getAttribute("Offset");
+            double offset = parseDouble(offsetS.trim());
+
+            String isActiveS = detectorNode.getAttribute("IsActive");
+            boolean isActive = "1".equals(isActiveS);
+
+            String channelS = detectorNode.getAttribute("Channel");
+            int channelIndex = parseInt(channelS);
+
+            Detector detector = new Detector();
+            detector.gain = gain;
+            detector.offset = offset;
+            detector.isActive = isActive;
+            detector.channel = channelIndex;
+            detector.model = detectorNode.getAttribute("Name");
+            detector.type = detectorNode.getAttribute("Type");
+            detector.zoom = zoom;
+
+            r.metaTemp.detectors.get(image).add(detector);
+
+            if (channelIndex < r.metaTemp.channels.get(image).size()){
+              r.metaTemp.channels.get(image).get(channelIndex).detector = detector;
+            }
+        }
+    }
+
   /**
    * Extracts detector information and writes it to reader's {@link MetadataTempBuffer}
    * @param imageNode Image node from Leica xml
    * @param image image / core index
    * @throws FormatException
    */
-  public void translateDetectors(Element imageNode, int image)
+  private void translateDetectors2(Element imageNode, int image)
     throws FormatException
   {
-    NodeList definitions = getNodes(imageNode, "ATLConfocalSettingDefinition");
+    NodeList definitions = getDescendantNodesWithName(imageNode, "ATLConfocalSettingDefinition");
     if (definitions == null) return;
-
     final List<String> channels = new ArrayList<String>();
     int nextChannel = 0;
     for (int definition=0; definition<definitions.getLength(); definition++) {
       Element definitionNode = (Element) definitions.item(definition);
       String parentName = definitionNode.getParentNode().getNodeName();
       boolean isMaster = parentName.endsWith("Master");
-      NodeList detectors = getNodes(definitionNode, "Detector");
+      NodeList detectors = getDescendantNodesWithName(definitionNode, "Detector");
       if (detectors == null) return;
       int count = 0;
       for (int d=0; d<detectors.getLength(); d++) {
         Element detector = (Element) detectors.item(d);
         NodeList multibands = null;
         if (!isMaster) {
-          multibands = getNodes(definitionNode, "MultiBand");
+          multibands = getDescendantNodesWithName(definitionNode, "MultiBand");
         }
-
         String v = detector.getAttribute("Gain");
         Double gain =
           v == null || v.trim().isEmpty() ? null : DataTools.parseDouble(v.trim());
@@ -1217,7 +1369,7 @@ public class LMSMetadataExtractor {
    * @throws FormatException
    */
   private void addUserCommentMeta(Element imageNode, int image) throws FormatException {
-    NodeList attachmentNodes = getNodes(imageNode, "User-Comment");
+    NodeList attachmentNodes = getDescendantNodesWithName(imageNode, "User-Comment");
     if (attachmentNodes == null)
       return;
     for (int i = 0; i < attachmentNodes.getLength(); i++) {
@@ -1291,7 +1443,7 @@ public class LMSMetadataExtractor {
   }
 
   public double parseDouble(String value){
-      return StringUtils.isBlank(value) ? 0d : DataTools.parseDouble(value.trim());
+      return value == null || value.trim().isEmpty() ? 0d : DataTools.parseDouble(value.trim());
   }
   
   private Element getImageDescription(Element root) {
@@ -1316,14 +1468,14 @@ public class LMSMetadataExtractor {
    * @param nodeName name of children that shall be searched
    * @return list of child nodes with given name
    */
-  private NodeList getNodes(Element root, String nodeName) {
+  private NodeList getDescendantNodesWithName(Element root, String nodeName) {
     NodeList nodes = root.getElementsByTagName(nodeName);
     if (nodes.getLength() == 0) {
         NodeList children = root.getChildNodes();
         for (int i=0; i<children.getLength(); i++) {
             Object child = children.item(i);
             if (child instanceof Element) {
-                NodeList childNodes = getNodes((Element) child, nodeName);
+                NodeList childNodes = getDescendantNodesWithName((Element) child, nodeName);
                 if (childNodes != null) {
                     return childNodes;
                 }
@@ -1332,6 +1484,33 @@ public class LMSMetadataExtractor {
         return null;
     }
     else return nodes;
+  }
+
+    private Node getChildNodeWithName(Node node, String nodeName) {
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i).getNodeName().equals(nodeName))
+                return children.item(i);
+        }
+        return null;
+    }
+
+  private Node getNodeWithAttribute(NodeList nodes, String attributeName, String attributeValue) {
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node node = nodes.item(i);
+      Node attribute = node.getAttributes().getNamedItem(attributeName);
+      if (attribute != null && attribute.getTextContent().equals(attributeValue))
+        return node;
+    }
+    return null;
+  }
+
+  private String getAttributeValue(Node node, String attributeName){
+    Node attribute = node.getAttributes().getNamedItem(attributeName);
+    if (attribute != null)
+      return attribute.getTextContent();
+    else
+      return "";
   }
 
   public static int getChannelIndex(Element filterSetting) {

@@ -84,7 +84,10 @@ public class MetadataTempBuffer {
   private ArrayList<ArrayList<Dimension>> dimensions;
   public ArrayList<ArrayList<Channel>> channels;
 
-  // -- Constructor --
+  public ArrayList<ArrayList<Detector>> detectors;
+  public ArrayList<ArrayList<Laser>> lasers;
+
+    // -- Constructor --
   /**
    * Constructs a MetadataTempBuffer for a given number of images.
    * 
@@ -136,6 +139,8 @@ public class MetadataTempBuffer {
     laserFrap = ArrayListOfArrayLists(len, Boolean.class);
     dimensions = ArrayListOfArrayLists(len, Dimension.class);
     channels = ArrayListOfArrayLists(len, Channel.class);
+    detectors = ArrayListOfArrayLists(len, Detector.class);
+    lasers = ArrayListOfArrayLists(len, Laser.class);
   }
 
   // -- Methods --

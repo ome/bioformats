@@ -125,11 +125,8 @@ public abstract class LMSFileReader extends FormatReader {
     int len = docs.size();
     metaTemp = new MetadataTempBuffer(len);
 
-    LMSMetadataExtractor extractor = new LMSMetadataExtractor(this);
-    extractor.translateMetadata(docs);
-
-    MetadataStoreInitializer initializer = new MetadataStoreInitializer(this);
-    initializer.initMetadataStore();
+    LMSMetadataTranslator translator = new LMSMetadataTranslator(this);
+    translator.translateMetadata(docs);
   }
 
   public void translateMetadata(LMSImageXmlDocument doc) throws FormatException, IOException{

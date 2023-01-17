@@ -25,6 +25,8 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
+import ome.units.quantity.Length;
+
 /**
  * This class represents image channels extracted from LMS image xmls.
  * 
@@ -55,6 +57,13 @@ public class Channel {
   }
 
   public ChannelType channelType;
+
+  
+  public Length cutIn;
+  public Length cutOut;
+  public String dye;
+  public Detector detector;
+  public Laser laser;
 
   // -- Constructor --
   public Channel(int channelTag, int resolution, double min, double max, String unit,
