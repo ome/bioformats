@@ -252,7 +252,7 @@ public class FormatReaderTest {
         }
 
         if (c > 4 || plane < 0 || plane != checkPlane ||
-          !TestTools.canFitInMemory(plane * 3))
+          !TestTools.canFitInMemory(checkPlane * 3))
         {
           continue;
         }
@@ -322,7 +322,7 @@ public class FormatReaderTest {
           continue;
         }
 
-        if (!TestTools.canFitInMemory(expected * 3) || expected < 0) {
+        if (!TestTools.canFitInMemory((long) expected * 3) || expected < 0) {
           continue;
         }
 
