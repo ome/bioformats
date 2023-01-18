@@ -510,23 +510,19 @@ public class SlideBook7Reader  extends FormatReader {
             File[] theDirectories = new File(theRootDirectory).listFiles(new FileFilter() {
                 @Override
                 public boolean accept(File file) {
-                    if(!file.isDirectory()) return false;
-                    String theDir = file.getAbsolutePath();
-                    if(!theDir.endsWith(kImageDirSuffix)) return false;
-                    // check if directroy is empty - no ImageRecord.yaml file or binary files
-                    File theImgRecFile = new File(theDir + File.separator + kImageRecordFilename);
-                    if(!theImgRecFile.exists()) return false;
-                    File [] theFiles = new File(theDir).listFiles(new FileFilter() {
-                        @Override
-                        public boolean accept(File file) {
-                            String thePath = file.getAbsolutePath();
-                            if(thePath.endsWith(kBinaryFileSuffix)) return true;
-                            else return false;
-                        }
-                    });
-                    if(theFiles.length == 0) return false;
-                    return true;
-                }
+                  if(!file.isDirectory()) return false;
+                  String theDir = file.getAbsolutePath();
+                  if(!theDir.endsWith(kImageDirSuffix)) return false;
+                  // check if directroy is empty - no ImageRecord.yaml file or binary files
+                  File theImgRecFile = new File(theDir + File.separator + kImageRecordFilename);
+                  if(!theImgRecFile.exists()) return false;
+                  File [] theFiles = new File(theDir).listFiles();
+                  for (File innerFile: theFiles) {
+                    String thePath = innerFile.getAbsolutePath();
+                    if(thePath.endsWith(kBinaryFileSuffix)) return true;
+                  }
+                  return false;
+              }
             });
             String []theTitles = new String[theDirectories.length];
             for(int theDir=0;theDir<theDirectories.length;theDir++)

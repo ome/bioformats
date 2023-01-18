@@ -188,6 +188,7 @@ public class ZeissCZIReader extends FormatReader {
   private transient int plateRows;
   private transient int plateColumns;
   private transient ArrayList<String> platePositions = new ArrayList<String>();
+  private transient ArrayList<String> fieldNames = new ArrayList<String>();
   private transient ArrayList<String> imageNames = new ArrayList<String>();
 
   // -- Constructor --
@@ -563,6 +564,7 @@ public class ZeissCZIReader extends FormatReader {
       plateRows = 0;
       plateColumns = 0;
       platePositions.clear();
+      fieldNames.clear();
       imageNames.clear();
     }
   }
@@ -1263,10 +1265,16 @@ public class ZeissCZIReader extends FormatReader {
       store.setPlateRows(new PositiveInteger(plateRows), 0);
       store.setPlateColumns(new PositiveInteger(plateColumns), 0);
 
+      int fieldsPerWell = fieldNames.size() / platePositions.size();
+      if (fieldNames.size() == 0) {
+        fieldsPerWell = 1;
+      }
+
       int nextWell = 0;
+      int nextField = 0;
       for (int i=0, img=0; img<core.size(); i++, img+=core.get(img).resolutionCount) {
-        if (i < platePositions.size() && platePositions.get(i) != null) {
-          String[] index = platePositions.get(i).split("-");
+        if (nextWell < platePositions.size() && platePositions.get(nextWell) != null) {
+          String[] index = platePositions.get(nextWell).split("-");
           if (index.length != 2) {
             continue;
           }
@@ -1281,16 +1289,31 @@ public class ZeissCZIReader extends FormatReader {
             LOGGER.trace("Could not parse well position", e);
           }
 
+          int field = 0;
+          if (i < fieldNames.size()) {
+            String fieldName = fieldNames.get(i);
+            try {
+              field = Integer.parseInt(fieldName.substring(1)) - 1; // name starts with "P"
+            }
+            catch (NumberFormatException e) {
+              LOGGER.warn("Could not parse field name {}; plate layout may be incorrect", fieldName);
+            }
+          }
+
           if (row >= 0 && column >= 0) {
             int imageIndex = coreIndexToSeries(img);
             store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
             store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
             store.setWellColumn(new NonNegativeInteger(column), 0, nextWell);
-            store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, nextWell, 0), 0, nextWell, 0);
-            store.setWellSampleImageRef(MetadataTools.createLSID("Image", imageIndex), 0, nextWell, 0);
-            store.setWellSampleIndex(new NonNegativeInteger(imageIndex), 0, nextWell, 0);
+            store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, nextWell, nextField), 0, nextWell, nextField);
+            store.setWellSampleImageRef(MetadataTools.createLSID("Image", imageIndex), 0, nextWell, nextField);
+            store.setWellSampleIndex(new NonNegativeInteger(imageIndex), 0, nextWell, nextField);
 
-            nextWell++;
+            nextField++;
+            if (nextField == fieldsPerWell) {
+              nextField = 0;
+              nextWell++;
+            }
           }
         }
       }
@@ -1352,7 +1375,11 @@ public class ZeissCZIReader extends FormatReader {
         }
         else {
           if (i < imageNames.size()) {
-            store.setImageName(imageNames.get(i), i);
+            String completeName = imageNames.get(i);
+            if (i < fieldNames.size()) {
+              completeName += " " + fieldNames.get(i);
+            }
+            store.setImageName(completeName, i);
           }
           else {
             int paddingLength = (""+getSeriesCount()).length();
@@ -3342,40 +3369,50 @@ public class ZeissCZIReader extends FormatReader {
                   platePositions.add(value);
                 }
                 String name = well.getAttribute("Name");
-                imageNames.add(name);
+                for (int f=0; f<well.getElementsByTagName("SingleTileRegion").getLength(); f++) {
+                  imageNames.add(name);
+                }
               }
             }
           }
 
-          NodeList regions = getGrandchildren(sampleHolder,
-            "SingleTileRegionArray", "SingleTileRegion");
-          if (regions != null) {
-            for (int i=0; i<regions.getLength(); i++) {
-              Element region = (Element) regions.item(i);
+          NodeList regionArrays = sampleHolder.getElementsByTagName("SingleTileRegionArray");
+          if (regionArrays != null) {
+            int positionIndex = 0;
+            for (int r=0; r<regionArrays.getLength(); r++) {
+              NodeList regions = ((Element) regionArrays.item(r)).getElementsByTagName("SingleTileRegion");
+              if (regions != null) {
+                for (int i=0; i<regions.getLength(); i++, positionIndex++) {
+                  Element region = (Element) regions.item(i);
 
-              String x = getFirstNode(region, "X").getTextContent();
-              String y = getFirstNode(region, "Y").getTextContent();
-              String z = getFirstNode(region, "Z").getTextContent();
+                  String x = getFirstNode(region, "X").getTextContent();
+                  String y = getFirstNode(region, "Y").getTextContent();
+                  String z = getFirstNode(region, "Z").getTextContent();
+                  String name = region.getAttribute("Name");
 
-              // safe to assume all 3 arrays have the same length
-              if (i < positionsX.length) {
-                if (x == null) {
-                  positionsX[i] = null;
-                } else {
-                  final Double number = Double.valueOf(x);
-                  positionsX[i] = new Length(number, UNITS.MICROMETER);
-                }
-                if (y == null) {
-                  positionsY[i] = null;
-                } else {
-                  final Double number = Double.valueOf(y);
-                  positionsY[i] = new Length(number, UNITS.MICROMETER);
-                }
-                if (z == null) {
-                  positionsZ[i] = null;
-                } else {
-                  final Double number = Double.valueOf(z);
-                  positionsZ[i] = new Length(number, UNITS.MICROMETER);
+                  // safe to assume all 3 arrays have the same length
+                  if (positionIndex < positionsX.length) {
+                    if (x == null) {
+                      positionsX[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(x);
+                      positionsX[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                    if (y == null) {
+                      positionsY[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(y);
+                      positionsY[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                    if (z == null) {
+                      positionsZ[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(z);
+                      positionsZ[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                  }
+
+                  fieldNames.add(name);
                 }
               }
             }
