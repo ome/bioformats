@@ -260,6 +260,10 @@ public class LiFlimReader extends FormatReader {
       compression = null;
       datatype = null;
       packing = null;
+      if (UINT12stream != null) UINT12stream.close();
+      UINT12stream = null;
+      UINT12streamPos = 0;
+      UINT12streamSeries = 0;
       channels = null;
       xLen = null;
       yLen = null;
