@@ -53,18 +53,15 @@ public class MetadataTempBuffer {
   public List<Length> fieldPosX = new ArrayList<Length>();
   public List<Length> fieldPosY = new ArrayList<Length>();
 
-  public String[] descriptions, microscopeModels, serialNumber;
-  public Double[] pinholes, zooms, zSteps, tSteps, lensNA;
+  public String[] descriptions;
+  public Double[] pinholes, zSteps, tSteps, lensNA;
   public boolean[] flipX, flipY, swapXY;
   public Double[][] expTimes, gains, detectorOffsets;
   public String[][] channelNames;
-  public ArrayList<ArrayList<String>> detectorModels;
   public Double[][] exWaves;
   public ArrayList<ArrayList<Boolean>> activeDetector;
-  public ArrayList<HashMap<Integer, String>> detectorIndexes;
 
-  public String[] immersions, corrections, objectiveModels;
-  public Double[] magnification;
+  public String[] corrections;
   public Length[] posX, posY, posZ;
   public Double[] refractiveIndex;
   public ArrayList<ArrayList<Length>> cutIns, cutOuts;
@@ -86,6 +83,14 @@ public class MetadataTempBuffer {
 
   public ArrayList<ArrayList<Detector>> detectors;
   public ArrayList<ArrayList<Laser>> lasers;
+  public ArrayList<ArrayList<Filter>> filters;
+
+  public enum DataSourceType {
+    CAMERA,
+    CONFOCAL
+  }
+
+  public DataSourceType[] dataSourceTypes; 
 
     // -- Constructor --
   /**
@@ -100,21 +105,15 @@ public class MetadataTempBuffer {
     acquiredDate = new double[len];
     descriptions = new String[len];
     timestamps = new Double[len][];
-    serialNumber = new String[len];
     lensNA = new Double[len];
-    magnification = new Double[len];
-    immersions = new String[len];
     corrections = new String[len];
-    objectiveModels = new String[len];
     posX = new Length[len];
     posY = new Length[len];
     posZ = new Length[len];
     refractiveIndex = new Double[len];
-    microscopeModels = new String[len];
     zSteps = new Double[len];
     tSteps = new Double[len];
     pinholes = new Double[len];
-    zooms = new Double[len];
     flipX = new boolean[len];
     flipY = new boolean[len];
     swapXY = new boolean[len];
@@ -126,14 +125,13 @@ public class MetadataTempBuffer {
     imageROIs = new ROI[len][];
     imageNames = new String[len];
     inverseRgb = new boolean[len];
+    dataSourceTypes = new DataSourceType[len];
 
     laserWavelength = ArrayListOfArrayLists(len, Double.class);
     activeDetector = ArrayListOfArrayLists(len, Boolean.class);
     cutIns = ArrayListOfArrayLists(len, Length.class);
     cutOuts = ArrayListOfArrayLists(len, Length.class);
     filterModels = ArrayListOfArrayLists(len, String.class);
-    detectorModels = ArrayListOfArrayLists(len, String.class);
-    detectorIndexes = ArrayListOfHashMaps(len, Integer.class, String.class);
     laserIntensity = ArrayListOfArrayLists(len, Double.class);
     laserActive = ArrayListOfArrayLists(len, Boolean.class);
     laserFrap = ArrayListOfArrayLists(len, Boolean.class);
@@ -141,6 +139,7 @@ public class MetadataTempBuffer {
     channels = ArrayListOfArrayLists(len, Channel.class);
     detectors = ArrayListOfArrayLists(len, Detector.class);
     lasers = ArrayListOfArrayLists(len, Laser.class);
+    filters = ArrayListOfArrayLists(len, Filter.class);
   }
 
   // -- Methods --
@@ -283,6 +282,14 @@ public class MetadataTempBuffer {
       maxBytesInc = yDim.bytesInc * yDim.size;
     }
     return maxBytesInc;
+  }
+
+  public Detector getDetectorForFilter(int series, Filter filter){
+    for (Channel channel : channels.get(series)){
+      if (channel.filter.equals(filter))
+      return channel.detector;
+    }
+    return null;
   }
 
   // -- Helper functions --

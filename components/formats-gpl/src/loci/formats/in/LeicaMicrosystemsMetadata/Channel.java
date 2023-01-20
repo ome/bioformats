@@ -58,12 +58,11 @@ public class Channel {
 
   public ChannelType channelType;
 
-  
-  public Length cutIn;
-  public Length cutOut;
   public String dye;
   public Detector detector;
   public Laser laser;
+  public Filter filter;
+  public String name;
 
   // -- Constructor --
   public Channel(int channelTag, int resolution, double min, double max, String unit,

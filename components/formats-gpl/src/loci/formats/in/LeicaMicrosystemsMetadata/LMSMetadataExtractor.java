@@ -477,14 +477,14 @@ public class LMSMetadataExtractor {
           continue;
         }
 
-        if (id.equals("SystemType")) {
-          r.metaTemp.microscopeModels[image] = value;
-        }
-        else if (id.equals("dblPinhole")) {
+        // if (id.equals("SystemType")) {
+        //   r.metaTemp.microscopeModels[image] = value;
+        // }
+        if (id.equals("dblPinhole")) {
           r.metaTemp.pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
         }
         else if (id.equals("dblZoom")) {
-          r.metaTemp.zooms[image] = DataTools.parseDouble(value.trim());
+          // r.metaTemp.zooms[image] = DataTools.parseDouble(value.trim());
         }
         else if (id.equals("dblStepSize")) {
           r.metaTemp.zSteps[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
@@ -493,7 +493,7 @@ public class LMSMetadataExtractor {
           r.metaTemp.tSteps[image] = DataTools.parseDouble(value.trim());
         }
         else if (id.equals("CameraName")) {
-          r.metaTemp.detectorModels.get(image).add(value);
+          // r.metaTemp.detectorModels.get(image).add(value);
         }
         else if (id.equals("eDirectional")) {
           r.addSeriesMeta("Reverse X orientation", "1".equals(value.trim()));
@@ -549,14 +549,14 @@ public class LMSMetadataExtractor {
 
         value = confocalSetting.getAttribute("Zoom");
 
-        if (value != null && !value.trim().isEmpty()) {
-          r.metaTemp.zooms[image] = DataTools.parseDouble(value.trim());
-        }
+        // if (value != null && !value.trim().isEmpty()) {
+        //   r.metaTemp.zooms[image] = DataTools.parseDouble(value.trim());
+        // }
 
         value = confocalSetting.getAttribute("ObjectiveName");
 
         if (value != null && !value.trim().isEmpty()) {
-          r.metaTemp.objectiveModels[image] = value.trim();
+          // r.metaTemp.objectiveModels[image] = value.trim();
         }
 
         value = confocalSetting.getAttribute("FlipX");
@@ -612,16 +612,16 @@ public class LMSMetadataExtractor {
         }
       }
       else if (attribute.equals("OrderNumber")) {
-        if (variant != null && !variant.trim().isEmpty()) {
-          r.metaTemp.serialNumber[image] = variant.trim();
-        }
+        // if (variant != null && !variant.trim().isEmpty()) {
+        //   r.metaTemp.serialNumber[image] = variant.trim();
+        // }
       }
       else if (objectClass.equals("CDetectionUnit")) {
         if (attribute.equals("State")) {
           int channel = getChannelIndex(filterSetting);
           if (channel < 0) continue;
 
-          r.metaTemp.detectorIndexes.get(image).put(Integer.parseInt(data), object);
+          // r.metaTemp.detectorIndexes.get(image).put(Integer.parseInt(data), object);
           r.metaTemp.activeDetector.get(image).add("Active".equals(variant.trim()));
         }
       }
@@ -642,7 +642,7 @@ public class LMSMetadataExtractor {
             }
             na = token.substring(0, x);
             if (na != null && !na.trim().isEmpty()) {
-              r.metaTemp.magnification[image] = DataTools.parseDouble(na.trim());
+              // r.metaTemp.magnification[image] = DataTools.parseDouble(na.trim());
             }
           }
           else {
@@ -658,7 +658,7 @@ public class LMSMetadataExtractor {
             immersion = "Other";
           }
         }
-        r.metaTemp.immersions[image] = immersion;
+        // r.metaTemp.immersions[image] = immersion;
 
         String correction = "Other";
         if (tokens.hasMoreTokens()) {
@@ -669,7 +669,7 @@ public class LMSMetadataExtractor {
         }
         r.metaTemp.corrections[image] = correction;
 
-        r.metaTemp.objectiveModels[image] = model.toString().trim();
+        // r.metaTemp.objectiveModels[image] = model.toString().trim();
       }
       else if (attribute.equals("RefractionIndex")) {
         if (variant != null && !variant.trim().isEmpty()) {
@@ -1076,7 +1076,7 @@ public class LMSMetadataExtractor {
       if (definition == null)
           return;
 
-      // add multiband cutin/out information to channel
+      // add multiband cutin/out information to channel as filter
       Node spectro = getChildNodeWithName(definition, "Spectro");
       NodeList multibands = spectro.getChildNodes();
       for (int i = 0; i < multibands.getLength(); i++) {
@@ -1086,24 +1086,17 @@ public class LMSMetadataExtractor {
           } catch (Exception e){
             continue;
           }
-          int channelIndex = Integer.parseInt(multiband.getAttribute("Channel"));
+          int channelIndex = Integer.parseInt(multiband.getAttribute("Channel")) - 1;
           if (channelIndex >= r.metaTemp.channels.get(image).size())
             continue;
 
-          Double cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
-          Double cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
-          if (cutIn != null && cutIn.intValue() > 0) {
-              Length in = FormatTools.getCutIn((double) Math.round(cutIn));
-              if (in != null) {
-                r.metaTemp.channels.get(image).get(channelIndex).cutIn = in;
-              }
-          }
-          if (cutOut != null && cutOut.intValue() > 0) {
-              Length out = FormatTools.getCutOut((double) Math.round(cutOut));
-              if (out != null) {
-                  r.metaTemp.channels.get(image).get(channelIndex).cutOut = out;
-              }
-          }
+          Filter filter = new Filter();
+          filter.cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
+          filter.cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
+          
+          r.metaTemp.filters.get(image).add(filter);
+          r.metaTemp.channels.get(image).get(channelIndex).filter = filter;
+
           String dye = multiband.getAttribute("DyeName");
           r.metaTemp.channels.get(image).get(channelIndex).dye = dye;
       }
@@ -1145,55 +1138,62 @@ public class LMSMetadataExtractor {
      * @throws FormatException
      */
     public void translateDetectors(Element imageNode, int image)
-            throws FormatException {
-        if (hardwareSetting == null)
-            return;
+      throws FormatException {
+      if (hardwareSetting == null)
+          return;
 
-        Node definition = getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
-        if (definition == null)
-            return;
+      Node definition = getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
+      if (definition == null)
+          return;
 
-        String zoomS = getAttributeValue(definition, "Zoom");
-        double zoom = parseDouble(zoomS);
+      String zoomS = getAttributeValue(definition, "Zoom");
+      double zoom = parseDouble(zoomS);
 
-        // create detectors from detector list
-        Node detectorList = getChildNodeWithName(definition, "DetectorList");
-        NodeList detectors = detectorList.getChildNodes();
-        for (int i = 0; i < detectors.getLength(); i++) {
-            Element detectorNode;
-            try {
-              detectorNode = (Element) detectors.item(i);
-            } catch (Exception e){
-              continue;
-            }
-
-            String gainS = detectorNode.getAttribute("Gain");
-            double gain = parseDouble(gainS.trim());
-
-            String offsetS = detectorNode.getAttribute("Offset");
-            double offset = parseDouble(offsetS.trim());
-
-            String isActiveS = detectorNode.getAttribute("IsActive");
-            boolean isActive = "1".equals(isActiveS);
-
-            String channelS = detectorNode.getAttribute("Channel");
-            int channelIndex = parseInt(channelS);
-
-            Detector detector = new Detector();
-            detector.gain = gain;
-            detector.offset = offset;
-            detector.isActive = isActive;
-            detector.channel = channelIndex;
-            detector.model = detectorNode.getAttribute("Name");
-            detector.type = detectorNode.getAttribute("Type");
-            detector.zoom = zoom;
-
-            r.metaTemp.detectors.get(image).add(detector);
-
-            if (channelIndex < r.metaTemp.channels.get(image).size()){
-              r.metaTemp.channels.get(image).get(channelIndex).detector = detector;
-            }
+      // create detectors from detector list
+      Node detectorList = getChildNodeWithName(definition, "DetectorList");
+      NodeList detectors = detectorList.getChildNodes();
+      for (int i = 0; i < detectors.getLength(); i++) {
+        Element detectorNode;
+        try {
+          detectorNode = (Element) detectors.item(i);
+        } catch (Exception e){
+          continue;
         }
+
+        String gainS = detectorNode.getAttribute("Gain");
+        double gain = parseDouble(gainS.trim());
+
+        String offsetS = detectorNode.getAttribute("Offset");
+        double offset = parseDouble(offsetS.trim());
+
+        String isActiveS = detectorNode.getAttribute("IsActive");
+        boolean isActive = "1".equals(isActiveS);
+
+        String channelS = detectorNode.getAttribute("Channel");
+        int channelIndex = parseInt(channelS) - 1;
+        //for channel references such as "100": using the less secure assumption that detectors and their mapped channels are listed in the same order
+        if (channelIndex >= r.metaTemp.channels.get(image).size())
+          channelIndex = r.metaTemp.detectors.get(image).size();
+
+        String channelName = detectorNode.getAttribute("ChannelName");
+
+        Detector detector = new Detector();
+        detector.gain = gain;
+        detector.offset = offset;
+        detector.isActive = isActive;
+        detector.channel = channelIndex;
+        detector.model = detectorNode.getAttribute("Name");
+        detector.type = detectorNode.getAttribute("Type");
+        detector.zoom = zoom;
+
+        r.metaTemp.detectors.get(image).add(detector);
+        
+        //link detector and channel information
+        if (channelIndex < r.metaTemp.channels.get(image).size() && detector.isActive){
+          r.metaTemp.channels.get(image).get(channelIndex).detector = detector;
+          r.metaTemp.channels.get(image).get(channelIndex).name = channelName;
+        }
+      }
     }
 
   /**
@@ -1233,9 +1233,9 @@ public class LMSMetadataExtractor {
         String c = detector.getAttribute("Channel");
         int channel = (c == null || c.trim().length() == 0) ? 0 : Integer.parseInt(c);
         if (active) {
-          if (r.metaTemp.detectorIndexes.get(image) != null && r.metaTemp.detectorModels.get(image) != null) {
-            r.metaTemp.detectorModels.get(image).add(r.metaTemp.detectorIndexes.get(image).get(channel));
-          }
+          // if (r.metaTemp.detectorIndexes.get(image) != null && r.metaTemp.detectorModels.get(image) != null) {
+          //   r.metaTemp.detectorModels.get(image).add(r.metaTemp.detectorIndexes.get(image).get(channel));
+          // }
 
           Element multiband = null;
 

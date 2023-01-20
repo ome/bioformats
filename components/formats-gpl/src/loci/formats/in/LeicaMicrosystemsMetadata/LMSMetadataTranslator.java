@@ -37,7 +37,10 @@ import loci.common.DataTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
+import loci.formats.in.LeicaMicrosystemsMetadata.MetadataTempBuffer.DataSourceType;
 import loci.formats.meta.MetadataStore;
+import ome.units.quantity.Length;
+import ome.xml.model.enums.MicroscopeType;
 
 public class LMSMetadataTranslator {
   // -- Fields --
@@ -48,6 +51,9 @@ public class LMSMetadataTranslator {
   Element ldmBlockMaster;
   Element ldmBlockList;
 
+
+
+
   // -- Constructor --
   public LMSMetadataTranslator(LMSFileReader reader){
     this.r = reader;
@@ -56,6 +62,7 @@ public class LMSMetadataTranslator {
 
   public void translateMetadata(List<LMSImageXmlDocument> docs) throws FormatException, IOException {
     initCoreMetadata(docs.size());
+    initMetadataStore();
 
     r.metaTemp.channelPrios = new int[r.metaTemp.tileCount.length][];
 
@@ -76,8 +83,18 @@ public class LMSMetadataTranslator {
     setCoreMetadataForTiles();
   }
 
+  private void initMetadataStore(){
+    for (int i=0; i<r.metaTemp.imageNames.length; i++) {
+      r.setSeries(i);
+      r.addSeriesMeta("Image name", r.metaTemp.imageNames[i]);
+    }
+    r.setSeries(0);
+  }
+
   private void translateImage(Element image, int i) throws FormatException {
-    NodeList attachments = getDescendantNodesWithName((Element)image, "Attachment");
+    r.setSeries(i);
+
+    NodeList attachments = getDescendantNodesWithName(image, "Attachment");
     hardwareSetting = getNodeWithAttribute(attachments, "Name", "HardwareSetting");
     mainConfocalSetting = getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
     Element ldmBlockSequential = getChildNodeWithName(hardwareSetting, "LDM_Block_Sequential");
@@ -85,8 +102,11 @@ public class LMSMetadataTranslator {
     ldmBlockList = getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_List");
 
     LMSMetadataExtractor extractor = new LMSMetadataExtractor(r); //TODO member ?
-    extractor.translateImage((Element)image, i);
-    translateObjective((Element)image, i);
+    extractor.translateImage(image, i);
+    translateStandDetails(image, i);
+    translateObjective(image, i);
+    mapLasersToChannels(i);
+
   }
 
   private void initCoreMetadata(int len){
@@ -111,6 +131,28 @@ public class LMSMetadataTranslator {
         }
     }
     r.setCore(core);
+  }
+
+  private void translateStandDetails(Element image, int series) throws FormatException {
+    int index = getTileIndex(series);
+    
+    String instrumentID = MetadataTools.createLSID("Instrument", series);
+    store.setInstrumentID(instrumentID, series);
+
+    String model = getAttributeValue(hardwareSetting, "SystemTypeName");
+    store.setMicroscopeModel(model, series);
+
+    String dataSourceType = getAttributeValue(hardwareSetting, "DataSourceTypeName");
+    r.metaTemp.dataSourceTypes[series] = dataSourceType.equals("Confocal") ? DataSourceType.CONFOCAL : DataSourceType.CAMERA;
+
+    String serialNumber = getAttributeValue(mainConfocalSetting, "SystemSerialNumber");
+    store.setMicroscopeSerialNumber(serialNumber, series);
+
+    String isInverse = getAttributeValue(mainConfocalSetting, "IsInverseMicroscopeModel");
+    MicroscopeType type = isInverse.equals("1") ? MicroscopeType.INVERTED : MicroscopeType.UPRIGHT;
+    store.setMicroscopeType(type, series);
+
+    // store.setImageInstrumentRef(instrumentID, series);
   }
 
   private void translateObjective(Element image, int series) throws FormatException{
@@ -142,6 +184,27 @@ public class LMSMetadataTranslator {
     store.setObjectiveSettingsID(objectiveID, series);
     store.setObjectiveSettingsRefractiveIndex(refractionIndex, series);
     // store.setObjectiveCorrection(MetadataTools.getCorrection(r.metaTemp.corrections[index]), series, 0);
+  }
+
+  private void mapLasersToChannels(int series){
+    for (Channel channel : r.metaTemp.channels.get(series)){
+      if (channel.filter == null) continue;
+
+      double cutIn = channel.filter.cutIn;
+      double cutOut = channel.filter.cutOut;
+      
+      Laser selectedLaser = null;
+      for (Laser laser : r.metaTemp.lasers.get(series)){
+        if (laser.wavelength < cutIn){
+          if (selectedLaser == null || selectedLaser.wavelength < laser.wavelength)
+            selectedLaser = laser;
+        }
+      }
+
+      channel.laser = selectedLaser;
+    }
+
+    
   }
 
   // -- Helper functions --
