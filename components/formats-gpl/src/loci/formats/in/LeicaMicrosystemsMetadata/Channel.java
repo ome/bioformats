@@ -59,7 +59,7 @@ public class Channel {
   public ChannelType channelType;
 
   public String dye;
-  public Detector detector;
+  public DetectorSetting detectorSetting;
   public Laser laser;
   public Filter filter;
   public String name;

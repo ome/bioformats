@@ -4,9 +4,7 @@ public class Detector {
   public String detectorId;
   public String model;
   public String type;
-  public double gain;
-  public double offset;
-  public boolean isActive;
   public int channel;
+  public String channelName;
   public double zoom;
 }

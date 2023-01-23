@@ -614,10 +614,12 @@ public class MetadataStoreInitializer {
       if (channel.filter != null)
         store.setChannelFilterSetRef(channel.filter.filterSetId, series, channelIndex);
       
-      if (channel.detector != null){
-        store.setDetectorSettingsID(channel.detector.detectorId, series, channelIndex);
-        store.setDetectorSettingsOffset(channel.detector.offset, series, channelIndex);
-        store.setDetectorSettingsGain(channel.detector.gain, series, channelIndex);
+      if (channel.detectorSetting != null){
+        
+        store.setDetectorSettingsID(channel.detectorSetting.detector.detectorId, series, channelIndex);
+        store.setDetectorSettingsOffset(channel.detectorSetting.offset, series, channelIndex);
+        store.setDetectorSettingsGain(channel.detectorSetting.gain, series, channelIndex);
+        store.setDetectorSettingsZoom(channel.detectorSetting.detector.zoom, series, channelIndex);
       }
     }
   }

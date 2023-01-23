@@ -1149,52 +1149,109 @@ public class LMSMetadataExtractor {
       String zoomS = getAttributeValue(definition, "Zoom");
       double zoom = parseDouble(zoomS);
 
-      // create detectors from detector list
+      // main confocal settings > detector list: instrument detectors
       Node detectorList = getChildNodeWithName(definition, "DetectorList");
-      NodeList detectors = detectorList.getChildNodes();
-      for (int i = 0; i < detectors.getLength(); i++) {
-        Element detectorNode;
-        try {
-          detectorNode = (Element) detectors.item(i);
-        } catch (Exception e){
-          continue;
+      NodeList detectorNodes = detectorList.getChildNodes();
+      List<Detector> detectors = createDetectors(detectorNodes, zoom);
+
+      r.metaTemp.detectors.get(image).addAll(detectors);
+
+      //LDM block sequential list confocal settings: channel detector settings
+      Node ldmBlockSequential = getChildNodeWithName(hardwareSetting, "LDM_Block_Sequential");
+      Node ldmBlockList = getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_List");
+      NodeList sequentialConfocalSettings = ldmBlockList.getChildNodes();
+
+      for (int i = 0; i < sequentialConfocalSettings.getLength(); i++){
+        Node seqDetectorList = getChildNodeWithName(sequentialConfocalSettings.item(i), "DetectorList");
+        if (seqDetectorList == null) continue;
+
+        NodeList seqDetectorNodes = seqDetectorList.getChildNodes();
+        List<DetectorSetting> detectorSettings = createDetectorSettings(seqDetectorNodes, detectors);
+
+        for (DetectorSetting setting : detectorSettings){
+          if (setting.isActive)
+            r.metaTemp.detectorSettings.get(image).add(setting);
         }
+      }
 
-        String gainS = detectorNode.getAttribute("Gain");
-        double gain = parseDouble(gainS.trim());
-
-        String offsetS = detectorNode.getAttribute("Offset");
-        double offset = parseDouble(offsetS.trim());
-
-        String isActiveS = detectorNode.getAttribute("IsActive");
-        boolean isActive = "1".equals(isActiveS);
-
-        String channelS = detectorNode.getAttribute("Channel");
-        int channelIndex = parseInt(channelS) - 1;
-        //for channel references such as "100": using the less secure assumption that detectors and their mapped channels are listed in the same order
-        if (channelIndex >= r.metaTemp.channels.get(image).size())
-          channelIndex = r.metaTemp.detectors.get(image).size();
-
-        String channelName = detectorNode.getAttribute("ChannelName");
-
-        Detector detector = new Detector();
-        detector.gain = gain;
-        detector.offset = offset;
-        detector.isActive = isActive;
-        detector.channel = channelIndex;
-        detector.model = detectorNode.getAttribute("Name");
-        detector.type = detectorNode.getAttribute("Type");
-        detector.zoom = zoom;
-
-        r.metaTemp.detectors.get(image).add(detector);
-        
-        //link detector and channel information
-        if (channelIndex < r.metaTemp.channels.get(image).size() && detector.isActive){
-          r.metaTemp.channels.get(image).get(channelIndex).detector = detector;
-          r.metaTemp.channels.get(image).get(channelIndex).name = channelName;
+      //link detector and channel information
+      //assuming that the order of channels in LMS XML maps the order of active detectors over all LDM block sequential lists 
+      for (int i = 0; i < r.metaTemp.detectorSettings.get(image).size(); i++){
+        if (i < r.metaTemp.channels.get(image).size()){
+          r.metaTemp.channels.get(image).get(i).detectorSetting = r.metaTemp.detectorSettings.get(image).get(i);
+          r.metaTemp.channels.get(image).get(i).name = r.metaTemp.detectorSettings.get(image).get(i).detector.channelName;
         }
       }
     }
+
+  private List<Detector> createDetectors(NodeList detectorNodes, double zoom){
+    List<Detector> detectors = new ArrayList<Detector>();
+
+    for (int i = 0; i < detectorNodes.getLength(); i++) {
+      Element detectorNode;
+      try {
+        detectorNode = (Element) detectorNodes.item(i);
+      } catch (Exception e){
+        continue;
+      }
+
+      //for channel references such as "100": using the less secure assumption that detectors and their mapped channels are listed in the same order
+      // if (channelIndex >= r.metaTemp.channels.get(image).size())
+      //   channelIndex = r.metaTemp.instrumentDetectors.get(image).size();
+
+      Detector detector = new Detector();
+      
+      String channelS = detectorNode.getAttribute("Channel");
+      detector.channel = parseInt(channelS) - 1;
+
+      detector.channelName = detectorNode.getAttribute("ChannelName");
+      detector.model = detectorNode.getAttribute("Name");
+      detector.type = detectorNode.getAttribute("Type");
+      detector.zoom = zoom;
+
+      detectors.add(detector);
+    }
+
+    return detectors;
+  }
+
+  private List<DetectorSetting> createDetectorSettings(NodeList detectorNodes, List<Detector> detectors){
+    List<DetectorSetting> detectorSettings = new ArrayList<DetectorSetting>();
+
+    for (int i = 0; i < detectorNodes.getLength(); i++) {
+      Element detectorNode;
+      try {
+        detectorNode = (Element) detectorNodes.item(i);
+      } catch (Exception e){
+        continue;
+      }
+
+      DetectorSetting setting = new DetectorSetting();
+
+      String gainS = detectorNode.getAttribute("Gain");
+      setting.gain = parseDouble(gainS);
+
+      String offsetS = detectorNode.getAttribute("Offset");
+      setting.offset = parseDouble(offsetS);
+
+      String isActiveS = detectorNode.getAttribute("IsActive");
+      setting.isActive = "1".equals(isActiveS);
+
+      String channelS = detectorNode.getAttribute("Channel");
+      int channel = parseInt(channelS) - 1;
+
+      for (Detector detector : detectors){
+        if (channel == detector.channel){
+          setting.detector = detector;
+          break;
+        }
+      }
+
+      detectorSettings.add(setting);
+    }
+
+    return detectorSettings;
+  }
 
   /**
    * Extracts detector information and writes it to reader's {@link MetadataTempBuffer}

@@ -81,7 +81,8 @@ public class MetadataTempBuffer {
   private ArrayList<ArrayList<Dimension>> dimensions;
   public ArrayList<ArrayList<Channel>> channels;
 
-  public ArrayList<ArrayList<Detector>> detectors;
+  public ArrayList<ArrayList<Detector>> detectors; //detector info added to an instrument in OME model
+  public ArrayList<ArrayList<DetectorSetting>> detectorSettings; //detector info added to detector settings of a channel in OME model
   public ArrayList<ArrayList<Laser>> lasers;
   public ArrayList<ArrayList<Filter>> filters;
 
@@ -138,6 +139,7 @@ public class MetadataTempBuffer {
     dimensions = ArrayListOfArrayLists(len, Dimension.class);
     channels = ArrayListOfArrayLists(len, Channel.class);
     detectors = ArrayListOfArrayLists(len, Detector.class);
+    detectorSettings = ArrayListOfArrayLists(len, DetectorSetting.class);
     lasers = ArrayListOfArrayLists(len, Laser.class);
     filters = ArrayListOfArrayLists(len, Filter.class);
   }
@@ -286,8 +288,8 @@ public class MetadataTempBuffer {
 
   public Detector getDetectorForFilter(int series, Filter filter){
     for (Channel channel : channels.get(series)){
-      if (channel.filter.equals(filter))
-      return channel.detector;
+      if (channel.filter != null && channel.filter.equals(filter) && channel.detectorSetting != null)
+      return channel.detectorSetting.detector;
     }
     return null;
   }
