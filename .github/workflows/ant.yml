@@ -17,4 +17,6 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - name: Build with Ant
-        run: ./tools/test-build ant
+        run: |
+            ./tools/test-build ant
+            ant docs
