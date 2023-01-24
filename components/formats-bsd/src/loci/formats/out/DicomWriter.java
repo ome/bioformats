@@ -208,6 +208,8 @@ public class DicomWriter extends FormatWriter {
 
       out.seek(compressionMethodPointer[resolutionIndex]);
       out.writeBytes(getCompressionMethod());
+
+      ifds[resolutionIndex][no].put(IFD.COMPRESSION, getTIFFCompression().getCode());
     }
 
     // TILED_SPARSE, so the tile coordinates must be written
@@ -250,14 +252,18 @@ public class DicomWriter extends FormatWriter {
 
     byte[] paddedBuf = null;
 
+    int thisTileWidth = tileWidth[resolutionIndex];
+    int thisTileHeight = tileHeight[resolutionIndex];
+    int thisTilePixels = thisTileWidth * thisTileHeight;
+
     // pad the last row and column of tiles to match specified tile size
-    if ((x + w == getSizeX() && w < tileWidth[resolutionIndex]) ||
-      (y + h == getSizeY() && h < tileHeight[resolutionIndex]))
+    if ((x + w == getSizeX() && w < thisTileWidth) ||
+      (y + h == getSizeY() && h < thisTileHeight))
     {
       if (interleaved || getSamplesPerPixel() == 1) {
         int srcRowLen = w * bytesPerPixel * getSamplesPerPixel();
-        int destRowLen = tileWidth[resolutionIndex] * bytesPerPixel * getSamplesPerPixel();
-        paddedBuf = new byte[tileHeight[resolutionIndex] * destRowLen];
+        int destRowLen = thisTileWidth * bytesPerPixel * getSamplesPerPixel();
+        paddedBuf = new byte[thisTileHeight * destRowLen];
 
         for (int row=0; row<h; row++) {
           System.arraycopy(buf, row * srcRowLen, paddedBuf, row * destRowLen, srcRowLen);
@@ -265,13 +271,13 @@ public class DicomWriter extends FormatWriter {
       }
       else {
         int srcRowLen = w * bytesPerPixel;
-        int destRowLen = tileWidth[resolutionIndex] * bytesPerPixel;
-        paddedBuf = new byte[tileHeight[resolutionIndex] * destRowLen * getSamplesPerPixel()];
+        int destRowLen = thisTileWidth * bytesPerPixel;
+        paddedBuf = new byte[thisTileHeight * destRowLen * getSamplesPerPixel()];
 
         for (int c=0; c<getSamplesPerPixel(); c++) {
           for (int row=0; row<h; row++) {
             int src = srcRowLen * ((c * h) + row);
-            int dest = destRowLen * ((c * tileHeight[resolutionIndex]) + row);
+            int dest = destRowLen * ((c * thisTileHeight) + row);
             System.arraycopy(buf, src, paddedBuf, dest, srcRowLen);
           }
         }
@@ -279,6 +285,18 @@ public class DicomWriter extends FormatWriter {
     }
     else {
       paddedBuf = buf;
+    }
+    if (!isInterleaved()) {
+      byte[] interleavedBuf = new byte[paddedBuf.length];
+      for (int c=0; c<getSamplesPerPixel(); c++) {
+        for (int px=0; px<thisTilePixels; px++) {
+          for (int b=0; b<bytesPerPixel; b++) {
+            interleavedBuf[px * getSamplesPerPixel() * bytesPerPixel + c * bytesPerPixel + b] = paddedBuf[c * thisTilePixels * bytesPerPixel + px * bytesPerPixel + b];
+          }
+        }
+      }
+
+      paddedBuf = interleavedBuf;
     }
 
     // now we actually compress and write the pixel data
@@ -327,7 +345,12 @@ public class DicomWriter extends FormatWriter {
       options.channels = getSamplesPerPixel();
       options.bitsPerSample = bytesPerPixel * 8;
       options.littleEndian = out.isLittleEndian();
-      options.interleaved = options.channels > 1 && interleaved;
+      options.interleaved = true;
+
+      if (codec instanceof JPEG2000Codec) {
+        options = JPEG2000CodecOptions.getDefaultOptions(options);
+        ((JPEG2000CodecOptions) options).numDecompositionLevels = 0;
+      }
       byte[] compressed = codec.compress(paddedBuf, options);
       boolean pad = compressed.length % 2 == 1;
 
@@ -1016,8 +1039,12 @@ public class DicomWriter extends FormatWriter {
             ifd.put(IFD.IMAGE_LENGTH, (long) height);
             ifd.put(IFD.TILE_WIDTH, tileWidth[resolutionIndex]);
             ifd.put(IFD.TILE_LENGTH, tileHeight[resolutionIndex]);
+
+            // this is a placeholder, as the compression type isn't supplied
+            // until after setId
             ifd.put(IFD.COMPRESSION, getTIFFCompression().getCode());
-            ifd.put(IFD.PLANAR_CONFIGURATION, rgb ? 2 : 1);
+
+            ifd.put(IFD.PLANAR_CONFIGURATION, 1);
 
             int sampleFormat = 1;
             if (FormatTools.isFloatingPoint(pixelTypeCode)) {
@@ -1039,7 +1066,8 @@ public class DicomWriter extends FormatWriter {
 
             ifd.put(IFD.SOFTWARE, FormatTools.CREATOR);
 
-            int tileCount = tileCountX * tileCountY * bps.length;
+            int tileCount = tileCountX * tileCountY;
+
             ifd.put(IFD.TILE_BYTE_COUNTS, new long[tileCount]);
             ifd.put(IFD.TILE_OFFSETS, new long[tileCount]);
 

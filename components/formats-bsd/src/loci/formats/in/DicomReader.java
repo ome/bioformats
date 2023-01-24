@@ -707,6 +707,9 @@ public class DicomReader extends SubResolutionFormatReader {
       if (m.sizeZ == 0) {
         m.sizeZ = 1;
       }
+      if (m.imageCount == 0) {
+        m.imageCount = 1;
+      }
       if (opticalChannels == 0 || (concatenationNumber == null && ((imagesPerFile / m.sizeZ) % opticalChannels != 0))) {
         opticalChannels = 1;
       }
@@ -1670,7 +1673,7 @@ public class DicomReader extends SubResolutionFormatReader {
     if (baseOffset == in.length()) {
       return;
     }
-    int channelCount = getRGBChannelCount();
+    int channelCount = isRGB() ? getSizeC() : 1;
     if (lut != null || channelCount == 0) {
       channelCount = 1;
     }
