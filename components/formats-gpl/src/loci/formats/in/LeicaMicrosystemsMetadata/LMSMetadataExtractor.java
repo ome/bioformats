@@ -27,11 +27,14 @@ package loci.formats.in.LeicaMicrosystemsMetadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.lang.model.util.ElementScanner14;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -114,7 +117,6 @@ public class LMSMetadataExtractor {
 
     translateChannelDescriptions(image, i);
     translateDimensionDescriptions(image, i);
-    translatePhysicalChannelInfo(image, i);
     translateAttachmentNodes(image, i);
     translateScannerSettings(image, i);
     translateFilterSettings(image, i);
@@ -125,6 +127,7 @@ public class LMSMetadataExtractor {
     translateSingleROIs(image, i);
     translateDetectors(image, i);
     translateDetectors2(image, i);
+    translatePhysicalChannelInfo(image, i);
 
     final Deque<String> nameStack = new ArrayDeque<String>();
     populateOriginalMetadata(image, nameStack);
@@ -1072,33 +1075,80 @@ public class LMSMetadataExtractor {
       if (hardwareSetting == null)
           return;
 
-      Node definition = getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
-      if (definition == null)
-          return;
+      Node ldmBlockSequential = getChildNodeWithName(hardwareSetting, "LDM_Block_Sequential");
+      Node ldmBlockList = getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_List");
+      NodeList sequentialConfocalSettings = ldmBlockList.getChildNodes();
 
       // add multiband cutin/out information to channel as filter
-      Node spectro = getChildNodeWithName(definition, "Spectro");
-      NodeList multibands = spectro.getChildNodes();
-      for (int i = 0; i < multibands.getLength(); i++) {
+      int sequenceIndex = 0;
+      for (int i = 0; i < sequentialConfocalSettings.getLength(); i++){
+        Node spectro = getChildNodeWithName(sequentialConfocalSettings.item(i), "Spectro");
+        if (spectro == null) continue;
+
+        NodeList multibands = spectro.getChildNodes();
+        int multibandIndex = 0;
+        for (int k = 0; k < multibands.getLength(); k++) {
           Element multiband;
           try {
-            multiband = (Element) multibands.item(i);
+            printNode(multibands.item(k));
+            multiband = (Element) multibands.item(k);
           } catch (Exception e){
             continue;
           }
-          int channelIndex = Integer.parseInt(multiband.getAttribute("Channel")) - 1;
-          if (channelIndex >= r.metaTemp.channels.get(image).size())
-            continue;
 
+          //assuming that multiband index maps detector index within a sequential setting
+          DetectorSetting setting = r.metaTemp.getDetectorSetting(image, sequenceIndex, multibandIndex);
+          if (setting != null){
+            int channelIndex = Integer.parseInt(multiband.getAttribute("Channel")) - 1;
+
+            Filter filter = new Filter();
+            filter.cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
+            filter.cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
+            filter.dye = multiband.getAttribute("DyeName");
+            filter.sequenceIndex = sequenceIndex;
+            filter.multibandIndex = multibandIndex;
+            
+            r.metaTemp.filters.get(image).add(filter);
+  
+          }
+
+          multibandIndex++;
+        }
+        sequenceIndex++;
+      }
+
+      //PMT transmission detectors don't have a matching multiband, so we have to manually create a filter for them
+      for (DetectorSetting setting : r.metaTemp.detectorSettings.get(image)){
+        if (setting.transmittedLightMode){
           Filter filter = new Filter();
-          filter.cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
-          filter.cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
-          
+          filter.sequenceIndex = setting.sequenceIndex;
+          filter.multibandIndex = setting.detectorListIndex;
           r.metaTemp.filters.get(image).add(filter);
-          r.metaTemp.channels.get(image).get(channelIndex).filter = filter;
+        }
+      }
 
-          String dye = multiband.getAttribute("DyeName");
-          r.metaTemp.channels.get(image).get(channelIndex).dye = dye;
+      Collections.sort(r.metaTemp.filters.get(image), new FilterComparator());
+
+      //assign filters to channels
+      for (int i = 0; i < r.metaTemp.channels.get(image).size(); i++){
+        if (i >= r.metaTemp.filters.get(image).size()) break;
+        r.metaTemp.channels.get(image).get(i).filter = r.metaTemp.filters.get(image).get(i);
+        r.metaTemp.channels.get(image).get(i).dye = r.metaTemp.channels.get(image).get(i).filter.dye;
+      }
+    }
+
+    class FilterComparator implements Comparator<Filter> {
+      @Override
+      public int compare(Filter a, Filter b){
+        if (a.sequenceIndex < b.sequenceIndex)
+          return -1;
+        else if (a.sequenceIndex > b.sequenceIndex)
+          return 1;
+        else {
+          if (a.multibandIndex < b.multibandIndex) return -1;
+          else if (a.multibandIndex > b.multibandIndex) return 1;
+          else return 0;
+        }
       }
     }
 
@@ -1161,17 +1211,20 @@ public class LMSMetadataExtractor {
       Node ldmBlockList = getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_List");
       NodeList sequentialConfocalSettings = ldmBlockList.getChildNodes();
 
+      int sequenceIndex = 0;
       for (int i = 0; i < sequentialConfocalSettings.getLength(); i++){
         Node seqDetectorList = getChildNodeWithName(sequentialConfocalSettings.item(i), "DetectorList");
         if (seqDetectorList == null) continue;
 
         NodeList seqDetectorNodes = seqDetectorList.getChildNodes();
-        List<DetectorSetting> detectorSettings = createDetectorSettings(seqDetectorNodes, detectors);
+        List<DetectorSetting> detectorSettings = createDetectorSettings(seqDetectorNodes, detectors, sequenceIndex);
 
         for (DetectorSetting setting : detectorSettings){
           if (setting.isActive)
             r.metaTemp.detectorSettings.get(image).add(setting);
         }
+
+        sequenceIndex++;
       }
 
       //link detector and channel information
@@ -1179,7 +1232,7 @@ public class LMSMetadataExtractor {
       for (int i = 0; i < r.metaTemp.detectorSettings.get(image).size(); i++){
         if (i < r.metaTemp.channels.get(image).size()){
           r.metaTemp.channels.get(image).get(i).detectorSetting = r.metaTemp.detectorSettings.get(image).get(i);
-          r.metaTemp.channels.get(image).get(i).name = r.metaTemp.detectorSettings.get(image).get(i).detector.channelName;
+          r.metaTemp.channels.get(image).get(i).name = r.metaTemp.detectorSettings.get(image).get(i).channelName;
         }
       }
     }
@@ -1201,10 +1254,6 @@ public class LMSMetadataExtractor {
 
       Detector detector = new Detector();
       
-      String channelS = detectorNode.getAttribute("Channel");
-      detector.channel = parseInt(channelS) - 1;
-
-      detector.channelName = detectorNode.getAttribute("ChannelName");
       detector.model = detectorNode.getAttribute("Name");
       detector.type = detectorNode.getAttribute("Type");
       detector.zoom = zoom;
@@ -1215,9 +1264,10 @@ public class LMSMetadataExtractor {
     return detectors;
   }
 
-  private List<DetectorSetting> createDetectorSettings(NodeList detectorNodes, List<Detector> detectors){
+  private List<DetectorSetting> createDetectorSettings(NodeList detectorNodes, List<Detector> detectors, int sequenceIndex){
     List<DetectorSetting> detectorSettings = new ArrayList<DetectorSetting>();
 
+    int detectorListIndex = 0;
     for (int i = 0; i < detectorNodes.getLength(); i++) {
       Element detectorNode;
       try {
@@ -1238,16 +1288,27 @@ public class LMSMetadataExtractor {
       setting.isActive = "1".equals(isActiveS);
 
       String channelS = detectorNode.getAttribute("Channel");
-      int channel = parseInt(channelS) - 1;
+      setting.channelIndex = parseInt(channelS) - 1;
+
+      setting.channelName = detectorNode.getAttribute("ChannelName");
+
+      setting.sequenceIndex = sequenceIndex;
+      setting.detectorListIndex = detectorListIndex;
+
+      String detectorName = detectorNode.getAttribute("Name");
+
+      setting.transmittedLightMode = detectorName.toLowerCase().contains("trans") 
+        && setting.channelName.equals("Transmission Channel");
 
       for (Detector detector : detectors){
-        if (channel == detector.channel){
+        if (detectorName.equals(detector.model)){
           setting.detector = detector;
           break;
         }
       }
 
       detectorSettings.add(setting);
+      detectorListIndex++;
     }
 
     return detectorSettings;

@@ -195,7 +195,7 @@ public class LMSMetadataTranslator {
       
       Laser selectedLaser = null;
       for (Laser laser : r.metaTemp.lasers.get(series)){
-        if (laser.wavelength < cutIn){
+        if (laser.wavelength < cutOut){
           if (selectedLaser == null || selectedLaser.wavelength < laser.wavelength)
             selectedLaser = laser;
         }
@@ -204,7 +204,7 @@ public class LMSMetadataTranslator {
       channel.laser = selectedLaser;
     }
 
-    
+
   }
 
   // -- Helper functions --

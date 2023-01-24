@@ -29,4 +29,7 @@ public class Filter {
   public String filterSetId;
   public double cutIn;
   public double cutOut;
+  public int sequenceIndex;
+  public int multibandIndex;
+  public String dye;
 }

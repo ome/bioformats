@@ -287,10 +287,19 @@ public class MetadataTempBuffer {
   }
 
   public Detector getDetectorForFilter(int series, Filter filter){
-    for (Channel channel : channels.get(series)){
-      if (channel.filter != null && channel.filter.equals(filter) && channel.detectorSetting != null)
-      return channel.detectorSetting.detector;
+    for (DetectorSetting setting : detectorSettings.get(series)){
+      if (setting.sequenceIndex == filter.sequenceIndex && setting.detectorListIndex == filter.multibandIndex)
+      return setting.detector;
     }
+    return null;
+  }
+
+  public DetectorSetting getDetectorSetting(int series, int sequenceIndex, int detectorListIndex){
+    for (DetectorSetting setting : detectorSettings.get(series)){
+      if (setting.sequenceIndex == sequenceIndex && setting.detectorListIndex == detectorListIndex)
+        return setting;
+    }
+
     return null;
   }
 

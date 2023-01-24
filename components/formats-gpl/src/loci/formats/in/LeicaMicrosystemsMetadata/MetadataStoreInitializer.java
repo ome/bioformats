@@ -615,7 +615,6 @@ public class MetadataStoreInitializer {
         store.setChannelFilterSetRef(channel.filter.filterSetId, series, channelIndex);
       
       if (channel.detectorSetting != null){
-        
         store.setDetectorSettingsID(channel.detectorSetting.detector.detectorId, series, channelIndex);
         store.setDetectorSettingsOffset(channel.detectorSetting.offset, series, channelIndex);
         store.setDetectorSettingsGain(channel.detectorSetting.gain, series, channelIndex);
