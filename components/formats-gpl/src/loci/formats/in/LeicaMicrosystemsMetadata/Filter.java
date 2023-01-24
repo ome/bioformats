@@ -25,6 +25,11 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
+/**
+ * Data structure for filter information extracted from LMS XML
+ * 
+ * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
+ */
 public class Filter {
   public String filterSetId;
   public double cutIn;

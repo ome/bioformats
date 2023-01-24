@@ -328,7 +328,7 @@ public class LIFReader2 extends LMSFileReader {
     Location currentFile = new Location(currentId).getAbsoluteFile();
     Location parent = currentFile.getParentFile();
     if (parent != null && getSeries() < metaTemp.imageNames.length &&
-      metaTemp.imageNames[getSeries()] != null) {
+        metaTemp.imageNames[getSeries()] != null) {
       // look for an XML file with the same name as this series
       Location xmlFile = new Location(parent, metaTemp.imageNames[getSeries()].trim() + ".xml");
       if (xmlFile.exists()) {
@@ -502,6 +502,6 @@ public class LIFReader2 extends LMSFileReader {
     LifXmlDocument doc = new LifXmlDocument(xml);
     List<LifImageXmlDocument> imageXmls = doc.getImageXmlDocuments();
 
-    translateMetadata((List<LMSImageXmlDocument>)(List<? extends LMSImageXmlDocument>)imageXmls);
+    translateMetadata((List<LMSImageXmlDocument>) (List<? extends LMSImageXmlDocument>) imageXmls);
   }
 }

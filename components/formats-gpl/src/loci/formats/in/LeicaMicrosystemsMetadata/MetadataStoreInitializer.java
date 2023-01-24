@@ -48,7 +48,8 @@ import ome.xml.model.primitives.Timestamp;
 import loci.formats.meta.MetadataStore;
 
 /**
- * This class initializes the {@link MetadataStore} of a given {@link LMSFileReader}, using its {@link MetadataTempBuffer}
+ * This class initializes the {@link MetadataStore} of a given
+ * {@link LMSFileReader}, using its {@link MetadataTempBuffer}
  * 
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
@@ -60,16 +61,19 @@ public class MetadataStoreInitializer {
   private int nextChannel = 0;
 
   // -- Constructor --
-  public MetadataStoreInitializer(LMSFileReader reader){
-      this.r = reader;
-      store = r.makeFilterMetadata();
+  public MetadataStoreInitializer(LMSFileReader reader) {
+    this.r = reader;
+    store = r.makeFilterMetadata();
   }
 
   // -- Methods --
 
   /**
-   * Adds microscope and objective details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
-   * @param series index of image series / metadata store
+   * Adds microscope and objective details from the reader's
+   * {@link MetadataTempBuffer} to its {@link MetadataStore}
+   * 
+   * @param series
+   *          index of image series / metadata store
    * @throws FormatException
    */
   public void initStandDetails(int series) throws FormatException {
@@ -86,26 +90,33 @@ public class MetadataStoreInitializer {
     // store.setObjectiveLensNA(r.metaTemp.lensNA[index], series, 0);
     // store.setObjectiveSerialNumber(r.metaTemp.serialNumber[index], series, 0);
     // if (r.metaTemp.magnification[index] != null) {
-    //   store.setObjectiveNominalMagnification(r.metaTemp.magnification[index], series, 0);
+    // store.setObjectiveNominalMagnification(r.metaTemp.magnification[index],
+    // series, 0);
     // }
     // if (r.metaTemp.immersions[index] != null)
-    //   store.setObjectiveImmersion(MetadataTools.getImmersion(r.metaTemp.immersions[index]), series, 0);
+    // store.setObjectiveImmersion(MetadataTools.getImmersion(r.metaTemp.immersions[index]),
+    // series, 0);
     // if (r.metaTemp.corrections[index] != null)
-    //   store.setObjectiveCorrection(MetadataTools.getCorrection(r.metaTemp.corrections[index]), series, 0);
+    // store.setObjectiveCorrection(MetadataTools.getCorrection(r.metaTemp.corrections[index]),
+    // series, 0);
     // store.setObjectiveModel(r.metaTemp.objectiveModels[index], series, 0);
 
     store.setImageInstrumentRef(instrumentID, series);
     // store.setObjectiveSettingsID(objectiveID, series);
-    // store.setObjectiveSettingsRefractiveIndex(r.metaTemp.refractiveIndex[index], series);
+    // store.setObjectiveSettingsRefractiveIndex(r.metaTemp.refractiveIndex[index],
+    // series);
   }
 
   /**
-   * Adds filter details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
-   * @param series index of image series / metadata store
+   * Adds filter details from the reader's {@link MetadataTempBuffer} to its
+   * {@link MetadataStore}
+   * 
+   * @param series
+   *          index of image series / metadata store
    * @throws FormatException
    */
-  public void initFilters(int series){
-    for (int filterIndex = 0; filterIndex < r.metaTemp.filters.get(series).size(); filterIndex++){
+  public void initFilters(int series) {
+    for (int filterIndex = 0; filterIndex < r.metaTemp.filters.get(series).size(); filterIndex++) {
       Filter filter = r.metaTemp.filters.get(series).get(filterIndex);
 
       String filterId = MetadataTools.createLSID("Filter", series, filterIndex);
@@ -115,10 +126,10 @@ public class MetadataStoreInitializer {
       store.setFilterSetID(filter.filterSetId, series, filterIndex);
       store.setFilterSetEmissionFilterRef(filterId, series, filterIndex, filterIndex);
 
-      //confocal: name of detector is used as filter model and filter set model
-      if (r.metaTemp.dataSourceTypes[series] == DataSourceType.CONFOCAL){
+      // confocal: name of detector is used as filter model and filter set model
+      if (r.metaTemp.dataSourceTypes[series] == DataSourceType.CONFOCAL) {
         Detector detector = r.metaTemp.getDetectorForFilter(series, filter);
-        if (detector != null){
+        if (detector != null) {
           store.setFilterModel(detector.model, series, filterIndex);
           store.setFilterSetModel(detector.model, series, filterIndex);
         }
@@ -128,35 +139,38 @@ public class MetadataStoreInitializer {
     }
 
     // int index = getTileIndex(series);
-    // if (r.metaTemp.cutIns.get(index) != null && r.metaTemp.filterModels.get(index) != null) {
-    //   // int channel = 0;
-    //   if (r.metaTemp.cutIns.get(index).size() >= r.metaTemp.filterModels.get(index).size() * 2) {
-    //     int diff = r.metaTemp.cutIns.get(index).size() - r.metaTemp.filterModels.get(index).size();
-    //     for (int q=0; q<diff; q++) {
-    //       r.metaTemp.cutIns.get(index).remove(r.metaTemp.filterModels.get(index).size());
-    //     }
-    //   }
-    //   for (int filter=0; filter<r.metaTemp.cutIns.get(index).size(); filter++) {
-    //     String filterID = MetadataTools.createLSID("Filter", series, filter);
-    //     store.setFilterID(filterID, series, filter);
-    //     if (r.metaTemp.filterModels.get(index) != null &&
-    //       filter < r.metaTemp.filterModels.get(index).size())
-    //     {
-    //       store.setFilterModel(
-    //         (String) r.metaTemp.filterModels.get(index).get(filter), series, filter);
-    //     }
-    //     store.setTransmittanceRangeCutIn(
-    //       (Length) r.metaTemp.cutIns.get(index).get(filter), series, filter);
-    //     store.setTransmittanceRangeCutOut(
-    //       (Length) r.metaTemp.cutOuts.get(index).get(filter), series, filter);
-    //   }
+    // if (r.metaTemp.cutIns.get(index) != null &&
+    // r.metaTemp.filterModels.get(index) != null) {
+    // // int channel = 0;
+    // if (r.metaTemp.cutIns.get(index).size() >=
+    // r.metaTemp.filterModels.get(index).size() * 2) {
+    // int diff = r.metaTemp.cutIns.get(index).size() -
+    // r.metaTemp.filterModels.get(index).size();
+    // for (int q=0; q<diff; q++) {
+    // r.metaTemp.cutIns.get(index).remove(r.metaTemp.filterModels.get(index).size());
+    // }
+    // }
+    // for (int filter=0; filter<r.metaTemp.cutIns.get(index).size(); filter++) {
+    // String filterID = MetadataTools.createLSID("Filter", series, filter);
+    // store.setFilterID(filterID, series, filter);
+    // if (r.metaTemp.filterModels.get(index) != null &&
+    // filter < r.metaTemp.filterModels.get(index).size())
+    // {
+    // store.setFilterModel(
+    // (String) r.metaTemp.filterModels.get(index).get(filter), series, filter);
+    // }
+    // store.setTransmittanceRangeCutIn(
+    // (Length) r.metaTemp.cutIns.get(index).get(filter), series, filter);
+    // store.setTransmittanceRangeCutOut(
+    // (Length) r.metaTemp.cutOuts.get(index).get(filter), series, filter);
+    // }
     // }
   }
 
-  public void initLasers(int series){
+  public void initLasers(int series) {
     int index = getTileIndex(series);
 
-    for (int i = 0; i < r.metaTemp.lasers.get(index).size(); i++){
+    for (int i = 0; i < r.metaTemp.lasers.get(index).size(); i++) {
       Laser laser = r.metaTemp.lasers.get(index).get(i);
       laser.laserId = MetadataTools.createLSID("LightSource", series, i);
       store.setLaserID(laser.laserId, series, i);
@@ -168,37 +182,42 @@ public class MetadataStoreInitializer {
 
       // store.setChannelLightSourceSettingsID(id, series, nextChannel);
       // store.setChannelLightSourceSettingsAttenuation(
-      //   new PercentFraction((float) intensity / 100f), series, nextChannel);
+      // new PercentFraction((float) intensity / 100f), series, nextChannel);
       // store.setChannelExcitationWavelength(ex, series, nextChannel);
     }
   }
 
   /**
-   * Adds laser and light source details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
-   * @param series index of image series / metadata store
+   * Adds laser and light source details from the reader's
+   * {@link MetadataTempBuffer} to its {@link MetadataStore}
+   * 
+   * @param series
+   *          index of image series / metadata store
    * @throws FormatException
    */
   public void initLasers2(int series) {
     int index = getTileIndex(series);
 
-    final List<Double> lasers = r.metaTemp.laserWavelength.size() > index ? r.metaTemp.laserWavelength.get(index) : null;
-    final List<Double> laserIntensities = r.metaTemp.laserIntensity.size() > index ? r.metaTemp.laserIntensity.get(index) : null;
+    final List<Double> lasers = r.metaTemp.laserWavelength.size() > index ? r.metaTemp.laserWavelength.get(index)
+        : null;
+    final List<Double> laserIntensities = r.metaTemp.laserIntensity.size() > index
+        ? r.metaTemp.laserIntensity.get(index)
+        : null;
 
     final List<Boolean> active = r.metaTemp.laserActive.size() > index ? r.metaTemp.laserActive.get(index) : null;
     final List<Boolean> frap = r.metaTemp.laserFrap.size() > index ? r.metaTemp.laserFrap.get(index) : null;
-    
+
     if (lasers != null) {
       int laserIndex = 0;
       while (laserIndex < lasers.size()) {
         if ((Double) lasers.get(laserIndex) == 0) {
           lasers.remove(laserIndex);
-        }
-        else {
+        } else {
           laserIndex++;
         }
       }
 
-      for (int laser=0; laser<lasers.size(); laser++) {
+      for (int laser = 0; laser < lasers.size(); laser++) {
         String id = MetadataTools.createLSID("LightSource", series, laser);
         store.setLaserID(id, series, laser);
         store.setLaserType(LaserType.OTHER, series, laser);
@@ -216,19 +235,19 @@ public class MetadataStoreInitializer {
       int channel = 0;
       Set<Integer> channels = new HashSet<Integer>();
 
-      for (int laser=0; laser<laserIntensities.size(); laser++) {
+      for (int laser = 0; laser < laserIntensities.size(); laser++) {
         double intensity = (Double) laserIntensities.get(laser);
-        channel = laser/size;
+        channel = laser / size;
         if (intensity < 100) {
           validIntensities.add(laser);
           channels.add(channel);
         }
         ignoredChannels.add(channel);
       }
-      //remove channels w/o valid intensities
+      // remove channels w/o valid intensities
       ignoredChannels.removeAll(channels);
-      //remove entries if channel has 2 wavelengths
-      //e.g. 30% 458 70% 633
+      // remove entries if channel has 2 wavelengths
+      // e.g. 30% 458 70% 633
       int s = validIntensities.size();
 
       int jj;
@@ -239,11 +258,11 @@ public class MetadataStoreInitializer {
         if (j < as && !(Boolean) active.get(j)) {
           toRemove.add(validIntensities.get(j));
         }
-        jj = j+1;
+        jj = j + 1;
         if (jj < s) {
-          int v = validIntensities.get(j)/size;
-          int vv = validIntensities.get(jj)/size;
-          if (vv == v) {//do not consider that channel.
+          int v = validIntensities.get(j) / size;
+          int vv = validIntensities.get(jj) / size;
+          if (vv == v) {// do not consider that channel.
             toRemove.add(validIntensities.get(j));
             toRemove.add(validIntensities.get(jj));
             ignoredChannels.add(j);
@@ -263,7 +282,7 @@ public class MetadataStoreInitializer {
           }
         }
       }
-      if (!noNames && frap != null) { //only use name for frap.
+      if (!noNames && frap != null) { // only use name for frap.
         for (int k = 0; k < frap.size(); k++) {
           if (!frap.get(k)) {
             noNames = true;
@@ -273,8 +292,8 @@ public class MetadataStoreInitializer {
       }
 
       int nextFilter = 0;
-      //int nextFilter = cutIns[i].size() - getEffectiveSizeC();
-      for (int k=0; k<validIntensities.size(); k++, nextChannel++) {
+      // int nextFilter = cutIns[i].size() - getEffectiveSizeC();
+      for (int k = 0; k < validIntensities.size(); k++, nextChannel++) {
         int laserArrayIndex = validIntensities.get(k);
         double intensity = (Double) laserIntensities.get(laserArrayIndex);
         int laser = laserArrayIndex % lasers.size();
@@ -284,17 +303,16 @@ public class MetadataStoreInitializer {
             nextChannel++;
           }
           while (r.metaTemp.channelNames != null && nextChannel < r.getEffectiveSizeC() &&
-            r.metaTemp.channelNames[index] != null &&
-            ((r.metaTemp.channelNames[index][nextChannel] == null ||
-            r.metaTemp.channelNames[index][nextChannel].equals("")) && !noNames))
-          {
+              r.metaTemp.channelNames[index] != null &&
+              ((r.metaTemp.channelNames[index][nextChannel] == null ||
+                  r.metaTemp.channelNames[index][nextChannel].equals("")) && !noNames)) {
             nextChannel++;
           }
           if (nextChannel < r.getEffectiveSizeC()) {
             String id = MetadataTools.createLSID("LightSource", series, laser);
             store.setChannelLightSourceSettingsID(id, series, nextChannel);
             store.setChannelLightSourceSettingsAttenuation(
-              new PercentFraction((float) intensity / 100f), series, nextChannel);
+                new PercentFraction((float) intensity / 100f), series, nextChannel);
 
             Length ex = FormatTools.getExcitationWavelength(wavelength);
             if (ex != null) {
@@ -302,19 +320,16 @@ public class MetadataStoreInitializer {
             }
 
             if (wavelength > 0) {
-              if (r.metaTemp.cutIns.get(index) == null || nextFilter >= r.metaTemp.cutIns.get(index).size())
-              {
+              if (r.metaTemp.cutIns.get(index) == null || nextFilter >= r.metaTemp.cutIns.get(index).size()) {
                 continue;
               }
-              Double cutIn =
-                ((Length) r.metaTemp.cutIns.get(index).get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
+              Double cutIn = ((Length) r.metaTemp.cutIns.get(index).get(nextFilter)).value(UNITS.NANOMETER)
+                  .doubleValue();
               while (cutIn - wavelength > 20) {
                 nextFilter++;
                 if (nextFilter < r.metaTemp.cutIns.get(index).size()) {
-                  cutIn = ((Length)
-                    r.metaTemp.cutIns.get(index).get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
-                }
-                else {
+                  cutIn = ((Length) r.metaTemp.cutIns.get(index).get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
+                } else {
                   break;
                 }
               }
@@ -330,10 +345,10 @@ public class MetadataStoreInitializer {
     }
   }
 
-  public void initDetectors(int series){
+  public void initDetectors(int series) {
     int index = getTileIndex(series);
 
-    for (int i = 0; i < r.metaTemp.detectors.get(index).size(); i++){
+    for (int i = 0; i < r.metaTemp.detectors.get(index).size(); i++) {
       Detector detector = r.metaTemp.detectors.get(index).get(i);
       detector.detectorId = MetadataTools.createLSID("Detector", series, i);
       store.setDetectorID(detector.detectorId, series, i);
@@ -345,58 +360,62 @@ public class MetadataStoreInitializer {
   }
 
   /**
-   * Adds detector and channel color details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
-   * @param series index of image series / metadata store
+   * Adds detector and channel color details from the reader's
+   * {@link MetadataTempBuffer} to its {@link MetadataStore}
+   * 
+   * @param series
+   *          index of image series / metadata store
    * @throws FormatException
    */
-  public void initDetectorModels2(int series){
+  public void initDetectorModels2(int series) {
     int index = getTileIndex(series);
 
-    // final List<String> detectors = r.metaTemp.detectorModels.size() > index ? r.metaTemp.detectorModels.get(index) : null;
+    // final List<String> detectors = r.metaTemp.detectorModels.size() > index ?
+    // r.metaTemp.detectorModels.get(index) : null;
     // if (detectors != null) {
-    //   nextChannel = 0;
-    //   int start = detectors.size() - r.getEffectiveSizeC();
-    //   if (start < 0) {
-    //     start = 0;
-    //   }
-    //   for (int detector=start; detector<detectors.size(); detector++) {
-    //     int dIndex = detector - start;
-    //     String detectorID = MetadataTools.createLSID("Detector", series, dIndex);
-    //     store.setDetectorID(detectorID, series, dIndex);
-    //     store.setDetectorModel((String) detectors.get(detector), series, dIndex);
+    // nextChannel = 0;
+    // int start = detectors.size() - r.getEffectiveSizeC();
+    // if (start < 0) {
+    // start = 0;
+    // }
+    // for (int detector=start; detector<detectors.size(); detector++) {
+    // int dIndex = detector - start;
+    // String detectorID = MetadataTools.createLSID("Detector", series, dIndex);
+    // store.setDetectorID(detectorID, series, dIndex);
+    // store.setDetectorModel((String) detectors.get(detector), series, dIndex);
 
-    //     store.setDetectorZoom(r.metaTemp.zooms[index], series, dIndex);
-    //     store.setDetectorType(DetectorType.PMT, series, dIndex);
+    // store.setDetectorZoom(r.metaTemp.zooms[index], series, dIndex);
+    // store.setDetectorType(DetectorType.PMT, series, dIndex);
 
-    //     if (r.metaTemp.activeDetector.get(index) != null) {
-    //       int detectorIndex =
-    //         r.metaTemp.activeDetector.get(index).size() - r.getEffectiveSizeC() + dIndex;
-    //       if (detectorIndex >= 0 &&
-    //         detectorIndex < r.metaTemp.activeDetector.get(index).size() &&
-    //         (Boolean) r.metaTemp.activeDetector.get(index).get(detectorIndex) &&
-    //         r.metaTemp.detectorOffsets[index] != null &&
-    //         nextChannel < r.metaTemp.detectorOffsets[index].length)
-    //       {
-    //         store.setDetectorOffset(
-    //           r.metaTemp.detectorOffsets[index][nextChannel++], series, dIndex);
-    //       }
-    //     }
-    //   }
+    // if (r.metaTemp.activeDetector.get(index) != null) {
+    // int detectorIndex =
+    // r.metaTemp.activeDetector.get(index).size() - r.getEffectiveSizeC() + dIndex;
+    // if (detectorIndex >= 0 &&
+    // detectorIndex < r.metaTemp.activeDetector.get(index).size() &&
+    // (Boolean) r.metaTemp.activeDetector.get(index).get(detectorIndex) &&
+    // r.metaTemp.detectorOffsets[index] != null &&
+    // nextChannel < r.metaTemp.detectorOffsets[index].length)
+    // {
+    // store.setDetectorOffset(
+    // r.metaTemp.detectorOffsets[index][nextChannel++], series, dIndex);
+    // }
+    // }
+    // }
     // }
 
-    final List<Boolean> activeDetectors = r.metaTemp.activeDetector.size() > index ? r.metaTemp.activeDetector.get(index) : null;
-    int firstDetector = activeDetectors == null ? 0 :
-      activeDetectors.size() - r.getEffectiveSizeC();
+    final List<Boolean> activeDetectors = r.metaTemp.activeDetector.size() > index
+        ? r.metaTemp.activeDetector.get(index)
+        : null;
+    int firstDetector = activeDetectors == null ? 0 : activeDetectors.size() - r.getEffectiveSizeC();
     int nextDetector = firstDetector;
 
     int nextFilter = 0;
     int nextFilterDetector = 0;
 
     if (activeDetectors != null &&
-      activeDetectors.size() > r.metaTemp.cutIns.get(index).size() &&
-      (Boolean) activeDetectors.get(activeDetectors.size() - 1) &&
-      (Boolean) activeDetectors.get(activeDetectors.size() - 2))
-    {
+        activeDetectors.size() > r.metaTemp.cutIns.get(index).size() &&
+        (Boolean) activeDetectors.get(activeDetectors.size() - 1) &&
+        (Boolean) activeDetectors.get(activeDetectors.size() - 2)) {
       nextFilterDetector = activeDetectors.size() - r.metaTemp.cutIns.get(index).size();
 
       if (r.metaTemp.cutIns.get(index).size() > r.metaTemp.filterModels.get(index).size()) {
@@ -405,31 +424,32 @@ public class MetadataStoreInitializer {
       }
     }
 
-    for (int c=0; c<r.getEffectiveSizeC(); c++) {
+    for (int c = 0; c < r.getEffectiveSizeC(); c++) {
       // if (activeDetectors != null) {
-      //   while (nextDetector >= 0 && nextDetector < activeDetectors.size() &&
-      //     !(Boolean) activeDetectors.get(nextDetector))
-      //   {
-      //     nextDetector++;
-      //   }
-      //   if (nextDetector < activeDetectors.size() && detectors != null &&
-      //     nextDetector - firstDetector < detectors.size())
-      //   {
-      //     String detectorID = MetadataTools.createLSID(
-      //       "Detector", series, nextDetector - firstDetector);
-      //     store.setDetectorSettingsID(detectorID, series, c);
-      //     nextDetector++;
+      // while (nextDetector >= 0 && nextDetector < activeDetectors.size() &&
+      // !(Boolean) activeDetectors.get(nextDetector))
+      // {
+      // nextDetector++;
+      // }
+      // if (nextDetector < activeDetectors.size() && detectors != null &&
+      // nextDetector - firstDetector < detectors.size())
+      // {
+      // String detectorID = MetadataTools.createLSID(
+      // "Detector", series, nextDetector - firstDetector);
+      // store.setDetectorSettingsID(detectorID, series, c);
+      // nextDetector++;
 
-      //     if (r.metaTemp.detectorOffsets[index] != null &&
-      //       c < r.metaTemp.detectorOffsets[index].length)
-      //     {
-      //       store.setDetectorSettingsOffset(r.metaTemp.detectorOffsets[index][c], series, c);
-      //     }
+      // if (r.metaTemp.detectorOffsets[index] != null &&
+      // c < r.metaTemp.detectorOffsets[index].length)
+      // {
+      // store.setDetectorSettingsOffset(r.metaTemp.detectorOffsets[index][c], series,
+      // c);
+      // }
 
-      //     if (r.metaTemp.gains[index] != null) {
-      //       store.setDetectorSettingsGain(r.metaTemp.gains[index][c], series, c);
-      //     }
-      //   }
+      // if (r.metaTemp.gains[index] != null) {
+      // store.setDetectorSettingsGain(r.metaTemp.gains[index][c], series, c);
+      // }
+      // }
       // }
 
       if (r.metaTemp.channelNames[index] != null) {
@@ -440,8 +460,7 @@ public class MetadataStoreInitializer {
       }
       if (r.metaTemp.exWaves[index] != null) {
         if (r.metaTemp.exWaves[index][c] != null && r.metaTemp.exWaves[index][c] > 1) {
-          Length ex =
-            FormatTools.getExcitationWavelength(r.metaTemp.exWaves[index][c]);
+          Length ex = FormatTools.getExcitationWavelength(r.metaTemp.exWaves[index][c]);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, series, c);
           }
@@ -455,11 +474,9 @@ public class MetadataStoreInitializer {
 
       if (channelColor.getValue() != -1 && nextFilter >= 0) {
         if (nextDetector - firstDetector != r.getSizeC() &&
-          r.metaTemp.cutIns.get(index) != null && nextDetector >= r.metaTemp.cutIns.get(index).size())
-        {
+            r.metaTemp.cutIns.get(index) != null && nextDetector >= r.metaTemp.cutIns.get(index).size()) {
           while (nextFilterDetector < firstDetector) {
-            String filterID =
-              MetadataTools.createLSID("Filter", series, nextFilter);
+            String filterID = MetadataTools.createLSID("Filter", series, nextFilter);
             store.setFilterID(filterID, series, nextFilter);
 
             nextFilterDetector++;
@@ -467,9 +484,8 @@ public class MetadataStoreInitializer {
           }
         }
         while (activeDetectors != null &&
-          nextFilterDetector < activeDetectors.size() &&
-          !(Boolean) activeDetectors.get(nextFilterDetector))
-        {
+            nextFilterDetector < activeDetectors.size() &&
+            !(Boolean) activeDetectors.get(nextFilterDetector)) {
           String filterID = MetadataTools.createLSID("Filter", series, nextFilter);
           store.setFilterID(filterID, series, nextFilter);
           nextFilterDetector++;
@@ -485,25 +501,26 @@ public class MetadataStoreInitializer {
   }
 
   /**
-   * Adds image and ROI details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
-   * @param series index of image series / metadata store
+   * Adds image and ROI details from the reader's {@link MetadataTempBuffer} to
+   * its {@link MetadataStore}
+   * 
+   * @param series
+   *          index of image series / metadata store
    * @throws FormatException
    */
-  public void initImageDetails(int series){
+  public void initImageDetails(int series) {
     int index = getTileIndex(series);
 
     store.setImageDescription(r.metaTemp.descriptions[index], series);
     if (r.metaTemp.acquiredDate[index] > 0) {
       store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
-        (long) (r.metaTemp.acquiredDate[index] * 1000), DateTools.COBOL,
-        DateTools.ISO8601_FORMAT, false)), series);
+          (long) (r.metaTemp.acquiredDate[index] * 1000), DateTools.COBOL,
+          DateTools.ISO8601_FORMAT, false)), series);
     }
     store.setImageName(r.metaTemp.imageNames[index].trim(), series);
 
-    Length sizeX =
-      FormatTools.getPhysicalSizeX(r.metaTemp.physicalSizeXs.get(index));
-    Length sizeY =
-      FormatTools.getPhysicalSizeY(r.metaTemp.physicalSizeYs.get(index));
+    Length sizeX = FormatTools.getPhysicalSizeX(r.metaTemp.physicalSizeXs.get(index));
+    Length sizeY = FormatTools.getPhysicalSizeY(r.metaTemp.physicalSizeYs.get(index));
     Length sizeZ = FormatTools.getPhysicalSizeZ(r.metaTemp.zSteps[index]);
 
     if (sizeX != null) {
@@ -520,7 +537,7 @@ public class MetadataStoreInitializer {
     }
 
     int roiCount = 0;
-    for (int image=0; image<r.getImageCount(); image++) {
+    for (int image = 0; image < r.getImageCount(); image++) {
       Length xPos = r.metaTemp.posX[index];
       Length yPos = r.metaTemp.posY[index];
       if (series < r.metaTemp.fieldPosX.size() && r.metaTemp.fieldPosX.get(series) != null) {
@@ -551,8 +568,7 @@ public class MetadataStoreInitializer {
           double timestamp = r.metaTemp.timestamps[index][image];
           if (r.metaTemp.timestamps[index][0] == r.metaTemp.acquiredDate[index]) {
             timestamp -= r.metaTemp.acquiredDate[index];
-          }
-          else if (timestamp == r.metaTemp.acquiredDate[index] && image > 0) {
+          } else if (timestamp == r.metaTemp.acquiredDate[index] && image > 0) {
             timestamp = r.metaTemp.timestamps[index][0];
           }
           store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), series, image);
@@ -561,33 +577,34 @@ public class MetadataStoreInitializer {
 
       if (r.metaTemp.expTimes[index] != null) {
         int c = r.getZCTCoords(image)[1];
-        if (r.metaTemp.expTimes[index][c] != null)
-        {
+        if (r.metaTemp.expTimes[index][c] != null) {
           store.setPlaneExposureTime(new Time(r.metaTemp.expTimes[index][c], UNITS.SECOND), series, image);
         }
       }
     }
 
     if (r.metaTemp.imageROIs[index] != null) {
-      for (int roi=0; roi<r.metaTemp.imageROIs[index].length; roi++) {
+      for (int roi = 0; roi < r.metaTemp.imageROIs[index].length; roi++) {
         if (r.metaTemp.imageROIs[index][roi] != null) {
-          r.metaTemp.imageROIs[index][roi].storeROI(store, series, roiCount++, roi, 
-            r.getCore().get(series).sizeX,r.getCore().get(series).sizeY, r.metaTemp.alternateCenter,
-            r.getMetadataOptions().getMetadataLevel());
+          r.metaTemp.imageROIs[index][roi].storeROI(store, series, roiCount++, roi,
+              r.getCore().get(series).sizeX, r.getCore().get(series).sizeY, r.metaTemp.alternateCenter,
+              r.getMetadataOptions().getMetadataLevel());
         }
       }
     }
   }
 
   /**
-   * Translates metadata information from the reader's {@link MetadataTempBuffer} and adds it to its {@link MetadataStore}
+   * Translates metadata information from the reader's {@link MetadataTempBuffer}
+   * and adds it to its {@link MetadataStore}
+   * 
    * @throws FormatException
    * @throws IOException
    */
   public void initMetadataStore() throws FormatException, IOException {
     MetadataTools.populatePixels(store, this.r, true, false);
 
-    for (int i=0; i<r.getSeriesCount(); i++) {
+    for (int i = 0; i < r.getSeriesCount(); i++) {
       r.setSeries(i);
       initStandDetails(i);
       initFilters(i);
@@ -595,26 +612,28 @@ public class MetadataStoreInitializer {
       initDetectors(i);
       initImageDetails(i);
       initPhysicalChannelInfo(i);
-    }     
+    }
   }
 
   /**
-   * Adds lightsource, filter set and detector settings to channels in the {@link MetadataStore}
+   * Adds lightsource, filter set and detector settings to channels in the
+   * {@link MetadataStore}
+   * 
    * @param series
    */
-  private void initPhysicalChannelInfo(int series){
-    for (int channelIndex = 0; channelIndex < r.metaTemp.channels.get(series).size(); channelIndex++){
+  private void initPhysicalChannelInfo(int series) {
+    for (int channelIndex = 0; channelIndex < r.metaTemp.channels.get(series).size(); channelIndex++) {
       Channel channel = r.metaTemp.channels.get(series).get(channelIndex);
 
-      if (channel.laser != null){
+      if (channel.laser != null) {
         store.setChannelLightSourceSettingsID(channel.laser.laserId, series, channelIndex);
         store.setChannelExcitationWavelength(FormatTools.getWavelength(channel.laser.wavelength), series, channelIndex);
       }
-      
+
       if (channel.filter != null)
         store.setChannelFilterSetRef(channel.filter.filterSetId, series, channelIndex);
-      
-      if (channel.detectorSetting != null){
+
+      if (channel.detectorSetting != null) {
         store.setDetectorSettingsID(channel.detectorSetting.detector.detectorId, series, channelIndex);
         store.setDetectorSettingsOffset(channel.detectorSetting.offset, series, channelIndex);
         store.setDetectorSettingsGain(channel.detectorSetting.gain, series, channelIndex);
@@ -622,24 +641,24 @@ public class MetadataStoreInitializer {
       }
     }
   }
-  
+
   public int getTileIndex(int coreIndex) {
     int count = 0;
     for (int tile = 0; tile < r.metaTemp.tileCount.length; tile++) {
-        if (coreIndex < count + r.metaTemp.tileCount[tile]) {
+      if (coreIndex < count + r.metaTemp.tileCount[tile]) {
         return tile;
-        }
-        count += r.metaTemp.tileCount[tile];
+      }
+      count += r.metaTemp.tileCount[tile];
     }
     return -1;
   }
-  
+
   // -- Helper functions --
 
   public Length checkFlip(boolean flip, Length pos) {
     if (flip && pos != null) {
-        pos = new Length(-pos.value().doubleValue(), pos.unit());
+      pos = new Length(-pos.value().doubleValue(), pos.unit());
     }
     return pos;
-}
+  }
 }

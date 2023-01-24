@@ -51,11 +51,8 @@ public class LMSMetadataTranslator {
   Element ldmBlockMaster;
   Element ldmBlockList;
 
-
-
-
   // -- Constructor --
-  public LMSMetadataTranslator(LMSFileReader reader){
+  public LMSMetadataTranslator(LMSFileReader reader) {
     this.r = reader;
     store = r.makeFilterMetadata();
   }
@@ -71,20 +68,21 @@ public class LMSMetadataTranslator {
       Node image = docs.get(i).getImageNode();
       r.metaTemp.imageNames[i] = docs.get(i).getImageName();
 
-      translateImage((Element)image, i);
+      translateImage((Element) image, i);
     }
     r.setSeries(0);
-    
+
     MetadataStoreInitializer initializer = new MetadataStoreInitializer(r);
     initializer.initMetadataStore();
 
-    //after the following call, we don't have 1 CoreMetadata per xlif-referenced image,
-    //but 1 CoreMetadata per series ( = tile )!
+    // after the following call, we don't have 1 CoreMetadata per xlif-referenced
+    // image,
+    // but 1 CoreMetadata per series ( = tile )!
     setCoreMetadataForTiles();
   }
 
-  private void initMetadataStore(){
-    for (int i=0; i<r.metaTemp.imageNames.length; i++) {
+  private void initMetadataStore() {
+    for (int i = 0; i < r.metaTemp.imageNames.length; i++) {
       r.setSeries(i);
       r.addSeriesMeta("Image name", r.metaTemp.imageNames[i]);
     }
@@ -101,7 +99,7 @@ public class LMSMetadataTranslator {
     ldmBlockMaster = getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_Master");
     ldmBlockList = getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_List");
 
-    LMSMetadataExtractor extractor = new LMSMetadataExtractor(r); //TODO member ?
+    LMSMetadataExtractor extractor = new LMSMetadataExtractor(r); // TODO member ?
     extractor.translateImage(image, i);
     translateStandDetails(image, i);
     translateObjective(image, i);
@@ -109,11 +107,11 @@ public class LMSMetadataTranslator {
 
   }
 
-  private void initCoreMetadata(int len){
+  private void initCoreMetadata(int len) {
     r.setCore(new ArrayList<CoreMetadata>(len));
     r.getCore().clear();
 
-    for (int i = 0; i < len; i++){
+    for (int i = 0; i < len; i++) {
       CoreMetadata ms = new CoreMetadata();
       ms.orderCertain = true;
       ms.metadataComplete = true;
@@ -123,19 +121,19 @@ public class LMSMetadataTranslator {
     }
   }
 
-  private void setCoreMetadataForTiles(){
+  private void setCoreMetadataForTiles() {
     ArrayList<CoreMetadata> core = new ArrayList<CoreMetadata>();
     for (int i = 0; i < r.getCore().size(); i++) {
-        for (int tile = 0; tile < r.metaTemp.tileCount[i]; tile++) {
-            core.add(r.getCore().get(i));
-        }
+      for (int tile = 0; tile < r.metaTemp.tileCount[i]; tile++) {
+        core.add(r.getCore().get(i));
+      }
     }
     r.setCore(core);
   }
 
   private void translateStandDetails(Element image, int series) throws FormatException {
     int index = getTileIndex(series);
-    
+
     String instrumentID = MetadataTools.createLSID("Instrument", series);
     store.setInstrumentID(instrumentID, series);
 
@@ -143,7 +141,8 @@ public class LMSMetadataTranslator {
     store.setMicroscopeModel(model, series);
 
     String dataSourceType = getAttributeValue(hardwareSetting, "DataSourceTypeName");
-    r.metaTemp.dataSourceTypes[series] = dataSourceType.equals("Confocal") ? DataSourceType.CONFOCAL : DataSourceType.CAMERA;
+    r.metaTemp.dataSourceTypes[series] = dataSourceType.equals("Confocal") ? DataSourceType.CONFOCAL
+        : DataSourceType.CAMERA;
 
     String serialNumber = getAttributeValue(mainConfocalSetting, "SystemSerialNumber");
     store.setMicroscopeSerialNumber(serialNumber, series);
@@ -155,7 +154,7 @@ public class LMSMetadataTranslator {
     // store.setImageInstrumentRef(instrumentID, series);
   }
 
-  private void translateObjective(Element image, int series) throws FormatException{
+  private void translateObjective(Element image, int series) throws FormatException {
     int index = getTileIndex(series);
 
     String objectiveID = MetadataTools.createLSID("Objective", series, 0);
@@ -167,10 +166,10 @@ public class LMSMetadataTranslator {
     String naS = mainConfocalSetting.getAttribute("NumericalAperture");
     double na = parseDouble(naS);
     store.setObjectiveLensNA(na, series, 0);
-    
+
     String nr = mainConfocalSetting.getAttribute("ObjectiveNumber");
     store.setObjectiveSerialNumber(nr, series, 0);
-    
+
     String magnificationS = mainConfocalSetting.getAttribute("Magnification");
     double magnification = parseDouble(magnificationS);
     store.setObjectiveNominalMagnification(magnification, series, 0);
@@ -183,19 +182,21 @@ public class LMSMetadataTranslator {
 
     store.setObjectiveSettingsID(objectiveID, series);
     store.setObjectiveSettingsRefractiveIndex(refractionIndex, series);
-    // store.setObjectiveCorrection(MetadataTools.getCorrection(r.metaTemp.corrections[index]), series, 0);
+    // store.setObjectiveCorrection(MetadataTools.getCorrection(r.metaTemp.corrections[index]),
+    // series, 0);
   }
 
-  private void mapLasersToChannels(int series){
-    for (Channel channel : r.metaTemp.channels.get(series)){
-      if (channel.filter == null) continue;
+  private void mapLasersToChannels(int series) {
+    for (Channel channel : r.metaTemp.channels.get(series)) {
+      if (channel.filter == null)
+        continue;
 
       double cutIn = channel.filter.cutIn;
       double cutOut = channel.filter.cutOut;
-      
+
       Laser selectedLaser = null;
-      for (Laser laser : r.metaTemp.lasers.get(series)){
-        if (laser.wavelength < cutOut){
+      for (Laser laser : r.metaTemp.lasers.get(series)) {
+        if (laser.wavelength < cutOut) {
           if (selectedLaser == null || selectedLaser.wavelength < laser.wavelength)
             selectedLaser = laser;
         }
@@ -204,67 +205,69 @@ public class LMSMetadataTranslator {
       channel.laser = selectedLaser;
     }
 
-
   }
 
   // -- Helper functions --
 
-  public long parseLong(String value){
+  public long parseLong(String value) {
     return value == null || value.trim().isEmpty() ? 0 : Long.parseLong(value.trim());
   }
 
-  public int parseInt(String value){
-      return value == null || value.trim().isEmpty() ? 0 : Integer.parseInt(value.trim());
+  public int parseInt(String value) {
+    return value == null || value.trim().isEmpty() ? 0 : Integer.parseInt(value.trim());
   }
 
-  public double parseDouble(String value){
-      return value == null || value.trim().isEmpty() ? 0d : DataTools.parseDouble(value.trim());
+  public double parseDouble(String value) {
+    return value == null || value.trim().isEmpty() ? 0d : DataTools.parseDouble(value.trim());
   }
 
   /**
    * Returns all (grand*n)children nodes with given node name
-   * @param root root node
-   * @param nodeName name of children that shall be searched
+   * 
+   * @param root
+   *          root node
+   * @param nodeName
+   *          name of children that shall be searched
    * @return list of child nodes with given name
    */
   private NodeList getDescendantNodesWithName(Element root, String nodeName) {
     NodeList nodes = root.getElementsByTagName(nodeName);
     if (nodes.getLength() == 0) {
-        NodeList children = root.getChildNodes();
-        for (int i=0; i<children.getLength(); i++) {
-            Object child = children.item(i);
-            if (child instanceof Element) {
-                NodeList childNodes = getDescendantNodesWithName((Element) child, nodeName);
-                if (childNodes != null) {
-                    return childNodes;
-                }
-            }
+      NodeList children = root.getChildNodes();
+      for (int i = 0; i < children.getLength(); i++) {
+        Object child = children.item(i);
+        if (child instanceof Element) {
+          NodeList childNodes = getDescendantNodesWithName((Element) child, nodeName);
+          if (childNodes != null) {
+            return childNodes;
+          }
         }
-        return null;
-    }
-    else return nodes;
+      }
+      return null;
+    } else
+      return nodes;
   }
 
-    private Element getChildNodeWithName(Node node, String nodeName) {
-        NodeList children = node.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            if (children.item(i).getNodeName().equals(nodeName))
-                return (Element)children.item(i);
-        }
-        return null;
+  private Element getChildNodeWithName(Node node, String nodeName) {
+    NodeList children = node.getChildNodes();
+    for (int i = 0; i < children.getLength(); i++) {
+      if (children.item(i).getNodeName().equals(nodeName))
+        return (Element) children.item(i);
     }
+    return null;
+  }
 
   private Element getNodeWithAttribute(NodeList nodes, String attributeName, String attributeValue) {
     for (int i = 0; i < nodes.getLength(); i++) {
       Node node = nodes.item(i);
       Node attribute = node.getAttributes().getNamedItem(attributeName);
       if (attribute != null && attribute.getTextContent().equals(attributeValue))
-        return (Element)node;
+        return (Element) node;
     }
     return null;
   }
 
-  private String getAttributeValue(Node node, String attributeName){
+  private String getAttributeValue(Node node, String attributeName) {
     Node attribute = node.getAttributes().getNamedItem(attributeName);
     if (attribute != null)
       return attribute.getTextContent();
@@ -275,10 +278,10 @@ public class LMSMetadataTranslator {
   public int getTileIndex(int coreIndex) {
     int count = 0;
     for (int tile = 0; tile < r.metaTemp.tileCount.length; tile++) {
-        if (coreIndex < count + r.metaTemp.tileCount[tile]) {
+      if (coreIndex < count + r.metaTemp.tileCount[tile]) {
         return tile;
-        }
-        count += r.metaTemp.tileCount[tile];
+      }
+      count += r.metaTemp.tileCount[tile];
     }
     return -1;
   }
