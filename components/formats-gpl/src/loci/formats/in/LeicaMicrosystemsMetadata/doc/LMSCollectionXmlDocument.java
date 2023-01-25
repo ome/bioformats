@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.doc;
 
 import java.util.ArrayList;
 import java.util.List;

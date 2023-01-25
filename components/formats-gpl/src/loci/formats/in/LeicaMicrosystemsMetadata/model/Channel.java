@@ -23,9 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
-
-import ome.units.quantity.Length;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
  * This class represents image channels extracted from LMS image xmls.
@@ -60,9 +58,10 @@ public class Channel {
 
   public String dye;
   public DetectorSetting detectorSetting;
-  public Laser laser;
+  public LaserSetting laserSetting;
   public Filter filter;
   public String name;
+  public double pinholeSize;
 
   // -- Constructor --
   public Channel(int channelTag, int resolution, double min, double max, String unit,

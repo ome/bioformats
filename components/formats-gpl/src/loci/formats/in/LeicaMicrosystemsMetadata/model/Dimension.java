@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
  * This class represents image dimensions extracted from LMS image xmls.

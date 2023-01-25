@@ -23,18 +23,18 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
- * Data structure for filter information extracted from LMS XML
+ * Data structure for laser settings extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class Filter {
-  public String filterSetId;
-  public double cutIn;
-  public double cutOut;
-  public int sequenceIndex;
-  public int multibandIndex;
-  public String dye;
+public class Laser {
+  public String laserId;
+  public String name;
+  public double wavelength;
+  public String wavelengthUnit;
+  public boolean isActive;
+  public boolean isFrap;
 }

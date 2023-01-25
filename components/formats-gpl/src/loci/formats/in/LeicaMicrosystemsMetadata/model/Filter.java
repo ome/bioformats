@@ -23,21 +23,18 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
- * Data structure for channel associated detector settings extracted from LMS XML
+ * Data structure for filter information extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class DetectorSetting {
-  public Detector detector;
-  public double gain;
-  public double offset;
-  public boolean isActive;
+public class Filter {
+  public String filterSetId;
+  public double cutIn;
+  public double cutOut;
   public int sequenceIndex;
-  public int detectorListIndex;
-  public int channelIndex;
-  public String channelName;
-  public boolean transmittedLightMode;
+  public int multibandIndex;
+  public String dye;
 }

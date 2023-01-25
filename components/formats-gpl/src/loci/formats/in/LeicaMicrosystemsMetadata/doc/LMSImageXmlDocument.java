@@ -23,45 +23,35 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.doc;
 
 import org.w3c.dom.Node;
 
 /**
- * This class loads and represents a Leica Microsystems XML document that has been extracted from a LOF file
+ * This class loads and represents a Leica Microsystems image XML document that contains image metadata
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class LofXmlDocument extends LMSImageXmlDocument {
-  private String name;
-
-  public LofXmlDocument(String xml, String name) {
+public abstract class LMSImageXmlDocument extends LMSXmlDocument {
+  public LMSImageXmlDocument(String xml) {
     super(xml);
-    this.name = name;
   }
 
-  @Override
-  public Node getImageNode() {
-    if (doc == null)
-      return null;
-
-    Node child = GetChildWithName(doc.getDocumentElement(), "Image");
-    if (child != null) return child;
-    child = GetChildWithName(doc.getDocumentElement(), "Element");
-    if (child != null){
-      Node elementChild = GetChildWithName(child, "Image");
-      if (elementChild != null) return elementChild;
-      elementChild = GetChildWithName(child, "Data");
-      if (elementChild != null){
-        Node dataChild = GetChildWithName(elementChild, "Image");
-        if (dataChild != null) return dataChild;
-      }
-    }
-    return null;
+  public LMSImageXmlDocument(String filepath, LMSCollectionXmlDocument parent){
+    super(filepath, parent);
   }
 
-  @Override
-  public String getImageName(){
-    return name;
+  public LMSImageXmlDocument(Node root){
+    super(root);
   }
+
+  /**
+   * Returns the image node of the xml document which contains image metadata
+   */
+  public abstract Node getImageNode();
+
+  /**
+   * Returns the name of the image (it might be contained in the XML or otherwise e.g. in the file name)
+   */
+  public abstract String getImageName();
 }

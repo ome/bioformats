@@ -35,7 +35,9 @@ import loci.formats.FormatReader;
 import loci.formats.in.LOFReader;
 import loci.formats.in.JPEGReader;
 import loci.formats.in.TiffDelegateReader;
-import loci.formats.in.LeicaMicrosystemsMetadata.Dimension.DimensionKey;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.XlifDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 import loci.formats.in.BMPReader;
 import loci.formats.in.APNGReader;
 

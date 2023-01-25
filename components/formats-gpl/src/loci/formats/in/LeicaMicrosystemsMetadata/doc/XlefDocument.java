@@ -23,39 +23,49 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.doc;
 
-import org.w3c.dom.Node;
+import java.util.List;
 
 /**
- * This class loads and represents a Leica Microsystems XML document for one
- * image that has
- * been extracted from a LIF file
+ * This class represents a Leica Microsystems XLEF xml document,
+ * a project file which references xlifs and optionally xlcfs
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class LifImageXmlDocument extends LMSImageXmlDocument {
+public class XlefDocument extends LMSCollectionXmlDocument {
 
-  public LifImageXmlDocument(Node root) {
-    super(root);
+  // -- Constructor --
+  public XlefDocument(String filepath) {
+    super(filepath, null);
+    initChildren();
   }
 
-  @Override
-  public Node getImageNode() {
-    if (doc == null)
-      return null;
+  // -- Getters --
 
-    Node data = GetChildWithName(doc.getDocumentElement(), "Data");
-    if (data != null){
-      Node image = GetChildWithName(data, "Image");
-      return image;
+  /**
+   * Returns number of images which are referenced by xlifs
+   * 
+   * @return image number
+   */
+  public int getImageCount() {
+    List<XlifDocument> xlifs = getXlifs();
+
+    int imgCount = 0;
+    for (LMSXmlDocument xlif : xlifs) {
+      imgCount += ((XlifDocument)xlif).getImagePaths().size();
     }
-
-    return null;
+    return imgCount;
   }
 
-  @Override
-  public String getImageName() {
-    return getAttr(doc.getDocumentElement(), "Name");
+  // -- Methods --
+
+  public void printReferences() {
+    List<XlifDocument> xlifs = getXlifs();
+    LOGGER.info("-------- XLEF INFO: " + xlifs.size() + " images found -------- ");
+    for (XlifDocument xlif : xlifs) {
+      xlif.printXlifInfo();
+    }
+    LOGGER.info("-------------------------------------------");
   }
 }

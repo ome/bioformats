@@ -35,7 +35,7 @@ loci.formats.in.GatanDM2Reader        # dm2
 loci.formats.in.ImarisReader          # ims
 loci.formats.in.OpenlabRawReader      # raw
 loci.formats.in.OMEXMLReader          # ome
-loci.formats.in.LIFReader2            # lif
+loci.formats.in.LMSLIFReader          # lif
 loci.formats.in.AVIReader             # avi
 loci.formats.in.PictReader            # pict, pct
 loci.formats.in.SDTReader             # sdt

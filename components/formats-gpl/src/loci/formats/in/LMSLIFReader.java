@@ -41,9 +41,9 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader;
-import loci.formats.in.LeicaMicrosystemsMetadata.LMSImageXmlDocument;
-import loci.formats.in.LeicaMicrosystemsMetadata.LifImageXmlDocument;
-import loci.formats.in.LeicaMicrosystemsMetadata.LifXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.LifImageXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.LifXmlDocument;
 import loci.formats.services.OMEXMLService;
 
 /**
@@ -52,7 +52,7 @@ import loci.formats.services.OMEXMLService;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class LIFReader2 extends LMSFileReader {
+public class LMSLIFReader extends LMSFileReader {
 
   // -- Constants --
 
@@ -79,7 +79,7 @@ public class LIFReader2 extends LMSFileReader {
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
-  public LIFReader2() {
+  public LMSLIFReader() {
     super("Leica Image File Format", "lif");
     suffixNecessary = false;
     hasCompanionFiles = true;

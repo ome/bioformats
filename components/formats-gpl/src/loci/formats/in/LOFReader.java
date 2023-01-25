@@ -35,6 +35,8 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.*;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.LofXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.XlifDocument;
 
 /**
  * LOFReader is the file format reader for Leica Microsystems' LOF files.

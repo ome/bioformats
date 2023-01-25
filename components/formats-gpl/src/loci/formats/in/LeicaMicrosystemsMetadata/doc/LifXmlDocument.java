@@ -23,16 +23,42 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.doc;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
- * Data structure for instrument associated detector information extracted from LMS XML
+ * This class loads and represents a Leica Microsystems XML document that has
+ * been extracted from a LIF file
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class Detector {
-  public String detectorId;
-  public String model;
-  public String type;
-  public double zoom;
+public class LifXmlDocument extends LMSXmlDocument {
+
+  public LifXmlDocument(String xml) {
+    super(xml);
+  }
+
+  public List<LifImageXmlDocument> getImageXmlDocuments() {
+    List<LifImageXmlDocument> imageXmlDocs = new ArrayList<LifImageXmlDocument>();
+    
+    if (doc == null)
+      return null;
+
+    Node rootElement = GetChildWithName(doc.getDocumentElement(), "Element");
+    Node children = GetChildWithName(rootElement, "Children");
+    for (int i = 0; i < children.getChildNodes().getLength(); i++) {
+      Node child = children.getChildNodes().item(i);
+      if (child.getNodeName().equals("Element")) {
+        LifImageXmlDocument imageXml = new LifImageXmlDocument(child);
+        imageXmlDocs.add(imageXml);
+      }
+    }
+
+    return imageXmlDocs;
+  }
 }

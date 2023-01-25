@@ -23,18 +23,21 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
- * This class loads and represents a Leica Microsystems XLCF xml document
+ * Data structure for channel associated detector settings extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class XlcfDocument extends LMSCollectionXmlDocument {
-
-  // -- Constructor --
-  public XlcfDocument(String filepath, LMSCollectionXmlDocument parent) {
-    super(filepath, parent);
-    initChildren();
-  }
+public class DetectorSetting {
+  public Detector detector;
+  public double gain;
+  public double offset;
+  public boolean isActive;
+  public int sequenceIndex;
+  public int detectorListIndex;
+  public int channelIndex;
+  public String channelName;
+  public boolean transmittedLightMode;
 }

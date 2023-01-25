@@ -23,19 +23,39 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.doc;
+
+import org.w3c.dom.Node;
 
 /**
- * Data structure for laser settings extracted from LMS XML
+ * This class loads and represents a Leica Microsystems XML document for one
+ * image that has
+ * been extracted from a LIF file
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class Laser {
-  public String laserId;
-  public String name;
-  public double intensity;
-  public double wavelength;
-  public String wavelengthUnit;
-  public boolean isActive;
-  public boolean isFrap;
+public class LifImageXmlDocument extends LMSImageXmlDocument {
+
+  public LifImageXmlDocument(Node root) {
+    super(root);
+  }
+
+  @Override
+  public Node getImageNode() {
+    if (doc == null)
+      return null;
+
+    Node data = GetChildWithName(doc.getDocumentElement(), "Data");
+    if (data != null){
+      Node image = GetChildWithName(data, "Image");
+      return image;
+    }
+
+    return null;
+  }
+
+  @Override
+  public String getImageName() {
+    return getAttr(doc.getDocumentElement(), "Name");
+  }
 }

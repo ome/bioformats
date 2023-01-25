@@ -23,42 +23,18 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+package loci.formats.in.LeicaMicrosystemsMetadata.doc;
 
 /**
- * This class loads and represents a Leica Microsystems XML document that has
- * been extracted from a LIF file
+ * This class loads and represents a Leica Microsystems XLCF xml document
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class LifXmlDocument extends LMSXmlDocument {
+public class XlcfDocument extends LMSCollectionXmlDocument {
 
-  public LifXmlDocument(String xml) {
-    super(xml);
-  }
-
-  public List<LifImageXmlDocument> getImageXmlDocuments() {
-    List<LifImageXmlDocument> imageXmlDocs = new ArrayList<LifImageXmlDocument>();
-    
-    if (doc == null)
-      return null;
-
-    Node rootElement = GetChildWithName(doc.getDocumentElement(), "Element");
-    Node children = GetChildWithName(rootElement, "Children");
-    for (int i = 0; i < children.getChildNodes().getLength(); i++) {
-      Node child = children.getChildNodes().item(i);
-      if (child.getNodeName().equals("Element")) {
-        LifImageXmlDocument imageXml = new LifImageXmlDocument(child);
-        imageXmlDocs.add(imageXml);
-      }
-    }
-
-    return imageXmlDocs;
+  // -- Constructor --
+  public XlcfDocument(String filepath, LMSCollectionXmlDocument parent) {
+    super(filepath, parent);
+    initChildren();
   }
 }

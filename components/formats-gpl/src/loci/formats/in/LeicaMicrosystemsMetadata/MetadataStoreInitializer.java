@@ -36,10 +36,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.MetadataTempBuffer.DataSourceType;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
-import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.primitives.Color;
@@ -67,125 +68,6 @@ public class MetadataStoreInitializer {
   }
 
   // -- Methods --
-
-  /**
-   * Adds microscope and objective details from the reader's
-   * {@link MetadataTempBuffer} to its {@link MetadataStore}
-   * 
-   * @param series
-   *          index of image series / metadata store
-   * @throws FormatException
-   */
-  public void initStandDetails(int series) throws FormatException {
-    String instrumentID = MetadataTools.createLSID("Instrument", series);
-    store.setInstrumentID(instrumentID, series);
-
-    // int index = getTileIndex(series);
-
-    // store.setMicroscopeModel(r.metaTemp.microscopeModels[index], series);
-    // store.setMicroscopeType(MetadataTools.getMicroscopeType("Other"), series);
-
-    // String objectiveID = MetadataTools.createLSID("Objective", series, 0);
-    // store.setObjectiveID(objectiveID, series, 0);
-    // store.setObjectiveLensNA(r.metaTemp.lensNA[index], series, 0);
-    // store.setObjectiveSerialNumber(r.metaTemp.serialNumber[index], series, 0);
-    // if (r.metaTemp.magnification[index] != null) {
-    // store.setObjectiveNominalMagnification(r.metaTemp.magnification[index],
-    // series, 0);
-    // }
-    // if (r.metaTemp.immersions[index] != null)
-    // store.setObjectiveImmersion(MetadataTools.getImmersion(r.metaTemp.immersions[index]),
-    // series, 0);
-    // if (r.metaTemp.corrections[index] != null)
-    // store.setObjectiveCorrection(MetadataTools.getCorrection(r.metaTemp.corrections[index]),
-    // series, 0);
-    // store.setObjectiveModel(r.metaTemp.objectiveModels[index], series, 0);
-
-    store.setImageInstrumentRef(instrumentID, series);
-    // store.setObjectiveSettingsID(objectiveID, series);
-    // store.setObjectiveSettingsRefractiveIndex(r.metaTemp.refractiveIndex[index],
-    // series);
-  }
-
-  /**
-   * Adds filter details from the reader's {@link MetadataTempBuffer} to its
-   * {@link MetadataStore}
-   * 
-   * @param series
-   *          index of image series / metadata store
-   * @throws FormatException
-   */
-  public void initFilters(int series) {
-    for (int filterIndex = 0; filterIndex < r.metaTemp.filters.get(series).size(); filterIndex++) {
-      Filter filter = r.metaTemp.filters.get(series).get(filterIndex);
-
-      String filterId = MetadataTools.createLSID("Filter", series, filterIndex);
-      store.setFilterID(filterId, series, filterIndex);
-
-      filter.filterSetId = MetadataTools.createLSID("FilterSet", series, filterIndex);
-      store.setFilterSetID(filter.filterSetId, series, filterIndex);
-      store.setFilterSetEmissionFilterRef(filterId, series, filterIndex, filterIndex);
-
-      // confocal: name of detector is used as filter model and filter set model
-      if (r.metaTemp.dataSourceTypes[series] == DataSourceType.CONFOCAL) {
-        Detector detector = r.metaTemp.getDetectorForFilter(series, filter);
-        if (detector != null) {
-          store.setFilterModel(detector.model, series, filterIndex);
-          store.setFilterSetModel(detector.model, series, filterIndex);
-        }
-      }
-      store.setTransmittanceRangeCutIn(FormatTools.getCutIn(filter.cutIn), series, filterIndex);
-      store.setTransmittanceRangeCutOut(FormatTools.getCutOut(filter.cutOut), series, filterIndex);
-    }
-
-    // int index = getTileIndex(series);
-    // if (r.metaTemp.cutIns.get(index) != null &&
-    // r.metaTemp.filterModels.get(index) != null) {
-    // // int channel = 0;
-    // if (r.metaTemp.cutIns.get(index).size() >=
-    // r.metaTemp.filterModels.get(index).size() * 2) {
-    // int diff = r.metaTemp.cutIns.get(index).size() -
-    // r.metaTemp.filterModels.get(index).size();
-    // for (int q=0; q<diff; q++) {
-    // r.metaTemp.cutIns.get(index).remove(r.metaTemp.filterModels.get(index).size());
-    // }
-    // }
-    // for (int filter=0; filter<r.metaTemp.cutIns.get(index).size(); filter++) {
-    // String filterID = MetadataTools.createLSID("Filter", series, filter);
-    // store.setFilterID(filterID, series, filter);
-    // if (r.metaTemp.filterModels.get(index) != null &&
-    // filter < r.metaTemp.filterModels.get(index).size())
-    // {
-    // store.setFilterModel(
-    // (String) r.metaTemp.filterModels.get(index).get(filter), series, filter);
-    // }
-    // store.setTransmittanceRangeCutIn(
-    // (Length) r.metaTemp.cutIns.get(index).get(filter), series, filter);
-    // store.setTransmittanceRangeCutOut(
-    // (Length) r.metaTemp.cutOuts.get(index).get(filter), series, filter);
-    // }
-    // }
-  }
-
-  public void initLasers(int series) {
-    int index = getTileIndex(series);
-
-    for (int i = 0; i < r.metaTemp.lasers.get(index).size(); i++) {
-      Laser laser = r.metaTemp.lasers.get(index).get(i);
-      laser.laserId = MetadataTools.createLSID("LightSource", series, i);
-      store.setLaserID(laser.laserId, series, i);
-      store.setLaserType(LaserType.OTHER, series, i);
-      store.setLaserLaserMedium(LaserMedium.OTHER, series, i);
-      store.setLaserModel(laser.name, series, i);
-      Length wavelength = FormatTools.getWavelength(laser.wavelength);
-      store.setLaserWavelength(wavelength, series, i);
-
-      // store.setChannelLightSourceSettingsID(id, series, nextChannel);
-      // store.setChannelLightSourceSettingsAttenuation(
-      // new PercentFraction((float) intensity / 100f), series, nextChannel);
-      // store.setChannelExcitationWavelength(ex, series, nextChannel);
-    }
-  }
 
   /**
    * Adds laser and light source details from the reader's
@@ -342,20 +224,6 @@ public class MetadataStoreInitializer {
           }
         }
       }
-    }
-  }
-
-  public void initDetectors(int series) {
-    int index = getTileIndex(series);
-
-    for (int i = 0; i < r.metaTemp.detectors.get(index).size(); i++) {
-      Detector detector = r.metaTemp.detectors.get(index).get(i);
-      detector.detectorId = MetadataTools.createLSID("Detector", series, i);
-      store.setDetectorID(detector.detectorId, series, i);
-      store.setDetectorModel(detector.model, series, i);
-
-      store.setDetectorZoom(detector.zoom, series, i);
-      store.setDetectorType(detector.type.equals("PMT") ? DetectorType.PMT : DetectorType.OTHER, series, i);
     }
   }
 
@@ -606,10 +474,10 @@ public class MetadataStoreInitializer {
 
     for (int i = 0; i < r.getSeriesCount(); i++) {
       r.setSeries(i);
-      initStandDetails(i);
-      initFilters(i);
-      initLasers(i);
-      initDetectors(i);
+      // initStandDetails(i);
+      // initFilters(i);
+      // initLasers(i);
+      // initDetectors(i);
       initImageDetails(i);
       initPhysicalChannelInfo(i);
     }
@@ -625,20 +493,7 @@ public class MetadataStoreInitializer {
     for (int channelIndex = 0; channelIndex < r.metaTemp.channels.get(series).size(); channelIndex++) {
       Channel channel = r.metaTemp.channels.get(series).get(channelIndex);
 
-      if (channel.laser != null) {
-        store.setChannelLightSourceSettingsID(channel.laser.laserId, series, channelIndex);
-        store.setChannelExcitationWavelength(FormatTools.getWavelength(channel.laser.wavelength), series, channelIndex);
-      }
-
-      if (channel.filter != null)
-        store.setChannelFilterSetRef(channel.filter.filterSetId, series, channelIndex);
-
-      if (channel.detectorSetting != null) {
-        store.setDetectorSettingsID(channel.detectorSetting.detector.detectorId, series, channelIndex);
-        store.setDetectorSettingsOffset(channel.detectorSetting.offset, series, channelIndex);
-        store.setDetectorSettingsGain(channel.detectorSetting.gain, series, channelIndex);
-        store.setDetectorSettingsZoom(channel.detectorSetting.detector.zoom, series, channelIndex);
-      }
+      
     }
   }
 

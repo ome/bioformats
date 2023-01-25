@@ -36,6 +36,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.in.MetadataOptions;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSXmlDocument;
 import loci.formats.in.DynamicMetadataOptions;
 
 /**

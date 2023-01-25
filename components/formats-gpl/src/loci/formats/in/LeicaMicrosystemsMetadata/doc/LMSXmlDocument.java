@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.doc;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,6 +43,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import loci.common.Location;
+import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader;
 
 import org.xml.sax.InputSource;
 

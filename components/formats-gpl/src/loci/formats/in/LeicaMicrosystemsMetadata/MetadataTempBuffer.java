@@ -27,7 +27,14 @@ package loci.formats.in.LeicaMicrosystemsMetadata;
 
 import java.util.List;
 
-import loci.formats.in.LeicaMicrosystemsMetadata.Dimension.DimensionKey;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.ROI;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -299,14 +306,6 @@ public class MetadataTempBuffer {
       maxBytesInc = yDim.bytesInc * yDim.size;
     }
     return maxBytesInc;
-  }
-
-  public Detector getDetectorForFilter(int series, Filter filter) {
-    for (DetectorSetting setting : detectorSettings.get(series)) {
-      if (setting.sequenceIndex == filter.sequenceIndex && setting.detectorListIndex == filter.multibandIndex)
-        return setting.detector;
-    }
-    return null;
   }
 
   public DetectorSetting getDetectorSetting(int series, int sequenceIndex, int detectorListIndex) {
