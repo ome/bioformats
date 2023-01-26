@@ -66,6 +66,7 @@ public class LaserExtractor extends Extractor {
 
           String intensityDevS = getAttributeValue(laserLineSettings.item(laserSettingIndex), "IntensityDev");
           setting.intensity = parseDouble(intensityDevS);
+          //realIntensity = 100d - intensity; ???
 
           String wavelengthS = getAttributeValue(laserLineSettings.item(laserSettingIndex), "LaserLine");
           int wavelength = parseInt(wavelengthS);

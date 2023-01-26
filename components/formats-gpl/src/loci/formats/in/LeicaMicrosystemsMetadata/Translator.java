@@ -11,6 +11,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
 import loci.formats.in.LeicaMicrosystemsMetadata.MetadataTempBuffer.DataSourceType;
+import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ChannelExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.DetectorExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.DimensionExtractor;
@@ -57,6 +58,7 @@ public class Translator {
   List<ROI> singleRois = new ArrayList<ROI>();
   List<Double> timestamps = new ArrayList<Double>();
 
+  String imageName;
   boolean alternateCenter = false;
   DataSourceType dataSourceType;
   double acquiredDate;
@@ -70,14 +72,17 @@ public class Translator {
   MetadataStore store;
   CoreMetadata core;
 
-  public Translator(Element imageNode, int seriesIndex, MetadataStore store, CoreMetadata core, int imageCount, 
-    boolean useOldPhysicalSizeCalculation, ImageFormat imageFormat){
-    this.imageNode = imageNode;
+  public Translator(LMSImageXmlDocument doc, int seriesIndex, int imageCount, LMSFileReader reader){
+    this.imageNode = (Element)doc.getImageNode();
+    this.imageName = doc.getImageName();
+    reader.setSeries(seriesIndex);
+    reader.addSeriesMeta("Image name", imageName);
+
     this.seriesIndex = seriesIndex;
-    this.store = store;
-    this.core = core;
+    this.store = reader.getMetadataStore();
+    this.core = reader.getCore().get(seriesIndex);
     this.imageCount = imageCount;
-    this.useOldPhysicalSizeCalculation = useOldPhysicalSizeCalculation;
+    this.useOldPhysicalSizeCalculation = reader.useOldPhysicalSizeCalculation();
   }
 
   public void translate(){
@@ -218,7 +223,7 @@ public class Translator {
     MicroscopeType type = isInverse.equals("1") ? MicroscopeType.INVERTED : MicroscopeType.UPRIGHT;
     store.setMicroscopeType(type, seriesIndex);
 
-    store.setImageInstrumentRef(instrumentID, seriesIndex);
+    // store.setImageInstrumentRef(instrumentID, seriesIndex);
   }
 
   private void translateObjective() {
@@ -320,9 +325,16 @@ public class Translator {
     if (tilescanInfo != null){
       NodeList tiles = tilescanInfo.getChildNodes();
       for (int i = 0; i < tiles.getLength(); i++){
-        String posXS = Extractor.getAttributeValue(tiles.item(i), "PosX");
+        Element tile;
+        try {
+          tile = (Element)tiles.item(i);
+        } catch (Exception e){
+          continue;
+        }
+
+        String posXS = Extractor.getAttributeValue(tile, "PosX");
         dimensionStore.fieldPosXs.add(Extractor.parseLength(posXS, UNITS.METER));
-        String posYS = Extractor.getAttributeValue(tiles.item(i), "PosY");
+        String posYS = Extractor.getAttributeValue(tile, "PosY");
         dimensionStore.fieldPosXs.add(Extractor.parseLength(posYS, UNITS.METER));
       }
     } else {

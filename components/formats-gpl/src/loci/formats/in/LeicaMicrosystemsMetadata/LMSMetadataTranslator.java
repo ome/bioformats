@@ -56,53 +56,25 @@ public class LMSMetadataTranslator {
 
   public void translateMetadata(List<LMSImageXmlDocument> docs) throws FormatException, IOException {
     initCoreMetadata(docs.size());
-    initMetadataStore();
+    r.setSeries(0);
 
     r.metaTemp.channelPrios = new int[r.metaTemp.tileCount.length][];
 
     for (int i = 0; i < docs.size(); i++) {
       r.setSeries(i);
-      Node image = docs.get(i).getImageNode();
-      r.metaTemp.imageNames[i] = docs.get(i).getImageName();
 
-      translateImage((Element) image, i);
+      Translator translator = new Translator(docs.get(i), i, docs.size(), r);
+      r.metadataTranslators.add(translator);
+      translator.translate();
     }
     r.setSeries(0);
 
     MetadataStoreInitializer initializer = new MetadataStoreInitializer(r);
-    initializer.initMetadataStore();
+    // initializer.initMetadataStore();
 
     // after the following call, we don't have 1 CoreMetadata per xlif-referenced
-    // image,
-    // but 1 CoreMetadata per series ( = tile )!
+    // image, but 1 CoreMetadata per series ( = tile )!
     setCoreMetadataForTiles();
-  }
-
-  private void initMetadataStore() {
-    for (int i = 0; i < r.metaTemp.imageNames.length; i++) {
-      r.setSeries(i);
-      r.addSeriesMeta("Image name", r.metaTemp.imageNames[i]);
-    }
-    r.setSeries(0);
-  }
-
-  private void translateImage(Element image, int i) throws FormatException {
-    r.setSeries(i);
-
-    NodeList attachments = getDescendantNodesWithName(image, "Attachment");
-    hardwareSetting = getNodeWithAttribute(attachments, "Name", "HardwareSetting");
-
-    LMSMetadataExtractor extractor = new LMSMetadataExtractor(r); // TODO member ?
-    extractor.translateImage(image, i);
-
-    if (hardwareSetting != null){
-      mainConfocalSetting = getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
-      Element ldmBlockSequential = getChildNodeWithName(hardwareSetting, "LDM_Block_Sequential");
-      ldmBlockMaster = getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_Master");
-      ldmBlockList = getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_List");
-
-      // mapLasersToChannels(i);
-    }
   }
 
   private void initCoreMetadata(int len) {

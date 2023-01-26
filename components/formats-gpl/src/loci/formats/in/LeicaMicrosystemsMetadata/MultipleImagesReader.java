@@ -209,12 +209,12 @@ public class MultipleImagesReader extends LMSFileReader {
       int sizeS = tileCount;
 
       List<FormatReader> newOrder = new ArrayList<FormatReader>();
-      List<Dimension> dimensions = metaTemp.getDimensions(imageIndex);
+      List<Dimension> dimensions = metadataTranslators.get(imageIndex).dimensionStore.getDimensions();
 
-      Dimension dimZ = metaTemp.getDimension(imageIndex, DimensionKey.Z);
-      Dimension dimC = metaTemp.getDimension(imageIndex, DimensionKey.C);
-      Dimension dimT = metaTemp.getDimension(imageIndex, DimensionKey.T);
-      Dimension dimS = metaTemp.getDimension(imageIndex, DimensionKey.S);
+      Dimension dimZ = metadataTranslators.get(imageIndex).dimensionStore.getDimension(DimensionKey.Z);
+      Dimension dimC = metadataTranslators.get(imageIndex).dimensionStore.getDimension(DimensionKey.C);
+      Dimension dimT = metadataTranslators.get(imageIndex).dimensionStore.getDimension(DimensionKey.T);
+      Dimension dimS = metadataTranslators.get(imageIndex).dimensionStore.getDimension(DimensionKey.S);
 
       //iterating through dimensions in desired order
       for (int indexDim5 = 0; indexDim5 < dimensions.get(5).size; indexDim5++){

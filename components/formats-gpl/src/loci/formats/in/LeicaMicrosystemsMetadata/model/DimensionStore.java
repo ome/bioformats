@@ -97,7 +97,7 @@ public class DimensionStore {
     dimensions.add(dimS);
   }
 
-  public List<Dimension> getDimensions(int imageIndex) {
+  public List<Dimension> getDimensions() {
     sortDimensions();
     return dimensions;
   }

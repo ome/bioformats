@@ -321,6 +321,7 @@ public class XLEFReader extends LMSFileReader {
       if (reader instanceof MultipleImagesReader){
         ((MultipleImagesReader)reader).setCoreMetadata(core.get(i));
         ((MultipleImagesReader)reader).setMetadataTempBuffer(metaTemp);
+        ((MultipleImagesReader)reader).metadataTranslators = this.metadataTranslators;
       }
     }
   }
