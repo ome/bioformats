@@ -25,6 +25,8 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
+import ome.xml.model.primitives.Color;
+
 /**
  * This class represents image channels extracted from LMS image xmls.
  * 
@@ -39,6 +41,8 @@ public class Channel {
   public String unit;
   public String lutName;
   public long bytesInc;
+  public Color lutColor;
+  public int channelPriority;
 
   public boolean isLutInverted;
   public long bitInc;

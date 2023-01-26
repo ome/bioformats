@@ -36,14 +36,8 @@ import org.w3c.dom.NodeList;
 import loci.common.DataTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
-import loci.formats.MetadataTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.MetadataTempBuffer.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
 import loci.formats.meta.MetadataStore;
-import ome.units.quantity.Length;
-import ome.xml.model.enums.MicroscopeType;
 
 public class LMSMetadataTranslator {
   // -- Fields --
@@ -195,14 +189,6 @@ public class LMSMetadataTranslator {
         return (Element) node;
     }
     return null;
-  }
-
-  private String getAttributeValue(Node node, String attributeName) {
-    Node attribute = node.getAttributes().getNamedItem(attributeName);
-    if (attribute != null)
-      return attribute.getTextContent();
-    else
-      return "";
   }
 
   public int getTileIndex(int coreIndex) {

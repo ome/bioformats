@@ -5,6 +5,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.common.DataTools;
+import ome.units.quantity.Length;
+import ome.units.unit.Unit;
 
 public class Extractor {
   public static Node getChildNodeWithName(Node node, String nodeName) {
@@ -71,5 +73,10 @@ public class Extractor {
 
   public static double parseDouble(String value) {
     return value == null || value.trim().isEmpty() ? 0d : DataTools.parseDouble(value.trim());
+  }
+
+  public static Length parseLength(String value, Unit<Length> unit){
+    double valueD = parseDouble(value);
+    return new Length(valueD, unit);
   }
 }

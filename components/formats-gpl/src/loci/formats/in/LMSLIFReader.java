@@ -86,15 +86,6 @@ public class LMSLIFReader extends LMSFileReader {
     domains = new String[] { FormatTools.LM_DOMAIN };
   }
 
-  public boolean useOldPhysicalSizeCalculation() {
-    MetadataOptions options = getMetadataOptions();
-    if (options instanceof DynamicMetadataOptions) {
-      return ((DynamicMetadataOptions) options).getBoolean(
-          OLD_PHYSICAL_SIZE_KEY, OLD_PHYSICAL_SIZE_DEFAULT);
-    }
-    return OLD_PHYSICAL_SIZE_DEFAULT;
-  }
-
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */

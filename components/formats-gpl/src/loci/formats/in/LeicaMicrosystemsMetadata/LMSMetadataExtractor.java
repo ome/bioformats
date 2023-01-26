@@ -26,15 +26,9 @@
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.lang.model.util.ElementScanner14;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -48,7 +42,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -58,16 +51,10 @@ import org.w3c.dom.Attr;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
 import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 import loci.common.DataTools;
-import loci.common.DateTools;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
-import ome.xml.model.primitives.Color;
 
 /**
  * This class extracts metadata information from Leica Microsystems image XML
@@ -83,7 +70,6 @@ public class LMSMetadataExtractor {
   // -- Fields --
   private LMSFileReader r;
   List<Long> channelBytesIncs = new ArrayList<Long>();
-  int extras = 1;
   Node hardwareSetting;
   List<Element> sequentialConfocalSettings = new ArrayList<Element>();
 
@@ -127,8 +113,8 @@ public class LMSMetadataExtractor {
     
     // getHardwareNodes(imageNode, series);
 
-    translateChannelDescriptions(imageNode, series);
-    translateDimensionDescriptions(imageNode, series);
+    // translateChannelDescriptions(imageNode, series);
+    // translateDimensionDescriptions(imageNode, series);
     translateAttachmentNodes(imageNode, series);
 
     if (hardwareSetting != null){
@@ -148,238 +134,6 @@ public class LMSMetadataExtractor {
     final Deque<String> nameStack = new ArrayDeque<String>();
     populateOriginalMetadata(imageNode, nameStack);
     addUserCommentMeta(imageNode, series);
-  }
-
-  /***
-   * Extracts i.a. channel number and luts from channel descriptions and writes it
-   * to reader's {@link CoreMetadata} and {@link MetadataTempBuffer}
-   * 
-   * @param imageNode
-   *          Image node from Leica xml
-   * @param coreIndex
-   * @throws FormatException
-   */
-  public void translateChannelDescriptions(Element imageNode, int coreIndex)
-      throws FormatException {
-    CoreMetadata ms = r.getCore().get(coreIndex);
-
-    NodeList channels = getChannelDescriptionNodes(imageNode);
-    ms.sizeC = channels.getLength();
-
-    List<String> luts = new ArrayList<String>();
-
-    for (int ch = 0; ch < channels.getLength(); ch++) {
-      Element channelElement = (Element) channels.item(ch);
-
-      luts.add(channelElement.getAttribute("LUTName"));
-      int channelTag = Integer.parseInt(channelElement.getAttribute("ChannelTag"));
-      int resolution = Integer.parseInt(channelElement.getAttribute("Resolution"));
-      double min = parseDouble(channelElement.getAttribute("Min"));
-      double max = parseDouble(channelElement.getAttribute("Max"));
-      String unit = channelElement.getAttribute("Unit");
-      String lutName = channelElement.getAttribute("LUTName");
-      long bytesInc = parseLong(channelElement.getAttribute("BytesInc"));
-
-      Channel channel = new Channel(channelTag, resolution, min, max, unit, lutName, bytesInc);
-      r.metaTemp.channels.get(coreIndex).add(channel);
-    }
-
-    // RGB order is defined by ChannelTag order (1,2,3 = RGB, 3,2,1=BGR)
-    r.metaTemp.inverseRgb[coreIndex] = channels.getLength() >= 3 &&
-        ((Element) channels.item(0)).getAttribute("ChannelTag").equals("3");
-
-    translateLuts(luts, coreIndex);
-  }
-
-  /***
-   * Translates raw channel luts of an image to Colors and writes it to reader's
-   * {@link MetadataTempBuffer}
-   * 
-   * @param luts
-   *          list of raw lut names / values from Leica XML
-   */
-  private void translateLuts(List<String> luts, int imgIndex) {
-    CoreMetadata ms = r.getCore().get(imgIndex);
-    ArrayList<Color> channelColors = new ArrayList<Color>(ms.sizeC);
-    r.metaTemp.channelPrios[imgIndex] = new int[ms.sizeC];
-
-    int nextLut = 0;
-    // foreach channel of image
-    for (int channel = 0; channel < ms.sizeC; channel++) {
-      if (nextLut < luts.size()) {
-        Color lutColor = translateLut(luts.get(nextLut));
-        channelColors.add(lutColor);
-        r.metaTemp.channelPrios[imgIndex][channel] = getChannelPriority(luts.get(nextLut));
-        nextLut++;
-      }
-    }
-    r.metaTemp.channelColors.add(channelColors);
-  }
-
-  private int getChannelPriority(String lutName) {
-    switch (lutName) {
-      case "red":
-        return 0;
-      case "green":
-        return 1;
-      case "blue":
-        return 2;
-      case "cyan":
-        return 3;
-      case "magenta":
-        return 4;
-      case "yellow":
-        return 5;
-      case "black":
-        return 6;
-      case "gray":
-        return 7;
-      case "":
-      default:
-        return 8;
-    }
-  }
-
-  /***
-   * Translates Leica XML lut name / value to Color
-   * 
-   * @param lutName
-   * @return
-   */
-  private Color translateLut(String lutName) {
-    lutName = lutName.replaceAll("\\s+", "");
-    // some LUTs are stored as gradients
-    Pattern pattern = Pattern.compile("Gradient\\(\\d+,\\d+,\\d+\\)", Pattern.CASE_INSENSITIVE);
-    Matcher matcher = pattern.matcher(lutName);
-    if (matcher.find()) {
-      String[] rgb = lutName.substring(9, lutName.length() - 1).split(",");
-      return new Color(Integer.parseInt(rgb[2]),
-          Integer.parseInt(rgb[1]),
-          Integer.parseInt(rgb[0]),
-          255);
-    } else {
-      switch (lutName.toLowerCase()) {
-        case "red":
-          return new Color(255, 0, 0, 255);
-        case "green":
-          return new Color(0, 255, 0, 255);
-        case "blue":
-          return new Color(0, 0, 255, 255);
-        case "cyan":
-          return new Color(0, 255, 255, 255);
-        case "magenta":
-          return new Color(255, 0, 255, 255);
-        case "yellow":
-          return new Color(255, 255, 0, 255);
-        default:
-          return new Color(255, 255, 255, 255);
-      }
-    }
-    // TODO: numeric lut handling
-  }
-
-  /**
-   * Extracts information from dimension descriptions and writes it to reader's
-   * {@link CoreMetadata} and {@link MetadataTempBuffer}
-   * 
-   * @param imageNode
-   *          Image node from Leica xml
-   * @param coreIndex
-   * @throws FormatException
-   */
-  private void translateDimensionDescriptions(Element imageNode, int coreIndex) throws FormatException {
-    CoreMetadata cmd = r.getCore().get(coreIndex);
-    NodeList dimensions = getDimensionDescriptionNodes(imageNode);
-
-    // add dimensions
-    for (int i = 0; i < dimensions.getLength(); i++) {
-      Element dimensionElement = (Element) dimensions.item(i);
-
-      int id = parseInt(dimensionElement.getAttribute("DimID"));
-      int size = parseInt(dimensionElement.getAttribute("NumberOfElements"));
-      long bytesInc = parseLong(dimensionElement.getAttribute("BytesInc"));
-      Double length = parseDouble(dimensionElement.getAttribute("Length"));
-      String unit = dimensionElement.getAttribute("Unit");
-      boolean oldPhysicalSize = r.useOldPhysicalSizeCalculation();
-
-      Dimension dimension = new Dimension(DimensionKey.with(id), size, bytesInc, unit, length, oldPhysicalSize);
-      r.metaTemp.addDimension(coreIndex, dimension);
-
-      if (DimensionKey.with(id) == null)
-        extras *= dimension.size;
-    }
-
-    r.metaTemp.addChannelDimension(coreIndex);
-    r.metaTemp.addMissingDimensions(coreIndex);
-    setCoreDimensionSizes(coreIndex);
-
-    setPixelType(coreIndex);
-
-    // TIFF and JPEG files not interleaved
-    if (r.getImageFormat() == ImageFormat.TIF || r.getImageFormat() == ImageFormat.JPEG) {
-      cmd.interleaved = false;
-    } else {
-      cmd.interleaved = cmd.rgb;
-    }
-    cmd.indexed = !cmd.rgb;
-    cmd.imageCount = cmd.sizeZ * cmd.sizeT;
-    if (!cmd.rgb)
-      cmd.imageCount *= cmd.sizeC;
-    else {
-      cmd.imageCount *= (cmd.sizeC / 3);
-    }
-
-    cmd.dimensionOrder = r.metaTemp.getDimensionOrder(coreIndex);
-  }
-
-  /**
-   * Writes extracted dimension sizes to CoreMetadata
-   * 
-   * @param coreIndex
-   */
-  private void setCoreDimensionSizes(int coreIndex) {
-    CoreMetadata cmd = r.getCore().get(coreIndex);
-    cmd.sizeX = r.metaTemp.getDimension(coreIndex, DimensionKey.X).size;
-    cmd.sizeY = r.metaTemp.getDimension(coreIndex, DimensionKey.Y).size;
-    cmd.sizeZ = r.metaTemp.getDimension(coreIndex, DimensionKey.Z).size;
-    cmd.sizeT = r.metaTemp.getDimension(coreIndex, DimensionKey.T).size;
-    cmd.rgb = (r.metaTemp.getDimension(coreIndex, DimensionKey.X).bytesInc % 3) == 0;
-    if (cmd.rgb)
-      r.metaTemp.getDimension(coreIndex, DimensionKey.X).bytesInc /= 3;
-
-    if (extras > 1) {
-      if (cmd.sizeZ == 1)
-        cmd.sizeZ = extras;
-      else {
-        if (cmd.sizeT == 0)
-          cmd.sizeT = extras;
-        else
-          cmd.sizeT *= extras;
-      }
-    }
-
-    if (cmd.sizeX == 0)
-      cmd.sizeX = 1;
-    if (cmd.sizeY == 0)
-      cmd.sizeY = 1;
-    if (cmd.sizeC == 0)
-      cmd.sizeC = 1;
-    if (cmd.sizeZ == 0)
-      cmd.sizeZ = 1;
-    if (cmd.sizeT == 0)
-      cmd.sizeT = 1;
-  }
-
-  /**
-   * Sets CoreMetadata.pixelType depending on extracted x bytesInc
-   * 
-   * @param coreIndex
-   * @throws FormatException
-   */
-  private void setPixelType(int coreIndex) throws FormatException {
-    CoreMetadata cmd = r.getCore().get(coreIndex);
-    long xBytesInc = r.metaTemp.getDimension(coreIndex, DimensionKey.X).bytesInc;
-    cmd.pixelType = FormatTools.pixelTypeFromBytes((int) xBytesInc, false, true);
   }
 
   /**
@@ -963,21 +717,7 @@ public class LMSMetadataExtractor {
     return value == null || value.trim().isEmpty() ? 0d : DataTools.parseDouble(value.trim());
   }
 
-  private Element getImageDescription(Element root) {
-    return (Element) root.getElementsByTagName("ImageDescription").item(0);
-  }
-
-  private NodeList getChannelDescriptionNodes(Element root) {
-    Element imageDescription = getImageDescription(root);
-    Element channels = (Element) imageDescription.getElementsByTagName("Channels").item(0);
-    return channels.getElementsByTagName("ChannelDescription");
-  }
-
-  private NodeList getDimensionDescriptionNodes(Element root) {
-    Element imageDescription = getImageDescription(root);
-    Element channels = (Element) imageDescription.getElementsByTagName("Dimensions").item(0);
-    return channels.getElementsByTagName("DimensionDescription");
-  }
+  
 
   /**
    * Returns all (grand*n)children nodes with given node name
@@ -1004,33 +744,6 @@ public class LMSMetadataExtractor {
       return null;
     } else
       return nodes;
-  }
-
-  private Node getChildNodeWithName(Node node, String nodeName) {
-    NodeList children = node.getChildNodes();
-    for (int i = 0; i < children.getLength(); i++) {
-      if (children.item(i).getNodeName().equals(nodeName))
-        return children.item(i);
-    }
-    return null;
-  }
-
-  private Node getNodeWithAttribute(NodeList nodes, String attributeName, String attributeValue) {
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node node = nodes.item(i);
-      Node attribute = node.getAttributes().getNamedItem(attributeName);
-      if (attribute != null && attribute.getTextContent().equals(attributeValue))
-        return node;
-    }
-    return null;
-  }
-
-  private String getAttributeValue(Node node, String attributeName) {
-    Node attribute = node.getAttributes().getNamedItem(attributeName);
-    if (attribute != null)
-      return attribute.getTextContent();
-    else
-      return "";
   }
 
   public static int getChannelIndex(Element filterSetting) {
