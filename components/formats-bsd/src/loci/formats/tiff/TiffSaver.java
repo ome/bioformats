@@ -1022,7 +1022,13 @@ public class TiffSaver implements Closeable {
       pi = PhotoInterp.RGB_PALETTE;
     }
     else if (nChannels == 3) {
-      pi = PhotoInterp.RGB;
+      if (ifd.getIFDValue(IFD.COMPRESSION).equals(TiffCompression.JPEG.getCode())) {
+        // see https://github.com/ome/bioformats/issues/3856
+        pi = PhotoInterp.Y_CB_CR;
+      }
+      else {
+        pi = PhotoInterp.RGB;
+      }
     }
     ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION, pi.getCode());
 

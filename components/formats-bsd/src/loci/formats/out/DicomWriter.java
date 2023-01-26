@@ -210,6 +210,11 @@ public class DicomWriter extends FormatWriter {
       out.writeBytes(getCompressionMethod());
 
       ifds[resolutionIndex][no].put(IFD.COMPRESSION, getTIFFCompression().getCode());
+
+      // see https://github.com/ome/bioformats/issues/3856
+      if (getTIFFCompression() == TiffCompression.JPEG) {
+        ifds[resolutionIndex][no].put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.Y_CB_CR.getCode());
+      }
     }
 
     // TILED_SPARSE, so the tile coordinates must be written
