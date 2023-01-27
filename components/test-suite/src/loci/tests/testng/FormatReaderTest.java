@@ -2010,7 +2010,15 @@ public class FormatReaderTest {
           {
             continue;
           }
-          
+
+          // .vsi datasets can only be detected with .vsi and frame*.ets
+          if (reader.getFormat().equals("CellSens VSI") &&
+            ((!base[i].toLowerCase().endsWith(".vsi") && !base[i].toLowerCase().endsWith(".ets")) ||
+            (base[i].toLowerCase().endsWith(".ets") && !base[i].toLowerCase().startsWith("frame"))))
+          {
+            continue;
+          }
+
           // XLef datasets not detected from xlif/lof file
           if (reader.getFormat().equals("Extended leica file") &&
             (base[i].toLowerCase().endsWith("xlif") || base[i].toLowerCase().endsWith("lof") 
@@ -2801,7 +2809,15 @@ public class FormatReaderTest {
             {
               continue;
             }
-            
+
+            // .vsi data can only be detected from .vsi and frame*.ets
+            if (!result && r instanceof CellSensReader &&
+              ((!used[i].endsWith(".vsi") && !used[i].endsWith(".ets")) ||
+              (used[i].endsWith(".ets") && !used[i].startsWith("frame"))))
+            {
+              continue;
+            }
+
             // XLEF data can only be detected from xlef file
             if (!result && readers[j] instanceof XLEFReader &&
                 (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
