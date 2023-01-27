@@ -39,6 +39,7 @@ public class Dimension {
   public String unit = null;
   private Double length = 0d;
   private Double offByOneLength = 0d;
+  public Double origin;
   public boolean oldPhysicalSize = false;
   public int frameIndex = 0;
 
@@ -72,13 +73,14 @@ public class Dimension {
 
   // -- Constructors --
 
-  public Dimension(DimensionKey key, int size, long bytesInc, String unit, Double length, boolean oldPhysicalSize) {
+  public Dimension(DimensionKey key, int size, long bytesInc, String unit, Double length, Double origin, boolean oldPhysicalSize) {
     this.key = key;
     this.size = size;
     this.bytesInc = bytesInc;
     this.unit = unit;
     this.oldPhysicalSize = oldPhysicalSize;
     setLength(length);
+    this.origin = origin;
   }
 
   private Dimension() {

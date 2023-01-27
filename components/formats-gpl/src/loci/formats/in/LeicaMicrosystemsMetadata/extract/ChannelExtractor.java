@@ -27,15 +27,15 @@ public class ChannelExtractor extends Extractor {
     for (int ch = 0; ch < channelNodes.getLength(); ch++) {
       Element channelElement = (Element) channelNodes.item(ch);
 
-      int channelTag = Integer.parseInt(channelElement.getAttribute("ChannelTag"));
-      int resolution = Integer.parseInt(channelElement.getAttribute("Resolution"));
-      double min = parseDouble(channelElement.getAttribute("Min"));
-      double max = parseDouble(channelElement.getAttribute("Max"));
-      String unit = channelElement.getAttribute("Unit");
-      String lutName = channelElement.getAttribute("LUTName");
-      long bytesInc = parseLong(channelElement.getAttribute("BytesInc"));
+      Channel channel = new Channel();
+      channel.channelTag = Integer.parseInt(channelElement.getAttribute("ChannelTag"));
+      channel.resolution = Integer.parseInt(channelElement.getAttribute("Resolution"));
+      channel.min = parseDouble(channelElement.getAttribute("Min"));
+      channel.max = parseDouble(channelElement.getAttribute("Max"));
+      channel.unit = channelElement.getAttribute("Unit");
+      channel.lutName = channelElement.getAttribute("LUTName");
+      channel.bytesInc = parseLong(channelElement.getAttribute("BytesInc"));
 
-      Channel channel = new Channel(channelTag, resolution, min, max, unit, lutName, bytesInc);
       channels.add(channel);
     }
 

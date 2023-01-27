@@ -115,7 +115,7 @@ public class LMSMetadataExtractor {
 
     // translateChannelDescriptions(imageNode, series);
     // translateDimensionDescriptions(imageNode, series);
-    translateAttachmentNodes(imageNode, series);
+    // translateAttachmentNodes(imageNode, series);
 
     if (hardwareSetting != null){
       translateScannerSettings(imageNode, series);
@@ -133,7 +133,7 @@ public class LMSMetadataExtractor {
 
     final Deque<String> nameStack = new ArrayDeque<String>();
     populateOriginalMetadata(imageNode, nameStack);
-    addUserCommentMeta(imageNode, series);
+    // addUserCommentMeta(imageNode, series);
   }
 
   
@@ -150,29 +150,6 @@ public class LMSMetadataExtractor {
   public void translateScannerSettings(Element imageNode, int image)
       throws FormatException {
     NodeList scannerSettings = getDescendantNodesWithName(imageNode, "ScannerSettingRecord");
-    NodeList attachmentNodes = getDescendantNodesWithName(imageNode, "Attachment");
-    if (attachmentNodes == null) {
-      return;
-    }
-    NodeList confocalSettings = null;
-    for (int i = 0; i < attachmentNodes.getLength(); i++) {
-      Element attachment = (Element) attachmentNodes.item(i);
-
-      String attachmentName = attachment.getAttribute("Name");
-
-      if ("HardwareSetting".equals(attachmentName)) {
-        confocalSettings = getDescendantNodesWithName(attachment, "ATLConfocalSettingDefinition");
-      }
-    }
-
-    if (scannerSettings == null && confocalSettings == null)
-      return;
-
-    r.metaTemp.expTimes[image] = new Double[r.getEffectiveSizeC()];
-    r.metaTemp.gains[image] = new Double[r.getEffectiveSizeC()];
-    r.metaTemp.detectorOffsets[image] = new Double[r.getEffectiveSizeC()];
-    r.metaTemp.channelNames[image] = new String[r.getEffectiveSizeC()];
-    r.metaTemp.exWaves[image] = new Double[r.getEffectiveSizeC()];
 
     if (scannerSettings != null) {
       for (int i = 0; i < scannerSettings.getLength(); i++) {
@@ -232,51 +209,6 @@ public class LMSMetadataExtractor {
               r.metaTemp.channelNames[image][c] = value;
             }
           }
-        }
-      }
-    }
-
-    if (confocalSettings != null) {
-      for (int i = 0; i < confocalSettings.getLength(); i++) {
-        Element confocalSetting = (Element) confocalSettings.item(i);
-
-        String value = confocalSetting.getAttribute("Pinhole");
-
-        if (value != null && !value.trim().isEmpty()) {
-          r.metaTemp.pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
-        }
-
-        value = confocalSetting.getAttribute("Zoom");
-
-        // if (value != null && !value.trim().isEmpty()) {
-        // r.metaTemp.zooms[image] = DataTools.parseDouble(value.trim());
-        // }
-
-        value = confocalSetting.getAttribute("ObjectiveName");
-
-        if (value != null && !value.trim().isEmpty()) {
-          // r.metaTemp.objectiveModels[image] = value.trim();
-        }
-
-        value = confocalSetting.getAttribute("FlipX");
-
-        if (value != null && !value.trim().isEmpty()) {
-          r.metaTemp.flipX[image] = "1".equals(value.trim());
-          r.addSeriesMeta("Reverse X orientation", r.metaTemp.flipX[image]);
-        }
-
-        value = confocalSetting.getAttribute("FlipY");
-
-        if (value != null && !value.trim().isEmpty()) {
-          r.metaTemp.flipY[image] = "1".equals(value.trim());
-          r.addSeriesMeta("Reverse Y orientation", r.metaTemp.flipY[image]);
-        }
-
-        value = confocalSetting.getAttribute("SwapXY");
-
-        if (value != null && !value.trim().isEmpty()) {
-          r.metaTemp.swapXY[image] = "1".equals(value.trim());
-          r.addSeriesMeta("Swap XY orientation", r.metaTemp.swapXY[image]);
         }
       }
     }
@@ -440,25 +372,7 @@ public class LMSMetadataExtractor {
 
   
 
-  /**
-   * Extracts user comments and adds them to the reader's {@link CoreMetadata}
-   * 
-   * @param imageNode
-   * @param image
-   * @throws FormatException
-   */
-  private void addUserCommentMeta(Element imageNode, int image) throws FormatException {
-    NodeList attachmentNodes = getDescendantNodesWithName(imageNode, "User-Comment");
-    if (attachmentNodes == null)
-      return;
-    for (int i = 0; i < attachmentNodes.getLength(); i++) {
-      Node attachment = attachmentNodes.item(i);
-      r.addSeriesMeta("User-Comment[" + i + "]", attachment.getTextContent());
-      if (i == 0 && r.metaTemp.descriptions[image] == null) {
-        r.metaTemp.descriptions[image] = attachment.getTextContent();
-      }
-    }
-  }
+  
 
   /**
    * Creates key value pairs from attributes of the root's child nodes (tag |

@@ -36,6 +36,7 @@ import org.w3c.dom.NodeList;
 import loci.common.DataTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
 import loci.formats.meta.MetadataStore;
 
@@ -69,8 +70,7 @@ public class LMSMetadataTranslator {
     }
     r.setSeries(0);
 
-    MetadataStoreInitializer initializer = new MetadataStoreInitializer(r);
-    // initializer.initMetadataStore();
+    MetadataTools.populatePixels(store, this.r, true, false);
 
     // after the following call, we don't have 1 CoreMetadata per xlif-referenced
     // image, but 1 CoreMetadata per series ( = tile )!

@@ -35,8 +35,9 @@ public class DimensionExtractor extends Extractor {
       long bytesInc = parseLong(dimensionElement.getAttribute("BytesInc"));
       Double length = parseDouble(dimensionElement.getAttribute("Length"));
       String unit = dimensionElement.getAttribute("Unit");
+      double origin = parseDouble(dimensionElement.getAttribute("Origin"));
 
-      Dimension dimension = new Dimension(DimensionKey.with(id), size, bytesInc, unit, length, useOldPhysicalSizeCalculation);
+      Dimension dimension = new Dimension(DimensionKey.with(id), size, bytesInc, unit, length, origin, useOldPhysicalSizeCalculation);
       dimensions.add(dimension);
     }
 

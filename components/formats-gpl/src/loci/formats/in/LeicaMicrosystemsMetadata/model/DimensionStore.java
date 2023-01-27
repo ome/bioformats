@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 import ome.units.quantity.Length;
 
@@ -12,9 +13,13 @@ public class DimensionStore {
     public List<Channel> channels = new ArrayList<Channel>();
     public double physicalSizeX;
     public double physicalSizeY;
-    public List<Length> fieldPosXs = new ArrayList<Length>();
-    public List<Length> fieldPosYs = new ArrayList<Length>();
+    public List<Tuple<Length, Length>> fieldPositions = new ArrayList<Tuple<Length,Length>>();
+    public List<Length> zPositions = new ArrayList<Length>();
+    public boolean flipX;
+    public boolean flipY;
+    public boolean swapXY;
     public double zStep;
+    public double tStep;
     public int tileCount = 1;
     public long tileBytesInc;
 
@@ -111,13 +116,13 @@ public class DimensionStore {
     dimensions.sort((dim1, dim2) -> Long.compare(dim1.bytesInc, dim2.bytesInc));
     Dimension lastDimension = dimensions.get(dimensions.size() - 1);
     if (getDimension(DimensionKey.Z) == null) {
-      addDimension(new Dimension(DimensionKey.Z, 1, lastDimension.bytesInc, "m", 1.0, lastDimension.oldPhysicalSize));
+      addDimension(new Dimension(DimensionKey.Z, 1, lastDimension.bytesInc, "m", 1.0, 0.0, lastDimension.oldPhysicalSize));
     }
     if (getDimension(DimensionKey.T) == null) {
-      addDimension(new Dimension(DimensionKey.T, 1, lastDimension.bytesInc, "s", 1.0, lastDimension.oldPhysicalSize));
+      addDimension(new Dimension(DimensionKey.T, 1, lastDimension.bytesInc, "s", 1.0, 0.0, lastDimension.oldPhysicalSize));
     }
     if (getDimension(DimensionKey.S) == null) {
-      addDimension(new Dimension(DimensionKey.S, 1, lastDimension.bytesInc, "", 1.0, lastDimension.oldPhysicalSize));
+      addDimension(new Dimension(DimensionKey.S, 1, lastDimension.bytesInc, "", 1.0, 0.0, lastDimension.oldPhysicalSize));
     }
   }
 

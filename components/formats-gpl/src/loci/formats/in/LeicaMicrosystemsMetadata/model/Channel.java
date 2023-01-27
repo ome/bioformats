@@ -66,17 +66,11 @@ public class Channel {
   public Filter filter;
   public String name;
   public double pinholeSize;
+  public double exposureTime;
+  public String channelName;
 
   // -- Constructor --
-  public Channel(int channelTag, int resolution, double min, double max, String unit,
-      String lutName, long bytesInc) {
-    this.channelTag = channelTag;
-    this.resolution = resolution;
-    this.min = min;
-    this.max = max;
-    this.unit = unit;
-    this.lutName = lutName;
-    this.bytesInc = bytesInc;
+  public Channel() {
     setChannelType();
   }
 
