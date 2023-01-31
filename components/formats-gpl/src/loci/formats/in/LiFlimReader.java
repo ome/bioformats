@@ -91,9 +91,14 @@ public class LiFlimReader extends FormatReader {
 
   // relevant keys in timestamp table
   public static final String TIMESTAMP_KEY = "FLIMIMAGE: TIMESTAMPS - t";
+  
+  // relevant keys in fli 2.0
+  public static final String NUMBEROFFRAMES_KEY = "numberOfFrames";
+  public static final String NUMBEROFDARKIMAGES_KEY = "nrOfDarkImages";
+  public static final String PIXELFORMAT_KEY = "pixelFormat";
 
   // supported versions
-  public static final String[] KNOWN_VERSIONS = {"1.0"};
+  public static final String[] KNOWN_VERSIONS = {"1.0", "2.0"};
 
   // compression types
   public static final String COMPRESSION_NONE = "0";
@@ -299,12 +304,21 @@ public class LiFlimReader extends FormatReader {
     parseHeader();
 
     LOGGER.info("Parsing metadata");
+    version = getVersion();
     initOriginalMetadata();
     initCoreMetadata();
     initOMEMetadata();
   }
 
   // -- Helper methods --
+  private String getVersion() {
+    HashMap<String, String> map = ini.flattenIntoHashMap();
+    for (String string : map.keySet()) {
+      if (string.contains(VERSION_KEY))
+        return map.get(string);
+    }
+    return "1.0";
+  }
 
   private void parseHeader() throws IOException {
     String headerData = in.findString("{END}");
@@ -316,18 +330,40 @@ public class LiFlimReader extends FormatReader {
   private void initOriginalMetadata() {
     rois = new HashMap<Integer, ROI>();
     stampValues = new HashMap<Integer, String>();
+    LOGGER.info(version);
 
-    IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
-    datatype = layoutTable.get(DATATYPE_KEY);
-    packing = layoutTable.get(PACKING_KEY);
-    channels = layoutTable.get(C_KEY);
-    xLen = layoutTable.get(X_KEY);
-    yLen = layoutTable.get(Y_KEY);
-    zLen = layoutTable.get(Z_KEY);
-    phases = layoutTable.get(P_KEY);
-    frequencies = layoutTable.get(F_KEY);
-    timestamps = layoutTable.get(T_KEY);
-    DarkImage = layoutTable.get(DarkImage_KEY);
+    if (version.equals("1.0")){
+      IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
+      datatype = layoutTable.get(DATATYPE_KEY);
+      packing = layoutTable.get(PACKING_KEY);
+      LOGGER.info("packing: " + packing);
+      channels = layoutTable.get(C_KEY);
+      xLen = layoutTable.get(X_KEY);
+      yLen = layoutTable.get(Y_KEY);
+      zLen = layoutTable.get(Z_KEY);
+      phases = layoutTable.get(P_KEY);
+      frequencies = layoutTable.get(F_KEY);
+      timestamps = layoutTable.get(T_KEY);
+      DarkImage = layoutTable.get(DarkImage_KEY);
+
+      IniTable infoTable = ini.getTable(INFO_TABLE);
+      compression = infoTable.get(COMPRESSION_KEY);
+    }
+    else if (version.equals("2.0")){
+      IniTable baseTable = ini.getTable(IniTable.DEFAULT_HEADER);
+      datatype = baseTable.get(PIXELFORMAT_KEY);
+      packing = LIPixelFormat.getPacking(datatype);
+      LOGGER.info("packing: " + packing);
+      channels = "1";
+      xLen = baseTable.get(X_KEY);
+      yLen = baseTable.get(Y_KEY);
+      zLen = baseTable.get(Z_KEY);
+      phases ="1";
+      frequencies = "1";
+      timestamps = baseTable.get(NUMBEROFFRAMES_KEY);
+      DarkImage = baseTable.get(NUMBEROFDARKIMAGES_KEY);
+      compression = "0";
+    }
     
     IniTable backgroundTable = ini.getTable(BACKGROUND_TABLE);
     if (backgroundTable != null) {
@@ -341,9 +377,6 @@ public class LiFlimReader extends FormatReader {
       backgroundF = backgroundTable.get(F_KEY);
     }
 
-    IniTable infoTable = ini.getTable(INFO_TABLE);
-    version = infoTable.get(VERSION_KEY);
-    compression = infoTable.get(COMPRESSION_KEY);
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     if (level != MetadataLevel.MINIMUM) {
@@ -437,7 +470,6 @@ public class LiFlimReader extends FormatReader {
     if (TypeUINT12) {
     	ms.bitsPerPixel = 12;
     }
-    
     ms.moduloZ.type = FormatTools.FREQUENCY;
     ms.moduloZ.step = ms.sizeZ / sizeF;
     ms.moduloZ.start = 0;
@@ -572,20 +604,25 @@ public class LiFlimReader extends FormatReader {
 
   private int getPixelTypeFromString(String type) throws FormatException {
     // check data type
-    if (DATATYPE_UINT8.equals(type)) return FormatTools.UINT8;
+    if (DATATYPE_UINT8.equals(type) || LIPixelFormat.pixelFormatEqualsBitSize(8, type)) return FormatTools.UINT8;
     else if (DATATYPE_INT8.equals(type)) return FormatTools.INT8;
-    else if (DATATYPE_UINT16.equals(type)) return FormatTools.UINT16;
+    else if (DATATYPE_UINT16.equals(type) || 
+      LIPixelFormat.pixelFormatEqualsBitSize(16, type) || 
+      LIPixelFormat.pixelFormatEqualsBitSize(10, type) || 
+      LIPixelFormat.pixelFormatEqualsBitSize(14, type)) return FormatTools.UINT16;
     else if (DATATYPE_INT16.equals(type)) return FormatTools.INT16;
     else if (DATATYPE_UINT32.equals(type)) return FormatTools.UINT32;
     else if (DATATYPE_INT32.equals(type)) return FormatTools.INT32;
     else if (DATATYPE_REAL32.equals(type)) return FormatTools.FLOAT;
     else if (DATATYPE_REAL64.equals(type)) return FormatTools.DOUBLE;
     /* Check for UINT12, set DataType to UINT16 because core does not support UINT12 */
-    else if (DATATYPE_UINT12.equals(type)) 
+    else if (DATATYPE_UINT12.equals(type) || LIPixelFormat.pixelFormatEqualsBitSize(12, type))
     { 
-    	TypeUINT12 = true;
+      LOGGER.info("getPixelTypeFromString TypeUINT12");
+    	if (packing != "") TypeUINT12 = true;
     	return FormatTools.UINT16;
     }
+    LOGGER.info("Unknown data type: " + type);
     throw new FormatException("Unknown data type: " + type);
   }
 
