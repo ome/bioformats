@@ -540,11 +540,22 @@ public class CellSensReader extends FormatReader {
         getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
       int outputRowLen = w * pixel;
 
+      Pyramid pyramid = getCurrentPyramid();
+
       for (int row=0; row<tileRows; row++) {
         for (int col=0; col<tileCols; col++) {
           int width = tileX.get(getCoreIndex());
           int height = tileY.get(getCoreIndex());
           Region tile = new Region(col * width, row * height, width, height);
+
+          // the pixel data in the stored tiles may be larger than the defined image size
+          // the "tile origin" information indicates how to crop the pixel data
+          if (pyramid.tileOriginX != null && pyramid.tileOriginY != null) {
+            int resScale = (int) Math.pow(2, getResolutionIndex());
+            tile.x += (pyramid.tileOriginX / resScale);
+            tile.y += (pyramid.tileOriginY / resScale);
+          }
+
           if (!tile.intersects(image)) {
             continue;
           }
@@ -988,6 +999,9 @@ public class CellSensReader extends FormatReader {
 
   // -- Helper methods --
 
+  /**
+   * Get the expected decompressed size of a single tile, in bytes.
+   */
   private int getTileSize() {
     int channels = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -995,18 +1009,12 @@ public class CellSensReader extends FormatReader {
     return bpp * channels * tileX.get(index) * tileY.get(index);
   }
 
-  private byte[] decodeTile(int no, int row, int col)
-    throws FormatException, IOException
-  {
-    if (tileMap.get(getCoreIndex()) == null) {
-      return new byte[getTileSize()];
-    }
-
-    int[] zct = getZCTCoords(no);
-    TileCoordinate t = new TileCoordinate(nDimensions.get(getCoreIndex()));
-    t.coordinate[0] = col;
-    t.coordinate[1] = row;
-
+  /**
+   * Get an object representing the pyramid which contains the
+   * current series/resolution. Accounts for flattened resolutions
+   * as needed.
+   */
+  private Pyramid getCurrentPyramid() {
     int resIndex = getResolution();
     int pyramidIndex = getSeries();
     if (hasFlattenedResolutions()) {
@@ -1025,7 +1033,46 @@ public class CellSensReader extends FormatReader {
       }
     }
 
-    Pyramid pyramid = pyramids.get(pyramidIndex);
+    return pyramids.get(pyramidIndex);
+  }
+
+  /**
+   * Get the current pyramid resolution, accounting for flattened resolutions
+   * as needed.
+   */
+  private int getResolutionIndex() {
+    int resIndex = getResolution();
+    if (hasFlattenedResolutions()) {
+      int index = 0;
+      for (int i=0; i<core.size(); ) {
+        if (index + core.get(i).resolutionCount <= getSeries()) {
+          index += core.get(i).resolutionCount;
+          i += core.get(i).resolutionCount;
+        }
+        else {
+          resIndex = getSeries() - index;
+          break;
+        }
+      }
+    }
+    return resIndex;
+  }
+
+  private byte[] decodeTile(int no, int row, int col)
+    throws FormatException, IOException
+  {
+    if (tileMap.get(getCoreIndex()) == null) {
+      return new byte[getTileSize()];
+    }
+
+    int[] zct = getZCTCoords(no);
+    TileCoordinate t = new TileCoordinate(nDimensions.get(getCoreIndex()));
+    t.coordinate[0] = col;
+    t.coordinate[1] = row;
+
+    int resIndex = getResolutionIndex();
+    Pyramid pyramid = getCurrentPyramid();
+
     for (String dim : pyramid.dimensionOrdering.keySet()) {
       int index = pyramid.dimensionOrdering.get(dim) + 2;
 
@@ -1076,7 +1123,6 @@ public class CellSensReader extends FormatReader {
       }
       options.maxBytes = (int) (offset + tileSize);
 
-      
       long end = index < tileOffsets.get(getCoreIndex()).length - 1 ?
         tileOffsets.get(getCoreIndex())[index + 1] : ets.length();
 
@@ -1671,6 +1717,12 @@ public class CellSensReader extends FormatReader {
                   if (pyramid != null && pyramid.width == null) {
                     pyramid.width = intValues[2];
                     pyramid.height = intValues[3];
+                  }
+                }
+                else if (tag == TILE_ORIGIN) {
+                  if (pyramid != null) {
+                    pyramid.tileOriginX = intValues[0];
+                    pyramid.tileOriginY = intValues[1];
                   }
                 }
                 break;
@@ -2490,6 +2542,8 @@ public class CellSensReader extends FormatReader {
 
     public Integer width;
     public Integer height;
+    public Integer tileOriginX;
+    public Integer tileOriginY;
     public Double originX;
     public Double originY;
     public Double physicalSizeX;
