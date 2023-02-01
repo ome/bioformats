@@ -180,7 +180,7 @@ public class JPEGReader extends DelegateReader {
 
   // -- Helper reader --
 
-  static class DefaultJPEGReader extends ImageIOReader {
+  public static class DefaultJPEGReader extends ImageIOReader {
     public DefaultJPEGReader() {
       super("JPEG", new String[] {"jpg", "jpeg", "jpe"});
       suffixNecessary = false;

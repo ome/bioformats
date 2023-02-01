@@ -91,7 +91,7 @@ public class PrairieReader extends FormatReader {
   private TiffReader tiff;
 
   /** The associated XML files. */
-  private Location xmlFile, cfgFile, envFile;
+  private String xmlFile, cfgFile, envFile;
 
   /** Format-specific metadata. */
   private PrairieMetadata meta;
@@ -215,9 +215,9 @@ public class PrairieReader extends FormatReader {
 
     // add metadata files to the used files list
     final ArrayList<String> usedFiles = new ArrayList<String>();
-    if (xmlFile != null) usedFiles.add(xmlFile.getAbsolutePath());
-    if (cfgFile != null) usedFiles.add(cfgFile.getAbsolutePath());
-    if (envFile != null) usedFiles.add(envFile.getAbsolutePath());
+    if (xmlFile != null) usedFiles.add(xmlFile);
+    if (cfgFile != null) usedFiles.add(cfgFile);
+    if (envFile != null) usedFiles.add(envFile);
 
     if (!noPixels) {
       // add TIFF files to the used files list
@@ -319,15 +319,15 @@ public class PrairieReader extends FormatReader {
     tiff = new TiffReader();
 
     if (checkSuffix(id, XML_SUFFIX)) {
-      xmlFile = new Location(id);
+      xmlFile = new Location(id).getAbsolutePath();
       findMetadataFiles();
     }
     else if (checkSuffix(id, CFG_SUFFIX)) {
-      cfgFile = new Location(id);
+      cfgFile = new Location(id).getAbsolutePath();
       findMetadataFiles();
     }
     else if (checkSuffix(id, ENV_SUFFIX)) {
-      envFile = new Location(id);
+      envFile = new Location(id).getAbsolutePath();
       findMetadataFiles();
     }
     else {
@@ -344,7 +344,7 @@ public class PrairieReader extends FormatReader {
       }
     }
 
-    currentId = xmlFile.getAbsolutePath();
+    currentId = xmlFile;
 
     parsePrairieMetadata();
     populateCoreMetadata();
@@ -356,9 +356,24 @@ public class PrairieReader extends FormatReader {
 
   private void findMetadataFiles() {
     LOGGER.info("Finding metadata files");
-    if (xmlFile == null) xmlFile = find(XML_SUFFIX);
-    if (cfgFile == null) cfgFile = find(CFG_SUFFIX);
-    if (envFile == null) envFile = find(ENV_SUFFIX);
+    if (xmlFile == null) {
+      Location xml = find(XML_SUFFIX);
+      if (xml != null) {
+        xmlFile = xml.getAbsolutePath();
+      }
+    }
+    if (cfgFile == null) {
+      Location cfg = find(CFG_SUFFIX);
+      if (cfg != null) {
+        cfgFile = cfg.getAbsolutePath();
+      }
+    }
+    if (envFile == null) {
+      Location env = find(ENV_SUFFIX);
+      if (env != null) {
+        envFile = env.getAbsolutePath();
+      }
+    }
   }
 
   /**
@@ -368,11 +383,19 @@ public class PrairieReader extends FormatReader {
   private void parsePrairieMetadata() throws FormatException, IOException {
     LOGGER.info("Parsing Prairie metadata");
 
-    final Document xml, cfg, env;
+    Document xml = null;
+    Document cfg = null;
+    Document env = null;
     try {
-      xml = parseDOM(xmlFile);
-      cfg = parseDOM(cfgFile);
-      env = parseDOM(envFile);
+      if (xmlFile != null) {
+        xml = parseDOM(new Location(xmlFile));
+      }
+      if (cfgFile != null) {
+        cfg = parseDOM(new Location(cfgFile));
+      }
+      if (envFile != null) {
+        env = parseDOM(new Location(envFile));
+      }
     }
     catch (ParserConfigurationException exc) {
       throw new FormatException(exc);
@@ -725,7 +748,7 @@ public class PrairieReader extends FormatReader {
 
   /** Gets the absolute path to the filename of the given {@link PFile}. */
   private String getPath(final PFile file) {
-    final Location f = new Location(xmlFile.getParent(), file.getFilename());
+    final Location f = new Location(new Location(xmlFile).getParent(), file.getFilename());
     return f.getAbsolutePath();
   }
 

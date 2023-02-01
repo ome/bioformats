@@ -77,6 +77,7 @@ public class LiFlimReader extends FormatReader {
 
   // relevant keys in layout and background tables
   public static final String DATATYPE_KEY = "datatype";
+  public static final String PACKING_KEY = "packing";
   public static final String C_KEY = "channels";
   public static final String X_KEY = "x";
   public static final String Y_KEY = "y";
@@ -120,6 +121,7 @@ public class LiFlimReader extends FormatReader {
   private String version;
   private String compression;
   private String datatype;
+  private String packing;
   private String channels;
   private String xLen;
   private String yLen;
@@ -215,12 +217,14 @@ public class LiFlimReader extends FormatReader {
           UINT12stream.readFully(bytes);
         }
         catch (EOFException e) {
-          LOGGER.debug("Could not read full 12-bitt plane", e);
+          LOGGER.debug("Could not read full 12-bit plane", e);
         }
 
-        //Covert 12bit data to 16bit data, maintaining 12bit depth.
+        // Covert 12bit data to 16bit data, maintaining 12bit depth.
+        // with msb packing convert in the order of most significant bit, otherwise use least significant bit
         byte[] returnArray = new byte[0];
-        returnArray = convert12to16(bytes); 
+        returnArray = packing.equals("msb") ? 
+          convert12to16MSB(bytes) : convert12to16LSB(bytes);
         RandomAccessInputStream s = new RandomAccessInputStream(returnArray);
         readPlane(s, x, y, w, h, buf);
         s.close();
@@ -255,6 +259,11 @@ public class LiFlimReader extends FormatReader {
       version = null;
       compression = null;
       datatype = null;
+      packing = null;
+      if (UINT12stream != null) UINT12stream.close();
+      UINT12stream = null;
+      UINT12streamPos = 0;
+      UINT12streamSeries = 0;
       channels = null;
       xLen = null;
       yLen = null;
@@ -310,6 +319,7 @@ public class LiFlimReader extends FormatReader {
 
     IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
     datatype = layoutTable.get(DATATYPE_KEY);
+    packing = layoutTable.get(PACKING_KEY);
     channels = layoutTable.get(C_KEY);
     xLen = layoutTable.get(X_KEY);
     yLen = layoutTable.get(Y_KEY);
@@ -572,10 +582,10 @@ public class LiFlimReader extends FormatReader {
     else if (DATATYPE_REAL64.equals(type)) return FormatTools.DOUBLE;
     /* Check for UINT12, set DataType to UINT16 because core does not support UINT12 */
     else if (DATATYPE_UINT12.equals(type)) 
-    	{ 
+    { 
     	TypeUINT12 = true;
     	return FormatTools.UINT16;
-    	}
+    }
     throw new FormatException("Unknown data type: " + type);
   }
 
@@ -667,25 +677,39 @@ public class LiFlimReader extends FormatReader {
 	    
 	  }
 	  
-  // Added a Function to unpack 12bit data to 16bit data maintaining 12bits depth.
-  private static byte[] convert12to16(byte[] image) {
-	   	byte[] image16 = new byte[image.length * 4 / 3];
+  // Unpack 12bit data by least significant bit first to 16bit data maintaining 12bits depth.
+  private static byte[] convert12to16LSB(byte[] image) {
+    byte[] image16 = new byte[image.length * 4 / 3];
 
-		
-		if (image16.length / 4 != image.length / 3)
-	  		return new byte[0];
+    if (image16.length / 4 != image.length / 3)
+      return new byte[0];
 
-		for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) 
-		{
-	  		image16[idx16] = (byte)(image[idx] & 0xff);
-	  		image16[idx16 + 1] = (byte)((image[idx + 1] & 0x0f));
-	  		image16[idx16 + 2] = (byte)(((image[idx + 1] & 0xf0) >> 4) + ((image[idx + 2] & 0x0f) << 4));
-	  		image16[idx16 + 3] = (byte)((image[idx + 2] & 0xf0) >> 4);
-		}
-		
-		return image16;
-		}
+    for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) {
+      image16[idx16] = (byte)(image[idx] & 0xff);
+      image16[idx16 + 1] = (byte)((image[idx + 1] & 0x0f));
+      image16[idx16 + 2] = (byte)(((image[idx + 1] & 0xf0) >> 4) | ((image[idx + 2] & 0x0f) << 4));
+      image16[idx16 + 3] = (byte)((image[idx + 2] & 0xf0) >> 4);
+    }
+   
+    return image16;
+  }
+
+  // Unpack 12bit data by most significant bit first to 16bit data maintaining 12bits depth.
+  private static byte[] convert12to16MSB(byte[] image) {
+    byte[] image16 = new byte[image.length * 4 / 3];
+
+    if (image16.length / 4 != image.length / 3)
+      return new byte[0];
+
+    for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) {
+      image16[idx16] = (byte)(((image[idx]  & 0x0f) << 4) | ((image[idx + 1]  & 0xf0) >> 4));
+      image16[idx16 + 1] = (byte)((image[idx]  & 0xf0) >> 4);
+      image16[idx16 + 2] = (byte)((image[idx + 2] & 0xff));
+      image16[idx16 + 3] = (byte)((image[idx + 1]) & 0x0f);
+    }
   
+    return image16;
+  }
 
   private void skip(InputStream is, long num) throws IOException {
     long skipLeft = num;
