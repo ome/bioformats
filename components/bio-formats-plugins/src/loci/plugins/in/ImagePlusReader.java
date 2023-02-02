@@ -34,6 +34,7 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 
 import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -198,6 +199,13 @@ public class ImagePlusReader implements StatusReporter {
         if (cm instanceof LUT) {
           // plane has custom LUT attached; save it to the list
           final LUT lut = (LUT) cm;
+          luts.add(lut);
+          // discard custom LUT from ImageProcessor
+          ip.setColorModel(ip.getDefaultColorModel());
+        }
+        else if (cm instanceof IndexColorModel) {
+          // plane has custom LUT attached; save it to the list
+          final LUT lut = new LUT((IndexColorModel) cm,0,0);
           luts.add(lut);
           // discard custom LUT from ImageProcessor
           ip.setColorModel(ip.getDefaultColorModel());
