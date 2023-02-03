@@ -1564,7 +1564,8 @@ public class SlideBook7Reader  extends FormatReader {
         public float GetVoxelSize()
         {
             float theSize = mImageRecord.mLensDef.mMicronPerPixel;
-            if(mImageRecord.mOptovarDef.mMagnification > 0) theSize /=  mImageRecord.mLensDef.mMicronPerPixel;
+            if(mImageRecord.mOptovarDef.mMagnification > 0)
+                theSize /= mImageRecord.mOptovarDef.mMagnification;
             float theXFactor = mChannelRecordList.get(0).mExposureRecord.mXFactor;
             if(theXFactor > 0) theSize *= theXFactor;
             return theSize;
