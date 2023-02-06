@@ -495,8 +495,8 @@ public class FV1000Reader extends FormatReader {
       code[i] = commonParams.get("AxisCode");
       size[i] = commonParams.get("MaxSize");
 
-      double end = Double.parseDouble(commonParams.get("EndPosition"));
-      double start = Double.parseDouble(commonParams.get("StartPosition"));
+      double end = DataTools.parseDouble(commonParams.get("EndPosition"));
+      double start = DataTools.parseDouble(commonParams.get("StartPosition"));
       pixelSize[i] = end - start;
     }
 
@@ -515,7 +515,7 @@ public class FV1000Reader extends FormatReader {
     while (laser != null) {
       laserEnabled = laser.get("Laser Enable").equals("1");
       if (laserEnabled) {
-        wavelengths.add(new Double(laser.get("LaserWavelength")));
+        wavelengths.add(DataTools.parseDouble(laser.get("LaserWavelength")));
       }
 
       creationDate = laser.get("ImageCaputreDate");
@@ -1006,14 +1006,14 @@ public class FV1000Reader extends FormatReader {
       // populate Dimensions data
 
       if (pixelSizeX != null) {
-        Double sizeX = new Double(pixelSizeX);
+        Double sizeX = DataTools.parseDouble(pixelSizeX);
         Length size = FormatTools.getPhysicalSizeX(sizeX);
         if (size != null) {
           store.setPixelsPhysicalSizeX(size, i);
         }
       }
       if (pixelSizeY != null) {
-        Double sizeY = new Double(pixelSizeY);
+        Double sizeY = DataTools.parseDouble(pixelSizeY);
         Length size = FormatTools.getPhysicalSizeY(sizeY);
         if (size != null) {
           store.setPixelsPhysicalSizeY(size, i);
@@ -1051,6 +1051,7 @@ public class FV1000Reader extends FormatReader {
     }
 
     int channelIndex = 0;
+    int filterIndex = 0;
     for (ChannelData channel : channels) {
       if (!channel.active) continue;
       if (channelIndex >= getEffectiveSizeC()) break;
@@ -1092,9 +1093,9 @@ public class FV1000Reader extends FormatReader {
 
       // populate Filter data
       if (channel.barrierFilter != null) {
-        String filterID = MetadataTools.createLSID("Filter", 0, channelIndex);
-        store.setFilterID(filterID, 0, channelIndex);
-        store.setFilterModel(channel.barrierFilter, 0, channelIndex);
+        String filterID = MetadataTools.createLSID("Filter", 0, filterIndex);
+        store.setFilterID(filterID, 0, filterIndex);
+        store.setFilterModel(channel.barrierFilter, 0, filterIndex);
 
         if (channel.barrierFilter.indexOf('-') != -1) {
           String[] emValues = channel.barrierFilter.split("-");
@@ -1102,22 +1103,23 @@ public class FV1000Reader extends FormatReader {
             emValues[i] = emValues[i].replaceAll("\\D", "");
           }
           try {
-            Double cutIn = new Double(emValues[0]);
-            Double cutOut = new Double(emValues[1]);
+            Double cutIn = DataTools.parseDouble(emValues[0]);
+            Double cutOut = DataTools.parseDouble(emValues[1]);
 
             Length in = FormatTools.getCutIn(cutIn);
             Length out = FormatTools.getCutOut(cutOut);
 
             if (in != null) {
-              store.setTransmittanceRangeCutIn(in, 0, channelIndex);
+              store.setTransmittanceRangeCutIn(in, 0, filterIndex);
             }
             if (out != null) {
-              store.setTransmittanceRangeCutOut(out, 0, channelIndex);
+              store.setTransmittanceRangeCutOut(out, 0, filterIndex);
             }
           }
           catch (NumberFormatException e) { }
         }
         store.setLightPathEmissionFilterRef(filterID, 0, channelIndex, 0);
+        filterIndex++;
       }
 
       // populate FilterSet data
@@ -1153,14 +1155,14 @@ public class FV1000Reader extends FormatReader {
 
     // populate Objective data
 
-    if (lensNA != null) store.setObjectiveLensNA(new Double(lensNA), 0, 0);
+    if (lensNA != null) store.setObjectiveLensNA(DataTools.parseDouble(lensNA), 0, 0);
     store.setObjectiveModel(objectiveName, 0, 0);
     if (magnification != null) {
       Double mag = Double.parseDouble(magnification);
       store.setObjectiveNominalMagnification(mag, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(DataTools.parseDouble(workingDistance), UNITS.MICROMETER), 0, 0);
     }
     store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
     store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
@@ -1283,8 +1285,8 @@ public class FV1000Reader extends FormatReader {
             Length l = new Length((double) lineWidth, UNITS.PIXEL);
             store.setPointStrokeWidth(l, nextROI, shape);
 
-            store.setPointX(new Double(xc[0]), nextROI, shape);
-            store.setPointY(new Double(yc[0]), nextROI, shape);
+            store.setPointX(DataTools.parseDouble(xc[0]), nextROI, shape);
+            store.setPointY(DataTools.parseDouble(yc[0]), nextROI, shape);
           }
           else if (shapeType == GRID || shapeType == RECTANGLE) {
             if (shapeType == RECTANGLE) divide = 1;

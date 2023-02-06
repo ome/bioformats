@@ -129,6 +129,11 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
   private boolean textData = false;
   private Double refractiveIndex = null;
+  Boolean imageMetadataLVProcessed = false;
+  String  imageMetadataLVOrder = "";
+  private transient Double lensNA = null;
+  private transient Double objectiveMag = null;
+  private transient String objectiveModel = null;
 
   // -- Constructor --
 
@@ -349,12 +354,23 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       useZ = null;
       textData = false;
       refractiveIndex = null;
+      lensNA = null;
+      objectiveMag = null;
+      objectiveModel = null;
       exposureTime.clear();
       positionCount = 0;
     }
   }
 
   // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(USE_CHUNKMAP_KEY);
+    return optionsList;
+  }
 
   static class ChunkMapEntry {
     public String name;
@@ -529,9 +545,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
       }
 
-      int chunkmapSkips = 0;
+      Boolean currentCountSetted = false;
+      int XYCount = 1;
+      int timeCount = 1;
+      int zCount = 1;
 
       in.seek(0);
+      int validBits = 0;
 
       while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
       {
@@ -656,7 +676,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
             useLastText = true;
           }
 
-          if(useChunkMap && chunkmapSkips == 0) {
+          if(useChunkMap) {
             ChunkMapEntry lastImage = null;
 
             // sanity check: see if the chunk we just found is actually in the chunkmap ...
@@ -679,13 +699,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
               if(!entry.name.startsWith("ImageDataSeq")) {
                 continue;
-              }
-
-              if(lastImage!=null) {
-                chunkmapSkips = (int)(((entry.position - lastImage.position) / entry.length) - 1);
-                if(chunkmapSkips > 0) {
-                  break;
-                }
               }
 
               lastImage = entry;
@@ -714,10 +727,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
           }
 
-          if(chunkmapSkips > 0) {
-            chunkmapSkips -= 1;
-          }
-
           dataLength -= 31;
           LOGGER.debug(
             "Adding non-chunkmap offset {}, nameLength = {}, dataLength = {}",
@@ -739,11 +748,46 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           long startFP = in.getFilePointer();
           in.seek(startFP - 1);
 
-          String textString = DataTools.stripString(in.readString((int) dataLength));
-          textStrings.add(textString);
-          validDimensions.add(blockCount > 2);
+          // text block can contain XML (which may be cut off)
+          // or sequence of string objects
 
-          if (!textString.startsWith("<")) {
+          int typeByte = in.read();
+
+          // 11 is the max object type code (see iterateIn case statement)
+          // don't look for '<' because old ND2s might have
+          // cut off or incorrectly aligned XML
+
+          if (typeByte > 11) {
+            in.seek(startFP - 1);
+            String textString = DataTools.stripString(in.readString((int) dataLength));
+            textStrings.add(textString);
+            validDimensions.add(blockCount > 2);
+            if (!textString.startsWith("<")) {
+              skip = 0;
+            }
+          }
+          else {
+            int charCount = in.read();
+            textStrings.add(DataTools.stripString(in.readString(charCount * 2)));
+            validDimensions.add(blockCount > 2);
+            int numTextInfos = in.readInt();
+            long remainingBytes = in.readLong();
+
+            // reassemble sequence of strings into single multi-line string
+            // that will be parsed once so that the same ND2Handler is
+            // used for the whole block
+            // this should maybe be refactored at some point?
+            ArrayList<String> text = iterateIn(in, startFP + dataLength - 1, true);
+            StringBuffer b = new StringBuffer();
+            for (int t=0; t<text.size(); t++) {
+              b.append(text.get(t));
+              b.append("\n");
+            }
+            textStrings.add(b.toString());
+            validDimensions.add(blockCount > 2);
+
+            // make sure the file pointer is at the end of the block
+            in.seek(startFP + dataLength - 1);
             skip = 0;
           }
         }
@@ -838,6 +882,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                   valueOrLength / 8, false, true);
               }
               else if (attributeName.equals("uiBpcSignificant")) {
+                validBits = valueOrLength;
                 core.get(0, 0).bitsPerPixel = valueOrLength;
               }
               else if (attributeName.equals("dCompressionParam")) {
@@ -897,8 +942,101 @@ public class NativeND2Reader extends SubResolutionFormatReader {
             isLossless = isLossless && canBeLossless;
           }
           else {
-            if (blockType.startsWith("ImageMetadat")) {
+            if (blockType.startsWith("ImageMetadat") && !imageMetadataLVProcessed) {
               foundMetadata = true;
+              long startFilePointer = in.getFilePointer();
+              in.skipBytes(6);
+              long endFP = in.getFilePointer() + len - 18;
+              while (in.read() == 0);
+
+              int eType = 0;
+              Boolean nextExperiment = true;
+
+              long currentFilePointer = in.getFilePointer();
+
+              while (true) {
+                in.seek(currentFilePointer);
+
+                int nameLen = in.read();
+                if (nameLen == 0 || nameLen < 0) {
+                  currentFilePointer++;
+                  continue;
+                }
+
+                String attributeName =
+                        DataTools.stripString(in.readString(nameLen * 2));
+
+                if(attributeName.length() != nameLen - 1)
+                {
+                  currentFilePointer++;
+                  continue;
+                }
+
+                if (attributeName.equals("SLxExperiment")) {
+                  currentFilePointer += nameLen * 2;
+                  imageMetadataLVProcessed = true;
+                  imageMetadataLVOrder = "";
+                }
+
+                if (attributeName.equals("eType")) {
+                  currentFilePointer += nameLen * 2;
+                  if(nextExperiment)
+                    eType = in.readInt();
+                  nextExperiment = false;
+                } else
+                if (attributeName.equals("uiCount")) {
+                  currentFilePointer += nameLen * 2;
+
+                  if(!currentCountSetted)
+                  {
+                    if(eType == 2)
+                    {
+                      imageMetadataLVOrder = "M" + imageMetadataLVOrder;
+                      XYCount = in.readInt();
+                    } else if(eType == 1)
+                    {
+                      imageMetadataLVOrder = "T" + imageMetadataLVOrder;
+                      timeCount = in.readInt();
+                    } if(eType == 4)
+                    {
+                      imageMetadataLVOrder = "Z" + imageMetadataLVOrder;
+                      zCount = in.readInt();
+                    }
+                    currentCountSetted = true;
+                  }
+                } else
+                if (attributeName.equals("bKeepObject")) {
+                  currentFilePointer += nameLen * 2;
+                } else
+                if (attributeName.equals("uiRepeatCount")) {
+                  currentFilePointer += nameLen * 2;
+                } else
+                  if (attributeName.equals("vectStimulationConfigurationsSize")) {
+                  currentFilePointer += nameLen * 2;
+                } else
+                if (attributeName.equals("uiNextLevelCount")) {
+                  currentFilePointer += nameLen * 2;
+                  int uiNextLevelCount = in.readInt();
+
+                  if(uiNextLevelCount == 0)
+                  {
+                    break;
+                  }
+                  currentCountSetted = false;
+                  nextExperiment = true;
+                }
+
+                if (in.getFilePointer() > endFP) {
+                  in.seek(startFilePointer);
+                  break;
+                }
+
+                currentFilePointer++;
+              }
+
+              if (in.getFilePointer() > startFilePointer) {
+                in.seek(startFilePointer);
+              }
             }
 
             int length = len - 12;
@@ -937,7 +1075,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
           int nInts = len / 4;
           long doubleOffset = fp + 8 * (nDoubles - imageOffsets.size());
           long intOffset = fp + 4 * (nInts - imageOffsets.size());
-          if (blockType.startsWith("CustomData|A")) {
+          if (nameAttri.startsWith("CustomData|AcqTimesCache")) {
             customDataOffsets.add(fp);
             customDataLengths.add(new long[] {nameLength, dataLength});
           }
@@ -965,6 +1103,14 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         if (skip > 0 && skip + in.getFilePointer() <= in.length()) {
           in.skipBytes(skip);
         }
+      }
+      
+      if(currentCountSetted && imageMetadataLVOrder.length() > 0 && 
+          (imageOffsets.size() == 0 || timeCount * zCount * XYCount == imageOffsets.size())) {
+        setDimensions(timeCount, zCount, XYCount);
+      }
+      else {
+        imageMetadataLVProcessed = false;
       }
 
       // parse text blocks
@@ -1235,6 +1381,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         core.get(0, 0).pixelType = FormatTools.UINT8;
       }
 
+      // now that pixel type is est, restore number of valid bits per pixel
+      if (core.get(0, 0).bitsPerPixel == 0 && validBits > 0 &&
+        validBits <= 8 * FormatTools.getBytesPerPixel(core.get(0, 0).pixelType))
+      {
+        core.get(0, 0).bitsPerPixel = validBits;
+      }
+
       if (getSizeX() == 0) {
         core.get(0, 0).sizeX = (int) Math.sqrt(availableBytes /
           (getSizeC() * FormatTools.getBytesPerPixel(getPixelType())));
@@ -1341,7 +1494,6 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
       if (getSizeC() > 1 && getDimensionOrder().indexOf('C') == -1) {
         core.get(0, 0).dimensionOrder = "C" + getDimensionOrder();
-        fieldIndex++;
       }
 
       core.get(0, 0).dimensionOrder = "XY" + getDimensionOrder();
@@ -1372,7 +1524,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         in.seek(xOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
           final Double number = Double.valueOf(in.readDouble());
-          final Length x = new Length(number, UNITS.REFERENCEFRAME);
+          final Length x = new Length(number, UNITS.MICROMETER);
           if (!posX.contains(x)) {
             uniqueX++;
           }
@@ -1383,7 +1535,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         in.seek(yOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
           final Double number = Double.valueOf(in.readDouble());
-          final Length y = new Length(number, UNITS.REFERENCEFRAME);
+          final Length y = new Length(number, UNITS.MICROMETER);
           if (!posY.contains(y)) {
             uniqueY++;
           }
@@ -1394,13 +1546,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         in.seek(zOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
           final Double number = Double.valueOf(in.readDouble());
-          final Length z = new Length(number, UNITS.REFERENCEFRAME);
+          final Length z = new Length(number, UNITS.MICROMETER);
           if (!posZ.contains(z)) {
             boolean unique = true;
             for (int q=0; q<posZ.size(); q++) {
               // account for potential stage drift
-              final double z1 = z.value(UNITS.REFERENCEFRAME).doubleValue();
-              final double z2 = posZ.get(q).value(UNITS.REFERENCEFRAME).doubleValue();
+              final double z1 = z.value(UNITS.MICROMETER).doubleValue();
+              final double z2 = posZ.get(q).value(UNITS.MICROMETER).doubleValue();
               if (Math.abs(z1 - z2) <= 0.05) {
                 unique = false;
                 break;
@@ -1442,8 +1594,8 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       // reset the series count if we're confident that the image count
       // covers all of the offsets; this prevents too much memory being used
       // when the offsets array is allocated
-      if (getImageCount() == imageOffsets.size() && numSeries > 1 &&
-        getSizeC() == 1)
+      if (numSeries > 1 && ((getImageCount() == imageOffsets.size()  &&
+          getSizeC() == 1) || (getImageCount() == imageOffsets.size() * getSizeC()))) 
       {
         CoreMetadata first = core.get(0, 0);
         core.clear();
@@ -1454,15 +1606,48 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       offsets = new long[numSeries][getImageCount()];
 
       int[] lengths = new int[4];
-      int nextChar = 2;
-      for (int i=0; i<lengths.length; i++) {
-        if (i == fieldIndex) lengths[i] = core.size();
-        else {
-          char axis = getDimensionOrder().charAt(nextChar++);
-          if (axis == 'Z') lengths[i] = getSizeZ();
-          else if (axis == 'C') lengths[i] = 1;
-          else if (axis == 'T') lengths[i] = getSizeT();
+      if(!imageMetadataLVProcessed) {
+        int nextChar = 2;
+        for (int i = 0; i < lengths.length; i++) {
+          if (i == fieldIndex) lengths[i] = core.size();
+          else {
+            char axis = getDimensionOrder().charAt(nextChar++);
+            if (axis == 'Z') lengths[i] = getSizeZ();
+            else if (axis == 'C') lengths[i] = 1;
+            else if (axis == 'T') lengths[i] = getSizeT();
+          }
         }
+      } else
+      {
+        int currPos = 1;
+        lengths[0] = 1;
+        lengths[1] = 1;
+        lengths[2] = 1;
+        lengths[3] = 1;
+        for (char c:
+                imageMetadataLVOrder.toCharArray()) {
+          if(c == 'Z')
+          {
+            lengths[currPos] = getSizeZ();
+          }
+          else if(c == 'M')
+          {
+            fieldIndex = currPos;
+            lengths[currPos] = core.size();
+          }
+          else if(c == 'T')
+          {
+            lengths[currPos] = getSizeT();
+          }
+          else
+          {
+            currPos--;
+          }
+          currPos++;
+        }
+
+        if(!imageMetadataLVOrder.contains("M"))
+          fieldIndex = 3;
       }
       int[] zctLengths = new int[4];
       System.arraycopy(lengths, 0, zctLengths, 0, lengths.length);
@@ -1862,10 +2047,24 @@ public class NativeND2Reader extends SubResolutionFormatReader {
    * Function for iterating through ND2 metaAttributes
    * @param in    stream of bytes from file
    * @param stop position where to stop
+   * @return text info values, if found
    */
-  private void iterateIn(RandomAccessInputStream in, Long stop) {
+  private ArrayList<String> iterateIn(RandomAccessInputStream in, Long stop) {
+    return iterateIn(in, stop, false);
+  }
+
+  /**
+   * Function for iterating through ND2 metaAttributes
+   * @param in    stream of bytes from file
+   * @param stop position where to stop
+   * @param minimal true if values should be read with no additional metadata parsing
+   * @return text info values, if found
+   */
+  private ArrayList<String> iterateIn(RandomAccessInputStream in, Long stop, boolean minimal) {
     Object value; // We don't know if attribute will be int, double, string....
     Double zHigh = null, zLow = null;
+
+    ArrayList<String> textInfos = new ArrayList<String>();
 
     try {
       Integer currentColor = null;
@@ -1909,6 +2108,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                 resultString.append(currentChar);
             }
             value = resultString.toString();
+
+            if (name.startsWith("TextInfoItem")) {
+              textInfos.add((String) value);
+            }
             break;
           case (9): // ByteArray
             long length = in.readLong();
@@ -1916,9 +2119,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
               in.seek(stop);
               continue;
             }
-            byte[] data = new byte[(int) length];
-            in.read(data);
-            value = new String(data, Constants.ENCODING);
+            value = "ByteArray";
+            if (length > 2) {
+              iterateIn(in, stop);
+            }
+            else {
+              in.skipBytes(length);
+            }
             break;
           case (10): // deprecated
             // Its like LEVEL but offset is pointing absolutely not relatively
@@ -1959,6 +2166,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
             continue;
         }
 
+        if (minimal) {
+          continue;
+        }
+
         name = name.trim();
 
         if (name.equals("bUseZ")) {
@@ -1994,8 +2205,17 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         else if (name.equals("dPosX")) {
           positionCount++;
         }
+        else if (name.equals("dObjectiveMag")) {
+          Double mag = DataTools.parseDouble(value.toString());
+          if (mag != null && mag > 0) {
+            objectiveMag = mag;
+          }
+        }
+        else if (name.equals("sObjective")) {
+          objectiveModel = value.toString();
+        }
 
-        if (type != 11 && type != 10) {    // if not level add global meta
+        if (type != 11 && type != 10 && type != 9) {    // if not level add global meta
           addGlobalMeta(name, value);
         }
       }
@@ -2007,6 +2227,8 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     if (zHigh != null && zLow != null && trueSizeZ != null && trueSizeZ > 0) {
       core.get(0, 0).sizeZ = (int) (Math.ceil(Math.abs(zHigh - zLow) / trueSizeZ)) + 1;
     }
+
+    return textInfos;
   }
 
   private void populateMetadataStore(ND2Handler handler) throws FormatException
@@ -2035,7 +2257,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
       if (channelNames.size() < getEffectiveSizeC() && backupHandler != null) {
         channelNames = backupHandler.getChannelNames();
       }
-      else if (channelNames.size() < getEffectiveSizeC()) {
+      if (channelNames.size() < getEffectiveSizeC()) {
         channelNames = textChannelNames;
       }
       for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -2156,7 +2378,10 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         setSeries(i);
         for (int n=0; n<getImageCount(); n++) {
           int[] coords = getZCTCoords(n);
-          int stampIndex = getIndex(coords[0], split ? 0 : coords[1], 0);
+          int stampIndex = coords[0];
+          if (!split || getSeriesCount() == 1) {
+            stampIndex = getIndex(coords[0], !split ? coords[1] : 0, 0);
+          }
           stampIndex += (coords[2] * getSeriesCount() + i) * zcPlanes;
           if (tsT.size() == getImageCount()) stampIndex = n;
           else if (tsT.size() == getSizeZ()) {
@@ -2318,15 +2543,22 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     }
 
     // populate Objective
-    Double na = handler.getNumericalAperture();
-    if (na != null) {
-      store.setObjectiveLensNA(na, 0, 0);
+    if (lensNA == null) {
+      lensNA = handler.getNumericalAperture();
     }
-    Double mag = handler.getMagnification();
-    if (mag != null) {
-      store.setObjectiveCalibratedMagnification(mag, 0, 0);
+    if (lensNA != null) {
+      store.setObjectiveLensNA(lensNA, 0, 0);
     }
-    store.setObjectiveModel(handler.getObjectiveModel(), 0, 0);
+    if (objectiveMag == null) {
+      objectiveMag = handler.getMagnification();
+    }
+    if (objectiveMag != null) {
+      store.setObjectiveCalibratedMagnification(objectiveMag, 0, 0);
+    }
+    if (objectiveModel == null) {
+      objectiveModel = handler.getObjectiveModel();
+    }
+    store.setObjectiveModel(objectiveModel, 0, 0);
 
     String immersion = handler.getImmersion();
     if (immersion == null) immersion = "Other";
@@ -2427,6 +2659,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
       String[] lines = textString.split("\n");
       ND2Handler handler = new ND2Handler(core, offsetCount);
+      handler.imageMetadataLVExists = imageMetadataLVProcessed;
       for (String line : lines) {
         int separator = line.indexOf(':');
         if (separator >= 0) {
@@ -2520,6 +2753,9 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         else if (key.equals("Refractive Index")) {
           refractiveIndex = DataTools.parseDouble(value);
         }
+        else if (key.equals("Numerical Aperture")) {
+          lensNA = DataTools.parseDouble(value);
+        }
 
         if (metadata.containsKey(key)) {
           Object oldValue = metadata.get(key);
@@ -2539,6 +2775,52 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
       }
     }
+  }
+
+  private void setDimensions(int numT, int numZ, int numSeries) {
+    CoreMetadata ms0 = core.get(0, 0);
+    ms0.sizeT = numT;
+    ms0.sizeZ = numZ;
+    if (numSeries > 1) {
+      int x = ms0.sizeX;
+      int y = ms0.sizeY;
+      int z = ms0.sizeZ;
+      int tSize = ms0.sizeT;
+      int c = ms0.sizeC;
+      String order = ms0.dimensionOrder;
+      core = new CoreMetadataList();
+      for (int i=0; i<numSeries; i++) {
+        CoreMetadata ms = new CoreMetadata();
+        core.add(ms);
+        ms.sizeX = x;
+        ms.sizeY = y;
+        ms.sizeZ = z == 0 ? 1 : z;
+        ms.sizeC = c == 0 ? 1 : c;
+        ms.sizeT = tSize == 0 ? 1 : tSize;
+        ms.dimensionOrder = order;
+      }
+      ms0 = core.get(0, 0);
+    }
+
+
+    ms0.imageCount = ms0.sizeZ * ms0.sizeC * ms0.sizeT;
+  }
+
+  /**
+   * @return offsets to pixel data
+   */
+  public long[][] getOffsets() {
+    return offsets;
+  }
+
+  /**
+   * Change the underlying file path and pixel data offsets,
+   * keeping all other metadata the same.
+   */
+  public void setOffsets(String file, long[][] newOffsets) throws IOException {
+    close(true);
+    in = new RandomAccessInputStream(file);
+    offsets = newOffsets;
   }
 
 }

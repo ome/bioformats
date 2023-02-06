@@ -816,13 +816,20 @@ public class MIASReader extends FormatReader {
     String plateAcqId = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqId, 0, 0);
     store.setPlateAcquisitionMaximumFieldCount(new PositiveInteger(1), 0, 0);
+    if (nWells >= wellColumns) {
+      store.setPlateRows(new PositiveInteger(nWells / wellColumns), 0);
+    }
+    else {
+      store.setPlateRows(new PositiveInteger(1), 0);
+    }
+    store.setPlateColumns(new PositiveInteger(wellColumns), 0);
 
     for (int well=0; well<nWells; well++) {
       int wellIndex = wellNumber[well];
 
       int row = wellIndex / wellColumns;
       int wellCol = (wellIndex % wellColumns) + 1;
-      char wellRow = (char) ('A' + row);
+      String wellRow = FormatTools.getWellRowName(row);
 
       store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
       store.setWellRow(new NonNegativeInteger(row), 0, well);

@@ -34,6 +34,7 @@
         <groups/>
         <classes>
             <class name="loci.formats.utests.OMEXMLServiceTest"/>
+            <class name="loci.formats.utests.JHDFServiceTest"/>
         </classes>
         <packages>
             <package name="loci.formats.utests.xml"/>

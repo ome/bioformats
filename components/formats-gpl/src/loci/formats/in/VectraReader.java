@@ -319,6 +319,10 @@ public class VectraReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
 
+    String instrument = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrument, 0);
+    String detector = MetadataTools.createLSID("Detector", 0, 0);
+    store.setDetectorID(detector, 0, 0);
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       int coreIndex = seriesToCoreIndex(i);
@@ -337,6 +341,8 @@ public class VectraReader extends BaseTiffReader {
       TiffRational yPos = ifd.getIFDRationalValue(IFD.Y_POSITION);
       int unitMultiplier = ifd.getResolutionMultiplier();
 
+      store.setImageInstrumentRef(instrument, i);
+
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setPlaneTheZ(new NonNegativeInteger(0), i, c);
         store.setPlaneTheT(new NonNegativeInteger(0), i, c);
@@ -350,13 +356,19 @@ public class VectraReader extends BaseTiffReader {
           double position = yPos.doubleValue() * unitMultiplier;
           store.setPlanePositionY(FormatTools.getPhysicalSizeY(position), i, c);
         }
+        store.setDetectorSettingsID(detector, i, c);
       }
     }
     setSeries(0);
 
     // each high-resolution IFD has an XML description that needs to be parsed
 
+    int omeImageCount = hasFlattenedResolutions() ? pyramidDepth : 1;
+
     for (int c=0; c<getEffectiveSizeC(); c++) {
+      String storedChannelName = null;
+      String biomarker = null;
+
       String xml = getIFDComment(c);
       try {
         Element root = XMLTools.parseDOM(xml).getDocumentElement();
@@ -369,20 +381,96 @@ public class VectraReader extends BaseTiffReader {
 
           String name = e.getNodeName();
           String value = e.getTextContent();
-          if (name.equals("ScanProfile")) {
-            try {
-              Document profileRoot = XMLTools.createDocument();
-              Node tmp = profileRoot.importNode(e, true);
-              profileRoot.appendChild(tmp);
-              profileXML = XMLTools.getXML(profileRoot);
 
-              // scan profile XML is usually too long to be saved
-              // when original metadata filtering is enabled, but there
-              // is an API method below to retrieve it
-              addGlobalMeta(name, profileXML);
+          if (name.equals("ScanProfile")) {
+            // the scan profile might be JSON or XML, with an undocumented structure
+            // only the first channel has a ScanProfile defined
+            if (value.startsWith("{")) {
+              profileXML = value;
             }
-            catch (Exception ex) {
-              LOGGER.debug("Could not preserve scan profile metadata", ex);
+            else {
+              try {
+                Document profileRoot = XMLTools.createDocument();
+                Node tmp = profileRoot.importNode(e, true);
+                profileRoot.appendChild(tmp);
+                profileXML = XMLTools.getXML(profileRoot);
+              }
+              catch (Exception ex) {
+                LOGGER.debug("Could not preserve scan profile metadata", ex);
+              }
+            }
+
+            // scan profile is usually too long to be saved
+            // when original metadata filtering is enabled, but there
+            // is an API method below to retrieve it
+            addGlobalMeta(name, profileXML);
+          }
+          else if (name.equals("Responsivity")) {
+            NodeList filters = e.getChildNodes();
+
+            int channelDigits = String.valueOf(getEffectiveSizeC()).length();
+            String prefix = String.format("Responsivity Filter #%0" + channelDigits + "d ", c + 1);
+            for (int f=0; f<filters.getLength(); f++) {
+              if ("Filter".equals(filters.item(f).getNodeName())) {
+                processParentNode(filters.item(f), prefix);
+              }
+            }
+          }
+          else if (name.equals("ExcitationFilter")) {
+            handleFilter(e, c);
+          }
+          else if (name.equals("EmissionFilter")) {
+            handleFilter(e, c);
+          }
+          else if (name.equals("CameraSettings")) {
+            NodeList settings = e.getChildNodes();
+            for (int q=0; q<settings.getLength(); q++) {
+              if (!(settings.item(q) instanceof Element)) {
+                continue;
+              }
+              Element setting = (Element) settings.item(q);
+              String settingName = setting.getNodeName();
+              String settingValue = setting.getTextContent();
+
+              if (settingName.equals("ROI")) {
+                Double x = null;
+                Double y = null;
+                Double w = null;
+                Double h = null;
+
+                NodeList roi = setting.getChildNodes();
+                for (int r=0; r<roi.getLength(); r++) {
+                  Node dim = roi.item(r);
+                  String dimName = dim.getNodeName();
+                  Double dimValue = DataTools.parseDouble(dim.getTextContent());
+                  if (dimName.equals("X")) {
+                    x = dimValue;
+                  }
+                  else if (dimName.equals("Y")) {
+                    y = dimValue;
+                  }
+                  else if (dimName.equals("Width")) {
+                    w = dimValue;
+                  }
+                  else if (dimName.equals("Height")) {
+                    h = dimValue;
+                  }
+                }
+                settingValue = String.format("[%f, %f, %f, %f]", x, y, w, h);
+              }
+
+              addGlobalMetaList(settingName, settingValue);
+
+              if (settingName.equals("Gain")) {
+                for (int series=0; series<omeImageCount; series++) {
+                  store.setDetectorSettingsGain(DataTools.parseDouble(settingValue), series, c);
+                }
+              }
+              else if (settingName.equals("Binning")) {
+                for (int series=0; series<omeImageCount; series++) {
+                  store.setDetectorSettingsBinning(MetadataTools.getBinning(settingValue + "x" + settingValue), series, c);
+                }
+              }
             }
           }
           else {
@@ -390,33 +478,41 @@ public class VectraReader extends BaseTiffReader {
           }
 
           if (name.equals("Name")) {
-            if (hasFlattenedResolutions()) {
-              for (int series=0; series<pyramidDepth; series++) {
-                store.setChannelName(value, series, c);
-              }
+            storedChannelName = value;
+          }
+          else if (name.equals("Biomarker")) {
+            biomarker = value;
+          }
+          else if (name.equals("SampleDescription")) {
+            for (int series=0; series<omeImageCount; series++) {
+              store.setImageDescription(value, series);
             }
-            else {
-              store.setChannelName(value, 0, c);
+          }
+          else if (name.equals("OperatorName")) {
+            String experimenter = MetadataTools.createLSID("Experimenter", 0);
+            store.setExperimenterID(experimenter, 0);
+            store.setExperimenterUserName(value, 0);
+            for (int series=0; series<omeImageCount; series++) {
+              store.setImageExperimenterRef(experimenter, 0);
             }
+          }
+          else if (name.equals("InstrumentType")) {
+            store.setMicroscopeModel(value, 0);
+          }
+          else if (name.equals("CameraType")) {
+            store.setDetectorModel(value, 0, 0);
           }
           else if (name.equals("Color")) {
             String[] components = value.split(",");
             Color color = new Color(Integer.parseInt(components[0]),
               Integer.parseInt(components[1]), Integer.parseInt(components[2]), 255);
-            if (hasFlattenedResolutions()) {
-              for (int series=0; series<pyramidDepth; series++) {
-                store.setChannelColor(color, series, c);
-              }
-            }
-            else {
-              store.setChannelColor(color, 0, c);
+            for (int series=0; series<omeImageCount; series++) {
+              store.setChannelColor(color, series, c);
             }
           }
           else if (name.equals("Objective") && c == 0) {
-            String instrument = MetadataTools.createLSID("Instrument", 0);
             String objective = MetadataTools.createLSID("Objective", 0, 0);
 
-            store.setInstrumentID(instrument, 0);
             store.setObjectiveID(objective, 0, 0);
             store.setObjectiveModel(value, 0, 0);
 
@@ -433,7 +529,6 @@ public class VectraReader extends BaseTiffReader {
             }
 
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setImageInstrumentRef(instrument, series);
               store.setObjectiveSettingsID(objective, series);
             }
           }
@@ -447,6 +542,60 @@ public class VectraReader extends BaseTiffReader {
         LOGGER.warn("Could not parse XML for channel {}", c);
         LOGGER.debug("", e);
       }
+
+      // set channel names based on "Name" and "Biomarker" attributes
+      // the "Biomarker" is preferred, in which case "Name" (if present) will be
+      // stored in the Channel.Fluor attribute
+      // if "Biomarker" is not present, then Channel.Name will be set to "Name"
+
+      boolean validBiomarker = biomarker != null && !biomarker.isEmpty();
+      boolean validName = storedChannelName != null && !storedChannelName.isEmpty();
+      for (int series=0; series<omeImageCount; series++) {
+        if (validBiomarker) {
+          store.setChannelName(biomarker, series, c);
+          if (validName) {
+            store.setChannelFluor(storedChannelName, series, c);
+          }
+        }
+        else {
+          store.setChannelName(storedChannelName, series, c);
+        }
+      }
+    }
+  }
+
+  private void handleFilter(Element filter, int channel) {
+    int channelDigits = String.valueOf(getEffectiveSizeC()).length();
+    String prefix = String.format("%s #%0" + channelDigits + "d ", filter.getNodeName(), channel + 1);
+    NodeList properties = filter.getChildNodes();
+    for (int p=0; p<properties.getLength(); p++) {
+      Node n = properties.item(p);
+      String propName = n.getNodeName();
+
+      if (propName.equals("Bands")) {
+        NodeList bands = n.getChildNodes();
+        int bandIndex = 1;
+        for (int b=0; b<bands.getLength(); b++) {
+          Node band = bands.item(b);
+          if (band instanceof Element) {
+            processParentNode(band, prefix + "Band #" + bandIndex + " ");
+            bandIndex++;
+          }
+        }
+      }
+      else if (n instanceof Element) {
+        addGlobalMeta(prefix + propName, n.getTextContent());
+      }
+    }
+  }
+
+  private void processParentNode(Node parent, String prefix) {
+    NodeList children = parent.getChildNodes();
+    for (int i=0; i<children.getLength(); i++) {
+      Node n = children.item(i);
+      if (n instanceof Element) {
+        addGlobalMeta(prefix + n.getNodeName(), n.getTextContent());
+      }
     }
   }
 
@@ -454,6 +603,8 @@ public class VectraReader extends BaseTiffReader {
 
   /**
    * Returns an XML string corresponding to the ScanProfile node.
+   * The QPTIFF specification indicates that the ScanProfile is XML,
+   * but in practice it may be XML or JSON.
    */
   public String getScanProfileXML() {
     FormatTools.assertId(currentId, true, 1);

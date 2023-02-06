@@ -56,6 +56,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
+import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
@@ -74,11 +75,12 @@ import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.meta.IPyramidStore;
+import loci.formats.out.DicomWriter;
 import loci.formats.ome.OMEPyramidStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
-import loci.formats.tiff.IFD;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
@@ -124,13 +126,21 @@ public final class ImageConverter {
   private boolean useMemoizer = false;
   private String cacheDir = null;
   private boolean originalMetadata = true;
+  private boolean noSequential = false;
+  private String swapOrder = null;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
+  private DimensionSwapper dimSwapper;
 
   private HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
   private boolean firstTile = true;
   private DynamicMetadataOptions options = new DynamicMetadataOptions();
+
+  // record paths that have been checked for overwriting
+  // this is mostly useful when "out" is a file name pattern
+  // that may be expanded into multiple actual files
+  private HashMap<String, Boolean> checkedPaths = new HashMap<String, Boolean>();
 
   // -- Constructor --
 
@@ -243,6 +253,12 @@ public final class ImageConverter {
           }
           catch (NumberFormatException e) { }
         }
+        else if (args[i].equals("-no-sequential")) {
+          noSequential = true;
+        }
+        else if (args[i].equals("-swap")) {
+          swapOrder = args[++i].toUpperCase();
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -305,7 +321,7 @@ public final class ImageConverter {
   }
 
   /**
-   * Output usage information, using log4j.
+   * Output usage information
    */
   private void printUsage() {
     String[] s = {
@@ -318,6 +334,7 @@ public final class ImageConverter {
       "    [-nolookup] [-autoscale] [-version] [-no-upgrade] [-padded]",
       "    [-option key value] [-novalid] [-validate] [-tilex tileSizeX]", 
       "    [-tiley tileSizeY] [-pyramid-scale scale]", 
+      "    [-swap dimensionsOrderString]",
       "    [-pyramid-resolutions numResolutionLevels] in_file out_file",
       "",
       "            -version: print the library version and exit",
@@ -359,6 +376,8 @@ public final class ImageConverter {
       "              -tiley: image will be converted one tile at a time using the given tile height",
       "      -pyramid-scale: generates a pyramid image with each subsequent resolution level divided by scale",
       "-pyramid-resolutions: generates a pyramid image with the given number of resolution levels ",
+      "      -no-sequential: do not assume that planes are written in sequential order",
+      "               -swap: override the default input dimension order; argument is f.i. XYCTZ",
       "",
       "The extension of the output file specifies the file format to use",
       "for the conversion. The list of available formats and extensions is:",
@@ -433,21 +452,9 @@ public final class ImageConverter {
     CommandLineTools.runUpgradeCheck(args);
 
     if (new Location(out).exists()) {
-      if (overwrite == null) {
-        LOGGER.warn("Output file {} exists.", out);
-        LOGGER.warn("Do you want to overwrite it? ([y]/n)");
-        BufferedReader r = new BufferedReader(
-          new InputStreamReader(System.in, Constants.ENCODING));
-        String choice = r.readLine().trim().toLowerCase();
-        overwrite = !choice.startsWith("n");
-      }
-      if (!overwrite) {
-        LOGGER.warn("Exiting; next time, please specify an output file that " +
-          "does not exist.");
+      boolean ok = overwriteCheck(out, false);
+      if (!ok) {
         return false;
-      }
-      else {
-        new Location(out).delete();
       }
     }
 
@@ -456,6 +463,9 @@ public final class ImageConverter {
     long start = System.currentTimeMillis();
     LOGGER.info(in);
     reader = new ImageReader();
+    if (swapOrder != null) {
+      reader = dimSwapper = new DimensionSwapper(reader);
+    }
     if (stitch) {
       reader = new FileStitcher(reader);
       Location f = new Location(in);
@@ -504,6 +514,10 @@ public final class ImageConverter {
     }
 
     reader.setId(in);
+
+    if (swapOrder != null) {
+       dimSwapper.swapDimensions(swapOrder);
+    }
 
     MetadataStore store = reader.getMetadataStore();
 
@@ -604,7 +618,7 @@ public final class ImageConverter {
         throw new FormatException(e);
       }
     }
-    writer.setWriteSequentially(true);
+    writer.setWriteSequentially(!noSequential);
 
     if (writer instanceof TiffWriter) {
       ((TiffWriter) writer).setBigTiff(bigtiff);
@@ -678,6 +692,9 @@ public final class ImageConverter {
 
         total += numImages;
 
+        writer.setTileSizeX(saveTileWidth);
+        writer.setTileSizeY(saveTileHeight);
+
         int count = 0;
         for (int i=startPlane; i<endPlane; i++) {
           int[] coords = reader.getZCTCoords(i);
@@ -689,7 +706,13 @@ public final class ImageConverter {
           }
 
           String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
-          if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
+          String tileName = FormatTools.getTileFilename(0, 0, 0, outputName);
+
+          if (outputName.equals(tileName)) {
+            boolean ok = overwriteCheck(outputName, false);
+            if (!ok) {
+              return false;
+            }
             writer.setId(outputName);
             if (compression != null) writer.setCompression(compression);
           }
@@ -704,7 +727,12 @@ public final class ImageConverter {
             }
             if (saveTileWidth == 0 && saveTileHeight == 0) {
               // Using tile output name but not tiled reading
-              writer.setId(FormatTools.getTileFilename(0, 0, 0, outputName));
+
+              boolean ok = overwriteCheck(tileName, false);
+              if (!ok) {
+                return false;
+              }
+              writer.setId(tileName);
               if (compression != null) writer.setCompression(compression);
             }
           }
@@ -777,16 +805,11 @@ public final class ImageConverter {
     String currentFile)
     throws FormatException, IOException
   {
-    if (DataTools.safeMultiply64(width, height) >=
-      DataTools.safeMultiply64(4096, 4096) ||
-      saveTileWidth > 0 || saveTileHeight > 0)
-    {
+    if (doTileConversion(writer, currentFile)) {
       // this is a "big image" or an output tile size was set, so we will attempt
       // to convert it one tile at a time
 
-      if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
-        (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
-      {
+      if (isTiledWriter(writer, out)) {
         return convertTilePlane(writer, index, outputIndex, currentFile);
       }
     }
@@ -824,6 +847,10 @@ public final class ImageConverter {
       h = saveTileHeight;
     }
 
+    IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
+    w = baseWriter.setTileSizeX(w);
+    h = baseWriter.setTileSizeY(h);
+
     if (firstTile) {
       LOGGER.info("Tile size = {} x {}", w, h);
       firstTile = false;
@@ -838,10 +865,6 @@ public final class ImageConverter {
     if (nYTiles * h != height) {
       nYTiles++;
     }
-
-    IFD ifd = new IFD();
-    ifd.put(IFD.TILE_WIDTH, w);
-    ifd.put(IFD.TILE_LENGTH, h);
 
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
@@ -873,6 +896,8 @@ public final class ImageConverter {
           }
 
           writer.setMetadataRetrieve(retrieve);
+
+          overwriteCheck(tileName, true);
           writer.setId(tileName);
           if (compression != null) writer.setCompression(compression);
 
@@ -884,11 +909,11 @@ public final class ImageConverter {
 
           if (nTileRows > 1) {
             tileY = 0;
-            ifd.put(IFD.TILE_LENGTH, tileHeight);
+            tileHeight = baseWriter.setTileSizeY(tileHeight);
           }
           if (nTileCols > 1) {
             tileX = 0;
-            ifd.put(IFD.TILE_WIDTH, tileWidth);
+            tileWidth = baseWriter.setTileSizeX(tileWidth);
           }
         }
 
@@ -911,17 +936,22 @@ public final class ImageConverter {
           outputX = 0;
           outputY = 0;
         }
-        
+
         if (writer instanceof TiffWriter) {
           ((TiffWriter) writer).saveBytes(outputIndex, buf,
-            ifd, outputX, outputY, tileWidth, tileHeight);
+            outputX, outputY, tileWidth, tileHeight);
         }
         else if (writer instanceof ImageWriter) {
-          IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
           if (baseWriter instanceof TiffWriter) {
-            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
+            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf,
               outputX, outputY, tileWidth, tileHeight);
           }
+          else {
+            writer.saveBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
+          }
+        }
+        else {
+          writer.saveBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
         }
       }
     }
@@ -1085,6 +1115,60 @@ public final class ImageConverter {
       FormatTools.getBytesPerPixel(type), reader.isLittleEndian(),
       FormatTools.isFloatingPoint(type), reader.getRGBChannelCount(),
       reader.isInterleaved());
+  }
+
+  private boolean isTiledWriter(IFormatWriter writer, String outputFile)
+    throws FormatException
+  {
+    if (writer instanceof ImageWriter) {
+      return isTiledWriter(((ImageWriter) writer).getWriter(outputFile), outputFile);
+    }
+    return (writer instanceof TiffWriter) || (writer instanceof DicomWriter);
+  }
+
+  private boolean doTileConversion(IFormatWriter writer, String outputFile)
+    throws FormatException
+  {
+    if (writer instanceof DicomWriter ||
+      (writer instanceof ImageWriter && ((ImageWriter) writer).getWriter(outputFile) instanceof DicomWriter))
+    {
+      MetadataStore r = reader.getMetadataStore();
+      return !(r instanceof IPyramidStore) || ((IPyramidStore) r).getResolutionCount(reader.getSeries()) > 1;
+    }
+    return DataTools.safeMultiply64(width, height) >= DataTools.safeMultiply64(4096, 4096) ||
+      saveTileWidth > 0 || saveTileHeight > 0;
+  }
+
+  private boolean overwriteCheck(String path, boolean throwOnExist) throws IOException {
+    if (checkedPaths.containsKey(path)) {
+      return checkedPaths.get(path);
+    }
+    if (!new Location(path).exists()) {
+      checkedPaths.put(path, true);
+      return true;
+    }
+    if (overwrite == null) {
+      LOGGER.warn("Output file {} exists.", path);
+      LOGGER.warn("Do you want to overwrite it? ([y]/n)");
+      BufferedReader r = new BufferedReader(
+        new InputStreamReader(System.in, Constants.ENCODING));
+      String choice = r.readLine().trim().toLowerCase();
+      overwrite = !choice.startsWith("n");
+    }
+    if (!overwrite) {
+      String msg = "Exiting; next time, please specify an output file that does not exist.";
+      checkedPaths.put(path, false);
+      if (throwOnExist) {
+        throw new IOException(msg);
+      }
+      LOGGER.warn(msg);
+      return false;
+    }
+    else {
+      new Location(path).delete();
+    }
+    checkedPaths.put(path, true);
+    return true;
   }
 
   // -- Main method --

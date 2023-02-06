@@ -1,0 +1,63 @@
+# Builds using maven
+# Pass the arguments you wish to run to maven_commands variable, default command will be mvn install
+---
+name: Maven
+
+on: 
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        java: [8, 11, 17]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      maven_commands: install # default is install
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'zulu'
+          cache: 'maven'
+      - name: Build
+        run: mvn ${{ env.maven_commands }}
+  deploy:
+    if: ${{ github.ref == 'refs/heads/develop' && github.repository_owner == 'ome' }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieve version
+        id: get_version
+        run: |
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Set server
+        id: set_server
+        run: |
+          if [[ ${{ steps.get_version.outputs.version }} =~ 'SNAPSHOT' ]]; then
+            echo server='ome.snapshots' >> $GITHUB_OUTPUT
+          else
+            echo server='ome.staging' >> $GITHUB_OUTPUT
+          fi
+      - name: Set up Repository
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: 'zulu'
+          server-id: ${{ steps.set_server.outputs.server }}
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+      - name: Deploy SNAPSHOT
+        run: mvn deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.CI_DEPLOY_USER }}
+          MAVEN_PASSWORD: ${{ secrets.CI_DEPLOY_PASS }}
+

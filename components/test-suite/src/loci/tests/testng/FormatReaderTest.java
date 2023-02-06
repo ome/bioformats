@@ -161,9 +161,16 @@ public class FormatReaderTest {
 
   // -- Setup/teardown methods --
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setup() throws IOException {
-    initFile();
+    try {
+      initFile();
+    }
+    catch (RuntimeException e) {
+      // implies that the configuration does not exist
+      // this is expected if the "config" group is run
+      LOGGER.trace("File initialization failed", e);
+    }
   }
 
   @AfterClass(alwaysRun = true)
@@ -966,7 +973,6 @@ public class FormatReaderTest {
   }
 
   private boolean isAlmostEqual(Quantity q1, Quantity q2) {
-
     if (q1 == null && q2 == null) {
       return true;
     } else if (q1 == null || q2 == null) {
@@ -1461,7 +1467,7 @@ public class FormatReaderTest {
       if (plate >= retrieve.getPlateCount()) {
         result(testName, false, "Plate index" + failureSuffix);
       }
-      else if (plate < 0) {
+      else if (plate < -1) {
         if (retrieve.getPlateCount() > 0) {
           boolean allEmpty = true;
           for (int p=0; p<retrieve.getPlateCount(); p++) {
@@ -1486,82 +1492,87 @@ public class FormatReaderTest {
         continue;
       }
       boolean foundWell = false;
-      for (int w=0; w<retrieve.getWellCount(plate); w++) {
-        int row = config.getWellRow();
-        int col = config.getWellColumn();
-        if (row == retrieve.getWellRow(plate, w).getNumberValue().intValue() &&
-          col == retrieve.getWellColumn(plate, w).getNumberValue().intValue())
-        {
-          foundWell = true;
+      for (int p=0; p<retrieve.getPlateCount(); p++) {
+        if (plate >= 0 && plate != p) {
+          continue;
+        }
 
-          int wellSample = config.getWellSample();
-          String image = retrieve.getImageID(s);
-          if (wellSample >= retrieve.getWellSampleCount(plate, w) ||
-            wellSample < 0 ||
-            !image.equals(retrieve.getWellSampleImageRef(plate, w, wellSample)))
+        for (int w=0; w<retrieve.getWellCount(p); w++) {
+          int row = config.getWellRow();
+          int col = config.getWellColumn();
+          if (row == retrieve.getWellRow(p, w).getNumberValue().intValue() &&
+            col == retrieve.getWellColumn(p, w).getNumberValue().intValue())
           {
-            result(testName, false, "WellSample index" + failureSuffix);
-          }
+            foundWell = true;
 
-          Length positionX = retrieve.getWellSamplePositionX(plate, w, wellSample);
-          Length positionY = retrieve.getWellSamplePositionY(plate, w, wellSample);
-          Length configX = config.getWellSamplePositionX();
-          Length configY = config.getWellSamplePositionY();
-          if (positionX != null || configX != null) {
-            if (positionX == null || !positionX.equals(configX)) {
-              result(testName, false, "WellSample position X" + failureSuffix);
+            int wellSample = config.getWellSample();
+            String image = retrieve.getImageID(s);
+            if (wellSample >= retrieve.getWellSampleCount(p, w) ||
+              wellSample < 0 ||
+              !image.equals(retrieve.getWellSampleImageRef(p, w, wellSample)))
+            {
+              result(testName, false, "WellSample index" + failureSuffix);
             }
-          }
-          if (positionY != null || configY != null) {
-            if (positionY == null || !positionY.equals(configY)) {
-              result(testName, false, "WellSample position Y" + failureSuffix);
-            }
-          }
 
-          int plateAcq = config.getPlateAcquisition();
-          int plateAcqCount = retrieve.getPlateAcquisitionCount(plate);
-          if (plateAcq >= plateAcqCount) {
-            result(testName, false, "PlateAcquisition index" + failureSuffix);
-          }
-          else if (plateAcq < 0 && plateAcqCount > 0) {
-            // special case where this WellSample isn't
-            // linked to a PlateAcquisition,
-            // but multiple PlateAcquisitions exist
-            String wellSampleID =
-              retrieve.getWellSampleID(plate, w, wellSample);
-            for (int pa=0; pa<plateAcqCount; pa++) {
-              int wsCount = retrieve.getWellSampleRefCount(plate, pa);
-              for (int wsRef=0; wsRef<wsCount; wsRef++) {
-                String wellSampleRef =
-                  retrieve.getPlateAcquisitionWellSampleRef(plate, pa, wsRef);
-                if (wellSampleID.equals(wellSampleRef)) {
-                  result(testName, false,
-                    "PlateAcquisition-WellSample link" + failureSuffix);
+            Length positionX = retrieve.getWellSamplePositionX(p, w, wellSample);
+            Length positionY = retrieve.getWellSamplePositionY(p, w, wellSample);
+            Length configX = config.getWellSamplePositionX();
+            Length configY = config.getWellSamplePositionY();
+            if (positionX != null || configX != null) {
+              if (positionX == null || !positionX.equals(configX)) {
+                result(testName, false, "WellSample position X" + failureSuffix);
+              }
+            }
+            if (positionY != null || configY != null) {
+              if (positionY == null || !positionY.equals(configY)) {
+                result(testName, false, "WellSample position Y" + failureSuffix);
+              }
+            }
+
+            int plateAcq = config.getPlateAcquisition();
+            int plateAcqCount = retrieve.getPlateAcquisitionCount(p);
+            if (plateAcq >= plateAcqCount) {
+              result(testName, false, "PlateAcquisition index" + failureSuffix);
+            }
+            else if (plateAcq < 0 && plateAcqCount > 0) {
+              // special case where this WellSample isn't
+              // linked to a PlateAcquisition,
+              // but multiple PlateAcquisitions exist
+              String wellSampleID = retrieve.getWellSampleID(p, w, wellSample);
+              for (int pa=0; pa<plateAcqCount; pa++) {
+                int wsCount = retrieve.getWellSampleRefCount(p, pa);
+                for (int wsRef=0; wsRef<wsCount; wsRef++) {
+                  String wellSampleRef =
+                    retrieve.getPlateAcquisitionWellSampleRef(p, pa, wsRef);
+                  if (wellSampleID.equals(wellSampleRef)) {
+                    result(testName, false,
+                      "PlateAcquisition-WellSample link" + failureSuffix);
+                  }
                 }
               }
             }
-          }
-          else if (plateAcq >= 0 && plateAcqCount > 0) {
-            String wellSampleID = retrieve.getWellSampleID(plate, w, wellSample);
-            boolean foundWellSampleRef = false;
-            for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(plate, plateAcq); wsRef++) {
-              String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
-                plate, plateAcq, wsRef);
-              if (wellSampleID.equals(wellSampleRef)) {
-                foundWellSampleRef = true;
-                break;
+            else if (plateAcq >= 0 && plateAcqCount > 0) {
+              String wellSampleID = retrieve.getWellSampleID(p, w, wellSample);
+              boolean foundWellSampleRef = false;
+              for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(p, plateAcq); wsRef++) {
+                String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
+                  p, plateAcq, wsRef);
+                if (wellSampleID.equals(wellSampleRef)) {
+                  foundWellSampleRef = true;
+                  break;
+                }
+              }
+              if (!foundWellSampleRef) {
+                result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
               }
             }
-            if (!foundWellSampleRef) {
-              result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
-            }
+          }
+          if (foundWell) {
+            break;
           }
         }
-        if (foundWell) {
-          break;
-        }
       }
-      if (!foundWell) {
+      if (!foundWell && plate >= 0) {
         result(testName, false, "Well indexes" + failureSuffix);
       }
     }
@@ -1752,7 +1763,7 @@ public class FormatReaderTest {
 
       String newFile = null;
       for (int i=0; i<usedFiles.length; i++) {
-        newFiles[i] = usedFiles[i].replaceAll(toRemove.toString(), "");
+        newFiles[i] = usedFiles[i].replace(toRemove.toString(), "");
         LOGGER.debug("mapping {} to {}", newFiles[i], usedFiles[i]);
         Location.mapId(newFiles[i], usedFiles[i]);
 
@@ -1982,6 +1993,39 @@ public class FormatReaderTest {
           // Cellomics datasets cannot be reliably detected with the .mdb file
           if (reader.getFormat().equals("Cellomics C01") &&
             base[i].toLowerCase().endsWith(".mdb"))
+          {
+            continue;
+          }
+
+          // Tecan datasets can only be detected with the .db file
+          if (reader.getFormat().equals("Tecan Spark Cyto") &&
+            !base[i].toLowerCase().endsWith(".db"))
+          {
+            continue;
+          }
+
+          // .omp2info datasets can only be detected with the .omp2info file
+          if (reader.getFormat().equals("Olympus .omp2info") &&
+            !base[i].toLowerCase().endsWith(".omp2info"))
+          {
+            continue;
+          }
+
+          // .vsi datasets can only be detected with .vsi and frame*.ets
+          if (reader.getFormat().equals("CellSens VSI") &&
+            ((!base[i].toLowerCase().endsWith(".vsi") && !base[i].toLowerCase().endsWith(".ets")) ||
+            (base[i].toLowerCase().endsWith(".ets") && !base[i].toLowerCase().startsWith("frame"))))
+          {
+            continue;
+          }
+
+          // XLef datasets not detected from xlif/lof file
+          if (reader.getFormat().equals("Extended leica file") &&
+            (base[i].toLowerCase().endsWith("xlif") || base[i].toLowerCase().endsWith("lof") 
+                || base[i].toLowerCase().endsWith("xlcf") || base[i].toLowerCase().endsWith("jpeg")
+                || base[i].toLowerCase().endsWith("tif") || base[i].toLowerCase().endsWith("tiff")
+                || base[i].toLowerCase().endsWith("bmp") || base[i].toLowerCase().endsWith("jpg")
+                || base[i].toLowerCase().endsWith("png")))
           {
             continue;
           }
@@ -2739,6 +2783,64 @@ public class FormatReaderTest {
               continue;
             }
 
+            // Tecan data can only be detected with the .db file
+            if (!result && readers[j] instanceof TecanReader &&
+              !used[i].toLowerCase().endsWith(".db"))
+            {
+              continue;
+            }
+
+            // OK for other readers to flag Tecan files other than .db
+            if (result && r instanceof TecanReader &&
+              !used[i].toLowerCase().endsWith(".db"))
+            {
+              continue;
+            }
+
+            // OK for OIRReader to flag .oir files in .omp2info dataset
+            // expected that .oir files not picked up by .omp2info reader
+            if (result && r instanceof OlympusTileReader &&
+              readers[j] instanceof OIRReader)
+            {
+              continue;
+            }
+            else if (!result && r instanceof OlympusTileReader &&
+              !used[i].toLowerCase().endsWith(".omp2info"))
+            {
+              continue;
+            }
+
+            // .vsi data can only be detected from .vsi and frame*.ets
+            if (!result && r instanceof CellSensReader &&
+              ((!used[i].endsWith(".vsi") && !used[i].endsWith(".ets")) ||
+              (used[i].endsWith(".ets") && !used[i].startsWith("frame"))))
+            {
+              continue;
+            }
+
+            // XLEF data can only be detected from xlef file
+            if (!result && readers[j] instanceof XLEFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif") || used[i].endsWith(".tiff") ||
+                used[i].endsWith(".lof") || used[i].endsWith(".jpg")
+                || used[i].endsWith(".png") || used[i].endsWith(".bmp")))
+            {
+              continue;
+            }
+            if (!result && readers[j] instanceof LOFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif")))
+            {
+              continue;
+            }
+
+            if (result && r instanceof XLEFReader &&
+                (readers[j] instanceof LOFReader || readers[j] instanceof APNGReader
+                || readers[j] instanceof BMPReader || readers[j] instanceof JPEGReader))
+              {
+                continue;
+              }   
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
@@ -2874,7 +2976,7 @@ public class FormatReaderTest {
       String configDir = configTree.getConfigDirectory();
       String rootDir = configTree.getRootDirectory();
       if (configDir != null) {
-        parent = parent.replaceAll(rootDir, configDir);
+        parent = parent.replace(rootDir, configDir);
         File parentDir = new File(parent);
         if (!parentDir.exists()) {
           parentDir.mkdirs();

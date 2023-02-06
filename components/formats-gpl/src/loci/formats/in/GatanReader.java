@@ -638,6 +638,7 @@ public class GatanReader extends FormatReader {
 
       NumberFormat f = NumberFormat.getInstance(Locale.ENGLISH);
       if (value != null) {
+        value = value.replaceAll("\0", "");
         addGlobalMeta(labelString, value);
 
         if (parent != null &&

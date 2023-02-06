@@ -191,9 +191,19 @@ Apache XML-RPC
     License:   Apache
 -->
 
-<project name="Bio-Formats" default="jars" basedir=".">
+<project name="Bio-Formats" default="jars" basedir="." xmlns:resolver="antlib:org.apache.maven.resolver.ant">
   <description>
     Master build file for all Bio-Formats software components
   </description>
   <import file="ant/toplevel.xml"/>
+  <taskdef uri="antlib:org.apache.maven.resolver.ant" resource="org/apache/maven/resolver/ant/antlib.xml">
+    <classpath>
+      <fileset dir="${root.dir}/jar" includes="maven-resolver-ant-tasks-*.jar"/>
+    </classpath>
+  </taskdef>
+
+  <target name="install-pom"  description="generate top-level POM file">
+    <resolver:pom file="pom.xml" id="pom"/>
+    <resolver:install pomref="pom"/>
+  </target>
 </project>

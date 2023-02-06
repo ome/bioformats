@@ -557,6 +557,13 @@ public class FlexReader extends FormatReader {
         new Timestamp(plateAcqStartTime), 0, 0);
     }
 
+    if (wellRows > 0) {
+      store.setPlateRows(new PositiveInteger(wellRows), 0);
+    }
+    if (wellColumns > 0) {
+      store.setPlateColumns(new PositiveInteger(wellColumns), 0);
+    }
+
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
         int well = row * wellColumns + col;
@@ -573,7 +580,7 @@ public class FlexReader extends FormatReader {
 
       int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
 
-      char wellRow = (char) ('A' + wellNumber[pos[1]][0]);
+      String wellRow = FormatTools.getWellRowName(wellNumber[pos[1]][0]);
       store.setImageName("Well " + wellRow + "-" + (wellNumber[pos[1]][1] + 1) +
         "; Field #" + (pos[0] + 1), i);
 
@@ -791,7 +798,7 @@ public class FlexReader extends FormatReader {
     throws FormatException, IOException
   {
     LOGGER.info("Parsing .flex file (well {}{}, field {})",
-      (char) (wellRow + 'A'), wellCol + 1, field);
+      FormatTools.getWellRowName(wellRow), wellCol + 1, field);
     FlexFile file = lookupFile(wellRow, wellCol, field < 0 ? 0 : field);
     if (file == null) return;
 
@@ -1332,7 +1339,7 @@ public class FlexReader extends FormatReader {
 
           if (compressed || firstFile) {
             LOGGER.info("Parsing IFDs for well {}{}",
-              (char) (row + 'A'), col + 1);
+              FormatTools.getWellRowName(row), col + 1);
             IFD firstIFD = tp.getFirstIFD();
             compressed =
               firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
@@ -1363,7 +1370,7 @@ public class FlexReader extends FormatReader {
             // retrieve the offsets to each IFD, instead of parsing
             // all of the IFDs
             LOGGER.info("Retrieving IFD offsets for well {}{}",
-              (char) (row + 'A'), col + 1);
+              FormatTools.getWellRowName(row), col + 1);
             file.offsets = new long[nOffsets];
 
             // Assume that all IFDs after the first are evenly spaced.

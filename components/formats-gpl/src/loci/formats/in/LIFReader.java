@@ -197,7 +197,13 @@ public class LIFReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 1;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
-    return stream.read() == LIF_MAGIC_BYTE;
+    if (stream.read() != LIF_MAGIC_BYTE) return false;
+    stream.skipBytes(7);
+    if (stream.readByte() != LIF_MEMORY_BYTE) return false;
+    int nc = stream.readInt();
+    String desc = DataTools.stripString(stream.readString(nc * 2));
+    if (desc.equals("LMS_Object_File")) return false; //LOF file
+    return true;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -474,6 +480,14 @@ public class LIFReader extends FormatReader {
   }
 
   // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(OLD_PHYSICAL_SIZE_KEY);
+    return optionsList;
+  }
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
@@ -1219,7 +1233,7 @@ public class LIFReader extends FormatReader {
       translateDetectors(image, index);
 
       final Deque<String> nameStack = new ArrayDeque<String>();
-      populateOriginalMetadata(image, nameStack);
+      populateOriginalMetadata(image, nameStack, null, -1);
       addUserCommentMeta(image, i);
     }
     setSeries(0);
@@ -1237,8 +1251,18 @@ public class LIFReader extends FormatReader {
     core = newCore;
   }
 
-  private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
+  private void populateOriginalMetadata(Element root, Deque<String> nameStack, int key_index[], int jj) {
     String name = root.getNodeName();
+
+    // keep track of number of elements at each level
+    // reset count of each level >= jj
+    if (key_index == null) {
+      key_index = new int[20];
+      jj = -1;
+    }
+    if (jj > -1) { key_index[jj] = 0; }
+    int j = 0;
+
     if (root.hasAttributes() && !name.equals("Element") &&
       !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
     {
@@ -1251,10 +1275,13 @@ public class LIFReader extends FormatReader {
       }
       final StringBuilder key = new StringBuilder();
       final Iterator<String> nameStackIterator = nameStack.descendingIterator();
+      j = 0;
       while (nameStackIterator.hasNext()) {
         final String k = nameStackIterator.next();
         key.append(k);
+        key.append(" #" + key_index[j]);
         key.append("|");
+        j++;
       }
       if (suffix != null && value != null && suffix.length() > 0 &&
         value.length() > 0 && !suffix.equals("HighInteger") &&
@@ -1279,7 +1306,7 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<children.getLength(); i++) {
       Object child = children.item(i);
       if (child instanceof Element) {
-        populateOriginalMetadata((Element) child, nameStack);
+        populateOriginalMetadata((Element) child, nameStack, key_index, j);
       }
     }
 
@@ -1288,6 +1315,8 @@ public class LIFReader extends FormatReader {
     {
       nameStack.pop();
     }
+
+    if (j > 0) { key_index[j-1]++; }
   }
 
   private void translateImageNames(Element imageNode, int image) {

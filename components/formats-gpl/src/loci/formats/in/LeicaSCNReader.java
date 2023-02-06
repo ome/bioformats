@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 
@@ -71,6 +72,8 @@ public class LeicaSCNReader extends BaseTiffReader {
     "http://www.leica-microsystems.com/scn/2010/03/10";
   private static final String SCHEMA_2010_10 =
     "http://www.leica-microsystems.com/scn/2010/10/01";
+
+  private static final String[] MODELS_WITHOUT_CORRECTION = {"versa", "leica scn400"};
 
   // -- Fields --
   LeicaSCNHandler handler;
@@ -230,7 +233,8 @@ public class LeicaSCNReader extends BaseTiffReader {
     // newer files from Versa systems do not
     if (handler != null) {
       Image i = handler.imageMap.get(0);
-      tiffParser.setYCbCrCorrection(!"versa".equalsIgnoreCase(i.devModel));
+      String model = i.devModel == null ? i.devModel : i.devModel.toLowerCase();
+      tiffParser.setYCbCrCorrection(!Arrays.asList(MODELS_WITHOUT_CORRECTION).contains(model));
     }
   }
 
@@ -370,6 +374,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     for (int s=0; s<core.size(); s++) {
       for (int r = 0; r < core.size(s); r++) {
         int coreIndex = core.flattenedIndex(s, r);
+        setCoreIndex(coreIndex);
         ImageCollection c = handler.collection;
         Image i = handler.imageMap.get(coreIndex);
 
@@ -390,8 +395,8 @@ public class LeicaSCNReader extends BaseTiffReader {
         // Leica units are nanometres; convert to µm
         double sizeX = i.vSizeX / 1000.0;
         double sizeY = i.vSizeY / 1000.0;
-        final Length offsetX = new Length(i.vOffsetX, UNITS.REFERENCEFRAME);
-        final Length offsetY = new Length(i.vOffsetY, UNITS.REFERENCEFRAME);
+        final Length offsetX = new Length(i.vOffsetX, UNITS.NM);
+        final Length offsetY = new Length(i.vOffsetY, UNITS.NM);
         double sizeZ = i.vSpacingZ / 1000.0;
 
         store.setPixelsPhysicalSizeX(
@@ -484,6 +489,7 @@ public class LeicaSCNReader extends BaseTiffReader {
         ++pos;
       }
     }
+    setCoreIndex(0);
   }
 
   private int getParent(int coreIndex) {

@@ -15,6 +15,7 @@ loci.formats.out.EPSWriter      # eps
 loci.formats.out.ICSWriter      # ics
 loci.formats.out.JavaWriter     # java
 loci.formats.out.V3DrawWriter	# v3draw
+loci.formats.out.DicomWriter    # dcm
 
 # writers requiring third-party libraries
 loci.formats.out.WlzWriter	# wlz

@@ -111,6 +111,7 @@ public class ND2Handler extends BaseHandler {
 
   private boolean canAdjustDimensions = true;
   private boolean firstTimeLoop = true;
+  public boolean imageMetadataLVExists = false;
 
   // -- Constructor --
 
@@ -511,17 +512,17 @@ public class ND2Handler extends BaseHandler {
       }
       else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
         final Double number = DataTools.parseDouble(value);
-        posX.add(new Length(number, UNITS.REFERENCEFRAME));
+        posX.add(new Length(number, UNITS.MICROMETER));
         metadata.put("X position for position #" + posX.size(), value);
       }
       else if ("dPosY".equals(prevElement) && qName.startsWith("item_")) {
         final Double number = DataTools.parseDouble(value);
-        posY.add(new Length(number, UNITS.REFERENCEFRAME));
+        posY.add(new Length(number, UNITS.MICROMETER));
         metadata.put("Y position for position #" + posY.size(), value);
       }
       else if ("dPosZ".equals(prevElement) && qName.startsWith("item_")) {
         final Double number = DataTools.parseDouble(value);
-        posZ.add(new Length(number, UNITS.REFERENCEFRAME));
+        posZ.add(new Length(number, UNITS.MICROMETER));
         metadata.put("Z position for position #" + posZ.size(), value);
       }
       else if (qName.startsWith("item_")) {
@@ -704,7 +705,7 @@ public class ND2Handler extends BaseHandler {
       }
       else if (key.endsWith("uiCount")) {
         if (runtype != null) {
-          if (runtype.endsWith("ZStackLoop")) {
+          if (runtype.endsWith("ZStackLoop") && !imageMetadataLVExists) {
             if (ms0.sizeZ == 0) {
               ms0.sizeZ = Integer.parseInt(value);
               if (ms0.dimensionOrder.indexOf('Z') == -1) {
@@ -712,7 +713,7 @@ public class ND2Handler extends BaseHandler {
               }
             }
           }
-          else if (runtype.endsWith("TimeLoop")) {
+          else if (runtype.endsWith("TimeLoop") && !imageMetadataLVExists) {
             if (ms0.sizeT == 0) {
               ms0.sizeT = Integer.parseInt(value);
               if (ms0.dimensionOrder.indexOf('T') == -1) {
@@ -770,7 +771,7 @@ public class ND2Handler extends BaseHandler {
           }
         }
       }
-      else if (isDimensions(key)) {
+      else if (isDimensions(key) && !imageMetadataLVExists) {
         String[] dims = value.split(" x ");
 
         if (ms0.sizeZ == 0) ms0.sizeZ = 1;
@@ -919,7 +920,7 @@ public class ND2Handler extends BaseHandler {
         }
       }
     }
-    catch (NumberFormatException exc) {
+    catch (NumberFormatException | NullPointerException exc) {
       LOGGER.warn("Could not parse {} value: {}", key, value);
     }
   }

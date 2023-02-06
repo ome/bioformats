@@ -421,7 +421,7 @@ public class Configuration {
   }
 
   public int getPlate() {
-    return getInt(PLATE, -1);
+    return getInt(PLATE, Integer.MIN_VALUE);
   }
 
   public int getPlateAcquisition() {

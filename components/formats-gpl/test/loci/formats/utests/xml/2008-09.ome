@@ -51,7 +51,13 @@
 		<ExperimenterRef ID = "urn:lsid:foo.bar.com:Experimenter:123456"/>
 		<GroupRef ID = "urn:lsid:foo.bar.com:Group:123456"/>
 		<ProjectRef ID = "urn:lsid:foo.bar.com:Project:123456"/>
-		<CA:CustomAttributes/>
+		<CA:CustomAttributes>
+			<OriginalMetadata ID="OriginalMetadata:0" Name="Custom Metadata 0" Value="0"/>
+			<OriginalMetadata ID="OriginalMetadata:1" Name="Custom Metadata 1" Value="1"/>
+			<OriginalMetadata ID="OriginalMetadata:2" Name="Custom Metadata 2" Value="2"/>
+			<OriginalMetadata ID="OriginalMetadata:3" Name="Custom Metadata 3" Value="3"/>
+			<OriginalMetadata ID="OriginalMetadata:4" Name="Custom Metadata 4" Value="4"/>
+		</CA:CustomAttributes>
 	</Dataset>
 	<Experiment Type = "TimeLapse" ID = "urn:lsid:foo.bar.com:Experiment:123456">
 		<Description>This was an experiment.</Description>
@@ -149,7 +155,21 @@
 		<Pixels DimensionOrder = "XYZCT" PixelType = "int16" BigEndian = "true"
 			ID = "urn:lsid:foo.bar.com:Pixels:123456" SizeX = "20" SizeY = "20" SizeZ = "5" SizeC = "1" SizeT = "6" PhysicalSizeX="0.2" PhysicalSizeY="0.2" PhysicalSizeZ="0.2">
 		</Pixels>
+		<CA:CustomAttributes>
+			<OriginalMetadata ID="OriginalMetadata:5" Name="Custom Metadata 5" Value="5"/>
+			<OriginalMetadata ID="OriginalMetadata:6" Name="Custom Metadata 6" Value="6"/>
+		</CA:CustomAttributes>
+		<Feature>
+			<CA:CustomAttributes>
+				<OriginalMetadata ID="OriginalMetadata:7" Name="Custom Metadata 7" Value="7"/>
+			</CA:CustomAttributes>
+		</Feature>
 	</Image>
+	<CA:CustomAttributes>
+		<OriginalMetadata ID="OriginalMetadata:8" Name="Custom Metadata 8" Value="8"/>
+		<OriginalMetadata ID="OriginalMetadata:9" Name="Custom Metadata 9" Value="9"/>
+		<OriginalMetadata ID="OriginalMetadata:10" Name="Custom Metadata 10" Value="10"/>
+	</CA:CustomAttributes>
 	<!--
 	<STD:SemanticTypeDefinitions>
 		< - - INSERT STD's here - - >

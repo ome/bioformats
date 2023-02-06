@@ -2,7 +2,7 @@
 
 rem xmlvalid.bat: a batch file for validating XML files
 
-rem Required JARs: loci_tools.jar or bioformats_package.jar
+rem Required JARs: bioformats_package.jar
 
 setlocal
 set BF_DIR=%~dp0

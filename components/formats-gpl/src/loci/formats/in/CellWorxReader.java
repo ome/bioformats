@@ -147,11 +147,10 @@ public class CellWorxReader extends FormatReader {
           }
           else if (key.startsWith("WellsSelection")) {
             int row = Integer.parseInt(key.substring(14)) - 1;
-            char rowLetter = (char) (row + 'A');
             String[] mapping = value.split(",");
             for (int col=0; col<xWells; col++) {
               if (new Boolean(mapping[col].trim()).booleanValue()) {
-                String base = plate + rowLetter + String.format("%02d", col + 1);
+                String base = plate + FormatTools.getWellName(row, col);
                 Location pnl = new Location(base + ".pnl");
                 if (pnl.exists()) {
                   return isThisType(pnl.getAbsolutePath(), open);
@@ -391,6 +390,35 @@ public class CellWorxReader extends FormatReader {
 
     reader.close();
 
+    for (int c=1; c<wavelengths.length; c++) {
+      seriesIndex = 0;
+      planeIndex = c;
+      file = getFile(seriesIndex, planeIndex);
+      while (!new Location(file).exists()) {
+        if (planeIndex < zSteps * nTimepoints * wavelengths.length) {
+          planeIndex += (zSteps * nTimepoints);
+        }
+        else if (seriesIndex < seriesCount - 1) {
+          planeIndex = c;
+          seriesIndex++;
+        }
+        else {
+          break;
+        }
+        file = getFile(seriesIndex, planeIndex);
+      }
+      reader = getReader(file, true);
+
+      OMEXMLMetadata channelMetadata = (OMEXMLMetadata) reader.getMetadataStore();
+      OMEXMLMetadataRoot channelRoot = (OMEXMLMetadataRoot) channelMetadata.getRoot();
+
+      reader.close();
+
+      for (int i=0; i<convertRoot.sizeOfImageList(); i++) {
+        MetadataConverter.convertChannels(channelMetadata, 0, 0, convertMetadata, i, c, false);
+      }
+    }
+
     MetadataStore store = makeFilterMetadata();
     MetadataConverter.convertMetadata(convertMetadata, store);
     MetadataTools.populatePixels(store, this, true);
@@ -497,7 +525,7 @@ public class CellWorxReader extends FormatReader {
               store.setPlateAcquisitionWellSampleRef(
                 wellSampleID, 0, 0, nextImage);
 
-              String well = (char) (row + 'A') + String.format("%02d", col + 1);
+              String well = FormatTools.getWellName(row, col);
               store.setImageName(
                 "Well " + well + " Field #" + (fieldIndex + 1), nextImage);
               nextImage++;
@@ -646,8 +674,7 @@ public class CellWorxReader extends FormatReader {
       for (int col=0; col<wellFiles[row].length; col++) {
         if (wellFiles[row][col] != null) {
           wellCount++;
-          char rowLetter = (char) (row + 'A');
-          String base = plateName + rowLetter + String.format("%02d", col + 1);
+          String base = plateName + FormatTools.getWellName(row, col);
           wellFiles[row][col][0] = base + ".pnl";
           logFiles[row][col] = base + "_scan.log";
         }
@@ -722,7 +749,7 @@ public class CellWorxReader extends FormatReader {
     if (!new Location(logFile).exists()) {
       return;
     }
-    LOGGER.debug("Parsing log file for well {}{}", (char) (row + 'A'), col + 1);
+    LOGGER.debug("Parsing log file for well {}", FormatTools.getWellName(row, col));
 
     int oldSeries = getSeries();
     setSeries(seriesIndex);

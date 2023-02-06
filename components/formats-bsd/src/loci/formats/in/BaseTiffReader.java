@@ -33,6 +33,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -329,8 +330,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("SampleFormat", sampleFormat);
 
-    putInt("SMinSampleValue", firstIFD, IFD.S_MIN_SAMPLE_VALUE);
-    putInt("SMaxSampleValue", firstIFD, IFD.S_MAX_SAMPLE_VALUE);
+    put("SMinSampleValue", firstIFD, IFD.S_MIN_SAMPLE_VALUE);
+    put("SMaxSampleValue", firstIFD, IFD.S_MAX_SAMPLE_VALUE);
     putInt("TransferRange", firstIFD, IFD.TRANSFER_RANGE);
 
     int jpeg = firstIFD.getIFDIntValue(IFD.JPEG_PROC);
@@ -465,11 +466,17 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      String unit = getResolutionUnitFromComment(firstIFD);
-      
+      // only look for a unit in the comment if the unit is unclear
+      // from the RESOLUTION_UNIT tag
+      String unit = null;
+      // "3" indicates cm
+      if (firstIFD.getIFDIntValue(IFD.RESOLUTION_UNIT) != 3) {
+        unit = getResolutionUnitFromComment(firstIFD);
+      }
+
       Length sizeX = FormatTools.getPhysicalSizeX(pixX, unit);
       Length sizeY = FormatTools.getPhysicalSizeY(pixY, unit);
-      
+
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
@@ -533,6 +540,23 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   protected void put(String key, Object value) {
     if (value == null) return;
     if (value instanceof String) value = ((String) value).trim();
+
+    try {
+      int length = Array.getLength(value);
+      StringBuffer sb = new StringBuffer("[");
+      for (int i=0; i<length; i++) {
+        sb.append(Array.get(value, i));
+        if (i < length - 1) {
+          sb.append(", ");
+        }
+      }
+      sb.append("]");
+      value = sb.toString();
+    }
+    catch (IllegalArgumentException e) {
+      // not an array
+    }
+
     addGlobalMeta(key, value);
   }
 
