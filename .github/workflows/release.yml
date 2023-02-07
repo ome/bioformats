@@ -1,0 +1,32 @@
+name: "Build and push artifacts"
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Release artifacts
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: 'zulu'
+      - name: Build artifacts
+        run: |
+          ./tools/test-build ant
+          ant release docs
+      - name: Create a release and upload Release Assets
+        run: |
+          cd artifacts
+          sha256sum ./*.zip >> SHASUMS
+          sha256sum ./*.jar >> SHASUMS
+          sha256sum ./*.xz >> SHASUMS
+          sha256sum ./*.gz >> SHASUMS
+          tag_name="${GITHUB_REF##*/}"
+          gh release create "$tag_name" ./*.zip ./*.jar ./*.xz ./*.gz SHASUMS
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
