@@ -241,7 +241,24 @@ public class OperettaReader extends FormatReader {
           return buf;
         }
 
-        if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
+        if (reader.getPixelType() != getPixelType()) {
+          // return an empty plane if a 32-bit TIFF is encountered in a non-32 bit plate
+          // 32-bit TIFFs may occur seemingly at random if the acquired images had bright spots (e.g. dust)
+          // according to PerkinElmer, these images should be considered invalid and
+          // so are replaced with all 0s
+          // affected TIFF file paths are logged, as this information is not available
+          // in the Index.idx.xml
+          if (reader.getPixelType() == FormatTools.UINT32) {
+            LOGGER.warn("Found invalid 32-bit TIFF in series {}, plane {}: {}", getSeries(), no, p.filename);
+            return buf;
+          }
+
+          // if the file's pixel type is not uint32 and still doesn't match the overall plate's type,
+          // then something else very unexpected is happening
+          throw new FormatException("Pixel type mismatch in " + p.filename +
+            " (got " + FormatTools.getPixelTypeString(reader.getPixelType()) + ")");
+        }
+        else if (reader.getSizeX() >= getSizeX() && reader.getSizeY() >= getSizeY()) {
           reader.openBytes(0, buf, x, y, w, h);
         }
         else {
@@ -495,7 +512,12 @@ public class OperettaReader extends FormatReader {
               parser.setDoCaching(false);
 
               IFD firstIFD = parser.getFirstIFD();
-              if (firstIFD != null) {
+
+              // ignore any files with a 32-bit pixel type
+              // we expect valid files to be uint16
+              // as noted in openBytes above, uint32 data should be ignored because
+              // it indicates a failure to process images with bright spots
+              if (firstIFD != null && firstIFD.getPixelType() != FormatTools.UINT32) {
                 ms.littleEndian = firstIFD.isLittleEndian();
                 ms.pixelType = firstIFD.getPixelType();
                 validFile = true;
