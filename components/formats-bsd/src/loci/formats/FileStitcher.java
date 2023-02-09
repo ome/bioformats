@@ -145,7 +145,7 @@ public class FileStitcher extends ReaderWrapper {
   public void setReaderClassList(ClassList<IFormatReader> classList) {
     this.classList = classList;
     try {
-      reader.close();
+      reader.close(true);
     }  catch (IOException e) {
       LOGGER.debug("Close failed", e);
     }
