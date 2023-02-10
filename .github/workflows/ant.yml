@@ -18,7 +18,9 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'zulu'
       - name: Build with Ant
-        run: ./tools/test-build ant
+        run: |
+            ./tools/test-build ant
+            ant docs
       - name: Upload artifacts
         # upload just one set of artifacts for easier PR review
         if: matrix.os == 'ubuntu-latest' && matrix.java == '1.8'
