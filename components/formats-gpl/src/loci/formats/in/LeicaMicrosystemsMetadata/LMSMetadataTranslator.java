@@ -101,8 +101,6 @@ public class LMSMetadataTranslator {
     r.setCore(core);
   }
 
-  
-
   // -- Helper functions --
 
   public long parseLong(String value) {
@@ -115,52 +113,6 @@ public class LMSMetadataTranslator {
 
   public double parseDouble(String value) {
     return value == null || value.trim().isEmpty() ? 0d : DataTools.parseDouble(value.trim());
-  }
-
-  /**
-   * Returns all (grand*n)children nodes with given node name
-   * 
-   * @param root
-   *          root node
-   * @param nodeName
-   *          name of children that shall be searched
-   * @return list of child nodes with given name
-   */
-  private NodeList getDescendantNodesWithName(Element root, String nodeName) {
-    NodeList nodes = root.getElementsByTagName(nodeName);
-    if (nodes.getLength() == 0) {
-      NodeList children = root.getChildNodes();
-      for (int i = 0; i < children.getLength(); i++) {
-        Object child = children.item(i);
-        if (child instanceof Element) {
-          NodeList childNodes = getDescendantNodesWithName((Element) child, nodeName);
-          if (childNodes != null) {
-            return childNodes;
-          }
-        }
-      }
-      return null;
-    } else
-      return nodes;
-  }
-
-  private Element getChildNodeWithName(Node node, String nodeName) {
-    NodeList children = node.getChildNodes();
-    for (int i = 0; i < children.getLength(); i++) {
-      if (children.item(i).getNodeName().equals(nodeName))
-        return (Element) children.item(i);
-    }
-    return null;
-  }
-
-  private Element getNodeWithAttribute(NodeList nodes, String attributeName, String attributeValue) {
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node node = nodes.item(i);
-      Node attribute = node.getAttributes().getNamedItem(attributeName);
-      if (attribute != null && attribute.getTextContent().equals(attributeValue))
-        return (Element) node;
-    }
-    return null;
   }
 
   public int getTileIndex(int coreIndex) {

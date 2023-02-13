@@ -33,14 +33,17 @@ public class DimensionStore {
   public void addDimension(Dimension dimension) {
     dimensions.add(dimension);
     if (dimension.key == DimensionKey.X) {
-      physicalSizeX = dimension.getLength();
+      physicalSizeX = dimension.getLengthPerUnit();
     } else if (dimension.key == DimensionKey.Y) {
-      physicalSizeY = dimension.getLength();
+      physicalSizeY = dimension.getLengthPerUnit();
     } else if (dimension.key == DimensionKey.Z) {
-      if (dimension.getLength() != null) {
-        zStep = Math.abs(dimension.getLength());
+      if (dimension.getLengthPerUnit() != null) {
+        zStep = Math.abs(dimension.getLengthPerUnit());
       }
-    } else if (dimension.key == DimensionKey.S) {
+    } else if (dimension.key == DimensionKey.T){
+      tStep = dimension.getLengthPerUnit();
+    }
+     else if (dimension.key == DimensionKey.S) {
       tileCount *= dimension.size;
       tileBytesInc = dimension.bytesInc;
     }

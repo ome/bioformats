@@ -37,8 +37,8 @@ public class Dimension {
   public int size;
   public long bytesInc;
   public String unit = null;
-  private Double length = 0d;
-  private Double offByOneLength = 0d;
+  private Double lengthPerUnit = 0d;
+  private Double offByOneLengthPerPixel = 0d;
   public Double origin;
   public boolean oldPhysicalSize = false;
   public int frameIndex = 0;
@@ -96,29 +96,29 @@ public class Dimension {
 
   // -- Methods --
   public void setLength(Double length) {
-    this.length = length;
-    offByOneLength = 0d;
+    lengthPerUnit = length;
     if (size > 1) {
-      offByOneLength = this.length / size;
-      this.length /= (size - 1); // length per pixel
+      lengthPerUnit /= (size - 1);
+      offByOneLengthPerPixel = lengthPerUnit / size;
     } else {
-      this.length = 0d;
+      lengthPerUnit = 0d;
+      offByOneLengthPerPixel = 0d;
     }
 
     if (unit.equals("Ks")) {
-      this.length /= 1000;
-      offByOneLength /= 1000;
+      this.lengthPerUnit /= 1000;
+      offByOneLengthPerPixel /= 1000;
     } else if (unit.equals("m")) {
-      this.length *= METER_MULTIPLY;
-      offByOneLength *= METER_MULTIPLY;
+      this.lengthPerUnit *= METER_MULTIPLY;
+      offByOneLengthPerPixel *= METER_MULTIPLY;
     }
   }
 
-  public Double getLength() {
+  public Double getLengthPerUnit() {
     if (key == DimensionKey.X || key == DimensionKey.Y) {
-      return oldPhysicalSize ? offByOneLength : length;
+      return oldPhysicalSize ? offByOneLengthPerPixel : lengthPerUnit;
     } else {
-      return length;
+      return lengthPerUnit;
     }
   }
 }

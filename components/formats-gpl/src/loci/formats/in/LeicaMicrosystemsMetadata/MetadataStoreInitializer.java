@@ -97,17 +97,17 @@ public class MetadataStoreInitializer {
         }
       }
 
-      for (int laser = 0; laser < lasers.size(); laser++) {
-        String id = MetadataTools.createLSID("LightSource", series, laser);
-        store.setLaserID(id, series, laser);
-        store.setLaserType(LaserType.OTHER, series, laser);
-        store.setLaserLaserMedium(LaserMedium.OTHER, series, laser);
-        Double wavelength = (Double) lasers.get(laser);
-        Length wave = FormatTools.getWavelength(wavelength);
-        if (wave != null) {
-          store.setLaserWavelength(wave, series, laser);
-        }
-      }
+      // for (int laser = 0; laser < lasers.size(); laser++) {
+      //   String id = MetadataTools.createLSID("LightSource", series, laser);
+      //   store.setLaserID(id, series, laser);
+      //   store.setLaserType(LaserType.OTHER, series, laser);
+      //   store.setLaserLaserMedium(LaserMedium.OTHER, series, laser);
+      //   Double wavelength = (Double) lasers.get(laser);
+      //   Length wave = FormatTools.getWavelength(wavelength);
+      //   if (wave != null) {
+      //     store.setLaserWavelength(wave, series, laser);
+      //   }
+      // }
 
       Set<Integer> ignoredChannels = new HashSet<Integer>();
       final List<Integer> validIntensities = new ArrayList<Integer>();

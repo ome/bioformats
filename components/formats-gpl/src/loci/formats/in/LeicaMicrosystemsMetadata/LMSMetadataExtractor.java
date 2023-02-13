@@ -118,8 +118,8 @@ public class LMSMetadataExtractor {
     // translateAttachmentNodes(imageNode, series);
 
     if (hardwareSetting != null){
-      translateScannerSettings(imageNode, series);
-      translateFilterSettings(imageNode, series);
+      //translateScannerSettings(imageNode, series);
+      //translateFilterSettings(imageNode, series);
       // translateTimestamps(imageNode, series);
       // translateLasers(imageNode, series);
       // translateLaserLines2(imageNode, series);

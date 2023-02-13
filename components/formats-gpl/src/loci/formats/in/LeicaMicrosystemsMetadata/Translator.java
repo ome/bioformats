@@ -44,7 +44,6 @@ import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.xml.model.enums.MicroscopeType;
 import ome.xml.model.primitives.Timestamp;
-import ucar.nc2.constants.DataFormatType;
 
 public class Translator {
   private static final long METER_MULTIPLY = 1000000;
@@ -116,14 +115,12 @@ public class Translator {
     translateObjective();
     translateLasers();
     translateDetectors();
-    translateFilters();
-
-    //channel metadata
     translateDetectorSettings();
-    translateLaserSettings();
+    translateFilters(); //checks for detector settings
     translateFilterSettings();
+    translateLaserSettings(); //checks for channel filter
 
-    translateChannelNames();
+    //translateChannelNames();
 
     translateROIs();
   }
@@ -460,12 +457,6 @@ public class Translator {
   }
 
   private void translatePhysicalSizes(){
-    Dimension dimZ = dimensionStore.getDimension(DimensionKey.Z);
-    dimensionStore.zStep = dimZ.getLength() / dimZ.size;
-
-    Dimension dimT = dimensionStore.getDimension(DimensionKey.T);
-    dimensionStore.tStep = dimT.getLength() / dimT.size;
-
     store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(dimensionStore.physicalSizeX), seriesIndex);
     store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(dimensionStore.physicalSizeY), seriesIndex);
     store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(dimensionStore.zStep), seriesIndex);

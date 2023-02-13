@@ -77,6 +77,8 @@ public class LaserExtractor extends Extractor {
               break;
             }
           }
+
+          laserSettings.add(setting);
         }
       }
     }
