@@ -45,8 +45,7 @@ public class ChannelExtractor extends Extractor {
   }
 
   /***
-   * Translates raw channel luts of an image to Colors and writes it to reader's
-   * {@link MetadataTempBuffer}
+   * Translates raw channel luts of an image to Colors
    * 
    * @param luts
    *          list of raw lut names / values from Leica XML

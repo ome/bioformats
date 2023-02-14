@@ -25,25 +25,17 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
-import ome.units.quantity.Time;
-import ome.xml.model.enums.LaserMedium;
-import ome.xml.model.enums.LaserType;
-import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PercentFraction;
-import ome.xml.model.primitives.Timestamp;
 import loci.formats.meta.MetadataStore;
 
 /**

@@ -25,20 +25,13 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
@@ -347,32 +340,6 @@ public class LMSMetadataExtractor {
       }
     }
   }
-
-  private void printNode(Node node) {
-    try {
-      // Set up the output transformer
-      TransformerFactory transfac = TransformerFactory.newInstance();
-      Transformer trans = transfac.newTransformer();
-      trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-      trans.setOutputProperty(OutputKeys.INDENT, "yes");
-
-      // Print the DOM node
-
-      StringWriter sw = new StringWriter();
-      StreamResult result = new StreamResult(sw);
-      DOMSource source = new DOMSource(node);
-      trans.transform(source, result);
-      String xmlString = sw.toString();
-
-      System.out.println(xmlString);
-    } catch (TransformerException e) {
-      e.printStackTrace();
-    }
-  }
-
-  
-
-  
 
   /**
    * Creates key value pairs from attributes of the root's child nodes (tag |

@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import loci.common.DataTools;
 import loci.formats.CoreMetadata;
@@ -58,8 +56,6 @@ public class LMSMetadataTranslator {
   public void translateMetadata(List<LMSImageXmlDocument> docs) throws FormatException, IOException {
     initCoreMetadata(docs.size());
     r.setSeries(0);
-
-    r.metaTemp.channelPrios = new int[r.metaTemp.tileCount.length][];
 
     for (int i = 0; i < docs.size(); i++) {
       r.setSeries(i);

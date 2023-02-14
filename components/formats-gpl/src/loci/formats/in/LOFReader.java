@@ -281,7 +281,7 @@ public class LOFReader extends LMSFileReader {
 
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
-      lastChannel = metaTemp.channelPrios[getTileIndex(series)][pos[1]];
+      lastChannel = metadataTranslators.get(getTileIndex(series)).dimensionStore.channels.get(pos[1]).channelPriority;
     }
 
     int tileIndex = getTileIndex(series);

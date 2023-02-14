@@ -42,7 +42,7 @@ public class DetectorExtractor extends Extractor {
     return detectors;
   }
 
-  public static List<DetectorSetting> extractDetectorSettings(List<Element> sequentialConfocalSettings, List<Detector> detectors){
+  public static List<DetectorSetting> extractDetectorSettings(List<Element> sequentialConfocalSettings, Element mainConfocalSetting, List<Detector> detectors){
     List<DetectorSetting> activeDetectorSettings = new ArrayList<DetectorSetting>();
 
     int sequenceIndex = 0;
@@ -88,6 +88,18 @@ public class DetectorExtractor extends Extractor {
         setting.transmittedLightMode = detectorName.toLowerCase().contains("trans")
             && setting.channelName.equals("Transmission Channel");
 
+        
+        //only in STELLARIS
+        Element detectionReferenceLine;
+        try {
+          detectionReferenceLine = (Element)getChildNodeWithName(detectorNode, "DetectionReferenceLine");
+          if (detectionReferenceLine != null){
+            setting.referenceLineName = getAttributeValue(detectionReferenceLine, "LaserName");
+            String referenceWavelengthS = getAttributeValue(detectionReferenceLine, "LaserWavelength");
+            setting.referenceLineWavelength = parseInt(referenceWavelengthS);
+          }
+        } catch (Exception e) {}
+
         for (Detector detector : detectors) {
           if (detectorName.equals(detector.model)) {
             setting.detector = detector;
@@ -99,9 +111,14 @@ public class DetectorExtractor extends Extractor {
         detectorListIndex++;
       }
 
+      String readOutRateS = getAttributeValue(mainConfocalSetting, "ScanSpeed");
+      double readOutRate = parseDouble(readOutRateS);
+
       for (DetectorSetting setting : detectorSettings) {
-        if (setting.isActive)
+        if (setting.isActive){
+          setting.readOutRate = readOutRate;
           activeDetectorSettings.add(setting);
+        }
       }
 
       sequenceIndex++;

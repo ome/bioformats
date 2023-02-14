@@ -55,15 +55,8 @@ public class MetadataTempBuffer {
   public List<ArrayList<Color>> channelColors = new ArrayList<ArrayList<Color>>();
   public int[][] channelPrios;
 
-  public List<Double> physicalSizeXs = new ArrayList<Double>();
-  public List<Double> physicalSizeYs = new ArrayList<Double>();
-  public List<Length> fieldPosX = new ArrayList<Length>();
-  public List<Length> fieldPosY = new ArrayList<Length>();
-
-  public String[] descriptions;
   public Double[] pinholes, zSteps, tSteps, lensNA;
-  public boolean[] flipX, flipY, swapXY;
-  public Double[][] expTimes, gains, detectorOffsets;
+  public Double[][] expTimes, gains;
   public String[][] channelNames;
   public Double[][] exWaves;
   public ArrayList<ArrayList<Boolean>> activeDetector;
@@ -73,32 +66,14 @@ public class MetadataTempBuffer {
   public Double[] refractiveIndex;
   public ArrayList<ArrayList<Length>> cutIns, cutOuts;
   public ArrayList<ArrayList<String>> filterModels;
-  public Double[][] timestamps;
   public ArrayList<ArrayList<Double>> laserIntensity, laserWavelength;
   public ArrayList<ArrayList<Boolean>> laserActive, laserFrap;
 
-  public ROI[][] imageROIs;
-  public boolean alternateCenter = false;
   public String[] imageNames;
-  public double[] acquiredDate;
 
   public int[] tileCount;
   public long[] tileBytesInc;
   public boolean[] inverseRgb; // true if channels are in BGR order
-  private ArrayList<ArrayList<Dimension>> dimensions;
-  public ArrayList<ArrayList<Channel>> channels;
-
-  public ArrayList<ArrayList<Detector>> detectors; // detector info added to an instrument in OME model
-  public ArrayList<ArrayList<DetectorSetting>> detectorSettings; // detector info added to detector settings of a
-                                                                 // channel in OME model
-  public ArrayList<ArrayList<Laser>> lasers;
-  public ArrayList<ArrayList<Filter>> filters;
-
-  public enum DataSourceType {
-    CAMERA, CONFOCAL
-  }
-
-  public DataSourceType[] dataSourceTypes;
 
   // -- Constructor --
   /**
@@ -111,9 +86,6 @@ public class MetadataTempBuffer {
     tileCount = new int[len];
     Arrays.fill(tileCount, 1);
     tileBytesInc = new long[len];
-    acquiredDate = new double[len];
-    descriptions = new String[len];
-    timestamps = new Double[len][];
     lensNA = new Double[len];
     corrections = new String[len];
     posX = new Length[len];
@@ -123,18 +95,12 @@ public class MetadataTempBuffer {
     zSteps = new Double[len];
     tSteps = new Double[len];
     pinholes = new Double[len];
-    flipX = new boolean[len];
-    flipY = new boolean[len];
-    swapXY = new boolean[len];
     expTimes = new Double[len][];
     gains = new Double[len][];
-    detectorOffsets = new Double[len][];
     channelNames = new String[len][];
     exWaves = new Double[len][];
-    imageROIs = new ROI[len][];
     imageNames = new String[len];
     inverseRgb = new boolean[len];
-    dataSourceTypes = new DataSourceType[len];
 
     laserWavelength = ArrayListOfArrayLists(len, Double.class);
     activeDetector = ArrayListOfArrayLists(len, Boolean.class);
@@ -144,23 +110,6 @@ public class MetadataTempBuffer {
     laserIntensity = ArrayListOfArrayLists(len, Double.class);
     laserActive = ArrayListOfArrayLists(len, Boolean.class);
     laserFrap = ArrayListOfArrayLists(len, Boolean.class);
-    dimensions = ArrayListOfArrayLists(len, Dimension.class);
-    channels = ArrayListOfArrayLists(len, Channel.class);
-    detectors = ArrayListOfArrayLists(len, Detector.class);
-    detectorSettings = ArrayListOfArrayLists(len, DetectorSetting.class);
-    lasers = ArrayListOfArrayLists(len, Laser.class);
-    filters = ArrayListOfArrayLists(len, Filter.class);
-  }
-
-  // -- Methods --
-
-  public DetectorSetting getDetectorSetting(int series, int sequenceIndex, int detectorListIndex) {
-    for (DetectorSetting setting : detectorSettings.get(series)) {
-      if (setting.sequenceIndex == sequenceIndex && setting.detectorListIndex == detectorListIndex)
-        return setting;
-    }
-
-    return null;
   }
 
   // -- Helper functions --
@@ -168,14 +117,6 @@ public class MetadataTempBuffer {
     ArrayList<ArrayList<T>> lst = new ArrayList<>();
     for (int i = 0; i < rows; i++) {
       lst.add(new ArrayList<T>());
-    }
-    return lst;
-  }
-
-  private <T, S> ArrayList<HashMap<T, S>> ArrayListOfHashMaps(int rows, Class<T> key, Class<S> value) {
-    ArrayList<HashMap<T, S>> lst = new ArrayList<>();
-    for (int i = 0; i < rows; i++) {
-      lst.add(new HashMap<T, S>());
     }
     return lst;
   }

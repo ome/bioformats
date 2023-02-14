@@ -2,10 +2,13 @@ package loci.formats.in.LeicaMicrosystemsMetadata.writeOME;
 
 import java.util.List;
 
+import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.meta.MetadataStore;
+import ome.units.UNITS;
+import ome.units.quantity.Frequency;
 import ome.xml.model.enums.DetectorType;
 
 public class DetectorWriter extends OMEWriter {
@@ -30,6 +33,8 @@ public class DetectorWriter extends OMEWriter {
         store.setDetectorSettingsOffset(channel.detectorSetting.offset, seriesIndex, channelIndex);
         store.setDetectorSettingsGain(channel.detectorSetting.gain, seriesIndex, channelIndex);
         store.setDetectorSettingsZoom(channel.detectorSetting.detector.zoom, seriesIndex, channelIndex);
+        Frequency frequency = FormatTools.createFrequency(channel.detectorSetting.readOutRate, UNITS.HERTZ);
+        store.setDetectorSettingsReadOutRate(frequency, seriesIndex, channelIndex);
       }
     }
   }

@@ -12,7 +12,6 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
-import loci.formats.in.LeicaMicrosystemsMetadata.MetadataTempBuffer.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ChannelExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.DetectorExtractor;
@@ -59,7 +58,7 @@ public class Translator {
   List<Element> widefieldChannelInfos = new ArrayList<Element>();
 
   //extracted data
-  DimensionStore dimensionStore = new DimensionStore();
+  public DimensionStore dimensionStore = new DimensionStore();
   List<Laser> lasers = new ArrayList<Laser>();
   List<LaserSetting> laserSettings = new ArrayList<LaserSetting>();
   List<Detector> detectors = new ArrayList<Detector>();
@@ -69,9 +68,13 @@ public class Translator {
   List<ROI> singleRois = new ArrayList<ROI>();
   List<Double> timestamps = new ArrayList<Double>();
 
+  String microscopeModel;
   String imageName;
   String description;
   boolean alternateCenter = false;
+  public enum DataSourceType {
+    CAMERA, CONFOCAL
+  }
   DataSourceType dataSourceType;
   int imageCount;
   boolean inverseRgb;
@@ -105,19 +108,25 @@ public class Translator {
     translateImageDetails();
     translateChannels();
     translateDimensions();
+    translateTimestamps();
+
+    if (hardwareSetting == null) return;
+
     translatePhysicalSizes();
     translateFieldPositions();
-    translateTimestamps();
     translateExposureTimes();
 
     //instrument metadata
     translateStandDetails();
     translateObjective();
-    translateLasers();
+
     translateDetectors();
     translateDetectorSettings();
+
     translateFilters(); //checks for detector settings
     translateFilterSettings();
+
+    translateLasers();
     translateLaserSettings(); //checks for channel filter
 
     //translateChannelNames();
@@ -191,23 +200,34 @@ public class Translator {
     LaserWriter.initLasers(lasers, seriesIndex, store);
   }
 
+  //link laser setting and channel information
   private void translateLaserSettings(){
     laserSettings = LaserExtractor.extractLaserSettings(sequentialConfocalSettings, lasers);
 
-    //link laser setting and channel information //TODO easier for STELLARIS
-    for (Channel channel : dimensionStore.channels) {
-      if (channel.filter == null)
-        continue;
-
-      LaserSetting selectedLaserSetting = null;
-      for (LaserSetting laserSetting : laserSettings) {
-        if (laserSetting.laser.wavelength < channel.filter.cutIn) {
-          if (selectedLaserSetting == null || selectedLaserSetting.laser.wavelength < laserSetting.laser.wavelength)
-            selectedLaserSetting = laserSetting;
+    // <= SP8: laser wavelength is assumed to lie left of detected emission spectrum
+    if (microscopeModel.contains("SP")){
+      for (Channel channel : dimensionStore.channels) {
+        if (channel.filter == null)
+          continue;
+  
+        LaserSetting selectedLaserSetting = null;
+        for (LaserSetting laserSetting : laserSettings) {
+          if (laserSetting.laser.wavelength < channel.filter.cutIn) {
+            if (selectedLaserSetting == null || selectedLaserSetting.laser.wavelength < laserSetting.laser.wavelength)
+              selectedLaserSetting = laserSetting;
+          }
+        }
+  
+        channel.laserSetting = selectedLaserSetting;
+      }
+    // STELLARIS: reference line info exists in detector node
+    } else if (microscopeModel.contains("STELLARIS")){
+      for (Channel channel: dimensionStore.channels){
+        for (LaserSetting laserSetting : laserSettings){
+          if (laserSetting.laser != null && channel.detectorSetting.referenceLineWavelength == laserSetting.laser.wavelength)
+            channel.laserSetting = laserSetting;
         }
       }
-
-      channel.laserSetting = selectedLaserSetting;
     }
 
     LaserWriter.initLaserSettings(dimensionStore.channels, seriesIndex, store);
@@ -219,7 +239,7 @@ public class Translator {
   }
 
   private void translateDetectorSettings(){
-    detectorSettings = DetectorExtractor.extractDetectorSettings(sequentialConfocalSettings, detectors);
+    detectorSettings = DetectorExtractor.extractDetectorSettings(sequentialConfocalSettings, mainConfocalSetting, detectors);
 
     // link detector and channel information
     // assuming that the order of channels in LMS XML maps the order of active
@@ -279,8 +299,8 @@ public class Translator {
     String instrumentID = MetadataTools.createLSID("Instrument", seriesIndex);
     store.setInstrumentID(instrumentID, seriesIndex);
 
-    String model = Extractor.getAttributeValue(hardwareSetting, "SystemTypeName");
-    store.setMicroscopeModel(model, seriesIndex);
+    microscopeModel = Extractor.getAttributeValue(hardwareSetting, "SystemTypeName");
+    store.setMicroscopeModel(microscopeModel, seriesIndex);
 
     String serialNumber = Extractor.getAttributeValue(mainConfocalSetting, "SystemSerialNumber");
     store.setMicroscopeSerialNumber(serialNumber, seriesIndex);
@@ -289,7 +309,7 @@ public class Translator {
     MicroscopeType type = isInverse.equals("1") ? MicroscopeType.INVERTED : MicroscopeType.UPRIGHT;
     store.setMicroscopeType(type, seriesIndex);
 
-    // store.setImageInstrumentRef(instrumentID, seriesIndex);
+    store.setImageInstrumentRef(instrumentID, seriesIndex);
   }
 
   private void translateObjective() {
