@@ -330,7 +330,7 @@ public class LiFlimReader extends FormatReader {
   private void initOriginalMetadata() {
     rois = new HashMap<Integer, ROI>();
     stampValues = new HashMap<Integer, String>();
-    LOGGER.info(version);
+    LOGGER.info("Fli file version: " + version);
 
     if (version.equals("1.0")){
       IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
