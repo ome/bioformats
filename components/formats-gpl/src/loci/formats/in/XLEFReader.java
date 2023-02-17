@@ -222,8 +222,8 @@ public class XLEFReader extends LMSFileReader {
    */
   private int getReaderIndex(int seriesIndex){
     for (int readerIndex = 0; readerIndex < readers.size(); readerIndex++){
-      int lastSeriesIndexLastReader = sum(metaTemp.tileCount, 0, readerIndex - 1) - 1;
-      int lastSeriesIndexThisReader = lastSeriesIndexLastReader + metaTemp.tileCount[readerIndex];
+      int lastSeriesIndexLastReader = sumUpTilecounts(0, readerIndex - 1) - 1;
+      int lastSeriesIndexThisReader = lastSeriesIndexLastReader + metadataTranslators.get(readerIndex).dimensionStore.tileCount;
       if (seriesIndex >= readerIndex && 
       seriesIndex > lastSeriesIndexLastReader &&
       seriesIndex <= lastSeriesIndexThisReader){
@@ -240,7 +240,7 @@ public class XLEFReader extends LMSFileReader {
    */
   private int getSeriesPerReaderIndex(int series){
     int readerIndex = getReaderIndex(series);
-    int sprIndex = series - sum(metaTemp.tileCount, 0, readerIndex-1);
+    int sprIndex = series - sumUpTilecounts(0, readerIndex-1);
     return sprIndex;
   }
 
@@ -320,7 +320,6 @@ public class XLEFReader extends LMSFileReader {
       LMSFileReader reader = readers.get(getReaderIndex(i));
       if (reader instanceof MultipleImagesReader){
         ((MultipleImagesReader)reader).setCoreMetadata(core.get(i));
-        ((MultipleImagesReader)reader).setMetadataTempBuffer(metaTemp);
         ((MultipleImagesReader)reader).metadataTranslators = this.metadataTranslators;
       }
     }
@@ -382,18 +381,18 @@ public class XLEFReader extends LMSFileReader {
   }
 
   /**
-   * Sums up all values of an array, from start index to (including) end index
+   * Sums up tilecounts from all images, from start image index to (including) end image index
    * @param arr
-   * @param start first array position whose value shall be added
-   * @param end last array position whose value shall be added
+   * @param start index of first image whose tilecount shall be added
+   * @param end index of last image whose tilecount shall be added
    * @return
    */
-  private int sum(int[] arr, int start, int end){
+  private int sumUpTilecounts(int start, int end){
     start = start < 0 ? 0 : start;
     if (end < start) return 0;
     int sum = 0;
-    for (int i = start; i <= end; i++){
-      sum += arr[i];
+    for (int i = 0; i <= end; i++){
+      sum += metadataTranslators.get(i).dimensionStore.tileCount;
     }
     return sum;
   }

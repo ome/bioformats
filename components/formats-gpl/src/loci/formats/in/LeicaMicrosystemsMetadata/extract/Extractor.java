@@ -27,6 +27,16 @@ public class Extractor {
     return null;
   }
 
+  public static Element getChildNodeWithNameAsElement(Node node, String nodeName){
+    Node child = getChildNodeWithName(node, nodeName);
+    Element element = null;
+    try {
+      element = (Element)child;
+    } catch (Exception e){}
+
+    return element;
+  }
+
   public static Node getNodeWithAttribute(NodeList nodes, String attributeName, String attributeValue) {
     for (int i = 0; i < nodes.getLength(); i++) {
       Node node = nodes.item(i);

@@ -1,14 +1,20 @@
 package loci.formats.in.LeicaMicrosystemsMetadata;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.common.DateTools;
 import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
@@ -53,6 +59,7 @@ public class Translator {
   Element hardwareSetting;
   Element mainConfocalSetting;
   Element mainCameraSetting;
+  Element widefieldChannelConfig;
   List<Element> sequentialConfocalSettings = new ArrayList<Element>();
   List<Element> sequentialCameraSettings = new ArrayList<Element>();
   List<Element> widefieldChannelInfos = new ArrayList<Element>();
@@ -69,7 +76,7 @@ public class Translator {
   List<Double> timestamps = new ArrayList<Double>();
 
   String microscopeModel;
-  String imageName;
+  public String imageName;
   String description;
   boolean alternateCenter = false;
   public enum DataSourceType {
@@ -77,7 +84,7 @@ public class Translator {
   }
   DataSourceType dataSourceType;
   int imageCount;
-  boolean inverseRgb;
+  public boolean inverseRgb = false;
   boolean useOldPhysicalSizeCalculation;
   ImageFormat imageFormat;
   int extras = 1;
@@ -120,18 +127,23 @@ public class Translator {
     translateStandDetails();
     translateObjective();
 
-    translateDetectors();
-    translateDetectorSettings();
+    if (dataSourceType == DataSourceType.CONFOCAL){
+      translateDetectors();
+      translateDetectorSettings();
+      
+      translateFilters(); //checks for detector settings
+      translateFilterSettings();
 
-    translateFilters(); //checks for detector settings
-    translateFilterSettings();
-
-    translateLasers();
-    translateLaserSettings(); //checks for channel filter
+      translateLasers();
+      translateLaserSettings(); //checks for channel filter
+    }
 
     //translateChannelNames();
 
     translateROIs();
+
+    final Deque<String> nameStack = new ArrayDeque<String>();
+    populateOriginalMetadata(imageNode, nameStack);
   }
 
   private void getMainNodes(){
@@ -145,7 +157,7 @@ public class Translator {
     dataSourceType = dataSourceTypeS.equals("Confocal") ? DataSourceType.CONFOCAL : DataSourceType.CAMERA;
 
     if (dataSourceType == DataSourceType.CONFOCAL){
-      mainConfocalSetting = (Element)Extractor.getChildNodeWithName(hardwareSetting, "ATLConfocalSettingDefinition");
+      mainConfocalSetting = Extractor.getChildNodeWithNameAsElement(hardwareSetting, "ATLConfocalSettingDefinition");
     
       Node ldmBlockSequential = Extractor.getChildNodeWithName(hardwareSetting, "LDM_Block_Sequential");
       if (ldmBlockSequential == null) return;
@@ -163,29 +175,32 @@ public class Translator {
         }
       }
     } else {
-      mainCameraSetting = (Element)Extractor.getChildNodeWithName(hardwareSetting, "ATLCameraSettingDefinition");
+      mainCameraSetting = Extractor.getChildNodeWithNameAsElement(hardwareSetting, "ATLCameraSettingDefinition");
 
-      Element ldmBlockWidefieldSequential = (Element)Extractor.getChildNodeWithName(hardwareSetting, "LDM_Block_Widefield_Sequential");
-
-      Element ldmBlockSequentialList = (Element)Extractor.getChildNodeWithName(ldmBlockWidefieldSequential, "LDM_Block_Sequential_List");
-      NodeList sequentialCameraSettings = ldmBlockSequentialList.getChildNodes();
-
-      for (int channelIndex = 0; channelIndex < sequentialCameraSettings.getLength(); channelIndex++){
-        Element sequentialCameraSetting = (Element)sequentialCameraSettings.item(channelIndex);
-        this.sequentialCameraSettings.add(sequentialCameraSetting);
+      Element ldmBlockWidefieldSequential = Extractor.getChildNodeWithNameAsElement(hardwareSetting, "LDM_Block_Widefield_Sequential");
+      if (ldmBlockWidefieldSequential != null){
+        Element ldmBlockSequentialList = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_List");
+        NodeList sequentialCameraSettings = ldmBlockSequentialList.getChildNodes();
+  
+        for (int channelIndex = 0; channelIndex < sequentialCameraSettings.getLength(); channelIndex++){
+          Element sequentialCameraSetting = (Element)sequentialCameraSettings.item(channelIndex);
+          this.sequentialCameraSettings.add(sequentialCameraSetting);
+        }
       }
-
+      
       if (this.sequentialCameraSettings.size() > 0){
-        //sequential camera settigns > config > info
+        //sequential camera settings > config > info
         for (int channelIndex = 0; channelIndex < this.sequentialCameraSettings.size(); channelIndex++){
           Element sequentialCameraSetting = this.sequentialCameraSettings.get(channelIndex);
-          Element widefieldChannelConfig = (Element)Extractor.getChildNodeWithName(sequentialCameraSetting, "WideFieldChannelConfigurator");
-          Element widefieldChannelInfo = (Element)Extractor.getChildNodeWithName(widefieldChannelConfig, "WideFieldChannelInfo");
+          Element widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(sequentialCameraSetting, "WideFieldChannelConfigurator");
+          Element widefieldChannelInfo = Extractor.getChildNodeWithNameAsElement(widefieldChannelConfig, "WideFieldChannelInfo");
           this.widefieldChannelInfos.add(widefieldChannelInfo);
         }
       } else {
         //main camera setting > config > infos
-        Element widefieldChannelConfig = (Element)Extractor.getChildNodeWithName(mainCameraSetting, "WideFieldChannelConfigurator");
+        widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(mainCameraSetting, "WideFieldChannelConfigurator");
+        if (widefieldChannelConfig == null) return;
+
         NodeList widefieldChannelInfos = Extractor.getDescendantNodesWithName(widefieldChannelConfig, "WideFieldChannelInfo");
         for (int channelIndex = 0; channelIndex < widefieldChannelInfos.getLength(); channelIndex++){
           Element widefieldChannelInfo = (Element)widefieldChannelInfos.item(channelIndex);
@@ -234,8 +249,8 @@ public class Translator {
   }
 
   private void translateDetectors(){
-    detectors = DetectorExtractor.extractDetectors(mainConfocalSetting, sequentialConfocalSettings);
-    DetectorWriter.initDetectors(detectors, seriesIndex, store);
+      detectors = DetectorExtractor.extractDetectors(mainConfocalSetting, sequentialConfocalSettings);
+      DetectorWriter.initDetectors(detectors, seriesIndex, store);
   }
 
   private void translateDetectorSettings(){
@@ -302,10 +317,17 @@ public class Translator {
     microscopeModel = Extractor.getAttributeValue(hardwareSetting, "SystemTypeName");
     store.setMicroscopeModel(microscopeModel, seriesIndex);
 
-    String serialNumber = Extractor.getAttributeValue(mainConfocalSetting, "SystemSerialNumber");
+    Element setting;
+    if (dataSourceType == DataSourceType.CONFOCAL){
+      setting = mainConfocalSetting;
+    } else {
+      setting = mainCameraSetting;
+    }
+
+    String serialNumber = Extractor.getAttributeValue(setting, "SystemSerialNumber");
     store.setMicroscopeSerialNumber(serialNumber, seriesIndex);
 
-    String isInverse = Extractor.getAttributeValue(mainConfocalSetting, "IsInverseMicroscopeModel");
+    String isInverse = Extractor.getAttributeValue(setting, "IsInverseMicroscopeModel");
     MicroscopeType type = isInverse.equals("1") ? MicroscopeType.INVERTED : MicroscopeType.UPRIGHT;
     store.setMicroscopeType(type, seriesIndex);
 
@@ -316,30 +338,37 @@ public class Translator {
     String objectiveID = MetadataTools.createLSID("Objective", seriesIndex, 0);
     store.setObjectiveID(objectiveID, seriesIndex, 0);
 
-    String model = mainConfocalSetting.getAttribute("ObjectiveName");
+    Element setting;
+    if (dataSourceType == DataSourceType.CONFOCAL){
+      setting = mainConfocalSetting;
+    } else {
+      setting = mainCameraSetting;
+    }
+
+    String model = setting.getAttribute("ObjectiveName");
     store.setObjectiveModel(model, seriesIndex, 0);
 
-    String naS = mainConfocalSetting.getAttribute("NumericalAperture");
+    String naS = setting.getAttribute("NumericalAperture");
     double na = Extractor.parseDouble(naS);
     store.setObjectiveLensNA(na, seriesIndex, 0);
 
-    String nr = mainConfocalSetting.getAttribute("ObjectiveNumber");
+    String nr = setting.getAttribute("ObjectiveNumber");
     store.setObjectiveSerialNumber(nr, seriesIndex, 0);
 
-    String magnificationS = mainConfocalSetting.getAttribute("Magnification");
+    String magnificationS = setting.getAttribute("Magnification");
     double magnification = Extractor.parseDouble(magnificationS);
     store.setObjectiveNominalMagnification(magnification, seriesIndex, 0);
 
     try {
 
-      String immersion = mainConfocalSetting.getAttribute("Immersion");
+      String immersion = setting.getAttribute("Immersion");
       store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), seriesIndex, 0);
     } catch (Exception e){
       System.out.println("Objective immersion could not be read.");
       e.printStackTrace();
     }
 
-    String refractionIndexS = mainConfocalSetting.getAttribute("RefractionIndex");
+    String refractionIndexS = setting.getAttribute("RefractionIndex");
     double refractionIndex = Extractor.parseDouble(refractionIndexS);
 
     store.setObjectiveSettingsID(objectiveID, seriesIndex);
@@ -390,14 +419,10 @@ public class Translator {
   private void translateExposureTimes(){
     if (dataSourceType == DataSourceType.CONFOCAL) return;
 
-    Element ldmBlockWidefieldSequential = (Element)Extractor.getChildNodeWithName(hardwareSetting, "LDM_Block_Widefield_Sequential");
-    Element ldmBlockSequentialList = (Element)Extractor.getChildNodeWithName(ldmBlockWidefieldSequential, "LDM_Block_Sequential_List");
-    NodeList sequentialCameraSettings = ldmBlockSequentialList.getChildNodes();
-
-    for (int channelIndex = 0; channelIndex < sequentialCameraSettings.getLength(); channelIndex++){
-      Element sequentialCameraSetting = (Element)sequentialCameraSettings.item(channelIndex);
-      Element widefieldChannelConfig = (Element)Extractor.getChildNodeWithName(sequentialCameraSetting, "WideFieldChannelConfigurator");
-      Element widefieldChannelInfo = (Element)Extractor.getChildNodeWithName(widefieldChannelConfig, "WideFieldChannelInfo");
+    for (int channelIndex = 0; channelIndex < sequentialCameraSettings.size(); channelIndex++){
+      Element sequentialCameraSetting = (Element)sequentialCameraSettings.get(channelIndex);
+      Element widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(sequentialCameraSetting, "WideFieldChannelConfigurator");
+      Element widefieldChannelInfo = Extractor.getChildNodeWithNameAsElement(widefieldChannelConfig, "WideFieldChannelInfo");
       String exposureTimeS = Extractor.getAttributeValue(widefieldChannelInfo, "ExposureTime");
       dimensionStore.channels.get(channelIndex).exposureTime = Extractor.parseDouble(exposureTimeS);
     }
@@ -504,8 +529,61 @@ public class Translator {
   
       store.setImageDescription(description, seriesIndex);
     }
-    
+  }
 
+  /**
+   * Creates key value pairs from attributes of the root's child nodes (tag |
+   * attribute name : attribute value) and adds them to reader's
+   * {@link CoreMetadata}
+   * 
+   * @param root
+   *          xml node
+   * @param nameStack
+   *          list of node names to be prepended to key name
+   */
+  private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
+    String name = root.getNodeName();
+    if (root.hasAttributes() && !name.equals("Element") && !name.equals("Attachment")
+        && !name.equals("LMSDataContainerHeader")) {
+      nameStack.push(name);
 
+      String suffix = root.getAttribute("Identifier");
+      String value = root.getAttribute("Variant");
+      if (suffix == null || suffix.trim().length() == 0) {
+        suffix = root.getAttribute("Description");
+      }
+      final StringBuilder key = new StringBuilder();
+      final Iterator<String> nameStackIterator = nameStack.descendingIterator();
+      while (nameStackIterator.hasNext()) {
+        final String k = nameStackIterator.next();
+        key.append(k);
+        key.append("|");
+      }
+      if (suffix != null && value != null && suffix.length() > 0 && value.length() > 0 && !suffix.equals("HighInteger")
+          && !suffix.equals("LowInteger")) {
+        reader.addSeriesMetaList(key.toString() + suffix, value);
+      } else {
+        NamedNodeMap attributes = root.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+          Attr attr = (Attr) attributes.item(i);
+          if (!attr.getName().equals("HighInteger") && !attr.getName().equals("LowInteger")) {
+            reader.addSeriesMeta(key.toString() + attr.getName(), attr.getValue());
+          }
+        }
+      }
+    }
+
+    NodeList children = root.getChildNodes();
+    for (int i = 0; i < children.getLength(); i++) {
+      Object child = children.item(i);
+      if (child instanceof Element) {
+        populateOriginalMetadata((Element) child, nameStack);
+      }
+    }
+
+    if (root.hasAttributes() && !name.equals("Element") && !name.equals("Attachment")
+        && !name.equals("LMSDataContainerHeader")) {
+      nameStack.pop();
+    }
   }
 }

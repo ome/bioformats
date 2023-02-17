@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Element;
-
 import loci.common.DataTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -42,10 +40,6 @@ public class LMSMetadataTranslator {
   // -- Fields --
   private LMSFileReader r;
   MetadataStore store;
-  Element hardwareSetting;
-  Element mainConfocalSetting;
-  Element ldmBlockMaster;
-  Element ldmBlockList;
 
   // -- Constructor --
   public LMSMetadataTranslator(LMSFileReader reader) {
@@ -90,7 +84,7 @@ public class LMSMetadataTranslator {
   private void setCoreMetadataForTiles() {
     ArrayList<CoreMetadata> core = new ArrayList<CoreMetadata>();
     for (int i = 0; i < r.getCore().size(); i++) {
-      for (int tile = 0; tile < r.metaTemp.tileCount[i]; tile++) {
+      for (int tile = 0; tile < r.metadataTranslators.get(i).dimensionStore.tileCount; tile++) {
         core.add(r.getCore().get(i));
       }
     }
@@ -113,11 +107,11 @@ public class LMSMetadataTranslator {
 
   public int getTileIndex(int coreIndex) {
     int count = 0;
-    for (int tile = 0; tile < r.metaTemp.tileCount.length; tile++) {
-      if (coreIndex < count + r.metaTemp.tileCount[tile]) {
+    for (int tile = 0; tile < r.metadataTranslators.size(); tile++) {
+      if (coreIndex < count + r.metadataTranslators.get(tile).dimensionStore.tileCount) {
         return tile;
       }
-      count += r.metaTemp.tileCount[tile];
+      count += r.metadataTranslators.get(tile).dimensionStore.tileCount;
     }
     return -1;
   }

@@ -327,7 +327,7 @@ public class LOFReader extends LMSFileReader {
     }
 
     // rearrange if color planes are stored in BGR order
-    if (getRGBChannelCount() == 3 && metaTemp.inverseRgb[0]) {
+    if (getRGBChannelCount() == 3 && metadataTranslators.get(0).inverseRgb) {
       ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
 
@@ -484,11 +484,11 @@ public class LOFReader extends LMSFileReader {
     int index = getTileIndex(series);
     long posInFile;
 
-    int numberOfTiles = metaTemp.tileCount[index];
+    int numberOfTiles = metadataTranslators.get(index).dimensionStore.tileCount;
     if (numberOfTiles > 1) {
       // LAS AF treats tiles just like any other dimension, while we do not.
       // Hence we need to take the tiles into account for a frame's position.
-      long bytesIncPerTile = metaTemp.tileBytesInc[index];
+      long bytesIncPerTile = metadataTranslators.get(index).dimensionStore.tileBytesInc;
       long framesPerTile = bytesIncPerTile / planeSize;
 
       if (framesPerTile > Integer.MAX_VALUE) {
@@ -500,7 +500,7 @@ public class LOFReader extends LMSFileReader {
 
       int tile = series;
       for (int i = 0; i < index; i++) {
-        tile -= metaTemp.tileCount[i];
+        tile -= metadataTranslators.get(i).dimensionStore.tileCount;
       }
 
       posInFile = dataOffset;

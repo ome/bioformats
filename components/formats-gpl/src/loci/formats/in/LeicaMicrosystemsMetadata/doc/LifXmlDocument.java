@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * This class loads and represents a Leica Microsystems XML document that has

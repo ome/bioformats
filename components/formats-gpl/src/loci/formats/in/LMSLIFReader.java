@@ -266,7 +266,7 @@ public class LMSLIFReader extends LMSFileReader {
       }
     }
 
-    if (getRGBChannelCount() == 3 && metaTemp.inverseRgb[0]) {
+    if (getRGBChannelCount() == 3 && metadataTranslators.get(0).inverseRgb) {
       ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
 
@@ -278,11 +278,11 @@ public class LMSLIFReader extends LMSFileReader {
     int index = getTileIndex(series);
     long posInFile;
 
-    int numberOfTiles = metaTemp.tileCount[index];
+    int numberOfTiles = metadataTranslators.get(index).dimensionStore.tileCount;
     if (numberOfTiles > 1) {
       // LAS AF treats tiles just like any other dimension, while we do not.
       // Hence we need to take the tiles into account for a frame's position.
-      long bytesIncPerTile = metaTemp.tileBytesInc[index];
+      long bytesIncPerTile = metadataTranslators.get(index).dimensionStore.tileBytesInc;
       long framesPerTile = bytesIncPerTile / planeSize;
 
       if (framesPerTile > Integer.MAX_VALUE) {
@@ -294,7 +294,7 @@ public class LMSLIFReader extends LMSFileReader {
 
       int tile = series;
       for (int i = 0; i < index; i++) {
-        tile -= metaTemp.tileCount[i];
+        tile -= metadataTranslators.get(i).dimensionStore.tileCount;
       }
 
       posInFile = dataOffset;
@@ -318,10 +318,9 @@ public class LMSLIFReader extends LMSFileReader {
 
     Location currentFile = new Location(currentId).getAbsoluteFile();
     Location parent = currentFile.getParentFile();
-    if (parent != null && getSeries() < metaTemp.imageNames.length &&
-        metaTemp.imageNames[getSeries()] != null) {
+    if (parent != null && getSeries() < metadataTranslators.size()) {
       // look for an XML file with the same name as this series
-      Location xmlFile = new Location(parent, metaTemp.imageNames[getSeries()].trim() + ".xml");
+      Location xmlFile = new Location(parent, metadataTranslators.get(getSeries()).imageName.trim() + ".xml");
       if (xmlFile.exists()) {
         files.add(xmlFile.getAbsolutePath());
       }

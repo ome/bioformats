@@ -54,7 +54,6 @@ public abstract class LMSFileReader extends FormatReader {
 
   // -- Fields --
   public static Logger log;
-  public MetadataTempBuffer metaTemp;
   public LMSXmlDocument associatedXmlDoc; //an optional LMS xml file that references the file(s) that are read by this reader
   public List<Translator> metadataTranslators = new ArrayList<Translator>();
 
@@ -77,7 +76,7 @@ public abstract class LMSFileReader extends FormatReader {
     super.close(fileOnly);
 
     if (!fileOnly){
-      metaTemp = null;
+      metadataTranslators = new ArrayList<Translator>();
     }
   }
 
@@ -125,9 +124,6 @@ public abstract class LMSFileReader extends FormatReader {
    * @throws IOException
    */
   public void translateMetadata(List<LMSImageXmlDocument> docs) throws FormatException, IOException {
-    int len = docs.size();
-    metaTemp = new MetadataTempBuffer(len);
-
     LMSMetadataTranslator translator = new LMSMetadataTranslator(this);
     translator.translateMetadata(docs);
   }
@@ -161,11 +157,11 @@ public abstract class LMSFileReader extends FormatReader {
   
   protected int getTileIndex(int coreIndex) {
     int count = 0;
-    for (int tile = 0; tile < metaTemp.tileCount.length; tile++) {
-      if (coreIndex < count + metaTemp.tileCount[tile]) {
+    for (int tile = 0; tile < metadataTranslators.size(); tile++) {
+      if (coreIndex < count + metadataTranslators.get(tile).dimensionStore.tileCount) {
         return tile;
       }
-      count += metaTemp.tileCount[tile];
+      count += metadataTranslators.get(tile).dimensionStore.tileCount;
     }
     return -1;
   }

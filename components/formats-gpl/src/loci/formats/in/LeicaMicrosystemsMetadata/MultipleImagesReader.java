@@ -185,10 +185,6 @@ public class MultipleImagesReader extends LMSFileReader {
     return imageFormat;
   }
 
-  public void setMetadataTempBuffer(MetadataTempBuffer metaTemp){
-    this.metaTemp = metaTemp;
-  }
-
   public void setCoreMetadata(CoreMetadata cmd){
     if (core == null){
       core = new ArrayList<CoreMetadata>();
