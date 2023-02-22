@@ -47,7 +47,7 @@ public class PositionExtractor extends Extractor {
     String flipYS = getAttributeValue(setting, "FlipY");
     dimensionStore.flipY = flipYS.equals("1");
 
-    String swapXYS = getAttributeValue(setting, "FlipY");
+    String swapXYS = getAttributeValue(setting, "SwapXY");
     dimensionStore.swapXY = swapXYS.equals("1");
 
     for (int planeIndex = 0; planeIndex < dimensionStore.fieldPositions.size(); planeIndex++){
