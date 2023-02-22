@@ -60,13 +60,18 @@ public class LaserExtractor extends Extractor {
   
         NodeList laserLineSettings = getDescendantNodesWithName((Element)aotf, "LaserLineSetting");
         for (int laserSettingIndex = 0; laserSettingIndex < laserLineSettings.getLength(); laserSettingIndex++){
+          String intensityDevS = getAttributeValue(laserLineSettings.item(laserSettingIndex), "IntensityDev");
+          double intensity = parseDouble(intensityDevS);
+          //ignore laser settings if lasers are not active
+          if (intensity <= 0)
+            continue;
+
+          //realIntensity = 100d - intensity; ???
+
           LaserSetting setting = new LaserSetting();
           setting.sequenceIndex = sequenceIndex;
           setting.laserSettingIndex = laserSettingIndex;
-
-          String intensityDevS = getAttributeValue(laserLineSettings.item(laserSettingIndex), "IntensityDev");
-          setting.intensity = parseDouble(intensityDevS);
-          //realIntensity = 100d - intensity; ???
+          setting.intensity = intensity;
 
           String wavelengthS = getAttributeValue(laserLineSettings.item(laserSettingIndex), "LaserLine");
           int wavelength = parseInt(wavelengthS);

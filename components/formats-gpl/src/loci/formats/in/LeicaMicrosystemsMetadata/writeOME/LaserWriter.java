@@ -36,7 +36,8 @@ public class LaserWriter extends OMEWriter {
       Channel channel = channels.get(channelIndex);
       if (channel.laserSetting != null) {
         store.setChannelLightSourceSettingsID(channel.laserSetting.laser.laserId, seriesIndex, channelIndex);
-        store.setChannelLightSourceSettingsAttenuation(new PercentFraction((float) channel.laserSetting.intensity / 100f), seriesIndex, channelIndex);
+        PercentFraction attenuation = new PercentFraction((float) channel.laserSetting.intensity / 100f);
+        store.setChannelLightSourceSettingsAttenuation(attenuation, seriesIndex, channelIndex);
         store.setChannelExcitationWavelength(FormatTools.getWavelength(channel.laserSetting.laser.wavelength), seriesIndex, channelIndex);
       }
     }
