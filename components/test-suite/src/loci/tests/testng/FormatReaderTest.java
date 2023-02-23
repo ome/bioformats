@@ -161,9 +161,16 @@ public class FormatReaderTest {
 
   // -- Setup/teardown methods --
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setup() throws IOException {
-    initFile();
+    try {
+      initFile();
+    }
+    catch (RuntimeException e) {
+      // implies that the configuration does not exist
+      // this is expected if the "config" group is run
+      LOGGER.trace("File initialization failed", e);
+    }
   }
 
   @AfterClass(alwaysRun = true)
@@ -2004,6 +2011,25 @@ public class FormatReaderTest {
             continue;
           }
 
+          // .vsi datasets can only be detected with .vsi and frame*.ets
+          if (reader.getFormat().equals("CellSens VSI") &&
+            ((!base[i].toLowerCase().endsWith(".vsi") && !base[i].toLowerCase().endsWith(".ets")) ||
+            (base[i].toLowerCase().endsWith(".ets") && !base[i].toLowerCase().startsWith("frame"))))
+          {
+            continue;
+          }
+
+          // XLef datasets not detected from xlif/lof file
+          if (reader.getFormat().equals("Extended leica file") &&
+            (base[i].toLowerCase().endsWith("xlif") || base[i].toLowerCase().endsWith("lof") 
+                || base[i].toLowerCase().endsWith("xlcf") || base[i].toLowerCase().endsWith("jpeg")
+                || base[i].toLowerCase().endsWith("tif") || base[i].toLowerCase().endsWith("tiff")
+                || base[i].toLowerCase().endsWith("bmp") || base[i].toLowerCase().endsWith("jpg")
+                || base[i].toLowerCase().endsWith("png")))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2783,6 +2809,37 @@ public class FormatReaderTest {
             {
               continue;
             }
+
+            // .vsi data can only be detected from .vsi and frame*.ets
+            if (!result && r instanceof CellSensReader &&
+              ((!used[i].endsWith(".vsi") && !used[i].endsWith(".ets")) ||
+              (used[i].endsWith(".ets") && !used[i].startsWith("frame"))))
+            {
+              continue;
+            }
+
+            // XLEF data can only be detected from xlef file
+            if (!result && readers[j] instanceof XLEFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif") || used[i].endsWith(".tiff") ||
+                used[i].endsWith(".lof") || used[i].endsWith(".jpg")
+                || used[i].endsWith(".png") || used[i].endsWith(".bmp")))
+            {
+              continue;
+            }
+            if (!result && readers[j] instanceof LOFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif")))
+            {
+              continue;
+            }
+
+            if (result && r instanceof XLEFReader &&
+                (readers[j] instanceof LOFReader || readers[j] instanceof APNGReader
+                || readers[j] instanceof BMPReader || readers[j] instanceof JPEGReader))
+              {
+                continue;
+              }   
 
             boolean expected = r == readers[j];
             if (result != expected) {

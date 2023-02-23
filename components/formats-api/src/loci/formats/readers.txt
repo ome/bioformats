@@ -15,6 +15,7 @@ loci.formats.in.JPEGReader            # jpg, jpeg [javax.imageio]
 
 # external readers with unique file extensions
 loci.formats.in.SlideBook6Reader[type=external]      # sld
+loci.formats.in.SlideBook7Reader[type=external]      # sldy
 loci.formats.in.ScreenReader[type=external]         # .screen
 loci.formats.in.ZarrReader[type=external]         # .zarr
 
@@ -102,6 +103,8 @@ loci.formats.in.SPEReader             # spe
 loci.formats.in.OIRReader             # oir
 loci.formats.in.KLBReader             # klb
 loci.formats.in.MicroCTReader         # vff
+loci.formats.in.LOFReader	            # lof
+loci.formats.in.XLEFReader            # xlef
 loci.formats.in.OlympusTileReader     # omp2info
 
 # multi-extension messes
@@ -185,6 +188,7 @@ loci.formats.in.IonpathMIBITiffReader   # tif, tiff
 
 # DICOM reader must go before standard TIFF reader to correctly handle DICOM-TIFF files
 loci.formats.in.DicomReader           # dcm, dicom
+loci.formats.in.HitachiReader         # txt, tif, jpg, bmp
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff
@@ -198,7 +202,6 @@ loci.formats.in.OpenlabReader         # liff
 loci.formats.in.SMCameraReader        # (no extension)
 loci.formats.in.SBIGReader            # (no extension)
 loci.formats.in.HRDGDFReader          # (no extension)
-loci.formats.in.HitachiReader         # txt, tif, jpg, bmp
 loci.formats.in.BrukerReader          # fid, acqp
 loci.formats.in.CanonRawReader        # cr2, crw, jpg, thm, wav
 loci.formats.in.OBFReader             # obf, msr

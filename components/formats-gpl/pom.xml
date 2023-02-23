@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>6.9.1-SNAPSHOT</version>
+    <version>6.12.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -65,8 +65,8 @@
     </dependency>
     <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>cdm</artifactId>
-      <version>4.6.13</version>
+      <artifactId>cdm-core</artifactId>
+      <version>5.3.3</version>
       <exclusions>
         <exclusion>
           <groupId>com.amazonaws</groupId>
@@ -129,11 +129,6 @@
       <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>
       <version>${kryo.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.airlift</groupId>
-      <artifactId>aircompressor</artifactId>
-      <version>0.18</version>
     </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
@@ -275,7 +270,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>edu.ucar:cdm</classpathDependencyExclude>
+                <classpathDependencyExclude>edu.ucar:cdm-core</classpathDependencyExclude>
               </classpathDependencyExcludes>
               <systemPropertyVariables>
                 <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>

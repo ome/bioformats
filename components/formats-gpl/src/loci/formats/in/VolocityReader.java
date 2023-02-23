@@ -69,7 +69,7 @@ public class VolocityReader extends FormatReader {
   private ArrayList<Stack> stacks;
   private ArrayList<String> extraFiles;
   private Object[][] sampleTable, stringTable;
-  private Location dir = null;
+  private String dir = null;
 
   private ArrayList<Double[]> timestamps = new ArrayList<Double[]>();
 
@@ -258,13 +258,14 @@ public class VolocityReader extends FormatReader {
     extraFiles.add(file.getAbsolutePath());
 
     Location parentDir = file.getParentFile();
-    dir = new Location(parentDir, DATA_DIR);
+    Location dataDir = new Location(parentDir, DATA_DIR);
+    dir = dataDir.getAbsolutePath();
 
-    if (dir.exists()) {
-      String[] files = dir.list(true);
+    if (dataDir.exists()) {
+      String[] files = dataDir.list(true);
       for (String f : files) {
         if (!checkSuffix(f, "aisf") && !checkSuffix(f, "atsf")) {
-          extraFiles.add(new Location(dir, f).getAbsolutePath());
+          extraFiles.add(new Location(dataDir, f).getAbsolutePath());
         }
       }
     }
@@ -851,7 +852,7 @@ public class VolocityReader extends FormatReader {
     return data;
   }
 
-  private String getFile(Integer parent, Location dir) {
+  private String getFile(Integer parent, String dir) {
     for (int row=0; row<sampleTable.length; row++) {
       if (parent.equals(sampleTable[row][0])) {
         Object o = sampleTable[row][14];

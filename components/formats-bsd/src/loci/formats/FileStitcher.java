@@ -935,7 +935,7 @@ public class FileStitcher extends ReaderWrapper {
     if (!patternIds) {
       patternIds = fp.isValid() && fp.getFiles().length > 1;
     }
-    else {
+    else if (canChangePattern() || !Location.getMappedId(id).equals(id)) {
       patternIds =
         !new Location(id).exists() && Location.getMappedId(id).equals(id);
     }

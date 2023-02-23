@@ -551,7 +551,7 @@ public class TiffParser implements Closeable {
 
     if (type == IFDType.BYTE) {
       // 8-bit unsigned integer
-      if (count == 1) return Short.valueOf(in.readByte());
+      if (count == 1) return in.readUnsignedByte();
       byte[] bytes = new byte[count];
       in.readFully(bytes);
       // bytes are unsigned, so use shorts
@@ -1104,6 +1104,13 @@ public class TiffParser implements Closeable {
           tileBounds.y = (int) ((row % nrows) * (tileLength - overlapY));
         }
 
+        // this tile is completely to the right of the requested image
+        // all subsequent tile columns will also be to the right of the image,
+        // so don't bother checking them
+        if (tileBounds.x > imageBounds.x + imageBounds.width) {
+          break;
+        }
+
         if (!imageBounds.intersects(tileBounds)) continue;
 
         getTile(ifd, cachedTileBuffer, row, col);
@@ -1243,10 +1250,23 @@ public class TiffParser implements Closeable {
     float lumaRed = PhotoInterp.LUMA_RED;
     float lumaGreen = PhotoInterp.LUMA_GREEN;
     float lumaBlue = PhotoInterp.LUMA_BLUE;
-    int[] reference = ifd.getIFDIntArray(IFD.REFERENCE_BLACK_WHITE);
-    if (reference == null) {
-      reference = new int[] {0, 0, 0, 0, 0, 0};
+    int[] reference = {0, 0, 0, 0, 0, 0};
+    try {
+      int[] value = ifd.getIFDIntArray(IFD.REFERENCE_BLACK_WHITE);
+      // TODO: Run extra validation on the value
+      if (value != null) {
+        reference = value;
+      }
+    } catch (FormatException e) {
+      float[] value = (float[]) ifd.getIFDValue(IFD.REFERENCE_BLACK_WHITE);
+      if (value != null && value.length == 6) {
+        LOGGER.debug("ReferenceBlackWhite tag stored as float array.");
+        for (int i = 0 ; i < 5; i++) {
+          reference[i] = (int) value[i];
+        }
+      }
     }
+
     int[] subsampling = ifd.getIFDIntArray(IFD.Y_CB_CR_SUB_SAMPLING);
     TiffRational[] coefficients = (TiffRational[])
       ifd.getIFDValue(IFD.Y_CB_CR_COEFFICIENTS);

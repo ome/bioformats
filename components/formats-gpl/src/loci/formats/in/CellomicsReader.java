@@ -85,7 +85,7 @@ public class CellomicsReader extends FormatReader {
   private static final Pattern PATTERN_O = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(o\\d+)?[^_]+$");
   private static final Pattern PATTERN_D = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(d\\d+)?[^_]+$");
 
-  private Pattern cellomicsPattern;
+  private transient Pattern cellomicsPattern;
 
   private ArrayList<ChannelFile> files = new ArrayList<ChannelFile>();
 
@@ -493,9 +493,8 @@ public class CellomicsReader extends FormatReader {
 
       int fieldIndex = uniqueFields.indexOf(field);
       store.setImageName(
-        String.format("Well %s%02d, Field #%02d",
-                  new String(Character.toChars(row+'A')),
-                  col + 1, field), image);
+        String.format("Well %s, Field #%02d",
+                      FormatTools.getWellName(row, col), field), image);
 
       if (getSeriesCount() == 1) {
         row = 0;

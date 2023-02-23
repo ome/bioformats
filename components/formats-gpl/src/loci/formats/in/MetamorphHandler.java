@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.xml.BaseHandler;
 
 import ome.units.UNITS;
@@ -215,19 +216,46 @@ public class MetamorphHandler extends BaseHandler {
 
   /** Check if the value needs to be saved. */
   private void checkKey(String key, String value) {
-    if (key.equals("Temperature")) {
-      temperature = Double.parseDouble(value);
+    Double doubleValue = parseDouble(value);
+    if (doubleValue != null) {
+      if (key.equals("Temperature")) {
+        temperature = doubleValue;
+      }
+      else if (key.equals("spatial-calibration-x")) {
+        pixelSizeX = doubleValue;
+      }
+      else if (key.equals("spatial-calibration-y")) {
+        pixelSizeY = doubleValue;
+      }
+      else if (key.equals("z-position")) {
+        zPositions.add(doubleValue);
+      }
+      else if (key.equals("_MagNA_")) {
+        lensNA = doubleValue;
+      }
+      else if (key.equals("_MagRI_")) {
+        lensRI = doubleValue;
+      }
+      else if (key.equals("Readout Frequency")) {
+        readOutRate = doubleValue;
+      }
+      else if (key.equals("zoom-percent")) {
+        zoom = doubleValue;
+      }
+      else if (key.equals("stage-position-x")) {
+        positionX = new Length(doubleValue, UNITS.REFERENCEFRAME);
+        if (metadata != null) {
+          metadata.put("X position for position #1", positionX);
+        }
+      }
+      else if (key.equals("stage-position-y")) {
+        positionY = new Length(doubleValue, UNITS.REFERENCEFRAME);
+        if (metadata != null) {
+          metadata.put("Y position for position #1", positionY);
+        }
+      }
     }
-    else if (key.equals("spatial-calibration-x")) {
-      pixelSizeX = Double.parseDouble(value);
-    }
-    else if (key.equals("spatial-calibration-y")) {
-      pixelSizeY = Double.parseDouble(value);
-    }
-    else if (key.equals("z-position")) {
-      zPositions.add(new Double(value));
-    }
-    else if (key.equals("wavelength")) {
+    if (key.equals("wavelength")) {
       wavelengths.add(new Integer(value));
     }
     else if (key.equals("acquisition-time-local")) {
@@ -238,45 +266,26 @@ public class MetamorphHandler extends BaseHandler {
     else if (key.equals("Binning")) {
       binning = value;
     }
-    else if (key.equals("Readout Frequency")) {
-      readOutRate = Double.parseDouble(value);
-    }
-    else if (key.equals("zoom-percent")) {
-      zoom = Double.parseDouble(value);
-    }
-    else if (key.equals("stage-position-x")) {
-      final Double number = Double.valueOf(value);
-      positionX = new Length(number, UNITS.REFERENCEFRAME);
-      if (metadata != null) {
-        metadata.put("X position for position #1", positionX);
-      }
-    }
-    else if (key.equals("stage-position-y")) {
-      final Double number = Double.valueOf(value);
-      positionY = new Length(number, UNITS.REFERENCEFRAME);
-      if (metadata != null) {
-        metadata.put("Y position for position #1", positionY);
-      }
-    }
     else if (key.equals("Speed")) {
       int space = value.indexOf(' ');
       if (space > 0) {
         value = value.substring(0, space);
       }
-      try {
-        readOutRate = Double.parseDouble(value.trim());
+      Double rate = parseDouble(value.trim());
+      if (rate != null) {
+        readOutRate = rate;
       }
-      catch (NumberFormatException e) { }
     }
     else if (key.equals("Exposure")) {
       if (value.indexOf(' ') != -1) {
         value = value.substring(0, value.indexOf(' '));
       }
       // exposure times are stored in milliseconds, we want them in seconds
-      try {
-        exposures.add(new Double(Double.parseDouble(value) / 1000));
+      Double exposure = parseDouble(value);
+      if (exposure != null) {
+        exposure /= 1000;
       }
-      catch (NumberFormatException e) { }
+      exposures.add(exposure);
     }
     else if (key.equals("_IllumSetting_")) {
       if (channelName == null) {
@@ -288,16 +297,10 @@ public class MetamorphHandler extends BaseHandler {
       stageLabel = value;
     }
     else if (key.endsWith("Gain") && gain == null) {
-      try {
-        gain = new Double(value.replaceAll("[xX]", ""));
+      Double v = parseDouble(value.replaceAll("[xX]", ""));
+      if (v != null) {
+        gain = v;
       }
-      catch (NumberFormatException e) { }
-    }
-    else if (key.equals("_MagNA_")) {
-      lensNA = Double.parseDouble(value);
-    }
-    else if (key.equals("_MagRI_")) {
-      lensRI = Double.parseDouble(value);
     }
     else if (key.startsWith("Dual Camera")) {
       // Determine if image has been already split by Metamorph.
@@ -310,6 +313,10 @@ public class MetamorphHandler extends BaseHandler {
             dualCamera = true;
       } else {
           try {
+            // this Double.parseDouble(...) instead of
+            // DataTools.parseDouble(...) is intentional,
+            // because we want NumberFormatException to be thrown
+            // if the value is not a valid double
             Double.parseDouble(value.substring(space));
             // last number is a wavelength and indicates this dual camera
             // image has been split
@@ -317,10 +324,19 @@ public class MetamorphHandler extends BaseHandler {
           }
           catch (NumberFormatException e) {
             // last token is not a number, so image has not been split
-            dualCamera = true; 
+            dualCamera = true;
           }
       }
     }
+  }
+
+  /**
+   * Remove '+' before parsing doubles.
+   * Scientific notation values may be stored as
+   * -1e+006 or similar.
+   */
+  private Double parseDouble(String v) {
+    return DataTools.parseDouble(v.replaceAll("\\+", ""));
   }
 
 }

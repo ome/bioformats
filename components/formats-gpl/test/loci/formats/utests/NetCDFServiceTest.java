@@ -124,7 +124,6 @@ public class NetCDFServiceTest {
     {"PAL_COLORMODEL", "RGB"},
     {"PAL_TYPE", "STANDARD8"},
     {"PAL_VERSION", "1.2"},
-    {"_Unsigned", "true"},
     },
     {
     {"CLASS", "IMAGE"},
@@ -136,7 +135,6 @@ public class NetCDFServiceTest {
     {"IMAGE_SUBCLASS", "IMAGE_INDEXED"},
     {"IMAGE_VERSION", "1.2"},
     {"PALETTE", "1680"},
-    {"_Unsigned", "true"},
     }
   };
 

@@ -25,8 +25,6 @@
 
 package loci.formats.in;
 
-import io.airlift.compress.zstd.ZstdDecompressor;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +54,7 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.JPEGXRCodec;
 import loci.formats.codec.LZWCodec;
+import loci.formats.codec.ZstdCodec;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.enums.AcquisitionMode;
@@ -189,6 +188,8 @@ public class ZeissCZIReader extends FormatReader {
   private transient int plateRows;
   private transient int plateColumns;
   private transient ArrayList<String> platePositions = new ArrayList<String>();
+  private transient ArrayList<String> fieldNames = new ArrayList<String>();
+  private transient ArrayList<String> imageNames = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -355,7 +356,11 @@ public class ZeissCZIReader extends FormatReader {
       validScanDim = false;
     }
 
-    Arrays.fill(buf, (byte) 0);
+    byte fillColor = (byte) 0;
+    if (isRGB() && maxResolution > 0) {
+      fillColor = (byte) 255;
+    }
+    Arrays.fill(buf, fillColor);
     boolean emptyTile = true;
     int compression = -1;
     try {
@@ -559,6 +564,8 @@ public class ZeissCZIReader extends FormatReader {
       plateRows = 0;
       plateColumns = 0;
       platePositions.clear();
+      fieldNames.clear();
+      imageNames.clear();
     }
   }
 
@@ -1258,10 +1265,16 @@ public class ZeissCZIReader extends FormatReader {
       store.setPlateRows(new PositiveInteger(plateRows), 0);
       store.setPlateColumns(new PositiveInteger(plateColumns), 0);
 
+      int fieldsPerWell = fieldNames.size() / platePositions.size();
+      if (fieldNames.size() == 0) {
+        fieldsPerWell = 1;
+      }
+
       int nextWell = 0;
+      int nextField = 0;
       for (int i=0, img=0; img<core.size(); i++, img+=core.get(img).resolutionCount) {
-        if (i < platePositions.size() && platePositions.get(i) != null) {
-          String[] index = platePositions.get(i).split("-");
+        if (nextWell < platePositions.size() && platePositions.get(nextWell) != null) {
+          String[] index = platePositions.get(nextWell).split("-");
           if (index.length != 2) {
             continue;
           }
@@ -1276,16 +1289,31 @@ public class ZeissCZIReader extends FormatReader {
             LOGGER.trace("Could not parse well position", e);
           }
 
+          int field = 0;
+          if (i < fieldNames.size()) {
+            String fieldName = fieldNames.get(i);
+            try {
+              field = Integer.parseInt(fieldName.substring(1)) - 1; // name starts with "P"
+            }
+            catch (NumberFormatException e) {
+              LOGGER.warn("Could not parse field name {}; plate layout may be incorrect", fieldName);
+            }
+          }
+
           if (row >= 0 && column >= 0) {
             int imageIndex = coreIndexToSeries(img);
             store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
             store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
             store.setWellColumn(new NonNegativeInteger(column), 0, nextWell);
-            store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, nextWell, 0), 0, nextWell, 0);
-            store.setWellSampleImageRef(MetadataTools.createLSID("Image", imageIndex), 0, nextWell, 0);
-            store.setWellSampleIndex(new NonNegativeInteger(imageIndex), 0, nextWell, 0);
+            store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, nextWell, nextField), 0, nextWell, nextField);
+            store.setWellSampleImageRef(MetadataTools.createLSID("Image", imageIndex), 0, nextWell, nextField);
+            store.setWellSampleIndex(new NonNegativeInteger(imageIndex), 0, nextWell, nextField);
 
-            nextWell++;
+            nextField++;
+            if (nextField == fieldsPerWell) {
+              nextField = 0;
+              nextWell++;
+            }
           }
         }
       }
@@ -1338,11 +1366,25 @@ public class ZeissCZIReader extends FormatReader {
           store.setImageName(name + " #" + imageIndex, i);
         }
         else if (positions == 1) {
-          store.setImageName("", i);
+          if (imageNames.size() == 1) {
+            store.setImageName(imageNames.get(0), i);
+          }
+          else {
+            store.setImageName("", i);
+          }
         }
         else {
-          int paddingLength = (""+getSeriesCount()).length();
-          store.setImageName("Scene #" + String.format("%0"+paddingLength+"d", (i + 1)), i);
+          if (i < imageNames.size()) {
+            String completeName = imageNames.get(i);
+            if (i < fieldNames.size()) {
+              completeName += " " + fieldNames.get(i);
+            }
+            store.setImageName(completeName, i);
+          }
+          else {
+            int paddingLength = (""+getSeriesCount()).length();
+            store.setImageName("Scene #" + String.format("%0"+paddingLength+"d", (i + 1)), i);
+          }
         }
       }
       else if (extraIndex == 0) {
@@ -1819,9 +1861,16 @@ public class ZeissCZIReader extends FormatReader {
     int minY = Integer.MAX_VALUE;
     int maxY = Integer.MIN_VALUE;
 
+    int dimensionCount = 0;
     for (SubBlock plane : planes) {
       if (xyOnly && plane.coreIndex != coreIndex) {
         continue;
+      }
+      boolean moreDimensions = plane.directoryEntry.dimensionEntries.length > dimensionCount;
+      if (moreDimensions) {
+        dimensionCount = plane.directoryEntry.dimensionEntries.length;
+        ms0.sizeX = 0;
+        ms0.sizeY = 0;
       }
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
         if (dimension == null) {
@@ -3326,39 +3375,51 @@ public class ZeissCZIReader extends FormatReader {
                 if (value != null && !value.isEmpty()) {
                   platePositions.add(value);
                 }
+                String name = well.getAttribute("Name");
+                for (int f=0; f<well.getElementsByTagName("SingleTileRegion").getLength(); f++) {
+                  imageNames.add(name);
+                }
               }
             }
           }
 
-          NodeList regions = getGrandchildren(sampleHolder,
-            "SingleTileRegionArray", "SingleTileRegion");
-          if (regions != null) {
-            for (int i=0; i<regions.getLength(); i++) {
-              Element region = (Element) regions.item(i);
+          NodeList regionArrays = sampleHolder.getElementsByTagName("SingleTileRegionArray");
+          if (regionArrays != null) {
+            int positionIndex = 0;
+            for (int r=0; r<regionArrays.getLength(); r++) {
+              NodeList regions = ((Element) regionArrays.item(r)).getElementsByTagName("SingleTileRegion");
+              if (regions != null) {
+                for (int i=0; i<regions.getLength(); i++, positionIndex++) {
+                  Element region = (Element) regions.item(i);
 
-              String x = getFirstNode(region, "X").getTextContent();
-              String y = getFirstNode(region, "Y").getTextContent();
-              String z = getFirstNode(region, "Z").getTextContent();
+                  String x = getFirstNode(region, "X").getTextContent();
+                  String y = getFirstNode(region, "Y").getTextContent();
+                  String z = getFirstNode(region, "Z").getTextContent();
+                  String name = region.getAttribute("Name");
 
-              // safe to assume all 3 arrays have the same length
-              if (i < positionsX.length) {
-                if (x == null) {
-                  positionsX[i] = null;
-                } else {
-                  final Double number = Double.valueOf(x);
-                  positionsX[i] = new Length(number, UNITS.MICROMETER);
-                }
-                if (y == null) {
-                  positionsY[i] = null;
-                } else {
-                  final Double number = Double.valueOf(y);
-                  positionsY[i] = new Length(number, UNITS.MICROMETER);
-                }
-                if (z == null) {
-                  positionsZ[i] = null;
-                } else {
-                  final Double number = Double.valueOf(z);
-                  positionsZ[i] = new Length(number, UNITS.MICROMETER);
+                  // safe to assume all 3 arrays have the same length
+                  if (positionIndex < positionsX.length) {
+                    if (x == null) {
+                      positionsX[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(x);
+                      positionsX[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                    if (y == null) {
+                      positionsY[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(y);
+                      positionsY[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                    if (z == null) {
+                      positionsZ[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(z);
+                      positionsZ[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                  }
+
+                  fieldNames.add(name);
                 }
               }
             }
@@ -4053,10 +4114,7 @@ public class ZeissCZIReader extends FormatReader {
           }
           break;
         case ZSTD_0:
-          ZstdDecompressor decompressor = new ZstdDecompressor();
-          byte[] output = new byte[(int) decompressor.getDecompressedSize(data, 0, data.length)];
-          decompressor.decompress(data, 0, data.length, output, 0, output.length);
-          data = output;
+          data = new ZstdCodec().decompress(data);
           break;
         case ZSTD_1:
           boolean highLowUnpacking = false;
@@ -4079,11 +4137,7 @@ public class ZeissCZIReader extends FormatReader {
             pointer = (int) stream.getFilePointer();
           }
 
-          ZstdDecompressor zstd = new ZstdDecompressor();
-          long decompressedSize = zstd.getDecompressedSize(data, pointer, data.length - pointer);
-          byte[] decoded = new byte[(int) decompressedSize];
-          zstd.decompress(data, pointer, data.length - pointer, decoded, 0, decoded.length);
-
+          byte[] decoded =  new ZstdCodec().decompress(data, pointer, data.length - pointer);
           // ZSTD_1 implies high/low byte unpacking, so it would be weird
           // if this flag were unset
           if (highLowUnpacking) {

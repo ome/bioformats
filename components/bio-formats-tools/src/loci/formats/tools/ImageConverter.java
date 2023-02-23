@@ -56,6 +56,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
+import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
@@ -126,13 +127,20 @@ public final class ImageConverter {
   private String cacheDir = null;
   private boolean originalMetadata = true;
   private boolean noSequential = false;
+  private String swapOrder = null;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
+  private DimensionSwapper dimSwapper;
 
   private HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
   private boolean firstTile = true;
   private DynamicMetadataOptions options = new DynamicMetadataOptions();
+
+  // record paths that have been checked for overwriting
+  // this is mostly useful when "out" is a file name pattern
+  // that may be expanded into multiple actual files
+  private HashMap<String, Boolean> checkedPaths = new HashMap<String, Boolean>();
 
   // -- Constructor --
 
@@ -248,6 +256,9 @@ public final class ImageConverter {
         else if (args[i].equals("-no-sequential")) {
           noSequential = true;
         }
+        else if (args[i].equals("-swap")) {
+          swapOrder = args[++i].toUpperCase();
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -323,6 +334,7 @@ public final class ImageConverter {
       "    [-nolookup] [-autoscale] [-version] [-no-upgrade] [-padded]",
       "    [-option key value] [-novalid] [-validate] [-tilex tileSizeX]", 
       "    [-tiley tileSizeY] [-pyramid-scale scale]", 
+      "    [-swap dimensionsOrderString]",
       "    [-pyramid-resolutions numResolutionLevels] in_file out_file",
       "",
       "            -version: print the library version and exit",
@@ -365,6 +377,7 @@ public final class ImageConverter {
       "      -pyramid-scale: generates a pyramid image with each subsequent resolution level divided by scale",
       "-pyramid-resolutions: generates a pyramid image with the given number of resolution levels ",
       "      -no-sequential: do not assume that planes are written in sequential order",
+      "               -swap: override the default input dimension order; argument is f.i. XYCTZ",
       "",
       "The extension of the output file specifies the file format to use",
       "for the conversion. The list of available formats and extensions is:",
@@ -439,21 +452,9 @@ public final class ImageConverter {
     CommandLineTools.runUpgradeCheck(args);
 
     if (new Location(out).exists()) {
-      if (overwrite == null) {
-        LOGGER.warn("Output file {} exists.", out);
-        LOGGER.warn("Do you want to overwrite it? ([y]/n)");
-        BufferedReader r = new BufferedReader(
-          new InputStreamReader(System.in, Constants.ENCODING));
-        String choice = r.readLine().trim().toLowerCase();
-        overwrite = !choice.startsWith("n");
-      }
-      if (!overwrite) {
-        LOGGER.warn("Exiting; next time, please specify an output file that " +
-          "does not exist.");
+      boolean ok = overwriteCheck(out, false);
+      if (!ok) {
         return false;
-      }
-      else {
-        new Location(out).delete();
       }
     }
 
@@ -462,6 +463,9 @@ public final class ImageConverter {
     long start = System.currentTimeMillis();
     LOGGER.info(in);
     reader = new ImageReader();
+    if (swapOrder != null) {
+      reader = dimSwapper = new DimensionSwapper(reader);
+    }
     if (stitch) {
       reader = new FileStitcher(reader);
       Location f = new Location(in);
@@ -510,6 +514,10 @@ public final class ImageConverter {
     }
 
     reader.setId(in);
+
+    if (swapOrder != null) {
+       dimSwapper.swapDimensions(swapOrder);
+    }
 
     MetadataStore store = reader.getMetadataStore();
 
@@ -698,7 +706,13 @@ public final class ImageConverter {
           }
 
           String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
-          if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
+          String tileName = FormatTools.getTileFilename(0, 0, 0, outputName);
+
+          if (outputName.equals(tileName)) {
+            boolean ok = overwriteCheck(outputName, false);
+            if (!ok) {
+              return false;
+            }
             writer.setId(outputName);
             if (compression != null) writer.setCompression(compression);
           }
@@ -713,7 +727,12 @@ public final class ImageConverter {
             }
             if (saveTileWidth == 0 && saveTileHeight == 0) {
               // Using tile output name but not tiled reading
-              writer.setId(FormatTools.getTileFilename(0, 0, 0, outputName));
+
+              boolean ok = overwriteCheck(tileName, false);
+              if (!ok) {
+                return false;
+              }
+              writer.setId(tileName);
               if (compression != null) writer.setCompression(compression);
             }
           }
@@ -877,6 +896,8 @@ public final class ImageConverter {
           }
 
           writer.setMetadataRetrieve(retrieve);
+
+          overwriteCheck(tileName, true);
           writer.setId(tileName);
           if (compression != null) writer.setCompression(compression);
 
@@ -1116,6 +1137,38 @@ public final class ImageConverter {
     }
     return DataTools.safeMultiply64(width, height) >= DataTools.safeMultiply64(4096, 4096) ||
       saveTileWidth > 0 || saveTileHeight > 0;
+  }
+
+  private boolean overwriteCheck(String path, boolean throwOnExist) throws IOException {
+    if (checkedPaths.containsKey(path)) {
+      return checkedPaths.get(path);
+    }
+    if (!new Location(path).exists()) {
+      checkedPaths.put(path, true);
+      return true;
+    }
+    if (overwrite == null) {
+      LOGGER.warn("Output file {} exists.", path);
+      LOGGER.warn("Do you want to overwrite it? ([y]/n)");
+      BufferedReader r = new BufferedReader(
+        new InputStreamReader(System.in, Constants.ENCODING));
+      String choice = r.readLine().trim().toLowerCase();
+      overwrite = !choice.startsWith("n");
+    }
+    if (!overwrite) {
+      String msg = "Exiting; next time, please specify an output file that does not exist.";
+      checkedPaths.put(path, false);
+      if (throwOnExist) {
+        throw new IOException(msg);
+      }
+      LOGGER.warn(msg);
+      return false;
+    }
+    else {
+      new Location(path).delete();
+    }
+    checkedPaths.put(path, true);
+    return true;
   }
 
   // -- Main method --

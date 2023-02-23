@@ -79,7 +79,6 @@ public class CV7000Reader extends FormatReader {
   // -- Fields --
 
   private String[] allFiles;
-  private Location parent;
   private MinimalTiffReader reader;
   private String wppPath;
   private String detailPath;
@@ -239,7 +238,7 @@ public class CV7000Reader extends FormatReader {
     String wpiXML = readSanitizedXML(id);
     XMLTools.parseXML(wpiXML, plate);
 
-    parent = new Location(id).getAbsoluteFile().getParentFile();
+    Location parent = new Location(id).getAbsoluteFile().getParentFile();
     allFiles = parent.list(true);
     Arrays.sort(allFiles);
     for (int i=0; i<allFiles.length; i++) {
@@ -450,7 +449,8 @@ public class CV7000Reader extends FormatReader {
           store.setImageID(imageID, nextImage);
           store.setWellSampleImageRef(imageID, 0, nextWell, field);
 
-          String name = "Well " + ((char) ('A' + row)) + (col + 1) + ", Field " + (field + 1);
+          String name = "Well " + FormatTools.getWellRowName(row) +
+            (col + 1) + ", Field " + (field + 1);
           store.setImageName(name, nextImage);
           store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
 

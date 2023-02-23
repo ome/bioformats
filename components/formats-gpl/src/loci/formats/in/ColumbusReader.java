@@ -390,8 +390,9 @@ public class ColumbusReader extends FormatReader {
           store.setImageID(imageID, wellSample);
           store.setWellSampleImageRef(imageID, 0, nextWell, field);
 
+          String wellName = FormatTools.getWellRowName(row) + (col + 1);
           store.setImageName(
-            imagePrefix + (char) (row + 'A') + (col + 1) + " Field #" + (field + 1), wellSample);
+            imagePrefix + wellName + " Field #" + (field + 1), wellSample);
           store.setImageAcquisitionDate(date, wellSample);
           if (p != null) {
             p.series = wellSample;

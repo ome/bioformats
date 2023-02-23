@@ -829,7 +829,7 @@ public class MIASReader extends FormatReader {
 
       int row = wellIndex / wellColumns;
       int wellCol = (wellIndex % wellColumns) + 1;
-      char wellRow = (char) ('A' + row);
+      String wellRow = FormatTools.getWellRowName(row);
 
       store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
       store.setWellRow(new NonNegativeInteger(row), 0, well);
