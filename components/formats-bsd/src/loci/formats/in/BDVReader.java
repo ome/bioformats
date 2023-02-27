@@ -279,6 +279,46 @@ public class BDVReader extends FormatReader {
   }
 
   /**
+   * @see loci.formats.IFormatReader#openBytes(byte[], int[], int[])
+   */
+  @Override
+  public byte[] openBytes(byte[] buf, int[] shape, int[] offsets)
+    throws FormatException, IOException
+  {
+    // TODO: checkPlaneParameters to be re-added once FormatTools updated
+    //FormatTools.checkParameters(this, buf.length, shape, offsets);
+    lastChannel = offsets[1];
+
+    // pixel data is stored in XYZ blocks
+    Object image = getImageData(shape, offsets);
+
+    boolean little = isLittleEndian();
+    int size = shape[2] * shape[3] * shape[4];
+
+    // image is of type byte[]. Left these checks and unpacking
+    // in the code for feature data types
+    if (image instanceof byte[]) {
+      byte[] data = (byte[]) image;
+      System.arraycopy(data, 0, buf, 0, size);
+    } else if (image instanceof short[]) {
+      short[] data = (short[]) image;
+      buf = DataTools.shortsToBytes(data, little);
+    } else if (image instanceof int[]) {
+      int[] data = (int[]) image;
+      buf = DataTools.intsToBytes(data, little);
+    } else if (image instanceof float[]) {
+      float[] data = (float[]) image;
+      buf = DataTools.floatsToBytes(data, little);
+    } else if (image instanceof double[]) {
+      double[] data = (double[]) image;
+      buf = DataTools.doublesToBytes(data, little);
+    }
+
+    return buf;    
+  }
+  
+  
+  /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
   @Override
@@ -286,52 +326,18 @@ public class BDVReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    lastChannel = getZCTCoords(no)[1];
-
-    // pixel data is stored in XYZ blocks
-    Object image = getImageData(no, x, y, w, h);
-
-    boolean little = isLittleEndian();
-
-    // images is of type byte[][]. Left these checks and unpacking
-    // in the code for feature data types
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    for (int row = 0; row < h; row++) {
-      int base = row * w * bpp;
-      if (image instanceof byte[][]) {
-        byte[][] data = (byte[][]) image;
-        byte[] rowData = data[row];
-        System.arraycopy(rowData, x, buf, row * w, w);
-      } else if (image instanceof short[][]) {
-        short[][] data = (short[][]) image;
-        short[] rowData = data[row];
-        for (int i = 0; i < w; i++) {
-          DataTools.unpackBytes(rowData[i], buf, base + 2 * i, 2, little);
-        }
-      } else if (image instanceof int[][]) {
-        int[][] data = (int[][]) image;
-        int[] rowData = data[row];
-        for (int i = 0; i < w; i++) {
-          DataTools.unpackBytes(rowData[i], buf, base + i * 4, 4, little);
-        }
-      } else if (image instanceof float[][]) {
-        float[][] data = (float[][]) image;
-        float[] rowData = data[row];
-        for (int i = 0; i < w; i++) {
-          int v = Float.floatToIntBits(rowData[i]);
-          DataTools.unpackBytes(v, buf, base + i * 4, 4, little);
-        }
-      } else if (image instanceof double[][]) {
-        double[][] data = (double[][]) image;
-        double[] rowData = data[row];
-        for (int i = 0; i < w; i++) {
-          long v = Double.doubleToLongBits(rowData[i]);
-          DataTools.unpackBytes(v, buf, base + i * 8, 8, little);
-        }
-      }
-    }
-    return buf;
+    int[] coordinates = getZCTCoords(no);
+    
+    int [] shape = {1, 1, 1, h, w};
+    int [] offsets = {coordinates[2], coordinates[1], coordinates[0], y, x};
+    return openBytes(buf, shape, offsets);
   }
+  
+  /* @see loci.formats.IFormatReader#getOptimalChunkSize() */
+  //@Override
+//  public int[] getOptimalChunkSize() {
+//    TODO: implement optimal chunk size
+//  }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
@@ -380,13 +386,12 @@ public class BDVReader extends FormatReader {
       throw new MissingLibraryException(JHDFServiceImpl.NO_JHDF_MSG, e);
     }
   }
-
-  private Object getImageData(int no, int x, int y, int width, int height) throws FormatException
+  
+  private Object getImageData(int [] shape, int [] offsets) throws FormatException
   {
-    int[] zct = getZCTCoords(no);
-    int zslice = zct[0];
-    int channel = zct[1];
-    int time = zct[2];
+    int time = offsets[0];
+    int channel = offsets[1];
+    int zslice = offsets[2];
     
     int seriesIndex = series;
     int requiredResolution = getResolution();
@@ -436,44 +441,33 @@ public class BDVReader extends FormatReader {
     }
 
     int elementSize = jhdf.getElementSize(imagePath.pathToImageData);
+    int height = shape[3];
+    int width = shape[4];
+    int depth = shape[2];
 
-    int[] arrayOrigin = new int[] {zslice, y, x};
-    int[] arrayDimension = new int[] {1, height, width};
+    int[] arrayOrigin = new int[] {zslice, offsets[3], offsets[4]};
+    int[] arrayDimension = new int[] {depth, height, width};
+    
+    int size = width * height * depth;
 
     MDIntArray subBlock = jhdf.readIntBlockArray(imagePath.pathToImageData, arrayOrigin, arrayDimension);
-
+    int[] subBlockArray =subBlock.getAsFlatArray();
     if (elementSize == 1) {
-      byte[][] image = new byte[height][width];
-
-      // Slice x, y dimension
-      for (int yy = 0; yy < height; yy++) {
-        for (int xx = 0; xx < width; xx++) {
-          image[yy][xx] = (byte) subBlock.get(0, yy, xx);
-        }
+      byte[] image = new byte[size];
+      for (int i = 0; i < size; i++) {
+        image[i] = (byte) subBlockArray[i];
       }
       return image;
     }
     else if (elementSize == 2) {
-      short[][] image = new short[height][width];
-
-      // Slice x, y dimension
-      for (int yy = 0; yy < height; yy++) {
-        for (int xx = 0; xx < width; xx++) {
-          image[yy][xx] = (short) subBlock.get(0, yy, xx);
-        }
+      short[] image = new short[size];
+      for (int i = 0; i < size; i++) {
+        image[i] = (short) subBlockArray[i];
       }
       return image;
     }
     else {
-      int[][] image = new int[height][width];
-
-      // Slice x, y dimension
-      for (int yy = 0; yy < height; yy++) {
-        for (int xx = 0; xx < width; xx++) {
-          image[yy][xx] = (int) subBlock.get(0, yy, xx);
-        }
-      }
-      return image;
+      return subBlockArray;
     }
   }
 
