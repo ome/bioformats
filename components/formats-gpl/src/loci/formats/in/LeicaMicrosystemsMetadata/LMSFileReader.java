@@ -55,7 +55,7 @@ public abstract class LMSFileReader extends FormatReader {
   // -- Fields --
   public static Logger log;
   public LMSXmlDocument associatedXmlDoc; //an optional LMS xml file that references the file(s) that are read by this reader
-  public List<Translator> metadataTranslators = new ArrayList<Translator>();
+  public List<SingleImageTranslator> metadataTranslators = new ArrayList<SingleImageTranslator>();
 
   /** file format in which actual image bytes are stored */
   public enum ImageFormat {
@@ -76,7 +76,7 @@ public abstract class LMSFileReader extends FormatReader {
     super.close(fileOnly);
 
     if (!fileOnly){
-      metadataTranslators = new ArrayList<Translator>();
+      metadataTranslators = new ArrayList<SingleImageTranslator>();
     }
   }
 

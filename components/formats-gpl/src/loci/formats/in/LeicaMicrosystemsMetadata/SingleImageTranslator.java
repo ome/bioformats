@@ -50,7 +50,7 @@ import ome.units.quantity.Time;
 import ome.xml.model.enums.MicroscopeType;
 import ome.xml.model.primitives.Timestamp;
 
-public class Translator {
+public class SingleImageTranslator {
   private static final long METER_MULTIPLY = 1000000;
 
   //XML nodes
@@ -94,7 +94,7 @@ public class Translator {
   MetadataStore store;
   CoreMetadata core;
 
-  public Translator(LMSImageXmlDocument doc, int seriesIndex, int imageCount, LMSFileReader reader){
+  public SingleImageTranslator(LMSImageXmlDocument doc, int seriesIndex, int imageCount, LMSFileReader reader){
     this.imageNode = (Element)doc.getImageNode();
     this.imageName = doc.getImageName();
     this.reader = reader;

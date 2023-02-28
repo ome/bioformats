@@ -54,7 +54,7 @@ public class LMSMetadataTranslator {
     for (int i = 0; i < docs.size(); i++) {
       r.setSeries(i);
 
-      Translator translator = new Translator(docs.get(i), i, docs.size(), r);
+      SingleImageTranslator translator = new SingleImageTranslator(docs.get(i), i, docs.size(), r);
       r.metadataTranslators.add(translator);
       translator.translate();
     }
