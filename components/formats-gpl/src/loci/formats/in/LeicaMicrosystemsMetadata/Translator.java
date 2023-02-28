@@ -495,8 +495,9 @@ public class Translator {
 
     //Z
     Dimension dimZ = dimensionStore.getDimension(DimensionKey.Z);
+    int sign = dimensionStore.zBegin <= dimensionStore.zEnd ? 1 : -1;
     for (int planeIndex = 0; planeIndex < dimZ.size; planeIndex++){
-      Length zPos = FormatTools.createLength(dimZ.origin + dimensionStore.zStep * planeIndex, UNITS.METER);
+      Length zPos = FormatTools.createLength(dimensionStore.zBegin + dimensionStore.zStep * sign * planeIndex, UNITS.METER);
       store.setPlanePositionZ(zPos, seriesIndex, planeIndex);
     }
   }

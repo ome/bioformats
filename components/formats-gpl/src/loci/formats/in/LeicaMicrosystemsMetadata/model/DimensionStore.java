@@ -13,6 +13,8 @@ public class DimensionStore {
     public List<Channel> channels = new ArrayList<Channel>();
     public double physicalSizeX;
     public double physicalSizeY;
+    public double zBegin;
+    public double zEnd;
     public List<Tuple<Length, Length>> fieldPositions = new ArrayList<Tuple<Length,Length>>();
     public List<Length> zPositions = new ArrayList<Length>();
     public boolean flipX;

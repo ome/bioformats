@@ -65,6 +65,12 @@ public class PositionExtractor extends Extractor {
       if (dimensionStore.flipY)
         fieldPosition.y = flip(fieldPosition.y);
     }
+
+    //Z
+    String beginS = getAttributeValue(setting, "Begin");
+    dimensionStore.zBegin = parseDouble(beginS);
+    String endS = getAttributeValue(setting, "End");
+    dimensionStore.zEnd = parseDouble(endS);
   }
 
   private static Length flip(Length pos) {
