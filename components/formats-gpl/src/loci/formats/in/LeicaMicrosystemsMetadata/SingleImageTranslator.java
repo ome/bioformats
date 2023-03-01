@@ -494,10 +494,10 @@ public class SingleImageTranslator {
     }
 
     //Z
-    Dimension dimZ = dimensionStore.getDimension(DimensionKey.Z);
-    int sign = dimensionStore.zBegin <= dimensionStore.zEnd ? 1 : -1;
-    for (int planeIndex = 0; planeIndex < dimZ.size; planeIndex++){
-      Length zPos = FormatTools.createLength(dimensionStore.zBegin + dimensionStore.zStep * sign * planeIndex, UNITS.METER);
+    for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
+      int sign = dimensionStore.zBegin <= dimensionStore.zEnd ? 1 : -1;
+      int zIndex = reader.getZCTCoords(planeIndex)[0];
+      Length zPos = FormatTools.createLength(dimensionStore.zBegin + dimensionStore.zStep * sign * zIndex, UNITS.METER);
       store.setPlanePositionZ(zPos, seriesIndex, planeIndex);
     }
   }
