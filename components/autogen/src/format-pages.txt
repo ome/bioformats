@@ -392,7 +392,7 @@ bsd = no
 export = no
 versions = 2.7, 3.0, 5.5
 weHave = * an `Imaris (RAW) specification document <http://flash.bitplane.com/wda/interfaces/public/faqs/faqsview.cfm?inCat=0&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
-* an `Imaris 5.5 (HDF) specification document <http://open.bitplane.com/Default.aspx?tabid=268>`_ \n
+* an `Imaris 5.5 (HDF) specification document <https://github.com/imaris/ImarisWriter/blob/master/doc/Imaris5FileFormat.pdf>`_ \n
 * Bitplane's bfFileReaderImaris3N code (from no later than 2005, in C++) \n
 * several older Imaris (RAW) datasets \n
 * one Imaris 3 (TIFF) dataset \n
