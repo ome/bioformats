@@ -73,11 +73,12 @@ public class DimensionWriter {
    * @throws FormatException
    */
   private static void setPixelType(CoreMetadata core, DimensionStore dimensionStore) {
-    long xBytesInc = dimensionStore.getDimension(DimensionKey.X).bytesInc;
+    //assuming that all channels of one image have the same resolution
+    int resolutionBytes = dimensionStore.channels.get(0).resolution / 8;
     try {
-      core.pixelType = FormatTools.pixelTypeFromBytes((int) xBytesInc, false, true);
+      core.pixelType = FormatTools.pixelTypeFromBytes((int) resolutionBytes, false, true);
     } catch (Exception e){
-      System.out.println("Could not render pixel type from x bytes inc: " + xBytesInc);
+      System.out.println("Could not render pixel type from channel resolution (in bytes): " + resolutionBytes);
       e.printStackTrace();
     }
   }

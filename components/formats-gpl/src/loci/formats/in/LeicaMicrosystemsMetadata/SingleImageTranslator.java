@@ -17,7 +17,6 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
 import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ChannelExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.DetectorExtractor;
@@ -38,7 +37,6 @@ import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.ROI;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 import loci.formats.in.LeicaMicrosystemsMetadata.writeCore.DimensionWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.writeOME.DetectorWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.writeOME.FilterWriter;
@@ -86,7 +84,6 @@ public class SingleImageTranslator {
   int imageCount;
   public boolean inverseRgb = false;
   boolean useOldPhysicalSizeCalculation;
-  ImageFormat imageFormat;
   int extras = 1;
 
   int seriesIndex;
@@ -117,6 +114,8 @@ public class SingleImageTranslator {
     translateDimensions();
     translateTimestamps();
 
+
+    translateStandDetails();
     if (hardwareSetting == null) return;
 
     translatePhysicalSizes();
@@ -124,7 +123,6 @@ public class SingleImageTranslator {
     translateExposureTimes();
 
     //instrument metadata
-    translateStandDetails();
     translateObjective();
 
     if (dataSourceType == DataSourceType.CONFOCAL){
@@ -313,6 +311,10 @@ public class SingleImageTranslator {
   private void translateStandDetails()  {
     String instrumentID = MetadataTools.createLSID("Instrument", seriesIndex);
     store.setInstrumentID(instrumentID, seriesIndex);
+    
+    //an empty instrument is created even when there are no hardware settings for the image (e.g. depth map image, EDF image),
+    //since this is bioformats' expectation (see OMEXMLMetadataImpl, line 7801)
+    if (hardwareSetting == null) return;
 
     microscopeModel = Extractor.getAttributeValue(hardwareSetting, "SystemTypeName");
     store.setMicroscopeModel(microscopeModel, seriesIndex);
@@ -397,6 +399,8 @@ public class SingleImageTranslator {
 
   private void translateTimestamps(){
     timestamps = TimestampExtractor.translateTimestamps(imageNode, imageCount);
+    if (timestamps.size() == 0) return;
+
     double acquiredDate = timestamps.get(0);
 
     store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
@@ -468,7 +472,7 @@ public class SingleImageTranslator {
     dimensionStore.addChannelDimension();
     dimensionStore.addMissingDimensions();
 
-    DimensionWriter.setupCoreDimensionParameters(imageFormat, core, dimensionStore, extras);
+    DimensionWriter.setupCoreDimensionParameters(reader.getImageFormat(), core, dimensionStore, extras);
   }
 
   public void translateFieldPositions() {

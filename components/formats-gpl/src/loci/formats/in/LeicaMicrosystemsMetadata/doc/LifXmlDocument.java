@@ -49,12 +49,32 @@ public class LifXmlDocument extends LMSXmlDocument {
       return null;
 
     Node rootElement = GetChildWithName(doc.getDocumentElement(), "Element");
-    Node children = GetChildWithName(rootElement, "Children");
-    for (int i = 0; i < children.getChildNodes().getLength(); i++) {
-      Node child = children.getChildNodes().item(i);
-      if (child.getNodeName().equals("Element")) {
-        LifImageXmlDocument imageXml = new LifImageXmlDocument(child);
-        imageXmlDocs.add(imageXml);
+    imageXmlDocs.addAll(GetImageChildren(rootElement));
+
+    return imageXmlDocs;
+  }
+
+  private List<LifImageXmlDocument> GetImageChildren(Node elementNode){
+    List<LifImageXmlDocument> imageXmlDocs = new ArrayList<LifImageXmlDocument>();
+    
+    Node data = GetChildWithName(elementNode, "Data");
+    //Element is Experiment or Image Element
+    if (data != null){
+      Node image = GetChildWithName(data, "Image");
+    //Element is Image Element
+    if (image != null){
+        imageXmlDocs.add(new LifImageXmlDocument(elementNode));
+      }
+    } 
+    
+    Node children = GetChildWithName(elementNode, "Children");
+    //Element is Collection Element
+    if (children != null){
+      for (int i = 0; i < children.getChildNodes().getLength(); i++) {
+        Node child = children.getChildNodes().item(i);
+        if (child.getNodeName().equals("Element")) {
+          imageXmlDocs.addAll(GetImageChildren(child));
+        }
       }
     }
 
