@@ -53,31 +53,29 @@ public class ChannelExtractor extends Extractor {
   public static void translateLuts(List<Channel> channels) {
     for (Channel channel : channels){
       channel.lutColor = translateLut(channel.lutName);
-      channel.channelPriority = getChannelPriority(channel.lutName);
+      channel.lutColorIndex = getLutColorIndex(channel.lutName);
     }
   }
 
-  private static int getChannelPriority(String lutName) {
+  private static int getLutColorIndex(String lutName) {
     switch (lutName) {
       case "red":
-        return 0;
+        return Channel.RED;
       case "green":
-        return 1;
+        return Channel.GREEN;
       case "blue":
-        return 2;
+        return Channel.BLUE;
       case "cyan":
-        return 3;
+        return Channel.CYAN;
       case "magenta":
-        return 4;
+        return Channel.MAGENTA;
       case "yellow":
-        return 5;
+        return Channel.YELLOW;
       case "black":
-        return 6;
       case "gray":
-        return 7;
       case "":
       default:
-        return 8;
+        return Channel.GREY;
     }
   }
 

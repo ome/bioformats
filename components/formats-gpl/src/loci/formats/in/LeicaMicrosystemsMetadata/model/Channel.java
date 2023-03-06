@@ -42,7 +42,7 @@ public class Channel {
   public String lutName;
   public long bytesInc;
   public Color lutColor;
-  public int channelPriority;
+  public int lutColorIndex;
 
   public boolean isLutInverted;
   public long bitInc;
@@ -57,6 +57,14 @@ public class Channel {
     // PHOTON_COUNTING,
     // ARRIVAL_TIME
   }
+
+  public static final int RED = 0;
+  public static final int GREEN = 1;
+  public static final int BLUE = 2;
+  public static final int CYAN = 3;
+  public static final int MAGENTA = 4;
+  public static final int YELLOW = 5;
+  public static final int GREY = 6;
 
   public ChannelType channelType;
 
