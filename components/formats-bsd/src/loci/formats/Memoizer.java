@@ -442,6 +442,9 @@ public class Memoizer extends ReaderWrapper {
    *         will be created.
    */
   public Memoizer(long minimumElapsed) {
+    // setting the directory to null explicitly disables memo files
+    // setting doInPlaceCaching allows a memo file to be written to the
+    // original file's directory only - see getMemoFile
     this(null, minimumElapsed, null);
     this.doInPlaceCaching = true;
   }
@@ -471,6 +474,9 @@ public class Memoizer extends ReaderWrapper {
    *  @param r an {@link IFormatReader} instance
    */
   public Memoizer(IFormatReader r) {
+    // setting the directory to null explicitly disables memo files
+    // setting doInPlaceCaching allows a memo file to be written to the
+    // original file's directory only - see getMemoFile
     this(r, DEFAULT_MINIMUM_ELAPSED, null);
     this.doInPlaceCaching = true;
   }
@@ -487,6 +493,9 @@ public class Memoizer extends ReaderWrapper {
    *         will be created.
    */
   public Memoizer(IFormatReader r, long minimumElapsed) {
+    // setting the directory to null explicitly disables memo files
+    // setting doInPlaceCaching allows a memo file to be written to the
+    // original file's directory only - see getMemoFile
     this(r, minimumElapsed, null);
     this.doInPlaceCaching = true;
   }
