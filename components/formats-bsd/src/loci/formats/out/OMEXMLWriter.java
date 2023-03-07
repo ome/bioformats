@@ -53,6 +53,8 @@ import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
+import loci.formats.in.MetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
