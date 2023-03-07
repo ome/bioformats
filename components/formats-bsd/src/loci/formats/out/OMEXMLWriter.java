@@ -69,6 +69,8 @@ public class OMEXMLWriter extends FormatWriter {
 
   // -- Fields --
 
+  public static final String CREATOR_KEY = "omexml.preserve_creator";
+
   private List<String> xmlFragments;
   private String currentFragment;
   private OMEXMLService service;
@@ -104,7 +106,13 @@ public class OMEXMLWriter extends FormatWriter {
       service.removeBinData(noBin);
 
       OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) noBin.getRoot();
-      root.setCreator(FormatTools.CREATOR);
+      String creator = root.getCreator();
+      if (!preserveCreator() || creator == null) {
+        if (creator != null) {
+          LOGGER.warn("Overwriting existing Creator attribute: {}", creator);
+        }
+        root.setCreator(FormatTools.CREATOR);
+      }
       xml = service.getOMEXML(noBin);
     }
     catch (DependencyException de) {
@@ -216,6 +224,28 @@ public class OMEXMLWriter extends FormatWriter {
       return new int[] {FormatTools.INT8, FormatTools.UINT8};
     }
     return super.getPixelTypes(codec);
+  }
+
+  // -- OMEXMLWriter-specific methods --
+
+  /**
+   * Get the value of the {@link CREATOR_KEY} option.
+   * This toggles whether or not the OME Creator attribute will be
+   * overwritten with the current Bio-Formats version. For input
+   * data that does not have a Creator attribute defined, this makes
+   * no difference.
+   *
+   * By default, returns false, i.e. the Creator will be overwritten
+   * if it exists.
+   *
+   * @return true if the Creator attribute should be preserved (if it exists)
+   */
+  public boolean preserveCreator() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(CREATOR_KEY, false);
+    }
+    return false;
   }
 
   // -- Helper methods --
