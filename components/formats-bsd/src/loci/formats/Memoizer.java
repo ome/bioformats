@@ -471,7 +471,8 @@ public class Memoizer extends ReaderWrapper {
    *  call to {@link #setId} takes longer than
    *  {@value DEFAULT_MINIMUM_ELAPSED} in milliseconds.
    *
-   *  @param r an {@link IFormatReader} instance
+   *  @param r an {@link IFormatReader} instance.
+   *         If {@code null}, a new {@link ImageReader} is created.
    */
   public Memoizer(IFormatReader r) {
     // setting the directory to null explicitly disables memo files
@@ -488,6 +489,7 @@ public class Memoizer extends ReaderWrapper {
    *  milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
+   *         If {@code null}, a new {@link ImageReader} is created.
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
@@ -507,6 +509,7 @@ public class Memoizer extends ReaderWrapper {
    * {@value DEFAULT_MINIMUM_ELAPSED} in milliseconds.
    *
    * @param r an {@link IFormatReader} instance
+   *        If {@code null}, a new {@link ImageReader} is created.
    * @param directory a {@link File} specifying the directory where all memo
    *        files should be created. If {@code null}, disable memoization.
    */
@@ -521,6 +524,7 @@ public class Memoizer extends ReaderWrapper {
    *  {@code minimumElapsed} in milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
+   *         If {@code null}, a new {@link ImageReader} is created.
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
