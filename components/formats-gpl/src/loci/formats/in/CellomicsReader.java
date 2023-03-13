@@ -138,7 +138,7 @@ public class CellomicsReader extends FormatReader {
       }
     }
     else {
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
     }
 
     return buf;

@@ -315,6 +315,27 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   /**
+   * @see loci.formats.FormatReader#getFillColor()
+   *
+   * If the fill value was set explicitly, use that.
+   * Otherwise, return 255 (white) for RGB data with a pyramid,
+   * and 0 in all other cases. RGB data with a pyramid can
+   * reasonably be assumed to be a brightfield slide.
+   */
+  @Override
+  public Byte getFillColor() {
+    if (fillColor != null) {
+      return fillColor;
+    }
+
+    byte fill = (byte) 0;
+    if (isRGB() && maxResolution > 0) {
+      fill = (byte) 255;
+    }
+    return fill;
+  }
+
+  /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
   @Override
@@ -356,11 +377,7 @@ public class ZeissCZIReader extends FormatReader {
       validScanDim = false;
     }
 
-    byte fillColor = (byte) 0;
-    if (isRGB() && maxResolution > 0) {
-      fillColor = (byte) 255;
-    }
-    Arrays.fill(buf, fillColor);
+    Arrays.fill(buf, getFillColor());
     boolean emptyTile = true;
     int compression = -1;
     try {
