@@ -15,6 +15,8 @@ public class DimensionStore {
     public double physicalSizeY;
     public double zBegin;
     public double zEnd;
+    public double zWidePosition = 0;
+    public double zGalvoPosition = 0;
     public List<Tuple<Length, Length>> fieldPositions = new ArrayList<Tuple<Length,Length>>();
     public List<Length> zPositions = new ArrayList<Length>();
     public boolean flipX;
@@ -24,6 +26,13 @@ public class DimensionStore {
     public double tStep;
     public int tileCount = 1;
     public long tileBytesInc;
+
+    public enum ZDriveMode {
+      ZGalvo,
+      ZWide
+    }
+
+    public ZDriveMode zDriveMode;
 
     /**
    * Inserts dimension to buffer and optionally adapts other dimension-dependent
@@ -178,5 +187,15 @@ public class DimensionStore {
         return dimension;
     }
     return null;
+  }
+
+  /**
+   * Calculates the number of planes per tile (= field position), considering CZT
+   * @return
+   */
+  public int getNumberOfPlanesPerTile(){
+    int zSize = getDimension(DimensionKey.Z).size;
+    int tSize = getDimension(DimensionKey.T).size;
+    return zSize * tSize * channels.size();
   }
 }

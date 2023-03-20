@@ -37,6 +37,7 @@ import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.ROI;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore.ZDriveMode;
 import loci.formats.in.LeicaMicrosystemsMetadata.writeCore.DimensionWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.writeOME.DetectorWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.writeOME.FilterWriter;
@@ -260,7 +261,7 @@ public class SingleImageTranslator {
     for (int i = 0; i < detectorSettings.size(); i++) {
       if (i < dimensionStore.channels.size()) {
         dimensionStore.channels.get(i).detectorSetting = detectorSettings.get(i);
-        dimensionStore.channels.get(i).name = detectorSettings.get(i).channelName;
+        dimensionStore.channels.get(i).channelName = detectorSettings.get(i).channelName;
       }
     }
 
@@ -476,14 +477,14 @@ public class SingleImageTranslator {
   }
 
   public void translateFieldPositions() {
-    Element setting;
+    Element mainSetting;
     if (dataSourceType == DataSourceType.CONFOCAL)
-      setting = mainConfocalSetting;
+      mainSetting = mainConfocalSetting;
     else 
-      setting = mainCameraSetting;
+      mainSetting = mainCameraSetting;
 
     //XY
-    PositionExtractor.extractFieldPositions(imageNode, setting, dimensionStore);
+    PositionExtractor.extractFieldPositions(imageNode, mainSetting, dimensionStore);
 
     reader.addSeriesMeta("Reverse X orientation", dimensionStore.flipX);
     reader.addSeriesMeta("Reverse Y orientation", dimensionStore.flipY);
@@ -491,9 +492,11 @@ public class SingleImageTranslator {
 
     for (int tileIndex = 0; tileIndex < dimensionStore.fieldPositions.size(); tileIndex++){
       Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(tileIndex);
-      for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
-        store.setPlanePositionX(fieldPosition.x, tileIndex, planeIndex);
-        store.setPlanePositionY(fieldPosition.y, tileIndex, planeIndex);
+      int nPlanesPerTile = dimensionStore.getNumberOfPlanesPerTile();
+      for (int planeIndexWithinTile = 0; planeIndexWithinTile < nPlanesPerTile; planeIndexWithinTile++){
+        int absolutePlaneIndex = tileIndex * nPlanesPerTile + planeIndexWithinTile;
+        store.setPlanePositionX(fieldPosition.x, seriesIndex, absolutePlaneIndex);
+        store.setPlanePositionY(fieldPosition.y, seriesIndex, absolutePlaneIndex);
       }
     }
 
@@ -501,7 +504,8 @@ public class SingleImageTranslator {
     for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
       int sign = dimensionStore.zBegin <= dimensionStore.zEnd ? 1 : -1;
       int zIndex = reader.getZCTCoords(planeIndex)[0];
-      Length zPos = FormatTools.createLength(dimensionStore.zBegin + dimensionStore.zStep * sign * zIndex, UNITS.METER);
+      double otherZDrivePos = dimensionStore.zDriveMode == ZDriveMode.ZGalvo ? dimensionStore.zWidePosition : dimensionStore.zGalvoPosition;
+      Length zPos = FormatTools.createLength(otherZDrivePos + dimensionStore.zBegin + dimensionStore.zStep * sign * zIndex, UNITS.METER);
       store.setPlanePositionZ(zPos, seriesIndex, planeIndex);
     }
   }

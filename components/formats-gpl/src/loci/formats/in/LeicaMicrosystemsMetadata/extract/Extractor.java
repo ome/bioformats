@@ -1,6 +1,8 @@
 package loci.formats.in.LeicaMicrosystemsMetadata.extract;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -35,6 +37,21 @@ public class Extractor {
     } catch (Exception e){}
 
     return element;
+  }
+
+  public static List<Element> getChildNodesWithNameAsElement(Node node, String nodeName){
+    List<Element> children = new ArrayList<Element>();
+    NodeList childNodes = node.getChildNodes();
+
+    for (int i = 0; i < childNodes.getLength(); i++){
+      Element element = null;
+      try {
+        element = (Element)childNodes.item(i);
+        children.add(element);
+      } catch (Exception e){}
+    }
+
+    return children;
   }
 
   public static Node getNodeWithAttribute(NodeList nodes, String attributeName, String attributeValue) {

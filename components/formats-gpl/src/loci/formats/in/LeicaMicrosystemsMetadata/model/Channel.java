@@ -72,7 +72,6 @@ public class Channel {
   public DetectorSetting detectorSetting;
   public LaserSetting laserSetting;
   public Filter filter;
-  public String name;
   public double pinholeSize;
   public double exposureTime;
   public String channelName;
