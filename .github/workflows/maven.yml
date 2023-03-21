@@ -45,7 +45,7 @@ jobs:
           if [[ ${{ steps.get_version.outputs.version }} =~ 'SNAPSHOT' ]]; then
             echo server='ome.snapshots' >> $GITHUB_OUTPUT
           else
-            echo server='ome.staging' >> $GITHUB_OUTPUT
+            echo server='ome.releases' >> $GITHUB_OUTPUT
           fi
       - name: Set up Repository
         uses: actions/setup-java@v3
