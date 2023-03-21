@@ -38,8 +38,6 @@ import loci.common.DebugTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static loci.tests.testng.TestTools.getProperty;
-
 /**
  * Print a list of files that are explicitly set to not be tested,
  * and which do not have a justifying comment in the config file.
@@ -58,85 +56,34 @@ public class ReportEnabledStatus {
    * @param enabled true if the list of files is all configured and tested files,
    *                false if the list of files is all configured but neither tested nor commented
    */
-  public void logConfiguredFiles(boolean enabled) throws IOException {
+  public void logConfiguredFiles(String dataDir, String configDir, boolean enabled) throws IOException {
     List<String> files = new ArrayList<String>();
 
     String[] validSubdirs = null;
 
-    // parse base directory
-    // this is where the actual data files exist
-    final String baseDirProp = "testng.directory";
-    String baseDir = getProperty(baseDirProp);
-
-    if (baseDir == null) {
-      baseDir = getProperty("testng.directory-prefix");
-      String dirList = System.getProperty("testng.directory-list");
-      try {
-        validSubdirs = DataTools.readFile(dirList).split("\n");
-      }
-      catch (IOException e) {
-        LOGGER.debug("", e);
-      }
-    }
-
     // Return early if no base directory is supplied
-    if (baseDir == null) {
-      LOGGER.error("No base directory specified.");
-      LOGGER.error("Please specify a directory containing files to test:");
-      LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
+    if (dataDir == null) {
+      LOGGER.error("No data directory specified.");
       return;
     }
 
     // Test base directory validity
-    File baseDirFile = new File(baseDir);
+    File baseDirFile = new File(dataDir);
     if (!baseDirFile.isDirectory()) {
-      LOGGER.info("Directory: {}", baseDir);
+      LOGGER.info("Directory: {}", dataDir);
       LOGGER.info("  exists?: {}", baseDirFile.exists());
       LOGGER.info("  readable?: {}", baseDirFile.canRead());
       LOGGER.info("  is a directory?: {}", baseDirFile.isDirectory());
-      LOGGER.error("Please specify a directory containing files to test:");
-      LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
       return;
     }
-    LOGGER.info("testng.directory = {}", baseDir);
 
-    // check for an alternate configuration directory
-    final String configDirProperty = "testng.configDirectory";
-    String configDir = getProperty(configDirProperty);
-    if (configDir != null) {
-      LOGGER.info("testng.configDirectory = {}", configDir);
-    }
-
-    // check for an alternate configuration directory
-    final String cacheDirProperty = "testng.cacheDirectory";
-    String cacheDir = getProperty(cacheDirProperty);
-    if (cacheDir != null) {
-      LOGGER.info("testng.cacheDirectory = {}", cacheDir);
-    }
-
-    ConfigurationTree configTree = new ConfigurationTree(baseDir, configDir, cacheDir);
-
-    // check for an alternate top level configuration file
-    final String toplevelConfig = "testng.toplevel-config";
-    String configFile = getProperty(toplevelConfig);
-    if (configFile != null) {
-      LOGGER.info("testng.toplevel-config = {}", configFile);
-    }
-
-    // check for a configuration file suffix
-
-    final String configSuffixProperty = "testng.configSuffix";
-    String configSuffix = getProperty(configSuffixProperty);
-    if (configSuffix == null) {
-      configSuffix = "";
-    }
+    ConfigurationTree configTree = new ConfigurationTree(dataDir, configDir, null);
 
     // scan for files
     System.out.println("Scanning for files...");
     long start = System.currentTimeMillis();
     try {
-      TestTools.getFiles(baseDir, files, configTree,
-        configDir != null ? configDir : configFile, validSubdirs, configSuffix, false);
+      TestTools.getFiles(dataDir, files, configTree, configDir, validSubdirs, "", false);
     }
     catch (Exception e) {
       LOGGER.info("Failed to retrieve complete list of files", e);
@@ -173,9 +120,45 @@ public class ReportEnabledStatus {
   }
 
   public static void main(String[] args) throws Exception {
+    if (args.length == 0 || args[0].equals("--help")) {
+      System.out.println("unconfigured data_dir configuration_dir [--enabled]");
+      System.out.println();
+      System.out.println("  --enabled: print a list of files that are configured and tested");
+    }
+
     DebugTools.enableLogging("INFO");
     ReportEnabledStatus status = new ReportEnabledStatus();
-    status.logConfiguredFiles(args[0].equals("--enabled"));
+    String data = null;
+    String config = null;
+    boolean enabled = false;
+
+    String msg = null;
+    for (String arg : args) {
+      if (arg.equals("--enabled")) {
+        enabled = true;
+      }
+      else if (data == null) {
+        data = arg;
+      }
+      else if (config == null) {
+        config = arg;
+      }
+      else {
+        msg = "Unexpected argument: " + arg;
+        break;
+      }
+    }
+    if (data == null) {
+      msg = "Data directory not specified";
+    }
+    else if (config == null) {
+      msg = "Configuration directory not specified";
+    }
+    if (msg != null) {
+      throw new IllegalArgumentException(msg);
+    }
+
+    status.logConfiguredFiles(data, config, enabled);
   }
 
 }
