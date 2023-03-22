@@ -47,7 +47,7 @@
     <ome-metakit.version>5.3.5</ome-metakit.version>
     <metakit.version>${ome-metakit.version}</metakit.version>
     <slf4j.version>1.7.30</slf4j.version>
-    <kryo.version>4.0.2</kryo.version>
+    <kryo.version>5.4.0</kryo.version>
     <testng.version>6.8</testng.version>
     <ome-common.version>6.0.14</ome-common.version>
     <ome-model.group>org.openmicroscopy</ome-model.group>

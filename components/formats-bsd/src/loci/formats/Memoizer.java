@@ -60,6 +60,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
@@ -121,7 +122,12 @@ public class Memoizer extends ReaderWrapper {
     final public Kryo kryo = new Kryo();
     {
       // See https://github.com/EsotericSoftware/kryo/issues/216
-      ((Kryo.DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+      ((DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+
+      // switch from 5.0.x default settings to 4.0.2 default settings
+      // see https://github.com/EsotericSoftware/kryo/wiki/Migration-to-v5#configuration-changes
+      kryo.setRegistrationRequired(false);
+      kryo.setReferences(true);
     }
 
     FileInputStream fis;
