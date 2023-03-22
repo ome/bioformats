@@ -163,7 +163,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
             while (keySet.hasNext()) {
               String key = (String) keySet.next();
               if (key.startsWith("mibi.")) {
-                simsDescription.put(key, jsonDescription.getString(key));
+                simsDescription.put(key, jsonDescription.get(key).toString());
               }
             }
           } catch (JSONException e) {
