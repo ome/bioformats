@@ -107,11 +107,13 @@ public class SlideBook7Reader  extends FormatReader {
             String myName = cls.getName();
             String sbName = GetSBClassName();
             Class<?> theTypeInteger = Integer.class;
+            Class<?> theTypeLong = Long.class;
             Class<?> theTypeFloat = Float.class;
             Class<?> theTypeDouble = Double.class;
             Class<?> theTypeBoolean = Boolean.class;
             Class<?> theTypeString = String.class;
             Class<?> theTypeIntegerVector = Integer[].class;
+            Class<?> theTypeLongVector = Long[].class;
             Class<?> theTypeFloatVector = Float[].class;
             myName = myName.replaceAll(".*\\$","");
 
@@ -240,6 +242,35 @@ public class SlideBook7Reader  extends FormatReader {
                                     continue;
                                 }
                                 theArray[theListNode-1] = Integer.valueOf(theAttrValue);
+                            }
+                            try {
+                                theField.set(this,theArray);
+                            } catch (IllegalArgumentException ex) {
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                            } catch (IllegalAccessException ex) {
+                                SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
+                            }
+
+                        }
+                        else if(theField.getType().isAssignableFrom(theTypeLongVector))
+                        {
+                            Long[] theArray = new Long[theListSize-1];
+                            for(int theListNode=0;theListNode<theListSize;theListNode++)
+                            {
+                                ScalarNode theAttrValueScalarNode = (ScalarNode)theScalarNodeList.get(theListNode);
+                                String theAttrValue = theAttrValueScalarNode.getValue();
+                                if(theListNode == 0)
+                                {
+                                    if(Integer.valueOf(theAttrValue) != theListSize-1)
+                                    {
+                                        SlideBook7Reader.LOGGER.trace("theAttrName: " + theAttrName);
+                                        SlideBook7Reader.LOGGER.trace("theAttrValue: " + theAttrValue);
+                                        SlideBook7Reader.LOGGER.trace("theListSize: " + theListSize);
+                                        SlideBook7Reader.LOGGER.trace("Long.valueOf(theAttrValue) != theListSize");
+                                    }
+                                    continue;
+                                }
+                                theArray[theListNode-1] = Long.valueOf(theAttrValue);
                             }
                             try {
                                 theField.set(this,theArray);
@@ -1987,7 +2018,7 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mStagePositionTablePtr;
         public Integer mAuxDataTablePtr;
         public Integer mNumAuxDataTables;
-        public Integer [] mThumbNail;
+        public Long [] mThumbNail;
         public Integer mElapsedTimeOffset;
 
         public String mName;
