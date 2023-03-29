@@ -442,13 +442,16 @@ public class Memoizer extends ReaderWrapper {
    *         will be created.
    */
   public Memoizer(long minimumElapsed) {
-    this(minimumElapsed, null);
+    // setting the directory to null explicitly disables memo files
+    // setting doInPlaceCaching allows a memo file to be written to the
+    // original file's directory only - see getMemoFile
+    this(null, minimumElapsed, null);
     this.doInPlaceCaching = true;
   }
 
   /**
-   *  Constructs a memoizer around a new {@link ImageReader} creating memo file
-   *  files under the {@code directory} argument including the full path of the
+   *  Constructs a memoizer around a new {@link ImageReader} creating memo files
+   *  under the {@code directory} argument including the full path of the
    *  original file only if the call to {@link #setId} takes longer than
    *  {@code minimumElapsed} in milliseconds.
    *
@@ -459,9 +462,7 @@ public class Memoizer extends ReaderWrapper {
    *         files should be created. If {@code null}, disable memoization.
    */
   public Memoizer(long minimumElapsed, File directory) {
-    super();
-    this.minimumElapsed = minimumElapsed;
-    this.directory = directory;
+    this(null, minimumElapsed, directory);
   }
 
   /**
@@ -470,10 +471,15 @@ public class Memoizer extends ReaderWrapper {
    *  call to {@link #setId} takes longer than
    *  {@value DEFAULT_MINIMUM_ELAPSED} in milliseconds.
    *
-   *  @param r an {@link IFormatReader} instance
+   *  @param r an {@link IFormatReader} instance.
+   *         If {@code null}, a new {@link ImageReader} is created.
    */
   public Memoizer(IFormatReader r) {
-    this(r, DEFAULT_MINIMUM_ELAPSED);
+    // setting the directory to null explicitly disables memo files
+    // setting doInPlaceCaching allows a memo file to be written to the
+    // original file's directory only - see getMemoFile
+    this(r, DEFAULT_MINIMUM_ELAPSED, null);
+    this.doInPlaceCaching = true;
   }
 
   /**
@@ -483,13 +489,32 @@ public class Memoizer extends ReaderWrapper {
    *  milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
+   *         If {@code null}, a new {@link ImageReader} is created.
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
    */
   public Memoizer(IFormatReader r, long minimumElapsed) {
+    // setting the directory to null explicitly disables memo files
+    // setting doInPlaceCaching allows a memo file to be written to the
+    // original file's directory only - see getMemoFile
     this(r, minimumElapsed, null);
     this.doInPlaceCaching = true;
+  }
+
+  /**
+   * Constructs a memoizer around the given {@link IFormatReader} creating
+   * memo file under the {@code directory} argument including the full path of the
+   * original file only if the call to {@link #setId} takes longer than
+   * {@value DEFAULT_MINIMUM_ELAPSED} in milliseconds.
+   *
+   * @param r an {@link IFormatReader} instance
+   *        If {@code null}, a new {@link ImageReader} is created.
+   * @param directory a {@link File} specifying the directory where all memo
+   *        files should be created. If {@code null}, disable memoization.
+   */
+  public Memoizer(IFormatReader r, File directory) {
+    this(r, DEFAULT_MINIMUM_ELAPSED, directory);
   }
 
   /**
@@ -499,6 +524,7 @@ public class Memoizer extends ReaderWrapper {
    *  {@code minimumElapsed} in milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
+   *         If {@code null}, a new {@link ImageReader} is created.
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
@@ -506,11 +532,15 @@ public class Memoizer extends ReaderWrapper {
    *         files should be created. If {@code null}, disable memoization.
    */
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
-    super(r);
+    if (r == null) {
+      reader = new ImageReader();
+    }
+    else {
+      reader = r;
+    }
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
   }
-
 
   /**
    *  Returns whether the {@link #reader} instance currently active was loaded
@@ -1003,6 +1033,21 @@ public class Memoizer extends ReaderWrapper {
     return rv;
   }
 
+  /**
+   * Force the current memo file to be deleted, if it exists.
+   *
+   * @return true if the delete succeeded
+   */
+  public boolean deleteMemo() {
+    return deleteQuietly(memoFile);
+  }
+
+  /**
+   * @return current memo file (may be null)
+   */
+  public File getMemoFile() {
+    return memoFile;
+  }
 
   /**
    * Return the {@link IFormatReader} instance that is passed in or null if
