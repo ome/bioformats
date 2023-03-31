@@ -955,7 +955,8 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setObjectiveNominalMagnification(magnification, 0, 0);
         }
         else if (key.startsWith("Objective ID")) {
-          store.setObjectiveID("Objective:" + value, 0, 0);
+          String objectiveID = MetadataTools.createLSID("Objective:" + value, "Objective", 0, 0);
+          store.setObjectiveID(objectiveID, 0, 0);
           store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
           store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
         }

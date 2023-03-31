@@ -36,6 +36,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
@@ -210,20 +211,24 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
     int simsIndex = seriesTypes.get("SIMS");
     String instrument = (String) simsDescription.get("mibi.instrument");
-    store.setInstrumentID(formatMetadata("Instrument", instrument), simsIndex);
+    instrument = formatMetadata("Instrument", instrument);
+    store.setInstrumentID(MetadataTools.createLSID(instrument, "Instrument", simsIndex), simsIndex);
     store.setImageDescription((String) simsDescription.get("mibi.description"), simsIndex);
 
     String currentFile = FilenameUtils.getName(this.getCurrentFile());
     for (Map.Entry<String, Integer> entry : seriesTypes.entrySet()) {
       String key = entry.getKey();
       if (key != null) {
-        store.setImageID(formatMetadata("Image", entry.getKey()), entry.getValue());
-        store.setImageName(currentFile + " " + entry.getKey(), entry.getValue());
+        String imageID = formatMetadata("Image", entry.getKey());
+        Integer index = entry.getValue();
+        store.setImageID(MetadataTools.createLSID(imageID, "Image", index), index);
+        store.setImageName(currentFile + " " + entry.getKey(), index);
       }
     }
 
     for (int j = 0; j < channelIDs.size(); j++) {
-      store.setChannelID(formatMetadata("Channel", channelIDs.get(j)), simsIndex, j);
+      String channel = formatMetadata("Channel", channelIDs.get(j));
+      store.setChannelID(MetadataTools.createLSID(channel, "Channel", simsIndex, j), simsIndex, j);
       if (channelNames.get(j) != null) {
         store.setChannelName(formatMetadata("Target", channelNames.get(j)), simsIndex, j);
       }

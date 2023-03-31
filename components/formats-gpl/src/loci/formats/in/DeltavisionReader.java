@@ -1290,7 +1290,7 @@ public class DeltavisionReader extends FormatReader {
             value = value.substring(value.indexOf(' ') + 1);
           }
           if (!value.equals("null")) {
-            String objectiveID = "Objective:" + value;
+            String objectiveID = MetadataTools.createLSID("Objective:" + value, "Objective", 0, 0);
             store.setObjectiveID(objectiveID, 0, 0);
             for (int series=0; series<getSeriesCount(); series++) {
               store.setObjectiveSettingsID(objectiveID, series);
@@ -3089,7 +3089,7 @@ public class DeltavisionReader extends FormatReader {
           lensID);
     }
 
-    String objectiveID = "Objective:" + lensID;
+    String objectiveID = MetadataTools.createLSID("Objective:" + lensID, "Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
     for (int series=0; series<getSeriesCount(); series++) {
       store.setObjectiveSettingsID(objectiveID, series);
