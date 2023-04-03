@@ -490,6 +490,12 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   @Override
+  public double getForegroundValue() {
+    record("getForegroundValue");
+    return proc.getForegroundValue();
+  }
+
+  @Override
   public int getAutoThreshold(int[] histogram) {
     record("getAutoThreshold", histogram, int[].class);
     return proc.getAutoThreshold(histogram);
