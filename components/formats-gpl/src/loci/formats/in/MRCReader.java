@@ -211,7 +211,6 @@ public class MRCReader extends FormatReader {
 
     switch (mode) {
       case 0:
-        in.seek(IMODSTAMP_OFFSET);
         if (imod && imodSigned) {
           m.pixelType = FormatTools.INT8;
         }
