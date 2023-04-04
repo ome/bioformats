@@ -198,11 +198,21 @@ public class MRCReader extends FormatReader {
     m.rgb = false;
 
     int mode = in.readInt();
+
+    // see the 'imodStamp' and 'imodFlags' fields in
+    // https://bio3d.colorado.edu/imod/doc/mrc_format.txt
+    in.seek(IMODSTAMP_OFFSET);
+    boolean imod = in.readInt() == 1146047817; // little-endian 'IMOD'
+    boolean imodSigned = false;
+    if (imod) {
+      int imodFlags = in.readInt();
+      imodSigned = (imodFlags & 0x1) == 1;
+    }
+
     switch (mode) {
       case 0:
         in.seek(IMODSTAMP_OFFSET);
-        if (in.readInt() == 1146047817)
-        {
+        if (imod && imodSigned) {
           m.pixelType = FormatTools.INT8;
         }
         else
