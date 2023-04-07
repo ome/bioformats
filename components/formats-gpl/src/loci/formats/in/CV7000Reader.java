@@ -388,7 +388,7 @@ public class CV7000Reader extends FormatReader {
       planeLengths[2] = core.get(p.series).sizeT;
 
       p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {p.channelIndex, p.z - m.minZ, p.timepoint - m.minT});
+        new int[] {p.channelIndex - m.minC, p.z - m.minZ, p.timepoint - m.minT});
 
       if (reversePlaneLookup[p.series][p.no] < 0) {
         reversePlaneLookup[p.series][p.no] = i;
