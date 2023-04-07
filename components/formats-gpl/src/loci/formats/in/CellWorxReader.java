@@ -395,7 +395,7 @@ public class CellWorxReader extends FormatReader {
       planeIndex = c;
       file = getFile(seriesIndex, planeIndex);
       while (!new Location(file).exists()) {
-        if (planeIndex < zSteps * nTimepoints * wavelengths.length) {
+        if (planeIndex < zSteps * nTimepoints * (wavelengths.length - 1)) {
           planeIndex += (zSteps * nTimepoints);
         }
         else if (seriesIndex < seriesCount - 1) {
