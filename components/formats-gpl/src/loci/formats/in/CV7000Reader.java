@@ -130,7 +130,7 @@ public class CV7000Reader extends FormatReader {
     ArrayList<String> files = new ArrayList<String>();
     files.add(new Location(currentId).getAbsolutePath());
     for (String file : allFiles) {
-      if (!files.contains(file) && (!noPixels || !checkSuffix(file, "tif"))) {
+      if (file != null && !files.contains(file) && (!noPixels || !checkSuffix(file, "tif"))) {
         files.add(file);
       }
     }
@@ -176,7 +176,7 @@ public class CV7000Reader extends FormatReader {
     }
     files.addAll(extraFiles);
     for (String file : allFiles) {
-      if (!checkSuffix(file, "tif") && !(new Location(file).isDirectory())) {
+      if (file != null && !checkSuffix(file, "tif") && !(new Location(file).isDirectory())) {
         files.add(file);
       }
     }
@@ -242,7 +242,13 @@ public class CV7000Reader extends FormatReader {
     allFiles = parent.list(true);
     Arrays.sort(allFiles);
     for (int i=0; i<allFiles.length; i++) {
-      allFiles[i] = new Location(parent, allFiles[i]).getAbsolutePath();
+      Location file = new Location(parent, allFiles[i]);
+      if (!file.isDirectory() && file.canRead()) {
+        allFiles[i] = file.getAbsolutePath();
+      }
+      else {
+        allFiles[i] = null;
+      }
     }
     Location measurementData = new Location(parent, MEASUREMENT_FILE);
 
