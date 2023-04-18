@@ -130,13 +130,10 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
         jsonDescription = new JSONObject(imageDescription);
         imageType = jsonDescription.getString("image.type");
         if (imageType.equals("SIMS")) {
-          String mass = jsonDescription.getString("channel.mass");
-          if (mass == null) {
-            throw new FormatException("Channel masses are mandatory.");
-          }
+          Double mass = jsonDescription.getDouble("channel.mass");
           String target = jsonDescription.getString("channel.target");
-          channelIDs.add(mass);
-          channelNames.add(target != null && target != "null" ? target : mass);
+          channelIDs.add(mass.toString());
+          channelNames.add(target != null && target != "null" ? target : mass.toString());
         }
       } catch (JSONException e) {
         throw new FormatException("Unexpected format in SIMS description JSON.");
@@ -166,7 +163,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
             while (keySet.hasNext()) {
               String key = (String) keySet.next();
               if (key.startsWith("mibi.")) {
-                simsDescription.put(key, jsonDescription.getString(key));
+                simsDescription.put(key, jsonDescription.get(key).toString());
               }
             }
           } catch (JSONException e) {
