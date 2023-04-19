@@ -218,7 +218,7 @@ public class CV7000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     Plane p = lookupPlane(getSeries(), no);
     LOGGER.trace("series = {}, no = {}, file = {}", series, no, p == null ? null : p.file);
     if (p != null && p.file != null) {

@@ -223,7 +223,7 @@ public class OperettaReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     if (getSeries() < planes.length && no < planes[getSeries()].length) {
       Plane p = planes[getSeries()][no];
 

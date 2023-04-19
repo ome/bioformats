@@ -614,6 +614,20 @@ public class ImageReader implements IFormatReader {
     return getReader(id).fileGroupOption(id);
   }
 
+  /* @see IFormatReader#setFillColor(Byte) */
+  @Override
+  public void setFillColor(Byte fill) {
+    for (IFormatReader r : readers) {
+      r.setFillColor(fill);
+    }
+  }
+
+  /* @see IFormatReader#getFillColor() */
+  @Override
+  public Byte getFillColor() {
+    return getReader().getFillColor();
+  }
+
   /* @see IFormatReader#isMetadataComplete() */
   @Override
   public boolean isMetadataComplete() {

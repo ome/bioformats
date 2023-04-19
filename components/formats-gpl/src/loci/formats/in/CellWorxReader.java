@@ -207,7 +207,7 @@ public class CellWorxReader extends FormatReader {
     String file = getFile(getSeries(), no);
     LOGGER.trace("Series {} plane {} using file = {}", getSeries(), no, file);
     if (file == null) {
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 
