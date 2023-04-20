@@ -359,16 +359,23 @@ public interface IFormatReader extends IFormatHandler, IPyramidHandler {
    * This can be used to override the default fill value
    * defined in a reader.
    *
+   * The default implementation in IFormatReader is a no-op.
+   *
    * @param color value that will be used to fill pixel byte arrays
    */
-  void setFillColor(Byte color);
+  default void setFillColor(Byte color) {
+  }
 
   /**
    * Return the fill value for undefined pixels.
    *
+   * The default implementation in IFormatReader always returns 0.
+   *
    * @see #setFillColor(Byte)
    */
-  Byte getFillColor();
+  default Byte getFillColor() {
+    return 0;
+  }
 
   /** Returns true if this format's metadata is completely parsed. */
   boolean isMetadataComplete();
