@@ -45,6 +45,8 @@ import java.util.Set;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
@@ -935,6 +937,68 @@ public class FileStitcher extends ReaderWrapper {
 
     close();
     initFile(id);
+  }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int[] pos = computeIndices(no);
+    IFormatReader r = getReader(getCoreIndex(), pos[0]);
+    int ino = pos[1];
+
+    if (ino < r.getImageCount()) {
+      return r.openCompressedBytes(ino, x, y);
+    }
+
+    throw new IOException("Compressed tile not available");
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int[] pos = computeIndices(no);
+    IFormatReader r = getReader(getCoreIndex(), pos[0]);
+    int ino = pos[1];
+
+    if (ino < r.getImageCount()) {
+      return r.openCompressedBytes(ino, x, y);
+    }
+
+    throw new IOException("Compressed tile not available");
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int[] pos = computeIndices(no);
+    IFormatReader r = getReader(getCoreIndex(), pos[0]);
+    int ino = pos[1];
+
+    if (ino < r.getImageCount()) {
+      return r.getTileCodec(ino);
+    }
+
+    throw new IOException("Compressed tile not available");
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int[] pos = computeIndices(no);
+    IFormatReader r = getReader(getCoreIndex(), pos[0]);
+    int ino = pos[1];
+
+    if (ino < r.getImageCount()) {
+      return r.getTileCodecOptions(ino, x, y);
+    }
+
+    throw new IOException("Compressed tile not available");
   }
 
   // -- Internal FormatReader API methods --
