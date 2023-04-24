@@ -182,6 +182,17 @@ public class ZeissCZIReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String ALLOW_AUTOSTITCHING_KEY =
+          "zeissczi.autostitch";
+  public static final boolean ALLOW_AUTOSTITCHING_DEFAULT = true;
+  public static final String INCLUDE_ATTACHMENTS_KEY =
+          "zeissczi.attachments";
+  public static final boolean INCLUDE_ATTACHMENTS_DEFAULT = true;
+  public static final String TRIM_DIMENSIONS_KEY = "zeissczi.trim_dimensions";
+  public static final boolean TRIM_DIMENSIONS_DEFAULT = false;
+  public static final String RELATIVE_POSITIONS_KEY = "zeissczi.relative_positions";
+  public static final boolean RELATIVE_POSITIONS_DEFAULT = false;
+
   private static final String CZI_MAGIC_STRING = "ZISRAWFILE";
   private static final int BUFFER_SIZE = 512;
 
@@ -377,6 +388,55 @@ public class ZeissCZIReader extends FormatReader {
       fieldNames.clear();
       imageNames.clear();
     }
+  }
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(ALLOW_AUTOSTITCHING_KEY);
+    optionsList.add(INCLUDE_ATTACHMENTS_KEY);
+    optionsList.add(TRIM_DIMENSIONS_KEY);
+    optionsList.add(RELATIVE_POSITIONS_KEY);
+    return optionsList;
+  }
+
+  // -- ZeissCZI-specific methods --
+
+  public boolean allowAutostitching() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+              ALLOW_AUTOSTITCHING_KEY, ALLOW_AUTOSTITCHING_DEFAULT);
+    }
+    return ALLOW_AUTOSTITCHING_DEFAULT;
+  }
+
+  public boolean canReadAttachments() { // TODO : handle this method
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+              INCLUDE_ATTACHMENTS_KEY, INCLUDE_ATTACHMENTS_DEFAULT);
+    }
+    return INCLUDE_ATTACHMENTS_DEFAULT;
+  }
+
+  public boolean trimDimensions() { // TODO : handle this method
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+              TRIM_DIMENSIONS_KEY, TRIM_DIMENSIONS_DEFAULT);
+    }
+    return TRIM_DIMENSIONS_DEFAULT;
+  }
+
+  public boolean storeRelativePositions() { // TODO : handle this method
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+              RELATIVE_POSITIONS_KEY, RELATIVE_POSITIONS_DEFAULT);
+    }
+    return RELATIVE_POSITIONS_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -1052,10 +1112,6 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
     //this.store=null;
-  }
-
-  private boolean allowAutostitching() {
-    return false;
   }
 
   private static int getDownSampling(LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry entry) {
