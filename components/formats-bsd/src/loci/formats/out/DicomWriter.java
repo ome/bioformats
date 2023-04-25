@@ -177,6 +177,78 @@ public class DicomWriter extends FormatWriter {
     }
   }
 
+  @Override
+  public void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    // TODO: update compression type check, only allows JPEG right now
+    if (compression == null || !compression.equals(CompressionType.JPEG.getCompression())) {
+      throw new UnsupportedOperationException("Pre-compressed tiles not supported for compression: " + compression);
+    }
+    if (!isReallySequential()) {
+      throw new UnsupportedOperationException("Pre-compressed tiles not supported for TILED_SPARSE");
+    }
+
+    // TODO: may want better handling of non-tiled "extra" images (e.g. label, macro)
+    MetadataRetrieve r = getMetadataRetrieve();
+    if ((!(r instanceof IPyramidStore) ||
+      ((IPyramidStore) r).getResolutionCount(series) == 1) &&
+      !isFullPlane(x, y, w, h))
+    {
+      throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
+    }
+
+    boolean first = x == 0 && y == 0;
+    boolean last = x + w == getSizeX() && y + h == getSizeY();
+    int resolutionIndex = getIndex(series, resolution);
+
+    // the compression type isn't supplied to the writer until
+    // after setId is called, so metadata that indicates or
+    // depends on the compression type needs to be set in
+    // the first call to saveBytes for each file
+    if (first) {
+      out.seek(transferSyntaxPointer[resolutionIndex]);
+      out.writeBytes(getTransferSyntax());
+
+      out.seek(compressionMethodPointer[resolutionIndex]);
+      out.writeBytes(getCompressionMethod());
+    }
+
+    int bytesPerPixel = FormatTools.getBytesPerPixel(
+      FormatTools.pixelTypeFromString(
+      r.getPixelsType(series).toString()));
+
+    out.seek(out.length());
+    long start = out.getFilePointer();
+
+    // now write the compressed pixel data
+
+    boolean pad = buf.length % 2 == 1;
+
+    if (first) {
+      DicomTag bot = new DicomTag(ITEM, IMPLICIT);
+      bot.elementLength = 0;
+      writeTag(bot);
+    }
+
+    DicomTag item = new DicomTag(ITEM, IMPLICIT);
+    item.elementLength = buf.length;
+    if (pad) {
+      item.elementLength++;
+    }
+    item.value = buf;
+    writeTag(item);
+    if (pad) {
+      out.writeByte(0);
+    }
+
+    if (last) {
+      DicomTag end = new DicomTag(SEQUENCE_DELIMITATION_ITEM, IMPLICIT);
+      end.elementLength = 0;
+      writeTag(end);
+    }
+  }
+
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
@@ -247,10 +319,9 @@ public class DicomWriter extends FormatWriter {
       }
     }
 
-    MetadataRetrieve retrieve = getMetadataRetrieve();
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
-      retrieve.getPixelsType(series).toString()));
+      r.getPixelsType(series).toString()));
 
     out.seek(out.length());
     long start = out.getFilePointer();
