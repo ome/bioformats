@@ -257,6 +257,32 @@ public class SVSReader extends BaseTiffReader {
   // -- ICompressedTileReader API methods --
 
   @Override
+  public int getTileRows(int no) {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      IFD ifd = getIFD(no);
+      return (int) ifd.getTilesPerColumn();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not get tile row count", e);
+    }
+    return super.getTileRows(no);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      IFD ifd = getIFD(no);
+      return (int) ifd.getTilesPerRow();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not get tile column count", e);
+    }
+    return super.getTileColumns(no);
+  }
+
+  @Override
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     IFD ifd = getIFD(no);

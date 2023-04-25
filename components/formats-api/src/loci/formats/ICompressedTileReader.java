@@ -44,6 +44,20 @@ public interface ICompressedTileReader {
   /**
    *
    */
+  default int getTileRows(int no) {
+    throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
+  }
+
+  /**
+   *
+   */
+  default int getTileColumns(int no) {
+    throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
+  }
+
+  /**
+   *
+   */
   default byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
   }

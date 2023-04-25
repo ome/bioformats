@@ -363,6 +363,16 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   @Override
+  public int getTileRows(int no) {
+    return reader.getTileRows(no);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    return reader.getTileColumns(no);
+  }
+
+  @Override
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     return reader.openCompressedBytes(no, x, y);
   }
