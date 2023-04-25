@@ -44,6 +44,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.DynamicMetadataOptions;
@@ -858,6 +860,38 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#close() */
   @Override
   public void close() throws IOException { close(false); }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    return getReader().getTileRows(no);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    return getReader().getTileColumns(no);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    return getReader().openCompressedBytes(no, x, y);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    return getReader().openCompressedBytes(no, buf, x, y);
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    return getReader().getTileCodec(no);
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    return getReader().getTileCodecOptions(no, x, y);
+  }
 
   private boolean isThisType(IFormatReader reader, String name, boolean allowOpen) {
     try {
