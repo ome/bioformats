@@ -42,42 +42,69 @@ import loci.formats.codec.CodecOptions;
 public interface ICompressedTileReader {
 
   /**
+   * Get the number of rows of tiles in the specified plane in the current series.
    *
+   * @param no plane index
+   * @return tile row count
    */
   default int getTileRows(int no) {
     throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
   }
 
   /**
+   * Get the number of columns of tiles in the specified plane in the current series.
    *
+   * @param no plane index
+   * @return tile column count
    */
   default int getTileColumns(int no) {
     throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
   }
 
   /**
+   * Retrieve the specified tile without performing any decompression.
    *
+   * @param no plane index
+   * @param x tile X index (indexed from 0, @see getTileColumns(int))
+   * @param y tile Y index (indexed frmo 0, @see getTileRows(int))
+   * @return compressed tile bytes
    */
   default byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
   }
 
   /**
+   * Retrieve the specified tile without performing any decompression.
    *
+   * @param no plane index
+   * @param buf pre-allocated buffer in which to store compressed bytes
+   * @param x tile X index (indexed from 0, @see getTileColumns(int))
+   * @param y tile Y index (indexed frmo 0, @see getTileRows(int))
+   * @return compressed tile bytes
    */
   default byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
     throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
   }
 
   /**
+   * Retrieve a codec that can be used to decompress compressed tiles.
    *
+   * @param no plane index
+   * @return codec that can be used for compressed tiles in the specified plane
+   * @see openCompressedBytes(int, int, int)
    */
   default Codec getTileCodec(int no) throws FormatException, IOException {
     throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
   }
 
   /**
+   * Retrieve codec options that can be used to decompressed the specified tile.
    *
+   * @param no plane index
+   * @param x tile X index (indexed from 0, @see getTileColumns(int))
+   * @param y tile Y index (indexed frmo 0, @see getTileRows(int))
+   * @return codec options
+   * @see getTileCodec(int)
    */
   default CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
     throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
