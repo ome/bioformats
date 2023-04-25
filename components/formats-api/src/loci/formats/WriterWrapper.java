@@ -363,6 +363,15 @@ public abstract class WriterWrapper implements IFormatWriter {
     return writer.getResolutions();
   }
 
+  // -- ICompressedTileWriter API methods --
+
+  @Override
+  public void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    writer.saveCompressedBytes(no, buf, x, y, w, h);
+  }
+
   // -- IFormatHandler API methods --
 
   @Override

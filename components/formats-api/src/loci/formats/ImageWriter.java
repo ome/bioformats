@@ -419,6 +419,15 @@ public class ImageWriter implements IFormatWriter {
     getWriter().setCodecOptions(options);
   }
 
+  // -- ICompressedTileWriter API methods --
+
+  @Override
+  public void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    getWriter().saveCompressedBytes(no, buf, x, y, w, h);
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */
