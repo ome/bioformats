@@ -41,6 +41,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
@@ -173,11 +175,8 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    if (tiffParser == null) {
-      initTiffParser();
-    }
-    int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[no];
-    tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
+    IFD ifd = getIFD(no);
+    tiffParser.getSamples(ifd, buf, x, y, w, h);
     return buf;
   }
 
@@ -232,8 +231,8 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[0];
-      return (int) ifds.get(ifd).getTileWidth();
+      IFD ifd = getIFD(0);
+      return (int) ifd.getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -246,13 +245,70 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[0];
-      return (int) ifds.get(ifd).getTileLength();
+      IFD ifd = getIFD(0);
+      return (int) ifd.getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
     }
     return super.getOptimalTileHeight();
+  }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    IFD ifd = getIFD(no);
+    long[] byteCounts = ifd.getStripByteCounts();
+    int tileIndex = getTileIndex(ifd, x, y);
+
+    if (byteCounts[tileIndex] < 0 || byteCounts[tileIndex] > Integer.MAX_VALUE) {
+      throw new IOException("Invalid compressed tile size: " + byteCounts[tileIndex]);
+    }
+
+    byte[] buf = new byte[(int) byteCounts[tileIndex]];
+    return openCompressedBytes(no, buf, x, y);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    IFD ifd = getIFD(no);
+    long[] offsets = ifd.getStripOffsets();
+    long[] byteCounts = ifd.getStripByteCounts();
+
+    int tileIndex = getTileIndex(ifd, x, y);
+
+    if (buf.length < byteCounts[tileIndex]) {
+      throw new IllegalArgumentException("Tile buffer too small: expected >=" +
+        byteCounts[tileIndex] + ", got " + buf.length);
+    }
+    else if (byteCounts[tileIndex] < 0 || byteCounts[tileIndex] > Integer.MAX_VALUE) {
+      throw new IOException("Invalid compressed tile size: " + byteCounts[tileIndex]);
+    }
+
+    tiffParser.getStream().seek(offsets[tileIndex]);
+    tiffParser.getStream().readFully(buf, 0, (int) byteCounts[tileIndex]);
+
+    return buf;
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    IFD ifd = getIFD(no);
+    return ifd.getCompression().getCodec();
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    IFD ifd = getIFD(no);
+    CodecOptions options = ifd.getCompression().getCompressionCodecOptions(ifd);
+    options.width = (int) ifd.getTileWidth();
+    options.height = (int) ifd.getTileLength();
+    return options;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -644,6 +700,44 @@ public class SVSReader extends BaseTiffReader {
 
   protected Color getDisplayColor() {
     return displayColor;
+  }
+
+  /**
+   * Get the IFD corresponding to the given plane in the current series.
+   * Initializes the underlying TiffParser if necessary.
+   *
+   * @param plane index
+   * @return corresponding IFD
+   */
+  protected IFD getIFD(int no) {
+    if (tiffParser == null) {
+      initTiffParser();
+    }
+    int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[no];
+    return ifds.get(ifd);
+  }
+
+  /**
+   * Get the index of the tile corresponding to given IFD (plane)
+   * and tile XY indexes.
+   *
+   * @param ifd IFD for the requested tile's plane
+   * @param x tile X index
+   * @param y tile Y index
+   * @return corresponding tile index
+   */
+  protected int getTileIndex(IFD ifd, int x, int y) throws FormatException {
+    int rows = (int) ifd.getTilesPerColumn();
+    int cols = (int) ifd.getTilesPerRow();
+
+    if (x < 0 || x >= cols) {
+      throw new IllegalArgumentException("X index " + x + " not in range [0, " + cols + ")");
+    }
+    if (y < 0 || y >= rows) {
+      throw new IllegalArgumentException("Y index " + y + " not in range [0, " + rows + ")");
+    }
+
+    return (cols * y) + x;
   }
 
 }
