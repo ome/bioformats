@@ -611,7 +611,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
         in.seek(helper + 12);  // Return to starting position
 
-        int len = (int) (nameLength + dataLength);
+        long len = nameLength + dataLength;
 
         long fp = in.getFilePointer();
         String blockType = in.readString(12);
@@ -620,7 +620,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         LOGGER.info("Parsing block '{}' {}%", blockType, percent);
         blockCount++;
 
-        int skip = len - 12 - nameLength * 2;
+        long skip = len - 12 - nameLength * 2;
         if (skip <= 0) skip += nameLength * 2;
 
         // Image calibration for newer nd2 files
@@ -1038,8 +1038,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
                 in.seek(startFilePointer);
               }
             }
+            // more than 2GB of XML is not supported and likely indicates
+            // some other parsing error
+            if (len - 12 > Integer.MAX_VALUE) {
+              LOGGER.warn("Found {} bytes of XML, this is probably incorrect", len - 12);
+            }
 
-            int length = len - 12;
+            int length = (int) (len - 12);
             byte[] b = new byte[length];
             in.read(b);
 
@@ -1071,8 +1076,8 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         else if (getMetadataOptions().getMetadataLevel() !=
           MetadataLevel.MINIMUM)
         {
-          int nDoubles = len / 8;
-          int nInts = len / 4;
+          long nDoubles = len / 8;
+          long nInts = len / 4;
           long doubleOffset = fp + 8 * (nDoubles - imageOffsets.size());
           long intOffset = fp + 4 * (nInts - imageOffsets.size());
           if (nameAttri.startsWith("CustomData|AcqTimesCache")) {
