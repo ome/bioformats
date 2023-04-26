@@ -25,6 +25,7 @@
 
 
 import loci.common.services.ServiceFactory;
+import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.in.SVSReader;
@@ -49,9 +50,10 @@ public class PrecompressedConversionExample {
       reader.setMetadataStore(omexmlMeta);
 
       reader.setId(args[0]);
+      MetadataTools.populatePixels(omexmlMeta, reader);
 
       try (DicomWriter writer = new DicomWriter()) {
-        writer.setMetadataRetrieve((IMetadata) reader.getMetadataStore());
+        writer.setMetadataRetrieve(omexmlMeta);
         writer.setWriteSequentially(true);
         writer.setId(args[1]);
         writer.setCompression("JPEG");
