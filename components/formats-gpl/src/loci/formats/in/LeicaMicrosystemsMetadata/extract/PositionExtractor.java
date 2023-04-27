@@ -5,15 +5,26 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore.ZDriveMode;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
 public class PositionExtractor extends Extractor {
-  public static void extractFieldPositions(Element imageNode, Element mainSetting, DimensionStore dimensionStore){
-    NodeList attachments = Extractor.getDescendantNodesWithName(imageNode, "Attachment");
+  public static void extractFieldPositions(LMSMainXmlNodes xmlNodes, DimensionStore dimensionStore){
+    Element mainSetting;
+    
+    if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
+      mainSetting = xmlNodes.dataSourceType == DataSourceType.CONFOCAL ? xmlNodes.masterConfocalSetting : xmlNodes.masterCameraSetting;
+    } else {
+      mainSetting = xmlNodes.dataSourceType == DataSourceType.CONFOCAL ? xmlNodes.mainConfocalSetting : xmlNodes.mainCameraSetting;
+    }
+    
+    NodeList attachments = Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "Attachment");
     Element tilescanInfo = (Element)Extractor.getNodeWithAttribute(attachments, "Name", "TileScanInfo");
     
     //XY positions

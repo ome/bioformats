@@ -7,18 +7,21 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 
 public class DetectorExtractor extends Extractor {
 
-  public static List<Detector> extractDetectors(Element mainConfocalSetting, List<Element> sequentialConfocalSettings)
-       {
-    String zoomS = getAttributeValue(mainConfocalSetting, "Zoom");
+  public static List<Detector> extractDetectors(LMSMainXmlNodes xmlNodes)
+  {
+    Element setting = xmlNodes.getAtlSetting();
+
+    String zoomS = getAttributeValue(setting, "Zoom");
     double zoom = parseDouble(zoomS);
 
     // main confocal settings > detector list: instrument detectors
-    Node detectorList = getChildNodeWithName(mainConfocalSetting, "DetectorList");
+    Node detectorList = getChildNodeWithName(setting, "DetectorList");
     NodeList detectorNodes = detectorList.getChildNodes();
     List<Detector> detectors = new ArrayList<Detector>();
 
@@ -42,12 +45,14 @@ public class DetectorExtractor extends Extractor {
     return detectors;
   }
 
-  public static List<DetectorSetting> extractDetectorSettings(List<Element> sequentialConfocalSettings, Element mainConfocalSetting, List<Detector> detectors){
+  public static List<DetectorSetting> extractDetectorSettings(LMSMainXmlNodes xmlNodes, List<Detector> detectors){
+    Element atlSetting = xmlNodes.getAtlSetting();
+
     List<DetectorSetting> activeDetectorSettings = new ArrayList<DetectorSetting>();
 
     int sequenceIndex = 0;
-    for (int i = 0; i < sequentialConfocalSettings.size(); i++) {
-      Node seqDetectorList = getChildNodeWithName(sequentialConfocalSettings.get(i), "DetectorList");
+    for (int i = 0; i < xmlNodes.sequentialConfocalSettings.size(); i++) {
+      Node seqDetectorList = getChildNodeWithName(xmlNodes.sequentialConfocalSettings.get(i), "DetectorList");
       if (seqDetectorList == null)
         continue;
 
@@ -64,29 +69,29 @@ public class DetectorExtractor extends Extractor {
           continue;
         }
 
-        DetectorSetting setting = new DetectorSetting();
+        DetectorSetting detectorSetting = new DetectorSetting();
 
         String gainS = detectorNode.getAttribute("Gain");
-        setting.gain = parseDouble(gainS);
+        detectorSetting.gain = parseDouble(gainS);
 
         String offsetS = detectorNode.getAttribute("Offset");
-        setting.offset = parseDouble(offsetS);
+        detectorSetting.offset = parseDouble(offsetS);
 
         String isActiveS = detectorNode.getAttribute("IsActive");
-        setting.isActive = "1".equals(isActiveS);
+        detectorSetting.isActive = "1".equals(isActiveS);
 
         String channelS = detectorNode.getAttribute("Channel");
-        setting.channelIndex = parseInt(channelS) - 1;
+        detectorSetting.channelIndex = parseInt(channelS) - 1;
 
-        setting.channelName = detectorNode.getAttribute("ChannelName");
+        detectorSetting.channelName = detectorNode.getAttribute("ChannelName");
 
-        setting.sequenceIndex = sequenceIndex;
-        setting.detectorListIndex = detectorListIndex;
+        detectorSetting.sequenceIndex = sequenceIndex;
+        detectorSetting.detectorListIndex = detectorListIndex;
 
         String detectorName = detectorNode.getAttribute("Name");
 
-        setting.transmittedLightMode = detectorName.toLowerCase().contains("trans")
-            && setting.channelName.equals("Transmission Channel");
+        detectorSetting.transmittedLightMode = detectorName.toLowerCase().contains("trans")
+            && detectorSetting.channelName.equals("Transmission Channel");
 
         
         //only in STELLARIS
@@ -94,24 +99,24 @@ public class DetectorExtractor extends Extractor {
         try {
           detectionReferenceLine = (Element)getChildNodeWithName(detectorNode, "DetectionReferenceLine");
           if (detectionReferenceLine != null){
-            setting.referenceLineName = getAttributeValue(detectionReferenceLine, "LaserName");
+            detectorSetting.referenceLineName = getAttributeValue(detectionReferenceLine, "LaserName");
             String referenceWavelengthS = getAttributeValue(detectionReferenceLine, "LaserWavelength");
-            setting.referenceLineWavelength = parseInt(referenceWavelengthS);
+            detectorSetting.referenceLineWavelength = parseInt(referenceWavelengthS);
           }
         } catch (Exception e) {}
 
         for (Detector detector : detectors) {
           if (detectorName.equals(detector.model)) {
-            setting.detector = detector;
+            detectorSetting.detector = detector;
             break;
           }
         }
 
-        detectorSettings.add(setting);
+        detectorSettings.add(detectorSetting);
         detectorListIndex++;
       }
 
-      String readOutRateS = getAttributeValue(mainConfocalSetting, "ScanSpeed");
+      String readOutRateS = getAttributeValue(atlSetting, "ScanSpeed");
       double readOutRate = parseDouble(readOutRateS);
 
       for (DetectorSetting setting : detectorSettings) {

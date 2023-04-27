@@ -4,7 +4,7 @@ import java.util.List;
 
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.SingleImageTranslator.DataSourceType;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;

@@ -23,11 +23,16 @@ import loci.formats.in.LeicaMicrosystemsMetadata.extract.DetectorExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.DimensionExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.FilterExtractor;
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.HardwareSettingsExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.LaserExtractor;
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.MicroscopeExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.PositionExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ROIExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.TimestampExtractor;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
@@ -53,15 +58,7 @@ public class SingleImageTranslator {
   private static final long METER_MULTIPLY = 1000000;
 
   //XML nodes
-  Element imageNode;
-  Element imageDescription;
-  Element hardwareSetting;
-  Element mainConfocalSetting;
-  Element mainCameraSetting;
-  Element widefieldChannelConfig;
-  List<Element> sequentialConfocalSettings = new ArrayList<Element>();
-  List<Element> sequentialCameraSettings = new ArrayList<Element>();
-  List<Element> widefieldChannelInfos = new ArrayList<Element>();
+  LMSMainXmlNodes xmlNodes = new LMSMainXmlNodes();
 
   //extracted data
   public DimensionStore dimensionStore = new DimensionStore();
@@ -78,10 +75,7 @@ public class SingleImageTranslator {
   public String imageName;
   String description;
   boolean alternateCenter = false;
-  public enum DataSourceType {
-    CAMERA, CONFOCAL
-  }
-  DataSourceType dataSourceType;
+
   int imageCount;
   public boolean inverseRgb = false;
   boolean useOldPhysicalSizeCalculation;
@@ -93,7 +87,7 @@ public class SingleImageTranslator {
   CoreMetadata core;
 
   public SingleImageTranslator(LMSImageXmlDocument doc, int seriesIndex, int imageCount, LMSFileReader reader){
-    this.imageNode = (Element)doc.getImageNode();
+    this.xmlNodes.imageNode = (Element)doc.getImageNode();
     this.imageName = doc.getImageName();
     this.reader = reader;
     reader.setSeries(seriesIndex);
@@ -117,7 +111,7 @@ public class SingleImageTranslator {
 
 
     translateStandDetails();
-    if (hardwareSetting == null) return;
+    if (xmlNodes.hardwareSetting == null) return;
 
     translatePhysicalSizes();
     translateFieldPositions();
@@ -126,7 +120,7 @@ public class SingleImageTranslator {
     //instrument metadata
     translateObjective();
 
-    if (dataSourceType == DataSourceType.CONFOCAL){
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
       translateDetectors();
       translateDetectorSettings();
       
@@ -142,81 +136,42 @@ public class SingleImageTranslator {
     translateROIs();
 
     final Deque<String> nameStack = new ArrayDeque<String>();
-    populateOriginalMetadata(imageNode, nameStack);
+    populateOriginalMetadata(xmlNodes.imageNode, nameStack);
   }
 
   private void getMainNodes(){
-    imageDescription = (Element) imageNode.getElementsByTagName("ImageDescription").item(0);
+    xmlNodes.imageDescription = (Element) xmlNodes.imageNode.getElementsByTagName("ImageDescription").item(0);
 
-    NodeList attachments = Extractor.getDescendantNodesWithName(imageNode, "Attachment");
-    hardwareSetting = (Element)Extractor.getNodeWithAttribute(attachments, "Name", "HardwareSetting");
-    if (hardwareSetting == null) return;
+    HardwareSettingsExtractor.getHardwareSetting(xmlNodes);
 
-    String dataSourceTypeS = Extractor.getAttributeValue(hardwareSetting, "DataSourceTypeName");
-    dataSourceType = dataSourceTypeS.equals("Confocal") ? DataSourceType.CONFOCAL : DataSourceType.CAMERA;
+    if (xmlNodes.hardwareSetting == null) return;
 
-    if (dataSourceType == DataSourceType.CONFOCAL){
-      mainConfocalSetting = Extractor.getChildNodeWithNameAsElement(hardwareSetting, "ATLConfocalSettingDefinition");
-    
-      Node ldmBlockSequential = Extractor.getChildNodeWithName(hardwareSetting, "LDM_Block_Sequential");
-      if (ldmBlockSequential == null) return;
-  
-      Node ldmBlockList = Extractor.getChildNodeWithName(ldmBlockSequential, "LDM_Block_Sequential_List");
-      NodeList sequentialConfocalSettings = ldmBlockList.getChildNodes();
-  
-      for (int i = 0; i < sequentialConfocalSettings.getLength(); i++){
-        Element sequentialConfocalSetting;
-        try {
-          sequentialConfocalSetting = (Element) sequentialConfocalSettings.item(i);
-          this.sequentialConfocalSettings.add(sequentialConfocalSetting);
-        } catch (Exception e) {
-          continue;
-        }
-      }
+    HardwareSettingsExtractor.extractDataSourceType(xmlNodes);
+    if (xmlNodes.dataSourceType == null) return;
+
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
+      HardwareSettingsExtractor.extractConfocalSettings(xmlNodes);
     } else {
-      mainCameraSetting = Extractor.getChildNodeWithNameAsElement(hardwareSetting, "ATLCameraSettingDefinition");
+      HardwareSettingsExtractor.extractCameraSettings(xmlNodes);
+    }
 
-      Element ldmBlockWidefieldSequential = Extractor.getChildNodeWithNameAsElement(hardwareSetting, "LDM_Block_Widefield_Sequential");
-      if (ldmBlockWidefieldSequential != null){
-        Element ldmBlockSequentialList = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_List");
-        NodeList sequentialCameraSettings = ldmBlockSequentialList.getChildNodes();
-  
-        for (int channelIndex = 0; channelIndex < sequentialCameraSettings.getLength(); channelIndex++){
-          Element sequentialCameraSetting = (Element)sequentialCameraSettings.item(channelIndex);
-          this.sequentialCameraSettings.add(sequentialCameraSetting);
-        }
-      }
-      
-      if (this.sequentialCameraSettings.size() > 0){
-        //sequential camera settings > config > info
-        for (int channelIndex = 0; channelIndex < this.sequentialCameraSettings.size(); channelIndex++){
-          Element sequentialCameraSetting = this.sequentialCameraSettings.get(channelIndex);
-          Element widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(sequentialCameraSetting, "WideFieldChannelConfigurator");
-          Element widefieldChannelInfo = Extractor.getChildNodeWithNameAsElement(widefieldChannelConfig, "WideFieldChannelInfo");
-          this.widefieldChannelInfos.add(widefieldChannelInfo);
-        }
-      } else {
-        //main camera setting > config > infos
-        widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(mainCameraSetting, "WideFieldChannelConfigurator");
-        if (widefieldChannelConfig == null) return;
-
-        NodeList widefieldChannelInfos = Extractor.getDescendantNodesWithName(widefieldChannelConfig, "WideFieldChannelInfo");
-        for (int channelIndex = 0; channelIndex < widefieldChannelInfos.getLength(); channelIndex++){
-          Element widefieldChannelInfo = (Element)widefieldChannelInfos.item(channelIndex);
-          this.widefieldChannelInfos.add(widefieldChannelInfo);
-        }
-      }
+    if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
+      Element scannerSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ScannerSetting");
+      xmlNodes.scannerSettingRecords = Extractor.getDescendantNodesWithName(scannerSetting, "ScannerSettingRecord");
+      Element filterSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "FilterSetting");
+      xmlNodes.filterSettingRecords = Extractor.getDescendantNodesWithName(filterSetting, "FilterSettingRecord");
     }
   }
 
   private void translateLasers(){
-    lasers = LaserExtractor.extractLasers(mainConfocalSetting);
+    Element setting = xmlNodes.getAtlSetting();
+    lasers = LaserExtractor.extractLasers(setting);
     LaserWriter.initLasers(lasers, seriesIndex, store);
   }
 
   //link laser setting and channel information
   private void translateLaserSettings(){
-    laserSettings = LaserExtractor.extractLaserSettings(sequentialConfocalSettings, lasers);
+    laserSettings = LaserExtractor.extractLaserSettings(xmlNodes.sequentialConfocalSettings, lasers);
 
     // <= SP8: laser wavelength is assumed to lie left of detected emission spectrum
     if (microscopeModel.contains("SP")){
@@ -226,7 +181,7 @@ public class SingleImageTranslator {
   
         LaserSetting selectedLaserSetting = null;
         for (LaserSetting laserSetting : laserSettings) {
-          if (laserSetting.laser.wavelength < channel.filter.cutIn) {
+          if (laserSetting.laser != null && laserSetting.laser.wavelength < channel.filter.cutIn) {
             if (selectedLaserSetting == null || selectedLaserSetting.laser.wavelength < laserSetting.laser.wavelength)
               selectedLaserSetting = laserSetting;
           }
@@ -248,12 +203,12 @@ public class SingleImageTranslator {
   }
 
   private void translateDetectors(){
-      detectors = DetectorExtractor.extractDetectors(mainConfocalSetting, sequentialConfocalSettings);
+      detectors = DetectorExtractor.extractDetectors(xmlNodes);
       DetectorWriter.initDetectors(detectors, seriesIndex, store);
   }
 
   private void translateDetectorSettings(){
-    detectorSettings = DetectorExtractor.extractDetectorSettings(sequentialConfocalSettings, mainConfocalSetting, detectors);
+    detectorSettings = DetectorExtractor.extractDetectorSettings(xmlNodes, detectors);
 
     // link detector and channel information
     // assuming that the order of channels in LMS XML maps the order of active
@@ -271,7 +226,7 @@ public class SingleImageTranslator {
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
       Channel channel = dimensionStore.channels.get(channelIndex);
       int sequenceIndex = channel.detectorSetting.sequenceIndex;
-      String pinholeSizeS = Extractor.getAttributeValue(sequentialConfocalSettings.get(sequenceIndex), "Pinhole");
+      String pinholeSizeS = Extractor.getAttributeValue(xmlNodes.sequentialConfocalSettings.get(sequenceIndex), "Pinhole");
       channel.pinholeSize = Extractor.parseDouble(pinholeSizeS) * METER_MULTIPLY;
 
       store.setChannelPinholeSize(new Length(channel.pinholeSize, UNITS.MICROMETER), seriesIndex, channelIndex);
@@ -282,18 +237,18 @@ public class SingleImageTranslator {
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
       Channel channel = dimensionStore.channels.get(channelIndex);
 
-      if (dataSourceType == DataSourceType.CONFOCAL){
+      if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
         channel.channelName = detectorSettings.get(channelIndex).channelName;
       } else {
-        channel.channelName = Extractor.getAttributeValue(widefieldChannelInfos.get(channelIndex), "UserDefName");
+        channel.channelName = Extractor.getAttributeValue(xmlNodes.widefieldChannelInfos.get(channelIndex), "UserDefName");
       }
       store.setChannelName(channel.channelName, seriesIndex, channelIndex);
     }
   }
 
   private void translateFilters(){
-    filters = FilterExtractor.translateFilters(sequentialConfocalSettings, detectorSettings);
-    FilterWriter.initFilters(filters, detectorSettings, seriesIndex, store, dataSourceType);
+    filters = FilterExtractor.translateFilters(xmlNodes.sequentialConfocalSettings, detectorSettings);
+    FilterWriter.initFilters(filters, detectorSettings, seriesIndex, store, xmlNodes.dataSourceType);
   }
 
   private void translateFilterSettings(){
@@ -315,24 +270,16 @@ public class SingleImageTranslator {
     
     //an empty instrument is created even when there are no hardware settings for the image (e.g. depth map image, EDF image),
     //since this is bioformats' expectation (see OMEXMLMetadataImpl, line 7801)
-    if (hardwareSetting == null) return;
+    if (xmlNodes.hardwareSetting == null) return;
 
-    microscopeModel = Extractor.getAttributeValue(hardwareSetting, "SystemTypeName");
+    microscopeModel = MicroscopeExtractor.extractMicroscopeModel(xmlNodes);
     store.setMicroscopeModel(microscopeModel, seriesIndex);
 
-    Element setting;
-    if (dataSourceType == DataSourceType.CONFOCAL){
-      setting = mainConfocalSetting;
-    } else {
-      setting = mainCameraSetting;
-    }
+    MicroscopeType micType = MicroscopeExtractor.extractMicroscopeType(xmlNodes);
+    store.setMicroscopeType(micType, seriesIndex);
 
-    String serialNumber = Extractor.getAttributeValue(setting, "SystemSerialNumber");
+    String serialNumber = MicroscopeExtractor.extractMicroscopeSerialNumber(xmlNodes);
     store.setMicroscopeSerialNumber(serialNumber, seriesIndex);
-
-    String isInverse = Extractor.getAttributeValue(setting, "IsInverseMicroscopeModel");
-    MicroscopeType type = isInverse.equals("1") ? MicroscopeType.INVERTED : MicroscopeType.UPRIGHT;
-    store.setMicroscopeType(type, seriesIndex);
 
     store.setImageInstrumentRef(instrumentID, seriesIndex);
   }
@@ -341,12 +288,7 @@ public class SingleImageTranslator {
     String objectiveID = MetadataTools.createLSID("Objective", seriesIndex, 0);
     store.setObjectiveID(objectiveID, seriesIndex, 0);
 
-    Element setting;
-    if (dataSourceType == DataSourceType.CONFOCAL){
-      setting = mainConfocalSetting;
-    } else {
-      setting = mainCameraSetting;
-    }
+    Element setting = xmlNodes.getAtlSetting();
 
     String model = setting.getAttribute("ObjectiveName");
     store.setObjectiveModel(model, seriesIndex, 0);
@@ -381,12 +323,12 @@ public class SingleImageTranslator {
   }
 
   private void translateROIs(){
-    if (Extractor.getDescendantNodesWithName(imageNode, "ROI") != null) {
+    if (Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "ROI") != null) {
       alternateCenter = true;
     }
 
-    rois = ROIExtractor.translateROIs(imageNode, dimensionStore.physicalSizeX, dimensionStore.physicalSizeY);
-    singleRois = ROIExtractor.translateSingleROIs(imageNode, dimensionStore.physicalSizeX, dimensionStore.physicalSizeY);
+    rois = ROIExtractor.translateROIs(xmlNodes.imageNode, dimensionStore.physicalSizeX, dimensionStore.physicalSizeY);
+    singleRois = ROIExtractor.translateSingleROIs(xmlNodes.imageNode, dimensionStore.physicalSizeX, dimensionStore.physicalSizeY);
 
     int roiCount = 0;
     for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
@@ -399,7 +341,7 @@ public class SingleImageTranslator {
   }
 
   private void translateTimestamps(){
-    timestamps = TimestampExtractor.translateTimestamps(imageNode, imageCount);
+    timestamps = TimestampExtractor.translateTimestamps(xmlNodes.imageNode, imageCount);
     if (timestamps.size() == 0) return;
 
     double acquiredDate = timestamps.get(0);
@@ -422,10 +364,10 @@ public class SingleImageTranslator {
   }
 
   private void translateExposureTimes(){
-    if (dataSourceType == DataSourceType.CONFOCAL) return;
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL) return;
 
-    for (int channelIndex = 0; channelIndex < sequentialCameraSettings.size(); channelIndex++){
-      Element sequentialCameraSetting = (Element)sequentialCameraSettings.get(channelIndex);
+    for (int channelIndex = 0; channelIndex < xmlNodes.sequentialCameraSettings.size(); channelIndex++){
+      Element sequentialCameraSetting = (Element)xmlNodes.sequentialCameraSettings.get(channelIndex);
       Element widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(sequentialCameraSetting, "WideFieldChannelConfigurator");
       Element widefieldChannelInfo = Extractor.getChildNodeWithNameAsElement(widefieldChannelConfig, "WideFieldChannelInfo");
       String exposureTimeS = Extractor.getAttributeValue(widefieldChannelInfo, "ExposureTime");
@@ -440,7 +382,7 @@ public class SingleImageTranslator {
   }
 
   private void translateChannels(){
-    Element channelsNode = (Element) imageDescription.getElementsByTagName("Channels").item(0);
+    Element channelsNode = (Element) xmlNodes.imageDescription.getElementsByTagName("Channels").item(0);
     NodeList channelNodes = channelsNode.getElementsByTagName("ChannelDescription");;
     core.sizeC = channelNodes.getLength();
 
@@ -460,7 +402,7 @@ public class SingleImageTranslator {
   }
 
   private void translateDimensions(){
-    List<Dimension> dimensions = DimensionExtractor.extractDimensions(imageDescription, useOldPhysicalSizeCalculation);
+    List<Dimension> dimensions = DimensionExtractor.extractDimensions(xmlNodes.imageDescription, useOldPhysicalSizeCalculation);
 
     //for all dimensions
     for (Dimension dimension : dimensions){
@@ -477,14 +419,8 @@ public class SingleImageTranslator {
   }
 
   public void translateFieldPositions() {
-    Element mainSetting;
-    if (dataSourceType == DataSourceType.CONFOCAL)
-      mainSetting = mainConfocalSetting;
-    else 
-      mainSetting = mainCameraSetting;
-
     //XY
-    PositionExtractor.extractFieldPositions(imageNode, mainSetting, dimensionStore);
+    PositionExtractor.extractFieldPositions(xmlNodes, dimensionStore);
 
     reader.addSeriesMeta("Reverse X orientation", dimensionStore.flipX);
     reader.addSeriesMeta("Reverse Y orientation", dimensionStore.flipY);
@@ -527,7 +463,7 @@ public class SingleImageTranslator {
   private void translateImageDetails() {
     store.setImageName(imageName, seriesIndex);
 
-    NodeList attachmentNodes = Extractor.getDescendantNodesWithName(imageNode, "User-Comment");
+    NodeList attachmentNodes = Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "User-Comment");
     if (attachmentNodes != null){
       for (int i = 0; i < attachmentNodes.getLength(); i++) {
         Node attachment = attachmentNodes.item(i);
