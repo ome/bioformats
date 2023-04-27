@@ -275,8 +275,8 @@ public class LOFReader extends LMSFileReader {
 
     int tileIndex = getTileIndex(series);
     if (tileIndex >= offsets.size()) {
-      // truncated file; imitate LAS AF and return black planes
-      Arrays.fill(buf, (byte) 0);
+      // truncated file; imitate LAS AF and return blank planes
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 
@@ -293,8 +293,8 @@ public class LOFReader extends LMSFileReader {
       bytesToSkip = 0;
 
     if (offset + (planeSize + bytesToSkip * getSizeY()) * no >= in.length()) {
-      // truncated file; imitate LAS AF and return black planes
-      Arrays.fill(buf, (byte) 0);
+      // truncated file; imitate LAS AF and return blank planes
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 

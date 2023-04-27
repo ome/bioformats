@@ -256,7 +256,7 @@ public class FlexReader extends FormatReader {
             factor = 1d;
           }
           else {
-            Arrays.fill(buf, (byte) 0);
+            Arrays.fill(buf, getFillColor());
             return buf;
           }
         }

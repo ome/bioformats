@@ -120,8 +120,15 @@ public class MemoizerTest {
     recursiveDeleteOnExit(idDir);
   }
 
+  @Test
   public void testDefaultConstructor() throws Exception {
     Memoizer memoizer = new Memoizer();
+    checkMemoFile(memoizer.getMemoFile(id));
+  }
+
+  @Test
+  public void testNullReader() throws Exception {
+    Memoizer memoizer = new Memoizer(null);
     checkMemoFile(memoizer.getMemoFile(id));
   }
 
@@ -237,6 +244,23 @@ public class MemoizerTest {
     assertTrue(memoizer.isLoadedFromMemo());
     assertFalse(memoizer.isSavedToMemo());
     recursiveDeleteOnExit(newidDir);
+  }
+
+  @Test
+  public void testDeleteMemo() throws Exception {
+    // Create an in-place memo file
+    Memoizer memoizer = new Memoizer(reader, 0);
+    memoizer.setId(id);
+    memoizer.close();
+    assertFalse(memoizer.isLoadedFromMemo());
+    assertTrue(memoizer.isSavedToMemo());
+
+    // attempt to delete the memo file, and make sure it's really gone
+    File currentMemoFile = memoizer.getMemoFile();
+    assertTrue(currentMemoFile.exists());
+    boolean success = memoizer.deleteMemo();
+    assertTrue(success);
+    assertFalse(currentMemoFile.exists());
   }
 
   @Test

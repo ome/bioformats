@@ -206,7 +206,7 @@ public class VentanaReader extends BaseTiffReader {
     if (tiffParser == null) {
       initTiffParser();
     }
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
 
     if (splitTiles()) {

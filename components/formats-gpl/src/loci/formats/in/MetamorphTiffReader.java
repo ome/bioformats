@@ -282,7 +282,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
         xPositions.add(x);
         yPositions.add(y);
       }
-      else {
+      else if (x != null && y != null) {
         final Length previousX = xPositions.get(xPositions.size() - 1);
         final Length previousY = yPositions.get(yPositions.size() - 1);
 

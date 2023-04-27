@@ -200,7 +200,7 @@ public class OIRReader extends FormatReader {
 
     if (startIndex < 0) {
       LOGGER.warn("No pixel blocks for plane #{}", no);
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 

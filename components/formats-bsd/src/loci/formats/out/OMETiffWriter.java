@@ -77,6 +77,7 @@ public class OMETiffWriter extends TiffWriter {
     FormatTools.URL_OME_TIFF + ". -->";
 
   public static final String COMPANION_KEY = "ometiff.companion";
+  public static final String CREATOR_KEY = "ometiff.preserve_creator";
 
   // -- Fields --
 
@@ -248,12 +249,38 @@ public class OMETiffWriter extends TiffWriter {
   }
 
   // -- OMETiff-specific methods --
+
+  /**
+   * Get the value of the {@link COMPANION_KEY} option.
+   *
+   * @return path to the companion file, or null if a companion file is not used
+   */
   public String getCompanion() {
     MetadataOptions options = getMetadataOptions();
     if (options instanceof DynamicMetadataOptions) {
       return ((DynamicMetadataOptions) options).get(COMPANION_KEY);
     }
     return null;
+  }
+
+  /**
+   * Get the value of the {@link CREATOR_KEY} option.
+   * This toggles whether or not the OME Creator attribute will be
+   * overwritten with the current Bio-Formats version. For input
+   * data that does not have a Creator attribute defined, this makes
+   * no difference.
+   *
+   * By default, returns false, i.e. the Creator will be overwritten
+   * if it exists.
+   *
+   * @return true if the Creator attribute should be preserved (if it exists)
+   */
+  public boolean preserveCreator() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(CREATOR_KEY, false);
+    }
+    return false;
   }
 
   // -- Helper methods --
@@ -295,7 +322,7 @@ public class OMETiffWriter extends TiffWriter {
     omeMeta.setUUID(uuid);
 
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omeMeta.getRoot();
-    root.setCreator(FormatTools.CREATOR);
+    setCreator(root);
 
     String xml;
     try {
@@ -318,8 +345,28 @@ public class OMETiffWriter extends TiffWriter {
     meta.setBinaryOnlyMetadataFile(new Location(companion).getName());
     meta.setBinaryOnlyUUID(companionUUID);
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
-    root.setCreator(FormatTools.CREATOR);
+    setCreator(root);
     return service.getOMEXML(meta);
+  }
+
+  /**
+   * Set the Creator attribute on the given OME-XML root object.
+   * If the Creator was not previously set, it will be set to the
+   * current Bio-Formats version.
+   * If the Creator has been set already, the {@link CREATOR_KEY}
+   * option (via {@link preserveCreator}) is used to determine
+   * whether to overwrite the existing value with the Bio-Formats version.
+   *
+   * @param root OME-XML root object
+   */
+  private void setCreator(OMEXMLMetadataRoot root) {
+    String creator = root.getCreator();
+    if (!preserveCreator() || creator == null) {
+      if (creator != null) {
+        LOGGER.warn("Overwriting existing Creator attribute: {}", creator);
+      }
+      root.setCreator(FormatTools.CREATOR);
+    }
   }
 
   private void saveComment(String file, String xml) throws IOException {

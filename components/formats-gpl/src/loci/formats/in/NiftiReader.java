@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -145,9 +146,15 @@ public class NiftiReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    pixelFile.seek(0);
     long planeSize = FormatTools.getPlaneSize(this);
-    pixelFile.seek(pixelOffset + no * planeSize);
+    long newOffset = pixelOffset + no * planeSize;
+
+    if (pixelFile.getFilePointer() > newOffset) {
+      // force the stream to reset, in case of GZIP data
+      // see https://github.com/ome/bioformats/pull/2508#issuecomment-237065726
+      pixelFile.seek(0);
+    }
+    pixelFile.seek(newOffset);
     readPlane(pixelFile, x, y, w, h, buf);
 
     return buf;
@@ -220,7 +227,6 @@ public class NiftiReader extends FormatReader {
     in.seek(40);
     short check = in.readShort();
     boolean little = check < 1 || check > 7;
-    in.seek(40);
 
     if (id.endsWith(".hdr")) {
       pixelsFilename = id.substring(0, id.lastIndexOf(".")) + ".img";
@@ -240,7 +246,13 @@ public class NiftiReader extends FormatReader {
 
     LOGGER.info("Reading header");
 
-    nDimensions = in.readShort();
+    if (!little) {
+      nDimensions = check;
+    }
+    else {
+      nDimensions = DataTools.swap(check);
+    }
+
     m.sizeX = in.readShort();
     m.sizeY = in.readShort();
     m.sizeZ = in.readShort();
