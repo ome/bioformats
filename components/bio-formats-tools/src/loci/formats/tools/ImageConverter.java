@@ -847,8 +847,18 @@ public final class ImageConverter {
       }
     }
 
+    tryPrecompressed = precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
+
     byte[] buf = getTile(reader, writer.getResolution(), index,
       xCoordinate, yCoordinate, width, height);
+
+    // if we asked for precompressed tiles, but that wasn't possible,
+    // then log that decompression/recompression happened
+    // TODO: decide if an exception is better here?
+    if (precompressed && !tryPrecompressed) {
+      LOGGER.warn("Decompressed tile: series={}, resolution={}, x={}, y={}",
+        writer.getSeries(), writer.getResolution(), xCoordinate, yCoordinate);
+    }
 
     autoscalePlane(buf, index);
     applyLUT(writer);
