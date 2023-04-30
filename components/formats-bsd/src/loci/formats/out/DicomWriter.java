@@ -1210,7 +1210,13 @@ public class DicomWriter extends FormatWriter {
 
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
-    baseTileWidth = tileSize;
+    // TODO: this currently enforces the same tile size across all resolutions
+    // since the tile size is written during setId
+    // the tile size should probably be configurable per resolution,
+    // for better pre-compressed tile support
+    if (currentId == null) {
+      baseTileWidth = tileSize;
+    }
     return baseTileWidth;
   }
 
@@ -1221,7 +1227,10 @@ public class DicomWriter extends FormatWriter {
 
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
-    baseTileHeight = tileSize;
+    // TODO: see note in setTileSizeX above
+    if (currentId == null) {
+      baseTileHeight = tileSize;
+    }
     return baseTileHeight;
   }
 

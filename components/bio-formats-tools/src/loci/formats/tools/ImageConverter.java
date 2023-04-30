@@ -130,6 +130,7 @@ public final class ImageConverter {
   private String swapOrder = null;
   private Byte fillColor = null;
   private boolean precompressed = false;
+  private boolean tryPrecompressed = false;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -458,6 +459,7 @@ public final class ImageConverter {
       return false;
     }
 
+    // TODO: there may be other options not compatible with -precompressed
     if (precompressed &&
       (width_crop > 0 || height_crop > 0 ||
       pyramidResolutions > 1 ||
@@ -717,8 +719,14 @@ public final class ImageConverter {
 
         total += numImages;
 
-        writer.setTileSizeX(saveTileWidth);
-        writer.setTileSizeY(saveTileHeight);
+        if (precompressed) {
+          writer.setTileSizeX(reader.getOptimalTileWidth());
+          writer.setTileSizeY(reader.getOptimalTileHeight());
+        }
+        else {
+          writer.setTileSizeX(saveTileWidth);
+          writer.setTileSizeY(saveTileHeight);
+        }
 
         int count = 0;
         for (int i=startPlane; i<endPlane; i++) {
@@ -845,7 +853,7 @@ public final class ImageConverter {
     autoscalePlane(buf, index);
     applyLUT(writer);
     long m = System.currentTimeMillis();
-    if (precompressed) {
+    if (tryPrecompressed) {
       writer.saveCompressedBytes(outputIndex, buf, 0, 0, reader.getSizeX(), reader.getSizeY());
     }
     else {
@@ -903,8 +911,18 @@ public final class ImageConverter {
         int tileY = yCoordinate + y * h;
         int tileWidth = x < nXTiles - 1 ? w : width - (w * x);
         int tileHeight = y < nYTiles - 1 ? h : height - (h * y);
+
+        tryPrecompressed = precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
         byte[] buf = getTile(reader, writer.getResolution(),
           index, tileX, tileY, tileWidth, tileHeight);
+
+        // if we asked for precompressed tiles, but that wasn't possible,
+        // then log that decompression/recompression happened
+        // TODO: decide if an exception is better here?
+        if (precompressed && !tryPrecompressed) {
+          LOGGER.warn("Decompressed tile: series={}, resolution={}, x={}, y={}",
+            writer.getSeries(), writer.getResolution(), x, y);
+        }
 
         String tileName =
           FormatTools.getTileFilename(x, y, y * nXTiles + x, currentFile);
@@ -967,7 +985,7 @@ public final class ImageConverter {
           outputY = 0;
         }
 
-        if (precompressed) {
+        if (tryPrecompressed) {
           writer.saveCompressedBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
         }
         else {
@@ -1033,7 +1051,7 @@ public final class ImageConverter {
   private void autoscalePlane(byte[] buf, int index)
     throws FormatException, IOException
   {
-    if (autoscale && !precompressed) {
+    if (autoscale && !tryPrecompressed) {
       Double min = null;
       Double max = null;
 
@@ -1123,12 +1141,15 @@ public final class ImageConverter {
   {
     if (resolution < reader.getResolutionCount()) {
       reader.setResolution(resolution);
-      if (precompressed) {
-        return reader.openCompressedBytes(no, x / reader.getOptimalTileWidth(), y / reader.getOptimalTileHeight());
+      int optimalWidth = reader.getOptimalTileWidth();
+      int optimalHeight = reader.getOptimalTileHeight();
+      if (tryPrecompressed) {
+        return reader.openCompressedBytes(no, x / optimalWidth, y / optimalHeight);
       }
+      tryPrecompressed = false;
       return reader.openBytes(no, x, y, w, h);
     }
-    if (precompressed) {
+    if (tryPrecompressed) {
       throw new UnsupportedOperationException("Cannot generate resolutions with precompressed tiles");
     }
     reader.setResolution(0);
