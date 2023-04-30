@@ -198,6 +198,8 @@ public class DicomWriter extends FormatWriter {
       throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
     }
 
+    // TODO: refactor code shared with saveBytes, e.g. IFD handling?
+
     boolean first = x == 0 && y == 0;
     boolean last = x + w == getSizeX() && y + h == getSizeY();
     int resolutionIndex = getIndex(series, resolution);
@@ -212,6 +214,13 @@ public class DicomWriter extends FormatWriter {
 
       out.seek(compressionMethodPointer[resolutionIndex]);
       out.writeBytes(getCompressionMethod());
+
+      ifds[resolutionIndex][no].put(IFD.COMPRESSION, getTIFFCompression().getCode());
+
+      // see https://github.com/ome/bioformats/issues/3856
+      if (getTIFFCompression() == TiffCompression.JPEG) {
+        ifds[resolutionIndex][no].put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.Y_CB_CR.getCode());
+      }
     }
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(
@@ -240,6 +249,30 @@ public class DicomWriter extends FormatWriter {
     writeTag(item);
     if (pad) {
       out.writeByte(0);
+    }
+
+    // update the IFD to include this tile
+    int xTiles = (int) Math.ceil((double) getSizeX() / tileWidth[resolutionIndex]);
+    int xTile = x / tileWidth[resolutionIndex];
+    int yTile = y / tileHeight[resolutionIndex];
+    int tileIndex = (yTile * xTiles) + xTile;
+    long[] tileByteCounts = null;
+    long[] tileOffsets = null;
+
+    // IFD is expected to be null if dual personality writing was turned off
+    if (ifds[resolutionIndex][no] != null) {
+      tileByteCounts = (long[]) ifds[resolutionIndex][no].getIFDValue(IFD.TILE_BYTE_COUNTS);
+      tileOffsets = (long[]) ifds[resolutionIndex][no].getIFDValue(IFD.TILE_OFFSETS);
+    }
+
+    if (tileByteCounts != null) {
+      tileByteCounts[tileIndex] = buf.length;
+    }
+    if (tileOffsets != null) {
+      tileOffsets[tileIndex] = out.getFilePointer() - buf.length;
+      if (pad) {
+        tileOffsets[tileIndex]--;
+      }
     }
 
     if (last) {
