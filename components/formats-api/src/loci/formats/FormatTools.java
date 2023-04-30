@@ -2127,4 +2127,43 @@ public final class FormatTools {
 
     return (int) Math.max(maxDirCount - dirCount, 0);
   }
+
+  /**
+   * Compare the given reader and writer at the specified series and resolution to
+   * see if pre-compressed tiles can be transferred directly from the reader to the writer.
+   */
+  public static boolean canUsePrecompressedTiles(IFormatReader reader, IFormatWriter writer,
+    int series, int resolution)
+    throws FormatException, IOException
+  {
+    if (!(reader instanceof ICompressedTileReader)) {
+      return false;
+    }
+    if (!(writer instanceof ICompressedTileWriter)) {
+      return false;
+    }
+
+    int readerSeries = reader.getSeries();
+    int readerRes = reader.getResolution();
+    reader.setSeries(series);
+    reader.setResolution(resolution);
+
+    int writerSeries = writer.getSeries();
+    int writerRes = writer.getResolution();
+    writer.setSeries(series);
+    writer.setResolution(resolution);
+
+    boolean sameTileWidth = reader.getOptimalTileWidth() == writer.getTileSizeX();
+    boolean sameTileHeight = reader.getOptimalTileHeight() == writer.getTileSizeY();
+
+    // TODO: this needs to check for compatible compression options
+
+    reader.setSeries(readerSeries);
+    reader.setResolution(resolution);
+    writer.setSeries(series);
+    writer.setResolution(resolution);
+
+    return sameTileWidth && sameTileHeight;
+  }
+
 }
