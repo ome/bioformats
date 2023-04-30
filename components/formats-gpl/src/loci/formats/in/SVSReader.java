@@ -289,11 +289,15 @@ public class SVSReader extends BaseTiffReader {
     long[] byteCounts = ifd.getStripByteCounts();
     int tileIndex = getTileIndex(ifd, x, y);
 
-    if (byteCounts[tileIndex] < 0 || byteCounts[tileIndex] > Integer.MAX_VALUE) {
-      throw new IOException("Invalid compressed tile size: " + byteCounts[tileIndex]);
+    byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
+    int jpegTableBytes = jpegTable == null ? 0 : jpegTable.length - 2;
+    long expectedBytes = byteCounts[tileIndex] + jpegTableBytes;
+
+    if (expectedBytes < 0 || expectedBytes > Integer.MAX_VALUE) {
+      throw new IOException("Invalid compressed tile size: " + expectedBytes);
     }
 
-    byte[] buf = new byte[(int) byteCounts[tileIndex]];
+    byte[] buf = new byte[(int) expectedBytes];
     return openCompressedBytes(no, buf, x, y);
   }
 
@@ -306,16 +310,28 @@ public class SVSReader extends BaseTiffReader {
 
     int tileIndex = getTileIndex(ifd, x, y);
 
-    if (buf.length < byteCounts[tileIndex]) {
+    byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
+    int jpegTableBytes = jpegTable == null ? 0 : jpegTable.length - 2;
+    long expectedBytes = byteCounts[tileIndex] + jpegTableBytes;
+
+    if (buf.length < expectedBytes) {
       throw new IllegalArgumentException("Tile buffer too small: expected >=" +
-        byteCounts[tileIndex] + ", got " + buf.length);
+        expectedBytes + ", got " + buf.length);
     }
-    else if (byteCounts[tileIndex] < 0 || byteCounts[tileIndex] > Integer.MAX_VALUE) {
-      throw new IOException("Invalid compressed tile size: " + byteCounts[tileIndex]);
+    else if (expectedBytes < 0 || expectedBytes > Integer.MAX_VALUE) {
+      throw new IOException("Invalid compressed tile size: " + expectedBytes);
     }
 
-    tiffParser.getStream().seek(offsets[tileIndex]);
-    tiffParser.getStream().readFully(buf, 0, (int) byteCounts[tileIndex]);
+    if (jpegTable != null) {
+      System.arraycopy(jpegTable, 0, buf, 0, jpegTable.length - 2);
+      // skip over the duplicate SOI marker
+      tiffParser.getStream().seek(offsets[tileIndex] + 2);
+      tiffParser.getStream().readFully(buf, jpegTable.length - 2, (int) byteCounts[tileIndex]);
+    }
+    else {
+      tiffParser.getStream().seek(offsets[tileIndex]);
+      tiffParser.getStream().readFully(buf, 0, (int) byteCounts[tileIndex]);
+    }
 
     return buf;
   }
