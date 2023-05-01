@@ -263,6 +263,10 @@ public final class ImageConverter {
         else if (args[i].equals("-swap")) {
           swapOrder = args[++i].toUpperCase();
         }
+        else if (args[i].equals("-fill")) {
+          // allow specifying 0-255
+          fillColor = (byte) Integer.parseInt(args[++i]);
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -521,6 +525,7 @@ public final class ImageConverter {
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(originalMetadata);
     reader.setFlattenedResolutions(flat);
+    reader.setFillColor(fillColor);
     OMEXMLService service = null;
     try {
       ServiceFactory factory = new ServiceFactory();
