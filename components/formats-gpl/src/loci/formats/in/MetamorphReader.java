@@ -2114,6 +2114,9 @@ public class MetamorphReader extends BaseTiffReader {
   private void readPlaneData() throws IOException {
     in.skipBytes(4);
     int keyLength = in.read();
+    if (keyLength < 0 || keyLength >= in.length() - in.getFilePointer()) {
+      return;
+    }
     String key = in.readString(keyLength);
     in.skipBytes(4);
 

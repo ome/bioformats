@@ -362,7 +362,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       info[series][no].reader == null ||
       info[series][no].id == null)
     {
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 

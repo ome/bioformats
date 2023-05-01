@@ -755,7 +755,7 @@ public class PrairieReader extends FormatReader {
   /** Blanks out and returns the given buffer. */
   private byte[] blank(final byte[] buf) {
     // missing data; return empty plane
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     return buf;
   }
 

@@ -207,7 +207,7 @@ public class CellWorxReader extends FormatReader {
     String file = getFile(getSeries(), no);
     LOGGER.trace("Series {} plane {} using file = {}", getSeries(), no, file);
     if (file == null) {
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 
@@ -395,7 +395,7 @@ public class CellWorxReader extends FormatReader {
       planeIndex = c;
       file = getFile(seriesIndex, planeIndex);
       while (!new Location(file).exists()) {
-        if (planeIndex < zSteps * nTimepoints * wavelengths.length) {
+        if (planeIndex < zSteps * nTimepoints * (wavelengths.length - 1)) {
           planeIndex += (zSteps * nTimepoints);
         }
         else if (seriesIndex < seriesCount - 1) {

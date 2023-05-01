@@ -498,7 +498,7 @@ public class FileStitcher extends ReaderWrapper {
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     return buf;
   }
 
