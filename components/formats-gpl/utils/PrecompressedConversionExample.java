@@ -52,9 +52,14 @@ public class PrecompressedConversionExample {
       reader.setId(args[0]);
       MetadataTools.populatePixels(omexmlMeta, reader);
 
+      int baseTileWidth = reader.getOptimalTileWidth();
+      int baseTileHeight = reader.getOptimalTileHeight();
+
       try (DicomWriter writer = new DicomWriter()) {
         writer.setMetadataRetrieve(omexmlMeta);
         writer.setWriteSequentially(true);
+        writer.setTileSizeX(baseTileWidth);
+        writer.setTileSizeY(baseTileHeight);
         writer.setId(args[1]);
         writer.setCompression("JPEG");
 
@@ -75,14 +80,27 @@ public class PrecompressedConversionExample {
 
               // convert pyramids tile-wise
               if (reader.getResolutionCount() > 1) {
-                for (int y=0; y<reader.getTileRows(plane); y++) {
-                  for (int x=0; x<reader.getTileColumns(plane); x++) {
-                    // read the pre-compressed tile from the SVS and save directly to DICOM
-                    byte[] tile = reader.openCompressedBytes(plane, x, y);
+                if (width == baseTileWidth && height == baseTileHeight) {
+                  for (int y=0; y<reader.getTileRows(plane); y++) {
+                    for (int x=0; x<reader.getTileColumns(plane); x++) {
+                      // read the pre-compressed tile from the SVS and save directly to DICOM
+                      byte[] tile = reader.openCompressedBytes(plane, x, y);
 
-                    int tileWidth = (int) Math.min(width, reader.getSizeX() - x * width);
-                    int tileHeight = (int) Math.min(height, reader.getSizeY() - y * height);
-                    writer.saveCompressedBytes(plane, tile, x * width, y * height, tileWidth, tileHeight);
+                      int tileWidth = (int) Math.min(width, reader.getSizeX() - x * width);
+                      int tileHeight = (int) Math.min(height, reader.getSizeY() - y * height);
+                      writer.saveCompressedBytes(plane, tile, x * width, y * height, tileWidth, tileHeight);
+                    }
+                  }
+                }
+                else {
+                  // reader tile size is different, so can't use precompressed tiles
+                  for (int y=0; y<reader.getSizeY(); y+=baseTileHeight) {
+                    for (int x=0; x<reader.getSizeX(); x+=baseTileWidth) {
+                      int tileWidth = (int) Math.min(baseTileWidth, reader.getSizeX() - x);
+                      int tileHeight = (int) Math.min(baseTileHeight, reader.getSizeY() - y);
+                      byte[] tile = reader.openBytes(plane, x, y, tileWidth, tileHeight);
+                      writer.saveBytes(plane, tile, x, y, tileWidth, tileHeight);
+                    }
                   }
                 }
               }
