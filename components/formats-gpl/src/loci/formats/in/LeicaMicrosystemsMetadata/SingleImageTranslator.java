@@ -31,6 +31,7 @@ import loci.formats.in.LeicaMicrosystemsMetadata.extract.ROIExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.TimestampExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.CameraSettingsLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
@@ -123,10 +124,12 @@ public class SingleImageTranslator {
     if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
       translateDetectors();
       translateDetectorSettings();
+    }
       
-      translateFilters(); //checks for detector settings
-      translateFilterSettings();
-
+    translateFilters(); //checks for detector settings
+    translateFilterSettings();
+    
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
       translateLasers();
       translateLaserSettings(); //checks for channel filter
     }
@@ -247,7 +250,12 @@ public class SingleImageTranslator {
   }
 
   private void translateFilters(){
-    filters = FilterExtractor.translateFilters(xmlNodes.sequentialConfocalSettings, detectorSettings);
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
+      filters = FilterExtractor.translateConfocalFilters(xmlNodes.sequentialConfocalSettings, detectorSettings);
+    } else {
+      filters = FilterExtractor.translateWidefieldFilters(xmlNodes);
+    }
+    
     FilterWriter.initFilters(filters, detectorSettings, seriesIndex, store, xmlNodes.dataSourceType);
   }
 
@@ -366,11 +374,8 @@ public class SingleImageTranslator {
   private void translateExposureTimes(){
     if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL) return;
 
-    for (int channelIndex = 0; channelIndex < xmlNodes.sequentialCameraSettings.size(); channelIndex++){
-      Element sequentialCameraSetting = (Element)xmlNodes.sequentialCameraSettings.get(channelIndex);
-      Element widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(sequentialCameraSetting, "WideFieldChannelConfigurator");
-      Element widefieldChannelInfo = Extractor.getChildNodeWithNameAsElement(widefieldChannelConfig, "WideFieldChannelInfo");
-      String exposureTimeS = Extractor.getAttributeValue(widefieldChannelInfo, "ExposureTime");
+    for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
+      String exposureTimeS = Extractor.getAttributeValue(xmlNodes.widefieldChannelInfos.get(channelIndex), "ExposureTime");
       dimensionStore.channels.get(channelIndex).exposureTime = Extractor.parseDouble(exposureTimeS);
     }
 
@@ -378,7 +383,6 @@ public class SingleImageTranslator {
       int channelIndex = reader.getZCTCoords(planeIndex)[1];
         store.setPlaneExposureTime(new Time(dimensionStore.channels.get(channelIndex).exposureTime, UNITS.SECOND), seriesIndex, planeIndex);
     }
-    
   }
 
   private void translateChannels(){

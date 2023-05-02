@@ -5,6 +5,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.CameraSettingsLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
 
@@ -79,7 +80,7 @@ public class HardwareSettingsExtractor {
     Element ldmBlockWidefieldSequential = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "LDM_Block_Widefield_Sequential");
     if (ldmBlockWidefieldSequential != null){
       Element ldmBlockSequentialMaster = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_Master");
-      xmlNodes.masterCameraSetting = Extractor.getChildNodeWithNameAsElement(ldmBlockSequentialMaster, "ATLConfocalSettingDefinition");
+      xmlNodes.masterCameraSetting = Extractor.getChildNodeWithNameAsElement(ldmBlockSequentialMaster, "ATLCameraSettingDefinition");
 
       Element ldmBlockSequentialList = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_List");
       NodeList sequentialCameraSettings = ldmBlockSequentialList.getChildNodes();
@@ -92,6 +93,8 @@ public class HardwareSettingsExtractor {
     
     if (xmlNodes.sequentialCameraSettings.size() > 0){
       //sequential camera settings > config > info
+      xmlNodes.cameraSettingsLayout = CameraSettingsLayout.SEQUENTIAL;
+      
       for (int channelIndex = 0; channelIndex < xmlNodes.sequentialCameraSettings.size(); channelIndex++){
         Element sequentialCameraSetting = xmlNodes.sequentialCameraSettings.get(channelIndex);
         Element widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(sequentialCameraSetting, "WideFieldChannelConfigurator");
@@ -100,6 +103,8 @@ public class HardwareSettingsExtractor {
       }
     } else {
       //main camera setting > config > infos
+      xmlNodes.cameraSettingsLayout = CameraSettingsLayout.SIMPLE;
+
       xmlNodes.widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(xmlNodes.mainCameraSetting, "WideFieldChannelConfigurator");
       if (xmlNodes.widefieldChannelConfig == null) return;
 

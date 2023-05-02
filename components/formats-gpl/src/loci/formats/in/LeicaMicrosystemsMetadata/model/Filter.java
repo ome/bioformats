@@ -37,4 +37,5 @@ public class Filter {
   public int sequenceIndex;
   public int multibandIndex;
   public String dye;
+  public String name;
 }

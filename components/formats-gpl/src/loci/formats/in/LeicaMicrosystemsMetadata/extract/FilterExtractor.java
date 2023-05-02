@@ -10,12 +10,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.common.DataTools;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 
 public class FilterExtractor extends Extractor {
 
-  public static List<Filter> translateFilters(List<Element> sequentialConfocalSettings, List<DetectorSetting> detectorSettings) {
+  public static List<Filter> translateConfocalFilters(List<Element> sequentialConfocalSettings, List<DetectorSetting> detectorSettings) {
     List<Filter> filters = new ArrayList<Filter>();
 
     // add multiband cutin/out information to channel as filter
@@ -96,5 +97,24 @@ public class FilterExtractor extends Extractor {
     }
 
     return null;
+  }
+
+  public static List<Filter> translateWidefieldFilters(LMSMainXmlNodes xmlNodes){
+    List<Filter> filters = new ArrayList<Filter>();
+
+    for (Element widefieldChannelInfo : xmlNodes.widefieldChannelInfos){
+      Filter filter = new Filter();
+
+      String wavelengthS = Extractor.getAttributeValue(widefieldChannelInfo, "EmissionWavelength");
+      double waveLength = Extractor.parseDouble(wavelengthS);
+      filter.cutIn = waveLength;
+      filter.cutOut = waveLength;
+      filter.dye = Extractor.getAttributeValue(widefieldChannelInfo, "UserDefName");
+      filter.name = Extractor.getAttributeValue(widefieldChannelInfo, "FFW_Emission1FilterName");
+
+      filters.add(filter);
+    }
+
+    return filters;
   }
 }

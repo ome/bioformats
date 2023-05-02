@@ -35,6 +35,13 @@ public class LMSMainXmlNodes {
   }
   public DataSourceType dataSourceType;
 
+  public enum CameraSettingsLayout {
+    SIMPLE, //main AtlCameraSettingsDefinition exists and contains e.g. all widefield channel infos
+    SEQUENTIAL // main AtlCameraSettingsDefinition is empty, sequential AtlCameraSettingsDefinitions within LDM_Block_Widefield_Sequential exist
+  }
+
+  public CameraSettingsLayout cameraSettingsLayout = CameraSettingsLayout.SIMPLE;
+
   public Element getAtlSetting(){
     if (hardwareSettingLayout == HardwareSettingLayout.OLD){
       return dataSourceType == DataSourceType.CONFOCAL ? masterConfocalSetting : masterCameraSetting;

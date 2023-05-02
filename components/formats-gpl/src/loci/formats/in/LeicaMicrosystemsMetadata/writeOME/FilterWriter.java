@@ -30,6 +30,9 @@ public class FilterWriter {
           store.setFilterModel(detector.model, series, filterIndex);
           store.setFilterSetModel(detector.model, series, filterIndex);
         }
+      } else {
+        store.setFilterModel(filter.name, series, filterIndex);
+        store.setFilterSetModel(filter.name, series, filterIndex);
       }
       store.setTransmittanceRangeCutIn(FormatTools.getCutIn(filter.cutIn), series, filterIndex);
       store.setTransmittanceRangeCutOut(FormatTools.getCutOut(filter.cutOut), series, filterIndex);
