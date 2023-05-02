@@ -121,7 +121,7 @@ public class ReportEnabledStatus {
 
   public static void main(String[] args) throws Exception {
     if (args.length == 0 || args[0].equals("--help")) {
-      System.out.println("unconfigured data_dir configuration_dir [--enabled]");
+      System.out.println("bf-unconfigured data_dir configuration_dir [--enabled]");
       System.out.println();
       System.out.println("  --enabled: print a list of files that are configured and tested");
     }

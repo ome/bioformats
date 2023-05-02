@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# unconfigured: a script for identifying datasets with no .bioformats configuration
+# bf-unconfigured: a script for identifying datasets with no .bioformats configuration
 
 # Required JARs: bioformats_package.jar, bio-formats-testing-framework.jar
 

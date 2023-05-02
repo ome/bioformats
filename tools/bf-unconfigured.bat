@@ -1,6 +1,6 @@
 @echo off
 
-rem unconfigured.bat: a batch file for identifying datasets with no .bioformats configuration
+rem bf-unconfigured.bat: a batch file for identifying datasets with no .bioformats configuration
 
 rem Required JARs: bioformats_package.jar, bio-formats-testing-framework.jar
 
