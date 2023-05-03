@@ -29,13 +29,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import loci.common.DataTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
 import loci.formats.meta.MetadataStore;
 
+/**
+ * LMSMetadataTranslator sets up the whole metadata translation for all images of an LMSFileReader,
+ * translating LMS image XML to the reader's CoreMetadata and MetadataStore, and mapping LMS image and
+ * instrument metadata to OME metadata.
+ * 
+ * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
+ */
 public class LMSMetadataTranslator {
   // -- Fields --
   private LMSFileReader r;
@@ -89,30 +95,5 @@ public class LMSMetadataTranslator {
       }
     }
     r.setCore(core);
-  }
-
-  // -- Helper functions --
-
-  public long parseLong(String value) {
-    return value == null || value.trim().isEmpty() ? 0 : Long.parseLong(value.trim());
-  }
-
-  public int parseInt(String value) {
-    return value == null || value.trim().isEmpty() ? 0 : Integer.parseInt(value.trim());
-  }
-
-  public double parseDouble(String value) {
-    return value == null || value.trim().isEmpty() ? 0d : DataTools.parseDouble(value.trim());
-  }
-
-  public int getTileIndex(int coreIndex) {
-    int count = 0;
-    for (int tile = 0; tile < r.metadataTranslators.size(); tile++) {
-      if (coreIndex < count + r.metadataTranslators.get(tile).dimensionStore.tileCount) {
-        return tile;
-      }
-      count += r.metadataTranslators.get(tile).dimensionStore.tileCount;
-    }
-    return -1;
   }
 }

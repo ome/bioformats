@@ -48,7 +48,7 @@ import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.services.OMEXMLService;
 
 /**
- * LIFReader is the file format reader for Leica LIF files.
+ * LMSLIFReader is the new file format reader for Leica LIF files.
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com

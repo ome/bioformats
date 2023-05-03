@@ -1,3 +1,28 @@
+/*
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
+
 package loci.formats.in.LeicaMicrosystemsMetadata.extract;
 
 import java.io.StringWriter;
@@ -19,7 +44,16 @@ import loci.common.DataTools;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 
+/**
+ * Extractor is a helper class for navigating, reading, parsing and printing XML node contents.
+ * 
+ * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
+ */
 public class Extractor {
+
+  /**
+   * Returns the first direct child node with passed name that is found
+   */
   public static Node getChildNodeWithName(Node node, String nodeName) {
     NodeList children = node.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
@@ -29,6 +63,9 @@ public class Extractor {
     return null;
   }
 
+  /**
+   * Returns the first direct child node with passed name that is found and tries to cast it to Element
+   */
   public static Element getChildNodeWithNameAsElement(Node node, String nodeName){
     Node child = getChildNodeWithName(node, nodeName);
     Element element = null;
@@ -39,6 +76,9 @@ public class Extractor {
     return element;
   }
 
+  /**
+   * Returns all direct child nodes with passed name and tries to cast them to Element
+   */
   public static List<Element> getChildNodesWithNameAsElement(Node node, String nodeName){
     List<Element> children = new ArrayList<Element>();
     NodeList childNodes = node.getChildNodes();
@@ -54,6 +94,9 @@ public class Extractor {
     return children;
   }
 
+  /**
+   * Returns the first node of a NodeList that has an attribute with a certain value 
+   */
   public static Node getNodeWithAttribute(NodeList nodes, String attributeName, String attributeValue) {
     for (int i = 0; i < nodes.getLength(); i++) {
       Node node = nodes.item(i);
@@ -64,6 +107,9 @@ public class Extractor {
     return null;
   }
 
+  /**
+   * Returns the value of an attribute of a node
+   */
   public static String getAttributeValue(Node node, String attributeName) {
     Node attribute = node.getAttributes().getNamedItem(attributeName);
     if (attribute != null)
@@ -116,6 +162,9 @@ public class Extractor {
     return new Length(valueD, unit);
   }
 
+  /**
+   * Prints the complete XML of a node
+   */
   public static void printNode(Node node) {
     try {
       // Set up the output transformer

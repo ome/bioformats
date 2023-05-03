@@ -1,3 +1,28 @@
+/*
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
+
 package loci.formats.in.LeicaMicrosystemsMetadata.extract;
 
 import java.util.ArrayList;
@@ -11,21 +36,21 @@ import org.w3c.dom.NodeList;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import ome.xml.model.primitives.Color;
 
+/**
+ * ChannelExtractor is a helper class for extracting channel information from LMS XML files.
+ * 
+ * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
+ */
 public class ChannelExtractor extends Extractor {
+  
   /***
-   * Extracts i.a. channel number and luts from channel descriptions and writes it
-   * to reader's {@link CoreMetadata} and {@link MetadataTempBuffer}
-   * 
-   * @param imageNode
-   *          Image node from Leica xml
-   * @param coreIndex
-   * @throws FormatException
+   * Creates and returns Channels with information extracted from channel description nodes
    */
-  public static List<Channel> extractChannels(NodeList channelNodes) {
+  public static List<Channel> extractChannels(NodeList channelDescNodes) {
     List<Channel> channels = new ArrayList<Channel>();
 
-    for (int ch = 0; ch < channelNodes.getLength(); ch++) {
-      Element channelElement = (Element) channelNodes.item(ch);
+    for (int ch = 0; ch < channelDescNodes.getLength(); ch++) {
+      Element channelElement = (Element) channelDescNodes.item(ch);
 
       Channel channel = new Channel();
       channel.channelTag = Integer.parseInt(channelElement.getAttribute("ChannelTag"));
@@ -45,10 +70,7 @@ public class ChannelExtractor extends Extractor {
   }
 
   /***
-   * Translates raw channel luts of an image to Colors
-   * 
-   * @param luts
-   *          list of raw lut names / values from Leica XML
+   * Translates raw channel luts of an image to Colors and lut color indices
    */
   public static void translateLuts(List<Channel> channels) {
     for (Channel channel : channels){
@@ -57,6 +79,9 @@ public class ChannelExtractor extends Extractor {
     }
   }
 
+  /**
+   * Translates LeicaXML lut name to lut color index
+   */
   private static int getLutColorIndex(String lutName) {
     switch (lutName) {
       case "red":
@@ -81,9 +106,6 @@ public class ChannelExtractor extends Extractor {
 
   /***
    * Translates Leica XML lut name / value to Color
-   * 
-   * @param lutName
-   * @return
    */
   private static Color translateLut(String lutName) {
     lutName = lutName.replaceAll("\\s+", "");

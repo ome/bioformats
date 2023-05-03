@@ -1,3 +1,28 @@
+/*
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
+
 package loci.formats.in.LeicaMicrosystemsMetadata.extract;
 
 import java.util.ArrayList;
@@ -9,15 +34,15 @@ import org.w3c.dom.NodeList;
 
 import loci.common.DateTools;
 
+/**
+ * TimestampExtractor is a helper class for extracting timestamp information from LMS XML files.
+ * 
+ * @author Melissa Linkert melissa at glencoesoftware.com
+ * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
+ */
 public class TimestampExtractor extends Extractor {
   /**
-   * Extracts timestamps and writes them to reader's {@link MetadataTempBuffer}
-   * 
-   * @param imageNode
-   *          Image node from Leica xml
-   * @param image
-   *          image / core index
-   * @throws FormatException
+   * Extracts and returns timestamps from image node
    */
   public static List<Double> translateTimestamps(Element imageNode, int imageCount) {
     List<Double> timestamps = new ArrayList<Double>();
@@ -61,9 +86,6 @@ public class TimestampExtractor extends Extractor {
 
   /**
    * Translates hex timestamp string to double value
-   * 
-   * @param timestamp
-   *          timestamp in format
    * @return number of seconds
    */
   private static double translateSingleTimestamp(String timestamp) {
@@ -83,12 +105,6 @@ public class TimestampExtractor extends Extractor {
 
   /**
    * Translates the content of a timestamp node to double value
-   * 
-   * @param imageNode
-   *          timestamp node
-   * @param image
-   *          image / core index
-   * @throws FormatException
    */
   private static double translateSingleTimestamp(Element timestamp) {
     String stampHigh = timestamp.getAttribute("HighInteger");

@@ -26,7 +26,7 @@
 package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
- * Data structure for laser settings extracted from LMS XML
+ * Data structure for laser information extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
