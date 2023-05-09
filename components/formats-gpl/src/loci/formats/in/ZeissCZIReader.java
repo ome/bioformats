@@ -2565,7 +2565,7 @@ public class ZeissCZIReader extends FormatReader {
           
           gain = getFirstNodeValue(detector, "Gain");
           if (gain != null && !gain.isEmpty()) {
-            if (detectorIndex == 0 || detectorIndex >= gains.size()) {
+            if (detectorIndex >= gains.size()) {
               store.setDetectorGain(DataTools.parseDouble(gain), 0, detectorIndex);
             }
             else {
