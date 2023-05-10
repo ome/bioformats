@@ -181,13 +181,7 @@ public class DicomWriter extends FormatWriter {
   public void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    // TODO: update compression type check, only allows JPEG right now
-    if (compression == null || !compression.equals(CompressionType.JPEG.getCompression())) {
-      throw new UnsupportedOperationException("Pre-compressed tiles not supported for compression: " + compression);
-    }
-    if (!isReallySequential()) {
-      throw new UnsupportedOperationException("Pre-compressed tiles not supported for TILED_SPARSE");
-    }
+    checkPrecompressedSupport();
 
     // TODO: may want better handling of non-tiled "extra" images (e.g. label, macro)
     MetadataRetrieve r = getMetadataRetrieve();
@@ -1846,6 +1840,22 @@ public class DicomWriter extends FormatWriter {
     }
 
     return new TiffRational((long) (physicalSize * 1000 * 10000), 1000);
+  }
+
+  /**
+   * Check if pre-compressed tiles are supported with the current options.
+   * TODO: maybe this should be a higher-level API method?
+   *
+   * @throws UnsupportedOperationException if pre-compressed tiles are not supported
+   */
+  private void checkPrecompressedSupport() {
+    // allows both JPEG and JPEG-2000
+    if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
+      throw new UnsupportedOperationException("Pre-compressed tiles not supported for compression: " + compression);
+    }
+    if (!isReallySequential()) {
+      throw new UnsupportedOperationException("Pre-compressed tiles not supported for TILED_SPARSE");
+    }
   }
 
   class PlaneOffset {
