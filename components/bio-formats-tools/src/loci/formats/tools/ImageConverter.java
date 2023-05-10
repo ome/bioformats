@@ -601,6 +601,8 @@ public final class ImageConverter {
         else {
           for (int i=0; i<reader.getSeriesCount(); i++) {
             reader.setSeries(i);
+            width = reader.getSizeX();
+            height = reader.getSizeY();
             if (width_crop != 0 || height_crop != 0) {
               width = Math.min(reader.getSizeX(), width_crop);
               height = Math.min(reader.getSizeY(), height_crop);
