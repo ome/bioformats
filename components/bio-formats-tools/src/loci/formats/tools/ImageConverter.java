@@ -599,9 +599,14 @@ public final class ImageConverter {
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         else {
-          meta.setPixelsSizeX(new PositiveInteger(width), 0);
-          meta.setPixelsSizeY(new PositiveInteger(height), 0);
           for (int i=0; i<reader.getSeriesCount(); i++) {
+            reader.setSeries(i);
+            if (width_crop != 0 || height_crop != 0) {
+              width = Math.min(reader.getSizeX(), width_crop);
+              height = Math.min(reader.getSizeY(), height_crop);
+            }
+            meta.setPixelsSizeX(new PositiveInteger(width), i);
+            meta.setPixelsSizeY(new PositiveInteger(height), i);
             if (autoscale) {
               store.setPixelsType(PixelType.UINT8, i);
             }
