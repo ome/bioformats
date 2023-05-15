@@ -309,6 +309,10 @@ public class CV7000Reader extends FormatReader {
 
     for (Plane p : planeData) {
       if (p != null) {
+        if (!isWellAcquired(p.field.row, p.field.column)) {
+          continue;
+        }
+
         p.channelIndex = getChannelIndex(p);
 
         int wellIndex = p.field.row * plate.getPlateColumns() + p.field.column;
@@ -383,6 +387,9 @@ public class CV7000Reader extends FormatReader {
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
       Field f = p.field;
+      if (!isWellAcquired(f.row, f.column)) {
+        continue;
+      }
       int wellNumber = f.row * plate.getPlateColumns() + f.column;
       int wellIndex = Arrays.binarySearch(wells, wellNumber);
       p.series = FormatTools.positionToRaster(seriesLengths,
