@@ -14,6 +14,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -24,6 +26,8 @@ import java.io.IOException;
  * - std::int32_t is int
  * - std::int64_t is long
  * Translating to String for char arrays
+ *
+ * // TODO: get event list
  *
  * See  @see <a href="https://zeiss.github.io/">CZI reference documentation</a>
  *
@@ -46,7 +50,6 @@ public class LibCZI {
     }*/
 
     private static final Logger logger = LoggerFactory.getLogger(LibCZI.class);
-
     private static final int ALIGNMENT = 32; // all segments are aligned on 32 bytes increments
     private static final int HEADER_SIZE = 32; // SubBlock header size
     public static FileHeaderSegment getFileHeaderSegment(String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
@@ -118,6 +121,38 @@ public class LibCZI {
         }
     }
 
+    public static AttachmentDirectorySegment getAttachmentDirectorySegment(FileHeaderSegment fileHeader, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
+        try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
+            AttachmentDirectorySegment directorySegment = new AttachmentDirectorySegment();
+            in.order(isLittleEndian);
+            in.seek(fileHeader.data.attachmentDirectoryPosition);
+            String segmentID = in.readString(16).trim();
+            if (segmentID.equals("ZISRAWATTDIR")) {
+                directorySegment.header.id = segmentID; // 16
+                directorySegment.header.allocatedSize = in.readLong(); // 8
+                directorySegment.header.usedSize = in.readLong(); // 8
+                directorySegment.data.entryCount = in.readInt(); // 4 -> Sum of bytes = 36
+                System.out.println("Entry count = "+directorySegment.data.entryCount);
+                in.skipBytes(252); // 256 - 4;
+                directorySegment.data.entries = new AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry[directorySegment.data.entryCount];
+                for (int i=0; i<directorySegment.data.entryCount; i++) {
+                    directorySegment.data.entries[i] = new AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry();
+                    String schemaType = in.readString(2);
+                    System.out.println(schemaType);
+                    if (schemaType.equals("A1")) {
+                        directorySegment.data.entries[i] = getAttachmentEntryA1(in);//return new ZeissCZIFastReader.DirectoryEntryDV(s, prestitchedSetter, coreIndex);
+                    } else {
+                        throw new IOException("Unrecognized attachment entry schema type = "+schemaType);
+                    }
+                }
+                return directorySegment;
+            } else {
+                throw new IOException("ZISRAWDIRECTORY segment expected, found "+segmentID+" instead.");
+            }
+        }
+    }
+
+
     public static MetaDataSegment getMetaDataSegment(FileHeaderSegment fileHeader, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
         try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
             in.order(isLittleEndian);
@@ -146,6 +181,157 @@ public class LibCZI {
                 throw new IOException("ZISRAWMETADATA segment expected, found "+segmentID+" instead.");
             }
         }
+    }
+
+    public static AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry getAttachmentEntryA1(RandomAccessInputStream in) throws IOException{
+        AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry entry = new AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry();
+        //entryDV.schemaType = "A1"; // Removed to save space
+        /*
+
+        std::int64_t FilePosition;
+        std::int32_t FilePart;
+        GUID ContentGuid;
+        unsigned char ContentFileType[8];
+        unsigned char Name[80];
+         */
+
+        in.skipBytes(10); //unsigned char _spare[10];
+        entry.filePosition = in.readLong();
+        entry.filePart = in.readInt();
+        in.skipBytes(16); // GUID
+        entry.contentFileType = in.readString(8).trim();
+        entry.name = in.readString(80).trim();
+
+
+        // Jérôme's macro : https://gist.github.com/mutterer/5fbddc293d6c969a9d02778f1551b73f
+        System.out.println(entry.contentFileType);
+        System.out.println(entry.name);
+        /*
+        A1
+        CZEVL
+        EventList
+
+        o = indexOf(s,"CZEVL");
+        o=o+0xcc;
+        n = parseInt(read32bAt(o));
+        events = newArray(n);
+        eventNames = newArray(n);
+        o=o+4;
+        for (i=0;i<n;i++) {
+           entryLength = parseInt(read32bAt(o));
+           o=o+4;
+           eventTime = parseFloat(readDoubleAt(o)) - timeOffset;
+           o=o+8;
+           eventType = parseInt(read32bAt(o));
+           o=o+4;
+           nameLength = parseInt(read32bAt(o));
+           o=o+4;
+           eventName = substring(s,o,o+nameLength);
+           o=o+nameLength;
+           events[i]=eventTime;
+           eventNames[i]=eventName;
+        }
+
+        A1
+        CZTIMS
+        TimeStamps
+
+        for (i=0;i<n;i++) {
+           offset = o+4+i*8;
+           timestamps[i] = parseFloat(readDoubleAt(offset));
+           if (i==0) timeOffset = timestamps[i];
+           timestamps[i] = timestamps[i] - timeOffset;
+        }
+
+        A1
+        JPG
+        Thumbnail
+         */
+
+        return entry;
+    }
+
+    public static byte[] getJPGThumbNail(AttachmentDirectorySegment attachmentDirectorySegment, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
+        AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry thumbnailEntry = null;
+        for (AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry entry: attachmentDirectorySegment.data.entries) {
+            if (entry.contentFileType.equals("JPG") && (entry.name.equals("Thumbnail"))) {
+                thumbnailEntry = entry;
+            }
+        }
+
+        if (thumbnailEntry==null) {
+            return null;
+        }
+
+        try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
+            in.order(isLittleEndian);
+            in.seek(thumbnailEntry.filePosition);
+            String segmentID = in.readString(16).trim();
+            if (segmentID.equals("ZISRAWATTACH")) {
+                long allocatedSize = in.readLong();
+                long usedSize = in.readLong();
+                in.skipBytes(256); // Hum hum why ? 16 (String) + 8 + 8
+                System.out.println("used  size = "+usedSize);
+                byte[] jpegbytes = new byte[(int) usedSize];
+                in.read(jpegbytes);
+
+                /*File outputFile = new File("C:\\Users\\nicol\\Desktop\\czijpg.jpg");
+
+                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                    fos.write(jpegbytes);
+                }*/
+                return jpegbytes;
+
+            } else {
+                logger.warn("Thumbnail not found, ZISRAWATTACH segment expected, "+segmentID+" found instead.");
+            }
+            System.out.println("-----------------------"+segmentID);
+            /*
+            int size = in.readInt(); // size
+            int nTimeStamps = in.readInt();
+
+            timeStamps = new double[nTimeStamps];
+            for (int i = 0; i<nTimeStamps; i++) {
+                timeStamps[i] = in.readDouble();
+            }*/
+        }
+        return null;
+    }
+
+    public static double[] getTimeStamps(AttachmentDirectorySegment attachmentDirectorySegment, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
+
+        AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry timeStampEntry = null;
+        for (AttachmentDirectorySegment.AttachmentDirectorySegmentData.AttachmentEntry entry: attachmentDirectorySegment.data.entries) {
+            if (entry.contentFileType.equals("CZTIMS")) {
+                timeStampEntry = entry;
+            }
+        }
+
+        if (timeStampEntry==null) {
+            return new double[0];
+        }
+
+        double[] timeStamps = new double[0];
+        try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
+            in.order(isLittleEndian);
+            in.seek(timeStampEntry.filePosition);
+            String segmentID = in.readString(16).trim();
+            //if (segmentID.equals("ZISRAWMETADATA")) {}
+            System.out.println(segmentID);
+            long allocatedSize = in.readLong();
+            long usedSize = in.readLong();
+
+            in.skipBytes(256); // Hum hum why ? 16 (String) + 8 + 8
+
+            int size = in.readInt(); // size
+            int nTimeStamps = in.readInt();
+
+            timeStamps = new double[nTimeStamps];
+            for (int i = 0; i<nTimeStamps; i++) {
+                timeStamps[i] = in.readDouble();
+            }
+        }
+        return timeStamps;
     }
 
     public static SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDV getEntryDV(RandomAccessInputStream in) throws IOException{
@@ -205,7 +391,6 @@ public class LibCZI {
                                                 DocumentBuilder parser) throws IOException {
 
         SubBlockMeta subBlockMeta = new SubBlockMeta();
-
         if (subBlock.dataOffset + subBlock.data.dataSize + subBlock.data.attachmentSize < in.length()) {
             in.seek(subBlock.data.metadataOffset);
 
@@ -278,17 +463,15 @@ public class LibCZI {
                 }
             }
         }
-        subBlockMeta.isValid = true;
+
         return subBlockMeta;
     }
 
     public static class SubBlockMeta {
-        public boolean isValid = false;
         public double exposureTime;
         public double timestamp;
         public Length stageX, stageY, stageZ;
     }
-
 
     //---------------- Equivalent Java Structures of LibCZI
     public static class SegmentHeader {
@@ -649,6 +832,59 @@ public class LibCZI {
         }
 
     }
+
+    public static class AttachmentDirectorySegment {
+        /*
+        // AttachmentDirectorySegment: size = 256(fixed) + EntryCount * 128(fixed)
+        struct PACKED AttachmentDirectorySegment
+        {
+            struct SegmentHeader header;
+            struct AttachmentDirectorySegmentData data;
+        };
+        */
+        public final SegmentHeader header = new SegmentHeader();
+        public final AttachmentDirectorySegmentData data = new AttachmentDirectorySegmentData();
+        public static class AttachmentDirectorySegmentData {
+            /*
+            struct PACKED AttachmentDirectorySegmentData
+            {
+                std::int32_t EntryCount;
+                unsigned char _spare[SIZE_ATTACHMENTDIRECTORY_DATA - 4];
+                // followed by => AttachmentEntry entries[EntryCount];
+            };*/
+            public int entryCount;
+            public String _spare; // _spare[SIZE_ATTACHMENTDIRECTORY_DATA - 4];
+            // followed by any sequence of SubBlockDirectoryEntryDE or SubBlockDirectoryEntryDV records;
+            public AttachmentEntry[] entries;
+
+            public static class AttachmentEntry {
+                /*
+                struct PACKED AttachmentEntryA1
+                {
+                    unsigned char SchemaType[2];
+                    unsigned char _spare[10];
+                    std::int64_t FilePosition;
+                    std::int32_t FilePart;
+                    GUID ContentGuid;
+                    unsigned char ContentFileType[8];
+                    unsigned char Name[80];
+                };
+                 */
+
+                public String schemaType;
+                // Spare : 10 bytes
+                public long filePosition;
+                public int filePart;
+                // GUID : 16 bytes
+                public int compression;
+                public String contentFileType;
+                public String name;  //dimensionCount;
+
+            }
+        }
+
+    }
+
 
     // defined segment alignments (never modify this constants!)
     final public static int SEGMENT_ALIGN = 32;

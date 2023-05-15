@@ -28,6 +28,7 @@ package loci.formats.in;
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -48,12 +49,16 @@ import loci.formats.meta.MetadataStore;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
+import ome.units.quantity.Pressure;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.IlluminationType;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -174,6 +179,7 @@ import static loci.formats.in.libczi.LibCZI.ZSTD_1;
  *  Features:
  *  - add two methods that map forth and back czi dimension indices to bio-formats series
  *  - add a method that returns a 3D matrix per series (for lattice skewed dataset?)
+ *  - add extraImages
  *
  */
 public class ZeissCZIReader extends FormatReader {
@@ -200,6 +206,10 @@ public class ZeissCZIReader extends FormatReader {
   // at least not written as a dimension entry
   private static final String RESOLUTION_LEVEL_DIMENSION = "PY";
 
+  // A string identifier for an extra dimension: the file part. It's not directly part of the CZI format,
+  // at least not written as a dimension entry
+  private static final String FILE_PART_DIMENSION = "PA";
+
   // -- Fields --
 
   // bio-formats core index to x origin, in the Zeiss 2D coordinates system, common to all planes. Unit: pixel (highest resolution level)
@@ -213,6 +223,10 @@ public class ZeissCZIReader extends FormatReader {
   // bio-formats core index the compression factor of the series.
   @CopyByRef
   private List<Integer> coreIndexToCompression = new ArrayList<>();
+
+  // bio-formats core index the compression factor of the series.
+  @CopyByRef
+  private List<CoreSignature> coreIndexToSignature = new ArrayList<>();
 
   // bio-formats core index the downscaling factor of the series.
   @CopyByRef
@@ -287,6 +301,10 @@ public class ZeissCZIReader extends FormatReader {
   private transient ArrayList<String> imageNames = new ArrayList<>();
 
   @CopyByRef
+  private transient ArrayList<byte[]> extraImages = new ArrayList<>(); // transient but in fact it's because
+  // it's only used in the iniatilisation -> this should stay local and got ridden of as soon as possible
+
+  @CopyByRef
   private boolean hasDetectorSettings = false;
   @CopyByRef
   private String[] rotationLabels, phaseLabels, illuminationLabels;
@@ -295,11 +313,14 @@ public class ZeissCZIReader extends FormatReader {
   @CopyByRef
   int maxBlockSizeY = -1;
 
+  @CopyByRef
+  Length[] scenePosX, scenePosY;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss .czi reader. */
   public ZeissCZIReader() {
-    super("Zeiss CZI", "fczi");
+    super("Zeiss CZI", "czi");
     domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HISTOLOGY_DOMAIN};
     suffixSufficient = false;
     suffixNecessary = false;
@@ -323,7 +344,6 @@ public class ZeissCZIReader extends FormatReader {
     for (Field field:fields) {
       if (field.isAnnotationPresent(CopyByRef.class)) {
         try {
-          System.out.println("Set "+field.getName());
           field.set(this,field.get(that));
         } catch (IllegalAccessException e) {
           throw new RuntimeException(e);
@@ -670,6 +690,22 @@ public class ZeissCZIReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h) throws FormatException, IOException {
 
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (isThumbnailSeries()) {
+      // thumbnail, label, or preview image stored as an attachment
+      int index = getCoreIndex() - (core.size() - extraImages.size());
+      byte[] fullPlane = extraImages.get(index);
+      RandomAccessInputStream s = new RandomAccessInputStream(fullPlane);
+      try {
+        readPlane(s, x, y, w, h, buf);
+      }
+      finally {
+        s.close();
+      }
+      return buf;
+    }
+
+
     int currentIndex = getCoreIndex();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int nCh = getRGBChannelCount();
@@ -795,12 +831,7 @@ public class ZeissCZIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    List< // CoreIndex
-            HashMap<CZTKey, // CZT
-                    List<LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry>>>
-            mapCoreTZCToBlocks = new ArrayList<>();
-
-    // switch to the master file if this is part of a multi-file dataset
+    // Switch to the master file if this is part of a multi-file dataset
     int lastDot = id.lastIndexOf(".");
     String base = lastDot < 0 ? id : id.substring(0, lastDot);
     if (base.endsWith(")") && isGroupFiles()) {
@@ -820,19 +851,11 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
 
+    // At this point of the initFile method, it's guaranteed that id is the id of the master file
     store = makeFilterMetadata(); // For metadata
+    core.get(0).littleEndian = true; // We assume that CZI files are always little endian. Setting the value at this point in the method ensures that isLittleEndian() calls return true
 
-    core.get(0).littleEndian = true;
-
-    // Multiple czi files may exist. Maybe it's the 'part' which matters
-    Map<String, LibCZI.FileHeaderSegment> fileHeaderSegments = new HashMap<>();
-    Map<String, LibCZI.SubBlockDirectorySegment> subBlockDirectorySegments = new HashMap<>();
-    Map<String, LibCZI.MetaDataSegment> metadataSegments = new HashMap<>();
-    fileHeaderSegments.put(currentId, LibCZI.getFileHeaderSegment(id, BUFFER_SIZE, isLittleEndian()));
-    subBlockDirectorySegments.put(currentId, LibCZI.getSubBlockDirectorySegment(fileHeaderSegments.get(id), id, BUFFER_SIZE, isLittleEndian()));
-    metadataSegments.put(currentId, LibCZI.getMetaDataSegment(fileHeaderSegments.get(id), id, BUFFER_SIZE, isLittleEndian()));
-
-    // check if we have the master file in a multi-file dataset
+    // Multiple czi files may exist
     // file names are not stored in the files; we have to rely on a
     // specific naming convention:
     //
@@ -851,25 +874,27 @@ public class ZeissCZIReader extends FormatReader {
       base = base.substring(0, lastDot);
     }
 
+    // Map file part and CZI segments found in the file
+    // but only the segments needed for the file initialisation...
+    Map<Integer, CZISegments> cziPartToSegments = new HashMap<>();
+    cziPartToSegments.put(0, new CZISegments(id, isLittleEndian())); // CZISegments constructor parses CZI file segments
+
+    // And we the additional parts.
     Location parent = file.getParentFile();
     String[] list = parent.list(true);
     for (String f : list) {
       if (f.startsWith(base + "(") || f.startsWith(base + " (")) {
-        //String part = f.substring(f.lastIndexOf("(") + 1, f.lastIndexOf(")"));
+        String part = f.substring(f.lastIndexOf("(") + 1, f.lastIndexOf(")"));
         try {
-          //pixels.put(Integer.parseInt(part),
-          //        new Location(parent, f).getAbsolutePath());
-          String extraId = new Location(parent, f).getAbsolutePath();
-          fileHeaderSegments.put(extraId, LibCZI.getFileHeaderSegment(extraId, BUFFER_SIZE, isLittleEndian()));
-          subBlockDirectorySegments.put(extraId, LibCZI.getSubBlockDirectorySegment(fileHeaderSegments.get(extraId), extraId, BUFFER_SIZE, isLittleEndian()));
-          metadataSegments.put(extraId, LibCZI.getMetaDataSegment(fileHeaderSegments.get(extraId), extraId, BUFFER_SIZE, isLittleEndian()));
+          cziPartToSegments.put(Integer.parseInt(part),
+                  new CZISegments(new Location(parent, f).getAbsolutePath(), isLittleEndian()));
         } catch (NumberFormatException e) {
           LOGGER.debug("{} not included in multi-file dataset", f);
         }
       }
     }
 
-    // One core metadata per series
+    // How many dimensions exist for CZI ? A lot
     //Z The Z-dimension.
     //C The C-dimension ("channel").
     //T The T-dimension ("time").
@@ -881,84 +906,107 @@ public class ZeissCZIReader extends FormatReader {
     //B The B-dimension ("block") - its use is deprecated.
     //M The M-dimension ("mosaic") -> why there's no trace of it in libczi ???
 
+    // Then, we add two extra dimensions for convenience:
+    // PY, which identifies the pyramidal level (RESOLUTION_LEVEL_DIMENSION)
+    // PA, which identifies the file part (FILE_PART_DIMENSION)
+
     // To build a series, one should:
     // - Split according to view, phase, illumination, rotation, scene, and mosaic ?
     // - Merge according to Z, T
     // - Merge according to C, except if pixels types are different
 
-    // For the series order, let's keep the following order:
+    // Adding the extra dimension in each subblock : part, and resolution level
+    // For the series order, each dimension has a priority, set by the method dimensionPriority
 
     // What do I want to do ?
     // I want to find the number of series. For that, I make a unique signature
     // of each subblock with its dimension signature, then count the number of
     // signature in the signature set.
 
-    // The signature should be used for the ordering of the series
+    // The signature alphabetical order will be used for the ordering of the series
+    // Here's some example signatures:
+    // PA0H0S04PY00001
+    // PA0H0S03PY00001
+    // PA0H0S02PY00001 -> file part 0, phase 0, scene 2, pyramidal level 1 (highest resolution)
+    // PA0H0S01PY00001
+    // PA0H0S00PY00001
+    // PA is always first, PY always last
+
     Set<String> allDimensions = new HashSet<>();
-    for (LibCZI.SubBlockDirectorySegment subBlockDirectorySegment : subBlockDirectorySegments.values()) {
-      for (LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry entry: subBlockDirectorySegment.data.entries) {
-        for (String dimension: entry.getDimensions()) {
-          allDimensions.add(dimension);
-        }
-      }
-    }
-
-    Map<CoreSignature, List<LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry>> coreSignatureToBlocks = new HashMap<>();
-
     Map<String, Integer> maxDigitPerDimension = new HashMap<>();
 
-    for (LibCZI.SubBlockDirectorySegment subBlockDirectorySegment : subBlockDirectorySegments.values()) {
-      for (LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry entry: subBlockDirectorySegment.data.entries) {
-        for (LibCZI.SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDV.DimensionEntry dimEntry: entry.getDimensionEntries()) {
-          int nDigits = String.valueOf(dimEntry.start).length(); // TODO: Can this be negative ?
-          if (!maxDigitPerDimension.containsKey(dimEntry.dimension)) {
-            maxDigitPerDimension.put(dimEntry.dimension,nDigits);
-          } else {
-            int curMax = maxDigitPerDimension.get(dimEntry.dimension);
-            if (nDigits>curMax) {
+    // First we look at all the existing dimensions
+    cziPartToSegments.forEach((part, cziSegments) -> { // For each part
+      Arrays.asList(cziSegments.subBlockDirectory.data.entries).forEach( // and each entry
+        entry -> {
+          for (String dimension: entry.getDimensions()) {
+            allDimensions.add(dimension);
+          }
+        }
+      );
+    });
+
+    // Then we look at the max value in each dimension, to know how many digits are needed to write the signature
+    // and proper alphabetical ordering
+    cziPartToSegments.forEach((part, cziSegments) -> { // For each part
+      Arrays.asList(cziSegments.subBlockDirectory.data.entries).forEach( // and each entry
+        entry -> {
+          for (LibCZI.SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDV.DimensionEntry dimEntry: entry.getDimensionEntries()) {
+            int nDigits = String.valueOf(dimEntry.start).length(); // TODO: Can this be negative ?
+            if (!maxDigitPerDimension.containsKey(dimEntry.dimension)) {
               maxDigitPerDimension.put(dimEntry.dimension,nDigits);
+            } else {
+              int curMax = maxDigitPerDimension.get(dimEntry.dimension);
+              if (nDigits>curMax) {
+                maxDigitPerDimension.put(dimEntry.dimension,nDigits);
+              }
             }
           }
         }
-      }
-    }
+      );
+    });
 
-    maxDigitPerDimension.put("PY",5); // Let's hope that the downsampling ratio never exceeds 9999 TODO : improve
+    // Ready to build the signature
+    Map<CoreSignature, List<LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry>> coreSignatureToBlocks = new HashMap<>();
+    maxDigitPerDimension.put(RESOLUTION_LEVEL_DIMENSION,5); // Let's hope that the downsampling ratio never exceeds 9999 TODO : improve
+    maxDigitPerDimension.put(FILE_PART_DIMENSION, String.valueOf(cziPartToSegments.size()).length());
 
-    for (LibCZI.SubBlockDirectorySegment subBlockDirectorySegment : subBlockDirectorySegments.values()) {
-      for (LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry entry: subBlockDirectorySegment.data.entries) {
-        // Split by resolution level if flattenedResolutions is true
-        CoreSignature usl = new CoreSignature(entry.getDimensionEntries(),"PY",
-                getDownSampling(entry), (dim) -> maxDigitPerDimension.get(dim), allowAutostitching());
-        if (!coreSignatureToBlocks.containsKey(usl)) {
-          coreSignatureToBlocks.put(usl, new ArrayList<>());
-        }
-        coreSignatureToBlocks.get(usl).add(entry);
-      }
-    }
+    // Write all signatures
+    cziPartToSegments.forEach((part, cziSegments) -> { // For each part
+      Arrays.asList(cziSegments.subBlockDirectory.data.entries).forEach( // and each entry
+          entry -> {
+            // Split by resolution level if flattenedResolutions is true
+            CoreSignature coreSignature = new CoreSignature(entry.getDimensionEntries(), RESOLUTION_LEVEL_DIMENSION,
+                    getDownSampling(entry), (dim) -> maxDigitPerDimension.get(dim), allowAutostitching(),
+                    FILE_PART_DIMENSION, part);
+            if (!coreSignatureToBlocks.containsKey(coreSignature)) {
+              coreSignatureToBlocks.put(coreSignature, new ArrayList<>());
+            }
+            coreSignatureToBlocks.get(coreSignature).add(entry);
+          });
+    });
 
-    List<CoreSignature> seriesUSLList = coreSignatureToBlocks.keySet().stream().sorted().collect(Collectors.toList());
+    // Sort them
+    List<CoreSignature> orderedCoreSignatureList = coreSignatureToBlocks.keySet().stream().sorted().collect(Collectors.toList());
 
-    int nCoreIndices = seriesUSLList.size();
+    // We now know how many core index are present in the image... except for missing extra images!
 
     core = new ArrayList<>();
-    int idxSeriesResolutionLevelStart = -1;
-
-    for (int i = 0; i<nCoreIndices; i++) {
-      series = i;
+    int idxCoreResolutionLevelStart = -1;
+    for (int i = 0; i<orderedCoreSignatureList.size(); i++) {
       CoreMetadata core_i = new CoreMetadata();
       core.add(core_i);
       core_i.orderCertain = true;
       core_i.dimensionOrder = "XYCZT";
       core_i.littleEndian = true;
-      CoreSignature usl = seriesUSLList.get(i);
-      LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry model = coreSignatureToBlocks.get(usl).get(0);
+      CoreSignature coreSignature = orderedCoreSignatureList.get(i);
+      LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry model = coreSignatureToBlocks.get(coreSignature).get(0);
       convertPixelType(core_i, model.getPixelType());
       coreIndexToCompression.add(model.getCompression());
       coreIndex = i;
       coreIndexToDownscaleFactor.add(getDownSampling(model));
 
-      int[] coordsOrigin = setOriginAndSize(core_i,coreSignatureToBlocks.get(usl));
+      int[] coordsOrigin = setOriginAndSize(core_i,coreSignatureToBlocks.get(coreSignature));
       coreIndexToOx.add(coordsOrigin[0]);
       coreIndexToOy.add(coordsOrigin[1]);
 
@@ -971,31 +1019,61 @@ public class ZeissCZIReader extends FormatReader {
       // When a change is noticed, all previous series should belong to the same series.
       // see FormatReader#getSeriesToCoreIndex
       if (getDownSampling(model)==1) {
-        if (idxSeriesResolutionLevelStart==-1) {
-          idxSeriesResolutionLevelStart = i;
+        if (idxCoreResolutionLevelStart==-1) {
+          idxCoreResolutionLevelStart = i;
         } else {
-          for (int j = idxSeriesResolutionLevelStart; j<i; j++) {
+          for (int j = idxCoreResolutionLevelStart; j<i; j++) {
             core.get(j).resolutionCount = i-j;
           }
-          idxSeriesResolutionLevelStart = i;
+          idxCoreResolutionLevelStart = i;
         }
       } else {
         // Let's close the loop
-        if (i==nCoreIndices-1) {
+        if (i==orderedCoreSignatureList.size()-1) {
           // Let's finish
-          for (int j = idxSeriesResolutionLevelStart; j<nCoreIndices; j++) {
-            core.get(j).resolutionCount = nCoreIndices-j;
+          for (int j = idxCoreResolutionLevelStart; j<orderedCoreSignatureList.size(); j++) {
+            core.get(j).resolutionCount = orderedCoreSignatureList.size()-j;
           }
+        }
+      }
+
+      coreIndexToSignature.add(coreSignature);
+    }
+
+    // Handle extra images:
+    // JPG
+    // Thumbnail
+    List<Integer> sortedFileParts = cziPartToSegments.keySet().stream().sorted().collect(Collectors.toList());
+
+    for (int filePart: sortedFileParts) {
+      byte[] jpegBytes = LibCZI.getJPGThumbNail(cziPartToSegments.get(filePart).attachmentDirectory, id, BUFFER_SIZE, isLittleEndian());
+      if (jpegBytes!=null) {
+        JPEGReader thumbReader = new JPEGReader();
+        thumbReader.setMetadataOptions(getMetadataOptions());
+        ByteArrayHandle stream = new ByteArrayHandle(jpegBytes);
+        Location.mapFile("image.czi", stream);
+        thumbReader.setId("image.czi");
+
+        CoreMetadata c = thumbReader.getCoreMetadataList().get(0);
+
+        if (c.sizeZ > 1 || c.sizeT > 1) {
+
+        } else {
+          core.add(new CoreMetadata(c));
+          core.get(core.size() - 1).thumbnail = true;
+          extraImages.add(thumbReader.openBytes(0));
+          thumbReader.close();
+          stream.close();
+          Location.mapFile("image.czi", null);
         }
       }
     }
 
-    LOGGER.trace("#CoreSeries = {}", nCoreIndices);
+    LOGGER.trace("#CoreSeries = {}", core.size());
+
     // Logs all series info
-    for (int i = 0; i<nCoreIndices; i++) {
+    for (int i = 0; i<core.size(); i++) {
       setCoreIndex(i);
-      CoreSignature usl = seriesUSLList.get(i);
-      LOGGER.trace("Core Series signature = "+usl);
       LOGGER.trace("Series = {}", getSeries());
       LOGGER.trace("\tSize X = {}", getSizeX());
       LOGGER.trace("\tSize Y = {}", getSizeY());
@@ -1004,23 +1082,34 @@ public class ZeissCZIReader extends FormatReader {
       LOGGER.trace("\tSize T = {}", getSizeT());
       LOGGER.trace("\tis RGB = {}", isRGB());
       LOGGER.trace("\tcalculated image count = {}", getCurrentCore().imageCount);
-      LOGGER.trace("\tnBlocks in CZI File = {}", coreSignatureToBlocks.get(usl).size());
+      if (!core.get(i).thumbnail) {
+        CoreSignature usl = orderedCoreSignatureList.get(i);
+        LOGGER.trace("Core Series signature = "+usl);
+        LOGGER.trace("\tnBlocks in CZI File = {}", coreSignatureToBlocks.get(usl).size());
+      }
     }
 
     setCoreIndex(0); // Fresh start
-
     // Ok, now let's sort all subblocks from a series into hashmaps
     // Idea: subblocks.get(coreIndex).get(timepoint).get(z).get(c) -> returns a list of blocks which
     // differs only in X and Y coordinates.
 
-    for (int iCoreIndex = 0; iCoreIndex<nCoreIndices; iCoreIndex++) {
+    // This structure will be trimmed down in size and stored in the mapCoreTZCToMinimalBlocks field
+    List< // CoreIndex
+            HashMap<CZTKey, // CZT
+                    List<LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry>>>
+            mapCoreTZCToBlocks = new ArrayList<>();
+
+    for (int iCoreIndex = 0; iCoreIndex<core.size(); iCoreIndex++) {
+      if (core.get(iCoreIndex).thumbnail) continue; // skips extra images
       coreIndexToFileName.add(id); // TODO : improve and understand multi-series files
-      CoreSignature usl = seriesUSLList.get(iCoreIndex);
+      CoreSignature coreSignature = orderedCoreSignatureList.get(iCoreIndex);
+      System.out.println(coreSignature.signature);
       mapCoreTZCToBlocks.add(iCoreIndex, new HashMap<>());
       mapCoreTZCToMinimalBlocks.add(iCoreIndex, new HashMap<>());
       HashMap<CZTKey, List<LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry>> seriesMap = mapCoreTZCToBlocks.get(iCoreIndex);
       HashMap<CZTKey, List<MinimalDimensionEntry>> seriesMinMap = mapCoreTZCToMinimalBlocks.get(iCoreIndex);
-      for (LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry block: coreSignatureToBlocks.get(usl)) {
+      for (LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry block: coreSignatureToBlocks.get(coreSignature)) {
         int c = block.getDimension("C").start;
         int z = block.getDimension("Z").start;
         int t = block.getDimension("T").start;
@@ -1037,15 +1126,191 @@ public class ZeissCZIReader extends FormatReader {
 
     // MetaData from xml file
     DocumentBuilder parser = XMLTools.createBuilder();
-    handleGlobalMetadata(metadataSegments.get(currentId), parser);
+
+    // But is everything in the master file ???
+    readXMLMetadata(cziPartToSegments.get(0).metadata, parser);
+    // Timestamps are already read
+
     MetadataTools.populatePixels(store, this, true);
+
+    // Needs to set the instrument reference before calling the next method
+    store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+
+    setExperimenterInformation();
+
+    setPlaneAndSeriesTimeInformation(mapCoreTZCToBlocks, parser);
+
+    setPlaneLocationLocationInformation();
+
+    setImageNames();
+
+    setAdditionalImageMetadata();
+
+    setChannelMetadata();
+  }
+
+
+  private void setPlaneLocationLocationInformation() {
+
+  }
+
+  private void setAdditionalImageMetadata() throws FormatException {
+    for (int iSeries=0; iSeries<getSeriesCount(); iSeries++) {
+
+      // Should not do the rest for extra images
+      // remaining acquisition settings (esp. channels) do not apply to
+      // label and macro images
+      int extraIndex = iSeries - (getSeriesCount() - extraImages.size());
+      if (extraIndex >= 0) {
+        continue;
+      }
+
+      if (description != null && description.length() > 0) {
+        store.setImageDescription(description, iSeries);
+      }
+
+      if (airPressure != null) {
+        store.setImagingEnvironmentAirPressure(
+                new Pressure(new Double(airPressure), UNITS.MILLIBAR), iSeries);
+      }
+
+      if (co2Percent != null) {
+        store.setImagingEnvironmentCO2Percent(
+                PercentFraction.valueOf(co2Percent), iSeries);
+      }
+      if (humidity != null) {
+        store.setImagingEnvironmentHumidity(
+                PercentFraction.valueOf(humidity), iSeries);
+      }
+      if (temperature != null) {
+        store.setImagingEnvironmentTemperature(new Temperature(
+                new Double(temperature), UNITS.CELSIUS), iSeries);
+      }
+
+      if (objectiveSettingsID != null) {
+        store.setObjectiveSettingsID(objectiveSettingsID, iSeries);
+        if (correctionCollar != null) {
+          store.setObjectiveSettingsCorrectionCollar(
+                  new Double(correctionCollar), iSeries);
+        }
+        if (medium != null) {
+          store.setObjectiveSettingsMedium(MetadataTools.getMedium(medium), iSeries);
+        }
+        if (refractiveIndex != null) {
+          store.setObjectiveSettingsRefractiveIndex(
+                  new Double(refractiveIndex), iSeries);
+        }
+      }
+    }
+  }
+
+  private void setChannelMetadata() {
+    for (int iSeries=0; iSeries<getSeriesCount(); iSeries++) {
+
+      int extraIndex = iSeries - (getSeriesCount() - extraImages.size());
+      if (extraIndex >= 0) {
+        continue;
+      }
+
+      boolean isPALM = false; // TODO
+      addChannelMetadata(iSeries, isPALM);
+    }
+  }
+
+  private void setImageNames() {
+    String name = new Location(getCurrentFile()).getName();
+    if (imageName != null && imageName.trim().length() > 0) {
+      name = imageName;
+    }
+
+    int indexLength = String.valueOf(getSeriesCount()).length();
+
+    for (int iSeries=0; iSeries<getSeriesCount(); iSeries++) {
+
+      String imageIndex = String.valueOf(iSeries + 1);
+      while (imageIndex.length() < indexLength) {
+        imageIndex = "0" + imageIndex;
+      }
+
+      int extraIndex = iSeries - (getSeriesCount() - extraImages.size());
+      if (extraIndex < 0) {
+        if (hasFlattenedResolutions()) {
+          store.setImageName(name + " #" + imageIndex, iSeries);
+        } else if (false) {// TODO fix! (positions == 1) {
+          if (imageNames.size() == 1) {
+            store.setImageName(imageNames.get(0), iSeries);
+          } else {
+            store.setImageName("", iSeries);
+          }
+        } else {
+          if (iSeries < imageNames.size()) {
+            String completeName = imageNames.get(iSeries);
+            if (iSeries < fieldNames.size()) {
+              completeName += " " + fieldNames.get(iSeries);
+            }
+            store.setImageName(completeName, iSeries);
+          } else {
+            int paddingLength = ("" + getSeriesCount()).length();
+            store.setImageName("Scene #" + String.format("%0" + paddingLength + "d", (iSeries + 1)), iSeries);
+          }
+        }
+      } else if (extraIndex == 0) {
+        store.setImageName("label image", iSeries);
+      } else if (extraIndex == 1) {
+        store.setImageName("macro image", iSeries);
+      } else {
+        store.setImageName("thumbnail image", iSeries);
+      }
+    }
+
+  }
+
+  private void setExperimenterInformation() {
+    // User information fields
+    String experimenterID = MetadataTools.createLSID("Experimenter", 0);
+    store.setExperimenterID(experimenterID, 0);
+    store.setExperimenterEmail(userEmail, 0);
+    store.setExperimenterFirstName(userFirstName, 0);
+    store.setExperimenterInstitution(userInstitution, 0);
+    store.setExperimenterLastName(userLastName, 0);
+    store.setExperimenterMiddleName(userMiddleName, 0);
+    store.setExperimenterUserName(userName, 0);
+    for (int iSeries=0; iSeries<getSeriesCount();iSeries++) {
+      if (experimenterID != null) {
+        store.setImageExperimenterRef(experimenterID, iSeries);
+      }
+    }
+  }
+
+  transient Timestamp[] coreIndexTimeStamp;
+  private void setPlaneAndSeriesTimeInformation(List<HashMap<CZTKey, List<LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry>>> mapCoreTZCToBlocks, DocumentBuilder parser) throws IOException {
 
     // MetaData from series -> read a few subblocks to locate the sample
     // We'll assume that everything is linearly interpolated from
     // Begin to start, along T and along Z
+    coreIndexTimeStamp = new Timestamp[core.size()];
 
-    for (int iCoreIndex = 0; iCoreIndex<nCoreIndices; iCoreIndex++) {
+    for (int iCoreIndex = 0; iCoreIndex<core.size(); iCoreIndex++) {
       setCoreIndex(iCoreIndex);
+
+      // Skips metadata for thumbnails
+      int extraIndex = iCoreIndex - (core.size() - extraImages.size());
+      if (extraIndex >= 0) {
+        continue;
+      }
+
+      // Set stage label
+      CoreSignature signature = coreIndexToSignature.get(iCoreIndex);
+      if (signature.getDimensions().containsKey("S")) {
+        int sceneIndex = signature.getDimensions().get("S");
+        String sceneName = allPositionsInformation.scenes.get(sceneIndex).name;
+        if (sceneName == null) sceneName = "Scene position #"+sceneIndex;
+        store.setStageLabelName(sceneName, getSeries());
+        store.setStageLabelX(allPositionsInformation.scenes.get(sceneIndex).pos.get(0).pX, getSeries());
+        store.setStageLabelY(allPositionsInformation.scenes.get(sceneIndex).pos.get(0).pY, getSeries());
+        store.setStageLabelZ(allPositionsInformation.scenes.get(sceneIndex).pos.get(0).pZ, getSeries());
+      }
+
       int nChannels = getSizeC();
 
       List<LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry> blocks;
@@ -1067,14 +1332,41 @@ public class ZeissCZIReader extends FormatReader {
         for (LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry iBlock : blocks) {
           block = LibCZI.getBlock(getStream(), iBlock.getFilePosition());
           LibCZI.SubBlockMeta sbm = LibCZI.readSubBlockMeta(getStream(), block, parser);
-          if ((stagePosX == null)||(stagePosX.value().doubleValue()>sbm.stageX.value().doubleValue())) {
+          if ((stagePosX == null)||(stagePosX.value(UNITS.MICROMETER).doubleValue()>sbm.stageX.value(UNITS.MICROMETER).doubleValue())) {
             stagePosX = sbm.stageX;
           }
-          if ((stagePosY == null)||(stagePosY.value().doubleValue()>sbm.stageY.value().doubleValue())) {
+          if ((stagePosY == null)||(stagePosY.value(UNITS.MICROMETER).doubleValue()>sbm.stageY.value(UNITS.MICROMETER).doubleValue())) {
             stagePosY = sbm.stageY;
           }
-          if ((stagePosZ == null)||(stagePosZ.value().doubleValue()>sbm.stageZ.value().doubleValue())) {
+          if ((stagePosZ == null)||(stagePosZ.value(UNITS.MICROMETER).doubleValue()>sbm.stageZ.value(UNITS.MICROMETER).doubleValue())) {
             stagePosZ = sbm.stageZ;
+          }
+        }
+
+
+        // Read position from block
+        if (stagePosX == null) {
+          for (LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry iBlock : blocks) {
+
+            Length posX = new Length(iBlock.getDimension("X").start/coreIndexToDownscaleFactor.get(iCoreIndex)
+                    *this.coreToPixSizeX.get(iCoreIndex).value(UNITS.MICROMETER).doubleValue(), UNITS.MICROMETER);
+            Length posY = new Length(iBlock.getDimension("Y").start/coreIndexToDownscaleFactor.get(iCoreIndex)
+                    *this.coreToPixSizeY.get(iCoreIndex).value(UNITS.MICROMETER).doubleValue(), UNITS.MICROMETER);
+            if ((stagePosX == null)||(stagePosX.value().doubleValue()>posX.value(UNITS.MICROMETER).doubleValue())) {
+              stagePosX = posX;
+            }
+            if ((stagePosY == null)||(stagePosY.value().doubleValue()>posY.value(UNITS.MICROMETER).doubleValue())) {
+              stagePosY = posY;
+            }
+
+            if (coreToPixSizeZ.size()!=0) {
+              Length posZ = new Length(iBlock.getDimension("Z").start
+                      * this.coreToPixSizeZ.get(iCoreIndex).value(UNITS.MICROMETER).doubleValue(), UNITS.MICROMETER);
+
+              if ((stagePosZ == null) || (stagePosZ.value().doubleValue() > posZ.value(UNITS.MICROMETER).doubleValue())) {
+                stagePosZ = posZ;
+              }
+            }
           }
         }
 
@@ -1088,30 +1380,366 @@ public class ZeissCZIReader extends FormatReader {
         block = LibCZI.getBlock(getStream(), blocks.get(0).getFilePosition());
         LibCZI.SubBlockMeta sbmzitf = LibCZI.readSubBlockMeta(getStream(), block, parser);
 
-        if (sbmziti.isValid && sbmzfti.isValid && sbmzitf.isValid) {
-          double incrementTimeOverZ = (sbmzfti.timestamp - sbmziti.timestamp)/(double)getSizeZ();
-          double incrementTimeOverT = (sbmzitf.timestamp - sbmziti.timestamp)/(double)getSizeT();
+        if (iChannel==0) {
+          if (sbmziti.timestamp!=0) { // The image was not taken on Jan 1st 1970...
+            long timestamp = (long) (sbmziti.timestamp * 1000);//planes.get(0).timestamp * 1000); TODO : do not work
+            String date =
+                    DateTools.convertDate(timestamp, DateTools.UNIX);
+            coreIndexTimeStamp[iCoreIndex] = new Timestamp(date);
+          }
+        }
 
-          Time exposure = new Time(sbmziti.exposureTime*1000, UNITS.SECOND);
 
-          for (int iZ = 0; iZ<getSizeZ(); iZ++){//getSizeZ(); iZ++) {
-            for (int iT = 0; iT<getSizeT(); iT++) {
-              int planeIndex = getIndex(iZ,iChannel,iT);
-              store.setPlanePositionX(stagePosX, iCoreIndex, planeIndex);
-              store.setPlanePositionY(stagePosY, iCoreIndex, planeIndex);
-              store.setPlanePositionZ(stagePosZ, iCoreIndex, planeIndex);
-              if (sbmziti.exposureTime!=0) store.setPlaneExposureTime(exposure, iCoreIndex, planeIndex); // 0 exposure do not make sense
-              store.setPlaneDeltaT(new Time(incrementTimeOverT*iT+incrementTimeOverZ*iZ,
+        double incrementTimeOverZ = (sbmzfti.timestamp - sbmziti.timestamp)/(double)getSizeZ();
+        double incrementTimeOverT = (sbmzitf.timestamp - sbmziti.timestamp)/(double)getSizeT();
+
+        Time exposure = new Time(sbmziti.exposureTime*1000, UNITS.SECOND);
+
+        for (int iZ = 0; iZ < getSizeZ(); iZ++) {
+          for (int iT = 0; iT < getSizeT(); iT++) {
+            int planeIndex = getIndex(iZ, iChannel, iT);
+            store.setPlanePositionX(stagePosX, iCoreIndex, planeIndex);
+            store.setPlanePositionY(stagePosY, iCoreIndex, planeIndex);
+            store.setPlanePositionZ(stagePosZ, iCoreIndex, planeIndex);
+            if (sbmziti.exposureTime != 0) {
+              store.setPlaneExposureTime(exposure, iCoreIndex, planeIndex); // 0 exposure do not make sense
+            }
+            if ((incrementTimeOverZ>0)||(incrementTimeOverT>0)) {
+              store.setPlaneDeltaT(new Time(incrementTimeOverT * iT + incrementTimeOverZ * iZ,
                       UNITS.SECOND), iCoreIndex, planeIndex);
             }
           }
-        } else {
-          LOGGER.warn("Could not read sub block metadata - plane deltaT and position unknown");
-          break loopChannel;
         }
+
+        for (int iZ = 0; iZ < getSizeZ(); iZ++) {
+          for (int iT = 0; iT < getSizeT(); iT++) {
+            int planeIndex = getIndex(iZ, iChannel, iT);
+            store.setPlanePositionX(stagePosX, iCoreIndex, planeIndex);
+            store.setPlanePositionY(stagePosY, iCoreIndex, planeIndex);
+            store.setPlanePositionZ(stagePosZ, iCoreIndex, planeIndex);
+            if (sbmziti.exposureTime != 0) {
+              store.setPlaneExposureTime(exposure, iCoreIndex, planeIndex); // 0 exposure do not make sense
+            }
+            if ((incrementTimeOverZ>0)||(incrementTimeOverT>0)) {
+              store.setPlaneDeltaT(new Time(incrementTimeOverT * iT + incrementTimeOverZ * iZ,
+                      UNITS.SECOND), iCoreIndex, planeIndex);
+            }
+          }
+        }
+
+      }
+
+    }
+
+    for (int iSeries = 0; iSeries<getSeriesCount(); iSeries++) {
+      store.setImageInstrumentRef(MetadataTools.createLSID("Instrument", 0), iSeries);
+      if (coreIndexTimeStamp[getCoreIndex()]!=null) {
+        store.setImageAcquisitionDate(coreIndexTimeStamp[getCoreIndex()], iSeries);
+      } else if (acquiredDate != null) {
+        store.setImageAcquisitionDate(new Timestamp(acquiredDate), iSeries);
+      }
+      if (timeIncrement != null) {
+        store.setPixelsTimeIncrement(timeIncrement, iSeries);
       }
     }
-    //this.store=null;
+
+    Double startTime = null;
+    if (acquiredDate != null) {
+      Timestamp t = Timestamp.valueOf(acquiredDate);
+      if (t != null)
+        startTime = t.asInstant().getMillis() / 1000d;
+    }
+
+    boolean firstPlane = true;
+
+
+    //addPlaneMetadata(iSeries);
+
+  }
+
+
+
+  /*
+  private void addPlaneMetadata(int iSeries) {
+      for (int plane=0; plane<getImageCount(); plane++) {
+          Coordinate coordinate = new Coordinate(seriesToCoreIndex(iSeries), plane, getImageCount());
+          ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
+          if (index == null) {
+              continue;
+          }
+
+          SubBlock p = planes.get(index.get(0));
+          if (startTime == null) {
+              startTime = p.timestamp;
+          }
+
+          if (firstPlane) {
+              if (!hasFlattenedResolutions()) {
+                  positionIndex = i;
+              }
+              else if (p.resolutionIndex == 0) {
+                  positionIndex++;
+              }
+              firstPlane = false;
+          }
+
+          Double minStageX = null;
+          Double maxStageX = null;
+          Double minStageY = null;
+          Double maxStageY = null;
+          for (Integer q : index) {
+              SubBlock currentPlane = planes.get(q);
+              if (currentPlane == null) continue;
+              if (storeRelativePositions()) {
+                  if (minStageX == null || currentPlane.col < minStageX) {
+                      minStageX = (double) currentPlane.col;
+                  }
+                  if (maxStageX == null || currentPlane.col > maxStageX) {
+                      maxStageX = (double) currentPlane.col;
+                  }
+              }
+              else if (currentPlane.stageX != null) {
+                  if (minStageX == null ||
+                          currentPlane.stageX.value().doubleValue() < minStageX)
+                  {
+                      minStageX = currentPlane.stageX.value().doubleValue();
+                  }
+                  if (maxStageX == null ||
+                          currentPlane.stageX.value().doubleValue() > maxStageX)
+                  {
+                      maxStageX = currentPlane.stageX.value().doubleValue();
+                  }
+              }
+              if (storeRelativePositions()) {
+                  if (minStageY == null || currentPlane.row < minStageY) {
+                      minStageY = (double) currentPlane.row;
+                  }
+                  if (maxStageY == null || currentPlane.row > maxStageY) {
+                      maxStageY = (double) currentPlane.row;
+                  }
+              }
+              else if (currentPlane.stageY != null) {
+                  if (minStageY == null ||
+                          currentPlane.stageY.value().doubleValue() < minStageY)
+                  {
+                      minStageY = currentPlane.stageY.value().doubleValue();
+                  }
+                  if (maxStageY == null ||
+                          currentPlane.stageY.value().doubleValue() > maxStageY)
+                  {
+                      maxStageY = currentPlane.stageY.value().doubleValue();
+                  }
+              }
+          }
+
+          // if the XML-defined positions are used,
+          // assign the same position to each resolution in a pyramid
+
+          Length x = null;
+          if (storeRelativePositions()) {
+              x = new Length(minStageX, UNITS.PIXEL);
+          }
+          else if (minStageX != null && maxStageX != null) {
+              double diff = (maxStageX - minStageX) / 2;
+              x = new Length(minStageX + diff, UNITS.MICROMETER);
+              if (positionsX != null) {
+                  positionsX[positionIndex] = x;
+              }
+          }
+          else if (positionsX != null && positionIndex < positionsX.length &&
+                  positionsX[positionIndex] != null)
+          {
+              x = positionsX[positionIndex];
+          }
+          else if (p.stageX != null) {
+              x = p.stageX;
+          }
+          else {
+              x = new Length(p.col, UNITS.REFERENCEFRAME);
+          }
+          if (x != null) {
+              store.setPlanePositionX(x, i, plane);
+              if (plane == 0) {
+                  store.setStageLabelX(x, i);
+              }
+          }
+
+          Length y = null;
+          if (storeRelativePositions()) {
+              y = new Length(minStageY, UNITS.PIXEL);
+          }
+          else if (minStageY != null && maxStageY != null) {
+              double diff = (maxStageY - minStageY) / 2;
+              y = new Length(minStageY + diff, UNITS.MICROMETER);
+              if (positionsY != null) {
+                  positionsY[positionIndex] = y;
+              }
+          }
+          else if (positionsY != null && positionIndex < positionsY.length &&
+                  positionsY[positionIndex] != null)
+          {
+              y = positionsY[positionIndex];
+          }
+          else if (p.stageY != null) {
+              y = p.stageY;
+          }
+          else {
+              y = new Length(p.row, UNITS.REFERENCEFRAME);
+          }
+          if (y != null) {
+              store.setPlanePositionY(y, i, plane);
+              if (plane == 0) {
+                  store.setStageLabelY(y, i);
+              }
+          }
+
+          Length z = null;
+          if (p.stageZ != null) {
+              z = p.stageZ;
+          }
+          else if (positionsZ != null && positionIndex < positionsZ.length) {
+              int zIndex = getZCTCoords(plane)[0];
+              if (positionsZ[positionIndex] != null) {
+                  if (zStep != null) {
+                      double value = positionsZ[positionIndex].value(zStep.unit()).doubleValue();
+                      if (zStep != null) {
+                          value += zIndex * zStep.value().doubleValue();
+                      }
+                      z = new Length(value, zStep.unit());
+                  }
+                  else {
+                      z = positionsZ[positionIndex];
+                  }
+              }
+          }
+          if (z != null) {
+              store.setPlanePositionZ(z, i, plane);
+              if (plane == 0) {
+                  store.setStageLabelZ(z, i);
+              }
+          }
+          if (plane == 0 && (x != null || y != null || z != null)) {
+              store.setStageLabelName("Scene position #" + i, i);
+          }
+
+          if (p.timestamp != null) {
+              store.setPlaneDeltaT(new Time(p.timestamp - startTime, UNITS.SECOND), i, plane);
+          }
+          else if (plane < timestamps.size() && timestamps.size() == getImageCount()) {
+              // only use the plane index if there is one timestamp per plane
+              if (timestamps.get(plane) != null) {
+                  store.setPlaneDeltaT(new Time(timestamps.get(plane), UNITS.SECOND), i, plane);
+              }
+          }
+          else if (getZCTCoords(plane)[2] < timestamps.size()) {
+              // otherwise use the timepoint index, to prevent incorrect timestamping of channels
+              int t = getZCTCoords(plane)[2];
+              if (timestamps.get(t) != null) {
+                  store.setPlaneDeltaT(new Time(timestamps.get(t), UNITS.SECOND), i, plane);
+              }
+          }
+          if (p.exposureTime != null) {
+              store.setPlaneExposureTime(new Time(p.exposureTime, UNITS.SECOND), i, plane);
+          }
+          else {
+              int channel = getZCTCoords(plane)[1];
+              if (channel < channels.size() &&
+                      channels.get(channel).exposure != null)
+              {
+                  store.setPlaneExposureTime(
+                          new Time(channels.get(channel).exposure, UNITS.SECOND), i, plane);
+              }
+          }
+      }
+  }
+    */
+  private void addChannelMetadata(int iSeries, boolean isPALM) {
+      setSeries(iSeries);
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+          if (c < channels.size()) {
+              if (isPALM && iSeries < channels.size()) {
+                  store.setChannelName(channels.get(iSeries).name, iSeries, c);
+              }
+              else {
+                  store.setChannelName(channels.get(c).name, iSeries, c);
+              }
+              store.setChannelFluor(channels.get(c).fluor, iSeries, c);
+              if (channels.get(c).filterSetRef != null) {
+                  store.setChannelFilterSetRef(channels.get(c).filterSetRef, iSeries, c);
+              }
+
+              String color = channels.get(c).color;
+              if (color != null && !isRGB()) {
+                  color = color.replaceAll("#", "");
+                  if (color.length() > 6) {
+                      color = color.substring(2, color.length());
+                  }
+                  try {
+                      // shift by 8 to allow alpha in the final byte
+                      store.setChannelColor(
+                              new Color((Integer.parseInt(color, 16) << 8) | 0xff), iSeries, c);
+                  }
+                  catch (NumberFormatException e) {
+                      LOGGER.warn("", e);
+                  }
+              }
+
+              String emWave = channels.get(c).emission;
+              if (emWave != null) {
+                  Double wave = new Double(emWave);
+                  Length em = FormatTools.getEmissionWavelength(wave);
+                  if (em != null) {
+                      store.setChannelEmissionWavelength(em, iSeries, c);
+                  }
+              }
+              String exWave = channels.get(c).excitation;
+              if (exWave != null) {
+                  Double wave = new Double(exWave);
+                  Length ex = FormatTools.getExcitationWavelength(wave);
+                  if (ex != null) {
+                      store.setChannelExcitationWavelength(ex, iSeries, c);
+                  }
+              }
+
+              if (channels.get(c).illumination != null) {
+                  store.setChannelIlluminationType(
+                          channels.get(c).illumination, iSeries, c);
+              }
+
+              if (channels.get(c).pinhole != null) {
+                  store.setChannelPinholeSize(
+                          new Length(new Double(channels.get(c).pinhole), UNITS.MICROMETER), iSeries, c);
+              }
+
+              if (channels.get(c).acquisitionMode != null) {
+                  store.setChannelAcquisitionMode(
+                          channels.get(c).acquisitionMode, iSeries, c);
+              }
+          }
+
+          if (c < detectorRefs.size()) {
+              String detector = detectorRefs.get(c);
+              store.setDetectorSettingsID(detector, iSeries, c);
+
+              if (c < binnings.size()) {
+                  try {
+                      store.setDetectorSettingsBinning(MetadataTools.getBinning(binnings.get(c)), iSeries, c);
+                  } catch (FormatException e) {
+                      logger.error(e.getMessage());
+                      e.printStackTrace();
+                  }
+              }
+              if (c < channels.size()) {
+                  store.setDetectorSettingsGain(channels.get(c).gain, iSeries, c);
+              }
+          }
+
+          if (c < channels.size()) {
+              if (hasDetectorSettings) {
+                  store.setDetectorSettingsGain(channels.get(c).gain, iSeries, c);
+              }
+          }
+      }
   }
 
   private static int getDownSampling(LibCZI.SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry entry) {
@@ -1263,6 +1891,8 @@ public class ZeissCZIReader extends FormatReader {
         return 11;
       case "S": // Scene
         return 12;
+      case FILE_PART_DIMENSION: // Scene
+        return 13;
       default:
         throw new UnsupportedOperationException("Unknown dimension "+dimension);
     }
@@ -1274,7 +1904,7 @@ public class ZeissCZIReader extends FormatReader {
     return new FilterMetadata(getMetadataStore(), isMetadataFiltered());
   }
 
-  private void handleGlobalMetadata(LibCZI.MetaDataSegment metaDataSegment, DocumentBuilder parser) throws FormatException, IOException {
+  private void readXMLMetadata(LibCZI.MetaDataSegment metaDataSegment, DocumentBuilder parser) throws FormatException, IOException {
     String xml = metaDataSegment.data.xml;
     xml = XMLTools.sanitizeXML(xml);
     translateMetadata(xml, parser);
@@ -1282,7 +1912,6 @@ public class ZeissCZIReader extends FormatReader {
 
   private void translateMetadata(String xml, DocumentBuilder parser) throws FormatException, IOException
   {
-    //System.out.println(xml);
     Element root;
     try {
       ByteArrayInputStream s =
@@ -1318,6 +1947,7 @@ public class ZeissCZIReader extends FormatReader {
     populateOriginalMetadata(realRoot, nameStack);
   }
 
+  AllPositionsInformation allPositionsInformation = new AllPositionsInformation();
   private void translateInformation(Element root) throws FormatException {
     NodeList informations = root.getElementsByTagName("Information");
     if (informations == null || informations.getLength() == 0) {
@@ -1345,11 +1975,6 @@ public class ZeissCZIReader extends FormatReader {
       medium = getFirstNodeValue(objectiveSettings, "Medium");
       refractiveIndex = getFirstNodeValue(objectiveSettings, "RefractiveIndex");
 
-      String sizeV = getFirstNodeValue(image, "SizeV");
-      /*if (sizeV != null && angles == 1) {
-        angles = Integer.parseInt(sizeV);
-      }*/
-
       Element dimensions = getFirstNode(image, "Dimensions");
 
       Element tNode = getFirstNode(dimensions, "T");
@@ -1367,43 +1992,53 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
 
+      allPositionsInformation.scenes = new ArrayList<>();
+
       Element sNode = getFirstNode(dimensions, "S");
       if (sNode != null) {
         NodeList scenes = sNode.getElementsByTagName("Scene");
-        int nextPosition = 0;
+        //int nextPosition = 0;
         for (int i=0; i<scenes.getLength(); i++) {
+          SceneProperties currentSceneProps = new SceneProperties();
+          allPositionsInformation.scenes.add(currentSceneProps);
+
           Element scene = (Element) scenes.item(i);
-          /*NodeList positions = scene.getElementsByTagName("Position"); // What is this ? Mosaic ? Scene ?
+          NodeList positions = scene.getElementsByTagName("Position"); // What is this ? Mosaic ? Scene ?
+
+          currentSceneProps.name = scene.getAttribute("Name");
+
           for (int p=0; p<positions.getLength(); p++) {
             Element position = (Element) positions.item(p);
             String x = position.getAttribute("X");
             String y = position.getAttribute("Y");
             String z = position.getAttribute("Z");
-            if (nextPosition < positionsX.length && positionsX[nextPosition] == null) {
-              positionsX[nextPosition] = new Length(DataTools.parseDouble(x), UNITS.MICROMETER);
-              positionsY[nextPosition] = new Length(DataTools.parseDouble(y), UNITS.MICROMETER);
-              positionsZ[nextPosition] = new Length(DataTools.parseDouble(z), UNITS.MICROMETER);
-              System.out.println("iPos = "+nextPosition);
-              System.out.println("x = "+positionsX[nextPosition]);
-              System.out.println("y = "+positionsY[nextPosition]);
-              System.out.println("z = "+positionsZ[nextPosition]);
-              nextPosition++;
-            }
+            System.out.println("Scene "+i+" pos "+p+" X="+x+" Y="+y+" Z="+z);
+            //if (nextPosition < positionsX.length && positionsX[nextPosition] == null) {
+
+            PositionLocation loc = new PositionLocation();
+            loc.pX = new Length(DataTools.parseDouble(x), UNITS.MICROMETER);
+            loc.pY = new Length(DataTools.parseDouble(y), UNITS.MICROMETER);
+            loc.pZ = new Length(DataTools.parseDouble(z), UNITS.MICROMETER);
+
+            currentSceneProps.pos.add(loc);
           }
 
           if (positions.getLength() == 0) {// && (mosaics <= 1 || (prestitched != null && prestitched))) {
             positions = scene.getElementsByTagName("CenterPosition");
-            if (positions.getLength() > 0 && nextPosition < positionsX.length) {
+            //if (positions.getLength() > 0 && nextPosition < positionsX.length) {
               Element position = (Element) positions.item(0);
               String[] pos = position.getTextContent().split(",");
-              positionsX[nextPosition] = new Length(DataTools.parseDouble(pos[0]), UNITS.MICROMETER);
-              positionsY[nextPosition] = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROMETER);
-            }
-            nextPosition++;
-          }*/
+              PositionLocation loc = new PositionLocation();
 
-          //sceneProps
-          //*/
+              loc.pX = new Length(DataTools.parseDouble(pos[0]), UNITS.MICROMETER);
+              loc.pY = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROMETER);
+
+              currentSceneProps.pos.add(loc);
+              System.out.println("Scene "+i+" center X="+pos[0]+" Y="+pos[1]);
+            //}
+            //nextPosition++;
+          }
+
         }
       }
 
@@ -1826,6 +2461,7 @@ public class ZeissCZIReader extends FormatReader {
     NodeList distances = getGrandchildren(scaling, "Items", "Distance");
 
     if (distances != null) {
+
       for (int i=0; i<distances.getLength(); i++) {
         Element distance = (Element) distances.item(i);
         String id = distance.getAttribute("Id");
@@ -1835,22 +2471,25 @@ public class ZeissCZIReader extends FormatReader {
         }
         Double value = new Double(originalValue) * 1000000;
         if (value > 0) {
-          PositiveFloat size = new PositiveFloat(value);
-          // Assumption
-          if (id.equals("X")) {
-            for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeX(FormatTools.createLength(size.getValue()* coreIndexToDownscaleFactor.get(series), UNITS.MICROMETER), series);
+          for (int iCoreIndex=0; iCoreIndex<core.size(); iCoreIndex++) {
+
+            int extraIndex = iCoreIndex - (core.size() - extraImages.size());
+            if (extraIndex >= 0) {
+              continue;
             }
-          }
-          else if (id.equals("Y")) {
-            for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeY(FormatTools.createLength(size.getValue()* coreIndexToDownscaleFactor.get(series), UNITS.MICROMETER), series);
-            }
-          }
-          else if (id.equals("Z")) {
-            zStep = FormatTools.createLength(size, UNITS.MICROMETER);
-            for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeZ(zStep, series);
+
+            PositiveFloat size = new PositiveFloat(value);
+            // Assumption
+            if (id.equals("X")) {
+              coreToPixSizeX.put(iCoreIndex, FormatTools.createLength(size.getValue() * coreIndexToDownscaleFactor.get(iCoreIndex), UNITS.MICROMETER));
+              store.setPixelsPhysicalSizeX(coreToPixSizeX.get(iCoreIndex), iCoreIndex);
+            } else if (id.equals("Y")) {
+              coreToPixSizeY.put(iCoreIndex, FormatTools.createLength(size.getValue() * coreIndexToDownscaleFactor.get(iCoreIndex), UNITS.MICROMETER));
+              store.setPixelsPhysicalSizeY(coreToPixSizeY.get(iCoreIndex), iCoreIndex);
+            } else if (id.equals("Z")) {
+              zStep = FormatTools.createLength(size, UNITS.MICROMETER);
+              coreToPixSizeZ.put(iCoreIndex, zStep);
+              store.setPixelsPhysicalSizeZ(zStep, iCoreIndex);
             }
           }
         }
@@ -1861,6 +2500,8 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
   }
+
+  Map<Integer, Length> coreToPixSizeX = new HashMap<>(), coreToPixSizeY = new HashMap<>(), coreToPixSizeZ = new HashMap<>(); // Because I can't read from the store.... RAAHAAH
 
   private void translateDisplaySettings(Element root) throws FormatException {
     NodeList displaySettings = root.getElementsByTagName("DisplaySetting");
@@ -2210,7 +2851,6 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
-
   }
 
   private void translateExperiment(Element root) throws FormatException {
@@ -2219,26 +2859,125 @@ public class ZeissCZIReader extends FormatReader {
       return;
     }
 
-    Element experimentBlock =
-            getFirstNode((Element) experiments.item(0), "ExperimentBlocks");
+    Element experimentBlock = getFirstNode((Element) experiments.item(0), "ExperimentBlocks");
     Element acquisition = getFirstNode(experimentBlock, "AcquisitionBlock");
+
+    // ---------------- POSITIONS
+    readPositions(acquisition);
+
+    // ---------------- DETECTORS
+    {
+      NodeList detectors = getGrandchildren(acquisition, "Detector");
+
+      Element setup = getFirstNode(acquisition, "AcquisitionModeSetup");
+      String cameraModel = getFirstNodeValue(setup, "SelectedCamera");
+
+      if (detectors != null) {
+        for (int i = 0; i < detectors.getLength(); i++) {
+          Element detector = (Element) detectors.item(i);
+          String id = MetadataTools.createLSID("Detector", 0, i);
+
+          store.setDetectorID(id, 0, i);
+          String model = detector.getAttribute("Id");
+          store.setDetectorModel(model, 0, i);
+
+          String bin = getFirstNodeValue(detector, "Binning");
+          if (bin != null) {
+            bin = bin.replaceAll(",", "x");
+            Binning binning = MetadataTools.getBinning(bin);
+
+            if (model != null && model.equals(cameraModel)) {
+              for (int image = 0; image < getSeriesCount(); image++) {
+                for (int c = 0; c < getEffectiveSizeC(); c++) {
+                  store.setDetectorSettingsID(id, image, c);
+                  store.setDetectorSettingsBinning(binning, image, c);
+                }
+              }
+              hasDetectorSettings = true;
+            }
+          }
+        }
+      }
+
+      Element multiTrack = getFirstNode(acquisition, "MultiTrackSetup");
+
+      if (multiTrack == null) {
+        return;
+      }
+
+      NodeList detectorGroups = multiTrack.getElementsByTagName("Detectors");
+      for (int d = 0; d < detectorGroups.getLength(); d++) {
+        Element detectorGroup = (Element) detectorGroups.item(d);
+        detectors = detectorGroup.getElementsByTagName("Detector");
+
+        if (detectors != null && detectors.getLength() > 0) {
+          for (int i = 0; i < detectors.getLength(); i++) {
+            Element detector = (Element) detectors.item(i);
+            String voltage = getFirstNodeValue(detector, "Voltage");
+            if (i == 0 && d == 0) {
+              gain = voltage;
+            }
+            gains.add(voltage);
+          }
+        }
+      }
+
+      NodeList tracks = multiTrack.getElementsByTagName("Track");
+
+      if (tracks != null && tracks.getLength() > 0) {
+        for (int i = 0; i < tracks.getLength(); i++) {
+          Element track = (Element) tracks.item(i);
+          Element channel = getFirstNode(track, "Channel");
+          String exposure = getFirstNodeValue(channel, "ExposureTime");
+          String gain = getFirstNodeValue(channel, "EMGain");
+
+          while (channels.size() <= i) {
+            channels.add(new Channel());
+          }
+
+          try {
+            if (exposure != null) {
+              channels.get(i).exposure = new Double(exposure);
+            }
+          } catch (NumberFormatException e) {
+            LOGGER.debug("Could not parse exposure time", e);
+          }
+          try {
+            if (gain != null) {
+              channels.get(i).gain = new Double(gain);
+            }
+          } catch (NumberFormatException e) {
+            LOGGER.debug("Could not parse gain", e);
+          }
+        }
+      }
+    }
+  }
+
+  private void readPositions(Element acquisition) {
+
     Element tilesSetup = getFirstNode(acquisition, "TilesSetup");
     NodeList groups = getGrandchildren(tilesSetup, "PositionGroup");
 
-    /*positionsX = new Length[core.size()];
-    positionsY = new Length[core.size()];
-    positionsZ = new Length[core.size()];*/
-
     if (groups != null) {
+
+      allPositionsInformation.groups = new ArrayList<>();
+
       for (int i=0; i<groups.getLength(); i++) {
         Element group = (Element) groups.item(i);
 
         Element position = getFirstNode(group, "Position");
         String tilesXValue = getFirstNodeValue(group, "TilesX");
         String tilesYValue = getFirstNodeValue(group, "TilesY");
+
+        GroupProperties groupProperties = new GroupProperties();
+        allPositionsInformation.groups.add(groupProperties);
+
         if (position != null && tilesXValue != null && !tilesXValue.isEmpty() && tilesYValue != null && !tilesYValue.isEmpty()) {
           Integer tilesX = DataTools.parseInteger(tilesXValue);
           Integer tilesY = DataTools.parseInteger(tilesYValue);
+          groupProperties.nTilesX = tilesX;
+          groupProperties.nTilesY = tilesY;
 
           String x = position.getAttribute("X");
           String y = position.getAttribute("Y");
@@ -2266,16 +3005,17 @@ public class ZeissCZIReader extends FormatReader {
             if (groups.getLength() == core.size()) {
               index = i;
             }
-            /*if (index < positionsX.length) {
-              positionsX[index] = xPos;
-              positionsY[index] = yPos;
-              positionsZ[index] = zPos;
-            }*/
+
+            TileProperties tileProperties = new TileProperties();
+            tileProperties.pos.pX = xPos;
+            tileProperties.pos.pY = yPos;
+            tileProperties.pos.pZ = zPos;
+            groupProperties.tiles.add(tileProperties);
+
           }
         }
       }
-    }
-    else {
+    } else {
       Element regionsSetup = getFirstNode(acquisition, "RegionsSetup");
 
       if (regionsSetup != null) {
@@ -2319,6 +3059,9 @@ public class ZeissCZIReader extends FormatReader {
           NodeList regionArrays = sampleHolder.getElementsByTagName("SingleTileRegionArray");
           if (regionArrays != null) {
             int positionIndex = 0;
+
+            allPositionsInformation.regions = new ArrayList<>();
+
             for (int r=0; r<regionArrays.getLength(); r++) {
               NodeList regions = ((Element) regionArrays.item(r)).getElementsByTagName("SingleTileRegion");
               if (regions != null) {
@@ -2331,119 +3074,33 @@ public class ZeissCZIReader extends FormatReader {
                   String name = region.getAttribute("Name");
 
                   // safe to assume all 3 arrays have the same length
-                  /*if (positionIndex < positionsX.length) {
-                    if (x == null) {
-                      positionsX[positionIndex] = null;
-                    } else {
-                      final Double number = Double.valueOf(x);
-                      positionsX[positionIndex] = new Length(number, UNITS.MICROMETER);
-                    }
-                    if (y == null) {
-                      positionsY[positionIndex] = null;
-                    } else {
-                      final Double number = Double.valueOf(y);
-                      positionsY[positionIndex] = new Length(number, UNITS.MICROMETER);
-                    }
-                    if (z == null) {
-                      positionsZ[positionIndex] = null;
-                    } else {
-                      final Double number = Double.valueOf(z);
-                      positionsZ[positionIndex] = new Length(number, UNITS.MICROMETER);
-                    }
-                  }*/
+                  //if (positionIndex < positionsX.length) {
+                  PositionLocation loc = new PositionLocation();
+                  if (x == null) {
+                    loc.pX = null; //positionsX[positionIndex] = null;
+                  } else {
+                    final Double number = Double.valueOf(x);
+                    loc.pX = new Length(number, UNITS.MICROMETER);// positionsX[positionIndex] = new Length(number, UNITS.MICROMETER);
+                  }
+                  if (y == null) {
+                    loc.pY = null;//positionsY[positionIndex] = null;
+                  } else {
+                    final Double number = Double.valueOf(y);
+                    loc.pY = new Length(number, UNITS.MICROMETER);//positionsY[positionIndex] = new Length(number, UNITS.MICROMETER);
+                  }
+                  if (z == null) {
+                    loc.pZ = null;//positionsZ[positionIndex] = null;
+                  } else {
+                    final Double number = Double.valueOf(z);
+                    loc.pZ = new Length(number, UNITS.MICROMETER);//positionsZ[positionIndex] = new Length(number, UNITS.MICROMETER);
+                  }
+                  allPositionsInformation.regions.add(loc);
 
                   fieldNames.add(name);
                 }
               }
             }
           }
-        }
-      }
-    }
-
-    NodeList detectors = getGrandchildren(acquisition, "Detector");
-
-    Element setup = getFirstNode(acquisition, "AcquisitionModeSetup");
-    String cameraModel = getFirstNodeValue(setup, "SelectedCamera");
-
-    if (detectors != null) {
-      for (int i=0; i<detectors.getLength(); i++) {
-        Element detector = (Element) detectors.item(i);
-        String id = MetadataTools.createLSID("Detector", 0, i);
-
-        store.setDetectorID(id, 0, i);
-        String model = detector.getAttribute("Id");
-        store.setDetectorModel(model, 0, i);
-
-        String bin = getFirstNodeValue(detector, "Binning");
-        if (bin != null) {
-          bin = bin.replaceAll(",", "x");
-          Binning binning = MetadataTools.getBinning(bin);
-
-          if (model != null && model.equals(cameraModel)) {
-            for (int image=0; image<getSeriesCount(); image++) {
-              for (int c=0; c<getEffectiveSizeC(); c++) {
-                store.setDetectorSettingsID(id, image, c);
-                store.setDetectorSettingsBinning(binning, image, c);
-              }
-            }
-            hasDetectorSettings = true;
-          }
-        }
-      }
-    }
-
-    Element multiTrack = getFirstNode(acquisition, "MultiTrackSetup");
-
-    if (multiTrack == null) {
-      return;
-    }
-
-    NodeList detectorGroups = multiTrack.getElementsByTagName("Detectors");
-    for (int d=0; d<detectorGroups.getLength(); d++) {
-      Element detectorGroup = (Element) detectorGroups.item(d);
-      detectors = detectorGroup.getElementsByTagName("Detector");
-
-      if (detectors != null && detectors.getLength() > 0) {
-        for (int i=0; i<detectors.getLength(); i++) {
-          Element detector = (Element) detectors.item(i);
-          String voltage = getFirstNodeValue(detector, "Voltage");
-          if (i == 0 && d == 0) {
-            gain = voltage;
-          }
-          gains.add(voltage);
-        }
-      }
-    }
-
-    NodeList tracks = multiTrack.getElementsByTagName("Track");
-
-    if (tracks != null && tracks.getLength() > 0) {
-      for (int i=0; i<tracks.getLength(); i++) {
-        Element track = (Element) tracks.item(i);
-        Element channel = getFirstNode(track, "Channel");
-        String exposure = getFirstNodeValue(channel, "ExposureTime");
-        String gain = getFirstNodeValue(channel, "EMGain");
-
-        while (channels.size() <= i) {
-          channels.add(new Channel());
-        }
-
-        try {
-          if (exposure != null) {
-            channels.get(i).exposure = new Double(exposure);
-          }
-        }
-        catch (NumberFormatException e) {
-          LOGGER.debug("Could not parse exposure time", e);
-        }
-        try {
-          if (gain != null) {
-            channels.get(i).gain = new Double(gain);
-          }
-        }
-        catch (NumberFormatException e) {
-          LOGGER.debug("Could not parse gain", e);
         }
       }
     }
@@ -2779,27 +3436,68 @@ public class ZeissCZIReader extends FormatReader {
    *
    * To avoid issues with ordering, the maximal number of digits per dimension should be known in advance.
    */
-  static class CoreSignature implements Comparable<CoreSignature> {
+   static class CoreSignature implements Comparable<CoreSignature> {
     final String signature;
     final int hashCode;
     public CoreSignature(LibCZI.SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDV.DimensionEntry[] entries,
                          String pyramidLevelDimension, int pyramidLevelValue,
-                         Function<String, Integer> maxDigitPerDimension, boolean autostitch) {
+                         Function<String, Integer> maxDigitPerDimension, boolean autostitch,
+                         String filePartDimension, int filePartValue) {
       final StringBuilder signatureBuilder = new StringBuilder();
+      signatureBuilder.append(filePartDimension);
+      String digitFormat = "%0"+maxDigitPerDimension.apply(filePartDimension)+"d";
+      signatureBuilder.append(String.format(digitFormat, filePartValue));
       Arrays.asList(entries).stream()
               .sorted(Comparator.comparing(e -> dimensionPriority(e.dimension)))
               .forEachOrdered(e -> {
                 if (!ignoreDimForSeries(e.dimension, autostitch)) {
-                  String digitFormat = "%0"+maxDigitPerDimension.apply(e.dimension)+"d";
-                  signatureBuilder.append(e.dimension+String.format(digitFormat, e.start));
+                  String digitFormat_inner = "%0"+maxDigitPerDimension.apply(e.dimension)+"d";
+                  signatureBuilder.append(e.dimension+String.format(digitFormat_inner, e.start));
                 }
               });
       // TODO : put this as a dimension entry directly
       signatureBuilder.append(pyramidLevelDimension);
-      String digitFormat = "%0"+maxDigitPerDimension.apply(pyramidLevelDimension)+"d";
+      digitFormat = "%0"+maxDigitPerDimension.apply(pyramidLevelDimension)+"d";
       signatureBuilder.append(String.format(digitFormat, pyramidLevelValue));
       signature = signatureBuilder.toString();
       hashCode = Objects.hash(signature); // final, so let's precompute the hashcode
+    }
+
+    public Map<String, Integer> getDimensions() {
+      Map<String, Integer> resultMap = new HashMap<>();
+
+      // Iterate over the characters in the input string
+      int startIndex = 0;
+      int endIndex = startIndex+1;
+      //for (int i = 0; i < signature.length(); i++) {
+      while (startIndex<signature.length()) {
+        //char currentChar = signature.charAt(startIndex);
+        // Check if the current character is alphabetical
+        //assert Character.isLetter(currentChar);
+
+        // Find the index of the digit character after the alphabetical characters
+        while (endIndex < signature.length() && !Character.isDigit(signature.charAt(endIndex))) {
+          endIndex++;
+        }
+
+        // Extract the dimension substring and convert it to an integer value
+        String dimension = signature.substring(startIndex, endIndex);
+        startIndex = endIndex;
+
+        while (endIndex < signature.length() && Character.isDigit(signature.charAt(endIndex))) {
+          endIndex++;
+        }
+
+        String numberString = signature.substring(startIndex, endIndex);
+        int number = Integer.parseInt(numberString);
+
+        startIndex = endIndex;
+
+        // Add the alphabetical character and the associated integer to the map
+        resultMap.put(dimension, number);
+
+      }
+      return resultMap;
     }
 
     @Override
@@ -2824,6 +3522,7 @@ public class ZeissCZIReader extends FormatReader {
     public String toString() {
       return signature;
     }
+
   }
 
   /**
@@ -2898,5 +3597,58 @@ public class ZeissCZIReader extends FormatReader {
   @interface CopyByRef {
 
   }
+
+  public static class SceneProperties {
+    List<PositionLocation> pos = new ArrayList<>();
+    String name;
+  }
+
+  public static class GroupProperties {
+    List<TileProperties> tiles = new ArrayList<>();
+
+    int nTilesX, nTilesY;
+  }
+
+  public static class TileProperties {
+    PositionLocation pos = new PositionLocation();
+    Integer iX;
+    Integer iY;
+  }
+
+  private static class PositionLocation {
+    Length pX, pY, pZ;
+  }
+
+  private static class AllPositionsInformation {
+    /**
+     * We may have, group, tiles, or scenes
+     */
+    List<SceneProperties> scenes;
+    List<GroupProperties> groups;
+    //List<TileProperties> tiles;
+
+    List<PositionLocation> regions;
+  }
+
+  /**
+   * A structure that helps to group all CZI segments
+   * that are used in the file initialization
+   */
+  private static class CZISegments {
+    final LibCZI.FileHeaderSegment fileHeader;
+    final LibCZI.SubBlockDirectorySegment subBlockDirectory;
+    final LibCZI.AttachmentDirectorySegment attachmentDirectory;
+    final LibCZI.MetaDataSegment metadata;
+    final double[] timeStamps;
+
+    public CZISegments(String id, boolean littleEndian) throws IOException {
+      this.fileHeader = LibCZI.getFileHeaderSegment(id, BUFFER_SIZE, littleEndian);
+      this.subBlockDirectory = LibCZI.getSubBlockDirectorySegment(this.fileHeader, id, BUFFER_SIZE, littleEndian);
+      this.metadata = LibCZI.getMetaDataSegment(this.fileHeader, id, BUFFER_SIZE, littleEndian);
+      this.attachmentDirectory = LibCZI.getAttachmentDirectorySegment(this.fileHeader, id, BUFFER_SIZE, littleEndian);
+      this.timeStamps = LibCZI.getTimeStamps(this.attachmentDirectory, id, BUFFER_SIZE, littleEndian);
+    }
+  }
+
 
 }
