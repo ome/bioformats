@@ -269,7 +269,7 @@ public class KLBReader extends FormatReader {
           if (coordBlock[1] < y && coordBlock[0] < x && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) outputOffset = 0;
 
           // Location within the block for required XY plane
-          int inputOffset = (coordBlock[2] % dims_blockSize[2]) * blockRowSize * blockSizeAux[1];
+          int inputOffset = (currentCoords[0] % dims_blockSize[2]) * blockRowSize * blockSizeAux[1];
           if (coordBlock[0] < x && coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) inputOffset += ((dims_blockSize[0] * (dims_blockSize[1] - blockSizeAux[1])) + (x - coordBlock[0])) * bytesPerPixel;
           // Partial block at the start of x tile
           else if (coordBlock[0] < x && blockSizeAux[0] != dims_blockSize[0]) inputOffset += (dims_blockSize[0] - blockSizeAux[0]) * bytesPerPixel;
