@@ -836,6 +836,12 @@ public class CV7000Reader extends FormatReader {
         startTime = attributes.getValue("bts:BeginTime");
         endTime = attributes.getValue("bts:EndTime");
         settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
+
+        String system = attributes.getValue("bts:TargetSystem");
+        addGlobalMeta("Acquisition system", system);
+        if (!system.toLowerCase().startsWith("cv7000")) {
+          LOGGER.warn("Found data from {}; this is not well-supported", system);
+        }
       }
     }
 
