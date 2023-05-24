@@ -2500,6 +2500,13 @@ public class FormatReaderTest {
         IFormatReader[] readers = ir.getReaders();
         String[] used = reader.getUsedFiles();
         for (int i=0; i<used.length && success; i++) {
+          // ignore anything other than .wpi for CV7000
+          if (!used[i].toLowerCase().endsWith(".wpi") &&
+            r instanceof CV7000Reader)
+          {
+            continue;
+          }
+
           // for each used file, make sure that one reader,
           // and only one reader, identifies the dataset as its own
           for (int j=0; j<readers.length; j++) {
@@ -2745,13 +2752,6 @@ public class FormatReaderTest {
 
             // Operetta only reliably detects from Index.*.xml
             if (!result && r instanceof OperettaReader) {
-              continue;
-            }
-
-            // ignore anything other than .wpi for CV7000
-            if (!used[i].toLowerCase().endsWith(".wpi") &&
-              r instanceof CV7000Reader)
-            {
               continue;
             }
 
