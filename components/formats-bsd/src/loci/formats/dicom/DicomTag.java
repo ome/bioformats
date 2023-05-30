@@ -522,6 +522,23 @@ public class DicomTag {
     return null;
   }
 
+  /**
+   * Check this tag against a list of existing tags.
+   * If this tag is a duplicate of an existing tag or otherwise deemed invalid,
+   * return false. Otherwise return true.
+   */
+  public boolean validate(List<DicomTag> tags) {
+    // TODO: this is very simplistic validation that just rejects duplicates
+    // we could pursue more comprehensive validation here,
+    // but need to define what that means
+    for (DicomTag t : tags) {
+      if (this.tag == t.tag) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @Override
   public String toString() {
     return key + " = " + value;

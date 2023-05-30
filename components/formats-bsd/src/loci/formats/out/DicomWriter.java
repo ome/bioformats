@@ -57,6 +57,7 @@ import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.dicom.ITagProvider;
 import loci.formats.dicom.DicomTag;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataOptions;
@@ -104,6 +105,8 @@ public class DicomWriter extends FormatWriter {
   private String instanceUIDValue;
   private String implementationUID;
 
+  private ArrayList<ITagProvider> tagProviders = new ArrayList<ITagProvider>();
+
   // -- Constructor --
 
   public DicomWriter() {
@@ -113,6 +116,28 @@ public class DicomWriter extends FormatWriter {
       CompressionType.JPEG.getCompression(),
       CompressionType.J2K.getCompression()
     };
+  }
+
+  // -- DicomWriter API methods --
+
+  /**
+   * Provide additional DICOM tags that should be written
+   * as part of this dataset.
+   *
+   * Calling this method is optional. Multiple calls are allowed,
+   * e.g. if tags come from multiple external sources.
+   * If multiple calls to this method are made then the order matters,
+   * with earlier calls implying higher priority when resolving duplicate
+   * or conflicting tags.
+   *
+   * All calls to this method must occur before setId is called.
+   */
+  public void setExtraTags(ITagProvider tagProvider) {
+    FormatTools.assertId(currentId, false, 1);
+
+    if (tagProvider != null) {
+      tagProviders.add(tagProvider);
+    }
   }
 
   // -- IFormatWriter API methods --
@@ -896,6 +921,16 @@ public class DicomWriter extends FormatWriter {
           tags.add(labelText);
         }
 
+        // now add all supplementary tags from tag providers
+        for (ITagProvider provider : tagProviders) {
+          for (DicomTag t : provider.getTags()) {
+            boolean validTag = t.validate(tags);
+            if (validTag) {
+              tags.add(t);
+            }
+          }
+        }
+
         // sort tags into ascending order, then write
 
         tags.sort(new Comparator<DicomTag>() {
@@ -928,6 +963,8 @@ public class DicomWriter extends FormatWriter {
     transferSyntaxPointer = null;
     compressionMethodPointer = null;
     fileMetaLengthPointer = 0;
+
+    tagProviders.clear();
 
     // intentionally don't reset tile dimensions
   }
