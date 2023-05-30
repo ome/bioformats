@@ -928,6 +928,9 @@ public class DicomWriter extends FormatWriter {
             if (validTag) {
               tags.add(t);
             }
+            else {
+              LOGGER.warn("Ignoring tag {} from provider {}", t, provider);
+            }
           }
         }
 
