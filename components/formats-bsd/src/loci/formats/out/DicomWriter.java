@@ -58,6 +58,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.dicom.DCDumpProvider;
+import loci.formats.dicom.DicomJSONProvider;
 import loci.formats.dicom.ITagProvider;
 import loci.formats.dicom.DicomTag;
 import loci.formats.in.DynamicMetadataOptions;
@@ -130,10 +131,12 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
     if (tagSource != null) {
       ITagProvider provider = null;
-      if (checkSuffix(tagSource, "dcdump")) {
+      if (checkSuffix(tagSource, "json")) {
+        provider = new DicomJSONProvider();
+      }
+      else if (checkSuffix(tagSource, "dcdump")) {
         provider = new DCDumpProvider();
       }
-      // TODO: allow for JSON parser here
 
       try {
         provider.readTagSource(tagSource);
@@ -931,6 +934,14 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
           for (DicomTag t : provider.getTags()) {
             boolean validTag = t.validate(tags);
             if (validTag) {
+              if (t.value instanceof String) {
+                if (t.vr == UI) {
+                  t.value = padUID((String) t.value);
+                }
+                else {
+                  t.value = padString((String) t.value);
+                }
+              }
               tags.add(t);
             }
             else {

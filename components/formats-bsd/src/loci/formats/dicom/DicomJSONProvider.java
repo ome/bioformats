@@ -36,49 +36,60 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Provide DICOM tags from a file containing the output of dcdump.
+ * Provide DICOM tags from a file containing JSON.
+ * Formal JSON schema yet to be determined, but the idea is to accept a hierarchy
+ * of tags of the form:
+ *
+ * {
+ *   "BodyPartExamined": {
+ *     "Value": "BRAIN",
+ *     "VR": "CS",
+ *     "Tag": "(0018,0015)"
+ *   }
+ * }
+ *
+ * This is similar to JSON examples in https://github.com/QIICR/dcmqi/tree/master/doc/examples,
+ * but allows for the VR (type) and tag to be explicitly stated, in addition to
+ * the more human-readable description.
  */
-public class DCDumpProvider implements ITagProvider {
+public class DicomJSONProvider implements ITagProvider {
 
   private List<DicomTag> tags = new ArrayList<DicomTag>();
 
   @Override
   public void readTagSource(String location) throws IOException {
-    String[] lines = DataTools.readFile(location).split("\r\n");
+    String rawJSON = DataTools.readFile(location);
+    try {
+      JSONObject root = new JSONObject(rawJSON);
 
-    // TODO: does not currently handle tag hierarchies
-    for (String line : lines) {
-      String[] tokens = line.split(" ");
-      String[] tag = tokens[0].replaceAll("()", "").split(",");
+      // TODO: nested tags not currently supported
 
-      String vr = tokens[1];
-      vr = vr.substring(vr.indexOf("<") + 1, vr.indexOf(">"));
+      for (String tagKey : root.keySet()) {
+        JSONObject tag = root.getJSONObject(tagKey);
+        String vr = tag.getString("VR");
+        String value = tag.getString("Value");
+        String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
 
-      String length = null;
-      String value = "";
-      for (int i=2; i<tokens.length; i++) {
-        if (tokens[i].startsWith("VL")) {
-          length = tokens[i];
-        }
-        else if (tokens[i].startsWith("<")) {
-          value += tokens[i];
-          while (!value.endsWith(">")) {
-            i++;
-            value += tokens[i];
-          }
-        }
+        int tagUpper = Integer.parseInt(tagCode[0], 16);
+        int tagLower = Integer.parseInt(tagCode[1], 16);
+
+        DicomAttribute attr = DicomAttribute.get(tagUpper << 16 | tagLower);
+        DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
+        DicomTag dicomTag = new DicomTag(attr, vrEnum);
+        dicomTag.value = value;
+        tags.add(dicomTag);
       }
-
-      int tagUpper = Integer.parseInt(tag[0], 16);
-      int tagLower = Integer.parseInt(tag[1], 16);
-
-      DicomTag t = new DicomTag(DicomAttribute.get(tagUpper << 16 | tagLower), DicomVR.valueOf(DicomVR.class, vr));
-      // TODO: fix value handling for more complex cases (e.g. arrays)
-      t.value = value;
-      tags.add(t);
+    }
+    catch (JSONException e) {
+      throw new IOException("Could not parse JSON", e);
     }
   }
 
