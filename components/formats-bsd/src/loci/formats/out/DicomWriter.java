@@ -57,6 +57,7 @@ import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.dicom.DCDumpProvider;
 import loci.formats.dicom.ITagProvider;
 import loci.formats.dicom.DicomTag;
 import loci.formats.in.DynamicMetadataOptions;
@@ -76,7 +77,7 @@ import static loci.formats.dicom.DicomVR.*;
  * This is designed for whole slide images, and may not produce
  * schema-compliant files for other modalities.
  */
-public class DicomWriter extends FormatWriter {
+public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
   // -- Constants --
 
@@ -118,25 +119,29 @@ public class DicomWriter extends FormatWriter {
     };
   }
 
-  // -- DicomWriter API methods --
+  // -- IExtraMetadataWriter API methods --
 
-  /**
-   * Provide additional DICOM tags that should be written
-   * as part of this dataset.
-   *
-   * Calling this method is optional. Multiple calls are allowed,
-   * e.g. if tags come from multiple external sources.
-   * If multiple calls to this method are made then the order matters,
-   * with earlier calls implying higher priority when resolving duplicate
-   * or conflicting tags.
-   *
-   * All calls to this method must occur before setId is called.
-   */
-  public void setExtraTags(ITagProvider tagProvider) {
+  @Override
+  public void setExtraMetadata(String tagSource) {
     FormatTools.assertId(currentId, false, 1);
 
-    if (tagProvider != null) {
-      tagProviders.add(tagProvider);
+    // get the provider (parser) from the source name
+    // uses the file extension, this might need improvement
+
+    if (tagSource != null) {
+      ITagProvider provider = null;
+      if (checkSuffix(tagSource, "dcdump")) {
+        provider = new DCDumpProvider();
+      }
+      // TODO: allow for JSON parser here
+
+      try {
+        provider.readTagSource(tagSource);
+        tagProviders.add(provider);
+      }
+      catch (IOException e) {
+        LOGGER.error("Could not parse extra metadata: " + tagSource, e);
+      }
     }
   }
 
