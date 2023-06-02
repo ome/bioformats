@@ -261,6 +261,13 @@ public class KLBReader extends FormatReader {
           int imageRowSize = w * bytesPerPixel;
           int blockRowSize = blockSizeAux[0] * bytesPerPixel;
           int fullBlockRowSize = dims_blockSize[0] * bytesPerPixel;
+          
+          // Actual block values used as offsets for  Z planes
+          // This covers the use case when you have a block that overlaps a tile and also 
+          // is a partial block at the end of a row or column
+          int actualBlockWidth = Math.min(dims_blockSize[0], (getSizeX() - coordBlock[0]));
+          int actualBlockHeight = Math.min(dims_blockSize[1], (getSizeY() - coordBlock[1]));
+          int actualBlockPlaneSize = bytesPerPixel * actualBlockHeight * actualBlockWidth;
 
           // Location in output buffer to copy block
           outputOffset = (imageRowSize * (coordBlock[1] - y)) + ((coordBlock[0] - x) * bytesPerPixel);
@@ -269,13 +276,13 @@ public class KLBReader extends FormatReader {
           if (coordBlock[1] < y && coordBlock[0] < x && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) outputOffset = 0;
 
           // Location within the block for required XY plane
-          int inputOffset = (currentCoords[0] % dims_blockSize[2]) * fullBlockRowSize * dims_blockSize[1];
-          if (coordBlock[0] < x && coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) inputOffset += ((dims_blockSize[0] * (dims_blockSize[1] - blockSizeAux[1])) + (x - coordBlock[0])) * bytesPerPixel;
+          int inputOffset = (currentCoords[0] % dims_blockSize[2]) * actualBlockPlaneSize;
+          if (coordBlock[0] < x && coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && blockSizeAux[0] != dims_blockSize[0]) inputOffset += ((dims_blockSize[0] * (y - coordBlock[1])) + (x - coordBlock[0])) * bytesPerPixel;
           // Partial block at the start of x tile
-          else if (coordBlock[0] < x && blockSizeAux[0] != dims_blockSize[0]) inputOffset += (dims_blockSize[0] - blockSizeAux[0]) * bytesPerPixel;
+          else if (coordBlock[0] < x && blockSizeAux[0] != dims_blockSize[0]) inputOffset += (x - coordBlock[0]) * bytesPerPixel;
           // Partial block at the start of y tile
-          else if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && coordBlock[0] + blockSizeAux[0] == dims_xyzct[0]) inputOffset += blockSizeAux[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
-          else if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1]) inputOffset += dims_blockSize[0] * (dims_blockSize[1] - blockSizeAux[1]) * bytesPerPixel;
+          else if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1] && coordBlock[0] + blockSizeAux[0] == dims_xyzct[0]) inputOffset += blockSizeAux[0] * (y - coordBlock[1]) * bytesPerPixel;
+          else if (coordBlock[1] < y && blockSizeAux[1] != dims_blockSize[1]) inputOffset += dims_blockSize[0] * (y - coordBlock[1]) * bytesPerPixel;
           
           inputOffset += (coordBlock[3] % dims_blockSize[3]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2];
           inputOffset += (coordBlock[4] % dims_blockSize[4]) * blockRowSize * blockSizeAux[1] * blockSizeAux[2] * blockSizeAux[3];
