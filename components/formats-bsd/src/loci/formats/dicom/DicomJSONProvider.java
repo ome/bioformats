@@ -43,6 +43,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Provide DICOM tags from a file containing JSON.
  * Formal JSON schema yet to be determined, but the idea is to accept a hierarchy
@@ -61,6 +64,9 @@ import org.json.JSONObject;
  * the more human-readable description.
  */
 public class DicomJSONProvider implements ITagProvider {
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(DicomJSONProvider.class);
 
   private List<DicomTag> tags = new ArrayList<DicomTag>();
 
@@ -85,6 +91,8 @@ public class DicomJSONProvider implements ITagProvider {
         DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
         DicomTag dicomTag = new DicomTag(attr, vrEnum);
         dicomTag.value = value;
+        LOGGER.debug("Adding tag: {}, VR: {}, value: {}", attr, vrEnum, value);
+        dicomTag.validateValue();
         tags.add(dicomTag);
       }
     }

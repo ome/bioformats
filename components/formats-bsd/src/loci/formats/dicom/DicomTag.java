@@ -539,8 +539,151 @@ public class DicomTag {
     return true;
   }
 
+  /**
+   * Compare the value type to the VR.
+   * If the two types do not match, attempt to conver the value
+   * into the VR's type.
+   * Usually this means parsing numerical values from a String.
+   */
+  public void validateValue() {
+    if (value == null) {
+      return;
+    }
+    switch (vr) {
+      case AE:
+      case AS:
+      case CS:
+      case DA:
+      case DS:
+      case DT:
+      case IS:
+      case LO:
+      case LT:
+      case PN:
+      case SH:
+      case ST:
+      case TM:
+      case UC:
+      case UI:
+      case UR:
+      case UT:
+        value = value.toString();
+        break;
+      case AT:
+      case SS:
+      case US:
+        if (value instanceof Short) {
+          value = new short[] {(short) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          short[] v = new short[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Short.decode(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof short[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case FL:
+        if (value instanceof Float) {
+          value = new float[] {(float) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          float[] v = new float[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Float.parseFloat(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof float[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case FD:
+        if (value instanceof Double) {
+          value = new double[] {(double) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          double[] v = new double[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Double.parseDouble(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof double[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case OB:
+      case IMPLICIT:
+        if (value instanceof Byte) {
+          value = new byte[] {(byte) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          byte[] v = new byte[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Byte.decode(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof byte[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case SL:
+        if (value instanceof Integer) {
+          value = new int[] {(int) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          int[] v = new int[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Integer.decode(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof int[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case SV:
+      case UL:
+        if (value instanceof Long) {
+          value = new long[] {(long) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          long[] v = new long[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Long.decode(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof long[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      default:
+        throw new IllegalArgumentException(String.valueOf(vr.getCode()));
+    }
+  }
+
   @Override
   public String toString() {
+    if (key == null) {
+      if (attribute != null) {
+        key = attribute.getDescription();
+      }
+      else {
+        key = DicomAttribute.getDescription(tag);
+      }
+    }
     return key + " = " + value;
   }
 

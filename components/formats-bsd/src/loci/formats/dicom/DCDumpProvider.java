@@ -38,24 +38,35 @@ import java.util.List;
 
 import loci.common.DataTools;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Provide DICOM tags from a file containing the output of dcdump.
  */
 public class DCDumpProvider implements ITagProvider {
 
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(DCDumpProvider.class);
+
   private List<DicomTag> tags = new ArrayList<DicomTag>();
 
   @Override
   public void readTagSource(String location) throws IOException {
-    String[] lines = DataTools.readFile(location).split("\r\n");
+    String[] lines = DataTools.readFile(location).split("[\r\n]");
 
+    LOGGER.debug("Attempting to parse {} tags", lines.length);
     // TODO: does not currently handle tag hierarchies
     for (String line : lines) {
+      LOGGER.debug("Parsing line: {}", line);
       String[] tokens = line.split(" ");
-      String[] tag = tokens[0].replaceAll("()", "").split(",");
+      String[] tag = tokens[0].replaceAll("[()]", "").split(",");
 
-      String vr = tokens[1];
-      vr = vr.substring(vr.indexOf("<") + 1, vr.indexOf(">"));
+      String vr = tokens[1].trim();
+      if (vr.isEmpty()) {
+        LOGGER.debug("VR not found for tag {}", tokens[0]);
+        continue;
+      }
 
       String length = null;
       String value = "";
@@ -69,15 +80,27 @@ public class DCDumpProvider implements ITagProvider {
             i++;
             value += tokens[i];
           }
+          value = value.substring(1, value.length() - 1);
+        }
+        else if (tokens[i].startsWith("[")) {
+          value += tokens[i];
+          while (!value.endsWith("]")) {
+            i++;
+            value += tokens[i];
+          }
+          value = value.substring(1, value.length() - 1);
         }
       }
 
-      int tagUpper = Integer.parseInt(tag[0], 16);
-      int tagLower = Integer.parseInt(tag[1], 16);
+      int tagUpper = Integer.decode(tag[0]);
+      int tagLower = Integer.decode(tag[1]);
 
-      DicomTag t = new DicomTag(DicomAttribute.get(tagUpper << 16 | tagLower), DicomVR.valueOf(DicomVR.class, vr));
-      // TODO: fix value handling for more complex cases (e.g. arrays)
+      DicomAttribute attr = DicomAttribute.get(tagUpper << 16 | tagLower);
+      DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
+      DicomTag t = new DicomTag(attr, vrEnum);
       t.value = value;
+      t.validateValue();
+      LOGGER.debug("Adding tag: {}, VR: {}, value: {}", attr, vrEnum, value);
       tags.add(t);
     }
   }
