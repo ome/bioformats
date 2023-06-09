@@ -57,6 +57,22 @@ import org.slf4j.LoggerFactory;
  *     "VR": "CS",
  *     "Tag": "(0018,0015)"
  *   }
+ *   "ContributingEquipmentSequence": {
+ *     "VR": "SQ",
+ *     "Tag": "(0018,a001)",
+ *     "Sequence": {
+ *       "Manufacturer": {
+ *         "Value": "PixelMed",
+ *         "VR": "LO",
+ *         "Tag": "(0008,0070)"
+ *       },
+ *       "ContributionDateTime": {
+ *         "Value": "20210710234601.105+0000",
+ *         "VR": "DT",
+ *         "Tag": "(0018,a002)"
+ *       }
+ *     }
+ *   }
  * }
  *
  * This is similar to JSON examples in https://github.com/QIICR/dcmqi/tree/master/doc/examples,
@@ -76,23 +92,26 @@ public class DicomJSONProvider implements ITagProvider {
     try {
       JSONObject root = new JSONObject(rawJSON);
 
-      // TODO: nested tags not currently supported
-
       for (String tagKey : root.keySet()) {
         JSONObject tag = root.getJSONObject(tagKey);
         String vr = tag.getString("VR");
-        String value = tag.getString("Value");
+        String value = tag.has("Value") ? tag.getString("Value") : null;
         String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
 
         int tagUpper = Integer.parseInt(tagCode[0], 16);
         int tagLower = Integer.parseInt(tagCode[1], 16);
 
-        DicomAttribute attr = DicomAttribute.get(tagUpper << 16 | tagLower);
+        int intTagCode = tagUpper << 16 | tagLower;
         DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
-        DicomTag dicomTag = new DicomTag(attr, vrEnum);
+        DicomTag dicomTag = new DicomTag(intTagCode, vrEnum);
         dicomTag.value = value;
-        LOGGER.debug("Adding tag: {}, VR: {}, value: {}", attr, vrEnum, value);
+        LOGGER.debug("Adding tag: {}, VR: {}, value: {}", intTagCode, vrEnum, value);
         dicomTag.validateValue();
+
+        if (vrEnum == DicomVR.SQ && tag.has("Sequence")) {
+          readSequence(tag, dicomTag);
+        }
+
         tags.add(dicomTag);
       }
     }
@@ -104,6 +123,33 @@ public class DicomJSONProvider implements ITagProvider {
   @Override
   public List<DicomTag> getTags() {
     return tags;
+  }
+
+  private void readSequence(JSONObject rootTag, DicomTag parent) {
+    JSONObject sequence = rootTag.getJSONObject("Sequence");
+    for (String key : sequence.keySet()) {
+      JSONObject tag = sequence.getJSONObject(key);
+      String vr = tag.getString("VR");
+      String value = tag.getString("Value");
+      String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
+
+      int tagUpper = Integer.parseInt(tagCode[0], 16);
+      int tagLower = Integer.parseInt(tagCode[1], 16);
+
+      int intTagCode = tagUpper << 16 | tagLower;
+      DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
+      DicomTag dicomTag = new DicomTag(intTagCode, vrEnum);
+      dicomTag.value = value;
+      LOGGER.debug("Adding tag: {}, VR: {}, value: {}", intTagCode, vrEnum, value);
+      dicomTag.validateValue();
+
+      dicomTag.parent = parent;
+      parent.children.add(dicomTag);
+
+      if (vrEnum == DicomVR.SQ && tag.get("Sequence") != null) {
+        readSequence(tag, dicomTag);
+      }
+    }
   }
 
 }
