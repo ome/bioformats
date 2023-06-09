@@ -80,6 +80,17 @@ public class DicomTag {
     this.tag = attribute.getTag();
   }
 
+  public DicomTag(int tag, DicomVR vr) {
+    this.tag = tag;
+    this.attribute = DicomAttribute.get(tag);
+    if (vr != null) {
+      this.vr = vr; 
+    }
+    else if (attribute != null) {
+      this.vr = attribute.getDefaultVR();
+    }
+  }
+
   /**
    * Read a complete tag and value from the given input stream.
    */

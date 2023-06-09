@@ -934,14 +934,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
           for (DicomTag t : provider.getTags()) {
             boolean validTag = t.validate(tags);
             if (validTag) {
-              if (t.value instanceof String) {
-                if (t.vr == UI) {
-                  t.value = padUID((String) t.value);
-                }
-                else {
-                  t.value = padString((String) t.value);
-                }
-              }
+              padTagValues(t);
               tags.add(t);
             }
             else {
@@ -954,7 +947,10 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
         tags.sort(new Comparator<DicomTag>() {
           public int compare(DicomTag a, DicomTag b) {
-            return a.attribute.getTag() - b.attribute.getTag();
+            int aTag = a.attribute == null ? a.tag : a.attribute.getTag();
+            int bTag = b.attribute == null ? b.tag : b.attribute.getTag();
+
+            return aTag - bTag;
           }
         });
 
@@ -1043,7 +1039,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
   }
 
   private void writeTag(DicomTag tag) throws IOException {
-    int tagCode = tag.attribute.getTag();
+    int tagCode = tag.attribute == null ? tag.tag : tag.attribute.getTag();
 
     out.writeShort((short) ((tagCode & 0xffff0000) >> 16));
     out.writeShort((short) (tagCode & 0xffff));
@@ -1501,6 +1497,21 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     DicomTag item = new DicomTag(ITEM_DELIMITATION_ITEM, IMPLICIT);
     item.elementLength = 0;
     return item;
+  }
+
+  private void padTagValues(DicomTag t) {
+    if (t.value instanceof String) {
+      if (t.vr == UI) {
+        t.value = padUID((String) t.value);
+      }
+      else {
+        t.value = padString((String) t.value);
+      }
+    }
+
+    for (DicomTag child : t.children) {
+      padTagValues(child);
+    }
   }
 
   private short[] makeShortArray(int v) {

@@ -56,10 +56,29 @@ public class DCDumpProvider implements ITagProvider {
     String[] lines = DataTools.readFile(location).split("[\r\n]");
 
     LOGGER.debug("Attempting to parse {} tags", lines.length);
-    // TODO: does not currently handle tag hierarchies
+    DicomTag parentTag = null;
     for (String line : lines) {
+      line = line.trim();
+
+      if (line.isEmpty() && parentTag != null) {
+        // indicates end of sequence
+        parentTag = parentTag.parent;
+        continue;
+      }
+
       LOGGER.debug("Parsing line: {}", line);
+      boolean sequenceElement = line.startsWith(">");
+      if (sequenceElement) {
+        line = line.substring(1).trim();
+        if (parentTag == null) {
+          parentTag = tags.get(tags.size() - 1);
+        }
+      }
+
       String[] tokens = line.split(" ");
+      if (tokens.length <= 1) {
+        continue;
+      }
       String[] tag = tokens[0].replaceAll("[()]", "").split(",");
 
       String vr = tokens[1].trim();
@@ -95,13 +114,24 @@ public class DCDumpProvider implements ITagProvider {
       int tagUpper = Integer.decode(tag[0]);
       int tagLower = Integer.decode(tag[1]);
 
-      DicomAttribute attr = DicomAttribute.get(tagUpper << 16 | tagLower);
       DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
-      DicomTag t = new DicomTag(attr, vrEnum);
-      t.value = value;
-      t.validateValue();
-      LOGGER.debug("Adding tag: {}, VR: {}, value: {}", attr, vrEnum, value);
-      tags.add(t);
+      int tagCode = tagUpper << 16 | tagLower;
+      DicomTag t = new DicomTag(tagCode, vrEnum);
+      if (vrEnum != DicomVR.SQ) {
+        t.value = value;
+        t.validateValue();
+      }
+      LOGGER.debug("Adding tag: {}, VR: {}, value: {}", tagCode, vrEnum, value);
+      if (parentTag == null) {
+        tags.add(t);
+      }
+      else {
+        t.parent = parentTag;
+        parentTag.children.add(t);
+      }
+      if (vrEnum == DicomVR.SQ) {
+        parentTag = t;
+      }
     }
   }
 
