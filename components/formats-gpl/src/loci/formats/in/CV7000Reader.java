@@ -92,6 +92,8 @@ public class CV7000Reader extends FormatReader {
   private String startTime, endTime;
   private ArrayList<String> extraFiles;
 
+  private transient Map<String, Boolean> acquiredWells = new HashMap<String, Boolean>();
+
   // -- Constructor --
 
   /** Constructs a new Yokogawa CV7000 reader. */
@@ -206,6 +208,7 @@ public class CV7000Reader extends FormatReader {
       endTime = null;
       reversePlaneLookup = null;
       extraFiles = null;
+      acquiredWells.clear();
     }
   }
 
@@ -309,6 +312,10 @@ public class CV7000Reader extends FormatReader {
 
     for (Plane p : planeData) {
       if (p != null) {
+        if (!isWellAcquired(p.field.row, p.field.column)) {
+          continue;
+        }
+
         p.channelIndex = getChannelIndex(p);
 
         int wellIndex = p.field.row * plate.getPlateColumns() + p.field.column;
@@ -383,6 +390,9 @@ public class CV7000Reader extends FormatReader {
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
       Field f = p.field;
+      if (!isWellAcquired(f.row, f.column)) {
+        continue;
+      }
       int wellNumber = f.row * plate.getPlateColumns() + f.column;
       int wellIndex = Arrays.binarySearch(wells, wellNumber);
       p.series = FormatTools.positionToRaster(seriesLengths,
@@ -639,13 +649,19 @@ public class CV7000Reader extends FormatReader {
   }
 
   private boolean isWellAcquired(int row, int col) {
+    String key = row + "-" + col;
+    if (acquiredWells.containsKey(key)) {
+      return acquiredWells.get(key);
+    }
     if (planeData != null) {
       for (Plane p : planeData) {
         if (p != null && p.file != null && p.field.row == row && p.field.column == col) {
+          acquiredWells.put(key, true);
           return true;
         }
       }
     }
+    acquiredWells.put(key, false);
     return false;
   }
 
