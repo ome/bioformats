@@ -580,7 +580,8 @@ public class CV7000Reader extends FormatReader {
 
             // the index here is the original bts:Ch index in
             // the *.mes and *.mrf files
-            store.setChannelName("Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
+            store.setChannelName("Action #" + (channel.actionIndex + 1) +
+              ", Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
 
             if (channel.color != null) {
               store.setChannelColor(channel.color, i, c);
