@@ -70,6 +70,9 @@ public class CV7000Reader extends FormatReader {
 
   // -- Constants --
 
+  public static final String DUPLICATE_PLANES_KEY = "cv7000.duplicate_missing_planes";
+  public static final boolean DUPLICATE_PLANES_DEFAULT = true;
+
   private static final Logger LOGGER = LoggerFactory.getLogger(CV7000Reader.class);
 
   private static final String MEASUREMENT_FILE = "MeasurementData.mlf";
@@ -102,6 +105,17 @@ public class CV7000Reader extends FormatReader {
     hasCompanionFiles = true;
     domains = new String[] {FormatTools.HCS_DOMAIN};
     datasetDescription = "Directory with XML files and one .tif/.tiff file per plane";
+  }
+
+  // -- CV7000Reader API methods --
+
+  public boolean duplicatePlanes() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       DUPLICATE_PLANES_KEY, DUPLICATE_PLANES_DEFAULT);
+    }
+    return DUPLICATE_PLANES_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -227,6 +241,9 @@ public class CV7000Reader extends FormatReader {
     if (p != null && p.file != null) {
       reader.setId(p.file);
       return reader.openBytes(0, buf, x, y, w, h);
+    }
+    else if (duplicatePlanes() && no > 0) {
+      return openBytes(0, buf, x, y, w, h);
     }
     return buf;
   }
