@@ -18,6 +18,7 @@ loci.formats.in.SlideBook6Reader[type=external]      # sld
 loci.formats.in.SlideBook7Reader[type=external]      # sldy
 loci.formats.in.ScreenReader[type=external]         # .screen
 loci.formats.in.ZarrReader[type=external]         # .zarr
+ch.epfl.biop.formats.in.ZeissQuickStartCZIReader[type=external]         # .czi alternative reader
 
 # standalone readers with unique file extensions
 loci.formats.in.PGMReader             # pgm
