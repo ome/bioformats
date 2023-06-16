@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
 
 import loci.common.DateTools;
 import loci.common.Location;
@@ -598,7 +599,7 @@ public class ImagePlusReader implements StatusReporter {
     filename = sliceLabelPattern;
     
     filename = filename.replaceAll(FormatTools.SERIES_NUM, String.format("%d", series));
-    filename = filename.replaceAll(FormatTools.SERIES_NAME, imageName);
+    filename = filename.replaceAll(FormatTools.SERIES_NAME, Matcher.quoteReplacement(imageName));
     if (sizeC > 1) {
       int[] subC;
       String[] subCTypes;
