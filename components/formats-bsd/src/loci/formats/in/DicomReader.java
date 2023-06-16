@@ -1673,9 +1673,16 @@ public class DicomReader extends SubResolutionFormatReader {
     if (baseOffset == in.length()) {
       return;
     }
-    int channelCount = isRGB() ? getSizeC() : 1;
+    // for tiled images, the RGB channel count will likely be 0,
+    // as the image count has not yet been set correctly
+    // for RGB tiles, the channel count needs to be adjusted
+    // so that the correct number of pixel bytes are anticipated
+    int channelCount = getRGBChannelCount();
     if (lut != null || channelCount == 0) {
       channelCount = 1;
+    }
+    if (isRGB()) {
+      channelCount = getSizeC() / channelCount;
     }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
