@@ -209,11 +209,15 @@ public class DicomWriter extends FormatWriter {
       out.seek(compressionMethodPointer[resolutionIndex]);
       out.writeBytes(getCompressionMethod());
 
-      ifds[resolutionIndex][no].put(IFD.COMPRESSION, getTIFFCompression().getCode());
+      // the corresponding IFD is expected to be null
+      // if dual personality writing is turned off
+      if (writeDualPersonality()) {
+        ifds[resolutionIndex][no].put(IFD.COMPRESSION, getTIFFCompression().getCode());
 
-      // see https://github.com/ome/bioformats/issues/3856
-      if (getTIFFCompression() == TiffCompression.JPEG) {
-        ifds[resolutionIndex][no].put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.Y_CB_CR.getCode());
+        // see https://github.com/ome/bioformats/issues/3856
+        if (getTIFFCompression() == TiffCompression.JPEG) {
+          ifds[resolutionIndex][no].put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.Y_CB_CR.getCode());
+        }
       }
     }
 
