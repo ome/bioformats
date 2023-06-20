@@ -76,7 +76,11 @@ import loci.formats.services.WlzService;
 
 /**
  * WlzWriter is the file format writer for Woolz files.
+ * 
+ * @Deprecated Bio-Formats support for the Woolz format will be removed in Bio-Formats 7.0.0
  */
+
+@Deprecated
 public class WlzWriter extends FormatWriter {
 
   // -- Fields --

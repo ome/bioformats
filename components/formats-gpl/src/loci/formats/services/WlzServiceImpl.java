@@ -78,6 +78,11 @@ import uk.ac.mrc.hgu.Wlz.WlzIVertex3;
 import uk.ac.mrc.hgu.Wlz.WlzDVertex3;
 import uk.ac.mrc.hgu.Wlz.WlzObject;
 
+/**
+ * @Deprecated Bio-Formats support for the Woolz format will be removed in Bio-Formats 7.0.0
+ */
+
+@Deprecated
 public class WlzServiceImpl extends AbstractService
   implements WlzService {
 
