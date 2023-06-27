@@ -65,6 +65,11 @@ import loci.formats.FormatException;
 
 import loci.common.services.Service;
 
+/**
+ * @Deprecated Bio-Formats support for the Woolz format will be removed in Bio-Formats 7.0.0
+ */
+
+@Deprecated
 public interface WlzService extends Service {
   
   /**

@@ -80,7 +80,11 @@ import ome.units.UNITS;
 /**
  * WlzReader is a file format reader for Woolz files.
  * Woolz is available from: https://github.com/ma-tech/Woolz
+ * 
+ * @Deprecated Bio-Formats support for the Woolz format will be removed in Bio-Formats 7.0.0
  */
+
+@Deprecated
 public class WlzReader extends FormatReader {
 
   // -- Constants --
