@@ -54,7 +54,10 @@ import loci.formats.services.LuraWaveServiceImpl;
  * <code>-Dlurawave.license=XXXX</code> on the command line).
  *
  * @author Curtis Rueden ctrueden at wisc.edu
+ *
+ * @deprecated LuraWaveCodec will be removed in Bio-Formats 7.0.0
  */
+@Deprecated
 public class LuraWaveCodec extends WrappedCodec {
   public LuraWaveCodec() {
     super(new ome.codecs.LuraWaveCodec());

@@ -42,7 +42,10 @@ import loci.common.services.ServiceException;
 /**
  *
  * @author callan
+ *
+ * @deprecated LuraWaveService will be removed in Bio-Formats 7.0.0
  */
+@Deprecated
 public interface LuraWaveService extends Service {
 
   /**
