@@ -309,6 +309,7 @@ public class CV7000Reader extends FormatReader {
 
     fields = 0;
     HashSet<Integer> uniqueWells = new HashSet<Integer>();
+    HashSet<Integer> uniqueChannels = new HashSet<Integer>();
 
     for (Plane p : planeData) {
       if (p != null) {
@@ -340,12 +341,17 @@ public class CV7000Reader extends FormatReader {
         if (p.z < m.minZ) {
           m.minZ = p.z;
         }
+
+        // min and max channel indexes not currently used,
+        // but continue to calculate for completeness
+        // they may be needed in future CV7000/8000 work
         if (p.channelIndex > m.maxC) {
           m.maxC = p.channelIndex;
         }
         if (p.channelIndex < m.minC) {
           m.minC = p.channelIndex;
         }
+        uniqueChannels.add(p.channelIndex);
 
         if (p.field.field >= fields) {
           fields = p.field.field + 1;
@@ -367,6 +373,9 @@ public class CV7000Reader extends FormatReader {
     Arrays.sort(wells);
     reversePlaneLookup = new int[realWells * fields][];
 
+    Integer[] channelIndexes = uniqueChannels.toArray(new Integer[uniqueChannels.size()]);
+    Arrays.sort(channelIndexes);
+
     for (int i=0; i<realWells * fields; i++) {
       if (i > 0) {
         core.add(new CoreMetadata(core.get(0)));
@@ -376,7 +385,7 @@ public class CV7000Reader extends FormatReader {
       MinMax m = minMax.get(wellIndex);
       core.get(i).sizeZ = (m.maxZ - m.minZ) + 1;
       core.get(i).sizeT = (m.maxT - m.minT) + 1;
-      core.get(i).sizeC = reader.getSizeC() * ((m.maxC - m.minC) + 1);
+      core.get(i).sizeC = reader.getSizeC() * uniqueChannels.size();
       core.get(i).imageCount = core.get(i).sizeZ * core.get(i).sizeT *
         (core.get(i).sizeC / reader.getSizeC());
       reversePlaneLookup[i] = new int[core.get(i).imageCount];
@@ -389,6 +398,13 @@ public class CV7000Reader extends FormatReader {
     extraFiles = new ArrayList<String>();
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
+
+      // reindex so that the plane's channel index is into
+      // the list of unique acquired channels, not the list of all channels
+      // that might have been acquired
+      // this eliminates the need to correct for the minimum C index later on
+      p.channelIndex = Arrays.binarySearch(channelIndexes, p.channelIndex);
+
       Field f = p.field;
       if (!isWellAcquired(f.row, f.column)) {
         continue;
@@ -404,7 +420,7 @@ public class CV7000Reader extends FormatReader {
       planeLengths[2] = core.get(p.series).sizeT;
 
       p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {p.channelIndex - m.minC, p.z - m.minZ, p.timepoint - m.minT});
+        new int[] {p.channelIndex, p.z - m.minZ, p.timepoint - m.minT});
 
       if (reversePlaneLookup[p.series][p.no] < 0) {
         reversePlaneLookup[p.series][p.no] = i;
@@ -836,6 +852,12 @@ public class CV7000Reader extends FormatReader {
         startTime = attributes.getValue("bts:BeginTime");
         endTime = attributes.getValue("bts:EndTime");
         settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
+
+        String system = attributes.getValue("bts:TargetSystem");
+        addGlobalMeta("Acquisition system", system);
+        if (!system.toLowerCase().startsWith("cv7000")) {
+          LOGGER.warn("Found data from {}; this is not well-supported", system);
+        }
       }
     }
 
