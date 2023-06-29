@@ -57,7 +57,10 @@ import loci.formats.meta.MetadataStore;
  *
  * Much of this code was based on the QuickTime Movie Opener for ImageJ
  * (available at http://rsb.info.nih.gov/ij/plugins/movie-opener.html).
+ *
+ * @Deprecated LegacyQTReader will be removed in Bio-Formats 7.0.0
  */
+@Deprecated
 public class LegacyQTReader extends BIFormatReader {
 
   // -- Fields --

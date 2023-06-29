@@ -53,7 +53,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for working with QuickTime for Java.
+ *
+ * @Deprecated LegacyQTTools will be removed in Bio-Formats 7.0.0
  */
+@Deprecated
 public class LegacyQTTools {
 
   // -- Constants --
