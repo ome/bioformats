@@ -603,6 +603,9 @@ public class CV7000Reader extends FormatReader {
             if (channel.color != null) {
               store.setChannelColor(channel.color, i, c);
             }
+            if (channel.fluor != null && !channel.fluor.isEmpty()) {
+              store.setChannelFluor(channel.fluor, i, c);
+            }
 
             if (channel.excitation != null && channel.lightSourceRefs != null) {
               int index = -1;
@@ -955,6 +958,8 @@ public class CV7000Reader extends FormatReader {
                 currentChannel.excitation = DataTools.parseDouble(wave);
               }
             }
+
+            currentChannel.fluor = attributes.getValue("bts:Fluorophore");
           }
         }
       }
@@ -1018,6 +1023,8 @@ public class CV7000Reader extends FormatReader {
     public Double exposureTime;
     public String binning;
     public Color color;
+
+    public String fluor;
 
     @Override
     public String toString() {
