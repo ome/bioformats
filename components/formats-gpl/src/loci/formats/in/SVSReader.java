@@ -288,7 +288,10 @@ public class SVSReader extends BaseTiffReader {
 
     byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
     int jpegTableBytes = jpegTable == null ? 0 : jpegTable.length - 2;
-    long expectedBytes = byteCounts[tileIndex] + jpegTableBytes;
+    long expectedBytes = byteCounts[tileIndex];
+    if (expectedBytes > 0) {
+      expectedBytes += jpegTableBytes;
+    }
 
     if (expectedBytes < 0 || expectedBytes > Integer.MAX_VALUE) {
       throw new IOException("Invalid compressed tile size: " + expectedBytes);
@@ -309,7 +312,10 @@ public class SVSReader extends BaseTiffReader {
 
     byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
     int jpegTableBytes = jpegTable == null ? 0 : jpegTable.length - 2;
-    long expectedBytes = byteCounts[tileIndex] + jpegTableBytes;
+    long expectedBytes = byteCounts[tileIndex];
+    if (expectedBytes > 0) {
+      expectedBytes += jpegTableBytes;
+    }
 
     if (buf.length < expectedBytes) {
       throw new IllegalArgumentException("Tile buffer too small: expected >=" +
@@ -319,13 +325,13 @@ public class SVSReader extends BaseTiffReader {
       throw new IOException("Invalid compressed tile size: " + expectedBytes);
     }
 
-    if (jpegTable != null) {
+    if (jpegTable != null && expectedBytes > 0) {
       System.arraycopy(jpegTable, 0, buf, 0, jpegTable.length - 2);
       // skip over the duplicate SOI marker
       tiffParser.getStream().seek(offsets[tileIndex] + 2);
       tiffParser.getStream().readFully(buf, jpegTable.length - 2, (int) byteCounts[tileIndex]);
     }
-    else {
+    else if (byteCounts[tileIndex] > 0) {
       tiffParser.getStream().seek(offsets[tileIndex]);
       tiffParser.getStream().readFully(buf, 0, (int) byteCounts[tileIndex]);
     }
