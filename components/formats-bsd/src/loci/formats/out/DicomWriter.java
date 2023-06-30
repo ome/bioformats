@@ -183,6 +183,9 @@ public class DicomWriter extends FormatWriter {
   {
     checkPrecompressedSupport();
 
+    LOGGER.debug("savePrecompressedBytes(series={}, resolution={}, no={}, x={}, y={})",
+      series, resolution, no, x, y);
+
     // TODO: may want better handling of non-tiled "extra" images (e.g. label, macro)
     MetadataRetrieve r = getMetadataRetrieve();
     if ((!(r instanceof IPyramidStore) ||
@@ -192,11 +195,43 @@ public class DicomWriter extends FormatWriter {
       throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
     }
 
+    int bytesPerPixel = FormatTools.getBytesPerPixel(
+      FormatTools.pixelTypeFromString(
+      r.getPixelsType(series).toString()));
+    int resolutionIndex = getIndex(series, resolution);
+
+    if (buf.length == 0) {
+      LOGGER.warn("Zero-length tile encountered (series={}, resolution={}, no={}, x={}, y={}; creating blank tile",
+        series, resolution, no, x, y);
+      int thisTileWidth = tileWidth[resolutionIndex];
+      int thisTileHeight = tileHeight[resolutionIndex];
+      byte[] emptyTile = new byte[thisTileWidth * thisTileHeight * bytesPerPixel * getSamplesPerPixel()];
+
+      if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
+        buf = emptyTile;
+      }
+      else {
+        Codec codec = getCodec();
+        CodecOptions options = new CodecOptions();
+        options.width = w;
+        options.height = h;
+        options.channels = getSamplesPerPixel();
+        options.bitsPerSample = bytesPerPixel * 8;
+        options.littleEndian = out.isLittleEndian();
+        options.interleaved = true;
+
+        if (codec instanceof JPEG2000Codec) {
+          options = JPEG2000CodecOptions.getDefaultOptions(options);
+          ((JPEG2000CodecOptions) options).numDecompositionLevels = 0;
+        }
+        buf = codec.compress(emptyTile, options);
+      }
+    }
+
     // TODO: refactor code shared with saveBytes, e.g. IFD handling?
 
     boolean first = x == 0 && y == 0;
     boolean last = x + w == getSizeX() && y + h == getSizeY();
-    int resolutionIndex = getIndex(series, resolution);
 
     // the compression type isn't supplied to the writer until
     // after setId is called, so metadata that indicates or
@@ -216,10 +251,6 @@ public class DicomWriter extends FormatWriter {
         ifds[resolutionIndex][no].put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.Y_CB_CR.getCode());
       }
     }
-
-    int bytesPerPixel = FormatTools.getBytesPerPixel(
-      FormatTools.pixelTypeFromString(
-      r.getPixelsType(series).toString()));
 
     out.seek(out.length());
     long start = out.getFilePointer();
