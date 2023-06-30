@@ -1497,8 +1497,8 @@ public class DicomReader extends SubResolutionFormatReader {
         LOGGER.error("attempted to read beyond end of file ({}, {})", tile.fileOffset, tile.file);
         return;
       }
-      stream.seek(tile.fileOffset);
       LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
+      stream.seek(tile.fileOffset);
 
       if (tile.isRLE) {
         // plane is compressed using run-length encoding
@@ -1760,7 +1760,7 @@ public class DicomReader extends SubResolutionFormatReader {
           }
         }
       }
-      else offset = baseOffset + plane*i;
+      else offset = baseOffset + (long) plane*i;
 
       tilePositions.get(getCoreIndex()).get(i).fileOffset = offset;
       tilePositions.get(getCoreIndex()).get(i).last = i == imagesPerFile - 1;
