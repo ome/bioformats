@@ -61,7 +61,11 @@ import loci.formats.meta.MetadataStore;
  * Additional video codecs will be added as time permits.
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
+ *
+ * @Deprecated NativeQTReader will be unified with QTReader in Bio-Formats 7.0.0
+ * and should no longer be used
  */
+@Deprecated
 public class NativeQTReader extends FormatReader {
 
   // -- Constants --
