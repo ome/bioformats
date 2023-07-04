@@ -70,7 +70,11 @@ import ome.units.UNITS;
  * (2) the JAI jar file precedes JJ2000 in the classpath.
  *
  * Thanks to Tom Caswell for additions to the ND2 metadata parsing logic.
+ *
+ * @Deprecated NativeND2Reader will be unified with ND2Reader in Bio-Formats 7.0.0
+ * and should no longer be used
  */
+@Deprecated
 public class NativeND2Reader extends SubResolutionFormatReader {
 
   // -- Constants --
