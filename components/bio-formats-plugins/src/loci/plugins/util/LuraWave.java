@@ -34,7 +34,10 @@ import loci.formats.services.LuraWaveServiceImpl;
 
 /**
  * Utility methods for dealing with proprietary LuraWave licensing.
+ *
+ * @deprecated LuraWave will be removed in Bio-Formats 7.0.0
  */
+@Deprecated
 public final class LuraWave {
 
   // -- Constants --

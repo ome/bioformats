@@ -45,7 +45,10 @@ import com.luratech.lwf.lwfDecoder;
 /**
  *
  * @author callan
+ *
+ * @deprecated LuraWaveServiceImpl will be removed in Bio-Formats 7.0.0
  */
+@Deprecated
 public class LuraWaveServiceImpl extends AbstractService
   implements LuraWaveService {
 
