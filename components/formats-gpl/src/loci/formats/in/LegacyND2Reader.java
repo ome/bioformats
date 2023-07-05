@@ -38,7 +38,10 @@ import loci.formats.meta.MetadataStore;
 /**
  * LegacyND2Reader is a file format reader for Nikon ND2 files that uses
  * the Nikon ND2 SDK - it is only usable on Windows machines.
+ *
+ * @Deprecated LegacyND2Reader will be removed in Bio-Formats 7.0.0
  */
+@Deprecated
 public class LegacyND2Reader extends FormatReader {
 
   // -- Constants --
