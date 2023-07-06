@@ -296,11 +296,3 @@ url = http://www.loci.wisc.edu/software/ome-notes
 license = GPL
 notes = OME Notes library for flexible organization and presentation
         of OME-XML metadata.
-
-[LuraWave decoder SDK]
-type = Java library
-class = com.luratech.lwf.lwfDecoder
-url = http://www.luratech.com/
-license = Commercial
-notes = Used by Bio-Formats to decode Flex files
-        compressed with the LuraWave JPEG2000 codec.

@@ -16,8 +16,7 @@ Bio-Formats
     JAR file:      bio-formats.jar
     Path:          components/bio-formats
     Project deps:  Formats Common, OME-XML Java library, JAI Image I/O Tools,
-                   MDB Tools (Java port), Apache Jakarta POI,
-                   Luratech LuraWave stubs
+                   MDB Tools (Java port), Apache Jakarta POI
     Library deps:  JGoodies Forms, Logback, NetCDF,
                    Simple Logging Facade for Java API, TestNG
     Optional:      Xalan Serializer, Xalan
@@ -75,21 +74,6 @@ JAI Image I/O Tools
                    needed by Bio-Formats, and created an additional dependency.
                    This component will be removed once our changes have been
                    added to the official JAI CVS repository.
-
-===============================================================================
-The following components are stubs of third party projects:
-
-Luratech LuraWave stubs
-    Stub of proprietary Java API to handle Luratech LWF compression
-    -=-
-    JAR file:      lwf-stubs.jar
-    Path:          components/stubs/lwf-stubs
-    Project deps:  (none)
-    Optional:      (none)
-    License:       BSD
-    Project URL:   http://www.luratech.com/
-    Notes:         required to compile Bio-Formats's support for Luratech LWF
-                   compression for the Opera Flex format
 
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
