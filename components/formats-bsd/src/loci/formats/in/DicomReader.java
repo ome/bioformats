@@ -1604,7 +1604,14 @@ public class DicomReader extends SubResolutionFormatReader {
         options.interleaved = isInterleaved();
         if (tile.isJPEG) codec = new JPEGCodec();
         else codec = new JPEG2000Codec();
-        b = codec.decompress(b, options);
+
+        try {
+          b = codec.decompress(b, options);
+        }
+        catch (NullPointerException e) {
+          LOGGER.debug("Could not read empty or invalid tile", e);
+          return;
+        }
 
         int rowLen = w * bpp;
         int srcRowLen = tile.region.width * bpp;
