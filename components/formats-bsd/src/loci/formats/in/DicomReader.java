@@ -1712,7 +1712,10 @@ public class DicomReader extends SubResolutionFormatReader {
             in.seek(in.getFilePointer() - 1);
           }
         }
-        in.skipBytes(i == 0 ? 64 : 53);
+        if (in.readInt() == 0xe000fffe) {
+          in.skipBytes(12);
+        }
+        in.skipBytes(i == 0 ? 60 : 49);
         while (in.read() == 0);
         offset = in.getFilePointer() - 1;
       }

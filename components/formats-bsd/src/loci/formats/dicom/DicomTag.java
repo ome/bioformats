@@ -135,7 +135,10 @@ public class DicomTag {
     }
 
     if (!readValue || attribute == PIXEL_DATA) {
-      in.skipBytes(elementLength & 0xffffffffL);
+      long skip = elementLength & 0xffffffffL;
+      if (skip > 0 && skip < in.length() - in.getFilePointer()) {
+        in.skipBytes(skip);
+      }
       return;
     }
 
@@ -358,7 +361,8 @@ public class DicomTag {
       // the length may legitimately be between 2 and 4 GB
       long length = elementLength & 0xffffffffL;
 
-      if (length > 0 && length < in.length()) {
+      // length of 0xffffffff means undefined length, which is uncommon but allowed
+      if (elementLength == -1 || (length > 0 && length < in.length())) {
         return tag;
       }
       else {
