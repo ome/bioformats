@@ -443,6 +443,19 @@ public class DicomWriter extends FormatWriter {
       else {
         totalFiles++;
       }
+      if (getCodec() == null) {
+        long pixels = (long) getPlaneCount(pyramid) * getSamplesPerPixel(pyramid);
+        pixels *= r.getPixelsSizeX(pyramid).getValue().intValue();
+        pixels *= r.getPixelsSizeY(pyramid).getValue().intValue();
+        int pixelType = FormatTools.pixelTypeFromString(r.getPixelsType(pyramid).toString());
+        int bpp = FormatTools.getBytesPerPixel(pixelType);
+        pixels *= bpp;
+
+        if (pixels > Math.pow(2, 32)) {
+          throw new FormatException("Cannot write more than 4GB of uncompressed pixel data. " +
+            "Specify a compression type instead.");
+        }
+      }
     }
     pixelDataLengthPointer = new long[totalFiles];
     pixelDataSize = new int[totalFiles];
@@ -1460,10 +1473,10 @@ public class DicomWriter extends FormatWriter {
    * @return Codec instance corresponding to current compression type
    */
   private Codec getCodec() {
-    if (compression.equals(CompressionType.JPEG.getCompression())) {
+    if (CompressionType.JPEG.getCompression().equals(compression)) {
       return new JPEGCodec();
     }
-    else if (compression.equals(CompressionType.J2K.getCompression())) {
+    else if (CompressionType.J2K.getCompression().equals(compression)) {
       return new JPEG2000Codec();
     }
     return null;
