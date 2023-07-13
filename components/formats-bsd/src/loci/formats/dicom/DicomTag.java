@@ -136,7 +136,7 @@ public class DicomTag {
 
     if (!readValue || attribute == PIXEL_DATA) {
       long skip = elementLength & 0xffffffffL;
-      if (skip > 0 && skip < in.length() - in.getFilePointer()) {
+      if (skip > 0 && skip <= in.length() - in.getFilePointer()) {
         in.skipBytes(skip);
       }
       return;
