@@ -119,6 +119,8 @@ public class DicomWriter extends FormatWriter {
   private boolean bigTiff = false;
   private TiffSaver tiffSaver;
 
+  private Boolean validPixelCount = null;
+
   // -- Constructor --
 
   public DicomWriter() {
@@ -193,6 +195,7 @@ public class DicomWriter extends FormatWriter {
     {
       throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
     }
+    checkPixelCount(false);
 
     boolean first = x == 0 && y == 0;
     boolean last = x + w == getSizeX() && y + h == getSizeY();
@@ -425,6 +428,8 @@ public class DicomWriter extends FormatWriter {
       out.close();
     }
 
+    checkPixelCount(true);
+
     uids = new UIDCreator();
 
     MetadataRetrieve r = getMetadataRetrieve();
@@ -442,19 +447,6 @@ public class DicomWriter extends FormatWriter {
       }
       else {
         totalFiles++;
-      }
-      if (getCodec() == null) {
-        long pixels = (long) getPlaneCount(pyramid) * getSamplesPerPixel(pyramid);
-        pixels *= r.getPixelsSizeX(pyramid).getValue().intValue();
-        pixels *= r.getPixelsSizeY(pyramid).getValue().intValue();
-        int pixelType = FormatTools.pixelTypeFromString(r.getPixelsType(pyramid).toString());
-        int bpp = FormatTools.getBytesPerPixel(pixelType);
-        pixels *= bpp;
-
-        if (pixels > Math.pow(2, 32)) {
-          throw new FormatException("Cannot write more than 4GB of uncompressed pixel data. " +
-            "Specify a compression type instead.");
-        }
       }
     }
     pixelDataLengthPointer = new long[totalFiles];
@@ -1150,6 +1142,7 @@ public class DicomWriter extends FormatWriter {
     nextIFDPointer = null;
     ifds = null;
     tiffSaver = null;
+    validPixelCount = null;
 
     // intentionally don't reset tile dimensions
   }
@@ -1750,6 +1743,35 @@ public class DicomWriter extends FormatWriter {
     }
 
     return new TiffRational((long) (physicalSize * 1000 * 10000), 1000);
+  }
+
+  private void checkPixelCount(boolean warn) throws FormatException {
+    if ((validPixelCount != null && validPixelCount) || getCodec() != null) {
+      return;
+    }
+    MetadataRetrieve r = getMetadataRetrieve();
+    for (int pyramid=0; pyramid<r.getImageCount(); pyramid++) {
+      long pixels = (long) getPlaneCount(pyramid) * getSamplesPerPixel(pyramid);
+      pixels *= r.getPixelsSizeX(pyramid).getValue().intValue();
+      pixels *= r.getPixelsSizeY(pyramid).getValue().intValue();
+      int pixelType = FormatTools.pixelTypeFromString(r.getPixelsType(pyramid).toString());
+      int bpp = FormatTools.getBytesPerPixel(pixelType);
+      pixels *= bpp;
+
+      if (pixels > Math.pow(2, 32)) {
+        validPixelCount = false;
+        if (warn) {
+          LOGGER.warn("More than 4GB of pixel data, compression will need to be used");
+        }
+        else {
+          throw new FormatException("Cannot write more than 4GB of uncompressed pixel data. " +
+            "Specify a compression type instead.");
+        }
+      }
+    }
+    if (validPixelCount == null) {
+      validPixelCount = true;
+    }
   }
 
   class PlaneOffset {
