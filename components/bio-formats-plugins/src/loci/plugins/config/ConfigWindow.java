@@ -218,7 +218,6 @@ public class ConfigWindow extends JFrame
     //   + upgrade button for "ImageJ" just launches ImageJ upgrade plugin
     // - can install native libs by downloading installer from its web site
     //   + QuickTime for Java
-    //   + Nikon ND2 plugin
     //   + ImageIO Tools
 
     libInfo.add(makeLabel("Path", false));
