@@ -39,6 +39,7 @@ import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.NIOFileHandle;
 import loci.common.RandomAccessInputStream;
+import loci.common.enumeration.EnumException;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -1234,8 +1235,14 @@ public class FlexReader extends FormatReader {
         firstIFD = parser.getFirstIFD();
         ifdCount = parser.getIFDOffsets().length;
       }
-      boolean compressed =
-        firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+      Boolean compressed = null;
+      try {
+        compressed =
+          firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+      }
+      catch (EnumException e) {
+        LOGGER.trace("Could not get compression for " + file, e);
+      }
       if (firstCompressed == null) {
         firstCompressed = compressed;
         firstIFDCount = ifdCount;
@@ -1341,8 +1348,14 @@ public class FlexReader extends FormatReader {
             LOGGER.info("Parsing IFDs for well {}{}",
               FormatTools.getWellRowName(row), col + 1);
             IFD firstIFD = tp.getFirstIFD();
-            compressed =
-              firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+            try {
+              compressed =
+                firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+            }
+            catch (EnumException e) {
+              LOGGER.trace("Could not get compression", e);
+              continue;
+            }
 
             if (compressed || firstIFD.getStripOffsets()[0] == 16 ||
               firstIFD.getStripOffsets().length == 1)
