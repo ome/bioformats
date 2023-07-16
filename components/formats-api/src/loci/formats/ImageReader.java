@@ -226,6 +226,17 @@ public class ImageReader implements IFormatReader {
     return r;
   }
 
+  /** Gets all possible readers without any knowledge of the file extension. */
+  public IFormatReader[] getPotentialReaders(RandomAccessInputStream stream) {
+    List<IFormatReader> potentialReaders = new ArrayList<IFormatReader>();
+    for (int i=0; i<readers.length; i++) {
+      if (isThisType(readers[i], stream)) potentialReaders.add(readers[i]);
+    }
+    IFormatReader[] readers = new IFormatReader[potentialReaders.size()];
+    potentialReaders.toArray(readers);
+    return readers;
+  }
+
   // -- IMetadataConfigurable API methods --
 
   /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */
