@@ -37,7 +37,7 @@ import loci.formats.in.CellSensReader;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.LIFReader;
 import loci.formats.in.MetadataOptions;
-import loci.formats.in.NativeND2Reader;
+import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;
 import loci.formats.in.SDTReader;

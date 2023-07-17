@@ -62,7 +62,7 @@ import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**
- * NativeND2Reader is the file format reader for Nikon ND2 files.
+ * ND2Reader is the file format reader for Nikon ND2 files.
  * The JAI ImageIO library is required to use this reader; it is available from
  * http://jai-imageio.dev.java.net. Note that JAI ImageIO is bundled with a
  * version of the JJ2000 library, so it is important that either:
@@ -72,7 +72,7 @@ import ome.units.UNITS;
  * Thanks to Tom Caswell for additions to the ND2 metadata parsing logic.
  */
 
-public class NativeND2Reader extends SubResolutionFormatReader {
+public class ND2Reader extends SubResolutionFormatReader {
 
   // -- Constants --
 
@@ -139,13 +139,13 @@ public class NativeND2Reader extends SubResolutionFormatReader {
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
-  public NativeND2Reader() {
+  public ND2Reader() {
     super("Nikon ND2", new String[] {"nd2", "jp2"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
-  // -- NativeND2Reader methods --
+  // -- ND2Reader methods --
 
   public boolean useChunkMap() {
     MetadataOptions options = getMetadataOptions();
@@ -438,7 +438,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
          * Implementation: Read the chunk map beforehand, process the file as normally,
          * once the first ImageDataSeq block is reached, add all images and skip past the
          * image data to process remaining metadata.
-         * I haven't read through all of NativeND2Reader, but I hope to have the least
+         * I haven't read through all of ND2Reader, but I hope to have the least
          * chance of inadvertedly breaking something by this approach.
          */
         String chunkMapSignature = "ND2 CHUNK MAP SIGNATURE 0000001";
