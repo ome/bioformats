@@ -38,7 +38,6 @@ import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.LIFReader;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.NativeND2Reader;
-import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;
 import loci.formats.in.SDTReader;
@@ -56,7 +55,6 @@ public final class LociPrefs {
   public static final String PREF_READER_ENABLED = "bioformats.enabled";
   public static final String PREF_READER_WINDOWLESS = "bioformats.windowless";
 
-  public static final String PREF_ND2_NIKON = "bioformats.nd2.nikon";
   public static final String PREF_PICT_QTJAVA = "bioformats.pict.qtjava";
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
@@ -106,7 +104,7 @@ public final class LociPrefs {
       ((DynamicMetadataOptions) options).setBoolean(
         ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
       ((DynamicMetadataOptions) options).setBoolean(
-        NativeND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
+        ND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
       ((DynamicMetadataOptions) options).setBoolean(
         LIFReader.OLD_PHYSICAL_SIZE_KEY, isLeicaLIFPhysicalSizeBackwardsCompatible());
       ((DynamicMetadataOptions) options).setBoolean(
@@ -115,18 +113,13 @@ public final class LociPrefs {
     }
 
     // toggle reader-specific options
-    boolean nd2Nikon = LociPrefs.isND2Nikon();
     boolean pictQTJava = LociPrefs.isPictQTJava();
     boolean qtQTJava = LociPrefs.isQTQTJava();
     boolean sdtIntensity = LociPrefs.isSDTIntensity();
     boolean tiffImageIO = LociPrefs.isTiffImageIO();
     IFormatReader[] r = reader.getReaders();
     for (int i=0; i<r.length; i++) {
-      if (r[i] instanceof ND2Reader) {
-        ND2Reader nd2 = (ND2Reader) r[i];
-        nd2.setLegacy(nd2Nikon);
-      }
-      else if (r[i] instanceof PictReader) {
+      if (r[i] instanceof PictReader) {
         PictReader pict = (PictReader) r[i];
         pict.setLegacy(pictQTJava);
       }
@@ -159,10 +152,6 @@ public final class LociPrefs {
     return getPref(PREF_READER_ENABLED, c, true);
   }
 
-  public static boolean isND2Nikon() {
-    return Prefs.get(PREF_ND2_NIKON, false);
-  }
-
   public static boolean isPictQTJava() {
     return Prefs.get(PREF_PICT_QTJAVA, false);
   }
@@ -190,7 +179,7 @@ public final class LociPrefs {
   }
 
   public static boolean useND2Chunkmap() {
-    return Prefs.get(PREF_ND2_CHUNKMAP, NativeND2Reader.USE_CHUNKMAP_DEFAULT);
+    return Prefs.get(PREF_ND2_CHUNKMAP, ND2Reader.USE_CHUNKMAP_DEFAULT);
   }
 
   public static boolean isLeicaLIFPhysicalSizeBackwardsCompatible() {
