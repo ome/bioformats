@@ -156,6 +156,7 @@ class WrappedCodec extends BaseCodec {
     dest.tileGridXOffset = src.tileGridXOffset;
     dest.tileGridYOffset = src.tileGridYOffset;
     dest.ycbcr = src.ycbcr;
+    dest.disableChromaSubsampling = src.disableChromaSubsampling;
   }
 
   protected static ome.codecs.CodecOptions getOptions(CodecOptions options)
