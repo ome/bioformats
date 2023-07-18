@@ -57,7 +57,6 @@ import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
-import loci.formats.dicom.DCDumpProvider;
 import loci.formats.dicom.DicomJSONProvider;
 import loci.formats.dicom.ITagProvider;
 import loci.formats.dicom.DicomTag;
@@ -134,8 +133,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       if (checkSuffix(tagSource, "json")) {
         provider = new DicomJSONProvider();
       }
-      else if (checkSuffix(tagSource, "dcdump")) {
-        provider = new DCDumpProvider();
+      else {
+        throw new IllegalArgumentException("Unknown tag format: " + tagSource);
       }
 
       try {
