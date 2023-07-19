@@ -80,7 +80,10 @@ public class ND2Reader extends SubResolutionFormatReader {
   public static final long ND2_MAGIC_BYTES_2 = 0x6a502020L;
   private static final int BUFFER_SIZE = 32 * 1024;
 
-  public static final String USE_CHUNKMAP_KEY = "nativend2.chunkmap";
+  /** Legacy chunkmap option key will be removed in Bio-Formats 8.0.0. */
+  @Deprecated
+  public static final String USE_CHUNKMAP_LEGACY_KEY = "nativend2.chunkmap";
+  public static final String USE_CHUNKMAP_KEY = "nd2.chunkmap";
   public static final boolean USE_CHUNKMAP_DEFAULT = true;
 
   // -- Fields --
@@ -150,8 +153,14 @@ public class ND2Reader extends SubResolutionFormatReader {
   public boolean useChunkMap() {
     MetadataOptions options = getMetadataOptions();
     if (options instanceof DynamicMetadataOptions) {
+      if (((DynamicMetadataOptions) options).get(USE_CHUNKMAP_LEGACY_KEY) != null) {
+        LOGGER.warn("Legacy chunkmap option detected use {} instead",
+          USE_CHUNKMAP_KEY);
+      }
+      Boolean defaultValue = ((DynamicMetadataOptions) options).getBoolean(
+        USE_CHUNKMAP_LEGACY_KEY, USE_CHUNKMAP_DEFAULT);
       return ((DynamicMetadataOptions) options).getBoolean(
-        USE_CHUNKMAP_KEY, USE_CHUNKMAP_DEFAULT);
+        USE_CHUNKMAP_KEY, defaultValue);
     }
     return USE_CHUNKMAP_DEFAULT;
   }

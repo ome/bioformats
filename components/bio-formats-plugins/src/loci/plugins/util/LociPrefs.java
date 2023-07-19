@@ -64,7 +64,7 @@ public final class LociPrefs {
   public static final String PREF_CZI_ATTACHMENT =
     "bioformats.zeissczi.include.attachments";
   public static final String PREF_ND2_CHUNKMAP =
-    "bioformats.nativend2.chunkmap";
+    "bioformats.nd2.chunkmap";
   public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
     "bioformats.leicalif.physicalsize.compatibility";
   public static final String PREF_SLICE_LABEL_PATTERN = "bioformats.sliceLabelPattern";
