@@ -54,7 +54,7 @@ import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
 /**
- * NativeQTReader is the file format reader for QuickTime movie files.
+ * QTReader is the file format reader for QuickTime movie files.
  * It does not require any external libraries to be installed.
  *
  * Video codecs currently supported: raw, rle, jpeg, mjpb, rpza.
