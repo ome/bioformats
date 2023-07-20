@@ -41,7 +41,9 @@ import java.lang.reflect.Array;
 import java.rmi.dgc.VMID;
 import java.rmi.server.UID;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -57,6 +59,7 @@ import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.dicom.DicomAttribute;
 import loci.formats.dicom.DicomJSONProvider;
 import loci.formats.dicom.ITagProvider;
 import loci.formats.dicom.DicomTag;
@@ -934,7 +937,29 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
             boolean validTag = t.validate(tags);
             if (validTag) {
               padTagValues(t);
-              tags.add(t);
+
+              LOGGER.trace("handling supplemental tag ({}) with strategy {}", t, t.strategy);
+              switch (t.strategy) {
+                case APPEND:
+                  // TODO: doesn't handle sequences properly
+                  tags.add(t);
+                  break;
+                case IGNORE:
+                  // ignore current tag if a matching tag already exists
+                  DicomTag existing = lookupTag(tags, t);
+                  if (existing == null) {
+                    tags.add(t);
+                  }
+                  break;
+                case REPLACE:
+                  // replace existing tag with current tag
+                  DicomTag replace = lookupTag(tags, t);
+                  if (replace != null) {
+                    tags.remove(replace);
+                  }
+                  tags.add(t);
+                  break;
+              }
             }
             else {
               LOGGER.warn("Ignoring tag {} from provider {}", t, provider);
@@ -1496,6 +1521,15 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     DicomTag item = new DicomTag(ITEM_DELIMITATION_ITEM, IMPLICIT);
     item.elementLength = 0;
     return item;
+  }
+
+  private DicomTag lookupTag(List<DicomTag> tags, DicomTag compare) {
+    for (DicomTag t : tags) {
+      if (t.tag == compare.tag) {
+        return t;
+      }
+    }
+    return null;
   }
 
   private void padTagValues(DicomTag t) {

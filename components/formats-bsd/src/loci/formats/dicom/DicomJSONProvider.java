@@ -112,6 +112,13 @@ public class DicomJSONProvider implements ITagProvider {
           readSequence(tag, dicomTag);
         }
 
+        ResolutionStrategy rs = vrEnum == DicomVR.SQ ? ResolutionStrategy.APPEND : ResolutionStrategy.REPLACE;
+        if (tag.has("ResolutionStrategy")) {
+          String strategy = tag.getString("ResolutionStrategy");
+          rs = Enum.valueOf(ResolutionStrategy.class, strategy);
+        }
+        dicomTag.strategy = rs;
+
         tags.add(dicomTag);
       }
     }

@@ -65,6 +65,10 @@ public class DicomTag {
   private boolean bigEndianTransferSyntax = false;
   private boolean oddLocations = false;
 
+  // optional indicator of how to handle this tag when merging
+  // into an existing tag list
+  public ResolutionStrategy strategy = null;
+
   public DicomTag(DicomAttribute attribute) {
     this(attribute, null);
   }
@@ -539,12 +543,9 @@ public class DicomTag {
    * return false. Otherwise return true.
    */
   public boolean validate(List<DicomTag> tags) {
-    // TODO: this is very simplistic validation that just rejects duplicates
-    // we could pursue more comprehensive validation here,
-    // but need to define what that means
     for (DicomTag t : tags) {
       if (this.tag == t.tag) {
-        return false;
+        return strategy != ResolutionStrategy.IGNORE;
       }
     }
     return true;
