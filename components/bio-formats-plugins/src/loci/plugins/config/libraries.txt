@@ -78,15 +78,6 @@ url = https://jai-imageio.dev.java.net/
 license = BSD
 notes = Used by Bio-Formats for lossless JPEG support in DICOM.
 
-[Nikon ND2 plugin]
-type = Native library
-class = ND_to_Image6D
-url = http://rsb.info.nih.gov/ij/plugins/nd2-reader.html
-license = Commercial
-notes = Optional plugin. If you have Nikon's ND2 plugin installed, you can
-        configure Bio-Formats to use it instead of its native ND2 support
-        in the Formats tab's "Nikon ND2" entry.
-
 # ImageJ plugins
 
 [Bio-Formats plugins]
