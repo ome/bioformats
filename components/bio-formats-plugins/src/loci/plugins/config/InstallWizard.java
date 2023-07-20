@@ -96,12 +96,6 @@ public class InstallWizard extends JFrame
     // Find jre/bin folder by checking ImageJ.cfg file?
     // test with data/dicom/john/E724_S007_A0024.dcm
 
-    // Win32: download and install Nikon ND2 plugin
-    // (gray out option to use Nikon ND2 if plugin is not available)
-    // Download http://rsb.info.nih.gov/ij/plugins/download/jars/ImageJND2ReaderPlugin.zip
-    // Extract .msi file and execute it
-    // Wait for process completion before continuing
-
     // Option to download Image5D
     // Download http://rsb.info.nih.gov/ij/plugins/download/jars/Image_5D.jar
     // Place in ImageJ plugins folder

@@ -37,7 +37,6 @@ import loci.formats.in.CellSensReader;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.LIFReader;
 import loci.formats.in.MetadataOptions;
-import loci.formats.in.NativeND2Reader;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.SDTReader;
 import loci.formats.in.TiffDelegateReader;
@@ -54,7 +53,6 @@ public final class LociPrefs {
   public static final String PREF_READER_ENABLED = "bioformats.enabled";
   public static final String PREF_READER_WINDOWLESS = "bioformats.windowless";
 
-  public static final String PREF_ND2_NIKON = "bioformats.nd2.nikon";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
   public static final String PREF_TIFF_IMAGEIO = "bioformats.tiff.imageio";
   public static final String PREF_CZI_AUTOSTITCH =
@@ -62,7 +60,7 @@ public final class LociPrefs {
   public static final String PREF_CZI_ATTACHMENT =
     "bioformats.zeissczi.include.attachments";
   public static final String PREF_ND2_CHUNKMAP =
-    "bioformats.nativend2.chunkmap";
+    "bioformats.nd2.chunkmap";
   public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
     "bioformats.leicalif.physicalsize.compatibility";
   public static final String PREF_SLICE_LABEL_PATTERN = "bioformats.sliceLabelPattern";
@@ -102,7 +100,7 @@ public final class LociPrefs {
       ((DynamicMetadataOptions) options).setBoolean(
         ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
       ((DynamicMetadataOptions) options).setBoolean(
-        NativeND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
+        ND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
       ((DynamicMetadataOptions) options).setBoolean(
         LIFReader.OLD_PHYSICAL_SIZE_KEY, isLeicaLIFPhysicalSizeBackwardsCompatible());
       ((DynamicMetadataOptions) options).setBoolean(
@@ -111,16 +109,11 @@ public final class LociPrefs {
     }
 
     // toggle reader-specific options
-    boolean nd2Nikon = LociPrefs.isND2Nikon();
     boolean sdtIntensity = LociPrefs.isSDTIntensity();
     boolean tiffImageIO = LociPrefs.isTiffImageIO();
     IFormatReader[] r = reader.getReaders();
     for (int i=0; i<r.length; i++) {
-      if (r[i] instanceof ND2Reader) {
-        ND2Reader nd2 = (ND2Reader) r[i];
-        nd2.setLegacy(nd2Nikon);
-      }
-      else if (r[i] instanceof SDTReader) {
+      if (r[i] instanceof SDTReader) {
         SDTReader sdt = (SDTReader) r[i];
         sdt.setIntensity(sdtIntensity);
       }
@@ -145,10 +138,6 @@ public final class LociPrefs {
     return getPref(PREF_READER_ENABLED, c, true);
   }
 
-  public static boolean isND2Nikon() {
-    return Prefs.get(PREF_ND2_NIKON, false);
-  }
-
   public static boolean isSDTIntensity() {
     return Prefs.get(PREF_SDT_INTENSITY, false);
   }
@@ -168,7 +157,7 @@ public final class LociPrefs {
   }
 
   public static boolean useND2Chunkmap() {
-    return Prefs.get(PREF_ND2_CHUNKMAP, NativeND2Reader.USE_CHUNKMAP_DEFAULT);
+    return Prefs.get(PREF_ND2_CHUNKMAP, ND2Reader.USE_CHUNKMAP_DEFAULT);
   }
 
   public static boolean isLeicaLIFPhysicalSizeBackwardsCompatible() {

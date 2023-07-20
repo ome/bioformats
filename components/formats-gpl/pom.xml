@@ -116,11 +116,6 @@
       <version>${slf4j.version}</version>
     </dependency>
     <dependency>
-      <groupId>woolz</groupId>
-      <artifactId>JWlz</artifactId>
-      <version>1.4.0</version>
-    </dependency>
-    <dependency>
       <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>
       <version>${kryo.version}</version>
