@@ -1235,7 +1235,7 @@ public class FlexReader extends FormatReader {
         firstIFD = parser.getFirstIFD();
         ifdCount = parser.getIFDOffsets().length;
       }
-      Boolean compressed = null;
+      Boolean compressed = true;
       try {
         compressed =
           firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
@@ -1354,7 +1354,6 @@ public class FlexReader extends FormatReader {
             }
             catch (EnumException e) {
               LOGGER.trace("Could not get compression", e);
-              continue;
             }
 
             if (compressed || firstIFD.getStripOffsets()[0] == 16 ||
