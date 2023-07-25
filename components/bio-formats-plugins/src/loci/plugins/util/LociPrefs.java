@@ -38,8 +38,6 @@ import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.LIFReader;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.ND2Reader;
-import loci.formats.in.PictReader;
-import loci.formats.in.QTReader;
 import loci.formats.in.SDTReader;
 import loci.formats.in.TiffDelegateReader;
 import loci.formats.in.ZeissCZIReader;
@@ -55,8 +53,6 @@ public final class LociPrefs {
   public static final String PREF_READER_ENABLED = "bioformats.enabled";
   public static final String PREF_READER_WINDOWLESS = "bioformats.windowless";
 
-  public static final String PREF_PICT_QTJAVA = "bioformats.pict.qtjava";
-  public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
   public static final String PREF_TIFF_IMAGEIO = "bioformats.tiff.imageio";
   public static final String PREF_CZI_AUTOSTITCH =
@@ -113,21 +109,11 @@ public final class LociPrefs {
     }
 
     // toggle reader-specific options
-    boolean pictQTJava = LociPrefs.isPictQTJava();
-    boolean qtQTJava = LociPrefs.isQTQTJava();
     boolean sdtIntensity = LociPrefs.isSDTIntensity();
     boolean tiffImageIO = LociPrefs.isTiffImageIO();
     IFormatReader[] r = reader.getReaders();
     for (int i=0; i<r.length; i++) {
-      if (r[i] instanceof PictReader) {
-        PictReader pict = (PictReader) r[i];
-        pict.setLegacy(pictQTJava);
-      }
-      else if (r[i] instanceof QTReader) {
-        QTReader qt = (QTReader) r[i];
-        qt.setLegacy(qtQTJava);
-      }
-      else if (r[i] instanceof SDTReader) {
+      if (r[i] instanceof SDTReader) {
         SDTReader sdt = (SDTReader) r[i];
         sdt.setIntensity(sdtIntensity);
       }
@@ -150,14 +136,6 @@ public final class LociPrefs {
 
   public static boolean isReaderEnabled(Class<? extends IFormatReader> c) {
     return getPref(PREF_READER_ENABLED, c, true);
-  }
-
-  public static boolean isPictQTJava() {
-    return Prefs.get(PREF_PICT_QTJAVA, false);
-  }
-
-  public static boolean isQTQTJava() {
-    return Prefs.get(PREF_QT_QTJAVA, false);
   }
 
   public static boolean isSDTIntensity() {

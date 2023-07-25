@@ -42,7 +42,6 @@ import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CompressionType;
-import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -115,33 +114,13 @@ public class QTWriter extends FormatWriter {
   /** Number of padding bytes in each row. */
   protected int pad;
 
-  /** Whether we need the legacy writer. */
-  protected boolean needLegacy = false;
-
-  /** Legacy QuickTime writer. */
-  protected LegacyQTWriter legacy;
-
   private int numWritten = 0;
 
   // -- Constructor --
 
   public QTWriter() {
     super("QuickTime", "mov");
-    LegacyQTTools tools = new LegacyQTTools();
-    if (tools.canDoQT()) {
-      compressionTypes = new String[] {
-          CompressionType.UNCOMPRESSED.getCompression(),
-        // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
-        /*"Motion JPEG-B",*/
-          CompressionType.CINEPAK.getCompression(), 
-          CompressionType.ANIMATION.getCompression(), 
-          CompressionType.H_263.getCompression(), 
-          CompressionType.SORENSON.getCompression(), 
-          CompressionType.SORENSON_3.getCompression(), 
-          CompressionType.MPEG_4.getCompression()
-      };
-    }
-    else compressionTypes = new String[] {
+    compressionTypes = new String[] {
         CompressionType.UNCOMPRESSED.getCompression()};
   }
 
@@ -182,10 +161,6 @@ public class QTWriter extends FormatWriter {
     throws FormatException, IOException
   {
     checkParams(no, buf, x, y, w, h);
-    if (needLegacy) {
-      legacy.saveBytes(no, buf, x, y, w, h);
-      return;
-    }
 
     MetadataRetrieve r = getMetadataRetrieve();
 
@@ -204,10 +179,7 @@ public class QTWriter extends FormatWriter {
       initialized[series][no] = true;
       setCodec();
       if (codec != CODEC_RAW) {
-        needLegacy = true;
-        legacy.setId(currentId);
-        legacy.saveBytes(no, buf, x, y, w, h);
-        return;
+        throw new FormatException("Codec is not supported, only uncompressed data is supported with this writer");
       }
 
       // update the number of pixel bytes written
@@ -229,7 +201,7 @@ public class QTWriter extends FormatWriter {
     // but needs to be reversed in QTReader
 
     byte[] tmp = new byte[buf.length];
-    if (nChannels == 1 && !needLegacy) {
+    if (nChannels == 1) {
       for (int i=0; i<buf.length; i++) {
         tmp[i] = (byte) (255 - buf[i]);
       }
@@ -288,11 +260,6 @@ public class QTWriter extends FormatWriter {
 
     pad = nChannels > 1 ? 0 : (4 - (width % 4)) % 4;
 
-    if (legacy == null) {
-      legacy = new LegacyQTWriter();
-      legacy.setCodec(codec);
-      legacy.setMetadataRetrieve(r);
-    }
     offsets = new ArrayList<Integer>();
     created = (int) System.currentTimeMillis();
     numBytes = 0;

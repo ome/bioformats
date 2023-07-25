@@ -44,32 +44,6 @@ notes = Not used; listed for informational purposes only.
 
 # native libraries
 
-[QuickTime for Java]
-type = Native library
-class = quicktime.QTSession
-version = qtVersion
-url = http://www.apple.com/quicktime/
-license = Commercial
-notes = Bio-Formats has two modes of operation for QuickTime movies:\n
-        1) QTJava mode requires the QuickTime for Java library to be
-        installed.\n
-        2) Native mode works on systems with no QuickTime (e.g., Linux).\n
-        \n
-        Using QTJava mode adds or improves support for the following
-        codecs:\n
-        1) [iraw] Intel YUV Uncompressed: enables write\n
-        2) [rle] Animation (run length encoded RGB):
-        improves read, enables write\n
-        3) [rpza] Apple Video 16 bit "road pizza": improves read\n
-        4) [cvid] Cinepak: enables read and write\n
-        5) [svq1] Sorenson Video: enables read and write\n
-        6) [svq3] Sorenson Video 3: enables read and write\n
-        7) [mp4v] MPEG-4: enables read and write\n
-        8) [h263] H.263: enables read and write\n
-        \n
-        You can toggle which mode is used
-        in the Formats tab's "QuickTime" entry.
-
 [JAI Image I/O Tools - native codecs]
 type = Native library
 class = com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi

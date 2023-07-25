@@ -83,15 +83,6 @@ public class InstallWizard extends JFrame
 
     // check for conflicting JARs -- i.e., duplicate classes
 
-    // Win32: download and install QuickTime
-    // Download http://www.apple.com/quicktime/download/
-    // Find line with qtimewin, extract URL
-    // Download the URL
-    // Find line with QuickTimeInstaller.exe, extract URL
-    // Download the URL
-    // Execute program
-    // Wait for process completion before continuing
-
     // Linux: download and install Image I/O Tools native codecs
     // Download http://download.java.net/media/jai-imageio/builds/release/1.1/jai_imageio-1_1-lib-linux-i586-jre.bin
     // Chmod 755 and execute?
