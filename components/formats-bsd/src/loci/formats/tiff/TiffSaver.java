@@ -988,7 +988,7 @@ public class TiffSaver implements Closeable {
     if (nChannels == 1 && ifd.getIFDValue(IFD.COLOR_MAP) != null) {
       pi = PhotoInterp.RGB_PALETTE;
     }
-    else if (nChannels == 3) {
+    else if (nChannels == 3 || nChannels == 4) {
       pi = PhotoInterp.RGB;
     }
     ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION, pi.getCode());
