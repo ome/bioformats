@@ -672,6 +672,9 @@ public class DicomReader extends SubResolutionFormatReader {
         case EXTENDED_DEPTH_OF_FIELD:
           edf = tag.getStringValue().equalsIgnoreCase("yes");
           break;
+        case TRAILING_PADDING:
+          decodingTags = false;
+          break;
         default:
           in.seek(tag.getEndPointer());
       }
