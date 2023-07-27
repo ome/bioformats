@@ -42,7 +42,6 @@
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <logback.version>1.2.9</logback.version>
     <ome-stubs.version>5.3.2</ome-stubs.version>
-    <lwf-stubs.version>${ome-stubs.version}</lwf-stubs.version>
     <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
     <ome-metakit.version>5.3.5</ome-metakit.version>
     <metakit.version>${ome-metakit.version}</metakit.version>

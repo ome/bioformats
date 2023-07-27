@@ -66,9 +66,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * FlexReader is a file format reader for Evotec Flex files.
- * To use it, the LuraWave decoder library, lwf_jsdk2.6.jar, must be available,
- * and a LuraWave license key must be specified in the lurawave.license system
- * property (e.g., <code>-Dlurawave.license=XXXX</code> on the command line).
  */
 public class FlexReader extends FormatReader {
 

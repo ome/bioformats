@@ -42,13 +42,6 @@
 
     <dependency>
       <groupId>org.openmicroscopy</groupId>
-      <artifactId>lwf-stubs</artifactId>
-      <version>${lwf-stubs.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openmicroscopy</groupId>
       <artifactId>mipav-stubs</artifactId>
       <version>${mipav-stubs.version}</version>
       <scope>provided</scope>
