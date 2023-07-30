@@ -187,7 +187,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
 
     if (mcuWidth == 0) {
-      LOGGER.warning("assume MCU width and height 8");
+      LOGGER.warn("assume MCU width and height 8");
       mcuWidth = 8;
       mcuHeight = 8;
     }
@@ -425,8 +425,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
 
     boolean gotY = false, gotCb = false, gotCr = false;
-    // Sampling factor of 0x22 means 1*1 subsampling, 0x11 means 2*2 subsampling
-    int samplingFactor = Integer.MIN_VALUE;
+    // Default to 1*1 (8*8 MCU)
+    int samplingFactor = 0x22;
 
     for (int i = 0; i < channels; i++) {
       int componentId = in.readByte() & 0xff;
@@ -440,7 +440,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
           // Sampling factors https://groups.google.com/g/comp.compression/c/Q8FUSocL7nA
           // https://stackoverflow.com/questions/27918757/interpreting-jpeg-chroma-subsampling-read-from-file
-          int samplingFactorByteY = in.readByte() & 0xff;
+          samplingFactor = in.readByte() & 0xff;
           int quantTableNumberY = in.readByte() & 0xff;
           break;
 
@@ -454,11 +454,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
             gotCr = true;
           }
 
-          int samplingFactorByte = in.readByte() & 0xff;
-          if (samplingFactor != Integer.MIN_VALUE && samplingFactor != samplingFactorByte) {
-            throw new IOException("Contradictory sampling factors");
-          }
-          samplingFactor = samplingFactorByte;
+          int samplingFactorByteCbOrCr = in.readByte() & 0xff;
           int quantTableNumberCbOrCr = in.readByte() & 0xff;
           break;
 
@@ -470,16 +466,16 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     int samplingVertical = samplingFactor & 0x0f;
     int samplingHorizontal = (samplingFactor & 0xf0) >> 4;
     if (samplingVertical == 0x01) {
-      mcuHeight = 16;
-    } else if (samplingVertical == 0x02) {
       mcuHeight = 8;
+    } else if (samplingVertical == 0x02) {
+      mcuHeight = 16;
     } else {
       throw new IOException("Unsupported vertical sampling: " + samplingVertical);
     }
     if (samplingHorizontal == 0x01) {
-      mcuWidth = 16;
-    } else if (samplingHorizontal == 0x02) {
       mcuWidth = 8;
+    } else if (samplingHorizontal == 0x02) {
+      mcuWidth = 16;
     } else {
       throw new IOException("Unsupported horizontal sampling: " + samplingHorizontal);
     }
