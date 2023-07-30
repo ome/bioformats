@@ -88,6 +88,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   private long sos;
   private long imageDimensions;
 
+  private int mcuWidth;
+  private int mcuHeight;
   private int tileWidth;
   private int tileHeight;
   private int xTiles;
@@ -156,6 +158,10 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       }
       else if (marker == SOF0) {
         imageDimensions = in.getFilePointer() + 1;
+        parseSOF();
+      }
+      else if (marker > 0xFFC0 && marker < 0xFFD0 && marker % 4 != 0) {
+        throw new IOException("Unsupported JPEG SOF marker: " + marker);
       }
       else if (marker == SOS) {
         sos = end;
@@ -178,6 +184,12 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
         in.seek(end);
         marker = in.readShort() & 0xffff;
       }
+    }
+
+    if (mcuWidth == 0) {
+      LOGGER.warning("assume MCU width and height 8");
+      mcuWidth = 8;
+      mcuHeight = 8;
     }
 
     if (restartMarkers.size() == 1) {
@@ -206,7 +218,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       }
     }
 
-    tileWidth = restartInterval * 8;
+    tileWidth = restartInterval * mcuWidth;
     tileHeight = (int) Math.min(tileWidth, 512);
 
     xTiles = imageWidth / tileWidth;
@@ -289,9 +301,9 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
     long dataLength = header.length + 2;
 
-    int mult = tileHeight / 8; // was restartInterval
+    int mult = tileHeight / mcuHeight; // was restartInterval
     int start = tileX + (tileY * xTiles * mult);
-    for (int row=0; row<tileHeight/8; row++) {
+    for (int row=0; row<tileHeight/mcuHeight; row++) {
       int end = start + 1;
 
       long startOffset = restartMarkers.get(start);
@@ -314,7 +326,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     offset += header.length;
 
     start = tileX + (tileY * xTiles * mult);
-    for (int row=0; row<tileHeight/8; row++) {
+    for (int row=0; row<tileHeight/mcuHeight; row++) {
       int end = start + 1;
 
       long endOffset = in.length();
@@ -374,6 +386,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     restartInterval = 1;
     sos = 0;
     imageDimensions = 0;
+    mcuWidth = 0;
+    mcuHeight = 0;
     tileWidth = 0;
     tileHeight = 0;
     xTiles = 0;
@@ -394,6 +408,81 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     DataTools.unpackBytes(tileWidth, header, index + 2, 2, false);
 
     return header;
+  }
+
+  private void parseSOF() throws IOException {
+    // https://mykb.cipindanci.com/archive/SuperKB/1294/JPEG%20File%20Layout%20and%20Format.htm
+    // example: FFC00011 08001100 11030122 00021101 031101
+    int bpc = in.readByte() & 0xff;
+    if (bpc != 8) {
+      throw new IOException("Only 8-bit channels supported by this reader");
+    }
+    in.skipBytes(4);
+    int channels = in.readByte() & 0xff;
+    if (channels != 3) {
+      // https://stackoverflow.com/questions/51008883/is-there-a-grayscale-jpg-format
+      throw new IOException("Only exactly 3 channels supported by this reader");
+    }
+
+    boolean gotY = false, gotCb = false, gotCr = false;
+    // Sampling factor of 0x22 means 1*1 subsampling, 0x11 means 2*2 subsampling
+    int samplingFactor = Integer.MIN_VALUE;
+
+    for (int i = 0; i < channels; i++) {
+      int componentId = in.readByte() & 0xff;
+
+      switch(componentId) {
+        case 1:
+          if (gotY) {
+            throw new IOException("Got multiple Y channels");
+          }
+          gotY = true;
+
+          // Sampling factors https://groups.google.com/g/comp.compression/c/Q8FUSocL7nA
+          // https://stackoverflow.com/questions/27918757/interpreting-jpeg-chroma-subsampling-read-from-file
+          int samplingFactorByteY = in.readByte() & 0xff;
+          int quantTableNumberY = in.readByte() & 0xff;
+          break;
+
+        case 2:
+        case 3:
+          if (componentId == 2) {
+            if (gotCb) throw new IOException("Got multiple Cb channels");
+            gotCb = true;
+          } else {
+            if (gotCr) throw new IOException("Got multiple Cr channels");
+            gotCr = true;
+          }
+
+          int samplingFactorByte = in.readByte() & 0xff;
+          if (samplingFactor != Integer.MIN_VALUE && samplingFactor != samplingFactorByte) {
+            throw new IOException("Contradictory sampling factors");
+          }
+          samplingFactor = samplingFactorByte;
+          int quantTableNumberCbOrCr = in.readByte() & 0xff;
+          break;
+
+        default:
+          throw new IOException("Only YCbCr supported by this reader");
+      }
+    }
+
+    int samplingVertical = samplingFactor & 0x0f;
+    int samplingHorizontal = (samplingFactor & 0xf0) >> 4;
+    if (samplingVertical == 0x01) {
+      mcuHeight = 16;
+    } else if (samplingVertical == 0x02) {
+      mcuHeight = 8;
+    } else {
+      throw new IOException("Unsupported vertical sampling: " + samplingVertical);
+    }
+    if (samplingHorizontal == 0x01) {
+      mcuWidth = 16;
+    } else if (samplingHorizontal == 0x02) {
+      mcuWidth = 8;
+    } else {
+      throw new IOException("Unsupported horizontal sampling: " + samplingHorizontal);
+    }
   }
 
 }
