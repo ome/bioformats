@@ -424,43 +424,17 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       throw new IOException("Only exactly 3 channels supported by this reader");
     }
 
-    boolean gotY = false, gotCb = false, gotCr = false;
-    // Default to 1*1 (8*8 MCU)
-    int samplingFactor = 0x22;
+    // Sampling factors: https://groups.google.com/g/comp.compression/c/Q8FUSocL7nA
+    // https://stackoverflow.com/questions/27918757/interpreting-jpeg-chroma-subsampling-read-from-file
+    // In our code, assume that Y is the largest, and others are 0x11.
+    // Default to 1*1 (8*8 MCU), where Y=0x11
+    int samplingFactor = 0x11;
 
     for (int i = 0; i < channels; i++) {
       int componentId = in.readByte() & 0xff;
-
-      switch(componentId) {
-        case 1:
-          if (gotY) {
-            throw new IOException("Got multiple Y channels");
-          }
-          gotY = true;
-
-          // Sampling factors https://groups.google.com/g/comp.compression/c/Q8FUSocL7nA
-          // https://stackoverflow.com/questions/27918757/interpreting-jpeg-chroma-subsampling-read-from-file
-          samplingFactor = in.readByte() & 0xff;
-          int quantTableNumberY = in.readByte() & 0xff;
-          break;
-
-        case 2:
-        case 3:
-          if (componentId == 2) {
-            if (gotCb) throw new IOException("Got multiple Cb channels");
-            gotCb = true;
-          } else {
-            if (gotCr) throw new IOException("Got multiple Cr channels");
-            gotCr = true;
-          }
-
-          int samplingFactorByteCbOrCr = in.readByte() & 0xff;
-          int quantTableNumberCbOrCr = in.readByte() & 0xff;
-          break;
-
-        default:
-          throw new IOException("Only YCbCr supported by this reader");
-      }
+      // The first one is Y, then the others, but use a simpler logic here
+      samplingFactor = Math.max(samplingFactor, in.readByte() & 0xff);
+      int quantTableNumber = in.readByte() & 0xff;
     }
 
     int samplingVertical = samplingFactor & 0x0f;
