@@ -149,7 +149,7 @@ loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]
 loci.formats.in.SEQReader             # seq
 loci.formats.in.GelReader             # gel
 loci.formats.in.ImarisTiffReader      # ims
-loci.formats.in.FlexReader            # flex [LuraWave]
+loci.formats.in.FlexReader            # flex
 loci.formats.in.SVSReader             # svs
 loci.formats.in.ImaconReader          # fff
 loci.formats.in.LEOReader             # sxm
