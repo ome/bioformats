@@ -672,6 +672,9 @@ public class DicomReader extends SubResolutionFormatReader {
         case EXTENDED_DEPTH_OF_FIELD:
           edf = tag.getStringValue().equalsIgnoreCase("yes");
           break;
+        case TRAILING_PADDING:
+          decodingTags = false;
+          break;
         default:
           in.seek(tag.getEndPointer());
       }
@@ -1497,8 +1500,8 @@ public class DicomReader extends SubResolutionFormatReader {
         LOGGER.error("attempted to read beyond end of file ({}, {})", tile.fileOffset, tile.file);
         return;
       }
-      stream.seek(tile.fileOffset);
       LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
+      stream.seek(tile.fileOffset);
 
       if (tile.isRLE) {
         // plane is compressed using run-length encoding
@@ -1604,7 +1607,14 @@ public class DicomReader extends SubResolutionFormatReader {
         options.interleaved = isInterleaved();
         if (tile.isJPEG) codec = new JPEGCodec();
         else codec = new JPEG2000Codec();
-        b = codec.decompress(b, options);
+
+        try {
+          b = codec.decompress(b, options);
+        }
+        catch (NullPointerException e) {
+          LOGGER.debug("Could not read empty or invalid tile", e);
+          return;
+        }
 
         int rowLen = w * bpp;
         int srcRowLen = tile.region.width * bpp;
@@ -1712,7 +1722,10 @@ public class DicomReader extends SubResolutionFormatReader {
             in.seek(in.getFilePointer() - 1);
           }
         }
-        in.skipBytes(i == 0 ? 64 : 53);
+        if (in.readInt() == 0xe000fffe) {
+          in.skipBytes(12);
+        }
+        in.skipBytes(i == 0 ? 60 : 49);
         while (in.read() == 0);
         offset = in.getFilePointer() - 1;
       }
@@ -1760,7 +1773,7 @@ public class DicomReader extends SubResolutionFormatReader {
           }
         }
       }
-      else offset = baseOffset + plane*i;
+      else offset = baseOffset + (long) plane*i;
 
       tilePositions.get(getCoreIndex()).get(i).fileOffset = offset;
       tilePositions.get(getCoreIndex()).get(i).last = i == imagesPerFile - 1;
