@@ -243,7 +243,17 @@ public class CV7000Reader extends FormatReader {
       return reader.openBytes(0, buf, x, y, w, h);
     }
     else if (duplicatePlanes() && no > 0) {
-      return openBytes(0, buf, x, y, w, h);
+      int[] zct = getZCTCoords(no);
+      // pick the first plane in the same channel
+      int dupPlane = getIndex(0, zct[1], 0);
+
+      // very unlikely to happen, but catching the case
+      // where no is the first plane in the channel prevents
+      // a potential infinite loop
+      if (dupPlane == no) {
+        dupPlane = 0;
+      }
+      return openBytes(dupPlane, buf, x, y, w, h);
     }
     return buf;
   }
