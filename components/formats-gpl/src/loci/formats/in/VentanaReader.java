@@ -230,8 +230,8 @@ public class VentanaReader extends BaseTiffReader {
     int outputRowLen = w * tilePixel;
 
     int scale = getScale(getCoreIndex());
-    int thisTileWidth = tileWidth / scale;
-    int thisTileHeight = tileHeight / scale;
+    int thisTileWidth = scaleCoordinate(tileWidth, getCoreIndex());
+    int thisTileHeight = scaleCoordinate(tileHeight, getCoreIndex());
 
     byte[] subResTile = null;
     int subResX = -1, subResY = -1;
@@ -250,8 +250,8 @@ public class VentanaReader extends BaseTiffReader {
       }
       tileBox.x = scaleCoordinate(tileBox.x, getCoreIndex());
       tileBox.y = scaleCoordinate(tileBox.y, getCoreIndex());
-      tileBox.width /= scale;
-      tileBox.height /= scale;
+      tileBox.width = scaleCoordinate(tileBox.width, getCoreIndex());
+      tileBox.height = scaleCoordinate(tileBox.height, getCoreIndex());
 
       if (tileBox.intersects(imageBox)) {
         if (scale == 1) {
