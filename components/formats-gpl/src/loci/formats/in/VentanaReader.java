@@ -292,9 +292,13 @@ public class VentanaReader extends BaseTiffReader {
             input = inRow * (c * tileHeight + offsetY) + offsetX * tilePixel;
             output = c * thisTileHeight * outRow;
             for (int row=0; row<thisTileHeight; row++) {
-              System.arraycopy(subResTile, input, tilePixels, output, outRow);
-              input += inRow;
-              output += outRow;
+              int copy = (int) Math.min(outRow, tilePixels.length - output);
+              copy = (int) Math.min(copy, subResTile.length - input);
+              if (copy >= 0) {
+                System.arraycopy(subResTile, input, tilePixels, output, copy);
+                input += inRow;
+                output += outRow;
+              }
             }
           }
         }
