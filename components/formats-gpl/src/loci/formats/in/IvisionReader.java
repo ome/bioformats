@@ -94,7 +94,12 @@ public class IvisionReader extends FormatReader {
     String version = stream.readString(3);
     try {
       Double.parseDouble(version);
-      return version.indexOf('.') != -1 && version.indexOf('-') == -1;
+      boolean validVersion = version.indexOf('.') != -1 && version.indexOf('-') == -1;
+      boolean validPatch = Character.isAlphabetic(stream.read());
+      stream.skipBytes(1);
+      int dataType = stream.read();
+      boolean validType = dataType >= 0 && dataType <= 8;
+      return validVersion && validPatch && validType;
     }
     catch (NumberFormatException e) { }
     return false;
