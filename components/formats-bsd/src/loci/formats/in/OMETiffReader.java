@@ -1103,6 +1103,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
         if (firstFile == null ||
           (testFile != null && !info[s][0].reader.isThisType(testFile)))
         {
+          if (failOnMissingTIFF()) {
+            throw new FormatException("Invalid file (may be corrupted): " + info[s][0].id);
+          }
           LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
           info[s][0].id = currentId;
           info[s][0].exists = false;
