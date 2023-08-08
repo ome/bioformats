@@ -1241,7 +1241,7 @@ public class CellSensReader extends FormatReader {
 
     etsFile.skipBytes(4 * 10 - color.length); // background color
     int componentOrder = etsFile.readInt();
-    bgr[s] = componentOrder == 1;
+    bgr[s] = componentOrder == 1 && compressionType.get(compressionType.size() - 1) == RAW;
     boolean usePyramid = etsFile.readInt() != 0;
 
     ms.rgb = ms.sizeC > 1;
