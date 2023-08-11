@@ -100,6 +100,9 @@ public class SVSReader extends BaseTiffReader {
   // total number of extra (label and macro) images
   private int extraImages = 0;
 
+  private transient Double physicalDistanceFromLeftEdge;
+  private transient Double physicalDistanceFromTopEdge;
+
   // -- Constructor --
 
   /** Constructs a new SVS reader. */
@@ -481,6 +484,12 @@ public class SVSReader extends BaseTiffReader {
                   int color = Integer.parseInt(value);
                   displayColor = new Color((color << 8) | 0xff);
                   break;
+                case "Left":
+                  physicalDistanceFromLeftEdge = DataTools.parseDouble(value);
+                  break;
+                case "Top":
+                  physicalDistanceFromTopEdge = DataTools.parseDouble(value);
+                  break;
               }
             }
           }
@@ -498,7 +507,10 @@ public class SVSReader extends BaseTiffReader {
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, getImageCount() > 1);
+    boolean populatePlaneData = getImageCount() > 1 ||
+      physicalDistanceFromTopEdge != null ||
+      physicalDistanceFromLeftEdge != null;
+    MetadataTools.populatePixels(store, this, populatePlaneData);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     String objective = MetadataTools.createLSID("Objective", 0, 0);
@@ -512,6 +524,21 @@ public class SVSReader extends BaseTiffReader {
 
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
+
+      if (i == 0) {
+        if (physicalDistanceFromTopEdge != null) {
+          Length yPos = FormatTools.getStagePosition(physicalDistanceFromTopEdge, UNITS.MM);
+          for (int p=0; p<getImageCount(); p++) {
+            store.setPlanePositionY(yPos, i, p);
+          }
+        }
+        if (physicalDistanceFromLeftEdge != null) {
+          Length xPos = FormatTools.getStagePosition(physicalDistanceFromLeftEdge, UNITS.MM);
+          for (int p=0; p<getImageCount(); p++) {
+            store.setPlanePositionX(xPos, i, p);
+          }
+        }
+      }
 
       if (hasFlattenedResolutions() || i > extraImages) {
         store.setImageName("Series " + (i + 1), i);
