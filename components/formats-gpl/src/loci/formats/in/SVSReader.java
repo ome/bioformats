@@ -658,7 +658,7 @@ public class SVSReader extends BaseTiffReader {
   }
 
   protected double getMagnification() {
-    return magnification;
+    return magnification == null ? Double.NaN : magnification;
   }
 
   protected ArrayList<String> getDyeNames() {
