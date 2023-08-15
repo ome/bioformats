@@ -202,6 +202,14 @@ public class NDPIReader extends BaseTiffReader {
             markers[i] = markers[i] & 0xffffffffL;
           }
         }
+        else {
+          // might need to correct offset overflow by adding 4GB to offsets
+          for (int i=1; i<markers.length; i++) {
+            if (markers[i] < markers[i - 1]) {
+              markers[i] += (long) Math.pow(2, 32);
+            }
+          }
+        }
         if (markers != null) {
           service.setRestartMarkers(markers);
         }
