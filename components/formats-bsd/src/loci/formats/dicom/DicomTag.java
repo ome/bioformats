@@ -47,7 +47,7 @@ import static loci.formats.dicom.DicomVR.*;
  * Represents a complete DICOM tag, including the dictionary attribute,
  * actual VR, value, and any "child" tags (in the case of a sequence).
  */
-public class DicomTag {
+public class DicomTag implements Comparable<DicomTag> {
   public DicomTag parent = null;
   public List<DicomTag> children = new ArrayList<DicomTag>();
 
@@ -697,6 +697,14 @@ public class DicomTag {
       }
     }
     return key + " = " + value;
+  }
+
+  @Override
+  public int compareTo(DicomTag o) {
+    int thisTag = this.attribute == null ? this.tag : this.attribute.getTag();
+    int otherTag = o.attribute == null ? o.tag : o.attribute.getTag();
+
+    return thisTag - otherTag;
   }
 
 }

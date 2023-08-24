@@ -137,7 +137,6 @@ public class DicomJSONProvider implements ITagProvider {
     for (String key : sequence.keySet()) {
       JSONObject tag = sequence.getJSONObject(key);
       String vr = tag.getString("VR");
-      String value = tag.getString("Value");
       String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
 
       int tagUpper = Integer.parseInt(tagCode[0], 16);
@@ -146,8 +145,12 @@ public class DicomJSONProvider implements ITagProvider {
       int intTagCode = tagUpper << 16 | tagLower;
       DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
       DicomTag dicomTag = new DicomTag(intTagCode, vrEnum);
-      dicomTag.value = value;
-      LOGGER.debug("Adding tag: {}, VR: {}, value: {}", intTagCode, vrEnum, value);
+
+      if (tag.has("Value")) {
+        dicomTag.value = tag.get("Value");
+      }
+
+      LOGGER.debug("Adding tag: {}, VR: {}, value: {}", intTagCode, vrEnum, dicomTag.value);
       dicomTag.validateValue();
 
       dicomTag.parent = parent;
@@ -157,6 +160,7 @@ public class DicomJSONProvider implements ITagProvider {
         readSequence(tag, dicomTag);
       }
     }
+    parent.children.sort(null);
   }
 
 }

@@ -941,8 +941,22 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
               LOGGER.trace("handling supplemental tag ({}) with strategy {}", t, t.strategy);
               switch (t.strategy) {
                 case APPEND:
-                  // TODO: doesn't handle sequences properly
-                  tags.add(t);
+                  if (t.vr == SQ) {
+                    DicomTag existingSequence = lookupTag(tags, t);
+                    if (existingSequence == null) {
+                      tags.add(t);
+                    }
+                    else {
+                      existingSequence.children.add(makeItem());
+                      for (DicomTag child : t.children) {
+                        existingSequence.children.add(child);
+                      }
+                      existingSequence.children.add(makeItemDelimitation());
+                    }
+                  }
+                  else {
+                    tags.add(t);
+                  }
                   break;
                 case IGNORE:
                   // ignore current tag if a matching tag already exists
@@ -969,14 +983,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
         // sort tags into ascending order, then write
 
-        tags.sort(new Comparator<DicomTag>() {
-          public int compare(DicomTag a, DicomTag b) {
-            int aTag = a.attribute == null ? a.tag : a.attribute.getTag();
-            int bTag = b.attribute == null ? b.tag : b.attribute.getTag();
-
-            return aTag - bTag;
-          }
-        });
+        tags.sort(null);
 
         for (DicomTag tag : tags) {
           writeTag(tag);
