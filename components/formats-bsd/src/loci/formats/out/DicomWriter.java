@@ -1204,6 +1204,10 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
           long fp = out.getFilePointer();
           writeIFDs(resolutionIndex);
           long length = out.getFilePointer() - fp;
+          if (length % 2 == 1) {
+            out.writeByte(0);
+            length++;
+          }
           out.seek(fp - 4);
           out.writeInt((int) length);
         }
