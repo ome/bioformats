@@ -605,9 +605,16 @@ public final class ImageConverter {
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         else {
-          meta.setPixelsSizeX(new PositiveInteger(width), 0);
-          meta.setPixelsSizeY(new PositiveInteger(height), 0);
           for (int i=0; i<reader.getSeriesCount(); i++) {
+            reader.setSeries(i);
+            width = reader.getSizeX();
+            height = reader.getSizeY();
+            if (width_crop != 0 || height_crop != 0) {
+              width = Math.min(reader.getSizeX(), width_crop);
+              height = Math.min(reader.getSizeY(), height_crop);
+            }
+            meta.setPixelsSizeX(new PositiveInteger(width), i);
+            meta.setPixelsSizeY(new PositiveInteger(height), i);
             if (autoscale) {
               store.setPixelsType(PixelType.UINT8, i);
             }
@@ -637,11 +644,17 @@ public final class ImageConverter {
       ((TiffWriter) writer).setBigTiff(bigtiff);
       ((TiffWriter) writer).setCanDetectBigTiff(!nobigtiff);
     }
+    else if (writer instanceof DicomWriter) {
+      ((DicomWriter) writer).setBigTiff(bigtiff);
+    }
     else if (writer instanceof ImageWriter) {
       IFormatWriter w = ((ImageWriter) writer).getWriter(out);
       if (w instanceof TiffWriter) {
         ((TiffWriter) w).setBigTiff(bigtiff);
         ((TiffWriter) w).setCanDetectBigTiff(!nobigtiff);
+      }
+      else if (w instanceof DicomWriter) {
+        ((DicomWriter) w).setBigTiff(bigtiff);
       }
     }
     if (writer instanceof IExtraMetadataWriter) {

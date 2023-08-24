@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>6.13.1-SNAPSHOT</version>
+    <version>7.0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -114,11 +114,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>woolz</groupId>
-      <artifactId>JWlz</artifactId>
-      <version>1.4.0</version>
     </dependency>
     <dependency>
       <groupId>com.esotericsoftware</groupId>

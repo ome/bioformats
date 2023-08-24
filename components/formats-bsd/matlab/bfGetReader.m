@@ -70,14 +70,6 @@ if ~isempty(id) && ~isFake
     id = f.Name;
 end
 
-% set LuraWave license code, if available
-if exist('lurawaveLicense', 'var')
-    path = fullfile(fileparts(mfilename('fullpath')), 'lwf_jsdk2.6.jar');
-    javaaddpath(path);
-    javaMethod('setProperty', 'java.lang.System', ...
-               'lurawave.license', lurawaveLicense);
-end
-
 % Create a loci.formats.ReaderWrapper object
 r = javaObject('loci.formats.ChannelSeparator', ...
                javaObject('loci.formats.ChannelFiller'));

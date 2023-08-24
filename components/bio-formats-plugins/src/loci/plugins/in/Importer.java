@@ -96,12 +96,23 @@ public class Importer {
         finish(process);
       }
       catch (Exception exc) {
-        if (!process.getOptions().isVirtual() && process.getReader() != null) {
-          process.getReader().close();
-        }
         boolean quiet = options == null ? false : options.isQuiet();
         WindowTools.reportException(exc, quiet,
           "Sorry, there was a problem during import.");
+        
+        // Try to close the reader, if the exception occurred before file 
+        // initialization then this may not be possible 
+        try {
+          if (!process.getOptions().isVirtual() && process.getReader() != null) {
+            process.getReader().close();
+          }
+        }
+        catch(IllegalStateException argExcep) {
+          // If the ImageProcessReader could not be closed then instead close the baseReader
+          if (!process.getOptions().isVirtual() && process.getBaseReader() != null) {
+            process.getBaseReader().close();
+          }
+        }
       }
     }
     catch (IOException exc) {
