@@ -105,8 +105,10 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     logger = Logger.getLogger(NATIVE_LIB_CLASS);
     logger.setLevel(Level.SEVERE);
     if (!libraryLoaded) {
-      NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
-      libraryLoaded = true;
+      libraryLoaded = NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
+      if (!libraryLoaded) {
+        throw new RuntimeException("TurboJPEG could not be loaded");
+      }
     }
   }
 
