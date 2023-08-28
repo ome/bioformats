@@ -96,12 +96,27 @@ public class DicomJSONProvider implements ITagProvider {
         JSONObject tag = root.getJSONObject(tagKey);
         String vr = tag.getString("VR");
         String value = tag.has("Value") ? tag.getString("Value") : null;
-        String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
 
-        int tagUpper = Integer.parseInt(tagCode[0], 16);
-        int tagLower = Integer.parseInt(tagCode[1], 16);
+        Integer intTagCode = null;
 
-        int intTagCode = tagUpper << 16 | tagLower;
+        if (tag.has("Tag")) {
+          String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
+
+          int tagUpper = Integer.parseInt(tagCode[0], 16);
+          int tagLower = Integer.parseInt(tagCode[1], 16);
+
+          intTagCode = tagUpper << 16 | tagLower;
+        }
+        else {
+          intTagCode = DicomAttribute.getTag(tagKey);
+
+          if (intTagCode == null) {
+            throw new IllegalArgumentException(
+              "Tag not defined and could not be determined from description '" +
+              tagKey + "'");
+          }
+        }
+
         DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
         DicomTag dicomTag = new DicomTag(intTagCode, vrEnum);
         dicomTag.value = value;
