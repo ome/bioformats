@@ -193,4 +193,10 @@
         <class name="loci.formats.utests.out.ICSWriterTest"/>
       </classes>
     </test>
+    <test name="DICOMTest">
+       <groups/>
+      <classes>
+        <class name="loci.formats.utests.dicom.ProvidedMetadataTest"/>
+      </classes>
+    </test>
 </suite>
