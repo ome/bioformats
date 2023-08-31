@@ -94,7 +94,6 @@ public class DicomJSONProvider implements ITagProvider {
 
       for (String tagKey : root.keySet()) {
         JSONObject tag = root.getJSONObject(tagKey);
-        String vr = tag.getString("VR");
         String value = tag.has("Value") ? tag.getString("Value") : null;
 
         Integer intTagCode = null;
@@ -117,10 +116,22 @@ public class DicomJSONProvider implements ITagProvider {
           }
         }
 
-        DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
+        DicomVR vrEnum = DicomAttribute.getDefaultVR(intTagCode);
+        if (tag.has("VR")) {
+          DicomVR userEnum = DicomVR.valueOf(DicomVR.class, tag.getString("VR"));
+          if (!vrEnum.equals(userEnum)) {
+            LOGGER.warn("User-defined VR ({}) for {} does not match expected VR ({})",
+              userEnum, DicomAttribute.formatTag(intTagCode), vrEnum);
+            if (userEnum != null) {
+              vrEnum = userEnum;
+            }
+          }
+        }
+
         DicomTag dicomTag = new DicomTag(intTagCode, vrEnum);
         dicomTag.value = value;
-        LOGGER.debug("Adding tag: {}, VR: {}, value: {}", intTagCode, vrEnum, value);
+        LOGGER.debug("Adding tag: {}, VR: {}, value: {}",
+          DicomAttribute.formatTag(intTagCode), vrEnum, value);
         dicomTag.validateValue();
 
         if (vrEnum == DicomVR.SQ && tag.has("Sequence")) {
