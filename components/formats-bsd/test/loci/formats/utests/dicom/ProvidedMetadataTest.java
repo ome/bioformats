@@ -61,23 +61,30 @@ public class ProvidedMetadataTest {
 
   public Path doConversion(String jsonMetadata) throws FormatException, IOException {
     Path jsonFile = Files.createTempFile("dicom", ".json");
-    Files.write(jsonFile, jsonMetadata.getBytes(Constants.ENCODING));
-
-    IMetadata meta = MetadataTools.createOMEXMLMetadata();
+    Path dicomFile = Files.createTempFile("metadata-test", ".dcm");
     FakeReader reader = new FakeReader();
-    reader.setMetadataStore(meta);
-    reader.setId("test.fake");
-
     DicomWriter writer = new DicomWriter();
-    writer.setExtraMetadata(jsonFile.toString());
-    writer.setMetadataRetrieve(meta);
-    Path dicomFile = Files.createTempFile("metadata-test", "dcm");
-    writer.setId(dicomFile.toString());
-    writer.saveBytes(0, reader.openBytes(0));
+    try {
+      Files.write(jsonFile, jsonMetadata.getBytes(Constants.ENCODING));
 
-    reader.close();
-    writer.close();
-    Files.delete(jsonFile);
+      IMetadata meta = MetadataTools.createOMEXMLMetadata();
+      reader.setMetadataStore(meta);
+      reader.setId("test.fake");
+
+      writer.setExtraMetadata(jsonFile.toString());
+      writer.setMetadataRetrieve(meta);
+      writer.setId(dicomFile.toString());
+      writer.saveBytes(0, reader.openBytes(0));
+    }
+    catch (Throwable e) {
+      Files.delete(dicomFile);
+      throw e;
+    }
+    finally {
+      reader.close();
+      writer.close();
+      Files.delete(jsonFile);
+    }
 
     return dicomFile;
   }
@@ -101,22 +108,26 @@ public class ProvidedMetadataTest {
 
   @Test
   public void testSingleTagWithDefaults() throws FormatException, IOException {
-    String json = "{" +
-     "\"BodyPartExamined\": {" +
-     "\"Value\": \"BRAIN\"" +
-     "}}";
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+       "\"BodyPartExamined\": {" +
+       "\"Value\": \"BRAIN\"" +
+       "}}";
 
-    Path dicomFile = doConversion(json);
-    List<DicomTag> tags = getTags(dicomFile);
-    DicomTag found = lookup(tags, DicomAttribute.BODY_PART_EXAMINED);
-    assertNotNull(found);
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+      DicomTag found = lookup(tags, DicomAttribute.BODY_PART_EXAMINED);
+      assertNotNull(found);
 
-    // trailing space is not a typo
-    // the writer pads string values to an even number of characters
-    assertEquals(found.value, "BRAIN ");
-    assertEquals(found.vr, DicomVR.CS);
-
-    Files.delete(dicomFile);
+      // trailing space is not a typo
+      // the writer pads string values to an even number of characters
+      assertEquals(found.value, "BRAIN ");
+      assertEquals(found.vr, DicomVR.CS);
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
   }
 
   @Test(expectedExceptions={ IllegalArgumentException.class })
@@ -141,43 +152,301 @@ public class ProvidedMetadataTest {
 
   @Test
   public void testSingleTagWeirdName() throws FormatException, IOException {
-    String json = "{" +
-     "\"bOdyPaRtexamiNeD\": {" +
-     "\"Value\": \"BRAIN\"" +
-     "}}";
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+       "\"bOdyPaRtexamiNeD\": {" +
+       "\"Value\": \"BRAIN\"" +
+       "}}";
 
-    Path dicomFile = doConversion(json);
-    List<DicomTag> tags = getTags(dicomFile);
-    DicomTag found = lookup(tags, DicomAttribute.BODY_PART_EXAMINED);
-    assertNotNull(found);
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+      DicomTag found = lookup(tags, DicomAttribute.BODY_PART_EXAMINED);
+      assertNotNull(found);
 
-    // trailing space is not a typo
-    // the writer pads string values to an even number of characters
-    assertEquals(found.value, "BRAIN ");
-    assertEquals(found.vr, DicomVR.CS);
-
-    Files.delete(dicomFile);
+      // trailing space is not a typo
+      // the writer pads string values to an even number of characters
+      assertEquals(found.value, "BRAIN ");
+      assertEquals(found.vr, DicomVR.CS);
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
   }
 
   @Test
   public void testSingleTagCustomVR() throws FormatException, IOException {
-    String json = "{" +
-     "\"BodyPartExamined\": {" +
-     "\"Value\": \"0\"," +
-     "\"VR\": \"SH\"" +
-     "}}";
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+       "\"BodyPartExamined\": {" +
+       "\"Value\": \"0\"," +
+       "\"VR\": \"SH\"" +
+       "}}";
 
-    Path dicomFile = doConversion(json);
-    List<DicomTag> tags = getTags(dicomFile);
-    DicomTag found = lookup(tags, DicomAttribute.BODY_PART_EXAMINED);
-    assertNotNull(found);
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+      DicomTag found = lookup(tags, DicomAttribute.BODY_PART_EXAMINED);
+      assertNotNull(found);
 
-    assertEquals(found.value, "0 ");
-    assertEquals(found.vr, DicomVR.SH);
-
-    Files.delete(dicomFile);
+      assertEquals(found.value, "0 ");
+      assertEquals(found.vr, DicomVR.SH);
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
   }
 
-  // TODO: add some more complex examples including sequences and different ResolutionStrategy values
+  @Test
+  public void testReplaceExistingTag() throws FormatException, IOException {
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+       "\"SpecimenLabelInImage\": {" +
+       "\"Value\": \"NO\"" +
+       "}}";
+
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+      DicomTag found = lookup(tags, DicomAttribute.SPECIMEN_LABEL_IN_IMAGE);
+      assertNotNull(found);
+
+      assertEquals(found.value, "NO");
+      assertEquals(found.vr, DicomVR.CS);
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
+  }
+
+  @Test
+  public void testIgnoreExistingTag() throws FormatException, IOException {
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+       "\"SpecimenLabelInImage\": {" +
+       "\"Value\": \"NO\"," +
+       "\"ResolutionStrategy\": \"IGNORE\"" +
+       "}}";
+
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+      DicomTag found = lookup(tags, DicomAttribute.SPECIMEN_LABEL_IN_IMAGE);
+      assertNotNull(found);
+
+      assertEquals(found.value, "YES ");
+      assertEquals(found.vr, DicomVR.CS);
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
+  }
+
+  @Test
+  public void testReplaceOpticalPath() throws FormatException, IOException {
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+      "\"OpticalPathSequence\": {" +
+      "\"Sequence\": {" +
+      "\"IlluminationTypeCodeSequence\": {" +
+      "\"Sequence\": {" +
+      "\"CodeValue\": {" +
+      "\"VR\": \"SH\"," +
+      "\"Value\": \"111743\"" +
+      "}," +
+      "\"CodingSchemeDesignator\": {" +
+      "\"VR\": \"SH\"," +
+      "\"Value\": \"DCM\"" +
+      "}," +
+      "\"CodeMeaning\": {" +
+      "\"VR\": \"LO\"," +
+      "\"Tag\": \"(0008,0104)\"," +
+      "\"Value\": \"Epifluorescence illumination\"" +
+      "}}}," +
+      "\"IlluminationWaveLength\": {" +
+      "\"Value\": \"488.0\"" +
+      "}," +
+      "\"OpticalPathIdentifier\": {" +
+      "\"Value\": \"1\"" +
+      "}," +
+      "\"OpticalPathDescription\": {" +
+      "\"Value\": \"replacement channel\" " +
+      "}}," +
+      "\"ResolutionStrategy\": \"REPLACE\"" +
+      "}}";
+
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+
+      DicomTag found = lookup(tags, DicomAttribute.OPTICAL_PATH_SEQUENCE);
+      assertNotNull(found);
+
+      assertEquals(found.children.size(), 4);
+      assertEquals(found.vr, DicomVR.SQ);
+
+      assertEquals(found.children.get(0).attribute, DicomAttribute.ILLUMINATION_TYPE_CODE_SEQUENCE);
+
+      assertEquals(found.children.get(1).attribute, DicomAttribute.ILLUMINATION_WAVELENGTH);
+      assertEquals(found.children.get(1).value, 488f);
+
+      assertEquals(found.children.get(2).attribute, DicomAttribute.OPTICAL_PATH_ID);
+      assertEquals(found.children.get(2).value, "1 ");
+
+      assertEquals(found.children.get(3).attribute, DicomAttribute.OPTICAL_PATH_DESCRIPTION);
+      assertEquals(found.children.get(3).value, "replacement channel ");
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
+  }
+
+  @Test
+  public void testAppendOpticalPath() throws FormatException, IOException {
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+      "\"OpticalPathSequence\": {" +
+      "\"Sequence\": {" +
+      "\"IlluminationTypeCodeSequence\": {" +
+      "\"Sequence\": {" +
+      "\"CodeValue\": {" +
+      "\"VR\": \"SH\"," +
+      "\"Value\": \"111743\"" +
+      "}," +
+      "\"CodingSchemeDesignator\": {" +
+      "\"VR\": \"SH\"," +
+      "\"Value\": \"DCM\"" +
+      "}," +
+      "\"CodeMeaning\": {" +
+      "\"VR\": \"LO\"," +
+      "\"Tag\": \"(0008,0104)\"," +
+      "\"Value\": \"Epifluorescence illumination\"" +
+      "}}}," +
+      "\"IlluminationWaveLength\": {" +
+      "\"Value\": \"488.0\"" +
+      "}," +
+      "\"OpticalPathIdentifier\": {" +
+      "\"Value\": \"1\"" +
+      "}," +
+      "\"OpticalPathDescription\": {" +
+      "\"Value\": \"replacement channel\" " +
+      "}}," +
+      "\"ResolutionStrategy\": \"APPEND\"" +
+      "}}";
+
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+
+      DicomTag found = lookup(tags, DicomAttribute.OPTICAL_PATH_SEQUENCE);
+      assertNotNull(found);
+
+      assertEquals(found.children.size(), 8);
+      assertEquals(found.vr, DicomVR.SQ);
+
+      assertEquals(found.children.get(0).attribute, DicomAttribute.ILLUMINATION_TYPE_CODE_SEQUENCE);
+
+      assertEquals(found.children.get(1).attribute, DicomAttribute.ILLUMINATION_WAVELENGTH);
+      assertEquals(found.children.get(1).value, 1f);
+
+      assertEquals(found.children.get(2).attribute, DicomAttribute.OPTICAL_PATH_ID);
+      assertEquals(found.children.get(2).value, "0 ");
+
+      assertEquals(found.children.get(3).attribute, DicomAttribute.OPTICAL_PATH_DESCRIPTION);
+      assertEquals(found.children.get(3).value, "");
+
+      assertEquals(found.children.get(4).attribute, DicomAttribute.ILLUMINATION_TYPE_CODE_SEQUENCE);
+
+      assertEquals(found.children.get(5).attribute, DicomAttribute.ILLUMINATION_WAVELENGTH);
+      assertEquals(found.children.get(5).value, 488f);
+
+      assertEquals(found.children.get(6).attribute, DicomAttribute.OPTICAL_PATH_ID);
+      assertEquals(found.children.get(6).value, "1 ");
+
+      assertEquals(found.children.get(7).attribute, DicomAttribute.OPTICAL_PATH_DESCRIPTION);
+      assertEquals(found.children.get(7).value, "replacement channel ");
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
+  }
+
+  @Test
+  public void testIgnoreOpticalPath() throws FormatException, IOException {
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+      "\"OpticalPathSequence\": {" +
+      "\"Sequence\": {" +
+      "\"IlluminationTypeCodeSequence\": {" +
+      "\"Sequence\": {" +
+      "\"CodeValue\": {" +
+      "\"VR\": \"SH\"," +
+      "\"Value\": \"111743\"" +
+      "}," +
+      "\"CodingSchemeDesignator\": {" +
+      "\"VR\": \"SH\"," +
+      "\"Value\": \"DCM\"" +
+      "}," +
+      "\"CodeMeaning\": {" +
+      "\"VR\": \"LO\"," +
+      "\"Tag\": \"(0008,0104)\"," +
+      "\"Value\": \"Epifluorescence illumination\"" +
+      "}}}," +
+      "\"IlluminationWaveLength\": {" +
+      "\"Value\": \"488.0\"" +
+      "}," +
+      "\"OpticalPathIdentifier\": {" +
+      "\"Value\": \"1\"" +
+      "}," +
+      "\"OpticalPathDescription\": {" +
+      "\"Value\": \"replacement channel\" " +
+      "}}," +
+      "\"ResolutionStrategy\": \"IGNORE\"" +
+      "}}";
+
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+
+      DicomTag found = lookup(tags, DicomAttribute.OPTICAL_PATH_SEQUENCE);
+      assertNotNull(found);
+
+      assertEquals(found.children.size(), 4);
+      assertEquals(found.vr, DicomVR.SQ);
+
+      assertEquals(found.children.get(0).attribute, DicomAttribute.ILLUMINATION_TYPE_CODE_SEQUENCE);
+
+      assertEquals(found.children.get(1).attribute, DicomAttribute.ILLUMINATION_WAVELENGTH);
+      assertEquals(found.children.get(1).value, 1f);
+
+      assertEquals(found.children.get(2).attribute, DicomAttribute.OPTICAL_PATH_ID);
+      assertEquals(found.children.get(2).value, "0 ");
+
+      assertEquals(found.children.get(3).attribute, DicomAttribute.OPTICAL_PATH_DESCRIPTION);
+      assertEquals(found.children.get(3).value, "");
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
+  }
+
+  @Test
+  public void testIgnoreInvalidJSON() throws FormatException, IOException {
+    Path dicomFile = null;
+    try {
+      String json = "{" +
+       "\"BodyPartExamined\": {" +
+       "\"Value\": \"BRAIN\"" +
+       "}";
+
+      dicomFile = doConversion(json);
+      List<DicomTag> tags = getTags(dicomFile);
+      DicomTag found = lookup(tags, DicomAttribute.BODY_PART_EXAMINED);
+      assertEquals(found, null);
+    }
+    finally {
+      Files.delete(dicomFile);
+    }
+  }
 
 }

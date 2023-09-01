@@ -96,37 +96,8 @@ public class DicomJSONProvider implements ITagProvider {
         JSONObject tag = root.getJSONObject(tagKey);
         String value = tag.has("Value") ? tag.getString("Value") : null;
 
-        Integer intTagCode = null;
-
-        if (tag.has("Tag")) {
-          String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
-
-          int tagUpper = Integer.parseInt(tagCode[0], 16);
-          int tagLower = Integer.parseInt(tagCode[1], 16);
-
-          intTagCode = tagUpper << 16 | tagLower;
-        }
-        else {
-          intTagCode = DicomAttribute.getTag(tagKey);
-
-          if (intTagCode == null) {
-            throw new IllegalArgumentException(
-              "Tag not defined and could not be determined from description '" +
-              tagKey + "'");
-          }
-        }
-
-        DicomVR vrEnum = DicomAttribute.getDefaultVR(intTagCode);
-        if (tag.has("VR")) {
-          DicomVR userEnum = DicomVR.valueOf(DicomVR.class, tag.getString("VR"));
-          if (!vrEnum.equals(userEnum)) {
-            LOGGER.warn("User-defined VR ({}) for {} does not match expected VR ({})",
-              userEnum, DicomAttribute.formatTag(intTagCode), vrEnum);
-            if (userEnum != null) {
-              vrEnum = userEnum;
-            }
-          }
-        }
+        Integer intTagCode = lookupTag(tagKey, tag);
+        DicomVR vrEnum = lookupVR(intTagCode, tag);
 
         DicomTag dicomTag = new DicomTag(intTagCode, vrEnum);
         dicomTag.value = value;
@@ -162,14 +133,10 @@ public class DicomJSONProvider implements ITagProvider {
     JSONObject sequence = rootTag.getJSONObject("Sequence");
     for (String key : sequence.keySet()) {
       JSONObject tag = sequence.getJSONObject(key);
-      String vr = tag.getString("VR");
-      String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
 
-      int tagUpper = Integer.parseInt(tagCode[0], 16);
-      int tagLower = Integer.parseInt(tagCode[1], 16);
+      Integer intTagCode = lookupTag(key, tag);
+      DicomVR vrEnum = lookupVR(intTagCode, tag);
 
-      int intTagCode = tagUpper << 16 | tagLower;
-      DicomVR vrEnum = DicomVR.valueOf(DicomVR.class, vr);
       DicomTag dicomTag = new DicomTag(intTagCode, vrEnum);
 
       if (tag.has("Value")) {
@@ -188,5 +155,57 @@ public class DicomJSONProvider implements ITagProvider {
     }
     parent.children.sort(null);
   }
+
+  /**
+   * Get the tag code corresponding to the given JSON object.
+   * If "Tag" is not a defined attribute, lookup the default
+   * for the object name in the dictionary.
+   */
+  private Integer lookupTag(String tagKey, JSONObject tag) {
+    Integer intTagCode = null;
+
+    if (tag.has("Tag")) {
+      String[] tagCode = tag.getString("Tag").replaceAll("[()]", "").split(",");
+
+      int tagUpper = Integer.parseInt(tagCode[0], 16);
+      int tagLower = Integer.parseInt(tagCode[1], 16);
+
+      intTagCode = tagUpper << 16 | tagLower;
+    }
+    else {
+      intTagCode = DicomAttribute.getTag(tagKey);
+
+      if (intTagCode == null) {
+        throw new IllegalArgumentException(
+          "Tag not defined and could not be determined from description '" +
+          tagKey + "'");
+      }
+    }
+
+    return intTagCode;
+  }
+
+  /**
+   * Get the VR associated with the given tag code and JSON object.
+   * If "VR" is not a defined attribute, lookup the default for the
+   * given tag code in the dictionary.
+   */
+  private DicomVR lookupVR(Integer intTagCode, JSONObject tag) {
+    DicomVR vrEnum = DicomAttribute.getDefaultVR(intTagCode);
+    if (tag.has("VR")) {
+      DicomVR userEnum = DicomVR.valueOf(DicomVR.class, tag.getString("VR"));
+      if (!vrEnum.equals(userEnum)) {
+        LOGGER.warn("User-defined VR ({}) for {} does not match expected VR ({})",
+          userEnum, DicomAttribute.formatTag(intTagCode), vrEnum);
+        if (userEnum != null) {
+          vrEnum = userEnum;
+        }
+      }
+    }
+
+    return vrEnum;
+  }
+
+
 
 }
