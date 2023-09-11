@@ -91,6 +91,7 @@ public class ProvidedMetadataTest {
 
   public List<DicomTag> getTags(Path dicomFile) throws FormatException, IOException {
     DicomReader reader = new DicomReader();
+    reader.setGroupFiles(false);
     reader.setId(dicomFile.toString());
     List<DicomTag> tags = reader.getTags();
     reader.close();
