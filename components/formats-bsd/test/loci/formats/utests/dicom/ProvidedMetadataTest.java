@@ -130,7 +130,6 @@ public class ProvidedMetadataTest {
     }
   }
 
-  /*
   @Test(expectedExceptions={ IllegalArgumentException.class })
   public void testSingleInvalidTagName() throws FormatException, IOException {
     String json = "{" +
@@ -449,6 +448,5 @@ public class ProvidedMetadataTest {
       Files.delete(dicomFile);
     }
   }
-  */
 
 }
