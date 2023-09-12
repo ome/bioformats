@@ -188,6 +188,10 @@ public class DicomWriter extends FormatWriter {
   {
     checkParams(no, buf, x, y, w, h);
 
+    int resolutionIndex = getIndex(series, resolution);
+    int thisTileWidth = tileWidth[resolutionIndex];
+    int thisTileHeight = tileHeight[resolutionIndex];
+
     MetadataRetrieve r = getMetadataRetrieve();
     if ((!(r instanceof IPyramidStore) ||
       ((IPyramidStore) r).getResolutionCount(series) == 1) &&
@@ -195,11 +199,17 @@ public class DicomWriter extends FormatWriter {
     {
       throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
     }
+    else if (x % thisTileWidth != 0 || y % thisTileHeight != 0 ||
+      (w != thisTileWidth && x + w != getSizeX()) ||
+      (h != thisTileHeight && y + h != getSizeY()))
+    {
+      throw new FormatException("Tile too small, expected " + thisTileWidth + "x" + thisTileHeight +
+        ". Setting the tile size to " + getSizeX() + "x" + getSizeY() + " or smaller may work.");
+    }
     checkPixelCount(false);
 
     boolean first = x == 0 && y == 0;
     boolean last = x + w == getSizeX() && y + h == getSizeY();
-    int resolutionIndex = getIndex(series, resolution);
 
     // the compression type isn't supplied to the writer until
     // after setId is called, so metadata that indicates or
@@ -264,8 +274,6 @@ public class DicomWriter extends FormatWriter {
 
     byte[] paddedBuf = null;
 
-    int thisTileWidth = tileWidth[resolutionIndex];
-    int thisTileHeight = tileHeight[resolutionIndex];
     int thisTilePixels = thisTileWidth * thisTileHeight;
 
     // pad the last row and column of tiles to match specified tile size
