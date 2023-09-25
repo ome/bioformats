@@ -71,6 +71,7 @@ public class NDPIReader extends BaseTiffReader {
   private static final int TISSUE_INDEX = 65425;
   private static final int MARKER_TAG = 65426;
   private static final int REFERENCE = 65427;
+  private static final int MARKER_TAG_HIGH_BYTES = 65432;
   private static final int FILTER_SET_NAME = 65434;
   private static final int EXPOSURE_RATIO = 65435;
   private static final int RED_MULTIPLIER = 65436;
@@ -197,13 +198,28 @@ public class NDPIReader extends BaseTiffReader {
       try {
         service.close();
         long[] markers = ifd.getIFDLongArray(MARKER_TAG);
+        long[] markerHighBytes = ifd.getIFDLongArray(MARKER_TAG_HIGH_BYTES);
         if (!use64Bit) {
           for (int i=0; i<markers.length; i++) {
             markers[i] = markers[i] & 0xffffffffL;
           }
         }
+        else if (markerHighBytes != null) {
+          // 64-bit offsets expected
+          // markers need to be reconstructed from MARKER_TAG (lower 32 bits)
+          // and MARKER_TAG_HIGH_BYTES (upper 32 bits)
+          for (int i=0; i<markers.length; i++) {
+            if (i < markerHighBytes.length) {
+              markers[i] = markers[i] & 0xffffffffL;
+              markers[i] += (markerHighBytes[i] << 32);
+            }
+          }
+        }
         else {
-          // might need to correct offset overflow by adding 4GB to offsets
+          // 64-bit offsets expected, but upper 32 bits not found
+          // this can happen in sub-resolution IFDs
+          // try to correct for offset overflow by adding 4GB to offsets, if appropriate
+          LOGGER.debug("Optional tag {} missing or unreadable", MARKER_TAG_HIGH_BYTES);
           for (int i=1; i<markers.length; i++) {
             if (markers[i] < markers[i - 1]) {
               markers[i] += (long) Math.pow(2, 32);
