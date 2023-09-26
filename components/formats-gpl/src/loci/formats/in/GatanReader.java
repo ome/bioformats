@@ -347,8 +347,15 @@ public class GatanReader extends FormatReader {
       for (String token : scopeInfo) {
         token = token.trim();
         if (token.startsWith("Mode")) {
-          token = token.substring(token.indexOf(' ')).trim();
-          mode = token.substring(0, token.indexOf(' ')).trim();
+          if (token.indexOf(' ') > 0) {
+            token = token.substring(token.indexOf(' ')).trim();
+          }
+          if (token.indexOf(' ') > 0) {
+            mode = token.substring(0, token.indexOf(' ')).trim();
+          }
+          else {
+            mode = token;
+          }
           if (mode.equals("TEM")) mode = "Other";
         }
       }
