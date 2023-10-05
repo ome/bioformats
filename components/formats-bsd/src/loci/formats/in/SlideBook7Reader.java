@@ -167,6 +167,7 @@ public class SlideBook7Reader  extends FormatReader {
                         }
                         if(theField.getType().isAssignableFrom(theTypeInteger))
                         {
+				//avoid crashes when reading unsigned 32 bit numbers
                             try {
                                 Integer theVal = Integer.valueOf(theAttrValue);
                                 theField.set(this,theVal);
