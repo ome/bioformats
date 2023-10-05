@@ -160,8 +160,8 @@ public class SlideBook7Reader  extends FormatReader {
                         }
                         if(theField.getType().isAssignableFrom(theTypeInteger))
                         {
-                            Integer theVal = Integer.valueOf(theAttrValue);
                             try {
+                                Integer theVal = Integer.valueOf(theAttrValue);
                                 theField.set(this,theVal);
                             } catch (IllegalArgumentException ex) {
                                 SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
@@ -171,8 +171,8 @@ public class SlideBook7Reader  extends FormatReader {
                         }
                         else if(theField.getType().isAssignableFrom(theTypeDouble))
                         {
-                            Double theVal = Double.valueOf(theAttrValue);
                             try {
+                                Double theVal = Double.valueOf(theAttrValue);
                                 theField.set(this,theVal);
                             } catch (IllegalArgumentException ex) {
                                 SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
@@ -182,8 +182,8 @@ public class SlideBook7Reader  extends FormatReader {
                         }
                         else if(theField.getType().isAssignableFrom(theTypeFloat))
                         {
-                            Float theVal = Float.valueOf(theAttrValue);
                             try {
+                                Float theVal = Float.valueOf(theAttrValue);
                                 theField.set(this,theVal);
                             } catch (IllegalArgumentException ex) {
                                 SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
@@ -225,25 +225,25 @@ public class SlideBook7Reader  extends FormatReader {
 
                         if(theField.getType().isAssignableFrom(theTypeIntegerVector))
                         {
-                            Integer[] theArray = new Integer[theListSize-1];
-                            for(int theListNode=0;theListNode<theListSize;theListNode++)
-                            {
-                                ScalarNode theAttrValueScalarNode = (ScalarNode)theScalarNodeList.get(theListNode);
-                                String theAttrValue = theAttrValueScalarNode.getValue();
-                                if(theListNode == 0)
-                                {
-                                    if(Integer.valueOf(theAttrValue) != theListSize-1)
-                                    {
-                                        SlideBook7Reader.LOGGER.trace("theAttrName: " + theAttrName);
-                                        SlideBook7Reader.LOGGER.trace("theAttrValue: " + theAttrValue);
-                                        SlideBook7Reader.LOGGER.trace("theListSize: " + theListSize);
-                                        SlideBook7Reader.LOGGER.trace("Integer.valueOf(theAttrValue) != theListSize");
-                                    }
-                                    continue;
-                                }
-                                theArray[theListNode-1] = Integer.valueOf(theAttrValue);
-                            }
                             try {
+                                Integer[] theArray = new Integer[theListSize-1];
+                                for(int theListNode=0;theListNode<theListSize;theListNode++)
+                                {
+                                    ScalarNode theAttrValueScalarNode = (ScalarNode)theScalarNodeList.get(theListNode);
+                                    String theAttrValue = theAttrValueScalarNode.getValue();
+                                    if(theListNode == 0)
+                                    {
+                                        if(Integer.valueOf(theAttrValue) != theListSize-1)
+                                        {
+                                            SlideBook7Reader.LOGGER.trace("theAttrName: " + theAttrName);
+                                            SlideBook7Reader.LOGGER.trace("theAttrValue: " + theAttrValue);
+                                            SlideBook7Reader.LOGGER.trace("theListSize: " + theListSize);
+                                            SlideBook7Reader.LOGGER.trace("Integer.valueOf(theAttrValue) != theListSize");
+                                        }
+                                        continue;
+                                    }
+                                    theArray[theListNode-1] = Integer.valueOf(theAttrValue);
+                                }
                                 theField.set(this,theArray);
                             } catch (IllegalArgumentException ex) {
                                 SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
@@ -254,25 +254,25 @@ public class SlideBook7Reader  extends FormatReader {
                         }
                         else if(theField.getType().isAssignableFrom(theTypeLongVector))
                         {
-                            Long[] theArray = new Long[theListSize-1];
-                            for(int theListNode=0;theListNode<theListSize;theListNode++)
-                            {
-                                ScalarNode theAttrValueScalarNode = (ScalarNode)theScalarNodeList.get(theListNode);
-                                String theAttrValue = theAttrValueScalarNode.getValue();
-                                if(theListNode == 0)
-                                {
-                                    if(Integer.valueOf(theAttrValue) != theListSize-1)
-                                    {
-                                        SlideBook7Reader.LOGGER.trace("theAttrName: " + theAttrName);
-                                        SlideBook7Reader.LOGGER.trace("theAttrValue: " + theAttrValue);
-                                        SlideBook7Reader.LOGGER.trace("theListSize: " + theListSize);
-                                        SlideBook7Reader.LOGGER.trace("Long.valueOf(theAttrValue) != theListSize");
-                                    }
-                                    continue;
-                                }
-                                theArray[theListNode-1] = Long.valueOf(theAttrValue);
-                            }
                             try {
+                                Long[] theArray = new Long[theListSize-1];
+                                for(int theListNode=0;theListNode<theListSize;theListNode++)
+                                {
+                                    ScalarNode theAttrValueScalarNode = (ScalarNode)theScalarNodeList.get(theListNode);
+                                    String theAttrValue = theAttrValueScalarNode.getValue();
+                                    if(theListNode == 0)
+                                    {
+                                        if(Integer.valueOf(theAttrValue) != theListSize-1)
+                                        {
+                                            SlideBook7Reader.LOGGER.trace("theAttrName: " + theAttrName);
+                                            SlideBook7Reader.LOGGER.trace("theAttrValue: " + theAttrValue);
+                                            SlideBook7Reader.LOGGER.trace("theListSize: " + theListSize);
+                                            SlideBook7Reader.LOGGER.trace("Long.valueOf(theAttrValue) != theListSize");
+                                        }
+                                        continue;
+                                    }
+                                    theArray[theListNode-1] = Long.valueOf(theAttrValue);
+                                }
                                 theField.set(this,theArray);
                             } catch (IllegalArgumentException ex) {
                                 SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
@@ -283,23 +283,23 @@ public class SlideBook7Reader  extends FormatReader {
                         }
                         else if(theField.getType().isAssignableFrom(theTypeFloatVector))
                         {
-                            Float[] theArray = new Float[theListSize-1];
-                            for(int theListNode=0;theListNode<theListSize;theListNode++)
-                            {
-                                ScalarNode theAttrValueScalarNode = (ScalarNode)theScalarNodeList.get(theListNode);
-                                String theAttrValue = theAttrValueScalarNode.getValue();
-                                if(theListNode == 0)
-                                {
-                                    if(Integer.valueOf(theAttrValue) != theListSize-1)
-                                    {
-                                        SlideBook7Reader.LOGGER.trace("Integer.valueOf(theAttrValue) != theListSize");
-                                    }
-                                    continue;
-                                }
-
-                                theArray[theListNode-1] = Float.valueOf(theAttrValue);
-                            }
                             try {
+                                Float[] theArray = new Float[theListSize-1];
+                                for(int theListNode=0;theListNode<theListSize;theListNode++)
+                                {
+                                    ScalarNode theAttrValueScalarNode = (ScalarNode)theScalarNodeList.get(theListNode);
+                                    String theAttrValue = theAttrValueScalarNode.getValue();
+                                    if(theListNode == 0)
+                                    {
+                                        if(Integer.valueOf(theAttrValue) != theListSize-1)
+                                        {
+                                            SlideBook7Reader.LOGGER.trace("Integer.valueOf(theAttrValue) != theListSize");
+                                        }
+                                        continue;
+                                    }
+
+                                    theArray[theListNode-1] = Float.valueOf(theAttrValue);
+                                }
                                 theField.set(this,theArray);
                             } catch (IllegalArgumentException ex) {
                                 SlideBook7Reader.LOGGER.warn(ClassDecoder.class.getName() + ": " + ex.getMessage());
@@ -1741,11 +1741,11 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mStructLen;
         public Integer mNumPlanes;	
         public Integer mNumManip;
-        public Integer mManipPtr;
+        public Long mManipPtr;
         public Integer mDataType;
-        public Integer mDataTablePtr;	
-        public Integer mHistogramTablePtr;
-        public Integer mHistogramSummaryPtr;
+        public Long mDataTablePtr;	
+        public Long mHistogramTablePtr;
+        public Long mHistogramSummaryPtr;
 
         public CExposureRecord70 mExposureRecord;
         public CChannelDef70 mChannelDef;
@@ -1804,7 +1804,7 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mStructVersion;
         public Integer mByteOrdering;
         public Integer mStructLen;
-        public Integer mParentRecordPtr;
+        public Long mParentRecordPtr;
         public Integer mChannelIndex;
         public Integer mRows;
         public Integer mColumns;
@@ -1815,12 +1815,12 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mTimeBasis;
         public Integer mDescriptorVersion; 
         public Integer mDescriptorSize;
-        public Integer mDescriptorFileOffset;
+        public Long mDescriptorFileOffset;
         public Integer mStartTime;
         public Integer mTimeInterval;
         public Integer mTimePointsWritten;
         public Integer mTimePointsTableSize;
-        public Integer mNextTableFileOffset;
+        public Long mNextTableFileOffset;
     }
 
     class CExposureRecord70 extends ClassDecoder {
@@ -1998,25 +1998,25 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mSecond;
         public Boolean mImported;
         public Integer mNotesLen;
-        public Integer mNotesPtr;
+        public Long mNotesPtr;
         public Integer mWidth;
         public Integer mHeight;
         public Integer mNumPlanes;
         public Integer mNumChannels;
-        public Integer mChannelPtr;
+        public Long mChannelPtr;
         public Integer mNumTimepoints;
         public Integer mNumMasks;
-        public Integer mMaskPtr;
+        public Long mMaskPtr;
         public Integer mNumViews;
-        public Integer mViewPtr;
+        public Long mViewPtr;
         public Integer mXYInterpolationFactor;
         public Integer mZInterpolationFactor;
         public Integer mImageGroupIndex;
-        public Integer mAnnotationTablePtr;
-        public Integer mElapsedTimeTablePtr;
-        public Integer mSAPositionTablePtr;
-        public Integer mStagePositionTablePtr;
-        public Integer mAuxDataTablePtr;
+        public Long mAnnotationTablePtr;
+        public Long mElapsedTimeTablePtr;
+        public Long mSAPositionTablePtr;
+        public Long mStagePositionTablePtr;
+        public Long mAuxDataTablePtr;
         public Integer mNumAuxDataTables;
         public Long [] mThumbNail;
         public Integer mElapsedTimeOffset;
@@ -2112,8 +2112,8 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mStructLen;
         public String mName;
         public Integer mNumManip;
-        public Integer mManipPtr;
-        public Integer mMaskDataTablePtr;
+        public Long mManipPtr;
+        public Long mMaskDataTablePtr;
         public Integer mPersistentSubmasks;
         public String mCentroidFeature;
         public Integer mCentroidChannel;
@@ -2179,8 +2179,8 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mRemapType;
         public Integer mNumCalibPoints;
         public Integer mReserved2;
-        public Integer mCalibDataPtrLow;
-        public Integer mCalibDataPtrHigh;
+        public Long mCalibDataPtrLow;
+        public Long mCalibDataPtrHigh;
     }
 
     class CRemapPoint extends ClassDecoder {
@@ -2196,15 +2196,15 @@ public class SlideBook7Reader  extends FormatReader {
         public Integer mStructLen;
         public Integer mNotesLen;                // Length of notes text
         public Integer mNumImages;
-        public Integer mNotesPtr;                // File offset for notes text
-        public Integer mImagePtr;                // File offset to an array of ImageRecords
+        public Long mNotesPtr;                // File offset for notes text
+        public Long mImagePtr;                // File offset to an array of ImageRecords
         public Integer mPrefsFileLen;            // File size of inline copy of SlideBookPrefs.dat
         public Integer mPrefsOffset;             // File offset to inline copy of SlideBookPrefs.dat
         public Integer mHardwareFileOffset;      // File offset to inline copy of SlideBookHardwareProperties.dat
         public Integer mHighestCount;            // Image serial number -- KK 10.26.96
         public Integer mUncompactedSpace;        // amount of file that can be compacted
         public Integer mCheckpointNumImages;     // number of CImageRecords written at last checkpoint
-        public Integer mCheckpointImagePtr;      // file offset to checkpoint array of ImageRecords
+        public Long mCheckpointImagePtr;      // file offset to checkpoint array of ImageRecords
         public Integer mCheckpointMaxImages;     // maximum number of CImageRecords at checkpoint file offset
         public Integer mHardwareFileLen;         // File size of inline copy of SlideBookHardwareProperties.dat
         public Integer mCaptureStatus;           // Current capture status
