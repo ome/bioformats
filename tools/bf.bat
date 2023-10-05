@@ -61,6 +61,9 @@ if exist "%BF_JAR_DIR%\bioformats_package.jar" (
   echo and place in the same directory as the command line tools.
   goto end
 )
+if exist "%BF_JAR_DIR/bio-formats-testing-framework.jar" (
+  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bio-formats-testing-framework.jar"
+)
 
 java %BF_FLAGS% -cp "%BF_DIR%";%BF_CP% %BF_PROG% %*
 

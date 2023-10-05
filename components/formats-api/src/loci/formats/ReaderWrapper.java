@@ -396,6 +396,16 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   @Override
+  public void setFillColor(Byte color) {
+    reader.setFillColor(color);
+  }
+
+  @Override
+  public Byte getFillColor() {
+    return reader.getFillColor();
+  }
+
+  @Override
   public boolean isMetadataComplete() {
     return reader.isMetadataComplete();
   }

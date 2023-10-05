@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>6.11.1-SNAPSHOT</version>
+    <version>7.0.1-SNAPSHOT</version>
     <relativePath>../../../</relativePath>
   </parent>
 
@@ -42,13 +42,6 @@
 
     <dependency>
       <groupId>org.openmicroscopy</groupId>
-      <artifactId>lwf-stubs</artifactId>
-      <version>${lwf-stubs.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openmicroscopy</groupId>
       <artifactId>mipav-stubs</artifactId>
       <version>${mipav-stubs.version}</version>
       <scope>provided</scope>
@@ -59,6 +52,20 @@
       <artifactId>ij</artifactId>
       <version>${imagej1.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logback.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 

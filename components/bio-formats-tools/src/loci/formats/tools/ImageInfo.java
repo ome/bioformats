@@ -133,6 +133,7 @@ public class ImageInfo {
   private String cachedir = null;
   private int xmlSpaces = 3;
   private DynamicMetadataOptions options = new DynamicMetadataOptions();
+  private Byte fillColor = null;
 
   private IFormatReader reader;
   private IFormatReader baseReader;
@@ -186,6 +187,7 @@ public class ImageInfo {
     shuffleOrder = null;
     map = null;
     cachedir = null;
+    fillColor = null;
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
@@ -275,6 +277,10 @@ public class ImageInfo {
         else if (args[i].equals("-option")) {
           options.set(args[++i], args[++i]);
         }
+        else if (args[i].equals("-fill")) {
+          // allow specifying 0-255
+          fillColor = (byte) Integer.parseInt(args[++i]);
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -301,7 +307,7 @@ public class ImageInfo {
       "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
       "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
       "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
-      "    [-cache] [-cache-dir dir] [-option key value]",
+      "    [-cache] [-cache-dir dir] [-option key value] [-fill color]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -343,6 +349,7 @@ public class ImageInfo {
       "              initialized reader. If unspecified, the cached reader",
       "              will be stored under the same folder as the image file",
       "     -option: add the specified key/value pair to the reader's options list",
+      "       -fill: byte value to use for undefined pixels (0-255)",
       "",
       "* = may result in loss of precision",
       ""
@@ -480,6 +487,7 @@ public class ImageInfo {
     options.setValidate(validate);
     reader.setMetadataOptions(options);
     reader.setFlattenedResolutions(flat);
+    reader.setFillColor(fillColor);
   }
 
   public void configureReaderPostInit() {

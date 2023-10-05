@@ -90,7 +90,11 @@ public class GelReader extends BaseTiffReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser parser = new TiffParser(stream);
     parser.setDoCaching(false);
-    IFD ifd = parser.getFirstIFD();
+    long[] offsets = parser.getIFDOffsets();
+    if (offsets.length == 0 || offsets.length > 2) {
+      return false;
+    }
+    IFD ifd = parser.getIFD(offsets[0]);
     if (ifd == null) return false;
     return ifd.containsKey(MD_FILETAG);
   }

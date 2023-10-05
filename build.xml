@@ -16,8 +16,7 @@ Bio-Formats
     JAR file:      bio-formats.jar
     Path:          components/bio-formats
     Project deps:  Formats Common, OME-XML Java library, JAI Image I/O Tools,
-                   MDB Tools (Java port), Apache Jakarta POI,
-                   Luratech LuraWave stubs
+                   MDB Tools (Java port), Apache Jakarta POI
     Library deps:  JGoodies Forms, Logback, NetCDF,
                    Simple Logging Facade for Java API, TestNG
     Optional:      Xalan Serializer, Xalan
@@ -77,21 +76,6 @@ JAI Image I/O Tools
                    added to the official JAI CVS repository.
 
 ===============================================================================
-The following components are stubs of third party projects:
-
-Luratech LuraWave stubs
-    Stub of proprietary Java API to handle Luratech LWF compression
-    -=-
-    JAR file:      lwf-stubs.jar
-    Path:          components/stubs/lwf-stubs
-    Project deps:  (none)
-    Optional:      (none)
-    License:       BSD
-    Project URL:   http://www.luratech.com/
-    Notes:         required to compile Bio-Formats's support for Luratech LWF
-                   compression for the Opera Flex format
-
-===============================================================================
 The following external dependencies (in the jar folder) may be required:
 Ant-Contrib
     JAR file:  ant-contrib-1.0b3.jar
@@ -142,7 +126,7 @@ Logback
     License:   EPL v1.0 and LGPL 2.1
 
 Native library loader
-    JAR file:  native-lib-loader-2.0.2.jar
+    JAR file:  native-lib-loader-2.4.0.jar
     URL:       http://github.com/scijava/native-lib-loader
     Notes:     required for loading native libraries
     License:   BSD
@@ -191,9 +175,19 @@ Apache XML-RPC
     License:   Apache
 -->
 
-<project name="Bio-Formats" default="jars" basedir=".">
+<project name="Bio-Formats" default="jars" basedir="." xmlns:resolver="antlib:org.apache.maven.resolver.ant">
   <description>
     Master build file for all Bio-Formats software components
   </description>
   <import file="ant/toplevel.xml"/>
+  <taskdef uri="antlib:org.apache.maven.resolver.ant" resource="org/apache/maven/resolver/ant/antlib.xml">
+    <classpath>
+      <fileset dir="${root.dir}/jar" includes="maven-resolver-ant-tasks-*.jar"/>
+    </classpath>
+  </taskdef>
+
+  <target name="install-pom"  description="generate top-level POM file">
+    <resolver:pom file="pom.xml" id="pom"/>
+    <resolver:install pomref="pom"/>
+  </target>
 </project>

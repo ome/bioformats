@@ -496,7 +496,7 @@ public class AmiraReader extends FormatReader {
       if (maxOffsetIndex < no) {
         in.seek(offsets[maxOffsetIndex]);
         while (maxOffsetIndex <= no) {
-          Arrays.fill(buf, (byte) 0);
+          Arrays.fill(buf, getFillColor());
           read(currentNo, buf);
           currentNo++;
         }
@@ -504,7 +504,7 @@ public class AmiraReader extends FormatReader {
       else {
         in.seek(offsets[no]);
         currentNo = no;
-        Arrays.fill(buf, (byte) 0);
+        Arrays.fill(buf, getFillColor());
         read(buf, planeSize);
         if (maxOffsetIndex == no) {
           offsets[++maxOffsetIndex] = lastCodeOffset;

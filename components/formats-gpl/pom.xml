@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>6.11.1-SNAPSHOT</version>
+    <version>7.0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -116,16 +116,6 @@
       <version>${slf4j.version}</version>
     </dependency>
     <dependency>
-      <groupId>woolz</groupId>
-      <artifactId>JWlz</artifactId>
-      <version>1.4.0</version>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.2</version>
-    </dependency>
-    <dependency>
       <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>
       <version>${kryo.version}</version>
@@ -163,7 +153,7 @@
     <dependency>
     	<groupId>org.json</groupId>
     	<artifactId>json</artifactId>
-    	<version>20090211</version>
+    	<version>20230227</version>
     </dependency>
     <dependency>
       <groupId>org.xerial</groupId>

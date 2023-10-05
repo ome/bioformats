@@ -181,13 +181,6 @@ public class TiffCompressionCompressTest {
     compression.compress(data, options);
   }
 
-  @Test(expectedExceptions={ FormatException.class })
-  public void testLURAWAVE() throws FormatException, IOException {
-    TiffCompression compression = TiffCompression.LURAWAVE;
-    CodecOptions options = compression.getCompressionCodecOptions(ifd);
-    compression.compress(data, options);
-  }
-
   @Test(enabled=true)
   public void testJPEG_2000_ResetQuality() throws FormatException, IOException {
     TiffCompression compression = TiffCompression.JPEG_2000;
