@@ -446,6 +446,15 @@ public class Exporter {
             store.setPixelsSizeC(new PositiveInteger(channels*imp.getNChannels()), 0);
             store.setPixelsSizeT(new PositiveInteger(imp.getNFrames()), 0);
 
+            try {
+              // if a subset of the data was opened, the number of Channels
+              // in the OME-XML may not match the ImagePlus channel count
+              // channel count mismatches can cause problems when actually writing pixels
+              service.removeChannels(service.getOMEMetadata(store), 0, imp.getNChannels());
+            }
+            catch (ServiceException e) {
+            }
+
             if (store.getImageID(0) == null) {
                 store.setImageID(MetadataTools.createLSID("Image", 0), 0);
             }

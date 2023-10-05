@@ -13,52 +13,83 @@ jobs:
   build:
     strategy:
       matrix:
-        java: [1.8, 11]
+        java: [8, 11, 17]
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     env:
       maven_commands: install # default is install
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }}
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          distribution: 'zulu'
+          cache: 'maven'
       - name: Build
         run: mvn ${{ env.maven_commands }}
-  deploy:
+  deploy_snapshots:
     if: ${{ github.ref == 'refs/heads/develop' && github.repository_owner == 'ome' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Retrieve version
         id: get_version
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "::set-output name=version::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Set server
         id: set_server
         run: |
           if [[ ${{ steps.get_version.outputs.version }} =~ 'SNAPSHOT' ]]; then
-            echo ::set-output name=server::'ome.snapshots'
-          else
-            echo ::set-output name=server::'ome.staging'
+              echo server='ome.snapshots' >> $GITHUB_OUTPUT
+            else
+              echo server='ome.releases' >> $GITHUB_OUTPUT
           fi
       - name: Set up Repository
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.8
+          java-version: 8
+          distribution: 'zulu'
           server-id: ${{ steps.set_server.outputs.server }}
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Deploy SNAPSHOT
+        if: ${{ steps.set_server.outputs.server == 'ome.snapshots' }}
+        run: mvn deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.CI_DEPLOY_USER }}
+          MAVEN_PASSWORD: ${{ secrets.CI_DEPLOY_PASS }}
+  deploy_tags:
+    if: startsWith(github.ref, 'refs/tags') && github.repository_owner == 'ome'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Retrieve version
+        id: get_version
+        run: |
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Set server
+        id: set_server
+        run: |
+          if [[ ${{ steps.get_version.outputs.version }} =~ 'SNAPSHOT' ]]; then
+            echo server='ome.snapshots' >> $GITHUB_OUTPUT
+          else
+            echo server='ome.releases' >> $GITHUB_OUTPUT
+          fi
+      - name: Set up Repository
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: 'zulu'
+          server-id: ${{ steps.set_server.outputs.server }}
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+      - name: Deploy Tags
+        if: ${{ steps.set_server.outputs.server == 'ome.releases' }}
         run: mvn deploy
         env:
           MAVEN_USERNAME: ${{ secrets.CI_DEPLOY_USER }}

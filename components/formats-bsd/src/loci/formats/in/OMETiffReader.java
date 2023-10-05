@@ -34,6 +34,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -361,7 +362,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       info[series][no].reader == null ||
       info[series][no].id == null)
     {
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 
@@ -542,14 +543,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
       // overwrite XML with what is in the companion OME-XML file
       Location path = new Location(dir, metadataPath);
       if (path.exists()) {
-        // Since metatadataPath can be relative, use getCanonicalPath()
-        metadataFile = path.getCanonicalPath();
+        // Since metatadataPath can be relative, normalize the path
+        metadataFile = Paths.get(path.toString()).normalize().toString();
         xml = readMetadataFile();
 
         try {
           meta = service.createOMEXMLMetadata(xml);
           // Compute all paths relative to the directory of the metadata file
-          dir = path.getParentFile().getCanonicalPath();
+          dir = path.getParentFile().getAbsolutePath();
           // Set the current ID to the metadata file
           currentId = metadataFile;
         }

@@ -70,5 +70,9 @@ else
     echo "and place in the same directory as the command line tools."
     exit 2
   fi
+  if [ -e "$BF_JAR_DIR/bio-formats-testing-framework.jar" ]
+  then
+    BF_CP="$BF_CP:$BF_JAR_DIR/bio-formats-testing-framework.jar"
+  fi
   java $BF_FLAGS -cp "$BF_DIR:$BF_CP" $BF_PROG "$@"
 fi

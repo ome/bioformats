@@ -156,7 +156,7 @@ public class AFIReader extends FormatReader {
       return reader[channel].openBytes(index, buf, x, y, w, h);
     }
     else if (diff > 0) {
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
       byte[] tmp = reader[channel].openBytes(index, x, y, w, h);
       for (int i=0, dest=0; i<tmp.length; i+=srcBytes, dest+=destBytes) {
         if (isLittleEndian()) {

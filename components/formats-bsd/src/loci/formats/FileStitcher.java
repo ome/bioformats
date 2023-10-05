@@ -144,6 +144,11 @@ public class FileStitcher extends ReaderWrapper {
    */
   public void setReaderClassList(ClassList<IFormatReader> classList) {
     this.classList = classList;
+    try {
+      reader.close(true);
+    }  catch (IOException e) {
+      LOGGER.debug("Close failed", e);
+    }
     reader = DimensionSwapper.makeDimensionSwapper(new ImageReader(classList));
   }
 
@@ -205,7 +210,7 @@ public class FileStitcher extends ReaderWrapper {
    */
   public int[] getAxisTypes() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return externals[getExternalSeries()].getAxisGuesser().getAxisTypes();
+    return getAxisGuesser().getAxisTypes();
   }
 
   /**
@@ -220,7 +225,7 @@ public class FileStitcher extends ReaderWrapper {
    */
   public void setAxisTypes(int[] axes) throws FormatException {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    externals[getExternalSeries()].getAxisGuesser().setAxisTypes(axes);
+    getAxisGuesser().setAxisTypes(axes);
     computeAxisLengths();
   }
 
@@ -237,6 +242,11 @@ public class FileStitcher extends ReaderWrapper {
    */
   public AxisGuesser getAxisGuesser() {
     FormatTools.assertId(getCurrentFile(), true, 2);
+    if (externals == null) {
+      return new AxisGuesser(getFilePattern(), reader.getDimensionOrder(),
+        reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),
+        reader.isOrderCertain());
+    }
     return externals[getExternalSeries()].getAxisGuesser();
   }
 
@@ -488,7 +498,7 @@ public class FileStitcher extends ReaderWrapper {
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     return buf;
   }
 
@@ -902,10 +912,12 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public void reopenFile() throws IOException {
     reader.reopenFile();
-    for (ExternalSeries s : externals) {
-      for (DimensionSwapper r : s.getReaders()) {
-        if (r.getCurrentFile() != null) {
-          r.reopenFile();
+    if (externals != null) {
+      for (ExternalSeries s : externals) {
+        for (DimensionSwapper r : s.getReaders()) {
+          if (r.getCurrentFile() != null) {
+            r.reopenFile();
+          }
         }
       }
     }
@@ -959,6 +971,7 @@ public class FileStitcher extends ReaderWrapper {
         reader.setId(fp.getFiles()[0]);
       }
       else reader.setId(id);
+      LOGGER.info("File pattern ignored; {} groups files", reader.getFormat());
       return;
     }
 

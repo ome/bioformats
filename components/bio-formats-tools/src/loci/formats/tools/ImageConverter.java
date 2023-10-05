@@ -128,6 +128,7 @@ public final class ImageConverter {
   private boolean originalMetadata = true;
   private boolean noSequential = false;
   private String swapOrder = null;
+  private Byte fillColor = null;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -259,6 +260,10 @@ public final class ImageConverter {
         else if (args[i].equals("-swap")) {
           swapOrder = args[++i].toUpperCase();
         }
+        else if (args[i].equals("-fill")) {
+          // allow specifying 0-255
+          fillColor = (byte) Integer.parseInt(args[++i]);
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -334,7 +339,7 @@ public final class ImageConverter {
       "    [-nolookup] [-autoscale] [-version] [-no-upgrade] [-padded]",
       "    [-option key value] [-novalid] [-validate] [-tilex tileSizeX]", 
       "    [-tiley tileSizeY] [-pyramid-scale scale]", 
-      "    [-swap dimensionsOrderString]",
+      "    [-swap dimensionsOrderString] [-fill color]",
       "    [-pyramid-resolutions numResolutionLevels] in_file out_file",
       "",
       "            -version: print the library version and exit",
@@ -378,6 +383,7 @@ public final class ImageConverter {
       "-pyramid-resolutions: generates a pyramid image with the given number of resolution levels ",
       "      -no-sequential: do not assume that planes are written in sequential order",
       "               -swap: override the default input dimension order; argument is f.i. XYCTZ",
+      "               -fill: byte value to use for undefined pixels (0-255)",
       "",
       "The extension of the output file specifies the file format to use",
       "for the conversion. The list of available formats and extensions is:",
@@ -500,6 +506,7 @@ public final class ImageConverter {
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(originalMetadata);
     reader.setFlattenedResolutions(flat);
+    reader.setFillColor(fillColor);
     OMEXMLService service = null;
     try {
       ServiceFactory factory = new ServiceFactory();
@@ -592,9 +599,16 @@ public final class ImageConverter {
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         else {
-          meta.setPixelsSizeX(new PositiveInteger(width), 0);
-          meta.setPixelsSizeY(new PositiveInteger(height), 0);
           for (int i=0; i<reader.getSeriesCount(); i++) {
+            reader.setSeries(i);
+            width = reader.getSizeX();
+            height = reader.getSizeY();
+            if (width_crop != 0 || height_crop != 0) {
+              width = Math.min(reader.getSizeX(), width_crop);
+              height = Math.min(reader.getSizeY(), height_crop);
+            }
+            meta.setPixelsSizeX(new PositiveInteger(width), i);
+            meta.setPixelsSizeY(new PositiveInteger(height), i);
             if (autoscale) {
               store.setPixelsType(PixelType.UINT8, i);
             }
@@ -624,11 +638,17 @@ public final class ImageConverter {
       ((TiffWriter) writer).setBigTiff(bigtiff);
       ((TiffWriter) writer).setCanDetectBigTiff(!nobigtiff);
     }
+    else if (writer instanceof DicomWriter) {
+      ((DicomWriter) writer).setBigTiff(bigtiff);
+    }
     else if (writer instanceof ImageWriter) {
       IFormatWriter w = ((ImageWriter) writer).getWriter(out);
       if (w instanceof TiffWriter) {
         ((TiffWriter) w).setBigTiff(bigtiff);
         ((TiffWriter) w).setCanDetectBigTiff(!nobigtiff);
+      }
+      else if (w instanceof DicomWriter) {
+        ((DicomWriter) w).setBigTiff(bigtiff);
       }
     }
 

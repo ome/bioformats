@@ -11,12 +11,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
@@ -130,13 +130,10 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
         jsonDescription = new JSONObject(imageDescription);
         imageType = jsonDescription.getString("image.type");
         if (imageType.equals("SIMS")) {
-          String mass = jsonDescription.getString("channel.mass");
-          if (mass == null) {
-            throw new FormatException("Channel masses are mandatory.");
-          }
+          Double mass = jsonDescription.getDouble("channel.mass");
           String target = jsonDescription.getString("channel.target");
-          channelIDs.add(mass);
-          channelNames.add(target != null && target != "null" ? target : mass);
+          channelIDs.add(mass.toString());
+          channelNames.add(target != null && target != "null" ? target : mass.toString());
         }
       } catch (JSONException e) {
         throw new FormatException("Unexpected format in SIMS description JSON.");
@@ -166,7 +163,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
             while (keySet.hasNext()) {
               String key = (String) keySet.next();
               if (key.startsWith("mibi.")) {
-                simsDescription.put(key, jsonDescription.getString(key));
+                simsDescription.put(key, jsonDescription.get(key).toString());
               }
             }
           } catch (JSONException e) {

@@ -188,6 +188,7 @@ public class ZeissCZIReader extends FormatReader {
   private transient int plateRows;
   private transient int plateColumns;
   private transient ArrayList<String> platePositions = new ArrayList<String>();
+  private transient ArrayList<String> fieldNames = new ArrayList<String>();
   private transient ArrayList<String> imageNames = new ArrayList<String>();
 
   // -- Constructor --
@@ -249,7 +250,7 @@ public class ZeissCZIReader extends FormatReader {
 
     String color = channels.get(previousChannel).color;
     if (color != null) {
-      color = color.replaceAll("#", "");
+      color = normalizeColor(color);
       try {
         int colorValue = Integer.parseInt(color, 16);
 
@@ -286,7 +287,7 @@ public class ZeissCZIReader extends FormatReader {
 
     String color = channels.get(previousChannel).color;
     if (color != null) {
-      color = color.replaceAll("#", "");
+      color = normalizeColor(color);
       try {
         int colorValue = Integer.parseInt(color, 16);
 
@@ -311,6 +312,27 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
     else return null;
+  }
+
+  /**
+   * @see loci.formats.FormatReader#getFillColor()
+   *
+   * If the fill value was set explicitly, use that.
+   * Otherwise, return 255 (white) for RGB data with a pyramid,
+   * and 0 in all other cases. RGB data with a pyramid can
+   * reasonably be assumed to be a brightfield slide.
+   */
+  @Override
+  public Byte getFillColor() {
+    if (fillColor != null) {
+      return fillColor;
+    }
+
+    byte fill = (byte) 0;
+    if (isRGB() && maxResolution > 0) {
+      fill = (byte) 255;
+    }
+    return fill;
   }
 
   /**
@@ -355,11 +377,7 @@ public class ZeissCZIReader extends FormatReader {
       validScanDim = false;
     }
 
-    byte fillColor = (byte) 0;
-    if (isRGB() && maxResolution > 0) {
-      fillColor = (byte) 255;
-    }
-    Arrays.fill(buf, fillColor);
+    Arrays.fill(buf, getFillColor());
     boolean emptyTile = true;
     int compression = -1;
     try {
@@ -563,6 +581,7 @@ public class ZeissCZIReader extends FormatReader {
       plateRows = 0;
       plateColumns = 0;
       platePositions.clear();
+      fieldNames.clear();
       imageNames.clear();
     }
   }
@@ -875,10 +894,12 @@ public class ZeissCZIReader extends FormatReader {
         int newY = lastPlane.y;
         if (allowAutostitching() && (ms0.sizeX < newX || ms0.sizeY < newY)) {
           prestitched = true;
-          mosaics = 1;
+          if (maxResolution > 0) {
+            mosaics = 1;
+          }
         }
         else {
-          prestitched = maxResolution > 0;
+          prestitched = true;
         }
 
         // don't shrink the dimensions if prestitching is allowed
@@ -1263,10 +1284,16 @@ public class ZeissCZIReader extends FormatReader {
       store.setPlateRows(new PositiveInteger(plateRows), 0);
       store.setPlateColumns(new PositiveInteger(plateColumns), 0);
 
+      int fieldsPerWell = fieldNames.size() / platePositions.size();
+      if (fieldNames.size() == 0) {
+        fieldsPerWell = 1;
+      }
+
       int nextWell = 0;
+      int nextField = 0;
       for (int i=0, img=0; img<core.size(); i++, img+=core.get(img).resolutionCount) {
-        if (i < platePositions.size() && platePositions.get(i) != null) {
-          String[] index = platePositions.get(i).split("-");
+        if (nextWell < platePositions.size() && platePositions.get(nextWell) != null) {
+          String[] index = platePositions.get(nextWell).split("-");
           if (index.length != 2) {
             continue;
           }
@@ -1281,16 +1308,31 @@ public class ZeissCZIReader extends FormatReader {
             LOGGER.trace("Could not parse well position", e);
           }
 
+          int field = 0;
+          if (i < fieldNames.size()) {
+            String fieldName = fieldNames.get(i);
+            try {
+              field = Integer.parseInt(fieldName.substring(1)) - 1; // name starts with "P"
+            }
+            catch (NumberFormatException e) {
+              LOGGER.warn("Could not parse field name {}; plate layout may be incorrect", fieldName);
+            }
+          }
+
           if (row >= 0 && column >= 0) {
             int imageIndex = coreIndexToSeries(img);
             store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
             store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
             store.setWellColumn(new NonNegativeInteger(column), 0, nextWell);
-            store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, nextWell, 0), 0, nextWell, 0);
-            store.setWellSampleImageRef(MetadataTools.createLSID("Image", imageIndex), 0, nextWell, 0);
-            store.setWellSampleIndex(new NonNegativeInteger(imageIndex), 0, nextWell, 0);
+            store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, nextWell, nextField), 0, nextWell, nextField);
+            store.setWellSampleImageRef(MetadataTools.createLSID("Image", imageIndex), 0, nextWell, nextField);
+            store.setWellSampleIndex(new NonNegativeInteger(imageIndex), 0, nextWell, nextField);
 
-            nextWell++;
+            nextField++;
+            if (nextField == fieldsPerWell) {
+              nextField = 0;
+              nextWell++;
+            }
           }
         }
       }
@@ -1352,7 +1394,11 @@ public class ZeissCZIReader extends FormatReader {
         }
         else {
           if (i < imageNames.size()) {
-            store.setImageName(imageNames.get(i), i);
+            String completeName = imageNames.get(i);
+            if (i < fieldNames.size()) {
+              completeName += " " + fieldNames.get(i);
+            }
+            store.setImageName(completeName, i);
           }
           else {
             int paddingLength = (""+getSeriesCount()).length();
@@ -1632,10 +1678,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String color = channels.get(c).color;
           if (color != null && !isRGB()) {
-            color = color.replaceAll("#", "");
-            if (color.length() > 6) {
-              color = color.substring(2, color.length());
-            }
+            color = normalizeColor(color);
             try {
               // shift by 8 to allow alpha in the final byte
               store.setChannelColor(
@@ -1834,9 +1877,16 @@ public class ZeissCZIReader extends FormatReader {
     int minY = Integer.MAX_VALUE;
     int maxY = Integer.MIN_VALUE;
 
+    int dimensionCount = 0;
     for (SubBlock plane : planes) {
       if (xyOnly && plane.coreIndex != coreIndex) {
         continue;
+      }
+      boolean moreDimensions = plane.directoryEntry.dimensionEntries.length > dimensionCount;
+      if (moreDimensions) {
+        dimensionCount = plane.directoryEntry.dimensionEntries.length;
+        ms0.sizeX = 0;
+        ms0.sizeY = 0;
       }
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
         if (dimension == null) {
@@ -3342,40 +3392,50 @@ public class ZeissCZIReader extends FormatReader {
                   platePositions.add(value);
                 }
                 String name = well.getAttribute("Name");
-                imageNames.add(name);
+                for (int f=0; f<well.getElementsByTagName("SingleTileRegion").getLength(); f++) {
+                  imageNames.add(name);
+                }
               }
             }
           }
 
-          NodeList regions = getGrandchildren(sampleHolder,
-            "SingleTileRegionArray", "SingleTileRegion");
-          if (regions != null) {
-            for (int i=0; i<regions.getLength(); i++) {
-              Element region = (Element) regions.item(i);
+          NodeList regionArrays = sampleHolder.getElementsByTagName("SingleTileRegionArray");
+          if (regionArrays != null) {
+            int positionIndex = 0;
+            for (int r=0; r<regionArrays.getLength(); r++) {
+              NodeList regions = ((Element) regionArrays.item(r)).getElementsByTagName("SingleTileRegion");
+              if (regions != null) {
+                for (int i=0; i<regions.getLength(); i++, positionIndex++) {
+                  Element region = (Element) regions.item(i);
 
-              String x = getFirstNode(region, "X").getTextContent();
-              String y = getFirstNode(region, "Y").getTextContent();
-              String z = getFirstNode(region, "Z").getTextContent();
+                  String x = getFirstNode(region, "X").getTextContent();
+                  String y = getFirstNode(region, "Y").getTextContent();
+                  String z = getFirstNode(region, "Z").getTextContent();
+                  String name = region.getAttribute("Name");
 
-              // safe to assume all 3 arrays have the same length
-              if (i < positionsX.length) {
-                if (x == null) {
-                  positionsX[i] = null;
-                } else {
-                  final Double number = Double.valueOf(x);
-                  positionsX[i] = new Length(number, UNITS.MICROMETER);
-                }
-                if (y == null) {
-                  positionsY[i] = null;
-                } else {
-                  final Double number = Double.valueOf(y);
-                  positionsY[i] = new Length(number, UNITS.MICROMETER);
-                }
-                if (z == null) {
-                  positionsZ[i] = null;
-                } else {
-                  final Double number = Double.valueOf(z);
-                  positionsZ[i] = new Length(number, UNITS.MICROMETER);
+                  // safe to assume all 3 arrays have the same length
+                  if (positionIndex < positionsX.length) {
+                    if (x == null) {
+                      positionsX[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(x);
+                      positionsX[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                    if (y == null) {
+                      positionsY[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(y);
+                      positionsY[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                    if (z == null) {
+                      positionsZ[positionIndex] = null;
+                    } else {
+                      final Double number = Double.valueOf(z);
+                      positionsZ[positionIndex] = new Length(number, UNITS.MICROMETER);
+                    }
+                  }
+
+                  fieldNames.add(name);
                 }
               }
             }
@@ -4269,6 +4329,15 @@ public class ZeissCZIReader extends FormatReader {
       return (b << 7) | (a & 0x7f);
     }
     return a & 0xff;
+  }
+
+  private String normalizeColor(String color) {
+    String c = color.replaceAll("#", "");
+    if (c.length() > 6) {
+      c = c.substring(2, (int) Math.min(8, c.length()));
+      LOGGER.debug("Replaced color {} with {}", color, c);
+    }
+    return c;
   }
 
   /** Segment with ID "ZISRAWDIRECTORY". */
