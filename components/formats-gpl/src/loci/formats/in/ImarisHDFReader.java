@@ -415,6 +415,9 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
             (int) (color[2] * 255), 255);
           store.setChannelColor(realColor, s, i);
         }
+        if (i < channelName.size()) {
+          store.setChannelName(channelName.get(i), s, i);
+        }
       }
     }
     setSeries(0);
