@@ -615,6 +615,9 @@ public class IFD extends HashMap<Integer, Object> {
       case 24:
         return FormatTools.FLOAT;
       case 64:
+        if (bitFormat != 3) {
+          throw new FormatException("64-bit int data not supported");
+        }
         return FormatTools.DOUBLE;
       case 32:
         if (bitFormat == 3) return FormatTools.FLOAT;
