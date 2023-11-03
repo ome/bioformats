@@ -220,7 +220,7 @@ public class TecanReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     Image img = lookupImage(getSeries(), no, false, false);
     if (img != null && img.file != null) {
       if (helperReader == null) {

@@ -150,7 +150,7 @@ public class VolocityReader extends FormatReader {
     Stack stack = stacks.get(getSeries());
 
     if (!new Location(stack.pixelsFiles[zct[1]]).exists()) {
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 

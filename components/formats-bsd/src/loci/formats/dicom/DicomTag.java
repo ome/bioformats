@@ -134,7 +134,11 @@ public class DicomTag {
       vr = DicomAttribute.getDefaultVR(tag);
     }
 
-    if (!readValue) {
+    if (!readValue || attribute == PIXEL_DATA) {
+      long skip = elementLength & 0xffffffffL;
+      if (skip > 0 && skip <= in.length() - in.getFilePointer()) {
+        in.skipBytes(skip);
+      }
       return;
     }
 
@@ -352,10 +356,20 @@ public class DicomTag {
       return tag;
     }
 
-    if (elementLength < 0 && groupWord == 0x7fe0) {
-      in.skipBytes(12);
-      elementLength = in.readInt();
-      if (elementLength < 0) elementLength = in.readInt();
+    // indicates that we have found pixel data
+    if (groupWord == 0x7fe0) {
+      // the length may legitimately be between 2 and 4 GB
+      long length = elementLength & 0xffffffffL;
+
+      // length of 0xffffffff means undefined length, which is uncommon but allowed
+      if (elementLength == -1 || (length > 0 && length < in.length())) {
+        return tag;
+      }
+      else {
+        in.skipBytes(12);
+        elementLength = in.readInt();
+        if (elementLength < 0) elementLength = in.readInt();
+      }
     }
 
     if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {

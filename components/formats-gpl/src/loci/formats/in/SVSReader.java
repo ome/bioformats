@@ -90,9 +90,18 @@ public class SVSReader extends BaseTiffReader {
   private ArrayList<String> dyeNames = new ArrayList<String>();
 
   private transient Color displayColor = null;
+
+  // explicitly record the series and IFD indexes
+  // for the label and macro images
+  // this makes it easier to calculate IFD mappings
   private int labelIndex = -1;
   private int macroIndex = -1;
+
+  // total number of extra (label and macro) images
   private int extraImages = 0;
+
+  private transient Double physicalDistanceFromLeftEdge;
+  private transient Double physicalDistanceFromTopEdge;
 
   // -- Constructor --
 
@@ -169,9 +178,6 @@ public class SVSReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (core.size() == 1) {
-      return super.openBytes(no, buf, x, y, w, h);
-    }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     if (tiffParser == null) {
       initTiffParser();
@@ -278,7 +284,7 @@ public class SVSReader extends BaseTiffReader {
 
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
-      int index = getIFDIndex(i, 0);
+      int index = i;
       tiffParser.fillInIFD(ifds.get(index));
 
       String comment = ifds.get(index).getComment();
@@ -352,6 +358,12 @@ public class SVSReader extends BaseTiffReader {
       }
       else {
         ifds.remove(s);
+        if (s < labelIndex) {
+          labelIndex--;
+        }
+        if (s < macroIndex) {
+          macroIndex--;
+        }
       }
     }
     if (uniqueZ.size() == 0) {
@@ -472,6 +484,12 @@ public class SVSReader extends BaseTiffReader {
                   int color = Integer.parseInt(value);
                   displayColor = new Color((color << 8) | 0xff);
                   break;
+                case "Left":
+                  physicalDistanceFromLeftEdge = DataTools.parseDouble(value);
+                  break;
+                case "Top":
+                  physicalDistanceFromTopEdge = DataTools.parseDouble(value);
+                  break;
               }
             }
           }
@@ -489,7 +507,10 @@ public class SVSReader extends BaseTiffReader {
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, getImageCount() > 1);
+    boolean populatePlaneData = getImageCount() > 1 ||
+      physicalDistanceFromTopEdge != null ||
+      physicalDistanceFromLeftEdge != null;
+    MetadataTools.populatePixels(store, this, populatePlaneData);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     String objective = MetadataTools.createLSID("Objective", 0, 0);
@@ -504,6 +525,21 @@ public class SVSReader extends BaseTiffReader {
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
 
+      if (i == 0) {
+        if (physicalDistanceFromTopEdge != null) {
+          Length yPos = FormatTools.getStagePosition(physicalDistanceFromTopEdge, UNITS.MM);
+          for (int p=0; p<getImageCount(); p++) {
+            store.setPlanePositionY(yPos, i, p);
+          }
+        }
+        if (physicalDistanceFromLeftEdge != null) {
+          Length xPos = FormatTools.getStagePosition(physicalDistanceFromLeftEdge, UNITS.MM);
+          for (int p=0; p<getImageCount(); p++) {
+            store.setPlanePositionX(xPos, i, p);
+          }
+        }
+      }
+
       if (hasFlattenedResolutions() || i > extraImages) {
         store.setImageName("Series " + (i + 1), i);
       }
@@ -511,10 +547,10 @@ public class SVSReader extends BaseTiffReader {
         if (i == 0) {
           store.setImageName("", i);
         }
-        else if (i == labelIndex) {
+        else if (core.flattenedIndex(i, 0) == labelIndex) {
           store.setImageName("label image", i);
         }
-        else if (i == macroIndex) {
+        else if (core.flattenedIndex(i, 0) == macroIndex) {
           store.setImageName("macro image", i);
         }
       }
@@ -562,7 +598,10 @@ public class SVSReader extends BaseTiffReader {
 
   private int getIFDIndex(int coreIndex, int no) {
     int index = coreIndex;
+    // coreCount is the number of pyramid resolutions (independent of flattening)
     int coreCount = core.flattenedSize() - extraImages;
+
+    // this is the case where the requested IFD is within the pyramid
     if (coreIndex > 0 && coreIndex < coreCount) {
       if (core.get(0, 0).imageCount > 1) {
         index++;
@@ -571,6 +610,7 @@ public class SVSReader extends BaseTiffReader {
         index = coreCount - coreIndex;
       }
     }
+
     if ((coreIndex > 0 && coreIndex < coreCount) || no > 0) {
       for (int i=0; i<no; i++) {
         index += coreCount;
@@ -579,11 +619,21 @@ public class SVSReader extends BaseTiffReader {
         index++;
       }
     }
-    else if (coreIndex >= coreCount && core.get(0, 0).imageCount > 1) {
-      for (int i=0; i<coreCount; i++) {
-        index += core.get(0, i).imageCount;
+    else if (coreIndex >= coreCount) {
+      if (core.get(0, 0).imageCount > 1) {
+        for (int i=0; i<coreCount; i++) {
+          index += core.get(0, i).imageCount;
+        }
+        index -= (coreCount - 1);
       }
-      index -= (coreCount - 1);
+      else {
+        if (coreIndex == labelIndex) {
+          return labelIndex;
+        }
+        if (coreIndex == macroIndex) {
+          return macroIndex;
+        }
+      }
     }
     return index;
   }
@@ -635,7 +685,7 @@ public class SVSReader extends BaseTiffReader {
   }
 
   protected double getMagnification() {
-    return magnification;
+    return magnification == null ? Double.NaN : magnification;
   }
 
   protected ArrayList<String> getDyeNames() {

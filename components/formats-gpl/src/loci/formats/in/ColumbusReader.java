@@ -193,7 +193,7 @@ public class ColumbusReader extends FormatReader {
       }
     }
 
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     if (p != null && new Location(p.file).exists()) {
       reader.setId(p.file);
       if (p.fileIndex < reader.getImageCount()) {

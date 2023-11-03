@@ -1121,29 +1121,33 @@ public class CellSensReader extends FormatReader {
       if (tileSize == 0) {
         tileSize = tileX.get(getCoreIndex()) * tileY.get(getCoreIndex()) * 10;
       }
-      options.maxBytes = (int) (offset + tileSize);
 
       long end = index < tileOffsets.get(getCoreIndex()).length - 1 ?
         tileOffsets.get(getCoreIndex())[index + 1] : ets.length();
 
+      int compression = compressionType.get(getCoreIndex());
+      int compressedBufSize = compression == PNG || compression == BMP ?
+        (int) (end - offset) : tileSize;
+      byte[] compressedBuf = new byte[compressedBufSize];
+      ets.read(compressedBuf);
+
       String file = null;
 
-      switch (compressionType.get(getCoreIndex())) {
+      switch (compression) {
         case RAW:
-          buf = new byte[tileSize];
-          ets.read(buf);
+          buf = compressedBuf;
           break;
         case JPEG:
           Codec codec = new JPEGCodec();
-          buf = codec.decompress(ets, options);
+          buf = codec.decompress(compressedBuf, options);
           break;
         case JPEG_2000:
           codec = new JPEG2000Codec();
-          buf = codec.decompress(ets, options);
+          buf = codec.decompress(compressedBuf, options);
           break;
         case JPEG_LOSSLESS:
           codec = new LosslessJPEGCodec();
-          buf = codec.decompress(ets, options);
+          buf = codec.decompress(compressedBuf, options);
           break;
         case PNG:
           file = "tile.png";
@@ -1154,9 +1158,7 @@ public class CellSensReader extends FormatReader {
             reader = new BMPReader();
           }
 
-          byte[] b = new byte[(int) (end - offset)];
-          ets.read(b);
-          Location.mapFile(file, new ByteArrayHandle(b));
+          Location.mapFile(file, new ByteArrayHandle(compressedBuf));
           reader.setId(file);
           buf = reader.openBytes(0);
           Location.mapFile(file, null);

@@ -599,7 +599,8 @@ public class MicromanagerReader extends FormatReader {
         plane += ifds.size();
       }
       catch (IOException e) {
-        LOGGER.debug("Failed to read metadata from " + path, e);
+        LOGGER.error("Failed to read metadata from " + path, e);
+        throw new FormatException(e);
       }
     }
   }

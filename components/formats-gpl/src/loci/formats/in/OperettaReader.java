@@ -223,7 +223,7 @@ public class OperettaReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     if (getSeries() < planes.length && no < planes[getSeries()].length) {
       Plane p = planes[getSeries()][no];
 
@@ -498,13 +498,7 @@ public class OperettaReader extends FormatReader {
         ms.sizeY = planes[i][planeIndex].y;
         String filename = planes[i][planeIndex].filename;
         boolean validFile = false;
-        while ((filename == null || !new Location(filename).exists() || !validFile) &&
-          planeIndex < planes[i].length - 1)
-        {
-          LOGGER.debug("Missing TIFF file: {}", filename);
-          planeIndex++;
-          filename = planes[i][planeIndex].filename;
-
+        while (!validFile) {
           if (filename != null && new Location(filename).exists()) {
             try (RandomAccessInputStream s =
               new RandomAccessInputStream(filename, 16)) {
@@ -521,9 +515,25 @@ public class OperettaReader extends FormatReader {
                 ms.littleEndian = firstIFD.isLittleEndian();
                 ms.pixelType = firstIFD.getPixelType();
                 validFile = true;
+                break;
               }
             }
+          } else {
+              LOGGER.debug("Missing TIFF file: {}", filename);
           }
+          // Check the next plane if possible
+          planeIndex++;
+
+          // The next plane may be null, in which case we need to move to the next non-null one
+          while (planeIndex < planes[i].length && planes[i][planeIndex] == null) {
+            LOGGER.debug("skipping null plane series = {}, plane = {}", i, planeIndex);
+            planeIndex++;
+          }
+
+          if (planeIndex >= planes[i].length) {
+              break;
+          }
+          filename = planes[i][planeIndex].filename;
         }
 
         if (!validFile) {

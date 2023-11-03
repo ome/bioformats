@@ -218,7 +218,6 @@ public class ConfigWindow extends JFrame
     //   + upgrade button for "ImageJ" just launches ImageJ upgrade plugin
     // - can install native libs by downloading installer from its web site
     //   + QuickTime for Java
-    //   + Nikon ND2 plugin
     //   + ImageIO Tools
 
     libInfo.add(makeLabel("Path", false));
@@ -375,18 +374,6 @@ public class ConfigWindow extends JFrame
     // Ant replaces date token with datestamp of the build
     if (bfVersion.equals("@" + "date" + "@")) bfVersion = "Internal build";
 
-    String qtVersion = null;
-    try {
-      Class<?> qtToolsClass = Class.forName("loci.formats.gui.LegacyQTTools");
-      Object qtTools = qtToolsClass.newInstance();
-      Method getQTVersion = qtToolsClass.getMethod("getQTVersion");
-      qtVersion = (String) getQTVersion.invoke(qtTools);
-    }
-    catch (Throwable t) {
-      log.println("Could not determine QuickTime version:");
-      t.printStackTrace(log);
-    }
-
     String clibIIOVersion = null;
     try {
       Class<?> jpegSpi = Class.forName(
@@ -428,7 +415,6 @@ public class ConfigWindow extends JFrame
     HashMap<String, String> versions = new HashMap<String, String>();
     versions.put("javaVersion", javaVersion);
     versions.put("bfVersion", bfVersion);
-    if (qtVersion != null) versions.put("qtVersion", qtVersion);
     if (clibIIOVersion != null) versions.put("clibIIOVersion", clibIIOVersion);
     if (matlabVersion != null) versions.put("matlabVersion", matlabVersion);
 

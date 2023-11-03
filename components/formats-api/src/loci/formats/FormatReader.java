@@ -180,6 +180,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not to group multi-file formats. */
   protected boolean group = true;
 
+  /** Fill value for undefined pixels. */
+  protected Byte fillColor = null;
+
   /** List of domains in which this format is used. */
   protected String[] domains = new String[0];
 
@@ -996,6 +999,26 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     return FormatTools.CANNOT_GROUP;
+  }
+
+  /* @see IFormatReader#setFillColor(Byte) */
+  @Override
+  public void setFillColor(Byte color) {
+    fillColor = color;
+  }
+
+  /**
+   * @see IFormatReader#getFillColor()
+   *
+   * If a fill color was not defined by the reader or
+   * {@link #setFillColor(Byte)}, then 0 is returned.
+   */
+  @Override
+  public Byte getFillColor() {
+    if (fillColor == null) {
+      return 0;
+    }
+    return fillColor;
   }
 
   /* @see IFormatReader#isMetadataComplete() */

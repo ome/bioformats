@@ -206,7 +206,7 @@ public class VentanaReader extends BaseTiffReader {
     if (tiffParser == null) {
       initTiffParser();
     }
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
 
     if (splitTiles()) {
@@ -230,8 +230,8 @@ public class VentanaReader extends BaseTiffReader {
     int outputRowLen = w * tilePixel;
 
     int scale = getScale(getCoreIndex());
-    int thisTileWidth = tileWidth / scale;
-    int thisTileHeight = tileHeight / scale;
+    int thisTileWidth = scaleCoordinate(tileWidth, getCoreIndex());
+    int thisTileHeight = scaleCoordinate(tileHeight, getCoreIndex());
 
     byte[] subResTile = null;
     int subResX = -1, subResY = -1;
@@ -250,8 +250,8 @@ public class VentanaReader extends BaseTiffReader {
       }
       tileBox.x = scaleCoordinate(tileBox.x, getCoreIndex());
       tileBox.y = scaleCoordinate(tileBox.y, getCoreIndex());
-      tileBox.width /= scale;
-      tileBox.height /= scale;
+      tileBox.width = scaleCoordinate(tileBox.width, getCoreIndex());
+      tileBox.height = scaleCoordinate(tileBox.height, getCoreIndex());
 
       if (tileBox.intersects(imageBox)) {
         if (scale == 1) {
@@ -292,9 +292,13 @@ public class VentanaReader extends BaseTiffReader {
             input = inRow * (c * tileHeight + offsetY) + offsetX * tilePixel;
             output = c * thisTileHeight * outRow;
             for (int row=0; row<thisTileHeight; row++) {
-              System.arraycopy(subResTile, input, tilePixels, output, outRow);
-              input += inRow;
-              output += outRow;
+              int copy = (int) Math.min(outRow, tilePixels.length - output);
+              copy = (int) Math.min(copy, subResTile.length - input);
+              if (copy >= 0) {
+                System.arraycopy(subResTile, input, tilePixels, output, copy);
+                input += inRow;
+                output += outRow;
+              }
             }
           }
         }

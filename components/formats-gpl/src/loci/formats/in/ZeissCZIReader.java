@@ -250,7 +250,7 @@ public class ZeissCZIReader extends FormatReader {
 
     String color = channels.get(previousChannel).color;
     if (color != null) {
-      color = color.replaceAll("#", "");
+      color = normalizeColor(color);
       try {
         int colorValue = Integer.parseInt(color, 16);
 
@@ -287,7 +287,7 @@ public class ZeissCZIReader extends FormatReader {
 
     String color = channels.get(previousChannel).color;
     if (color != null) {
-      color = color.replaceAll("#", "");
+      color = normalizeColor(color);
       try {
         int colorValue = Integer.parseInt(color, 16);
 
@@ -312,6 +312,27 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
     else return null;
+  }
+
+  /**
+   * @see loci.formats.FormatReader#getFillColor()
+   *
+   * If the fill value was set explicitly, use that.
+   * Otherwise, return 255 (white) for RGB data with a pyramid,
+   * and 0 in all other cases. RGB data with a pyramid can
+   * reasonably be assumed to be a brightfield slide.
+   */
+  @Override
+  public Byte getFillColor() {
+    if (fillColor != null) {
+      return fillColor;
+    }
+
+    byte fill = (byte) 0;
+    if (isRGB() && maxResolution > 0) {
+      fill = (byte) 255;
+    }
+    return fill;
   }
 
   /**
@@ -356,11 +377,7 @@ public class ZeissCZIReader extends FormatReader {
       validScanDim = false;
     }
 
-    byte fillColor = (byte) 0;
-    if (isRGB() && maxResolution > 0) {
-      fillColor = (byte) 255;
-    }
-    Arrays.fill(buf, fillColor);
+    Arrays.fill(buf, getFillColor());
     boolean emptyTile = true;
     int compression = -1;
     try {
@@ -877,10 +894,12 @@ public class ZeissCZIReader extends FormatReader {
         int newY = lastPlane.y;
         if (allowAutostitching() && (ms0.sizeX < newX || ms0.sizeY < newY)) {
           prestitched = true;
-          mosaics = 1;
+          if (maxResolution > 0) {
+            mosaics = 1;
+          }
         }
         else {
-          prestitched = maxResolution > 0;
+          prestitched = true;
         }
 
         // don't shrink the dimensions if prestitching is allowed
@@ -1659,10 +1678,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String color = channels.get(c).color;
           if (color != null && !isRGB()) {
-            color = color.replaceAll("#", "");
-            if (color.length() > 6) {
-              color = color.substring(2, color.length());
-            }
+            color = normalizeColor(color);
             try {
               // shift by 8 to allow alpha in the final byte
               store.setChannelColor(
@@ -4313,6 +4329,15 @@ public class ZeissCZIReader extends FormatReader {
       return (b << 7) | (a & 0x7f);
     }
     return a & 0xff;
+  }
+
+  private String normalizeColor(String color) {
+    String c = color.replaceAll("#", "");
+    if (c.length() > 6) {
+      c = c.substring(2, (int) Math.min(8, c.length()));
+      LOGGER.debug("Replaced color {} with {}", color, c);
+    }
+    return c;
   }
 
   /** Segment with ID "ZISRAWDIRECTORY". */

@@ -100,11 +100,20 @@ public class BioRadGelReader extends FormatReader {
       else if (in.length() - planeSize > 61000) {
         in.seek(PIXEL_OFFSET - 196);
 
-        while (!in.readString(3).equals("scn")) {
-          in.seek(in.getFilePointer() - 2);
+        while (!in.readString(5).equals("scn0x")) {
+          in.seek(in.getFilePointer() - 4);
         }
 
-        in.skipBytes(91);
+        in.skipBytes(69);
+
+        // check byte indicates presence of additional metadata
+        // possibly specific to cropped images?
+        int check = in.read();
+        in.skipBytes(19);
+        if (check != 0) {
+          in.skipBytes(in.readShort() - 2);
+        }
+
         int len = in.readShort();
         in.skipBytes(len);
         in.skipBytes(32);

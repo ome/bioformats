@@ -98,9 +98,6 @@ autoloadBioFormats = 1;
 % named files into a single dataset based on file numbering.
 stitchFiles = 0;
 
-% To work with compressed Evotec Flex, fill in your LuraWave license code.
-%lurawaveLicense = 'xxxxxx-xxxxxxx';
-
 % -- Main function - no need to edit anything past this point --
 
 % load the Bio-Formats library into the MATLAB environment
