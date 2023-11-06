@@ -561,7 +561,7 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
         else if (name.equals("Max")) channelMax.add(value);
         else if (name.equals("Min")) channelMin.add(value);
         else if (name.equals("Pinhole")) pinhole.add(value);
-        else if (name.equals("Name")) channelName.add(value);
+        else if (name.equals("Name")) channelName.add(originalValue);
         else if (name.equals("MicroscopyMode")) microscopyMode.add(value);
         else if (name.equals("Color")) {
           double[] color = new double[3];
