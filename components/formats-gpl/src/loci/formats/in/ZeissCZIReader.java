@@ -1406,14 +1406,9 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
-      else if (extraIndex == 0) {
-        store.setImageName("label image", i);
-      }
-      else if (extraIndex == 1) {
-        store.setImageName("macro image", i);
-      }
-      else {
-        store.setImageName("thumbnail image", i);
+      else if (extraIndex >= 0 && extraIndex < extraImages.size()) {
+        AttachmentEntry entry = extraImages.get(extraIndex).attachment;
+        store.setImageName(entry.getNormalizedName(), i);
       }
 
       // remaining acquisition settings (esp. channels) do not apply to
@@ -4556,6 +4551,20 @@ public class ZeissCZIReader extends FormatReader {
       return "schemaType = " + schemaType + ", filePosition = " + filePosition +
         ", filePart = " + filePart + ", contentGUID = " + contentGUID +
         ", contentFileType = " + contentFileType;
+    }
+
+    public String getNormalizedName() {
+      if (name == null) {
+        return "";
+      }
+      String n = name.trim();
+      if (n.toLowerCase().startsWith("label")) {
+        return "label image";
+      }
+      else if (n.toLowerCase().startsWith("slidepreview")) {
+        return "macro image";
+      }
+      return n;
     }
   }
 
