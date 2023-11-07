@@ -3392,7 +3392,8 @@ public class ZeissCZIReader extends FormatReader {
                   platePositions.add(value);
                 }
                 String name = well.getAttribute("Name");
-                for (int f=0; f<well.getElementsByTagName("SingleTileRegion").getLength(); f++) {
+                int tileRegionCount = (int) Math.max(1, well.getElementsByTagName("SingleTileRegion").getLength());
+                for (int f=0; f<tileRegionCount; f++) {
                   imageNames.add(name);
                 }
               }
