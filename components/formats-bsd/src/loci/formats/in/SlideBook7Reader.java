@@ -79,6 +79,18 @@ public class SlideBook7Reader  extends FormatReader {
     public static Logger LOGGER =
         LoggerFactory.getLogger(SlideBook7Reader.class);
 
+    enum EGraphicType {
+          ePoint,
+          eLine,
+          eRectangle,
+          ePolygon,
+          eVolume,
+          eObjectPath,    // sequence of submask id's
+          eArrow,
+          eShape,                 // for stereology marks
+          eEllipse
+    }
+
     static class StrIntPair
     {
         public String mStr;
@@ -2800,6 +2812,89 @@ public class SlideBook7Reader  extends FormatReader {
     mDataLoader = null;
   }
 
+
+    protected int addAnnotation(MetadataStore store, CAnnotation70 inAnn, int inCapture, int inRegionIndex, int inRoiManagerRoiIndex)
+    {
+        if(inAnn.mGraphicType70 == 4) return inRoiManagerRoiIndex;  //EGraphicType.ePoint
+        if(inAnn.mGraphicType70 == 5) return inRoiManagerRoiIndex;  //EGraphicType.ePoint
+        if(inAnn.mGraphicType70 == 6) return inRoiManagerRoiIndex;  //EGraphicType.ePoint
+        if(inAnn.mGraphicType70 == 7) return inRoiManagerRoiIndex;  //EGraphicType.ePoint
+
+        String roiID = MetadataTools.createLSID("ROI", inRoiManagerRoiIndex);
+        store.setROIID(roiID, inRoiManagerRoiIndex);
+        store.setImageROIRef(roiID, inCapture, inRoiManagerRoiIndex);
+
+        store.setROIName("ROI " + inRegionIndex , inRoiManagerRoiIndex);
+
+        String shapeID =MetadataTools.createLSID("Shape", inRoiManagerRoiIndex, 0);
+        if(inAnn.mGraphicType70 == 0) //EGraphicType.ePoint
+        {
+            store.setPointID(shapeID, inRoiManagerRoiIndex, 0);
+            CSBPoint <Integer> thePoint1 = inAnn.mVertexes.get(0);
+            store.setPointX((double)thePoint1.mX,inRoiManagerRoiIndex, 0);
+            store.setPointY((double)thePoint1.mY,inRoiManagerRoiIndex, 0);
+        }
+        else if(inAnn.mGraphicType70 == 1) //EGraphicType.eLine
+        {
+            CSBPoint <Integer> thePoint1 = inAnn.mVertexes.get(0);
+            CSBPoint <Integer> thePoint2 = inAnn.mVertexes.get(1);
+            store.setLineID(shapeID, inRoiManagerRoiIndex, 0);
+            store.setLineX1((double)thePoint1.mX,inRoiManagerRoiIndex, 0);
+            store.setLineY1((double)thePoint1.mY,inRoiManagerRoiIndex, 0);
+            store.setLineX2((double)thePoint2.mX,inRoiManagerRoiIndex, 0);
+            store.setLineY2((double)thePoint2.mY,inRoiManagerRoiIndex, 0);
+        }
+        else if(inAnn.mGraphicType70 == 2) //EGraphicType.eRectangle
+        {
+            CSBPoint <Integer> thePoint1 = inAnn.mVertexes.get(0);
+            CSBPoint <Integer> thePoint2 = inAnn.mVertexes.get(1);
+            int left = thePoint1.mX;
+            int top = thePoint1.mY;
+            int width = thePoint2.mX - thePoint1.mX;
+            int height = thePoint2.mY - thePoint1.mY;
+            store.setRectangleID(shapeID, inRoiManagerRoiIndex, 0);
+            store.setRectangleX((double) left, inRoiManagerRoiIndex, 0);
+            store.setRectangleY((double) top, inRoiManagerRoiIndex, 0);
+            store.setRectangleWidth((double) width, inRoiManagerRoiIndex, 0);
+            store.setRectangleHeight((double) height, inRoiManagerRoiIndex, 0);
+            //store.setRectangleText(cellObjectName, inRoiManagerRoiIndex, 0);
+            //store.setRectangleTheT(new NonNegativeInteger(roiTime), inRoiManagerRoiIndex, 0);
+            //store.setRectangleTheC(new NonNegativeInteger(roiChannel), inRoiManagerRoiIndex, 0);
+            //store.setRectangleTheZ(new NonNegativeInteger(roiZSlice), inRoiManagerRoiIndex, 0);
+        }
+        else if(inAnn.mGraphicType70 == 3) //EGraphicType.ePolygon
+        {
+            store.setPolygonID(shapeID, inRoiManagerRoiIndex, 0);
+            int numVertex = inAnn.mVertexes.size();
+            final StringBuilder p = new StringBuilder();
+
+            for (int j=0; j<numVertex; j++) {
+                CSBPoint <Integer> thePoint = inAnn.mVertexes.get(j);
+                p.append(thePoint.mX);
+                p.append(",");
+                p.append(thePoint.mY);
+                if (j < numVertex - 1) p.append(" ");
+            }
+            store.setPolygonPoints(p.toString(), inRoiManagerRoiIndex, 0);
+        }
+        else if(inAnn.mGraphicType70 == 8) //EGraphicType.eEllipse
+        {
+            CSBPoint <Integer> thePoint1 = inAnn.mVertexes.get(0);
+            CSBPoint <Integer> thePoint2 = inAnn.mVertexes.get(1);
+            int theCenterX = (thePoint2.mX + thePoint1.mX)/2;
+            int theCenterY = (thePoint2.mY + thePoint1.mY)/2;
+            int theRadiusX = (thePoint2.mX - thePoint1.mX)/2;
+            int theRadiusY = (thePoint2.mY - thePoint1.mY)/2;
+            store.setEllipseID(shapeID, inRoiManagerRoiIndex, 0);
+            store.setEllipseX((double) theCenterX, inRoiManagerRoiIndex, 0);
+            store.setEllipseY((double) theCenterY, inRoiManagerRoiIndex, 0);
+            store.setEllipseRadiusX((double) theRadiusX, inRoiManagerRoiIndex, 0);
+            store.setEllipseRadiusY((double) theRadiusY, inRoiManagerRoiIndex, 0);
+        }
+        inRoiManagerRoiIndex++;
+        return inRoiManagerRoiIndex;
+    }
+
 	/* @see loci.formats.FormatReader#initFile(String) */
 	protected void initFile(String id) throws FormatException, IOException {
 		super.initFile(id);
@@ -2879,15 +2974,30 @@ public class SlideBook7Reader  extends FormatReader {
 			MetadataTools.populatePixels(store, this, true);
 
 			// add extended meta data
-			if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+			if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
+			{
 				
 				// set instrument information
 				String instrumentID = MetadataTools.createLSID("Instrument", 0);
 				store.setInstrumentID(instrumentID, 0);
 
 				// set up extended meta data
+                int roiManagerRoiIndex = 0;
 				for (int capture=0; capture < numCaptures; capture++) {
-          CImageGroup theCurrentImageGroup = mDataLoader.GetImageGroup(capture);
+                    CImageGroup theCurrentImageGroup = mDataLoader.GetImageGroup(capture);
+                    // annotation roi's
+
+                    int theAnnoSize = theCurrentImageGroup.mAnnotationList.size();
+                    for(int theAnnoIndex = 0; theAnnoIndex < theAnnoSize; theAnnoIndex++)
+                    {
+                        CImageGroup.CAnnotations theAnno = theCurrentImageGroup.mAnnotationList.get(theAnnoIndex);
+                        for(int theCubeIndex=0; theCubeIndex < theAnno.mCubeAnnotationList.size(); theCubeIndex++)
+                        {
+                            CCubeAnnotation70 theCubeAnno = theAnno.mCubeAnnotationList.get(theCubeIndex);
+                            roiManagerRoiIndex = addAnnotation(store,theCubeAnno.mAnn,capture,theCubeAnno.mRegionIndex,roiManagerRoiIndex);
+                        }
+                    }
+
 					// link Instrument and Image
 					store.setImageInstrumentRef(instrumentID, capture);
 
