@@ -3439,7 +3439,7 @@ public class ZeissCZIReader extends FormatReader {
               offsetZ0 = planePosZ.value(unitLength).doubleValue();
             }
           }
-          double stepZ = (zStep==null)?0:zStep.value(unitLength).doubleValue();
+          double stepZ = (zStep==null)?0:zStep.value().doubleValue();
 
           if (resolutionLevel0) timeStampsResolutionLevel0.put(iChannel, new double[reader.getSizeT()*reader.getSizeZ()]); // Store the timestamps to be copied over resolution levels
           double[] currentTimeStamps = timeStampsResolutionLevel0.get(iChannel);
