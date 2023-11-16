@@ -1267,7 +1267,7 @@ public class ZeissCZIReader extends FormatReader {
       HashMap<CZTKey, List<MinDimEntry>> blocksInCore = mapCoreTZCToBlocks.get(iCoreIndex);
       HashMap<CZTKey, List<MinDimEntry>> minimalBlocksInCore = coreIndexToTZCToMinimalBlocks.get(iCoreIndex);
       for (ModuloDimensionEntries block: coreSignatureToBlocks.get(coreSignature)) {
-        int c = block.getDimension("C").start;
+        int c = (block.hasDimension("C"))? block.getDimension("C").start: 0;
         int z = (block.hasDimension("Z"))? block.getDimension("Z").start: 0;
         int t = (block.hasDimension("T"))? block.getDimension("T").start: 0;
         CZTKey k = new CZTKey(c,z,t);
