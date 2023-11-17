@@ -58,5 +58,7 @@ public interface JPEGTurboService extends Service {
   byte[] getTile(int xTile, int yTile) throws IOException;
 
   void close() throws IOException;
+  
+  boolean isLibraryLoaded();
 
 }

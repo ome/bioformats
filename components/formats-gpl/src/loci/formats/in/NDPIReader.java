@@ -329,6 +329,7 @@ public class NDPIReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
+    if (!service.isLibraryLoaded()) throw new IOException("JPEG service failed to load Turbo JPEG library");
     RandomAccessInputStream s = new RandomAccessInputStream(id);
     use64Bit = s.length() >= Math.pow(2, 32);
     s.close();
