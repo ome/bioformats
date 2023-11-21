@@ -771,8 +771,15 @@ public class CellSensReader extends FormatReader {
       if (s < files.size() - 1) {
         setCoreIndex(index);
         String ff = files.get(s);
+        /**
+         * If there are fewer metadata 'pyramids' defined in the vsi than there
+         * are frame_*.ets files, we are missing the metadata associated with
+         * one or more frame_*.ets files.  In this case we need to dynamically
+         * match the metadata we do have with the appropriate frame_*.ets file.
+        */
+        boolean missingMetadata = pyramids.size() < (files.size() - 1);
         try (RandomAccessInputStream stream = new RandomAccessInputStream(ff)) {
-            parseETSFile(stream, ff, s);
+            parseETSFile(stream, ff, s, missingMetadata);
         }
 
         ms.littleEndian = compressionType.get(index) == RAW;
@@ -796,10 +803,6 @@ public class CellSensReader extends FormatReader {
           }
         }
         index += ms.resolutionCount;
-
-        if (s < pyramids.size()) {
-          ms.seriesMetadata = pyramids.get(s).originalMetadata;
-        }
 
         setCoreIndex(0);
         ms.dimensionOrder = "XYCZT";
@@ -1188,7 +1191,8 @@ public class CellSensReader extends FormatReader {
     return buf;
   }
 
-  private void parseETSFile(RandomAccessInputStream etsFile, String file, int s)
+  private void parseETSFile(RandomAccessInputStream etsFile, String file, int s,
+                            boolean missingMetadata)
     throws FormatException, IOException
   {
     fileMap.put(core.size() - 1, file);
@@ -1286,7 +1290,40 @@ public class CellSensReader extends FormatReader {
     int[] maxC = new int[maxResolution];
     int[] maxT = new int[maxResolution];
 
-    HashMap<String, Integer> dimOrder = pyramids.get(s).dimensionOrdering;
+    HashMap<String, Integer> dimOrder = new HashMap<String, Integer>();
+    Pyramid pyramid = null;
+    /**
+    * If there is metadata missing from the vsi file, we need to see if we can match up
+    * this frame_*.ets file with its correct metadata block if it exists.  To do that we
+    * search the metadata blocks (ie 'pyramids') for the one whose width and height are
+    * within the correct range for this frame_*.ets file.
+    */
+    if (missingMetadata) {
+      int maxXAtRes0 = 0;
+      int maxYAtRes0 = 0;
+      for (TileCoordinate t : tmpTiles) {
+        if (!usePyramid || t.coordinate[t.coordinate.length - 1] == 0) {
+          maxXAtRes0 = Math.max(maxXAtRes0, t.coordinate[0]);
+          maxYAtRes0 = Math.max(maxYAtRes0, t.coordinate[1]);
+        }
+      }
+      int maxPixelWidth  = (maxXAtRes0 + 1) * tileX.get(tileX.size()-1);
+      int maxPixelHeight = (maxYAtRes0 + 1) * tileY.get(tileY.size()-1);
+      for (Pyramid p : pyramids) {
+        if (  (p.width  <= maxPixelWidth ) && (p.width  >= maxPixelWidth  - tileX.get(tileX.size()-1))
+           && (p.height <= maxPixelHeight) && (p.height >= maxPixelHeight - tileY.get(tileY.size()-1)) ) {
+            pyramid = p;
+            break;
+        }
+      }
+    }
+    else {
+      pyramid = pyramids.get(s);
+    }
+
+    if (pyramid != null) {
+      dimOrder = pyramid.dimensionOrdering;
+    }
 
     for (TileCoordinate t : tmpTiles) {
       int resolution = usePyramid ? t.coordinate[t.coordinate.length - 1] : 0;
@@ -1381,12 +1418,23 @@ public class CellSensReader extends FormatReader {
         maxC[resolution] = t.coordinate[cIndex];
       }
     }
-
-    if (pyramids.get(s).width != null) {
-      ms.sizeX = pyramids.get(s).width;
+    /**
+     * If this ets file has an associated metadata block, grab the correct width and height,
+     * and link it to the full metadata block.
+     */
+    if (pyramid != null) {
+      ms.sizeX = pyramid.width;
+      ms.sizeY = pyramid.height;
+      ms.seriesMetadata = pyramid.originalMetadata;
     }
-    if (pyramids.get(s).height != null) {
-      ms.sizeY = pyramids.get(s).height;
+    else {
+    /**
+     * Otherwise, compute the closest approximation, since the real info couldn't be found.
+     */
+      ms.sizeX = (maxX[0] + 1) * tileX.get(tileX.size()-1);
+      ms.sizeY = (maxY[0] + 1) * tileY.get(tileY.size()-1);
+      ms.seriesMetadata = new Hashtable<String, Object>();
+      ms.seriesMetadata.put("Metadata", "Not Found"); // leave a trail that the metadata was missing for this ets.
     }
     ms.sizeZ = maxZ[0] + 1;
     if (maxC[0] > 0) {
