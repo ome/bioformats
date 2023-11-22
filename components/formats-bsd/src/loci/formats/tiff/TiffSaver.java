@@ -1022,7 +1022,7 @@ public class TiffSaver implements Closeable {
       pi = PhotoInterp.RGB_PALETTE;
     }
     else if (nChannels == 3 || nChannels == 4) {
-      // TODO: handle CMYK; nChannels == 4, extraSamples should be omitted
+      // TODO: handle CMYK; nChannels == 4, EXTRA_SAMPLES must not be present
       if (ifd.getIFDValue(IFD.COMPRESSION).equals(TiffCompression.JPEG.getCode())) {
         // see https://github.com/ome/bioformats/issues/3856
         pi = PhotoInterp.Y_CB_CR;
