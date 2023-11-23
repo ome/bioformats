@@ -415,38 +415,42 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     int channels = in.readByte() & 0xff;
     if (channels != 3) {
       // https://stackoverflow.com/questions/51008883/is-there-a-grayscale-jpg-format
-      throw new IOException("Only exactly 3 channels supported by this reader");
+      throw new IOException("Only images with 3 channels are supported by this reader");
     }
 
     // Sampling factors: https://groups.google.com/g/comp.compression/c/Q8FUSocL7nA
-    // https://stackoverflow.com/questions/27918757/interpreting-jpeg-chroma-subsampling-read-from-file
-    // In our code, assume that Y is the largest, and others are 0x11.
-    // Default to 1*1 (8*8 MCU), where Y=0x11
-    int samplingFactor = 0x11;
+    // https://stackoverflow.com/q/27918757 https://stackoverflow.com/q/43225439
+    // mcu_tool.sh shows MCU size for some images
+    // JpegSnoop or identify -verbose show subsampling rates
+    // convert -sampling rate 2x2 or ffmpeg -i .. -vf format=yuv420p for making images
+
+    // MCU size in X direction divided by 8 is the ratio of largest X to smallest X
+    // likewise for Y. The first 4 bits is X, the next 4 bits make up Y.
+    // some examples: 2x1,2x1,2x1 (0x21,0x21,0x21) is 8x8. because 2/2 = 1, 1/1 = 1
+    // 2x1,1x1,1x1 is 16x8. 3x2,1x1,1x1 is 24x16
+
+    // No need to shift now
+    int maxX = 0x00;
+    int minX = 0xf0;
+    int maxY = 0x00;
+    int minY = 0x0f;
 
     for (int i = 0; i < channels; i++) {
       int componentId = in.readByte() & 0xff;
-      // The first one is Y, then the others, but use a simpler logic here
-      samplingFactor = Math.max(samplingFactor, in.readByte() & 0xff);
+
+      int rates = in.readByte();
+      int X = rates & 0xf0;
+      int Y = rates & 0x0f;
+      maxX = Math.max(maxX, X);
+      minX = Math.min(minX, X);
+      maxY = Math.max(maxY, Y);
+      minY = Math.min(minY, Y);
+
       int quantTableNumber = in.readByte() & 0xff;
     }
 
-    int samplingVertical = samplingFactor & 0x0f;
-    int samplingHorizontal = (samplingFactor & 0xf0) >> 4;
-    if (samplingVertical == 0x01) {
-      mcuHeight = 8;
-    } else if (samplingVertical == 0x02) {
-      mcuHeight = 16;
-    } else {
-      throw new IOException("Unsupported vertical sampling: " + samplingVertical);
-    }
-    if (samplingHorizontal == 0x01) {
-      mcuWidth = 8;
-    } else if (samplingHorizontal == 0x02) {
-      mcuWidth = 16;
-    } else {
-      throw new IOException("Unsupported horizontal sampling: " + samplingHorizontal);
-    }
+    mcuHeight = maxX / minX * 8;
+    mcuWidth = maxY / minY * 8;
   }
 
 }
