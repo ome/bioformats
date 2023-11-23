@@ -186,12 +186,6 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       }
     }
 
-    if (mcuWidth == 0) {
-      LOGGER.warn("assume MCU width and height 8");
-      mcuWidth = 8;
-      mcuHeight = 8;
-    }
-
     if (restartMarkers.size() == 1) {
       in.seek(restartMarkers.get(0));
 
