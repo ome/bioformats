@@ -424,9 +424,10 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     // JpegSnoop or identify -verbose show subsampling rates
     // convert -sampling rate 2x2 or ffmpeg -i .. -vf format=yuv420p for making images
 
-    // MCU size in X direction divided by 8 is the ratio of largest X to smallest X
-    // likewise for Y. The first 4 bits is X, the next 4 bits make up Y.
-    // some examples: 2x1,2x1,2x1 (0x21,0x21,0x21) is 8x8. because 2/2 = 1, 1/1 = 1
+    // MCU size in X direction divided by 8 is lcm(x1,x2,x3)/gcd(x1,x2,x3)
+    // but use a simpler formula here: max x_i / min x_i.
+    // Likewise for Y. For each coomponent, first 4 bits is X, the next 4 bits make up Y.
+    // some examples: 2x1,2x1,2x1 (0x21,0x21,0x21) is 8x8.
     // 2x1,1x1,1x1 is 16x8. 3x2,1x1,1x1 is 24x16
 
     // No need to shift now
