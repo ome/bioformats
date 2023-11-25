@@ -449,8 +449,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       int quantTableNumber = in.readByte() & 0xff;
     }
 
-    mcuHeight = maxX / minX * 8;
-    mcuWidth = maxY / minY * 8;
+    mcuWidth = maxX / minX * 8;
+    mcuHeight = maxY / minY * 8;
   }
 
 }
