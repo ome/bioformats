@@ -250,7 +250,7 @@ public class ZeissCZIReader extends FormatReader {
 
     String color = channels.get(previousChannel).color;
     if (color != null) {
-      color = color.replaceAll("#", "");
+      color = normalizeColor(color);
       try {
         int colorValue = Integer.parseInt(color, 16);
 
@@ -287,7 +287,7 @@ public class ZeissCZIReader extends FormatReader {
 
     String color = channels.get(previousChannel).color;
     if (color != null) {
-      color = color.replaceAll("#", "");
+      color = normalizeColor(color);
       try {
         int colorValue = Integer.parseInt(color, 16);
 
@@ -1678,10 +1678,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String color = channels.get(c).color;
           if (color != null && !isRGB()) {
-            color = color.replaceAll("#", "");
-            if (color.length() > 6) {
-              color = color.substring(2, color.length());
-            }
+            color = normalizeColor(color);
             try {
               // shift by 8 to allow alpha in the final byte
               store.setChannelColor(
@@ -4332,6 +4329,15 @@ public class ZeissCZIReader extends FormatReader {
       return (b << 7) | (a & 0x7f);
     }
     return a & 0xff;
+  }
+
+  private String normalizeColor(String color) {
+    String c = color.replaceAll("#", "");
+    if (c.length() > 6) {
+      c = c.substring(2, (int) Math.min(8, c.length()));
+      LOGGER.debug("Replaced color {} with {}", color, c);
+    }
+    return c;
   }
 
   /** Segment with ID "ZISRAWDIRECTORY". */

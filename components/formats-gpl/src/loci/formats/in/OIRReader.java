@@ -661,12 +661,12 @@ public class OIRReader extends FormatReader {
         break;
       }
       long fp = s.getFilePointer();
-      String xml = s.readString(length).trim();
+      String xml = s.readString(length);
       if (!xml.startsWith("<?xml")) {
         s.seek(fp - 2);
         continue;
       }
-      LOGGER.trace("xml = {}", xml);
+      xml = xml.trim();
       if (((channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) &&
         isCurrentFile(file)) || xml.indexOf("lut:LUT") > 0)
       {

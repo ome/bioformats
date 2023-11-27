@@ -1131,6 +1131,10 @@ public class LIFReader extends FormatReader {
     }
 
     NodeList images = getNodes(realRoot, "Image");
+    if (images == null) {
+      throw new FormatException("No images found. This file is not valid.");
+    }
+
     List<Element> imageNodes = new ArrayList<Element>();
     Long[] oldOffsets = null;
     if (images.getLength() > offsets.size()) {

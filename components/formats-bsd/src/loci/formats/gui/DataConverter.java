@@ -98,7 +98,7 @@ public class DataConverter extends JFrame implements
   private boolean shutdown, force = true;
 
   private JTextField input, output;
-  private JCheckBox qtJava, forceType, includeZ, includeT, includeC;
+  private JCheckBox forceType, includeZ, includeT, includeC;
   private JLabel zLabel, tLabel, cLabel;
   private JComboBox zChoice, tChoice, cChoice, codec;
   private JSpinner fps, series;
@@ -271,11 +271,6 @@ public class DataConverter extends JFrame implements
     pane.add(row5);
 
     pane.add(Box.createVerticalStrut(9));
-
-    boolean canDoQT = new LegacyQTTools().canDoQT();
-    qtJava = new JCheckBox("Use QTJava", canDoQT);
-    qtJava.setEnabled(canDoQT);
-    row5.add(qtJava);
 
     row5.add(Box.createHorizontalStrut(3));
 
@@ -479,10 +474,6 @@ public class DataConverter extends JFrame implements
         writer.getWriter(out).setCompression((String) codec.getSelectedItem());
       }
       catch (NullPointerException npe) { }
-
-      //boolean isQT = swap.getFormat().equals("QuickTime");
-      //boolean useQTJ = isQT && qtJava.isSelected();
-      //((QTReader) reader.getReader(QTReader.class)).setLegacy(useQTJ);
 
       // swap dimensions based on user input
 

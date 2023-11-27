@@ -74,6 +74,10 @@ public class TillVisionReader extends FormatReader {
     new byte[] {0x43, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x03, 0x00};
   private static final byte[] MARKER_3 = new byte[] {(byte) 0x83, 3, 0};
 
+  private static final byte[] DESCRIPTION_MARKER = new byte[] {
+    0, 0, 0, 0, 0, (byte) 0xff
+  };
+
   private static final String[] DATE_FORMATS = new String[] {
     "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss aa", "mm/dd/yy",
     "HH:mm:ss aa", "HH:mm:ss aa"};
@@ -339,6 +343,8 @@ public class TillVisionReader extends FormatReader {
           int lowerBound = 0;
           int upperBound = 0x1000;
 
+          // parse main metadata stream in two steps:
+          // first get the list of image names...
           while (s.getFilePointer() < s.length() - 2) {
             LOGGER.debug("  Looking for image at {}", s.getFilePointer());
             s.order(false);
@@ -358,6 +364,28 @@ public class TillVisionReader extends FormatReader {
               upperBound = 0x4000;
             }
             if (len < lowerBound || len > upperBound) continue;
+            s.skipBytes(len);
+          }
+
+          // ...and now get the acquisition metadata text
+          // the image names and other key/value pairs are
+          // often not co-located, so this seems to be more accurate
+          // than trying to parse everything together
+          //
+          // the expected series count (nImages) is based on how many
+          // metadata text blocks are found
+          s.seek(0);
+          s.order(true);
+          while (s.getFilePointer() < s.length() - 2) {
+            long offset = findNextOffset(s, DESCRIPTION_MARKER);
+            if (offset < 0 || offset >= s.length() - 2) {
+              break;
+            }
+            s.seek(offset);
+            int len = s.readShort();
+            if (len <= 0 || len > 0x1000) {
+              continue;
+            }
             String description = s.readString(len);
             LOGGER.debug("Description: {}", description);
 
@@ -366,10 +394,13 @@ public class TillVisionReader extends FormatReader {
             String dateTime = "";
 
             String[] lines = description.split("[\r\n]");
+            boolean validLine = false;
             for (String line : lines) {
               line = line.trim();
               int colon = line.indexOf(':');
               if (colon != -1 && !line.startsWith(";")) {
+                validLine = true;
+
                 String key = line.substring(0, colon).trim();
                 String value = line.substring(colon + 1).trim();
                 String metaKey = "Series " + nImages + " " + key;
@@ -405,7 +436,9 @@ public class TillVisionReader extends FormatReader {
               }
               dates.add(success ? dateTime : "");
             }
-            nImages++;
+            if (validLine) {
+              nImages++;
+            }
           }
         }
       }
@@ -414,7 +447,7 @@ public class TillVisionReader extends FormatReader {
     Location directory =
       new Location(currentId).getAbsoluteFile().getParentFile();
 
-    String[] pixelsFile = new String[nImages];
+    List<String> pixelsFile = new ArrayList<String>(nImages);
 
     if (!embeddedImages) {
       if (nImages == 0) {
@@ -427,8 +460,6 @@ public class TillVisionReader extends FormatReader {
       String name = currentId.substring(
         currentId.lastIndexOf(File.separator) + 1, currentId.lastIndexOf("."));
 
-      int nextFile = 0;
-
       for (String f : files) {
         if (checkSuffix(f, "pst")) {
           Location pst = new Location(directory, f);
@@ -436,31 +467,40 @@ public class TillVisionReader extends FormatReader {
             String[] subfiles = pst.list(true);
             Arrays.sort(subfiles);
             for (String q : subfiles) {
-              if (checkSuffix(q, "pst") && nextFile < nImages) {
-                pixelsFile[nextFile++] = f + File.separator + q;
+              if (checkSuffix(q, "pst")) {
+                String path = f + File.separator + q;
+                // usually the number of .pst files matches the number of
+                // metadata text blocks parsed earlier
+                // in rare cases, there are actually fewer metadata text blocks
+                // than .pst files, so err on the side of showing all image data
+                if (pixelsFile.size() >= nImages) {
+                  LOGGER.warn("Adding {}, no matching acquisition metadata", path);
+                }
+                pixelsFile.add(path);
               }
             }
           }
         }
       }
-      if (nextFile == 0) {
+      if (pixelsFile.size() == 0) {
         for (String f : files) {
           if (checkSuffix(f, "pst")) {
-            pixelsFile[nextFile++] =
-              new Location(directory, f).getAbsolutePath();
+            pixelsFile.add(new Location(directory, f).getAbsolutePath());
           }
         }
 
-        if (nextFile == 0) throw new FormatException("No image files found.");
+        if (pixelsFile.size() == 0) {
+          throw new FormatException("No image files found.");
+        }
       }
     }
 
-    Arrays.sort(pixelsFile);
+    pixelsFile.sort(null);
 
     int nSeries = core.size();
     if (!embeddedImages) {
       core.clear();
-      nSeries = nImages;
+      nSeries = pixelsFile.size();
     }
 
     pixelsFiles = new String[nSeries];
@@ -479,7 +519,7 @@ public class TillVisionReader extends FormatReader {
 
         // make sure that pixels file exists
 
-        String file = pixelsFile[i];
+        String file = pixelsFile.get(i);
 
         file = file.replace('/', File.separatorChar);
         file = file.replace('\\', File.separatorChar);

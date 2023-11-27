@@ -70,6 +70,9 @@ public class CV7000Reader extends FormatReader {
 
   // -- Constants --
 
+  public static final String DUPLICATE_PLANES_KEY = "cv7000.duplicate_missing_planes";
+  public static final boolean DUPLICATE_PLANES_DEFAULT = true;
+
   private static final Logger LOGGER = LoggerFactory.getLogger(CV7000Reader.class);
 
   private static final String MEASUREMENT_FILE = "MeasurementData.mlf";
@@ -102,6 +105,17 @@ public class CV7000Reader extends FormatReader {
     hasCompanionFiles = true;
     domains = new String[] {FormatTools.HCS_DOMAIN};
     datasetDescription = "Directory with XML files and one .tif/.tiff file per plane";
+  }
+
+  // -- CV7000Reader API methods --
+
+  public boolean duplicatePlanes() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       DUPLICATE_PLANES_KEY, DUPLICATE_PLANES_DEFAULT);
+    }
+    return DUPLICATE_PLANES_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -228,6 +242,19 @@ public class CV7000Reader extends FormatReader {
       reader.setId(p.file);
       return reader.openBytes(0, buf, x, y, w, h);
     }
+    else if (duplicatePlanes() && no > 0) {
+      int[] zct = getZCTCoords(no);
+      // pick the first plane in the same channel
+      int dupPlane = getIndex(0, zct[1], 0);
+
+      // very unlikely to happen, but catching the case
+      // where no is the first plane in the channel prevents
+      // a potential infinite loop
+      if (dupPlane == no) {
+        dupPlane = 0;
+      }
+      return openBytes(dupPlane, buf, x, y, w, h);
+    }
     return buf;
   }
 
@@ -280,13 +307,6 @@ public class CV7000Reader extends FormatReader {
       if (settingsPath != null) {
         settingsPath = new Location(parent, settingsPath).getAbsolutePath();
       }
-
-      channels.sort(new Comparator<Channel>() {
-        @Override
-        public int compare(Channel c1, Channel c2) {
-          return c1.index - c2.index;
-        }
-      });
     }
 
     if (settingsPath != null && new Location(settingsPath).exists()) {
@@ -297,6 +317,16 @@ public class CV7000Reader extends FormatReader {
         XMLTools.parseXML(xml, settingsHandler);
       }
     }
+
+    channels.sort(new Comparator<Channel>() {
+      @Override
+      public int compare(Channel c1, Channel c2) {
+        if (c1.actionIndex != c2.actionIndex) {
+          return c1.actionIndex - c2.actionIndex;
+        }
+        return c1.index - c2.index;
+      }
+    });
 
     for (Channel ch : channels) {
       if (ch.correctionFile != null) {
@@ -555,7 +585,7 @@ public class CV7000Reader extends FormatReader {
               // particular plane.  Skip it.
               continue;
             }
-            Channel channel = lookupChannel(p.channel);
+            Channel channel = lookupChannel(p);
             if (channel == null) {
               continue;
             }
@@ -580,10 +610,14 @@ public class CV7000Reader extends FormatReader {
 
             // the index here is the original bts:Ch index in
             // the *.mes and *.mrf files
-            store.setChannelName("Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
+            store.setChannelName("Action #" + (p.actionIndex + 1) +
+              ", Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
 
             if (channel.color != null) {
               store.setChannelColor(channel.color, i, c);
+            }
+            if (channel.fluor != null && !channel.fluor.isEmpty()) {
+              store.setChannelFluor(channel.fluor, i, c);
             }
 
             if (channel.excitation != null && channel.lightSourceRefs != null) {
@@ -638,7 +672,7 @@ public class CV7000Reader extends FormatReader {
           ch.actionIndex == action)
         {
           index++;
-          if (ch.index == p.channel) {
+          if (ch.index == p.channel && ch.actionIndex == p.actionIndex) {
             return index;
           }
         }
@@ -647,9 +681,9 @@ public class CV7000Reader extends FormatReader {
     return index;
   }
 
-  private Channel lookupChannel(int index) {
+  private Channel lookupChannel(Plane p) {
     for (Channel ch : channels) {
-      if (ch.index == index) {
+      if (ch.index == p.channel) {
         return ch;
       }
     }
@@ -937,6 +971,8 @@ public class CV7000Reader extends FormatReader {
                 currentChannel.excitation = DataTools.parseDouble(wave);
               }
             }
+
+            currentChannel.fluor = attributes.getValue("bts:Fluorophore");
           }
         }
       }
@@ -967,9 +1003,22 @@ public class CV7000Reader extends FormatReader {
       else if (qName.equals("bts:Ch")) {
         int channelIndex = Integer.parseInt(value) - 1;
         if (channelIndex >= 0 && channelIndex < channels.size()) {
+          // the same channel may be acquired multiple times
+          // if this is the first time the channel is acquired, set the indexes
+          // if this is the second (or more) time the channel is acquired,
+          // duplicate the channel so that each action has its own copy with
+          // the correct indexes
           Channel ch = channels.get(channelIndex);
-          ch.timelineIndex = timelineIndex;
-          ch.actionIndex = actionIndex;
+          if (ch.timelineIndex == -1 && ch.actionIndex == -1) {
+            ch.timelineIndex = timelineIndex;
+            ch.actionIndex = actionIndex;
+          }
+          else {
+            Channel duplicate = new Channel(ch);
+            duplicate.timelineIndex = timelineIndex;
+            duplicate.actionIndex = actionIndex;
+            channels.add(duplicate);
+          }
         }
       }
     }
@@ -984,8 +1033,8 @@ public class CV7000Reader extends FormatReader {
   }
 
   class Channel {
-    public int timelineIndex;
-    public int actionIndex;
+    public int timelineIndex = -1;
+    public int actionIndex = -1;
     public int index;
     public double xSize;
     public double ySize;
@@ -1000,6 +1049,28 @@ public class CV7000Reader extends FormatReader {
     public Double exposureTime;
     public String binning;
     public Color color;
+
+    public String fluor;
+
+    public Channel() {
+    }
+
+    public Channel(Channel ch) {
+      index = ch.index;
+      xSize = ch.xSize;
+      ySize = ch.ySize;
+      cameraNumber = ch.cameraNumber;
+      correctionFile = ch.correctionFile;
+      lightSourceRefs = ch.lightSourceRefs;
+      excitation = ch.excitation;
+      objectiveID = ch.objectiveID;
+      objective = ch.objective;
+      magnification = ch.magnification;
+      exposureTime = ch.exposureTime;
+      binning = ch.binning;
+      color = ch.color;
+      fluor = ch.fluor;
+    }
 
     @Override
     public String toString() {

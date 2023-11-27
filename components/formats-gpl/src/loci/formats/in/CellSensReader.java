@@ -42,6 +42,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -405,6 +406,7 @@ public class CellSensReader extends FormatReader {
   private int previousTag = 0;
 
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
+  private boolean[] bgr;
 
   private transient boolean expectETS = false;
   private transient int channelCount = 0;
@@ -536,8 +538,8 @@ public class CellSensReader extends FormatReader {
       Region intersection = null;
 
       byte[] tileBuf = null;
-      int pixel =
-        getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+      int bpp = FormatTools.getBytesPerPixel(getPixelType());
+      int pixel = getRGBChannelCount() * bpp;
       int outputRowLen = w * pixel;
 
       Pyramid pyramid = getCurrentPyramid();
@@ -588,6 +590,10 @@ public class CellSensReader extends FormatReader {
         }
       }
 
+      if (bgr[getCurrentPyramidIndex()]) {
+        ImageTools.bgrToRgb(buf, isInterleaved(), bpp, getRGBChannelCount());
+      }
+
       return buf;
     }
     else {
@@ -633,6 +639,7 @@ public class CellSensReader extends FormatReader {
       pyramids.clear();
       channelCount = 0;
       zCount = 0;
+      bgr = null;
     }
   }
 
@@ -755,6 +762,7 @@ public class CellSensReader extends FormatReader {
 
     IFDList exifs = parser.getExifIFDs();
 
+    bgr = new boolean[seriesCount];
     int index = 0;
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
@@ -1010,11 +1018,11 @@ public class CellSensReader extends FormatReader {
   }
 
   /**
-   * Get an object representing the pyramid which contains the
+   * Get an index to the pyramid which contains the
    * current series/resolution. Accounts for flattened resolutions
    * as needed.
    */
-  private Pyramid getCurrentPyramid() {
+  private int getCurrentPyramidIndex() {
     int resIndex = getResolution();
     int pyramidIndex = getSeries();
     if (hasFlattenedResolutions()) {
@@ -1032,8 +1040,16 @@ public class CellSensReader extends FormatReader {
         }
       }
     }
+    return pyramidIndex;
+  }
 
-    return pyramids.get(pyramidIndex);
+  /**
+   * Get an object representing the pyramid which contains the
+   * current series/resolution. Accounts for flattened resolutions
+   * as needed.
+   */
+  private Pyramid getCurrentPyramid() {
+    return pyramids.get(getCurrentPyramidIndex());
   }
 
   /**
@@ -1224,7 +1240,8 @@ public class CellSensReader extends FormatReader {
     backgroundColor.put(getCoreIndex(), color);
 
     etsFile.skipBytes(4 * 10 - color.length); // background color
-    etsFile.skipBytes(4); // component order
+    int componentOrder = etsFile.readInt();
+    bgr[s] = componentOrder == 1 && compressionType.get(compressionType.size() - 1) == RAW;
     boolean usePyramid = etsFile.readInt() != 0;
 
     ms.rgb = ms.sizeC > 1;

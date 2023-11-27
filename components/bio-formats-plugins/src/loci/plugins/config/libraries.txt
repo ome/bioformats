@@ -44,32 +44,6 @@ notes = Not used; listed for informational purposes only.
 
 # native libraries
 
-[QuickTime for Java]
-type = Native library
-class = quicktime.QTSession
-version = qtVersion
-url = http://www.apple.com/quicktime/
-license = Commercial
-notes = Bio-Formats has two modes of operation for QuickTime movies:\n
-        1) QTJava mode requires the QuickTime for Java library to be
-        installed.\n
-        2) Native mode works on systems with no QuickTime (e.g., Linux).\n
-        \n
-        Using QTJava mode adds or improves support for the following
-        codecs:\n
-        1) [iraw] Intel YUV Uncompressed: enables write\n
-        2) [rle] Animation (run length encoded RGB):
-        improves read, enables write\n
-        3) [rpza] Apple Video 16 bit "road pizza": improves read\n
-        4) [cvid] Cinepak: enables read and write\n
-        5) [svq1] Sorenson Video: enables read and write\n
-        6) [svq3] Sorenson Video 3: enables read and write\n
-        7) [mp4v] MPEG-4: enables read and write\n
-        8) [h263] H.263: enables read and write\n
-        \n
-        You can toggle which mode is used
-        in the Formats tab's "QuickTime" entry.
-
 [JAI Image I/O Tools - native codecs]
 type = Native library
 class = com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi
@@ -77,15 +51,6 @@ version = clibIIOVersion
 url = https://jai-imageio.dev.java.net/
 license = BSD
 notes = Used by Bio-Formats for lossless JPEG support in DICOM.
-
-[Nikon ND2 plugin]
-type = Native library
-class = ND_to_Image6D
-url = http://rsb.info.nih.gov/ij/plugins/nd2-reader.html
-license = Commercial
-notes = Optional plugin. If you have Nikon's ND2 plugin installed, you can
-        configure Bio-Formats to use it instead of its native ND2 support
-        in the Formats tab's "Nikon ND2" entry.
 
 # ImageJ plugins
 
@@ -296,11 +261,3 @@ url = http://www.loci.wisc.edu/software/ome-notes
 license = GPL
 notes = OME Notes library for flexible organization and presentation
         of OME-XML metadata.
-
-[LuraWave decoder SDK]
-type = Java library
-class = com.luratech.lwf.lwfDecoder
-url = http://www.luratech.com/
-license = Commercial
-notes = Used by Bio-Formats to decode Flex files
-        compressed with the LuraWave JPEG2000 codec.
