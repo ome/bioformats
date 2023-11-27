@@ -106,9 +106,6 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     logger.setLevel(Level.SEVERE);
     if (!libraryLoaded) {
       libraryLoaded = NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
-      if (!libraryLoaded) {
-        throw new RuntimeException("TurboJPEG could not be loaded");
-      }
     }
   }
 
@@ -381,6 +378,11 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     xTiles = 0;
     yTiles = 0;
     header = null;
+  }
+
+  @Override
+  public boolean isLibraryLoaded() {
+    return libraryLoaded;
   }
 
   // -- Helper methods --
