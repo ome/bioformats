@@ -926,6 +926,15 @@ public final class ImageConverter {
       nYTiles++;
     }
 
+    // only warn once if the whole resolution will need to
+    // be decompressed and recompressed
+    boolean canPrecompressResolution = precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
+    if (precompressed && !canPrecompressResolution) {
+      LOGGER.warn("Decompressing resolution: series={}, resolution={}",
+        writer.getSeries(), writer.getResolution());
+      tryPrecompressed = false;
+    }
+
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
       for (int x=0; x<nXTiles; x++) {
@@ -934,14 +943,16 @@ public final class ImageConverter {
         int tileWidth = x < nXTiles - 1 ? w : width - (w * x);
         int tileHeight = y < nYTiles - 1 ? h : height - (h * y);
 
-        tryPrecompressed = precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
+        tryPrecompressed = precompressed && canPrecompressResolution &&
+          FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
         byte[] buf = getTile(reader, writer.getResolution(),
           index, tileX, tileY, tileWidth, tileHeight);
 
         // if we asked for precompressed tiles, but that wasn't possible,
         // then log that decompression/recompression happened
+        // this is mainly expected for edge tiles, which might be smaller than expected
         // TODO: decide if an exception is better here?
-        if (precompressed && !tryPrecompressed) {
+        if (precompressed && canPrecompressResolution && !tryPrecompressed) {
           LOGGER.warn("Decompressed tile: series={}, resolution={}, x={}, y={}",
             writer.getSeries(), writer.getResolution(), x, y);
         }
