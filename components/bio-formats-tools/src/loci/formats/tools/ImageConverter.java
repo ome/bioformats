@@ -735,7 +735,7 @@ public final class ImageConverter {
           writer.setTileSizeX(reader.getOptimalTileWidth());
           writer.setTileSizeY(reader.getOptimalTileHeight());
         }
-        else {
+        else if (saveTileWidth > 0 && saveTileHeight > 0) {
           writer.setTileSizeX(saveTileWidth);
           writer.setTileSizeY(saveTileHeight);
         }
