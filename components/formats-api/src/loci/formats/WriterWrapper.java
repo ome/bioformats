@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import loci.common.Region;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
@@ -370,6 +371,16 @@ public abstract class WriterWrapper implements IFormatWriter {
     throws FormatException, IOException
   {
     writer.saveCompressedBytes(no, buf, x, y, w, h);
+  }
+
+  @Override
+  public Codec getCodec() {
+    return writer.getCodec();
+  }
+
+  @Override
+  public CodecOptions getCodecOptions() {
+    return writer.getCodecOptions();
   }
 
   // -- IFormatHandler API methods --

@@ -54,6 +54,7 @@ import loci.common.ReflectedUniverse;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.codec.Codec;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -2156,14 +2157,28 @@ public final class FormatTools {
     boolean sameTileWidth = reader.getOptimalTileWidth() == writer.getTileSizeX();
     boolean sameTileHeight = reader.getOptimalTileHeight() == writer.getTileSizeY();
 
-    // TODO: this needs to check for compatible compression options
+    // reader and writer must use equivalent codecs
+    // the Codec objects are not expected to be strictly equal,
+    // but both should either be null, or non-null and instances of the same class
+    boolean sameCodec = true;
+    Codec writerCodec = ((ICompressedTileWriter) writer).getCodec();
+    for (int no=0; no<reader.getImageCount(); no++) {
+      Codec readerCodec = ((ICompressedTileReader) reader).getTileCodec(no);
+      if ((writerCodec == null && readerCodec != null) ||
+        (writerCodec != null && readerCodec == null) ||
+        !writerCodec.getClass().equals(readerCodec.getClass()))
+      {
+        sameCodec = false;
+        break;
+      }
+    }
 
     reader.setSeries(readerSeries);
     reader.setResolution(resolution);
     writer.setSeries(series);
     writer.setResolution(resolution);
 
-    return sameTileWidth && sameTileHeight;
+    return sameTileWidth && sameTileHeight && sameCodec;
   }
 
 }

@@ -59,4 +59,18 @@ public interface ICompressedTileWriter {
     throw new UnsupportedOperationException("Writer does not support pre-compressed tile writing");
   }
 
+  /**
+   * @return the codec that can be used to compress tiles
+   */
+  default Codec getCodec() {
+    throw new UnsupportedOperationException("Writer does not support pre-compressed tile writing");
+  }
+
+  /**
+   * @return the codec options that can be used to compress tiles
+   */
+  default CodecOptions getCodecOptions() {
+    throw new UnsupportedOperationException("Writer does not support pre-compressed tile writing");
+  }
+
 }

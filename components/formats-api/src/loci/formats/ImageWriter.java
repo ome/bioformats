@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Set;
 
 import loci.common.Region;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
@@ -426,6 +427,16 @@ public class ImageWriter implements IFormatWriter {
     throws FormatException, IOException
   {
     getWriter().saveCompressedBytes(no, buf, x, y, w, h);
+  }
+
+  @Override
+  public Codec getCodec() {
+    return getWriter().getCodec();
+  }
+
+  @Override
+  public CodecOptions getCodecOptions() {
+    return getWriter().getCodecOptions();
   }
 
   // -- IFormatHandler API methods --

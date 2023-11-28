@@ -180,6 +180,17 @@ public class DicomWriter extends FormatWriter {
   }
 
   @Override
+  public Codec getCodec() {
+    if (CompressionType.JPEG.getCompression().equals(compression)) {
+      return new JPEGCodec();
+    }
+    else if (CompressionType.J2K.getCompression().equals(compression)) {
+      return new JPEG2000Codec();
+    }
+    return null;
+  }
+
+  @Override
   public void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -1598,19 +1609,6 @@ public class DicomWriter extends FormatWriter {
     // this isn't a valid value, but I think the only other alternative is
     // setting the lossy flag to 0 (which may be incorrect)
     return padString("NOT_DEFINED");
-  }
-
-  /**
-   * @return Codec instance corresponding to current compression type
-   */
-  private Codec getCodec() {
-    if (CompressionType.JPEG.getCompression().equals(compression)) {
-      return new JPEGCodec();
-    }
-    else if (CompressionType.J2K.getCompression().equals(compression)) {
-      return new JPEG2000Codec();
-    }
-    return null;
   }
 
   private void openFile(int pyramid, int res) throws IOException {
