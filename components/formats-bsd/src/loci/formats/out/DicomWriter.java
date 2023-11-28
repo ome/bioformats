@@ -105,8 +105,8 @@ public class DicomWriter extends FormatWriter {
   private long[] nextIFDPointer;
   private IFD[][] ifds;
   private long fileMetaLengthPointer;
-  private int baseTileWidth = 0;
-  private int baseTileHeight = 0;
+  private int baseTileWidth = 256;
+  private int baseTileHeight = 256;
   private int[] tileWidth;
   private int[] tileHeight;
   private PlaneOffset[][] planeOffsets;
