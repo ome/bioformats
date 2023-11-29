@@ -83,6 +83,17 @@ public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
     throws FormatException, IOException;
 
   /**
+   * Saves the given chunk to the current series in the current file.
+   *
+   * @param buf the byte array that represents the image chunk.
+   * @param shape the size of the chunk for every dimension.
+   * @param offsets the offset of the chunk for every dimension.
+   * @throws FormatException if one of the parameters is invalid.
+   * @throws IOException if there was a problem writing to the file.
+   */
+  void saveBytes(byte[] buf, int[] shape, int[] offsets) throws FormatException, IOException;
+
+  /**
    * Saves the given image plane to the current series in the current file.
    *
    * @param no the plane index within the series.
@@ -247,5 +258,9 @@ public interface IFormatWriter extends IFormatHandler, IPyramidHandler {
    * Get a list of resolution objects for the current series.
    */
   List<Resolution> getResolutions();
+
+  int[] setChunkSize(int[] chunkSize) throws FormatException;
+
+  int[] getChunkSize() throws FormatException;
 
 }

@@ -206,6 +206,13 @@ public abstract class WriterWrapper implements IFormatWriter {
   }
 
   @Override
+  public void saveBytes(byte[] buf, int[] shape, int[] offsets)
+    throws FormatException, IOException
+  {
+    writer.saveBytes(buf, shape, offsets);
+  }
+
+  @Override
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
@@ -349,6 +356,18 @@ public abstract class WriterWrapper implements IFormatWriter {
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     return writer.setTileSizeY(tileSize);
+  }
+
+  /* @see IFormatWriter#getChunkSize() */
+  @Override
+  public int[] getChunkSize() throws FormatException {
+    return writer.getChunkSize();
+  }
+
+  /* @see IFormatWriter#setChunkSize(int[]) */
+  @Override
+  public int[] setChunkSize(int[] chunkSize) throws FormatException {
+    return writer.setChunkSize(chunkSize);
   }
 
   /* @see IFormatWriter#setResolutions(List<Resolution>) */

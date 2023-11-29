@@ -927,6 +927,29 @@ public abstract class FormatReader extends FormatHandler
   public abstract byte[] openBytes(int no, byte[] buf, int x, int y,
     int w, int h) throws FormatException, IOException;
 
+  /* @see IFormatReader#openBytes(int) */
+  @Override
+  public byte[] openBytes(byte[] buf, int [] shape, int [] offsets) throws FormatException, IOException {
+    FormatTools.checkParameters(this, buf.length, shape, offsets);
+    String order = getDimensionOrder();
+    int[] XYZTCshape = FormatTools.getXYZCTIndexes(order, shape);
+    int[] XYZTCoffsets = FormatTools.getXYZCTIndexes(order, offsets);
+    int num = getSizeZ() * getSizeC() * getSizeT();
+    int bufOffset = 0;
+    for (int z = 0; z < XYZTCshape[2]; z++) {
+      for (int c = 0; c < XYZTCshape[3]; c++) {
+        for (int t = 0; t < XYZTCshape[4]; t++) {
+          int no = FormatTools.getIndex(order, getSizeZ(), getSizeC(), getSizeT(), num, 
+              XYZTCoffsets[2] + z, XYZTCoffsets[3] + c, XYZTCoffsets[4] + t);
+          byte[] plane = openBytes(no, XYZTCoffsets[0], XYZTCoffsets[1], XYZTCshape[0], XYZTCshape[1]);
+          System.arraycopy(plane, 0, buf, bufOffset, plane.length);
+          bufOffset += plane.length;
+        }
+      }
+    }
+    return buf;
+  }
+
   /* @see IFormatReader#openPlane(int, int, int, int, int int) */
   @Override
   public Object openPlane(int no, int x, int y, int w, int h)
@@ -1308,6 +1331,13 @@ public abstract class FormatReader extends FormatHandler
      int bpp = FormatTools.getBytesPerPixel(getPixelType());
      int maxHeight = (1024 * 1024) / (getSizeX() * getRGBChannelCount() * bpp);
      return (int) Math.min(maxHeight, getSizeY());
+  }
+
+  /* @see IFormatReader#getOptimalChunkSize() */
+  @Override
+  public int[] getOptimalChunkSize() {
+    int[] chunkSize = {getOptimalTileWidth(), getOptimalTileHeight(), 1, 1, 1};
+    return chunkSize;
   }
 
   // -- Sub-resolution API methods --

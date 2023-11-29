@@ -202,6 +202,16 @@ public class ImageWriter implements IFormatWriter {
   }
 
   @Override
+  public int[] getChunkSize() throws FormatException {
+    return getWriter().getChunkSize();
+  }
+
+  @Override
+  public int[] setChunkSize(int[] chunkSize) throws FormatException {
+    return getWriter().setChunkSize(chunkSize);
+  }
+
+  @Override
   public void setResolutions(List<Resolution> resolutions) {
     for (IFormatWriter w : writers) {
       w.setResolutions(resolutions);
@@ -266,6 +276,12 @@ public class ImageWriter implements IFormatWriter {
     throws FormatException, IOException
   {
     getWriter().saveBytes(no, buf, tile);
+  }
+
+  /* @see IFormatWriter#saveBytes(byte[] buf, int[] shape, int[] offsets) */
+  @Override
+  public void saveBytes(byte[] buf, int[] shape, int[] offsets) throws FormatException, IOException {
+    getWriter().saveBytes(buf, shape, offsets);
   }
 
   /* @see IFormatWriter#savePlane(int, Object) */
