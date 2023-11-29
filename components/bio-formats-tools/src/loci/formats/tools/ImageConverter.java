@@ -467,11 +467,12 @@ public final class ImageConverter {
     if (precompressed &&
       (width_crop > 0 || height_crop > 0 ||
       pyramidResolutions > 1 ||
-      fillColor != null
+      fillColor != null ||
+      autoscale
       ))
     {
       throw new UnsupportedOperationException("-precompressed not supported with " +
-        "-crop, -fill, -pyramid-scale, -pyramid-resolutions");
+        "-autoscale, -crop, -fill, -pyramid-scale, -pyramid-resolutions");
     }
 
     CommandLineTools.runUpgradeCheck(args);
