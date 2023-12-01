@@ -129,6 +129,8 @@ public final class ImageConverter {
   private boolean noSequential = false;
   private String swapOrder = null;
   private Byte fillColor = null;
+  private boolean precompressed = false;
+  private boolean tryPrecompressed = false;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -179,6 +181,7 @@ public final class ImageConverter {
         else if (args[i].equals("-padded")) zeroPadding = true;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-no-sas")) originalMetadata = false;
+        else if (args[i].equals("-precompressed")) precompressed = true;
         else if (args[i].equals("-cache")) useMemoizer = true;
         else if (args[i].equals("-cache-dir")) {
           cacheDir = args[++i];
@@ -340,6 +343,7 @@ public final class ImageConverter {
       "    [-option key value] [-novalid] [-validate] [-tilex tileSizeX]", 
       "    [-tiley tileSizeY] [-pyramid-scale scale]", 
       "    [-swap dimensionsOrderString] [-fill color]",
+      "    [-precompressed]",
       "    [-pyramid-resolutions numResolutionLevels] in_file out_file",
       "",
       "            -version: print the library version and exit",
@@ -384,6 +388,10 @@ public final class ImageConverter {
       "      -no-sequential: do not assume that planes are written in sequential order",
       "               -swap: override the default input dimension order; argument is f.i. XYCTZ",
       "               -fill: byte value to use for undefined pixels (0-255)",
+      "      -precompressed: transfer compressed bytes from input dataset directly to output.",
+      "                      Most input and output formats do not support this option.",
+      "                      Do not use -crop, -fill, or -autoscale, or pyramid generation options",
+      "                      with this option.",
       "",
       "The extension of the output file specifies the file format to use",
       "for the conversion. The list of available formats and extensions is:",
@@ -453,6 +461,18 @@ public final class ImageConverter {
     if (in == null || out == null) {
       printUsage();
       return false;
+    }
+
+    // TODO: there may be other options not compatible with -precompressed
+    if (precompressed &&
+      (width_crop > 0 || height_crop > 0 ||
+      pyramidResolutions > 1 ||
+      fillColor != null ||
+      autoscale
+      ))
+    {
+      throw new UnsupportedOperationException("-precompressed not supported with " +
+        "-autoscale, -crop, -fill, -pyramid-scale, -pyramid-resolutions");
     }
 
     CommandLineTools.runUpgradeCheck(args);
@@ -712,8 +732,14 @@ public final class ImageConverter {
 
         total += numImages;
 
-        writer.setTileSizeX(saveTileWidth);
-        writer.setTileSizeY(saveTileHeight);
+        if (precompressed) {
+          writer.setTileSizeX(reader.getOptimalTileWidth());
+          writer.setTileSizeY(reader.getOptimalTileHeight());
+        }
+        else if (saveTileWidth > 0 && saveTileHeight > 0) {
+          writer.setTileSizeX(saveTileWidth);
+          writer.setTileSizeY(saveTileHeight);
+        }
 
         int count = 0;
         for (int i=startPlane; i<endPlane; i++) {
@@ -834,13 +860,28 @@ public final class ImageConverter {
       }
     }
 
+    tryPrecompressed = precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
+
     byte[] buf = getTile(reader, writer.getResolution(), index,
       xCoordinate, yCoordinate, width, height);
+
+    // if we asked for precompressed tiles, but that wasn't possible,
+    // then log that decompression/recompression happened
+    // TODO: decide if an exception is better here?
+    if (precompressed && !tryPrecompressed) {
+      LOGGER.warn("Decompressed tile: series={}, resolution={}, x={}, y={}",
+        writer.getSeries(), writer.getResolution(), xCoordinate, yCoordinate);
+    }
 
     autoscalePlane(buf, index);
     applyLUT(writer);
     long m = System.currentTimeMillis();
-    writer.saveBytes(outputIndex, buf);
+    if (tryPrecompressed) {
+      writer.saveCompressedBytes(outputIndex, buf, 0, 0, reader.getSizeX(), reader.getSizeY());
+    }
+    else {
+      writer.saveBytes(outputIndex, buf);
+    }
     return m;
   }
 
@@ -886,6 +927,15 @@ public final class ImageConverter {
       nYTiles++;
     }
 
+    // only warn once if the whole resolution will need to
+    // be decompressed and recompressed
+    boolean canPrecompressResolution = precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
+    if (precompressed && !canPrecompressResolution) {
+      LOGGER.warn("Decompressing resolution: series={}, resolution={}",
+        writer.getSeries(), writer.getResolution());
+      tryPrecompressed = false;
+    }
+
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
       for (int x=0; x<nXTiles; x++) {
@@ -893,8 +943,20 @@ public final class ImageConverter {
         int tileY = yCoordinate + y * h;
         int tileWidth = x < nXTiles - 1 ? w : width - (w * x);
         int tileHeight = y < nYTiles - 1 ? h : height - (h * y);
+
+        tryPrecompressed = precompressed && canPrecompressResolution &&
+          FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
         byte[] buf = getTile(reader, writer.getResolution(),
           index, tileX, tileY, tileWidth, tileHeight);
+
+        // if we asked for precompressed tiles, but that wasn't possible,
+        // then log that decompression/recompression happened
+        // this is mainly expected for edge tiles, which might be smaller than expected
+        // TODO: decide if an exception is better here?
+        if (precompressed && canPrecompressResolution && !tryPrecompressed) {
+          LOGGER.warn("Decompressed tile: series={}, resolution={}, x={}, y={}",
+            writer.getSeries(), writer.getResolution(), x, y);
+        }
 
         String tileName =
           FormatTools.getTileFilename(x, y, y * nXTiles + x, currentFile);
@@ -957,18 +1019,8 @@ public final class ImageConverter {
           outputY = 0;
         }
 
-        if (writer instanceof TiffWriter) {
-          ((TiffWriter) writer).saveBytes(outputIndex, buf,
-            outputX, outputY, tileWidth, tileHeight);
-        }
-        else if (writer instanceof ImageWriter) {
-          if (baseWriter instanceof TiffWriter) {
-            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf,
-              outputX, outputY, tileWidth, tileHeight);
-          }
-          else {
-            writer.saveBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
-          }
+        if (tryPrecompressed) {
+          writer.saveCompressedBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
         }
         else {
           writer.saveBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
@@ -1033,7 +1085,7 @@ public final class ImageConverter {
   private void autoscalePlane(byte[] buf, int index)
     throws FormatException, IOException
   {
-    if (autoscale) {
+    if (autoscale && !tryPrecompressed) {
       Double min = null;
       Double max = null;
 
@@ -1123,7 +1175,16 @@ public final class ImageConverter {
   {
     if (resolution < reader.getResolutionCount()) {
       reader.setResolution(resolution);
+      int optimalWidth = reader.getOptimalTileWidth();
+      int optimalHeight = reader.getOptimalTileHeight();
+      if (tryPrecompressed) {
+        return reader.openCompressedBytes(no, x / optimalWidth, y / optimalHeight);
+      }
+      tryPrecompressed = false;
       return reader.openBytes(no, x, y, w, h);
+    }
+    if (tryPrecompressed) {
+      throw new UnsupportedOperationException("Cannot generate resolutions with precompressed tiles");
     }
     reader.setResolution(0);
     IImageScaler scaler = new SimpleImageScaler();

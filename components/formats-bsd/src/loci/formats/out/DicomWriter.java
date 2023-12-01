@@ -105,8 +105,8 @@ public class DicomWriter extends FormatWriter {
   private long[] nextIFDPointer;
   private IFD[][] ifds;
   private long fileMetaLengthPointer;
-  private int baseTileWidth = 0;
-  private int baseTileHeight = 0;
+  private int baseTileWidth = 256;
+  private int baseTileHeight = 256;
   private int[] tileWidth;
   private int[] tileHeight;
   private PlaneOffset[][] planeOffsets;
@@ -176,6 +176,147 @@ public class DicomWriter extends FormatWriter {
     }
     catch (IOException e) {
       LOGGER.error("Could not open file for series #" + series + ", resolution #" + r, e);
+    }
+  }
+
+  @Override
+  public Codec getCodec() {
+    if (CompressionType.JPEG.getCompression().equals(compression)) {
+      return new JPEGCodec();
+    }
+    else if (CompressionType.J2K.getCompression().equals(compression)) {
+      return new JPEG2000Codec();
+    }
+    return null;
+  }
+
+  @Override
+  public void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    checkPrecompressedSupport();
+
+    LOGGER.debug("savePrecompressedBytes(series={}, resolution={}, no={}, x={}, y={})",
+      series, resolution, no, x, y);
+
+    // TODO: may want better handling of non-tiled "extra" images (e.g. label, macro)
+    MetadataRetrieve r = getMetadataRetrieve();
+    if ((!(r instanceof IPyramidStore) ||
+      ((IPyramidStore) r).getResolutionCount(series) == 1) &&
+      !isFullPlane(x, y, w, h))
+    {
+      throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
+    }
+
+    int bytesPerPixel = FormatTools.getBytesPerPixel(
+      FormatTools.pixelTypeFromString(
+      r.getPixelsType(series).toString()));
+    int resolutionIndex = getIndex(series, resolution);
+
+    if (buf.length == 0) {
+      LOGGER.warn("Zero-length tile encountered (series={}, resolution={}, no={}, x={}, y={}; creating blank tile",
+        series, resolution, no, x, y);
+      int thisTileWidth = tileWidth[resolutionIndex];
+      int thisTileHeight = tileHeight[resolutionIndex];
+      byte[] emptyTile = new byte[thisTileWidth * thisTileHeight * bytesPerPixel * getSamplesPerPixel()];
+
+      if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
+        buf = emptyTile;
+      }
+      else {
+        Codec codec = getCodec();
+        CodecOptions options = new CodecOptions();
+        options.width = w;
+        options.height = h;
+        options.channels = getSamplesPerPixel();
+        options.bitsPerSample = bytesPerPixel * 8;
+        options.littleEndian = out.isLittleEndian();
+        options.interleaved = true;
+
+        if (codec instanceof JPEG2000Codec) {
+          options = JPEG2000CodecOptions.getDefaultOptions(options);
+          ((JPEG2000CodecOptions) options).numDecompositionLevels = 0;
+        }
+        buf = codec.compress(emptyTile, options);
+      }
+    }
+
+    // TODO: refactor code shared with saveBytes, e.g. IFD handling?
+
+    boolean first = x == 0 && y == 0;
+    boolean last = x + w == getSizeX() && y + h == getSizeY();
+
+    // the compression type isn't supplied to the writer until
+    // after setId is called, so metadata that indicates or
+    // depends on the compression type needs to be set in
+    // the first call to saveBytes for each file
+    if (first) {
+      out.seek(transferSyntaxPointer[resolutionIndex]);
+      out.writeBytes(getTransferSyntax());
+
+      out.seek(compressionMethodPointer[resolutionIndex]);
+      out.writeBytes(getCompressionMethod());
+
+      ifds[resolutionIndex][no].put(IFD.COMPRESSION, getTIFFCompression().getCode());
+
+      // see https://github.com/ome/bioformats/issues/3856
+      if (getTIFFCompression() == TiffCompression.JPEG) {
+        ifds[resolutionIndex][no].put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.Y_CB_CR.getCode());
+      }
+    }
+
+    out.seek(out.length());
+    long start = out.getFilePointer();
+
+    // now write the compressed pixel data
+
+    boolean pad = buf.length % 2 == 1;
+
+    if (first) {
+      DicomTag bot = new DicomTag(ITEM, IMPLICIT);
+      bot.elementLength = 0;
+      writeTag(bot);
+    }
+
+    DicomTag item = new DicomTag(ITEM, IMPLICIT);
+    item.elementLength = buf.length;
+    if (pad) {
+      item.elementLength++;
+    }
+    item.value = buf;
+    writeTag(item);
+    if (pad) {
+      out.writeByte(0);
+    }
+
+    // update the IFD to include this tile
+    int xTiles = (int) Math.ceil((double) getSizeX() / tileWidth[resolutionIndex]);
+    int xTile = x / tileWidth[resolutionIndex];
+    int yTile = y / tileHeight[resolutionIndex];
+    int tileIndex = (yTile * xTiles) + xTile;
+    long[] tileByteCounts = null;
+    long[] tileOffsets = null;
+
+    // IFD is expected to be null if dual personality writing was turned off
+    if (ifds[resolutionIndex][no] != null) {
+      tileByteCounts = (long[]) ifds[resolutionIndex][no].getIFDValue(IFD.TILE_BYTE_COUNTS);
+      tileOffsets = (long[]) ifds[resolutionIndex][no].getIFDValue(IFD.TILE_OFFSETS);
+    }
+
+    if (tileByteCounts != null) {
+      tileByteCounts[tileIndex] = buf.length;
+    }
+    if (tileOffsets != null) {
+      tileOffsets[tileIndex] = out.getFilePointer() - buf.length;
+      if (pad) {
+        tileOffsets[tileIndex]--;
+      }
+    }
+
+    if (last) {
+      DicomTag end = new DicomTag(SEQUENCE_DELIMITATION_ITEM, IMPLICIT);
+      end.elementLength = 0;
+      writeTag(end);
     }
   }
 
@@ -264,10 +405,9 @@ public class DicomWriter extends FormatWriter {
       }
     }
 
-    MetadataRetrieve retrieve = getMetadataRetrieve();
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
-      retrieve.getPixelsType(series).toString()));
+      r.getPixelsType(series).toString()));
 
     out.seek(out.length());
     long start = out.getFilePointer();
@@ -1157,7 +1297,13 @@ public class DicomWriter extends FormatWriter {
 
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
-    baseTileWidth = tileSize;
+    // TODO: this currently enforces the same tile size across all resolutions
+    // since the tile size is written during setId
+    // the tile size should probably be configurable per resolution,
+    // for better pre-compressed tile support
+    if (currentId == null) {
+      baseTileWidth = tileSize;
+    }
     return baseTileWidth;
   }
 
@@ -1168,7 +1314,10 @@ public class DicomWriter extends FormatWriter {
 
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
-    baseTileHeight = tileSize;
+    // TODO: see note in setTileSizeX above
+    if (currentId == null) {
+      baseTileHeight = tileSize;
+    }
     return baseTileHeight;
   }
 
@@ -1470,19 +1619,6 @@ public class DicomWriter extends FormatWriter {
     return padString("NOT_DEFINED");
   }
 
-  /**
-   * @return Codec instance corresponding to current compression type
-   */
-  private Codec getCodec() {
-    if (CompressionType.JPEG.getCompression().equals(compression)) {
-      return new JPEGCodec();
-    }
-    else if (CompressionType.J2K.getCompression().equals(compression)) {
-      return new JPEG2000Codec();
-    }
-    return null;
-  }
-
   private void openFile(int pyramid, int res) throws IOException {
     if (pixelDataLengthPointer == null) {
       // not fully initialized, can't reliably determine
@@ -1751,6 +1887,22 @@ public class DicomWriter extends FormatWriter {
     }
 
     return new TiffRational((long) (physicalSize * 1000 * 10000), 1000);
+  }
+
+  /**
+   * Check if pre-compressed tiles are supported with the current options.
+   * TODO: maybe this should be a higher-level API method?
+   *
+   * @throws UnsupportedOperationException if pre-compressed tiles are not supported
+   */
+  private void checkPrecompressedSupport() {
+    // allows both JPEG and JPEG-2000
+    if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
+      throw new UnsupportedOperationException("Pre-compressed tiles not supported for compression: " + compression);
+    }
+    if (!isReallySequential()) {
+      throw new UnsupportedOperationException("Pre-compressed tiles not supported for TILED_SPARSE");
+    }
   }
 
   private void checkPixelCount(boolean warn) throws FormatException {

@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Set;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
@@ -358,6 +360,36 @@ public abstract class ReaderWrapper implements IFormatReader {
   @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     return reader.openThumbBytes(no);
+  }
+
+  @Override
+  public int getTileRows(int no) {
+    return reader.getTileRows(no);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    return reader.getTileColumns(no);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    return reader.openCompressedBytes(no, x, y);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    return reader.openCompressedBytes(no, buf, x, y);
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    return reader.getTileCodec(no);
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    return reader.getTileCodecOptions(no, x, y);
   }
 
   @Override

@@ -1310,6 +1310,20 @@ public abstract class FormatReader extends FormatHandler
      return (int) Math.min(maxHeight, getSizeY());
   }
 
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    double rows = (double) getSizeY() / getOptimalTileHeight();
+    return (int) Math.ceil(rows);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    double cols = (double) getSizeX() / getOptimalTileWidth();
+    return (int) Math.ceil(cols);
+  }
+
   // -- Sub-resolution API methods --
 
   @Override

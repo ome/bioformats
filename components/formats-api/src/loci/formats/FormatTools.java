@@ -54,6 +54,7 @@ import loci.common.ReflectedUniverse;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.codec.Codec;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -2127,4 +2128,57 @@ public final class FormatTools {
 
     return (int) Math.max(maxDirCount - dirCount, 0);
   }
+
+  /**
+   * Compare the given reader and writer at the specified series and resolution to
+   * see if pre-compressed tiles can be transferred directly from the reader to the writer.
+   */
+  public static boolean canUsePrecompressedTiles(IFormatReader reader, IFormatWriter writer,
+    int series, int resolution)
+    throws FormatException, IOException
+  {
+    if (!(reader instanceof ICompressedTileReader)) {
+      return false;
+    }
+    if (!(writer instanceof ICompressedTileWriter)) {
+      return false;
+    }
+
+    int readerSeries = reader.getSeries();
+    int readerRes = reader.getResolution();
+    reader.setSeries(series);
+    reader.setResolution(resolution);
+
+    int writerSeries = writer.getSeries();
+    int writerRes = writer.getResolution();
+    writer.setSeries(series);
+    writer.setResolution(resolution);
+
+    boolean sameTileWidth = reader.getOptimalTileWidth() == writer.getTileSizeX();
+    boolean sameTileHeight = reader.getOptimalTileHeight() == writer.getTileSizeY();
+
+    // reader and writer must use equivalent codecs
+    // the Codec objects are not expected to be strictly equal,
+    // but both should either be null, or non-null and instances of the same class
+    boolean sameCodec = true;
+    Codec writerCodec = ((ICompressedTileWriter) writer).getCodec();
+    for (int no=0; no<reader.getImageCount(); no++) {
+      Codec readerCodec = ((ICompressedTileReader) reader).getTileCodec(no);
+      if ((writerCodec == null && readerCodec != null) ||
+        (writerCodec != null && readerCodec == null) ||
+        !writerCodec.getClass().equals(readerCodec.getClass()))
+      {
+        sameCodec = false;
+        break;
+      }
+    }
+
+    reader.setSeries(readerSeries);
+    reader.setResolution(resolution);
+    writer.setSeries(series);
+    writer.setResolution(resolution);
+
+    return sameTileWidth && sameTileHeight && sameCodec;
+  }
+
 }
