@@ -226,8 +226,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
 
     if (restartInterval == 1 && restartMarkers.size() <= 1) {
-      // interval and markers are not present or invalid
-      throw new IOException("Restart interval and markers invalid");
+      throw new IOException("The tiled-JPEG reader only supports images encoded with restart markers");
     }
   }
 
@@ -418,40 +417,34 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       throw new IOException("Only images with 3 channels are supported by this reader");
     }
 
-    // Sampling factors: https://groups.google.com/g/comp.compression/c/Q8FUSocL7nA
+    // Sampling factors: https://stackoverflow.com/q/43225439
     // https://stackoverflow.com/q/27918757 https://stackoverflow.com/q/43225439
     // mcu_tool.sh shows MCU size for some images
     // JpegSnoop or identify -verbose show subsampling rates
     // convert -sampling rate 2x2 or ffmpeg -i .. -vf format=yuv420p for making images
 
-    // MCU size in X direction divided by 8 is lcm(x1,x2,x3)/gcd(x1,x2,x3)
-    // but use a simpler formula here: max x_i / min x_i.
-    // Likewise for Y. For each coomponent, first 4 bits is X, the next 4 bits make up Y.
-    // some examples: 2x1,2x1,2x1 (0x21,0x21,0x21) is 8x8.
+    // MCU size in X direction divided by 8 is taken as the largest X.
+    // Likewise for Y. For each coomponent, first 4 bits is X, the next 4 bits is Y.
+    // some examples: 2x1,2x1,2x1 (0x21,0x21,0x21) is 16x8.
     // 2x1,1x1,1x1 is 16x8. 3x2,1x1,1x1 is 24x16
 
-    // No need to shift now
     int maxX = 0x00;
-    int minX = 0xf0;
     int maxY = 0x00;
-    int minY = 0x0f;
 
     for (int i = 0; i < channels; i++) {
       int componentId = in.readByte() & 0xff;
 
       int rates = in.readByte();
-      int X = rates & 0xf0;
+      int X = rates & 0xf0; // Shift right later
       int Y = rates & 0x0f;
       maxX = Math.max(maxX, X);
-      minX = Math.min(minX, X);
       maxY = Math.max(maxY, Y);
-      minY = Math.min(minY, Y);
 
       int quantTableNumber = in.readByte() & 0xff;
     }
 
-    mcuWidth = maxX / minX * 8;
-    mcuHeight = maxY / minY * 8;
+    mcuWidth = (maxX >> 4) * 8;
+    mcuHeight = maxY * 8;
   }
 
 }
