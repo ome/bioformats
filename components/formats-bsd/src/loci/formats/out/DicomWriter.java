@@ -43,6 +43,7 @@ import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -58,6 +59,9 @@ import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.dicom.DicomAttribute;
+import loci.formats.dicom.DicomJSONProvider;
+import loci.formats.dicom.ITagProvider;
 import loci.formats.dicom.DicomTag;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataOptions;
@@ -82,7 +86,7 @@ import static loci.formats.dicom.DicomVR.*;
  * This is designed for whole slide images, and may not produce
  * schema-compliant files for other modalities.
  */
-public class DicomWriter extends FormatWriter {
+public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
   // -- Constants --
 
@@ -116,6 +120,7 @@ public class DicomWriter extends FormatWriter {
   private String instanceUIDValue;
   private String implementationUID;
 
+  private ArrayList<ITagProvider> tagProviders = new ArrayList<ITagProvider>();
   private boolean bigTiff = false;
   private TiffSaver tiffSaver;
 
@@ -130,6 +135,34 @@ public class DicomWriter extends FormatWriter {
       CompressionType.JPEG.getCompression(),
       CompressionType.J2K.getCompression()
     };
+  }
+
+  // -- IExtraMetadataWriter API methods --
+
+  @Override
+  public void setExtraMetadata(String tagSource) {
+    FormatTools.assertId(currentId, false, 1);
+
+    // get the provider (parser) from the source name
+    // uses the file extension, this might need improvement
+
+    if (tagSource != null) {
+      ITagProvider provider = null;
+      if (checkSuffix(tagSource, "json")) {
+        provider = new DicomJSONProvider();
+      }
+      else {
+        throw new IllegalArgumentException("Unknown tag format: " + tagSource);
+      }
+
+      try {
+        provider.readTagSource(tagSource);
+        tagProviders.add(provider);
+      }
+      catch (IOException e) {
+        LOGGER.error("Could not parse extra metadata: " + tagSource, e);
+      }
+    }
   }
 
   /**
@@ -1170,13 +1203,59 @@ public class DicomWriter extends FormatWriter {
           tags.add(labelText);
         }
 
+        // now add all supplementary tags from tag providers
+        for (ITagProvider provider : tagProviders) {
+          for (DicomTag t : provider.getTags()) {
+            boolean validTag = t.validate(tags);
+            if (validTag) {
+              padTagValues(t);
+
+              LOGGER.trace("handling supplemental tag ({}) with strategy {}", t, t.strategy);
+              switch (t.strategy) {
+                case APPEND:
+                  if (t.vr == SQ) {
+                    DicomTag existingSequence = lookupTag(tags, t);
+                    if (existingSequence == null) {
+                      tags.add(t);
+                    }
+                    else {
+                      existingSequence.children.add(makeItem());
+                      for (DicomTag child : t.children) {
+                        existingSequence.children.add(child);
+                      }
+                      existingSequence.children.add(makeItemDelimitation());
+                    }
+                  }
+                  else {
+                    tags.add(t);
+                  }
+                  break;
+                case IGNORE:
+                  // ignore current tag if a matching tag already exists
+                  DicomTag existing = lookupTag(tags, t);
+                  if (existing == null) {
+                    tags.add(t);
+                  }
+                  break;
+                case REPLACE:
+                  // replace existing tag with current tag
+                  DicomTag replace = lookupTag(tags, t);
+                  if (replace != null) {
+                    tags.remove(replace);
+                  }
+                  tags.add(t);
+                  break;
+              }
+            }
+            else {
+              LOGGER.warn("Ignoring tag {} from provider {}", t, provider);
+            }
+          }
+        }
+
         // sort tags into ascending order, then write
 
-        tags.sort(new Comparator<DicomTag>() {
-          public int compare(DicomTag a, DicomTag b) {
-            return a.attribute.getTag() - b.attribute.getTag();
-          }
-        });
+        tags.sort(null);
 
         for (DicomTag tag : tags) {
           writeTag(tag);
@@ -1273,6 +1352,10 @@ public class DicomWriter extends FormatWriter {
           long fp = out.getFilePointer();
           writeIFDs(resolutionIndex);
           long length = out.getFilePointer() - fp;
+          if (length % 2 == 1) {
+            out.writeByte(0);
+            length++;
+          }
           out.seek(fp - 4);
           out.writeInt((int) length);
         }
@@ -1291,6 +1374,8 @@ public class DicomWriter extends FormatWriter {
     ifds = null;
     tiffSaver = null;
     validPixelCount = null;
+
+    tagProviders.clear();
 
     // intentionally don't reset tile dimensions
   }
@@ -1359,7 +1444,7 @@ public class DicomWriter extends FormatWriter {
   }
 
   private void writeTag(DicomTag tag) throws IOException {
-    int tagCode = tag.attribute.getTag();
+    int tagCode = tag.attribute == null ? tag.tag : tag.attribute.getTag();
 
     out.writeShort((short) ((tagCode & 0xffff0000) >> 16));
     out.writeShort((short) (tagCode & 0xffff));
@@ -1868,6 +1953,30 @@ public class DicomWriter extends FormatWriter {
     DicomTag item = new DicomTag(ITEM_DELIMITATION_ITEM, IMPLICIT);
     item.elementLength = 0;
     return item;
+  }
+
+  private DicomTag lookupTag(List<DicomTag> tags, DicomTag compare) {
+    for (DicomTag t : tags) {
+      if (t.tag == compare.tag) {
+        return t;
+      }
+    }
+    return null;
+  }
+
+  private void padTagValues(DicomTag t) {
+    if (t.value instanceof String) {
+      if (t.vr == UI) {
+        t.value = padUID((String) t.value);
+      }
+      else {
+        t.value = padString((String) t.value);
+      }
+    }
+
+    for (DicomTag child : t.children) {
+      padTagValues(child);
+    }
   }
 
   private short[] makeShortArray(int v) {

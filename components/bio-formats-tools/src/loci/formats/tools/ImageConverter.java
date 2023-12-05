@@ -78,6 +78,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.meta.IPyramidStore;
 import loci.formats.out.DicomWriter;
 import loci.formats.ome.OMEPyramidStore;
+import loci.formats.out.IExtraMetadataWriter;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
@@ -131,6 +132,8 @@ public final class ImageConverter {
   private Byte fillColor = null;
   private boolean precompressed = false;
   private boolean tryPrecompressed = false;
+
+  private String extraMetadata = null;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -266,6 +269,9 @@ public final class ImageConverter {
         else if (args[i].equals("-fill")) {
           // allow specifying 0-255
           fillColor = (byte) Integer.parseInt(args[++i]);
+        }
+        else if (args[i].equals("-extra-metadata")) {
+          extraMetadata = args[++i];
         }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
@@ -669,6 +675,15 @@ public final class ImageConverter {
       }
       else if (w instanceof DicomWriter) {
         ((DicomWriter) w).setBigTiff(bigtiff);
+      }
+    }
+    if (writer instanceof IExtraMetadataWriter) {
+      ((IExtraMetadataWriter) writer).setExtraMetadata(extraMetadata);
+    }
+    else if (writer instanceof ImageWriter) {
+      IFormatWriter w = ((ImageWriter) writer).getWriter(out);
+      if (w instanceof IExtraMetadataWriter) {
+        ((IExtraMetadataWriter) w).setExtraMetadata(extraMetadata);
       }
     }
 
