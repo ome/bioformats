@@ -772,14 +772,28 @@ public class CellSensReader extends FormatReader {
         setCoreIndex(index);
         String ff = files.get(s);
         /**
-         * If there are fewer metadata 'pyramids' defined in the vsi than there
-         * are frame_*.ets files, we are missing the metadata associated with
-         * one or more frame_*.ets files.  In this case we need to dynamically
-         * match the metadata we do have with the appropriate frame_*.ets file.
+         * If there are more frame_*.ets files than there are metadata 'pyramids'
+         * defined in the .vsi, then we have orphaned frame files.  In this case
+         * we need to determine which are the valid frame files and which are 
+         * the orphans.  The valid ones need to be matched with the appropriate
+         * metadata blocks in the vsi, and the orphaned ones need to be ignored.
         */
-        boolean missingMetadata = pyramids.size() < (files.size() - 1);
+        boolean hasOrphanEtsFiles = pyramids.size() < (files.size() - 1);
         try (RandomAccessInputStream stream = new RandomAccessInputStream(ff)) {
-            parseETSFile(stream, ff, s, missingMetadata);
+            boolean validFrameFile = parseETSFile(stream, ff, s, hasOrphanEtsFiles);
+            /*
+             * If this frame file is an orphan, "undo" the work that was done for
+             * it and change its status to being an "extra" file.
+             */
+             if (!validFrameFile) {
+                core.remove(core.size()-1);
+                extraFiles.add(files.get(s));
+                files.remove(s);
+                usedFiles = files.toArray(new String[files.size()]);
+                s--;
+                seriesCount--;
+                continue;
+             }
         }
 
         ms.littleEndian = compressionType.get(index) == RAW;
@@ -1191,8 +1205,8 @@ public class CellSensReader extends FormatReader {
     return buf;
   }
 
-  private void parseETSFile(RandomAccessInputStream etsFile, String file, int s,
-                            boolean missingMetadata)
+  private boolean parseETSFile(RandomAccessInputStream etsFile, String file, int s,
+                            boolean hasOrphanEtsFiles)
     throws FormatException, IOException
   {
     fileMap.put(core.size() - 1, file);
@@ -1293,12 +1307,13 @@ public class CellSensReader extends FormatReader {
     HashMap<String, Integer> dimOrder = new HashMap<String, Integer>();
     Pyramid pyramid = null;
     /**
-    * If there is metadata missing from the vsi file, we need to see if we can match up
-    * this frame_*.ets file with its correct metadata block if it exists.  To do that we
-    * search the metadata blocks (ie 'pyramids') for the one whose width and height are
-    * within the correct range for this frame_*.ets file.
-    */
-    if (missingMetadata) {
+    * If there are orphaned .ets files with this vsi file, we need to determine whether
+    * the current one is an orphan or a legit file.  The logic to determine this is to
+    * see of there is a metadata block (ie 'pyramid') whose width and height are
+    * within the correct range for this .ets file.  If there is no matching metadata
+    * block, then we have to assume this is an orphan
+    **/
+    if (hasOrphanEtsFiles) {
       int maxXAtRes0 = 0;
       int maxYAtRes0 = 0;
       for (TileCoordinate t : tmpTiles) {
@@ -1316,14 +1331,24 @@ public class CellSensReader extends FormatReader {
             break;
         }
       }
+      /**
+      * No matching metadata block.  This is an orphan ets file.  Undo and erase 
+      * all the data elements that have been gathered up for this .ets file.
+      **/
+      if (pyramid == null) {
+        nDimensions.remove(nDimensions.size() - 1);
+        compressionType.remove(compressionType.size() - 1);
+        tileX.remove(tileX.size() - 1);
+        tileY.remove(tileY.size() - 1);
+        backgroundColor.remove(getCoreIndex());
+        tileOffsets.remove(tileOffsets.size()-1);
+        return(false);
+      }
     }
     else {
       pyramid = pyramids.get(s);
     }
-
-    if (pyramid != null) {
-      dimOrder = pyramid.dimensionOrdering;
-    }
+    dimOrder = pyramid.dimensionOrdering;
 
     for (TileCoordinate t : tmpTiles) {
       int resolution = usePyramid ? t.coordinate[t.coordinate.length - 1] : 0;
@@ -1418,24 +1443,9 @@ public class CellSensReader extends FormatReader {
         maxC[resolution] = t.coordinate[cIndex];
       }
     }
-    /**
-     * If this ets file has an associated metadata block, grab the correct width and height,
-     * and link it to the full metadata block.
-     */
-    if (pyramid != null) {
-      ms.sizeX = pyramid.width;
-      ms.sizeY = pyramid.height;
-      ms.seriesMetadata = pyramid.originalMetadata;
-    }
-    else {
-    /**
-     * Otherwise, compute the closest approximation, since the real info couldn't be found.
-     */
-      ms.sizeX = (maxX[0] + 1) * tileX.get(tileX.size()-1);
-      ms.sizeY = (maxY[0] + 1) * tileY.get(tileY.size()-1);
-      ms.seriesMetadata = new Hashtable<String, Object>();
-      ms.seriesMetadata.put("Metadata", "Not Found"); // leave a trail that the metadata was missing for this ets.
-    }
+    ms.sizeX = pyramid.width;
+    ms.sizeY = pyramid.height;
+    ms.seriesMetadata = pyramid.originalMetadata;
     ms.sizeZ = maxZ[0] + 1;
     if (maxC[0] > 0) {
       ms.sizeC *= (maxC[0] + 1);
@@ -1529,6 +1539,7 @@ public class CellSensReader extends FormatReader {
 
       ms.resolutionCount = finalResolution;
     }
+    return(true);
   }
 
   private int convertPixelType(int pixelType) throws FormatException {
