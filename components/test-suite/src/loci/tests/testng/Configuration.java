@@ -109,7 +109,7 @@ public class Configuration {
   private static final String EXCITATION_WAVELENGTH_UNIT = "ExcitationWavelengthUnit_";
   private static final String DETECTOR = "Detector_";
   private static final String NAME = "Name";
-  private static final String UNFLATTENED_NAME = "Alternate_Name";
+  private static final String UNFLATTENED_NAME = "Unflattened_Name";
   private static final String DESCRIPTION = "Description";
   private static final String SERIES_COUNT = "series_count";
   private static final String RESOLUTION_COUNT = "resolution_count";
