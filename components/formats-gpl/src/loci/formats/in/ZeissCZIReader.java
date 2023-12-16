@@ -840,8 +840,8 @@ public class ZeissCZIReader extends FormatReader {
       if (image.intersects(blockRegion)) {
         RandomAccessInputStream stream = getStream(block.filePart);
 
-        if (image.equals(blockRegion)) {
-          // Best case scenario
+        if (image.equals(blockRegion) && blocks.size()==1) { // THE SECOND TEST IS NECESSARY BECAUSE OTHER BLOCKS CAN INTERSECT!
+          // Best case scenario: reads and returns full subblock
           return readRawPixelData(
                   block,
                   coreIndexToCompression.get(coreIndex),
