@@ -421,16 +421,13 @@ public class ZeissCZIReader extends FormatReader {
 
   // -- ZeissCZI-specific methods --
 
-  public static boolean allowAutoStitch = false; // TODO CHANGE THIS TO METADATA OPTIONS!
-
   public boolean allowAutostitching() {
-    //return false;
     MetadataOptions options = getMetadataOptions();
     if (options instanceof DynamicMetadataOptions) {
       return ((DynamicMetadataOptions) options).getBoolean(
               ALLOW_AUTOSTITCHING_KEY, ALLOW_AUTOSTITCHING_DEFAULT);
     }
-    return allowAutoStitch;// ALLOW_AUTOSTITCHING_DEFAULT;*/
+    return ALLOW_AUTOSTITCHING_DEFAULT;
   }
 
   public boolean canReadAttachments() { // TODO : handle this method
@@ -2286,13 +2283,9 @@ public class ZeissCZIReader extends FormatReader {
 
     private void translateMetadata(String xml, DocumentBuilder parser) throws FormatException, IOException {
       Element root;
-      try {
-        ByteArrayInputStream s =
-                new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
+      try ( ByteArrayInputStream s = new ByteArrayInputStream(xml.getBytes(Constants.ENCODING))) {
         root = parser.parse(s).getDocumentElement();
-        s.close();
-      }
-      catch (SAXException e) {
+      } catch (SAXException e) {
         throw new FormatException(e);
       }
 
