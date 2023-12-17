@@ -1327,12 +1327,14 @@ public class ZeissCZIReader extends FormatReader {
 
     List<Integer> sortedFileParts = cziPartToSegments.keySet().stream().sorted().collect(Collectors.toList());
 
-    try {
-      addLabelIfExists(sortedFileParts, cziPartToSegments, id);//, allPositionsInformation);
-      addSlidePreviewIfExists(sortedFileParts, cziPartToSegments, id);//, allPositionsInformation);
-      //getJPGThumbnailIfExists(sortedFileParts, cziPartToSegments, id); //disabled for bwd compatibility
-    } catch (DependencyException | ServiceException e) {
-      throw new RuntimeException(e);
+    if (canReadAttachments()) {
+      try {
+        addLabelIfExists(sortedFileParts, cziPartToSegments, id);//, allPositionsInformation);
+        addSlidePreviewIfExists(sortedFileParts, cziPartToSegments, id);//, allPositionsInformation);
+        //getJPGThumbnailIfExists(sortedFileParts, cziPartToSegments, id); //disabled for bwd compatibility
+      } catch (DependencyException | ServiceException e) {
+        throw new RuntimeException(e);
+      }
     }
 
     LOGGER.trace("#CoreSeries = {}", core.size());
