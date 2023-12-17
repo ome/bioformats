@@ -297,7 +297,7 @@ public class ZeissCZIReader extends FormatReader {
           coreIndexToTZCToMinimalBlocks = new ArrayList<>();
 
   @CopyByRef
-  int nIlluminations, nRotations, nPhases;
+  int nIlluminations, nRotations, nPhases, maxResolution;
 
   // ------------------------ METADATA FIELDS
   @CopyByRef
@@ -468,6 +468,27 @@ public class ZeissCZIReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     String check = stream.readString(blockLen);
     return check.equals(CZI_MAGIC_STRING);
+  }
+
+  /**
+   * @see loci.formats.FormatReader#getFillColor()
+   *
+   * If the fill value was set explicitly, use that.
+   * Otherwise, return 255 (white) for RGB data with a pyramid,
+   * and 0 in all other cases. RGB data with a pyramid can
+   * reasonably be assumed to be a brightfield slide.
+   */
+  @Override
+  public Byte getFillColor() {
+    if (fillColor != null) {
+      return fillColor;
+    }
+
+    byte fill = (byte) 0;
+    if (isRGB() && maxResolution > 0) {
+      fill = (byte) 255;
+    }
+    return fill;
   }
 
   private void swapRGBIfnecessary(byte[] buf, int compression, int bpp, int pixel) {
@@ -821,6 +842,8 @@ public class ZeissCZIReader extends FormatReader {
       baseResolution--;
     }
 
+    Arrays.fill(buf, getFillColor());
+
     // The data is somewhere in these blocks
     List<MinDimEntry> blocks = coreIndexToTZCToMinimalBlocks.get(currentIndex).get(key);
 
@@ -1050,6 +1073,8 @@ public class ZeissCZIReader extends FormatReader {
     nRotations = maxValuePerDimension.containsKey("R")? maxValuePerDimension.get("R")+1:1;
 
     nPhases = maxValuePerDimension.containsKey("H")? maxValuePerDimension.get("H")+1:1;
+
+    maxResolution = maxValuePerDimension.containsKey(RESOLUTION_LEVEL_DIMENSION)? maxValuePerDimension.get(RESOLUTION_LEVEL_DIMENSION):0; // Used only for auto-determination of the fill color
 
     int nChannels = maxValuePerDimension.containsKey("C")? maxValuePerDimension.get("C")+1:1;
 
