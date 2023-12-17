@@ -224,8 +224,6 @@ import static loci.formats.in.libczi.LibCZI.ZSTD_1;
  *  maps the file 'temporarily' to a fake file. That's pretty clever and convenient, but prevents (most probably)
  *  lazy loading AND memoization functionality.
  *
- *  TODO: sync https://github.com/ome/bioformats/pull/4088, that was fixed after this reader was branched from bio-formats
- *  TODO: implement getfillcolor
  *  TODO: test PALM file
  *  TODO: ask how to get rid of absolute file path in memo that do not crash the reader when the file is moved
  *
@@ -284,8 +282,18 @@ public class ZeissCZIReader extends FormatReader {
   @CopyByRef
   private Map<Integer, Integer> coreIndexToSeries = new HashMap<>();
 
+  // This array has to be taken out of the metadata initializer because of the way IFormatReader#get8BitLookupTable
+  // and IFormatReader#get16BitLookupTable work
+  @CopyByRef
+  ArrayList<MetadataInitializer.Channel> channels = new ArrayList<>();
+
   // streamCurrentSeries is a temp field that should maybe be changed when setSeries is called
   transient int streamCurrentPart = -1;
+
+  // previous channel has a value set by the last bytes being called, this is a weird behaviour IMO
+  // but it behaves as expected to make the methods IFormatReader#get8BitLookupTable and
+  // IFormatReader#get16BitLookupTable work
+  transient int previousChannel = -1;
 
   // Core map structure for fast access to blocks:
   // - first key: bio-formats core index
@@ -468,6 +476,84 @@ public class ZeissCZIReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     String check = stream.readString(blockLen);
     return check.equals(CZI_MAGIC_STRING);
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    if ((getPixelType() != FormatTools.INT8 &&
+            getPixelType() != FormatTools.UINT8) || previousChannel == -1 ||
+            previousChannel >= channels.size())
+    {
+      return null;
+    }
+
+    byte[][] lut = new byte[3][256];
+
+    String color = channels.get(previousChannel).color;
+    if (color != null) {
+      color = normalizeColor(color);
+      try {
+        int colorValue = Integer.parseInt(color, 16);
+
+        int redMax = (colorValue & 0xff0000) >> 16;
+        int greenMax = (colorValue & 0xff00) >> 8;
+        int blueMax = colorValue & 0xff;
+
+        for (int i=0; i<lut[0].length; i++) {
+          lut[0][i] = (byte) (redMax * (i / 255.0));
+          lut[1][i] = (byte) (greenMax * (i / 255.0));
+          lut[2][i] = (byte) (blueMax * (i / 255.0));
+        }
+
+        return lut;
+      }
+      catch (NumberFormatException e) {
+        return null;
+      }
+    }
+    else return null;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    if ((getPixelType() != FormatTools.INT16 &&
+            getPixelType() != FormatTools.UINT16) || previousChannel == -1 ||
+            previousChannel >= channels.size())
+    {
+      return null;
+    }
+
+    short[][] lut = new short[3][65536];
+
+    String color = channels.get(previousChannel).color;
+    if (color != null) {
+      color = normalizeColor(color);
+      try {
+        int colorValue = Integer.parseInt(color, 16);
+
+        int redMax = (colorValue & 0xff0000) >> 16;
+        int greenMax = (colorValue & 0xff00) >> 8;
+        int blueMax = colorValue & 0xff;
+
+        redMax = (int) (65535 * (redMax / 255.0));
+        greenMax = (int) (65535 * (greenMax / 255.0));
+        blueMax = (int) (65535 * (blueMax / 255.0));
+
+        for (int i=0; i<lut[0].length; i++) {
+          lut[0][i] = (short) ((int) (redMax * (i / 65535.0)) & 0xffff);
+          lut[1][i] = (short) ((int) (greenMax * (i / 65535.0)) & 0xffff);
+          lut[2][i] = (short) ((int) (blueMax * (i / 65535.0)) & 0xffff);
+        }
+
+        return lut;
+      }
+      catch (NumberFormatException e) {
+        return null;
+      }
+    }
+    else return null;
   }
 
   /**
@@ -834,6 +920,7 @@ public class ZeissCZIReader extends FormatReader {
     // what this assumes is that the resolution level whereby downscaling = 1 is always present
 
     int[] czt = this.getZCTCoords(no);
+    previousChannel = czt[1];
     CZTKey key = new CZTKey(czt[1], czt[0], czt[2]);
 
     while (baseResolution > 0 &&
@@ -1305,7 +1392,11 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     // Initialize the reader store, and basically all metadata
-    new MetadataInitializer(this).initializeMetadata(cziPartToSegments, mapCoreTZCToBlocks);
+    MetadataInitializer mi = new MetadataInitializer(this);
+    mi.initializeMetadata(cziPartToSegments, mapCoreTZCToBlocks);
+    for (MetadataInitializer.Channel channel: mi.channels) {
+      channels.add(channel);
+    }
 
   }
 
@@ -4228,7 +4319,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String color = channels.get(c).color;
           if (color != null && !reader.isRGB()) {
-            color = color.replaceAll("#", "");
+            color = normalizeColor(color);
             if (color.length() > 6) {
               color = color.substring(2);
             }
@@ -4639,6 +4730,15 @@ public class ZeissCZIReader extends FormatReader {
       return isLatticeLightSheet;
     }
 
+  }
+
+  static private String normalizeColor(String color) {
+    String c = color.replaceAll("#", "");
+    if (c.length() > 6) {
+      c = c.substring(2, (int) Math.min(8, c.length()));
+      LOGGER.debug("Replaced color {} with {}", color, c);
+    }
+    return c;
   }
 
 }
