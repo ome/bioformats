@@ -631,6 +631,21 @@ public class LibCZI {
                         return -1;
                     }
                 }
+
+                @Override
+                public String toString() {
+                    if (entryDV!=null) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("pixelType "+this.getPixelType()+" compression = "+getCompression()+"\n");
+                        for (SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDV.DimensionEntry entry: getDimensionEntries()) {
+                            sb.append(entry+"\n");
+                        }
+                        return sb.toString();
+                    } else {
+                        return "entryDE not supported";
+                    }
+                }
+
             }
         }
 

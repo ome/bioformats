@@ -1161,8 +1161,6 @@ public class ZeissCZIReader extends FormatReader {
 
     nPhases = maxValuePerDimension.containsKey("H")? maxValuePerDimension.get("H")+1:1;
 
-    maxResolution = maxValuePerDimension.containsKey(RESOLUTION_LEVEL_DIMENSION)? maxValuePerDimension.get(RESOLUTION_LEVEL_DIMENSION):0; // Used only for auto-determination of the fill color
-
     int nChannels = maxValuePerDimension.containsKey("C")? maxValuePerDimension.get("C")+1:1;
 
     int nSlices = maxValuePerDimension.containsKey("Z")? maxValuePerDimension.get("Z")+1:1;
@@ -1198,7 +1196,7 @@ public class ZeissCZIReader extends FormatReader {
     cziPartToSegments.forEach((part, cziSegments) -> { // For each part
       Arrays.asList(cziSegments.subBlockDirectory.data.entries).forEach( // and each entry
               entry -> {
-                int downscalingFactor = entry.getDimension("X").size/entry.getDimension("X").storedSize;
+                int downscalingFactor = (int) Math.round((double)(entry.getDimension("X").size)/(double)(entry.getDimension("X").storedSize));
                 if ((downscalingFactor==1)||(allowAutostitching())) {
                   // Split by resolution level if flattenedResolutions is true
                   ModuloDimensionEntries moduloEntry = new ModuloDimensionEntries(entry,
@@ -1218,6 +1216,8 @@ public class ZeissCZIReader extends FormatReader {
                 }
               });
     });
+
+    maxResolution = maxValuePerDimension.containsKey(RESOLUTION_LEVEL_DIMENSION)? maxValuePerDimension.get(RESOLUTION_LEVEL_DIMENSION):0; // Used only for auto-determination of the fill color
 
     // Sort them
     List<CoreSignature> orderedCoreSignatureList = coreSignatureToBlocks.keySet().stream().sorted().collect(Collectors.toList());
@@ -1885,7 +1885,7 @@ public class ZeissCZIReader extends FormatReader {
       this.nPhases = nPhases;
       this.pixelType = entry.getPixelType();
       this.compression = entry.getCompression();
-      this.downSampling = entry.getDimension("X").size/entry.getDimension("X").storedSize;
+      this.downSampling = (int) Math.round((double)(entry.getDimension("X").size)/(double)(entry.getDimension("X").storedSize));
       this.filePosition = entry.getFilePosition();
 
       int iRotation = 0;
