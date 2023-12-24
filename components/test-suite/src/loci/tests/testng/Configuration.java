@@ -554,18 +554,15 @@ public class Configuration {
     putTableName(globalTable, reader, " global");
 
     int seriesCount = reader.getSeriesCount();
-    IFormatReader unflattenedReader = reader;
-    if (seriesCount > 1) {
-      unflattenedReader = new ImageReader();
-      unflattenedReader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
-      unflattenedReader.setFlattenedResolutions(false);
-      unflattenedReader.setMetadataOptions(new DynamicMetadataOptions());
-      try {
-        unflattenedReader.setId(reader.getCurrentFile());
-      }
-      catch (FormatException | IOException e) { }
-      seriesCount = unflattenedReader.getSeriesCount();
+    IFormatReader unflattenedReader = new ImageReader();
+    unflattenedReader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+    unflattenedReader.setFlattenedResolutions(false);
+    unflattenedReader.setMetadataOptions(new DynamicMetadataOptions());
+    try {
+      unflattenedReader.setId(reader.getCurrentFile());
     }
+    catch (FormatException | IOException e) { }
+    seriesCount = unflattenedReader.getSeriesCount();
     IMetadata unflattenedRetrieve = (IMetadata) unflattenedReader.getMetadataStore();
 
     globalTable.put(SERIES_COUNT, String.valueOf(seriesCount));
