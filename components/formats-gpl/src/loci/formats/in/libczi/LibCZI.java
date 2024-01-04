@@ -83,20 +83,20 @@ public class LibCZI {
     }
 
     /**
-     * @param fileHeader file header segment of the referenced czi file
+     * @param blockPosition position of the subblockdirectory segment of the referenced czi file
      * @param id a czi file path
      * @param BUFFER_SIZE the size of the caching buffer in bytes
      * @param isLittleEndian endianness of the data
      * @return the subblock directory segment of the czi file
      * @throws IOException invalid file, invalid file location, segment not found
      */
-    public static SubBlockDirectorySegment getSubBlockDirectorySegment(FileHeaderSegment fileHeader, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
+    public static SubBlockDirectorySegment getSubBlockDirectorySegment(long blockPosition, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
         // TODO (maybe) : increase buffer size to limit the number of IO calls, especially when the file is mounted on a network drive
         try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
             SubBlockDirectorySegment directorySegment = new SubBlockDirectorySegment();
 
             in.order(isLittleEndian);
-            in.seek(fileHeader.data.subBlockDirectoryPosition);
+            in.seek(blockPosition);
 
             String segmentID = in.readString(16).trim();
             if (segmentID.equals(ZISRAWDIRECTORY)) {
@@ -126,18 +126,18 @@ public class LibCZI {
     }
 
     /**
-     * @param fileHeader file header segment of the referenced czi file
+     * @param blockPosition  position of the attachment directory segment of the referenced czi file
      * @param id a czi file path
      * @param BUFFER_SIZE the size of the caching buffer in bytes
      * @param isLittleEndian endianness of the data
      * @return the attachment directory segment
      * @throws IOException invalid file, invalid file location, segment not found
      */
-    public static AttachmentDirectorySegment getAttachmentDirectorySegment(FileHeaderSegment fileHeader, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
+    public static AttachmentDirectorySegment getAttachmentDirectorySegment(long blockPosition, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
         try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
             AttachmentDirectorySegment directorySegment = new AttachmentDirectorySegment();
             in.order(isLittleEndian);
-            in.seek(fileHeader.data.attachmentDirectoryPosition);
+            in.seek(blockPosition);
             String segmentID = in.readString(16).trim();
             if (segmentID.equals(ZISRAWATTDIR)) {
                 directorySegment.header.id = segmentID; // 16 bytes
@@ -165,19 +165,35 @@ public class LibCZI {
     }
 
     /**
-     * @param fileHeader file header segment of the referenced czi file
+     * @param blockPosition position of the expected MetaData Segment
      * @param id a czi file path
      * @param BUFFER_SIZE the size of the caching buffer in bytes
      * @param isLittleEndian endianness of the data
      * @return the raw metadata segment
      * @throws IOException invalid file, invalid file location, segment not found
      */
-    public static MetaDataSegment getMetaDataSegment(FileHeaderSegment fileHeader, String id, int BUFFER_SIZE, boolean isLittleEndian) throws IOException {
+    public static MetaDataSegment getMetaDataSegment(long blockPosition, String id, int BUFFER_SIZE, boolean isLittleEndian, long lastBlockPosition) throws IOException {
         try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
             in.order(isLittleEndian);
-            in.seek(fileHeader.data.metadataPosition);
+            in.seek(blockPosition);
             String segmentID = in.readString(16).trim();
-            if (segmentID.equals(ZISRAWMETADATA)) {
+            boolean metadataSegmentFound = false;
+
+            // ------------ Handling of potentially deleted metadata segement
+            if (!segmentID.equals(ZISRAWMETADATA)) {
+                if (segmentID.equals(DELETED)) {
+                    // The metadata segment has been deleted, let's walk at the end of the file and attempt to find the missing metadata segment
+                    long newPosition = LibCZI.findOrphanBlock(id, BUFFER_SIZE, isLittleEndian, lastBlockPosition, ZISRAWMETADATA);
+                    if (newPosition != -1) {
+                        return getMetaDataSegment(newPosition, id, BUFFER_SIZE, isLittleEndian, -1);
+                    } else {
+                        throw new IOException(ZISRAWMETADATA+" segment expected, found "+segmentID+" instead.");
+                    }
+                }
+            } else {
+                metadataSegmentFound = true;
+            }
+            if (metadataSegmentFound) {
                 MetaDataSegment metaDataSegment = new MetaDataSegment();
                 // read the segment header
                 metaDataSegment.header.id = segmentID;
@@ -510,6 +526,40 @@ public class LibCZI {
             }
         }
         return subBlockMeta;
+    }
+
+    // If blocks have been deleted, they are appended at the end of the file. This method looks for the location of the last known block and
+    // iterates over the next blocks until the end of the file. This method returns whether some orphan blocks have been found
+    static long findOrphanBlock(String id, int BUFFER_SIZE, boolean isLittleEndian, long positionOfLastKnownBlock, String blockType) throws IOException {
+        try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
+            long eof = in.length();
+            in.order(isLittleEndian);
+            long positionBlockStart = positionOfLastKnownBlock;
+            in.seek(positionBlockStart);
+            String segmentID = in.readString(16).trim();
+
+            long allocatedSize = in.readLong();
+            long usedSize = in.readLong();
+            while (positionBlockStart + allocatedSize + 32 <eof) {
+                positionBlockStart += allocatedSize + 32;
+                in.seek(positionBlockStart);
+                segmentID = in.readString(16).trim();
+                if (segmentID.equals(blockType)) {
+                    return positionBlockStart;
+                }
+                allocatedSize = in.readLong();
+                usedSize = in.readLong();
+            }
+            return -1;
+        }
+    }
+
+    public static long getPositionLastBlock(SubBlockDirectorySegment segment) {
+        long lastBlockPosition = -1;
+        for (SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry entry: segment.data.entries) {
+            lastBlockPosition = Math.max(lastBlockPosition, entry.getFilePosition());
+        }
+        return lastBlockPosition;
     }
 
     // --------------------------- PUBLIC TRANSLATED CZI STRUCTS TO JAVA CLASSES
@@ -945,7 +995,8 @@ public class LibCZI {
             ZISRAWDIRECTORY = "ZISRAWDIRECTORY",
             ZISRAWATTDIR = "ZISRAWATTDIR",
             ZISRAWMETADATA = "ZISRAWMETADATA",
-            ZISRAWATTACH = "ZISRAWATTACH";
+            ZISRAWATTACH = "ZISRAWATTACH",
+            DELETED = "DELETED";
 
     // defined segment alignments (never modify this constants!)
     final public static int SEGMENT_ALIGN = 32;
