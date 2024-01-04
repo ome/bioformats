@@ -1395,7 +1395,7 @@ public class ZeissCZIReader extends FormatReader {
         else {
           if (i < imageNames.size()) {
             String completeName = imageNames.get(i);
-            if (i < fieldNames.size()) {
+            if (i < fieldNames.size() && !fieldNames.get(i).equals(completeName)) {
               completeName += " " + fieldNames.get(i);
             }
             store.setImageName(completeName, i);
@@ -2330,10 +2330,19 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
 
+
       Element sNode = getFirstNode(dimensions, "S");
       if (sNode != null) {
         NodeList scenes = sNode.getElementsByTagName("Scene");
         int nextPosition = 0;
+
+        boolean isPlate = platePositions.size() > 0;
+        if (isPlate) {
+          platePositions.clear();
+          fieldNames.clear();
+          imageNames.clear();
+        }
+
         for (int i=0; i<scenes.getLength(); i++) {
           Element scene = (Element) scenes.item(i);
           NodeList positions = scene.getElementsByTagName("Position");
@@ -2358,6 +2367,21 @@ public class ZeissCZIReader extends FormatReader {
               positionsY[nextPosition] = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROMETER);
             }
             nextPosition++;
+          }
+
+          if (isPlate) {
+            String sceneName = scene.getAttribute("Name");
+            NodeList shapes = scene.getElementsByTagName("Shape");
+            for (int shapeIndex=0; shapeIndex<shapes.getLength(); shapeIndex++) {
+              Element shape = (Element) shapes.item(shapeIndex);
+              String id = shape.getAttribute("Id");
+              if (!platePositions.contains(id)) {
+                platePositions.add(id);
+              }
+              String name = shape.getAttribute("Name");
+              imageNames.add(name);
+              fieldNames.add(sceneName);
+            }
           }
         }
       }
