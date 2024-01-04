@@ -305,7 +305,10 @@ public class ZeissCZIReader extends FormatReader {
           coreIndexToTZCToMinimalBlocks = new ArrayList<>();
 
   @CopyByRef
-  int nIlluminations, nRotations, nPhases, maxResolution;
+  int nIlluminations, nRotations, nPhases;
+
+  @CopyByRef
+  boolean hasPyramid = false;
 
   // ------------------------ METADATA FIELDS
   @CopyByRef
@@ -571,7 +574,7 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     byte fill = (byte) 0;
-    if (isRGB() && maxResolution > 0) {
+    if (isRGB() && (hasPyramid)) {
       fill = (byte) 255;
     }
     return fill;
@@ -1197,6 +1200,7 @@ public class ZeissCZIReader extends FormatReader {
       Arrays.asList(cziSegments.subBlockDirectory.data.entries).forEach( // and each entry
               entry -> {
                 int downscalingFactor = (int) Math.round((double)(entry.getDimension("X").size)/(double)(entry.getDimension("X").storedSize));
+                hasPyramid = hasPyramid || (downscalingFactor!=1);
                 if ((downscalingFactor==1)||(allowAutostitching())) {
                   // Split by resolution level if flattenedResolutions is true
                   ModuloDimensionEntries moduloEntry = new ModuloDimensionEntries(entry,
@@ -1216,8 +1220,6 @@ public class ZeissCZIReader extends FormatReader {
                 }
               });
     });
-
-    maxResolution = maxValuePerDimension.containsKey(RESOLUTION_LEVEL_DIMENSION)? maxValuePerDimension.get(RESOLUTION_LEVEL_DIMENSION):0; // Used only for auto-determination of the fill color
 
     // Sort them
     List<CoreSignature> orderedCoreSignatureList = coreSignatureToBlocks.keySet().stream().sorted().collect(Collectors.toList());
