@@ -42,8 +42,9 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 
 import ome.xml.model.primitives.PositiveInteger;
@@ -108,6 +109,7 @@ public class Configuration {
   private static final String EXCITATION_WAVELENGTH_UNIT = "ExcitationWavelengthUnit_";
   private static final String DETECTOR = "Detector_";
   private static final String NAME = "Name";
+  private static final String UNFLATTENED_NAME = "Unflattened_Name";
   private static final String DESCRIPTION = "Description";
   private static final String SERIES_COUNT = "series_count";
   private static final String RESOLUTION_COUNT = "resolution_count";
@@ -418,6 +420,10 @@ public class Configuration {
     return currentTable.get(NAME);
   }
 
+  public String getUnflattenedImageName() {
+    return currentTable.get(UNFLATTENED_NAME);
+  }
+
   public boolean hasImageDescription() {
     return currentTable.containsKey(DESCRIPTION);
   }
@@ -548,17 +554,16 @@ public class Configuration {
     putTableName(globalTable, reader, " global");
 
     int seriesCount = reader.getSeriesCount();
-    IFormatReader unflattenedReader = reader;
-    if (seriesCount > 1) {
-      unflattenedReader = new ImageReader();
-      unflattenedReader.setFlattenedResolutions(false);
-      unflattenedReader.setMetadataOptions(new DynamicMetadataOptions());
-      try {
-        unflattenedReader.setId(reader.getCurrentFile());
-      }
-      catch (FormatException | IOException e) { }
-      seriesCount = unflattenedReader.getSeriesCount();
+    IFormatReader unflattenedReader = new ImageReader();
+    unflattenedReader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+    unflattenedReader.setFlattenedResolutions(false);
+    unflattenedReader.setMetadataOptions(new DynamicMetadataOptions());
+    try {
+      unflattenedReader.setId(reader.getCurrentFile());
     }
+    catch (FormatException | IOException e) { }
+    seriesCount = unflattenedReader.getSeriesCount();
+    IMetadata unflattenedRetrieve = (IMetadata) unflattenedReader.getMetadataStore();
 
     globalTable.put(SERIES_COUNT, String.valueOf(seriesCount));
 
@@ -649,7 +654,12 @@ public class Configuration {
           // TODO
         }
 
-        seriesTable.put(NAME, retrieve.getImageName(index));
+        String flattenedName = retrieve.getImageName(index);
+        seriesTable.put(NAME, flattenedName);
+        String unflattenedName = unflattenedRetrieve.getImageName(series);
+        if ((flattenedName == null && unflattenedName != null) || !flattenedName.equals(unflattenedName)) {
+          seriesTable.put(UNFLATTENED_NAME, unflattenedName);
+        }
         seriesTable.put(DESCRIPTION, retrieve.getImageDescription(index));
 
         Length physicalX = retrieve.getPixelsPhysicalSizeX(index);
