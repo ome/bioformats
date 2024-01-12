@@ -320,6 +320,7 @@ public class TiffReader extends BaseTiffReader {
       t = getImageCount();
     }
     m.dimensionOrder = "XYCZT";
+    m.orderCertain = true;
 
     if (z * t * (isRGB() ? 1 : c) == ifds.size()) {
       m.sizeZ = z;
