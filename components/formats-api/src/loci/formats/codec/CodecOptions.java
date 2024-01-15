@@ -117,6 +117,13 @@ public class CodecOptions {
    */
   public boolean ycbcr;
 
+  /**
+   * Whether or not to use chroma subsampling.
+   * Only used when creating an image (WRITE).
+   * Default is false (use chroma subsampling).
+   */
+  public boolean disableChromaSubsampling;
+
   // -- Constructors --
 
   /** Construct a new CodecOptions. */
@@ -142,6 +149,7 @@ public class CodecOptions {
       this.tileGridXOffset = options.tileGridXOffset;
       this.tileGridYOffset = options.tileGridYOffset;
       this.ycbcr = options.ycbcr;
+      this.disableChromaSubsampling = options.disableChromaSubsampling;
     }
   }
 
@@ -154,6 +162,7 @@ public class CodecOptions {
     options.interleaved = false;
     options.lossless = true;
     options.ycbcr = false;
+    options.disableChromaSubsampling = false;
     return options;
   }
 

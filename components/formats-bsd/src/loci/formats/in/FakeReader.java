@@ -128,6 +128,7 @@ public class FakeReader extends FormatReader {
   public static final int DEFAULT_PIXEL_TYPE = FormatTools.UINT8;
   public static final int DEFAULT_RGB_CHANNEL_COUNT = 1;
   public static final String DEFAULT_DIMENSION_ORDER = "XYZCT";
+  public static final String DEFAULT_RGB_DIMENSION_ORDER = "XYCZT";
 
   public static final int DEFAULT_RESOLUTION_SCALE = 2;
 
@@ -535,9 +536,6 @@ public class FakeReader extends FormatReader {
 
   @Override
   protected void initFile(String id) throws FormatException, IOException {
-
-    sleep("initFile", sleepInitFile);
-
     if (!checkSuffix(id, "fake")) {
       if (checkSuffix(id, "fake.ini")) {
         id = id.substring(0, id.lastIndexOf("."));
@@ -600,7 +598,7 @@ public class FakeReader extends FormatReader {
     int pixelType = DEFAULT_PIXEL_TYPE;
     int bitsPerPixel = 0; // default
     int rgb = DEFAULT_RGB_CHANNEL_COUNT;
-    String dimOrder = DEFAULT_DIMENSION_ORDER;
+    String dimOrder = null;
     boolean orderCertain = true;
     boolean little = true;
     boolean interleaved = false;
@@ -780,7 +778,30 @@ public class FakeReader extends FormatReader {
       throw new FormatException("Invalid sizeC/rgb combination: " +
         sizeC + "/" + rgb);
     }
+
+    // make sure the dimension order is correct for RGB data
+    // and set to the correct default if not explicitly specified
+    if (rgb > 1) {
+      String newDimOrder = dimOrder == null ? DEFAULT_RGB_DIMENSION_ORDER : dimOrder;
+      if (!newDimOrder.startsWith("XYC")) {
+        if (newDimOrder.indexOf("Z") < newDimOrder.indexOf("T")) {
+          newDimOrder = "XYCZT";
+        }
+        else {
+          newDimOrder = "XYCTZ";
+        }
+        LOGGER.warn("Dimension order {} incorrect for rgb={}; corrected to {}",
+          dimOrder, rgb, newDimOrder);
+      }
+      dimOrder = newDimOrder;
+    }
+    else if (dimOrder == null) {
+      dimOrder = DEFAULT_DIMENSION_ORDER;
+    }
+
+    // validate the dimension order
     MetadataTools.getDimensionOrder(dimOrder);
+
     if (falseColor && !indexed) {
       throw new FormatException("False color images must be indexed");
     }
@@ -911,6 +932,7 @@ public class FakeReader extends FormatReader {
       }
       // NB: Other pixel types will have null LUTs.
     }
+    sleep("initFile", sleepInitFile);
   }
 
   @Override
@@ -1190,6 +1212,11 @@ public class FakeReader extends FormatReader {
   private void parseSeriesTable(IniTable table, MetadataStore store, int newSeries) {
     int s = getSeries();
     setSeries(newSeries);
+
+    for (int c=0; c<getEffectiveSizeC(); c++) {
+      String channelName = table.get("ChannelName_" + c);
+      store.setChannelName(channelName, newSeries, c);
+    }
 
     for (int i=0; i<getImageCount(); i++) {
       String exposureTime = table.get("ExposureTime_" + i);

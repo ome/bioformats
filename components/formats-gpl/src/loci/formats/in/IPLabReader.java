@@ -310,7 +310,7 @@ public class IPLabReader extends FormatReader {
         store.setROIID(roiID, 0);
         store.setImageROIRef(roiID, 0, 0);
 
-        in.skipBytes(8 * numRoiPts);
+        in.skipBytes((long) 8 * numRoiPts);
       }
       else if (tag.equals("mask")) {
         // read in Segmentation Mask

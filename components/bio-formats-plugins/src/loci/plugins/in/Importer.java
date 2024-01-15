@@ -72,32 +72,48 @@ public class Importer {
 
       ImportProcess process = new ImportProcess(options);
 
-      BF.debug("display option dialogs");
-      showDialogs(process);
-      if (plugin.canceled) return;
-
-      BF.debug("display metadata");
-      DisplayHandler displayHandler = new DisplayHandler(process);
-      displayHandler.displayOriginalMetadata();
-      displayHandler.displayOMEXML();
-
-      BF.debug("read pixel data");
-      ImagePlusReader reader = new ImagePlusReader(process);
-      ImagePlus[] imps = readPixels(reader, options, displayHandler);
-
-      BF.debug("display pixels");
-      displayHandler.displayImages(imps);
-
-      BF.debug("display ROIs");
-      displayHandler.displayROIs(imps);
-
-      BF.debug("finish");
-      finish(process);
-    }
-    catch (FormatException exc) {
-      boolean quiet = options == null ? false : options.isQuiet();
-      WindowTools.reportException(exc, quiet,
-        "Sorry, there was a problem during import.");
+      try {
+        BF.debug("display option dialogs");
+        showDialogs(process);
+        if (plugin.canceled) return;
+  
+        BF.debug("display metadata");
+        DisplayHandler displayHandler = new DisplayHandler(process);
+        displayHandler.displayOriginalMetadata();
+        displayHandler.displayOMEXML();
+  
+        BF.debug("read pixel data");
+        ImagePlusReader reader = new ImagePlusReader(process);
+        ImagePlus[] imps = readPixels(reader, options, displayHandler);
+  
+        BF.debug("display pixels");
+        displayHandler.displayImages(imps);
+  
+        BF.debug("display ROIs");
+        displayHandler.displayROIs(imps);
+  
+        BF.debug("finish");
+        finish(process);
+      }
+      catch (Exception exc) {
+        boolean quiet = options == null ? false : options.isQuiet();
+        WindowTools.reportException(exc, quiet,
+          "Sorry, there was a problem during import.");
+        
+        // Try to close the reader, if the exception occurred before file 
+        // initialization then this may not be possible 
+        try {
+          if (!process.getOptions().isVirtual() && process.getReader() != null) {
+            process.getReader().close();
+          }
+        }
+        catch(IllegalStateException argExcep) {
+          // If the ImageProcessReader could not be closed then instead close the baseReader
+          if (!process.getOptions().isVirtual() && process.getBaseReader() != null) {
+            process.getBaseReader().close();
+          }
+        }
+      }
     }
     catch (IOException exc) {
       boolean quiet = options == null ? false : options.isQuiet();

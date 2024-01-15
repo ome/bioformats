@@ -129,8 +129,8 @@ public class VisitechReader extends FormatReader {
       s.order(isLittleEndian());
       s.seek(pixelOffsets[fileIndex]);
 
-      int paddingBytes =
-          (int) (s.length() - s.getFilePointer() - div * plane) / (div - 1);
+      long paddingBytes =
+        (s.length() - s.getFilePointer() - div * plane) / (div - 1);
       if (planeIndex > 0) {
         s.skipBytes((plane + paddingBytes) * planeIndex);
       }

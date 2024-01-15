@@ -35,6 +35,8 @@ package loci.formats;
 import java.io.IOException;
 
 import loci.common.DataTools;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 
 /**
  * Logic to automatically merge channels in a file.
@@ -193,6 +195,28 @@ public class ChannelMerger extends ReaderWrapper {
   @Override
   public int[] getZCTModuloCoords(int index) {
     return FormatTools.getZCTModuloCoords(this, index);
+  }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("ChannelMerger does not support pre-compressed tile access");
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("ChannelMerger does not support pre-compressed tile access");
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    throw new UnsupportedOperationException("ChannelMerger does not support pre-compressed tile access");
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("ChannelMerger does not support pre-compressed tile access");
   }
 
   // -- IFormatHandler API methods --

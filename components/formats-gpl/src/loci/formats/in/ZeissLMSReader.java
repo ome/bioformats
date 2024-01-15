@@ -89,7 +89,7 @@ public class ZeissLMSReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     in.seek(offsets.get(getSeriesCount() - getSeries() - 1));
-    in.skipBytes(no * FormatTools.getPlaneSize(this));
+    in.skipBytes((long) no * FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
 
     return buf;
@@ -144,7 +144,7 @@ public class ZeissLMSReader extends FormatReader {
     seekToNextMarker();
     in.skipBytes(50);
     offsets.add(in.getFilePointer());
-    in.skipBytes(thumb.sizeX * thumb.sizeY * thumb.sizeC);
+    in.skipBytes((long) thumb.sizeX * thumb.sizeY * thumb.sizeC);
 
     seekToNextMarker();
     in.skipBytes(50);

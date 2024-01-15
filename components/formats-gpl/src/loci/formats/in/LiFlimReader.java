@@ -77,6 +77,7 @@ public class LiFlimReader extends FormatReader {
 
   // relevant keys in layout and background tables
   public static final String DATATYPE_KEY = "datatype";
+  public static final String PACKING_KEY = "packing";
   public static final String C_KEY = "channels";
   public static final String X_KEY = "x";
   public static final String Y_KEY = "y";
@@ -90,9 +91,14 @@ public class LiFlimReader extends FormatReader {
 
   // relevant keys in timestamp table
   public static final String TIMESTAMP_KEY = "FLIMIMAGE: TIMESTAMPS - t";
+  
+  // relevant keys in fli 2.0
+  public static final String NUMBEROFFRAMES_KEY = "numberOfFrames";
+  public static final String NUMBEROFDARKIMAGES_KEY = "nrOfDarkImages";
+  public static final String PIXELFORMAT_KEY = "pixelFormat";
 
   // supported versions
-  public static final String[] KNOWN_VERSIONS = {"1.0"};
+  public static final String[] KNOWN_VERSIONS = {"1.0", "2.0"};
 
   // compression types
   public static final String COMPRESSION_NONE = "0";
@@ -120,6 +126,7 @@ public class LiFlimReader extends FormatReader {
   private String version;
   private String compression;
   private String datatype;
+  private String packing;
   private String channels;
   private String xLen;
   private String yLen;
@@ -215,12 +222,14 @@ public class LiFlimReader extends FormatReader {
           UINT12stream.readFully(bytes);
         }
         catch (EOFException e) {
-          LOGGER.debug("Could not read full 12-bitt plane", e);
+          LOGGER.debug("Could not read full 12-bit plane", e);
         }
 
-        //Covert 12bit data to 16bit data, maintaining 12bit depth.
+        // Covert 12bit data to 16bit data, maintaining 12bit depth.
+        // with msb packing convert in the order of most significant bit, otherwise use least significant bit
         byte[] returnArray = new byte[0];
-        returnArray = convert12to16(bytes); 
+        returnArray = packing.equals("msb") ? 
+          convert12to16MSB(bytes) : convert12to16LSB(bytes);
         RandomAccessInputStream s = new RandomAccessInputStream(returnArray);
         readPlane(s, x, y, w, h, buf);
         s.close();
@@ -231,7 +240,7 @@ public class LiFlimReader extends FormatReader {
       int thisSeries = getSeries();
       for (int i=0; i<thisSeries; i++) {
         setSeries(i);
-        in.skipBytes(getImageCount() * FormatTools.getPlaneSize(this));
+        in.skipBytes((long) getImageCount() * FormatTools.getPlaneSize(this));
       }
       setSeries(thisSeries);
       readPlane(in, x, y, w, h, buf);
@@ -255,6 +264,11 @@ public class LiFlimReader extends FormatReader {
       version = null;
       compression = null;
       datatype = null;
+      packing = null;
+      if (UINT12stream != null) UINT12stream.close();
+      UINT12stream = null;
+      UINT12streamPos = 0;
+      UINT12streamSeries = 0;
       channels = null;
       xLen = null;
       yLen = null;
@@ -290,12 +304,21 @@ public class LiFlimReader extends FormatReader {
     parseHeader();
 
     LOGGER.info("Parsing metadata");
+    version = getVersion();
     initOriginalMetadata();
     initCoreMetadata();
     initOMEMetadata();
   }
 
   // -- Helper methods --
+  private String getVersion() {
+    HashMap<String, String> map = ini.flattenIntoHashMap();
+    for (String string : map.keySet()) {
+      if (string.contains(VERSION_KEY))
+        return map.get(string);
+    }
+    return "1.0";
+  }
 
   private void parseHeader() throws IOException {
     String headerData = in.findString("{END}");
@@ -307,17 +330,40 @@ public class LiFlimReader extends FormatReader {
   private void initOriginalMetadata() {
     rois = new HashMap<Integer, ROI>();
     stampValues = new HashMap<Integer, String>();
+    LOGGER.info("Fli file version: " + version);
 
-    IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
-    datatype = layoutTable.get(DATATYPE_KEY);
-    channels = layoutTable.get(C_KEY);
-    xLen = layoutTable.get(X_KEY);
-    yLen = layoutTable.get(Y_KEY);
-    zLen = layoutTable.get(Z_KEY);
-    phases = layoutTable.get(P_KEY);
-    frequencies = layoutTable.get(F_KEY);
-    timestamps = layoutTable.get(T_KEY);
-    DarkImage = layoutTable.get(DarkImage_KEY);
+    if (version.equals("1.0")){
+      IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
+      datatype = layoutTable.get(DATATYPE_KEY);
+      packing = layoutTable.get(PACKING_KEY);
+      LOGGER.info("packing: " + packing);
+      channels = layoutTable.get(C_KEY);
+      xLen = layoutTable.get(X_KEY);
+      yLen = layoutTable.get(Y_KEY);
+      zLen = layoutTable.get(Z_KEY);
+      phases = layoutTable.get(P_KEY);
+      frequencies = layoutTable.get(F_KEY);
+      timestamps = layoutTable.get(T_KEY);
+      DarkImage = layoutTable.get(DarkImage_KEY);
+
+      IniTable infoTable = ini.getTable(INFO_TABLE);
+      compression = infoTable.get(COMPRESSION_KEY);
+    }
+    else if (version.equals("2.0")){
+      IniTable baseTable = ini.getTable(IniTable.DEFAULT_HEADER);
+      datatype = baseTable.get(PIXELFORMAT_KEY);
+      packing = LIPixelFormat.getPacking(datatype);
+      LOGGER.info("packing: " + packing);
+      channels = "1";
+      xLen = baseTable.get(X_KEY);
+      yLen = baseTable.get(Y_KEY);
+      zLen = baseTable.get(Z_KEY);
+      phases ="1";
+      frequencies = "1";
+      timestamps = baseTable.get(NUMBEROFFRAMES_KEY);
+      DarkImage = baseTable.get(NUMBEROFDARKIMAGES_KEY);
+      compression = "0";
+    }
     
     IniTable backgroundTable = ini.getTable(BACKGROUND_TABLE);
     if (backgroundTable != null) {
@@ -331,9 +377,6 @@ public class LiFlimReader extends FormatReader {
       backgroundF = backgroundTable.get(F_KEY);
     }
 
-    IniTable infoTable = ini.getTable(INFO_TABLE);
-    version = infoTable.get(VERSION_KEY);
-    compression = infoTable.get(COMPRESSION_KEY);
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     if (level != MetadataLevel.MINIMUM) {
@@ -427,7 +470,6 @@ public class LiFlimReader extends FormatReader {
     if (TypeUINT12) {
     	ms.bitsPerPixel = 12;
     }
-    
     ms.moduloZ.type = FormatTools.FREQUENCY;
     ms.moduloZ.step = ms.sizeZ / sizeF;
     ms.moduloZ.start = 0;
@@ -562,20 +604,25 @@ public class LiFlimReader extends FormatReader {
 
   private int getPixelTypeFromString(String type) throws FormatException {
     // check data type
-    if (DATATYPE_UINT8.equals(type)) return FormatTools.UINT8;
+    if (DATATYPE_UINT8.equals(type) || LIPixelFormat.pixelFormatEqualsBitSize(8, type)) return FormatTools.UINT8;
     else if (DATATYPE_INT8.equals(type)) return FormatTools.INT8;
-    else if (DATATYPE_UINT16.equals(type)) return FormatTools.UINT16;
+    else if (DATATYPE_UINT16.equals(type) || 
+      LIPixelFormat.pixelFormatEqualsBitSize(16, type) || 
+      LIPixelFormat.pixelFormatEqualsBitSize(10, type) || 
+      LIPixelFormat.pixelFormatEqualsBitSize(14, type)) return FormatTools.UINT16;
     else if (DATATYPE_INT16.equals(type)) return FormatTools.INT16;
     else if (DATATYPE_UINT32.equals(type)) return FormatTools.UINT32;
     else if (DATATYPE_INT32.equals(type)) return FormatTools.INT32;
     else if (DATATYPE_REAL32.equals(type)) return FormatTools.FLOAT;
     else if (DATATYPE_REAL64.equals(type)) return FormatTools.DOUBLE;
     /* Check for UINT12, set DataType to UINT16 because core does not support UINT12 */
-    else if (DATATYPE_UINT12.equals(type)) 
-    	{ 
-    	TypeUINT12 = true;
+    else if (DATATYPE_UINT12.equals(type) || LIPixelFormat.pixelFormatEqualsBitSize(12, type))
+    { 
+      LOGGER.info("getPixelTypeFromString TypeUINT12");
+    	if (packing != "") TypeUINT12 = true;
     	return FormatTools.UINT16;
-    	}
+    }
+    LOGGER.info("Unknown data type: " + type);
     throw new FormatException("Unknown data type: " + type);
   }
 
@@ -667,25 +714,39 @@ public class LiFlimReader extends FormatReader {
 	    
 	  }
 	  
-  // Added a Function to unpack 12bit data to 16bit data maintaining 12bits depth.
-  private static byte[] convert12to16(byte[] image) {
-	   	byte[] image16 = new byte[image.length * 4 / 3];
+  // Unpack 12bit data by least significant bit first to 16bit data maintaining 12bits depth.
+  private static byte[] convert12to16LSB(byte[] image) {
+    byte[] image16 = new byte[image.length * 4 / 3];
 
-		
-		if (image16.length / 4 != image.length / 3)
-	  		return new byte[0];
+    if (image16.length / 4 != image.length / 3)
+      return new byte[0];
 
-		for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) 
-		{
-	  		image16[idx16] = (byte)(image[idx] & 0xff);
-	  		image16[idx16 + 1] = (byte)((image[idx + 1] & 0x0f));
-	  		image16[idx16 + 2] = (byte)(((image[idx + 1] & 0xf0) >> 4) + ((image[idx + 2] & 0x0f) << 4));
-	  		image16[idx16 + 3] = (byte)((image[idx + 2] & 0xf0) >> 4);
-		}
-		
-		return image16;
-		}
+    for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) {
+      image16[idx16] = (byte)(image[idx] & 0xff);
+      image16[idx16 + 1] = (byte)((image[idx + 1] & 0x0f));
+      image16[idx16 + 2] = (byte)(((image[idx + 1] & 0xf0) >> 4) | ((image[idx + 2] & 0x0f) << 4));
+      image16[idx16 + 3] = (byte)((image[idx + 2] & 0xf0) >> 4);
+    }
+   
+    return image16;
+  }
+
+  // Unpack 12bit data by most significant bit first to 16bit data maintaining 12bits depth.
+  private static byte[] convert12to16MSB(byte[] image) {
+    byte[] image16 = new byte[image.length * 4 / 3];
+
+    if (image16.length / 4 != image.length / 3)
+      return new byte[0];
+
+    for (int idx = 0, idx16 = 0; idx < (image.length - 2) && (idx16 < image16.length - 3); idx += 3, idx16 += 4) {
+      image16[idx16] = (byte)(((image[idx]  & 0x0f) << 4) | ((image[idx + 1]  & 0xf0) >> 4));
+      image16[idx16 + 1] = (byte)((image[idx]  & 0xf0) >> 4);
+      image16[idx16 + 2] = (byte)((image[idx + 2] & 0xff));
+      image16[idx16 + 3] = (byte)((image[idx + 1]) & 0x0f);
+    }
   
+    return image16;
+  }
 
   private void skip(InputStream is, long num) throws IOException {
     long skipLeft = num;

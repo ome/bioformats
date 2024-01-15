@@ -38,12 +38,13 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.IniWriter;
 import loci.common.Location;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 
 import ome.xml.model.primitives.PositiveInteger;
@@ -108,6 +109,7 @@ public class Configuration {
   private static final String EXCITATION_WAVELENGTH_UNIT = "ExcitationWavelengthUnit_";
   private static final String DETECTOR = "Detector_";
   private static final String NAME = "Name";
+  private static final String UNFLATTENED_NAME = "Unflattened_Name";
   private static final String DESCRIPTION = "Description";
   private static final String SERIES_COUNT = "series_count";
   private static final String RESOLUTION_COUNT = "resolution_count";
@@ -185,8 +187,22 @@ public class Configuration {
     return Integer.parseInt(memory);
   }
 
+  public String getTestComment() {
+    String test = globalTable.get(TEST);
+    int delim = test.indexOf("#");
+    if (delim >= 0) {
+      return test.substring(delim + 1);
+    }
+    return null;
+  }
+
   public boolean doTest() {
-    return new Boolean(globalTable.get(TEST)).booleanValue();
+    String test = globalTable.get(TEST);
+    int delim = test.indexOf("#");
+    if (delim >= 0) {
+      test = test.substring(0, delim);
+    }
+    return new Boolean(test.trim()).booleanValue();
   }
 
   public boolean hasValidXML() {
@@ -404,6 +420,10 @@ public class Configuration {
     return currentTable.get(NAME);
   }
 
+  public String getUnflattenedImageName() {
+    return currentTable.get(UNFLATTENED_NAME);
+  }
+
   public boolean hasImageDescription() {
     return currentTable.containsKey(DESCRIPTION);
   }
@@ -421,7 +441,7 @@ public class Configuration {
   }
 
   public int getPlate() {
-    return getInt(PLATE, -1);
+    return getInt(PLATE, Integer.MIN_VALUE);
   }
 
   public int getPlateAcquisition() {
@@ -534,16 +554,16 @@ public class Configuration {
     putTableName(globalTable, reader, " global");
 
     int seriesCount = reader.getSeriesCount();
-    IFormatReader unflattenedReader = reader;
-    if (seriesCount > 1) {
-      unflattenedReader = new FileStitcher();
-      unflattenedReader.setFlattenedResolutions(false);
-      try {
-        unflattenedReader.setId(reader.getCurrentFile());
-      }
-      catch (FormatException | IOException e) { }
-      seriesCount = unflattenedReader.getSeriesCount();
+    IFormatReader unflattenedReader = new ImageReader();
+    unflattenedReader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+    unflattenedReader.setFlattenedResolutions(false);
+    unflattenedReader.setMetadataOptions(new DynamicMetadataOptions());
+    try {
+      unflattenedReader.setId(reader.getCurrentFile());
     }
+    catch (FormatException | IOException e) { }
+    seriesCount = unflattenedReader.getSeriesCount();
+    IMetadata unflattenedRetrieve = (IMetadata) unflattenedReader.getMetadataStore();
 
     globalTable.put(SERIES_COUNT, String.valueOf(seriesCount));
 
@@ -563,12 +583,8 @@ public class Configuration {
     globalTable.put(TEST, "true");
     globalTable.put(MEMORY, String.valueOf(TestTools.getUsedMemory()));
 
-    long planeSize = (long) FormatTools.getPlaneSize(reader) * 3;
-    boolean canOpenImages =
-      planeSize > 0 && TestTools.canFitInMemory(planeSize);
-
     long t0 = System.currentTimeMillis();
-    if (canOpenImages) {
+    if (canOpenImages(reader)) {
       try {
         reader.openBytes(0);
       }
@@ -615,17 +631,7 @@ public class Configuration {
         seriesTable.put(CHANNEL_COUNT,
           String.valueOf(retrieve.getChannelCount(index)));
 
-        try {
-          planeSize = DataTools.safeMultiply32(reader.getSizeX(),
-            reader.getSizeY(), reader.getEffectiveSizeC(),
-            reader.getRGBChannelCount(),
-            FormatTools.getBytesPerPixel(reader.getPixelType()));
-          canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
-        } catch (IllegalArgumentException e) {
-          canOpenImages = false;
-        }
-
-        if (canOpenImages) {
+        if (canOpenImages(reader)) {
           try {
             byte[] plane = reader.openBytes(0);
             seriesTable.put(MD5, TestTools.md5(plane));
@@ -648,7 +654,12 @@ public class Configuration {
           // TODO
         }
 
-        seriesTable.put(NAME, retrieve.getImageName(index));
+        String flattenedName = retrieve.getImageName(index);
+        seriesTable.put(NAME, flattenedName);
+        String unflattenedName = unflattenedRetrieve.getImageName(series);
+        if ((flattenedName == null && unflattenedName != null) || !flattenedName.equals(unflattenedName)) {
+          seriesTable.put(UNFLATTENED_NAME, unflattenedName);
+        }
         seriesTable.put(DESCRIPTION, retrieve.getImageDescription(index));
 
         Length physicalX = retrieve.getPixelsPhysicalSizeX(index);
@@ -822,5 +833,25 @@ public class Configuration {
     catch (NumberFormatException e) { }
     catch (EnumerationException e) { }
     return null;
+  }
+
+  /**
+   * Check if a whole plane can be read.
+   *
+   * @param reader initialized reader set to the series to check
+   * @return true if the plane size is smaller than both 2GB
+                  and the amount of free memory
+   */
+  private boolean canOpenImages(IFormatReader reader) {
+    try {
+      long planeSize = DataTools.safeMultiply32(reader.getSizeX(),
+          reader.getSizeY(), reader.getEffectiveSizeC(),
+          reader.getRGBChannelCount(),
+          FormatTools.getBytesPerPixel(reader.getPixelType()));
+      return planeSize > 0 && TestTools.canFitInMemory(planeSize);
+    }
+    catch (IllegalArgumentException e) {
+      return false;
+    }
   }
 }

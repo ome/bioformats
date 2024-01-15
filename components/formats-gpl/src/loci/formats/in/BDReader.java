@@ -514,6 +514,8 @@ public class BDReader extends FormatReader {
       }
 
       store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateRows(new PositiveInteger(wellRows), 0);
+      store.setPlateColumns(new PositiveInteger(wellCols), 0);
       store.setPlateRowNamingConvention(MetadataTools.getNamingConvention("Letter"), 0);
       store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention("Number"), 0);
       store.setPlateName(plateName, 0);

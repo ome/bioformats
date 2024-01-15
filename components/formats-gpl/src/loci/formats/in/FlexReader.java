@@ -41,6 +41,7 @@ import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.NIOFileHandle;
 import loci.common.RandomAccessInputStream;
+import loci.common.enumeration.EnumException;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -67,9 +68,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * FlexReader is a file format reader for Evotec Flex files.
- * To use it, the LuraWave decoder library, lwf_jsdk2.6.jar, must be available,
- * and a LuraWave license key must be specified in the lurawave.license system
- * property (e.g., <code>-Dlurawave.license=XXXX</code> on the command line).
  */
 public class FlexReader extends FormatReader {
 
@@ -283,7 +281,7 @@ public class FlexReader extends FormatReader {
             factor = 1d;
           }
           else {
-            Arrays.fill(buf, (byte) 0);
+            Arrays.fill(buf, getFillColor());
             return buf;
           }
       }
@@ -630,6 +628,13 @@ public class FlexReader extends FormatReader {
       }
     }
 
+    if (wellRows > 0) {
+      store.setPlateRows(new PositiveInteger(wellRows), 0);
+    }
+    if (wellColumns > 0) {
+      store.setPlateColumns(new PositiveInteger(wellColumns), 0);
+    }
+
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
         int well = row * wellColumns + col;
@@ -646,7 +651,7 @@ public class FlexReader extends FormatReader {
 
       int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
 
-      char wellRow = (char) ('A' + wellNumber[pos[1]][0]);
+      String wellRow = FormatTools.getWellRowName(wellNumber[pos[1]][0]);
       store.setImageName("Well " + wellRow + "-" + (wellNumber[pos[1]][1] + 1) +
         "; Field #" + (pos[0] + 1), i);
 
@@ -872,7 +877,7 @@ public class FlexReader extends FormatReader {
     throws FormatException, IOException
   {
     LOGGER.info("Parsing .flex file (well {}{}, field {})",
-      (char) (wellRow + 'A'), wellCol + 1, field);
+      FormatTools.getWellRowName(wellRow), wellCol + 1, field);
     int fieldIndex = field < 0 || fieldCount == 0 ? 0 : field % fieldCount;
     int runIndex = field < 0 || fieldCount == 0 ? 0 : field / fieldCount;
     FlexFile file = lookupFile(wellRow, wellCol, fieldIndex, runIndex);
@@ -1315,8 +1320,14 @@ public class FlexReader extends FormatReader {
         firstIFD = parser.getFirstIFD();
         ifdCount = parser.getIFDOffsets().length;
       }
-      boolean compressed =
-        firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+      Boolean compressed = true;
+      try {
+        compressed =
+          firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+      }
+      catch (EnumException e) {
+        LOGGER.trace("Could not get compression for " + file, e);
+      }
       if (firstCompressed == null) {
         firstCompressed = compressed;
         firstIFDCount = ifdCount;
@@ -1423,10 +1434,15 @@ public class FlexReader extends FormatReader {
 
           if (compressed || firstFile) {
             LOGGER.info("Parsing IFDs for well {}{}",
-              (char) (row + 'A'), col + 1);
+              FormatTools.getWellRowName(row), col + 1);
             IFD firstIFD = tp.getFirstIFD();
-            compressed =
-              firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+            try {
+              compressed =
+                firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+            }
+            catch (EnumException e) {
+              LOGGER.trace("Could not get compression", e);
+            }
 
             if (compressed || firstIFD.getStripOffsets()[0] == 16 ||
                 firstIFD.getStripOffsets().length == 1)
@@ -1454,7 +1470,7 @@ public class FlexReader extends FormatReader {
             // retrieve the offsets to each IFD, instead of parsing
             // all of the IFDs
             LOGGER.info("Retrieving IFD offsets for well {}{}",
-              (char) (row + 'A'), col + 1);
+              FormatTools.getWellRowName(row), col + 1);
             file.offsets = new long[nOffsets];
 
             // Assume that all IFDs after the first are evenly spaced.

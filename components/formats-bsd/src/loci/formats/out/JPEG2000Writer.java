@@ -86,7 +86,7 @@ public class JPEG2000Writer extends FormatWriter {
   /**
    * Compresses the buffer.
    * 
-   * @param no the image index within the current file, starting from 0.
+   * @param no the plane index within the series.
    * @param buf the byte array that represents the image tile.
    * @param x the X coordinate of the upper-left corner of the image tile.
    * @param y the Y coordinate of the upper-left corner of the image tile.

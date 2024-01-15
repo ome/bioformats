@@ -2,7 +2,7 @@
 
 # cachegen: a script for generating cache (memo) files
 
-# Required JARs: loci_tools.jar or bioformats_package.jar
+# Required JARs: bioformats_package.jar
 
 BF_DIR=`dirname "$0"`
 

@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import loci.common.DataTools;
-import loci.formats.FileStitcher;
+import loci.formats.ImageReader;
 import loci.formats.UnknownFormatException;
 
 import org.slf4j.Logger;
@@ -239,7 +239,7 @@ public class FormatReaderTestFactory {
       originalPath.put(canonicalPath, s);
     }
     Set<String> minimalFiles = new LinkedHashSet<String>();
-    FileStitcher reader = new FileStitcher();
+    ImageReader reader = new ImageReader();
     Set<String> failingIds = new LinkedHashSet<String>();
     while (!fileSet.isEmpty()) {
       String file = fileSet.iterator().next();

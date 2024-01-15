@@ -237,7 +237,8 @@ public class AVIReader extends FormatReader {
       pad = bytes;
     }
 
-    in.skipBytes((getSizeX() + pad) * (bmpBitsPerPixel / 8) * (getSizeY() - h - y));
+    long skipRows = getSizeY() - h - y;
+    in.skipBytes((getSizeX() + pad) * (bmpBitsPerPixel / 8) * skipRows);
 
     if (getSizeX() == w && pad == 0) {
       for (int row=0; row<h; row++) {

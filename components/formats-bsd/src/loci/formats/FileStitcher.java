@@ -45,6 +45,8 @@ import java.util.Set;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
@@ -144,6 +146,11 @@ public class FileStitcher extends ReaderWrapper {
    */
   public void setReaderClassList(ClassList<IFormatReader> classList) {
     this.classList = classList;
+    try {
+      reader.close(true);
+    }  catch (IOException e) {
+      LOGGER.debug("Close failed", e);
+    }
     reader = DimensionSwapper.makeDimensionSwapper(new ImageReader(classList));
   }
 
@@ -205,7 +212,7 @@ public class FileStitcher extends ReaderWrapper {
    */
   public int[] getAxisTypes() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return externals[getExternalSeries()].getAxisGuesser().getAxisTypes();
+    return getAxisGuesser().getAxisTypes();
   }
 
   /**
@@ -220,7 +227,7 @@ public class FileStitcher extends ReaderWrapper {
    */
   public void setAxisTypes(int[] axes) throws FormatException {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    externals[getExternalSeries()].getAxisGuesser().setAxisTypes(axes);
+    getAxisGuesser().setAxisTypes(axes);
     computeAxisLengths();
   }
 
@@ -237,6 +244,11 @@ public class FileStitcher extends ReaderWrapper {
    */
   public AxisGuesser getAxisGuesser() {
     FormatTools.assertId(getCurrentFile(), true, 2);
+    if (externals == null) {
+      return new AxisGuesser(getFilePattern(), reader.getDimensionOrder(),
+        reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),
+        reader.isOrderCertain());
+    }
     return externals[getExternalSeries()].getAxisGuesser();
   }
 
@@ -488,7 +500,7 @@ public class FileStitcher extends ReaderWrapper {
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     return buf;
   }
 
@@ -902,10 +914,12 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public void reopenFile() throws IOException {
     reader.reopenFile();
-    for (ExternalSeries s : externals) {
-      for (DimensionSwapper r : s.getReaders()) {
-        if (r.getCurrentFile() != null) {
-          r.reopenFile();
+    if (externals != null) {
+      for (ExternalSeries s : externals) {
+        for (DimensionSwapper r : s.getReaders()) {
+          if (r.getCurrentFile() != null) {
+            r.reopenFile();
+          }
         }
       }
     }
@@ -925,6 +939,68 @@ public class FileStitcher extends ReaderWrapper {
     initFile(id);
   }
 
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int[] pos = computeIndices(no);
+    IFormatReader r = getReader(getCoreIndex(), pos[0]);
+    int ino = pos[1];
+
+    if (ino < r.getImageCount()) {
+      return r.openCompressedBytes(ino, x, y);
+    }
+
+    throw new IOException("Compressed tile not available");
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int[] pos = computeIndices(no);
+    IFormatReader r = getReader(getCoreIndex(), pos[0]);
+    int ino = pos[1];
+
+    if (ino < r.getImageCount()) {
+      return r.openCompressedBytes(ino, x, y);
+    }
+
+    throw new IOException("Compressed tile not available");
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int[] pos = computeIndices(no);
+    IFormatReader r = getReader(getCoreIndex(), pos[0]);
+    int ino = pos[1];
+
+    if (ino < r.getImageCount()) {
+      return r.getTileCodec(ino);
+    }
+
+    throw new IOException("Compressed tile not available");
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int[] pos = computeIndices(no);
+    IFormatReader r = getReader(getCoreIndex(), pos[0]);
+    int ino = pos[1];
+
+    if (ino < r.getImageCount()) {
+      return r.getTileCodecOptions(ino, x, y);
+    }
+
+    throw new IOException("Compressed tile not available");
+  }
+
   // -- Internal FormatReader API methods --
 
   /** Initializes the given file or file pattern. */
@@ -935,7 +1011,7 @@ public class FileStitcher extends ReaderWrapper {
     if (!patternIds) {
       patternIds = fp.isValid() && fp.getFiles().length > 1;
     }
-    else {
+    else if (canChangePattern() || !Location.getMappedId(id).equals(id)) {
       patternIds =
         !new Location(id).exists() && Location.getMappedId(id).equals(id);
     }
@@ -959,6 +1035,7 @@ public class FileStitcher extends ReaderWrapper {
         reader.setId(fp.getFiles()[0]);
       }
       else reader.setId(id);
+      LOGGER.info("File pattern ignored; {} groups files", reader.getFormat());
       return;
     }
 

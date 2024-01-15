@@ -23,7 +23,7 @@ Type "ant -p" for a list of targets.
     <delete dir="target"/>
   </target>
 
-  <target name="test-file-handles" depends="compile"
+  <target name="test-file-handles" depends="compile-tests"
     description="run tests for leaking file handles">
     <exec executable="${basedir}/target-test-runner">
       <!-- FileHandleTest is single-threaded -->
@@ -43,7 +43,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-open-bytes-performance" depends="compile"
+  <target name="test-open-bytes-performance" depends="compile-tests"
     description="run tests for open bytes performance">
     <exec executable="${basedir}/target-test-runner">
         <arg value="-t${testng.threadCount}"/>
@@ -62,7 +62,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-tiff-writer" depends="compile"
+  <target name="test-tiff-writer" depends="compile-tests"
     description="run tests for TIFF writing (conversion)">
     <exec executable="${basedir}/target-test-runner">
       <arg value="loci.tests.testng.TiffWriterTest"/>
@@ -70,7 +70,7 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
-  <target name="test-equivalent" depends="compile"
+  <target name="test-equivalent" depends="compile-tests"
     description="test if two files are pixels-equivalent">
     <testng testname="Pixels equivalence test" failureProperty="failedTest">
       <classpath>
@@ -81,7 +81,6 @@ Type "ant -p" for a list of targets.
       <classfileset file="${classes.dir}/loci/tests/testng/EquivalentPixelsTest.class"/>
       <sysproperty key="src" value="${testng.src}"/>
       <sysproperty key="check" value="${testng.check}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
@@ -90,7 +89,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-convert" depends="compile"
+  <target name="test-convert" depends="compile-tests"
     description="run automated tests on writers">
     <testng groups="all" testname="Writer tests"
       listener="loci.tests.testng.DotTestListener"
@@ -104,7 +103,6 @@ Type "ant -p" for a list of targets.
       <classfileset file="${classes.dir}/${writer-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
@@ -113,7 +111,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-all" depends="compile"
+  <target name="test-all" depends="compile-tests"
     description="run all automated tests">
     <testng groups="all" testname="All tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
@@ -135,7 +133,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -145,7 +142,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="gen-cache" depends="compile"
+  <target name="gen-cache" depends="compile-tests"
     description="generate config files for automated test suite">
     <testng groups="cache" testname="Cache generation"
       listener="loci.tests.testng.DotTestListener"
@@ -165,7 +162,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -175,7 +171,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="gen-config" depends="compile"
+  <target name="gen-config" depends="compile-tests"
     description="generate config files for automated test suite">
     <testng groups="config" testname="Config generation"
       listener="loci.tests.testng.DotTestListener"
@@ -197,7 +193,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
       <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -208,7 +203,7 @@ Type "ant -p" for a list of targets.
   </target>
   <target name="test-config" depends="gen-config"/>
 
-  <target name="gen-file-list" depends="compile"
+  <target name="gen-file-list" depends="compile-tests"
     description="generate list of files to be tested">
     <testng groups="file-list" testname="File list generation"
       listener="loci.tests.testng.DotTestListener"
@@ -230,7 +225,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
@@ -239,7 +233,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-automated" depends="compile"
+  <target name="test-automated" depends="compile-tests"
     description="run automated tests in group 'automated'">
 
     <testng groups="automated" testname="Automated tests"
@@ -265,19 +259,18 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="testng.threadCount" value="${testng.threadCount}"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
       <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
-      <jvmarg value="-javaagent:${org.kohsuke:file-leak-detector:jar:jar-with-dependencies}=strong"/>
+      <jvmarg value="-javaagent:${dep.org.kohsuke:file-leak-detector:jar:jar-with-dependencies}=strong"/>
     </testng>
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-memoizer" depends="compile"
+  <target name="test-memoizer" depends="compile-tests"
     description="run automated tests in group 'memoizer'">
 
     <condition property="testng.threadCount" value="1">
@@ -308,7 +301,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="testng.threadCount" value="${testng.threadCount}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
@@ -316,12 +308,12 @@ Type "ant -p" for a list of targets.
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
       <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
-      <jvmarg value="-javaagent:${root.dir}/jar/file-leak-detector-1.13.jar=strong"/>
+      <jvmarg value="-javaagent:${dep.org.kohsuke:file-leak-detector:jar:jar-with-dependencies}=strong"/>
     </testng>
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-fast" depends="compile"
+  <target name="test-fast" depends="compile-tests"
     description="run automated tests in group 'fast'">
     <testng groups="fast" testname="Fast tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
@@ -343,7 +335,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -353,7 +344,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-pixels" depends="compile"
+  <target name="test-pixels" depends="compile-tests"
     description="run automated tests in group 'pixels'">
     <testng groups="pixels" testname="Pixels tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
@@ -375,7 +366,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -385,7 +375,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-xml" depends="compile"
+  <target name="test-xml" depends="compile-tests"
     description="run automated tests in group 'xml'">
     <testng groups="xml" testname="XML tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
@@ -407,7 +397,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -417,7 +406,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-type" depends="compile"
+  <target name="test-type" depends="compile-tests"
     description="run automated tests in group 'type'">
     <testng groups="type" testname="Type tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
@@ -439,7 +428,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.allow-missing" value="${testng.allow-missing}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -449,7 +437,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="gen-config-xml" depends="compile"
+  <target name="gen-config-xml" depends="compile-tests"
     description="generate OME-XML files for automated test suite">
     <testng groups="config-xml" testname="OME-XML generation"
       listener="loci.tests.testng.DotTestListener"
@@ -468,7 +456,6 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
-      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -479,7 +466,7 @@ Type "ant -p" for a list of targets.
   </target>
   <target name="test-config-xml" depends="gen-config-xml"/>
 
-  <target name="test-metadata" depends="compile"
+  <target name="test-metadata" depends="compile-tests"
     description="test metadata level support for a single file">
     <testng testname="Metadata tests" failureProperty="failedTest">
       <classpath>

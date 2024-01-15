@@ -415,6 +415,9 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
             (int) (color[2] * 255), 255);
           store.setChannelColor(realColor, s, i);
         }
+        if (i < channelName.size()) {
+          store.setChannelName(channelName.get(i), s, i);
+        }
       }
     }
     setSeries(0);
@@ -552,25 +555,53 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
 
         while (cIndex >= getSizeC()) ms0.sizeC++;
 
-        if (name.equals("Gain")) gain.add(value);
-        else if (name.equals("LSMEmissionWavelength")) emWave.add(value);
-        else if (name.equals("LSMExcitationWavelength")) exWave.add(value);
-        else if (name.equals("Max")) channelMax.add(value);
-        else if (name.equals("Min")) channelMin.add(value);
-        else if (name.equals("Pinhole")) pinhole.add(value);
-        else if (name.equals("Name")) channelName.add(value);
-        else if (name.equals("MicroscopyMode")) microscopyMode.add(value);
+        if (name.equals("Gain")) {
+          addValue(gain, value, cIndex);
+        }
+        else if (name.equals("LSMEmissionWavelength")) {
+          addValue(emWave, value, cIndex);
+        }
+        else if (name.equals("LSMExcitationWavelength")) {
+          addValue(exWave, value, cIndex);
+        }
+        else if (name.equals("Max")) {
+          addValue(channelMax, value, cIndex);
+        }
+        else if (name.equals("Min")) {
+          addValue(channelMin, value, cIndex);
+        }
+        else if (name.equals("Pinhole")) {
+          addValue(pinhole, value, cIndex);
+        }
+        else if (name.equals("Name")) {
+          addValue(channelName, originalValue, cIndex);
+        }
+        else if (name.equals("MicroscopyMode")) {
+          addValue(microscopyMode, value, cIndex);
+        }
         else if (name.equals("Color")) {
           double[] color = new double[3];
           String[] intensity = originalValue.split(" ");
           for (int i=0; i<intensity.length; i++) {
             color[i] = Double.parseDouble(intensity[i]);
           }
-          colors.add(color);
+          addValue(colors, color, cIndex);
         }
       }
 
       if (value != null) addGlobalMeta(name, value);
+    }
+  }
+
+  private void addValue(List l, Object value, int index) {
+    if (index < l.size()) {
+      l.set(index, value);
+    }
+    else {
+      while (index > l.size()) {
+        l.add(null);
+      }
+      l.add(value);
     }
   }
 

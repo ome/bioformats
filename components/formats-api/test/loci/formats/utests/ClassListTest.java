@@ -274,14 +274,14 @@ public class ClassListTest {
   }
 
   @Test
-  public void testWhitelistedKeys() throws IOException
+  public void testAllowedKeys() throws IOException
   {
     c = new ClassList<Iterable>(null, Iterable.class);
-    assertTrue(c.isWhitelistedKey("type"));
-    assertTrue(c.isWhitelistedKey("package.name.type"));
-    assertTrue(c.isWhitelistedKey("type"));
-    assertFalse(c.isWhitelistedKey("type.subtype"));
-    assertFalse(c.isWhitelistedKey(""));
-    assertFalse(c.isWhitelistedKey("."));
+    assertTrue(c.isAllowedKey("type"));
+    assertTrue(c.isAllowedKey("package.name.type"));
+    assertTrue(c.isAllowedKey("type"));
+    assertFalse(c.isAllowedKey("type.subtype"));
+    assertFalse(c.isAllowedKey(""));
+    assertFalse(c.isAllowedKey("."));
   }
 }

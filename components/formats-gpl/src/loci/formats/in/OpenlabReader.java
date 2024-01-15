@@ -395,7 +395,7 @@ public class OpenlabReader extends FormatReader {
         in.skipBytes(16);
         long pointer = in.getFilePointer();
         planes[imagesFound].planeName = readCString().trim();
-        in.skipBytes((int) (256 - in.getFilePointer() + pointer));
+        in.skipBytes(256 - in.getFilePointer() + pointer);
 
         planes[imagesFound].planeOffset = in.getFilePointer();
 

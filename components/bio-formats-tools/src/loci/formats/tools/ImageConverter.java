@@ -56,6 +56,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
+import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
@@ -74,11 +75,13 @@ import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.meta.IPyramidStore;
+import loci.formats.out.DicomWriter;
 import loci.formats.ome.OMEPyramidStore;
+import loci.formats.out.IExtraMetadataWriter;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
-import loci.formats.tiff.IFD;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
@@ -124,13 +127,26 @@ public final class ImageConverter {
   private boolean useMemoizer = false;
   private String cacheDir = null;
   private boolean originalMetadata = true;
+  private boolean noSequential = false;
+  private String swapOrder = null;
+  private Byte fillColor = null;
+  private boolean precompressed = false;
+  private boolean tryPrecompressed = false;
+
+  private String extraMetadata = null;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
+  private DimensionSwapper dimSwapper;
 
   private HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
   private boolean firstTile = true;
   private DynamicMetadataOptions options = new DynamicMetadataOptions();
+
+  // record paths that have been checked for overwriting
+  // this is mostly useful when "out" is a file name pattern
+  // that may be expanded into multiple actual files
+  private HashMap<String, Boolean> checkedPaths = new HashMap<String, Boolean>();
 
   // -- Constructor --
 
@@ -168,6 +184,7 @@ public final class ImageConverter {
         else if (args[i].equals("-padded")) zeroPadding = true;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-no-sas")) originalMetadata = false;
+        else if (args[i].equals("-precompressed")) precompressed = true;
         else if (args[i].equals("-cache")) useMemoizer = true;
         else if (args[i].equals("-cache-dir")) {
           cacheDir = args[++i];
@@ -243,6 +260,19 @@ public final class ImageConverter {
           }
           catch (NumberFormatException e) { }
         }
+        else if (args[i].equals("-no-sequential")) {
+          noSequential = true;
+        }
+        else if (args[i].equals("-swap")) {
+          swapOrder = args[++i].toUpperCase();
+        }
+        else if (args[i].equals("-fill")) {
+          // allow specifying 0-255
+          fillColor = (byte) Integer.parseInt(args[++i]);
+        }
+        else if (args[i].equals("-extra-metadata")) {
+          extraMetadata = args[++i];
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -305,7 +335,7 @@ public final class ImageConverter {
   }
 
   /**
-   * Output usage information, using log4j.
+   * Output usage information
    */
   private void printUsage() {
     String[] s = {
@@ -318,6 +348,8 @@ public final class ImageConverter {
       "    [-nolookup] [-autoscale] [-version] [-no-upgrade] [-padded]",
       "    [-option key value] [-novalid] [-validate] [-tilex tileSizeX]", 
       "    [-tiley tileSizeY] [-pyramid-scale scale]", 
+      "    [-swap dimensionsOrderString] [-fill color]",
+      "    [-precompressed]",
       "    [-pyramid-resolutions numResolutionLevels] in_file out_file",
       "",
       "            -version: print the library version and exit",
@@ -359,6 +391,13 @@ public final class ImageConverter {
       "              -tiley: image will be converted one tile at a time using the given tile height",
       "      -pyramid-scale: generates a pyramid image with each subsequent resolution level divided by scale",
       "-pyramid-resolutions: generates a pyramid image with the given number of resolution levels ",
+      "      -no-sequential: do not assume that planes are written in sequential order",
+      "               -swap: override the default input dimension order; argument is f.i. XYCTZ",
+      "               -fill: byte value to use for undefined pixels (0-255)",
+      "      -precompressed: transfer compressed bytes from input dataset directly to output.",
+      "                      Most input and output formats do not support this option.",
+      "                      Do not use -crop, -fill, or -autoscale, or pyramid generation options",
+      "                      with this option.",
       "",
       "The extension of the output file specifies the file format to use",
       "for the conversion. The list of available formats and extensions is:",
@@ -430,24 +469,24 @@ public final class ImageConverter {
       return false;
     }
 
+    // TODO: there may be other options not compatible with -precompressed
+    if (precompressed &&
+      (width_crop > 0 || height_crop > 0 ||
+      pyramidResolutions > 1 ||
+      fillColor != null ||
+      autoscale
+      ))
+    {
+      throw new UnsupportedOperationException("-precompressed not supported with " +
+        "-autoscale, -crop, -fill, -pyramid-scale, -pyramid-resolutions");
+    }
+
     CommandLineTools.runUpgradeCheck(args);
 
     if (new Location(out).exists()) {
-      if (overwrite == null) {
-        LOGGER.warn("Output file {} exists.", out);
-        LOGGER.warn("Do you want to overwrite it? ([y]/n)");
-        BufferedReader r = new BufferedReader(
-          new InputStreamReader(System.in, Constants.ENCODING));
-        String choice = r.readLine().trim().toLowerCase();
-        overwrite = !choice.startsWith("n");
-      }
-      if (!overwrite) {
-        LOGGER.warn("Exiting; next time, please specify an output file that " +
-          "does not exist.");
+      boolean ok = overwriteCheck(out, false);
+      if (!ok) {
         return false;
-      }
-      else {
-        new Location(out).delete();
       }
     }
 
@@ -456,6 +495,9 @@ public final class ImageConverter {
     long start = System.currentTimeMillis();
     LOGGER.info(in);
     reader = new ImageReader();
+    if (swapOrder != null) {
+      reader = dimSwapper = new DimensionSwapper(reader);
+    }
     if (stitch) {
       reader = new FileStitcher(reader);
       Location f = new Location(in);
@@ -490,6 +532,7 @@ public final class ImageConverter {
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(originalMetadata);
     reader.setFlattenedResolutions(flat);
+    reader.setFillColor(fillColor);
     OMEXMLService service = null;
     try {
       ServiceFactory factory = new ServiceFactory();
@@ -504,6 +547,10 @@ public final class ImageConverter {
     }
 
     reader.setId(in);
+
+    if (swapOrder != null) {
+       dimSwapper.swapDimensions(swapOrder);
+    }
 
     MetadataStore store = reader.getMetadataStore();
 
@@ -579,9 +626,15 @@ public final class ImageConverter {
         }
         else {
           for (int i=0; i<reader.getSeriesCount(); i++) {
+            reader.setSeries(i);
+            width = reader.getSizeX();
+            height = reader.getSizeY();
+            if (width_crop != 0 || height_crop != 0) {
+              width = Math.min(reader.getSizeX(), width_crop);
+              height = Math.min(reader.getSizeY(), height_crop);
+            }
             meta.setPixelsSizeX(new PositiveInteger(width), i);
             meta.setPixelsSizeY(new PositiveInteger(height), i);
-
             if (autoscale) {
               store.setPixelsType(PixelType.UINT8, i);
             }
@@ -605,17 +658,32 @@ public final class ImageConverter {
         throw new FormatException(e);
       }
     }
-    writer.setWriteSequentially(true);
+    writer.setWriteSequentially(!noSequential);
 
     if (writer instanceof TiffWriter) {
       ((TiffWriter) writer).setBigTiff(bigtiff);
       ((TiffWriter) writer).setCanDetectBigTiff(!nobigtiff);
+    }
+    else if (writer instanceof DicomWriter) {
+      ((DicomWriter) writer).setBigTiff(bigtiff);
     }
     else if (writer instanceof ImageWriter) {
       IFormatWriter w = ((ImageWriter) writer).getWriter(out);
       if (w instanceof TiffWriter) {
         ((TiffWriter) w).setBigTiff(bigtiff);
         ((TiffWriter) w).setCanDetectBigTiff(!nobigtiff);
+      }
+      else if (w instanceof DicomWriter) {
+        ((DicomWriter) w).setBigTiff(bigtiff);
+      }
+    }
+    if (writer instanceof IExtraMetadataWriter) {
+      ((IExtraMetadataWriter) writer).setExtraMetadata(extraMetadata);
+    }
+    else if (writer instanceof ImageWriter) {
+      IFormatWriter w = ((ImageWriter) writer).getWriter(out);
+      if (w instanceof IExtraMetadataWriter) {
+        ((IExtraMetadataWriter) w).setExtraMetadata(extraMetadata);
       }
     }
 
@@ -679,6 +747,15 @@ public final class ImageConverter {
 
         total += numImages;
 
+        if (precompressed) {
+          writer.setTileSizeX(reader.getOptimalTileWidth());
+          writer.setTileSizeY(reader.getOptimalTileHeight());
+        }
+        else if (saveTileWidth > 0 && saveTileHeight > 0) {
+          writer.setTileSizeX(saveTileWidth);
+          writer.setTileSizeY(saveTileHeight);
+        }
+
         int count = 0;
         for (int i=startPlane; i<endPlane; i++) {
           int[] coords = reader.getZCTCoords(i);
@@ -690,7 +767,13 @@ public final class ImageConverter {
           }
 
           String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
-          if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
+          String tileName = FormatTools.getTileFilename(0, 0, 0, outputName);
+
+          if (outputName.equals(tileName)) {
+            boolean ok = overwriteCheck(outputName, false);
+            if (!ok) {
+              return false;
+            }
             writer.setId(outputName);
             if (compression != null) writer.setCompression(compression);
           }
@@ -705,7 +788,12 @@ public final class ImageConverter {
             }
             if (saveTileWidth == 0 && saveTileHeight == 0) {
               // Using tile output name but not tiled reading
-              writer.setId(FormatTools.getTileFilename(0, 0, 0, outputName));
+
+              boolean ok = overwriteCheck(tileName, false);
+              if (!ok) {
+                return false;
+              }
+              writer.setId(tileName);
               if (compression != null) writer.setCompression(compression);
             }
           }
@@ -778,27 +866,37 @@ public final class ImageConverter {
     String currentFile)
     throws FormatException, IOException
   {
-    if (DataTools.safeMultiply64(width, height) >=
-      DataTools.safeMultiply64(4096, 4096) ||
-      saveTileWidth > 0 || saveTileHeight > 0)
-    {
+    if (doTileConversion(writer, currentFile)) {
       // this is a "big image" or an output tile size was set, so we will attempt
       // to convert it one tile at a time
 
-      if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
-        (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
-      {
+      if (isTiledWriter(writer, out)) {
         return convertTilePlane(writer, index, outputIndex, currentFile);
       }
     }
 
+    tryPrecompressed = precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
+
     byte[] buf = getTile(reader, writer.getResolution(), index,
       xCoordinate, yCoordinate, width, height);
+
+    // if we asked for precompressed tiles, but that wasn't possible,
+    // then log that decompression/recompression happened
+    // TODO: decide if an exception is better here?
+    if (precompressed && !tryPrecompressed) {
+      LOGGER.warn("Decompressed tile: series={}, resolution={}, x={}, y={}",
+        writer.getSeries(), writer.getResolution(), xCoordinate, yCoordinate);
+    }
 
     autoscalePlane(buf, index);
     applyLUT(writer);
     long m = System.currentTimeMillis();
-    writer.saveBytes(outputIndex, buf);
+    if (tryPrecompressed) {
+      writer.saveCompressedBytes(outputIndex, buf, 0, 0, reader.getSizeX(), reader.getSizeY());
+    }
+    else {
+      writer.saveBytes(outputIndex, buf);
+    }
     return m;
   }
 
@@ -825,6 +923,10 @@ public final class ImageConverter {
       h = saveTileHeight;
     }
 
+    IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
+    w = baseWriter.setTileSizeX(w);
+    h = baseWriter.setTileSizeY(h);
+
     if (firstTile) {
       LOGGER.info("Tile size = {} x {}", w, h);
       firstTile = false;
@@ -840,9 +942,14 @@ public final class ImageConverter {
       nYTiles++;
     }
 
-    IFD ifd = new IFD();
-    ifd.put(IFD.TILE_WIDTH, w);
-    ifd.put(IFD.TILE_LENGTH, h);
+    // only warn once if the whole resolution will need to
+    // be decompressed and recompressed
+    boolean canPrecompressResolution = precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
+    if (precompressed && !canPrecompressResolution) {
+      LOGGER.warn("Decompressing resolution: series={}, resolution={}",
+        writer.getSeries(), writer.getResolution());
+      tryPrecompressed = false;
+    }
 
     Long m = null;
     for (int y=0; y<nYTiles; y++) {
@@ -851,8 +958,20 @@ public final class ImageConverter {
         int tileY = yCoordinate + y * h;
         int tileWidth = x < nXTiles - 1 ? w : width - (w * x);
         int tileHeight = y < nYTiles - 1 ? h : height - (h * y);
+
+        tryPrecompressed = precompressed && canPrecompressResolution &&
+          FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution());
         byte[] buf = getTile(reader, writer.getResolution(),
           index, tileX, tileY, tileWidth, tileHeight);
+
+        // if we asked for precompressed tiles, but that wasn't possible,
+        // then log that decompression/recompression happened
+        // this is mainly expected for edge tiles, which might be smaller than expected
+        // TODO: decide if an exception is better here?
+        if (precompressed && canPrecompressResolution && !tryPrecompressed) {
+          LOGGER.warn("Decompressed tile: series={}, resolution={}, x={}, y={}",
+            writer.getSeries(), writer.getResolution(), x, y);
+        }
 
         String tileName =
           FormatTools.getTileFilename(x, y, y * nXTiles + x, currentFile);
@@ -874,6 +993,8 @@ public final class ImageConverter {
           }
 
           writer.setMetadataRetrieve(retrieve);
+
+          overwriteCheck(tileName, true);
           writer.setId(tileName);
           if (compression != null) writer.setCompression(compression);
 
@@ -885,11 +1006,11 @@ public final class ImageConverter {
 
           if (nTileRows > 1) {
             tileY = 0;
-            ifd.put(IFD.TILE_LENGTH, tileHeight);
+            tileHeight = baseWriter.setTileSizeY(tileHeight);
           }
           if (nTileCols > 1) {
             tileX = 0;
-            ifd.put(IFD.TILE_WIDTH, tileWidth);
+            tileWidth = baseWriter.setTileSizeX(tileWidth);
           }
         }
 
@@ -912,17 +1033,12 @@ public final class ImageConverter {
           outputX = 0;
           outputY = 0;
         }
-        
-        if (writer instanceof TiffWriter) {
-          ((TiffWriter) writer).saveBytes(outputIndex, buf,
-            ifd, outputX, outputY, tileWidth, tileHeight);
+
+        if (tryPrecompressed) {
+          writer.saveCompressedBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
         }
-        else if (writer instanceof ImageWriter) {
-          IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
-          if (baseWriter instanceof TiffWriter) {
-            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
-              outputX, outputY, tileWidth, tileHeight);
-          }
+        else {
+          writer.saveBytes(outputIndex, buf, outputX, outputY, tileWidth, tileHeight);
         }
       }
     }
@@ -984,7 +1100,7 @@ public final class ImageConverter {
   private void autoscalePlane(byte[] buf, int index)
     throws FormatException, IOException
   {
-    if (autoscale) {
+    if (autoscale && !tryPrecompressed) {
       Double min = null;
       Double max = null;
 
@@ -1074,7 +1190,16 @@ public final class ImageConverter {
   {
     if (resolution < reader.getResolutionCount()) {
       reader.setResolution(resolution);
+      int optimalWidth = reader.getOptimalTileWidth();
+      int optimalHeight = reader.getOptimalTileHeight();
+      if (tryPrecompressed) {
+        return reader.openCompressedBytes(no, x / optimalWidth, y / optimalHeight);
+      }
+      tryPrecompressed = false;
       return reader.openBytes(no, x, y, w, h);
+    }
+    if (tryPrecompressed) {
+      throw new UnsupportedOperationException("Cannot generate resolutions with precompressed tiles");
     }
     reader.setResolution(0);
     IImageScaler scaler = new SimpleImageScaler();
@@ -1086,6 +1211,60 @@ public final class ImageConverter {
       FormatTools.getBytesPerPixel(type), reader.isLittleEndian(),
       FormatTools.isFloatingPoint(type), reader.getRGBChannelCount(),
       reader.isInterleaved());
+  }
+
+  private boolean isTiledWriter(IFormatWriter writer, String outputFile)
+    throws FormatException
+  {
+    if (writer instanceof ImageWriter) {
+      return isTiledWriter(((ImageWriter) writer).getWriter(outputFile), outputFile);
+    }
+    return (writer instanceof TiffWriter) || (writer instanceof DicomWriter);
+  }
+
+  private boolean doTileConversion(IFormatWriter writer, String outputFile)
+    throws FormatException
+  {
+    if (writer instanceof DicomWriter ||
+      (writer instanceof ImageWriter && ((ImageWriter) writer).getWriter(outputFile) instanceof DicomWriter))
+    {
+      MetadataStore r = reader.getMetadataStore();
+      return !(r instanceof IPyramidStore) || ((IPyramidStore) r).getResolutionCount(reader.getSeries()) > 1;
+    }
+    return DataTools.safeMultiply64(width, height) >= DataTools.safeMultiply64(4096, 4096) ||
+      saveTileWidth > 0 || saveTileHeight > 0;
+  }
+
+  private boolean overwriteCheck(String path, boolean throwOnExist) throws IOException {
+    if (checkedPaths.containsKey(path)) {
+      return checkedPaths.get(path);
+    }
+    if (!new Location(path).exists()) {
+      checkedPaths.put(path, true);
+      return true;
+    }
+    if (overwrite == null) {
+      LOGGER.warn("Output file {} exists.", path);
+      LOGGER.warn("Do you want to overwrite it? ([y]/n)");
+      BufferedReader r = new BufferedReader(
+        new InputStreamReader(System.in, Constants.ENCODING));
+      String choice = r.readLine().trim().toLowerCase();
+      overwrite = !choice.startsWith("n");
+    }
+    if (!overwrite) {
+      String msg = "Exiting; next time, please specify an output file that does not exist.";
+      checkedPaths.put(path, false);
+      if (throwOnExist) {
+        throw new IOException(msg);
+      }
+      LOGGER.warn(msg);
+      return false;
+    }
+    else {
+      new Location(path).delete();
+    }
+    checkedPaths.put(path, true);
+    return true;
   }
 
   // -- Main method --

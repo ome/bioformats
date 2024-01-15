@@ -145,7 +145,7 @@ public class NAFReader extends FormatReader {
       String name = in.readCString();
 
       if (i == 0) {
-        in.skipBytes((int) (92 - in.getFilePointer() + pointer));
+        in.skipBytes(92 - in.getFilePointer() + pointer);
         while (true) {
           int check = in.readInt();
           if (check > in.getFilePointer()) {

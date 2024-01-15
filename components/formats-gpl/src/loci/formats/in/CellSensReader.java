@@ -42,6 +42,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -376,6 +377,8 @@ public class CellSensReader extends FormatReader {
   // -- Fields --
 
   private String[] usedFiles;
+  // non-pixels files that are included in the directory (e.g. "blobs")
+  private ArrayList<String> extraFiles = new ArrayList<String>();
   private HashMap<Integer, String> fileMap = new HashMap<Integer, String>();
 
   private TiffParser parser;
@@ -403,6 +406,7 @@ public class CellSensReader extends FormatReader {
   private int previousTag = 0;
 
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
+  private boolean[] bgr;
 
   private transient boolean expectETS = false;
   private transient int channelCount = 0;
@@ -451,7 +455,15 @@ public class CellSensReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     // all files contain pixels
-    return noPixels ? null : usedFiles;
+    if (noPixels) {
+      return extraFiles.toArray(new String[extraFiles.size()]);
+    }
+    String[] allFiles = new String[extraFiles.size() + usedFiles.length];
+    System.arraycopy(usedFiles, 0, allFiles, 0, usedFiles.length);
+    for (int i=0; i<extraFiles.size(); i++) {
+      allFiles[usedFiles.length + i] = extraFiles.get(i);
+    }
+    return allFiles;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
@@ -526,15 +538,26 @@ public class CellSensReader extends FormatReader {
       Region intersection = null;
 
       byte[] tileBuf = null;
-      int pixel =
-        getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+      int bpp = FormatTools.getBytesPerPixel(getPixelType());
+      int pixel = getRGBChannelCount() * bpp;
       int outputRowLen = w * pixel;
+
+      Pyramid pyramid = getCurrentPyramid();
 
       for (int row=0; row<tileRows; row++) {
         for (int col=0; col<tileCols; col++) {
           int width = tileX.get(getCoreIndex());
           int height = tileY.get(getCoreIndex());
           Region tile = new Region(col * width, row * height, width, height);
+
+          // the pixel data in the stored tiles may be larger than the defined image size
+          // the "tile origin" information indicates how to crop the pixel data
+          if (pyramid.tileOriginX != null && pyramid.tileOriginY != null) {
+            int resScale = (int) Math.pow(2, getResolutionIndex());
+            tile.x += (pyramid.tileOriginX / resScale);
+            tile.y += (pyramid.tileOriginY / resScale);
+          }
+
           if (!tile.intersects(image)) {
             continue;
           }
@@ -567,6 +590,10 @@ public class CellSensReader extends FormatReader {
         }
       }
 
+      if (bgr[getCurrentPyramidIndex()]) {
+        ImageTools.bgrToRgb(buf, isInterleaved(), bpp, getRGBChannelCount());
+      }
+
       return buf;
     }
     else {
@@ -591,6 +618,7 @@ public class CellSensReader extends FormatReader {
       parser = null;
       ifds = null;
       usedFiles = null;
+      extraFiles.clear();
       fileMap.clear();
       tileOffsets.clear();
       jpeg = false;
@@ -611,10 +639,19 @@ public class CellSensReader extends FormatReader {
       pyramids.clear();
       channelCount = 0;
       zCount = 0;
+      bgr = null;
     }
   }
 
   // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(FAIL_ON_MISSING_KEY);
+    return optionsList;
+  }
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
@@ -665,8 +702,11 @@ public class CellSensReader extends FormatReader {
         if (pixelsFiles != null) {
           Arrays.sort(pixelsFiles);
           for (String pixelsFile : pixelsFiles) {
-            if (checkSuffix(pixelsFile, "ets")) {
+            if (checkSuffix(pixelsFile, "ets") && pixelsFile.startsWith("frame_")) {
               files.add(new Location(stackDir, pixelsFile).getAbsolutePath());
+            }
+            else {
+              extraFiles.add(new Location(stackDir, pixelsFile).getAbsolutePath());
             }
           }
         }
@@ -722,6 +762,7 @@ public class CellSensReader extends FormatReader {
 
     IFDList exifs = parser.getExifIFDs();
 
+    bgr = new boolean[seriesCount];
     int index = 0;
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
@@ -891,6 +932,9 @@ public class CellSensReader extends FormatReader {
               if (c < pyramid.exposureTimes.size()) {
                 exp = pyramid.exposureTimes.get(c);
               }
+              else if (c < pyramid.otherExposureTimes.size()) {
+                exp = pyramid.otherExposureTimes.get(c);
+              }
               if (exp != null) {
                 store.setPlaneExposureTime(
                   FormatTools.createTime(exp / 1000000.0, UNITS.SECOND), ii, nextPlane);
@@ -909,6 +953,7 @@ public class CellSensReader extends FormatReader {
                   FormatTools.createLength(pyramid.zStart + (z * pyramid.zIncrement),
                   UNITS.MICROMETER), ii, nextPlane);
               }
+              store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pyramid.zIncrement), ii);
             }
           }
         }
@@ -962,6 +1007,9 @@ public class CellSensReader extends FormatReader {
 
   // -- Helper methods --
 
+  /**
+   * Get the expected decompressed size of a single tile, in bytes.
+   */
   private int getTileSize() {
     int channels = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -969,18 +1017,12 @@ public class CellSensReader extends FormatReader {
     return bpp * channels * tileX.get(index) * tileY.get(index);
   }
 
-  private byte[] decodeTile(int no, int row, int col)
-    throws FormatException, IOException
-  {
-    if (tileMap.get(getCoreIndex()) == null) {
-      return new byte[getTileSize()];
-    }
-
-    int[] zct = getZCTCoords(no);
-    TileCoordinate t = new TileCoordinate(nDimensions.get(getCoreIndex()));
-    t.coordinate[0] = col;
-    t.coordinate[1] = row;
-
+  /**
+   * Get an index to the pyramid which contains the
+   * current series/resolution. Accounts for flattened resolutions
+   * as needed.
+   */
+  private int getCurrentPyramidIndex() {
     int resIndex = getResolution();
     int pyramidIndex = getSeries();
     if (hasFlattenedResolutions()) {
@@ -998,8 +1040,55 @@ public class CellSensReader extends FormatReader {
         }
       }
     }
+    return pyramidIndex;
+  }
 
-    Pyramid pyramid = pyramids.get(pyramidIndex);
+  /**
+   * Get an object representing the pyramid which contains the
+   * current series/resolution. Accounts for flattened resolutions
+   * as needed.
+   */
+  private Pyramid getCurrentPyramid() {
+    return pyramids.get(getCurrentPyramidIndex());
+  }
+
+  /**
+   * Get the current pyramid resolution, accounting for flattened resolutions
+   * as needed.
+   */
+  private int getResolutionIndex() {
+    int resIndex = getResolution();
+    if (hasFlattenedResolutions()) {
+      int index = 0;
+      for (int i=0; i<core.size(); ) {
+        if (index + core.get(i).resolutionCount <= getSeries()) {
+          index += core.get(i).resolutionCount;
+          i += core.get(i).resolutionCount;
+        }
+        else {
+          resIndex = getSeries() - index;
+          break;
+        }
+      }
+    }
+    return resIndex;
+  }
+
+  private byte[] decodeTile(int no, int row, int col)
+    throws FormatException, IOException
+  {
+    if (tileMap.get(getCoreIndex()) == null) {
+      return new byte[getTileSize()];
+    }
+
+    int[] zct = getZCTCoords(no);
+    TileCoordinate t = new TileCoordinate(nDimensions.get(getCoreIndex()));
+    t.coordinate[0] = col;
+    t.coordinate[1] = row;
+
+    int resIndex = getResolutionIndex();
+    Pyramid pyramid = getCurrentPyramid();
+
     for (String dim : pyramid.dimensionOrdering.keySet()) {
       int index = pyramid.dimensionOrdering.get(dim) + 2;
 
@@ -1048,30 +1137,33 @@ public class CellSensReader extends FormatReader {
       if (tileSize == 0) {
         tileSize = tileX.get(getCoreIndex()) * tileY.get(getCoreIndex()) * 10;
       }
-      options.maxBytes = (int) (offset + tileSize);
 
-      
       long end = index < tileOffsets.get(getCoreIndex()).length - 1 ?
         tileOffsets.get(getCoreIndex())[index + 1] : ets.length();
 
+      int compression = compressionType.get(getCoreIndex());
+      int compressedBufSize = compression == PNG || compression == BMP ?
+        (int) (end - offset) : tileSize;
+      byte[] compressedBuf = new byte[compressedBufSize];
+      ets.read(compressedBuf);
+
       String file = null;
 
-      switch (compressionType.get(getCoreIndex())) {
+      switch (compression) {
         case RAW:
-          buf = new byte[tileSize];
-          ets.read(buf);
+          buf = compressedBuf;
           break;
         case JPEG:
           Codec codec = new JPEGCodec();
-          buf = codec.decompress(ets, options);
+          buf = codec.decompress(compressedBuf, options);
           break;
         case JPEG_2000:
           codec = new JPEG2000Codec();
-          buf = codec.decompress(ets, options);
+          buf = codec.decompress(compressedBuf, options);
           break;
         case JPEG_LOSSLESS:
           codec = new LosslessJPEGCodec();
-          buf = codec.decompress(ets, options);
+          buf = codec.decompress(compressedBuf, options);
           break;
         case PNG:
           file = "tile.png";
@@ -1082,9 +1174,7 @@ public class CellSensReader extends FormatReader {
             reader = new BMPReader();
           }
 
-          byte[] b = new byte[(int) (end - offset)];
-          ets.read(b);
-          Location.mapFile(file, new ByteArrayHandle(b));
+          Location.mapFile(file, new ByteArrayHandle(compressedBuf));
           reader.setId(file);
           buf = reader.openBytes(0);
           Location.mapFile(file, null);
@@ -1150,7 +1240,8 @@ public class CellSensReader extends FormatReader {
     backgroundColor.put(getCoreIndex(), color);
 
     etsFile.skipBytes(4 * 10 - color.length); // background color
-    etsFile.skipBytes(4); // component order
+    int componentOrder = etsFile.readInt();
+    bgr[s] = componentOrder == 1 && compressionType.get(compressionType.size() - 1) == RAW;
     boolean usePyramid = etsFile.readInt() != 0;
 
     ms.rgb = ms.sizeC > 1;
@@ -1647,6 +1738,12 @@ public class CellSensReader extends FormatReader {
                     pyramid.height = intValues[3];
                   }
                 }
+                else if (tag == TILE_ORIGIN) {
+                  if (pyramid != null) {
+                    pyramid.tileOriginX = intValues[0];
+                    pyramid.tileOriginY = intValues[1];
+                  }
+                }
                 break;
               case COMPLEX:
               case DOUBLE_2:
@@ -1728,6 +1825,7 @@ public class CellSensReader extends FormatReader {
               }
               else if (tag == EXPOSURE_TIME) {
                 pyramid.defaultExposureTime = new Long(value);
+                pyramid.otherExposureTimes.add(pyramid.defaultExposureTime);
               }
               else if (tag == CREATION_TIME && pyramid.acquisitionTime == null) {
                 pyramid.acquisitionTime = new Long(value);
@@ -1884,7 +1982,7 @@ public class CellSensReader extends FormatReader {
         }
 
         if (nextField == 0 || tag == -494804095) {
-          if (fp + dataSize < vsi.length() && fp + dataSize >= 0) {
+          if (fp + dataSize + 32 < vsi.length() && fp + dataSize >= 0) {
             vsi.seek(fp + dataSize + 32);
           }
           return;
@@ -2463,6 +2561,8 @@ public class CellSensReader extends FormatReader {
 
     public Integer width;
     public Integer height;
+    public Integer tileOriginX;
+    public Integer tileOriginY;
     public Double originX;
     public Double originY;
     public Double physicalSizeX;
@@ -2485,6 +2585,7 @@ public class CellSensReader extends FormatReader {
     public ArrayList<String> channelNames = new ArrayList<String>();
     public ArrayList<Double> channelWavelengths = new ArrayList<Double>();
     public ArrayList<Long> exposureTimes = new ArrayList<Long>();
+    public transient ArrayList<Long> otherExposureTimes = new ArrayList<Long>();
     public Long defaultExposureTime;
 
     public ArrayList<String> objectiveNames = new ArrayList<String>();

@@ -261,7 +261,6 @@ public class FileWriteSPW {
       PositiveInteger pwidth = new PositiveInteger(width);
       PositiveInteger pheight = new PositiveInteger(height);
         
-      char rowChar = 'A';
       for (int row = 0; row  < rows; row++) {
         for (int column = 0; column < cols; column++) {
           
@@ -276,7 +275,8 @@ public class FileWriteSPW {
           for(int fov = 0; fov < nFOV ; fov++)  {
             
             // Create Image NB numberng in the Name goes from 1->n not 0-> n-1
-            String imageName = rowChar + ":" + Integer.toString(column + 1) + ":FOV:" + Integer.toString(fov + 1);
+            String imageName = FormatTools.getWellRowName(row) + ":" +
+              Integer.toString(column + 1) + ":FOV:" + Integer.toString(fov + 1);
             String imageID = MetadataTools.createLSID("Image", well, fov);
             meta.setImageID(imageID, series);
             meta.setImageName(imageName, series);
@@ -333,7 +333,6 @@ public class FileWriteSPW {
           }  //end of samples  
           well++;
         }
-        rowChar++;
       }
       
       expectedImages = new int[series];

@@ -3,7 +3,7 @@
 rem showinf.bat: a batch file for displaying information about a given
 rem              image file, while displaying it in the image viewer
 
-rem Required JARs: loci_tools.jar or bioformats_package.jar
+rem Required JARs: bioformats_package.jar
 
 setlocal
 set BF_DIR=%~dp0

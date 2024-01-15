@@ -88,7 +88,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   private long sos;
   private long imageDimensions;
 
-  private int tileDim;
+  private int tileWidth;
+  private int tileHeight;
   private int xTiles;
   private int yTiles;
 
@@ -104,8 +105,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     logger = Logger.getLogger(NATIVE_LIB_CLASS);
     logger.setLevel(Level.SEVERE);
     if (!libraryLoaded) {
-      NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
-      libraryLoaded = true;
+      libraryLoaded = NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
     }
   }
 
@@ -205,15 +205,16 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       }
     }
 
-    tileDim = restartInterval * 8;
+    tileWidth = restartInterval * 8;
+    tileHeight = (int) Math.min(tileWidth, 512);
 
-    xTiles = imageWidth / tileDim;
-    yTiles = imageHeight / tileDim;
+    xTiles = imageWidth / tileWidth;
+    yTiles = imageHeight / tileHeight;
 
-    if (xTiles * tileDim != imageWidth) {
+    if (xTiles * tileWidth != imageWidth) {
       xTiles++;
     }
-    if (yTiles * tileDim != imageHeight) {
+    if (yTiles * tileHeight != imageHeight) {
       yTiles++;
     }
 
@@ -239,11 +240,11 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     Region tileBoundary = new Region(0, 0, 0, 0);
     byte[] tile = null;
     for (int row=0; row<yTiles; row++) {
-      tileBoundary.height = row < yTiles - 1 ? tileDim : imageHeight - (tileDim*row);
-      tileBoundary.y = row * tileDim;
+      tileBoundary.height = row < yTiles - 1 ? tileHeight : imageHeight - (tileHeight*row);
+      tileBoundary.y = row * tileHeight;
       for (int col=0; col<xTiles; col++) {
-        tileBoundary.x = col * tileDim;
-        tileBoundary.width = col < xTiles - 1 ? tileDim : imageWidth - (tileDim*col);
+        tileBoundary.x = col * tileWidth;
+        tileBoundary.width = col < xTiles - 1 ? tileWidth : imageWidth - (tileWidth*col);
         if (tileBoundary.intersects(image)) {
           intersection = image.intersection(tileBoundary);
           tile = getTile(col, row);
@@ -260,7 +261,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
           for (int trow=0; trow<intersection.height; trow++) {
             int realRow = trow + intersection.y - tileBoundary.y;
             int inputOffset =
-              3 * (realRow * tileDim + intersectionX);
+              3 * (realRow * tileWidth + intersectionX);
             System.arraycopy(tile, inputOffset, buf, outputOffset, rowLen);
             outputOffset += outputRowLen;
           }
@@ -287,17 +288,22 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
     long dataLength = header.length + 2;
 
-    int start = tileX + (tileY * xTiles * restartInterval);
-    for (int row=0; row<restartInterval; row++) {
+    int mult = tileHeight / 8; // was restartInterval
+    int start = tileX + (tileY * xTiles * mult);
+    for (int row=0; row<tileHeight/8; row++) {
       int end = start + 1;
 
+      long startOffset = restartMarkers.get(start);
+      long endOffset = in.length();
       if (end < restartMarkers.size()) {
-        long startOffset = restartMarkers.get(start);
-        long endOffset = restartMarkers.get(end);
-
-        dataLength += (endOffset - startOffset);
+        endOffset = restartMarkers.get(end);
       }
+
+      dataLength += (endOffset - startOffset);
       start += xTiles;
+      if (start >= restartMarkers.size()) {
+        break;
+      }
     }
 
     byte[] data = new byte[(int) dataLength];
@@ -306,22 +312,29 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     System.arraycopy(header, 0, data, offset, header.length);
     offset += header.length;
 
-    start = tileX + (tileY * xTiles * restartInterval);
-    for (int row=0; row<restartInterval; row++) {
+    start = tileX + (tileY * xTiles * mult);
+    for (int row=0; row<tileHeight/8; row++) {
       int end = start + 1;
 
+      long endOffset = in.length();
+
       if (end < restartMarkers.size()) {
-        long startOffset = restartMarkers.get(start);
-        long endOffset = restartMarkers.get(end);
-
-        in.seek(startOffset);
-        in.read(data, offset, (int) (endOffset - startOffset - 2));
-        offset += (int) (endOffset - startOffset - 2);
-
-        DataTools.unpackBytes(0xffd0 + (row % 8), data, offset, 2, false);
-        offset += 2;
+        endOffset = restartMarkers.get(end);
       }
+      long startOffset = restartMarkers.get(start);
+
+      in.seek(startOffset);
+      int toRead = (int) (endOffset - startOffset - 2);
+      in.read(data, offset, toRead);
+      offset += toRead;
+
+      DataTools.unpackBytes(0xffd0 + (row % 8), data, offset, 2, false);
+      offset += 2;
       start += xTiles;
+
+      if (start >= restartMarkers.size()) {
+        break;
+      }
     }
 
     DataTools.unpackBytes(EOI, data, offset, 2, false);
@@ -333,8 +346,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       int pixelSize = TJ.getPixelSize(pixelType);
 
       TJDecompressor decoder = new TJDecompressor(data);
-      byte[] decompressed = decoder.decompress(tileDim, tileDim * pixelSize,
-        tileDim, pixelType, pixelType);
+      byte[] decompressed = decoder.decompress(tileWidth, tileWidth * pixelSize,
+        tileHeight, pixelType, pixelType);
       data = null;
       decoder.close();
       return decompressed;
@@ -360,10 +373,16 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     restartInterval = 1;
     sos = 0;
     imageDimensions = 0;
-    tileDim = 0;
+    tileWidth = 0;
+    tileHeight = 0;
     xTiles = 0;
     yTiles = 0;
     header = null;
+  }
+
+  @Override
+  public boolean isLibraryLoaded() {
+    return libraryLoaded;
   }
 
   // -- Helper methods --
@@ -375,8 +394,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     in.read(header);
 
     int index = (int) (imageDimensions - offset);
-    DataTools.unpackBytes(tileDim, header, index, 2, false);
-    DataTools.unpackBytes(tileDim, header, index + 2, 2, false);
+    DataTools.unpackBytes(tileHeight, header, index, 2, false);
+    DataTools.unpackBytes(tileWidth, header, index + 2, 2, false);
 
     return header;
   }

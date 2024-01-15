@@ -39,6 +39,7 @@ import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.formats.AxisGuesser;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.FileStitcher;
@@ -229,6 +230,22 @@ public class FilePatternReader extends WrappedReader {
     helper.setCanChangePattern(false);
     helper.setId(pattern);
     core = helper.getCoreMetadataList();
+
+    if (getEffectiveSizeC() > 1) {
+      MetadataStore store = makeFilterMetadata();
+      String[][] elements = helper.getFilePattern().getElements();
+      int[] axisTypes = helper.getAxisTypes();
+      int nextChannel = 0;
+      for (int i=0; i<axisTypes.length; i++) {
+        if (axisTypes[i] == AxisGuesser.C_AXIS) {
+          for (int c=0; c<elements[i].length; c++) {
+            if (nextChannel < getEffectiveSizeC()) {
+              store.setChannelName(elements[i][c], 0, nextChannel++);
+            }
+          }
+        }
+      }
+    }
   }
 
 }

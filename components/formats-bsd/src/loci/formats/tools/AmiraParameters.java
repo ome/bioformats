@@ -40,6 +40,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
@@ -63,6 +66,8 @@ public class AmiraParameters {
 
   protected int column, row;
   protected char c;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AmiraParameters.class);
 
   public AmiraParameters(String path) throws FormatException {
     readFile(path);
@@ -245,7 +250,7 @@ public class AmiraParameters {
 
   protected String readKey() throws IOException {
     StringBuilder result = new StringBuilder();
-    while (c >= '0' || c == '-') {
+    while (c >= '0' || c == '-' || c == '&') {
       result.append(c);
       readByte();
     }
@@ -380,7 +385,11 @@ public class AmiraParameters {
       }
 
       String key = readKey();
-      if (key.equals("")) syntaxError("Invalid key");
+      if (key.equals("")) {
+        LOGGER.warn("Syntax warning:" + row + ":" + column + ": " + "Invalid key");
+        skipComment();
+        continue;
+      }
 
       skipWhiteSpace();
       Object value;

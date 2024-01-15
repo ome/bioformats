@@ -147,6 +147,7 @@ public class TileJPEGReader extends FormatReader {
       service = null;
       throw new IOException("Could not initialize JPEG service", se);
     }
+    if (!service.isLibraryLoaded()) throw new IOException("JPEG service failed to load Turbo JPEG library");
   }
 
 }

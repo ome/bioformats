@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -121,7 +122,13 @@ public class HitachiReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = MAGIC.length();
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return (stream.readString(blockLen)).indexOf(MAGIC) >= 0;
+    if ((stream.readString(blockLen)).indexOf(MAGIC) >= 0) {
+      return true;
+    }
+    stream.seek(stream.getFilePointer() - blockLen);
+    stream.setEncoding("UTF-16");
+    String check = stream.readString((blockLen + 1) * 2);
+    return check.indexOf(MAGIC) >= 0;
   }
 
   /**
@@ -192,7 +199,20 @@ public class HitachiReader extends FormatReader {
 
     super.initFile(id);
 
-    String data = DataTools.readFile(id);
+    String data = null;
+    try (RandomAccessInputStream in = new RandomAccessInputStream(id)) {
+      long idLen = in.length();
+      if (idLen > Integer.MAX_VALUE) {
+        throw new IOException("File too large");
+      }
+      int len = (int) idLen;
+      byte[] b = new byte[len];
+      in.readFully(b);
+      data = new String(b, Constants.ENCODING);
+      if (data.indexOf(MAGIC) < 0) {
+        data = new String(b, "UTF-16");
+      }
+    }
 
     IniParser parser = new IniParser();
     parser.setBackslashContinuesLine(false);
@@ -215,8 +235,36 @@ public class HitachiReader extends FormatReader {
     String date = image.get("Date");
     String time = image.get("Time");
 
-    Location parent = new Location(id).getAbsoluteFile().getParentFile();
-    pixelsFile = new Location(parent, pixelsFile).getAbsolutePath();
+    Location baseFile = new Location(id).getAbsoluteFile();
+    Location parent = baseFile.getParentFile();
+    Location pixels = new Location(parent, pixelsFile);
+    if (pixels.exists()) {
+      pixelsFile = pixels.getAbsolutePath();
+    }
+    else {
+      LOGGER.warn("Stored file name {} not found, attempting to find pixels file", pixelsFile);
+
+      String base = baseFile.getAbsolutePath();
+      if (base.indexOf('.') >= 0) {
+        base = base.substring(0, base.lastIndexOf("."));
+      }
+
+      Location bmp = new Location(base + ".bmp");
+      Location jpg = new Location(base + ".jpg");
+      Location tif = new Location(base + ".tif");
+      if (tif.exists()) {
+        pixelsFile = tif.getAbsolutePath();
+      }
+      else if (jpg.exists()) {
+        pixelsFile = jpg.getAbsolutePath();
+      }
+      else if (bmp.exists()) {
+        pixelsFile = bmp.getAbsolutePath();
+      }
+      else {
+        throw new FormatException("Could not find pixels file");
+      }
+    }
 
     ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
     Class<? extends IFormatReader>[] classArray = classes.getClasses();
@@ -268,8 +316,8 @@ public class HitachiReader extends FormatReader {
     final Length stagePosYl = new Length(stagePosYn, UNITS.REFERENCEFRAME);
     final Length stagePosZl = new Length(stagePosZn, UNITS.REFERENCEFRAME);
 
-    Length sizeX = FormatTools.getPhysicalSizeX(pixelSize);
-    Length sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+    Length sizeX = FormatTools.getPhysicalSizeX(pixelSize, UNITS.NANOMETER);
+    Length sizeY = FormatTools.getPhysicalSizeY(pixelSize, UNITS.NANOMETER);
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }

@@ -44,6 +44,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.DynamicMetadataOptions;
@@ -107,6 +109,11 @@ public class ImageReader implements IFormatReader {
 
   private boolean allowOpen = true;
 
+  private boolean isOmero(String id) {
+    return id != null && id.toLowerCase().startsWith("omero:") &&
+    id.indexOf("\n") > 0;
+  }
+
   // -- Constructors --
 
   /**
@@ -166,10 +173,9 @@ public class ImageReader implements IFormatReader {
     id = id.substring(0, id.length() - 1);
    }
    boolean fake = id != null && id.toLowerCase().endsWith(".fake");
-   boolean omero = id != null && id.toLowerCase().startsWith("omero:") &&
-    id.indexOf("\n") > 0;
+   boolean omero = isOmero(id);
 
-   // blacklist temporary files that are being copied e.g. by WinSCP
+   // block temporary files that are being copied e.g. by WinSCP
    boolean invalid = id != null && id.toLowerCase().endsWith(".filepart");
 
    // NB: Check that we can generate a valid handle for the ID;
@@ -610,6 +616,20 @@ public class ImageReader implements IFormatReader {
     return getReader(id).fileGroupOption(id);
   }
 
+  /* @see IFormatReader#setFillColor(Byte) */
+  @Override
+  public void setFillColor(Byte fill) {
+    for (IFormatReader r : readers) {
+      r.setFillColor(fill);
+    }
+  }
+
+  /* @see IFormatReader#getFillColor() */
+  @Override
+  public Byte getFillColor() {
+    return getReader().getFillColor();
+  }
+
   /* @see IFormatReader#isMetadataComplete() */
   @Override
   public boolean isMetadataComplete() {
@@ -838,8 +858,10 @@ public class ImageReader implements IFormatReader {
   @Override
   public void setId(String id) throws FormatException, IOException {
     IFormatReader currentReader = getReader(id);
-    LOGGER.info("{} initializing {}",
+    if (!isOmero(id)) {
+      LOGGER.info("{} initializing {}",
       currentReader.getClass().getSimpleName(), id);
+    }
     currentReader.setId(id);
   }
 
@@ -852,6 +874,38 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#close() */
   @Override
   public void close() throws IOException { close(false); }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    return getReader().getTileRows(no);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    return getReader().getTileColumns(no);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    return getReader().openCompressedBytes(no, x, y);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    return getReader().openCompressedBytes(no, buf, x, y);
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    return getReader().getTileCodec(no);
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    return getReader().getTileCodecOptions(no, x, y);
+  }
 
   private boolean isThisType(IFormatReader reader, String name, boolean allowOpen) {
     try {

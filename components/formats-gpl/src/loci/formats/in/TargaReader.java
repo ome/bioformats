@@ -95,8 +95,8 @@ public class TargaReader extends FormatReader {
     while (bpp % 8 != 0) bpp++;
     bpp /= 8;
 
-    int rowSkip = orientation < 2 ? (getSizeY() - h - y) : y;
-    int colSkip = (orientation % 2) == 1 ? (getSizeX() - w - x) : x;
+    long rowSkip = orientation < 2 ? (getSizeY() - h - y) : y;
+    long colSkip = (orientation % 2) == 1 ? (getSizeX() - w - x) : x;
 
     try {
       s.skipBytes(rowSkip * getSizeX() * bpp);

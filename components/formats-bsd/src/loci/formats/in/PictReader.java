@@ -47,7 +47,6 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.gui.AWTImageTools;
-import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -99,10 +98,6 @@ public class PictReader extends FormatReader {
   /** Color lookup table for palette color images. */
   protected byte[][] lookup;
 
-  /** Helper reader in case this one fails. */
-  protected LegacyQTTools qtTools = new LegacyQTTools();
-
-  private boolean legacy = false;
   private Vector<Long> jpegOffsets = new Vector<Long>();
 
   // -- Constructor --
@@ -111,13 +106,6 @@ public class PictReader extends FormatReader {
   public PictReader() {
     super("PICT", new String[] {"pict", "pct"});
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
-  }
-
-  // -- PictReader API methods --
-
-  /** Control whether or not legacy reader (QT Java) is used. */
-  public void setLegacy(boolean legacy) {
-    this.legacy = legacy;
   }
 
   // -- IFormatReader API methods --
@@ -160,20 +148,6 @@ public class PictReader extends FormatReader {
         readPlane(s, x, y, w, h, buf);
       }
 
-      return buf;
-    }
-
-    if (legacy || strips.size() == 0) {
-      in.seek(512);
-      byte[] pix = new byte[(int) (in.length() - in.getFilePointer())];
-      in.read(pix);
-      byte[][] b = AWTImageTools.getBytes(
-        AWTImageTools.makeBuffered(qtTools.pictToImage(pix)));
-      pix = null;
-      for (int i=0; i<b.length; i++) {
-        System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
-      }
-      b = null;
       return buf;
     }
 
@@ -243,7 +217,6 @@ public class PictReader extends FormatReader {
       strips = null;
       versionOne = false;
       lookup = null;
-      legacy = false;
       jpegOffsets.clear();
     }
   }

@@ -2,7 +2,7 @@
 
 rem domainlist.bat: a batch file for listing supported domains in Bio-Formats
 
-rem Required JARs: loci_tools.jar or bioformats_package.jar
+rem Required JARs: bioformats_package.jar
 
 setlocal
 set BF_DIR=%~dp0

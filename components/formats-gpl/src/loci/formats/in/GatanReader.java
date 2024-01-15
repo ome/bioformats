@@ -85,6 +85,9 @@ public class GatanReader extends FormatReader {
   private static final int ELLIPSE = 6;
   private static final int TEXT = 13;
 
+  public static final String SPLIT_MONTAGE = "gatan.split_montage";
+  public static final boolean SPLIT_MONTAGE_DEFAULT = true;
+
   // -- Fields --
 
   /** Offset to pixel data. */
@@ -180,6 +183,14 @@ public class GatanReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(SPLIT_MONTAGE);
+    return optionsList;
+  }
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -253,12 +264,14 @@ public class GatanReader extends FormatReader {
     m.indexed = false;
     m.falseColor = false;
 
-    if (foundMontage && stageX.size() > 1) {
-      m.sizeZ /= stageX.size();
-      m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+    if (foundMontage && splitMontage() && stageX.size() > 1) {
+      if (m.sizeZ > 1) {
+        m.sizeZ /= stageX.size();
+        m.imageCount = getSizeZ() * getSizeC() * getSizeT();
 
-      for (int i=1; i<stageX.size(); i++) {
-        core.add(new CoreMetadata(core.get(0)));
+        for (int i=1; i<stageX.size(); i++) {
+          core.add(new CoreMetadata(core.get(0)));
+        }
       }
     }
 
@@ -334,8 +347,15 @@ public class GatanReader extends FormatReader {
       for (String token : scopeInfo) {
         token = token.trim();
         if (token.startsWith("Mode")) {
-          token = token.substring(token.indexOf(' ')).trim();
-          mode = token.substring(0, token.indexOf(' ')).trim();
+          if (token.indexOf(' ') > 0) {
+            token = token.substring(token.indexOf(' ')).trim();
+          }
+          if (token.indexOf(' ') > 0) {
+            mode = token.substring(0, token.indexOf(' ')).trim();
+          }
+          else {
+            mode = token;
+          }
           if (mode.equals("TEM")) mode = "Other";
         }
       }
@@ -438,6 +458,15 @@ public class GatanReader extends FormatReader {
         }
       }
     }
+  }
+
+  public boolean splitMontage() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+          SPLIT_MONTAGE, SPLIT_MONTAGE_DEFAULT);
+    }
+    return SPLIT_MONTAGE_DEFAULT;
   }
 
   // -- Helper methods --
@@ -616,6 +645,7 @@ public class GatanReader extends FormatReader {
 
       NumberFormat f = NumberFormat.getInstance(Locale.ENGLISH);
       if (value != null) {
+        value = value.replaceAll("\0", "");
         addGlobalMeta(labelString, value);
 
         if (parent != null &&

@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -228,13 +229,25 @@ public class DeltavisionReader extends FormatReader {
 
     int[] coords = getZCTCoords(no);
     long offset = getPlaneByteOffset(coords[0], coords[1], coords[2]);
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
     if (offset < in.length()) {
       in.seek(offset);
-      readPlane(in, x, getSizeY() - h - y, w, h, buf);
+      boolean wholePlane = in.length() - in.getFilePointer() >= getSizeX() * getSizeY() * bpp;
+      try {
+        readPlane(in, x, getSizeY() - h - y, w, h, buf);
+      }
+      catch (IllegalArgumentException|IOException e) {
+        if (wholePlane) {
+          throw e;
+        }
+        else {
+          LOGGER.warn("Could not finish reading truncated plane", e);
+        }
+      }
 
       // reverse the order of the rows
       // planes are stored with the origin in the lower-left corner
-      byte[] tmp = new byte[w * FormatTools.getBytesPerPixel(getPixelType())];
+      byte[] tmp = new byte[w * bpp];
       for (int row=0; row<h/2; row++) {
         int src = row * tmp.length;
         int dest = (h - row - 1) * tmp.length;
@@ -351,12 +364,23 @@ public class DeltavisionReader extends FormatReader {
     if (fileType == NEW_TYPE) {
       in.seek(852);
       int secondaryT = in.readInt();
-      if (secondaryT > 0 && (rawSizeT <= 0 || rawSizeT == 65535)) {
-        rawSizeT = secondaryT;
-      }
       in.seek(880);
       numPanels = in.readInt();
       in.seek(182);
+
+      // if unreasonable data found, assume that an old header
+      // version is used in spite of the newer file type ID
+      // maybe happens when files are processed in other software?
+      if (numPanels < 0 || numPanels > (in.length() / (sizeX * sizeY))) {
+        fileType = 0;
+        numPanels = 0;
+      }
+      else {
+        // if the panel data looks reasonable, then the T value can be trusted
+        if (secondaryT > 0 && (rawSizeT <= 0 || rawSizeT == 65535)) {
+          rawSizeT = secondaryT;
+        }
+      }
     }
     int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
 
@@ -476,18 +500,18 @@ public class DeltavisionReader extends FormatReader {
       extHdrFields[i] = hdr;
 
       if (!uniqueTileX.contains(hdr.stageXCoord) &&
-              hdr.stageXCoord.value().floatValue() != 0) {
+          Math.abs(hdr.stageXCoord.value().floatValue()) > Constants.EPSILON) {
         uniqueTileX.add(hdr.stageXCoord);
       }
-      else if (hdr.stageXCoord.value().floatValue() == 0) {
+      else if (Math.abs(hdr.stageXCoord.value().floatValue()) <= Constants.EPSILON) {
         hasZeroX = true;
       }
 
       if (!uniqueTileY.contains(hdr.stageYCoord) &&
-              hdr.stageYCoord.value().floatValue() != 0) {
+          Math.abs(hdr.stageYCoord.value().floatValue()) > Constants.EPSILON) {
         uniqueTileY.add(hdr.stageYCoord);
       }
-      else if (hdr.stageYCoord.value().floatValue() == 0) {
+      else if (Math.abs(hdr.stageYCoord.value().floatValue()) <= Constants.EPSILON) {
         hasZeroY = true;
       }
     }
@@ -885,6 +909,19 @@ public class DeltavisionReader extends FormatReader {
       else {
         xTiles = 1;
         yTiles = 1;
+      }
+    }
+    else if (xTiles * yTiles < getSeriesCount() && (backwardsStageX || backwardsStageY)) {
+      if (backwardsStageX && yTiles == 1) {
+        xTiles = getSeriesCount();
+      }
+      else if (backwardsStageY && xTiles == 1) {
+        yTiles = getSeriesCount();
+      }
+      else {
+        LOGGER.warn("Could not determine stage position ordering");
+        backwardsStageX = false;
+        backwardsStageY = false;
       }
     }
 

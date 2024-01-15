@@ -88,5 +88,14 @@ public class Upgrade200809Test {
     // OME:Channel, Color now use new colour representation and is required
     assertEquals(-1, metadata.getChannelColor(0, 0).getValue().intValue());
   }
+  
+  @Test
+  public void testCustomAttributes() throws ServiceException {
+    assertNotNull(ome.getStructuredAnnotations());
+    assertEquals(4, metadata.getXMLAnnotationCount());
+    String expectedAnnotation = "<OriginalMetadata ID=\"OriginalMetadata:7\" "
+        + "Name=\"Custom Metadata 7\" Value=\"7\"/>";
+    assertEquals(expectedAnnotation, metadata.getXMLAnnotationValue(2));
+  }
 
 }

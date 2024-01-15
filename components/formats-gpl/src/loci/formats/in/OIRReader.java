@@ -50,6 +50,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -85,6 +86,11 @@ public class OIRReader extends FormatReader {
 
   private int minZ = Integer.MAX_VALUE;
   private int minT = Integer.MAX_VALUE;
+
+  private transient Double zStart;
+  private transient Double zStep;
+  private transient Double tStep;
+  private transient HashMap<Integer, Double> timestampAdjustments = new HashMap<Integer, Double>();
 
   // -- Constructor --
 
@@ -194,7 +200,7 @@ public class OIRReader extends FormatReader {
 
     if (startIndex < 0) {
       LOGGER.warn("No pixel blocks for plane #{}", no);
-      Arrays.fill(buf, (byte) 0);
+      Arrays.fill(buf, getFillColor());
       return buf;
     }
 
@@ -273,6 +279,9 @@ public class OIRReader extends FormatReader {
       lastChannel = -1;
       minZ = Integer.MAX_VALUE;
       minT = Integer.MAX_VALUE;
+      zStart = null;
+      zStep = null;
+      tStep = null;
     }
   }
 
@@ -499,7 +508,8 @@ public class OIRReader extends FormatReader {
     // populate MetadataStore
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this,
+      (zStart != null && zStep != null) || tStep != null);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
@@ -584,6 +594,25 @@ public class OIRReader extends FormatReader {
         store.setChannelLightSourceSettingsID(laserId, 0, c);
       }
     }
+
+    if (zStart != null && zStep != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        int z = getZCTCoords(i)[0];
+        store.setPlanePositionZ(new Length(zStart + z * zStep, UNITS.MICROMETER), 0, i);
+      }
+    }
+    if (tStep != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        int t = getZCTCoords(i)[2];
+        double deltaT = t * tStep;
+        for (Integer frame : timestampAdjustments.keySet()) {
+          if (t >= frame) {
+            deltaT += (timestampAdjustments.get(frame) - tStep);
+          }
+        }
+        store.setPlaneDeltaT(new Time(deltaT, UNITS.MILLISECOND), 0, i);
+      }
+    }
   }
 
   // -- Helper methods --
@@ -637,7 +666,7 @@ public class OIRReader extends FormatReader {
         s.seek(fp - 2);
         continue;
       }
-      LOGGER.trace("xml = {}", xml);
+      xml = xml.trim();
       if (((channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) &&
         isCurrentFile(file)) || xml.indexOf("lut:LUT") > 0)
       {
@@ -658,7 +687,9 @@ public class OIRReader extends FormatReader {
     }
     // total block length could include multiple strings of XML
     int totalBlockLength = s.readInt();
+    LOGGER.debug("total block length = {}", totalBlockLength);
     long end = s.getFilePointer() + totalBlockLength - 4;
+    LOGGER.debug("end = {}", end);
     s.skipBytes(4);
 
     while (s.getFilePointer() < end) {
@@ -706,6 +737,9 @@ public class OIRReader extends FormatReader {
       long fp = s.getFilePointer();
       String xml = s.readString(xmlLength).trim();
       LOGGER.trace("xml = {}", xml);
+      if (!xml.startsWith("<?xml")) {
+        break;
+      }
       if (isCurrentFile(file) || xml.indexOf("lut:LUT") > 0) {
         parseXML(s, xml, fp);
       }
@@ -1131,6 +1165,38 @@ public class OIRReader extends FormatReader {
           }
         }
 
+        // defined pauses between different time points
+        // so far have only seen one defined, but might be multiple?
+        Element frameInterval = getFirstChild(imagingParam, "fvCommonparam:specifiedFrameInterval");
+        if (frameInterval != null) {
+          Element frameCount = getFirstChild(frameInterval, "commonparam:frameCount");
+          Element interval = getFirstChild(frameInterval, "commonparam:interval");
+          if (frameCount != null && interval != null) {
+            timestampAdjustments.put(Integer.parseInt(frameCount.getTextContent()), DataTools.parseDouble(interval.getTextContent()));
+          }
+        }
+      }
+
+      Element configuration = getFirstChild(acquisition, "commonimage:configuration");
+      NodeList scanners = acquisition.getElementsByTagName("lsmimage:scannerSettings");
+      if (configuration != null && scanners != null) {
+        Element usedScanner = getFirstChild(configuration, "lsmimage:scannerType");
+        // multiple scanners may be defined, pick the one that was actually used
+        if (usedScanner != null) {
+          String scannerType = usedScanner.getTextContent();
+
+          for (int i=0; i<scanners.getLength(); i++) {
+            Element scanner = (Element) scanners.item(i);
+            if (scannerType.equals(scanner.getAttribute("type"))) {
+              Element speed = getFirstChild(getFirstChild(scanner, "lsmimage:param"), "lsmparam:speed");
+              speed = getFirstChild(speed, "commonparam:speedInformation");
+              Element seriesInterval = getFirstChild(speed, "commonparam:seriesInterval");
+              if (seriesInterval != null) {
+                tStep = DataTools.parseDouble(seriesInterval.getTextContent());
+              }
+            }
+          }
+        }
       }
 
       NodeList imagingMainLasers = acquisition.getElementsByTagName("lsmimage:imagingMainLaser");
@@ -1188,6 +1254,15 @@ public class OIRReader extends FormatReader {
           parseChannel(channel, appendChannels);
         }
       }
+
+      // calls to parseChannel may have reset the channels list
+      // so there may be null elements that need to be removed
+      for (int i=0; i<channels.size(); i++) {
+        if (channels.get(i) == null) {
+          channels.remove(i);
+          i--;
+        }
+      }
     }
   }
 
@@ -1216,15 +1291,20 @@ public class OIRReader extends FormatReader {
       channelName = name.getTextContent();
     }
 
+    int index = Integer.parseInt(channel.getAttribute("order")) - 1;
+
     if (id != null) {
       boolean foundChannel = false;
       for (Channel ch : channels) {
+        if (ch == null) {
+          continue;
+        }
         if (ch.id.equals(id)) {
           foundChannel = true;
           if (laserId != null) {
             for (int l=0; l<lasers.size(); l++) {
               Laser laser = lasers.get(l);
-              if (laser.dataId.equals(laserId.getTextContent())) {
+              if (laser.dataId != null && laser.dataId.equals(laserId.getTextContent())) {
                 ch.laserIndex = l;
                 break;
               }
@@ -1239,13 +1319,22 @@ public class OIRReader extends FormatReader {
         if (laserId != null) {
           for (int l=0; l<lasers.size(); l++) {
             Laser laser = lasers.get(l);
-            if (laser.dataId.equals(laserId.getTextContent())) {
+            if (laser.dataId != null && laser.dataId.equals(laserId.getTextContent())) {
               c.laserIndex = l;
               break;
             }
           }
         }
-        channels.add(c);
+
+        while (index > channels.size()) {
+          channels.add(null);
+        }
+        if (index == channels.size()) {
+          channels.add(c);
+        }
+        else {
+          channels.set(index, c);
+        }
       }
     }
   }
@@ -1264,6 +1353,8 @@ public class OIRReader extends FormatReader {
       if (name.equals("ZSTACK")) {
         if (m.sizeZ <= 1) {
           m.sizeZ = Integer.parseInt(size.getTextContent());
+          zStart = DataTools.parseDouble(start.getTextContent());
+          zStep = DataTools.parseDouble(step.getTextContent());
         }
       }
       else if (name.equals("TIMELAPSE")) {

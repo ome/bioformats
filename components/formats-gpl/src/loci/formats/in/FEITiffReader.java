@@ -424,10 +424,14 @@ public class FEITiffReader extends BaseTiffReader {
           magnification = new Double(value);
         }
 
-        else if (key.endsWith("X") && "PixelSize".equals(parent)) {
+        else if ((key.endsWith("X") && "PixelSize".equals(parent)) ||
+          (key.endsWith(" pixelWidth") && "FeiImage".equals(parent)))
+        {
           sizeX = new Double(value);
         }
-        else if (key.endsWith("Y") && "PixelSize".equals(parent)) {
+        else if ((key.endsWith("Y") && "PixelSize".equals(parent)) ||
+          (key.endsWith(" pixelHeight") && "FeiImage".equals(parent)))
+        {
           sizeY = new Double(value);
         }
       }

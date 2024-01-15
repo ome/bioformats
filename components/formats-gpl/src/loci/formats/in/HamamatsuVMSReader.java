@@ -157,6 +157,7 @@ public class HamamatsuVMSReader extends FormatReader {
 
     if (service == null) {
       service = new JPEGTurboServiceImpl();
+      if (!service.isLibraryLoaded()) throw new IOException("JPEG service failed to load Turbo JPEG library");
     }
 
     try {

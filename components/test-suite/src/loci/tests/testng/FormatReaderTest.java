@@ -48,7 +48,6 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -162,9 +161,16 @@ public class FormatReaderTest {
 
   // -- Setup/teardown methods --
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setup() throws IOException {
-    initFile();
+    try {
+      initFile();
+    }
+    catch (RuntimeException e) {
+      // implies that the configuration does not exist
+      // this is expected if the "config" group is run
+      LOGGER.trace("File initialization failed", e);
+    }
   }
 
   @AfterClass(alwaysRun = true)
@@ -246,7 +252,7 @@ public class FormatReaderTest {
         }
 
         if (c > 4 || plane < 0 || plane != checkPlane ||
-          !TestTools.canFitInMemory(plane * 3))
+          !TestTools.canFitInMemory(checkPlane * 3))
         {
           continue;
         }
@@ -316,7 +322,7 @@ public class FormatReaderTest {
           continue;
         }
 
-        if (!TestTools.canFitInMemory(expected * 3) || expected < 0) {
+        if (!TestTools.canFitInMemory((long) expected * 3) || expected < 0) {
           continue;
         }
 
@@ -591,7 +597,6 @@ public class FormatReaderTest {
 
         // NB: OME-TIFF files do not have a BinData element under Pixels
         IFormatReader r = reader.unwrap();
-        if (r instanceof FileStitcher) r = ((FileStitcher) r).getReader();
         if (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).unwrap();
         if (!(r instanceof OMETiffReader)) {
           boolean littleEndian = false;
@@ -954,8 +959,20 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  private boolean isAlmostEqual(Quantity q1, Quantity q2) {
+  private boolean isEqual(String expected, String real) {
 
+    if (expected == null && real == null) {
+      return true;
+    } else if ("null".equals(expected) && real == null) {
+      return true;
+    } else if (expected == null) {
+      return false;
+    } else {
+      return expected.trim().equals(real.trim());
+    }
+  }
+
+  private boolean isAlmostEqual(Quantity q1, Quantity q2) {
     if (q1 == null && q2 == null) {
       return true;
     } else if (q1 == null || q2 == null) {
@@ -1094,9 +1111,7 @@ public class FormatReaderTest {
         String realName = retrieve.getChannelName(i, c);
         String expectedName = config.getChannelName(c);
 
-        if (!expectedName.equals(realName) &&
-          (realName == null && !expectedName.equals("null")))
-        {
+        if (!isEqual(expectedName, realName)) {
           result(testName, false, "Series " + i + " channel " + c +
             " (got '" + realName + "', expected '" + expectedName + "')");
         }
@@ -1398,14 +1413,57 @@ public class FormatReaderTest {
       String realName = retrieve.getImageName(i);
       String expectedName = config.getImageName();
 
-      if (!expectedName.equals(realName) &&
-        !(realName == null && expectedName.equals("null")))
-      {
+      if (!isEqual(expectedName, realName)) {
         result(testName, false, "Series " + i + " (got '" + realName +
           "', expected '" + expectedName + "')");
       }
     }
     result(testName, true);
+  }
+
+  @Test(groups = {"all", "fast", "automated"})
+  public void testUnflattenedImageNames() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testUnflattenedImageNames";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    IFormatReader resolutionReader = setupReader(false, true);
+    try {
+      IMetadata retrieve = (IMetadata) resolutionReader.getMetadataStore();
+
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
+
+      for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
+        config.setSeries(i, false);
+
+        String realName = retrieve.getImageName(i);
+        String expectedName = config.getImageName();
+
+        if (!isEqual(expectedName, realName)) {
+          String unflattenedName = config.getUnflattenedImageName();
+          if (!isEqual(unflattenedName, realName)) {
+            msg = "Series " + i + " (got '" + realName +
+              "', expected '" + expectedName + "' or '" + unflattenedName + "')";
+            success = false;
+          }
+        }
+      }
+    }
+    finally {
+      try {
+        resolutionReader.close();
+      }
+      catch (IOException e) {
+        success = false;
+        msg = "Could not close reader";
+      }
+    }
+    result(testName, success, msg);
   }
 
   @Test(groups = {"all", "fast", "automated"})
@@ -1454,7 +1512,7 @@ public class FormatReaderTest {
       if (plate >= retrieve.getPlateCount()) {
         result(testName, false, "Plate index" + failureSuffix);
       }
-      else if (plate < 0) {
+      else if (plate < -1) {
         if (retrieve.getPlateCount() > 0) {
           boolean allEmpty = true;
           for (int p=0; p<retrieve.getPlateCount(); p++) {
@@ -1479,82 +1537,87 @@ public class FormatReaderTest {
         continue;
       }
       boolean foundWell = false;
-      for (int w=0; w<retrieve.getWellCount(plate); w++) {
-        int row = config.getWellRow();
-        int col = config.getWellColumn();
-        if (row == retrieve.getWellRow(plate, w).getNumberValue().intValue() &&
-          col == retrieve.getWellColumn(plate, w).getNumberValue().intValue())
-        {
-          foundWell = true;
+      for (int p=0; p<retrieve.getPlateCount(); p++) {
+        if (plate >= 0 && plate != p) {
+          continue;
+        }
 
-          int wellSample = config.getWellSample();
-          String image = retrieve.getImageID(s);
-          if (wellSample >= retrieve.getWellSampleCount(plate, w) ||
-            wellSample < 0 ||
-            !image.equals(retrieve.getWellSampleImageRef(plate, w, wellSample)))
+        for (int w=0; w<retrieve.getWellCount(p); w++) {
+          int row = config.getWellRow();
+          int col = config.getWellColumn();
+          if (row == retrieve.getWellRow(p, w).getNumberValue().intValue() &&
+            col == retrieve.getWellColumn(p, w).getNumberValue().intValue())
           {
-            result(testName, false, "WellSample index" + failureSuffix);
-          }
+            foundWell = true;
 
-          Length positionX = retrieve.getWellSamplePositionX(plate, w, wellSample);
-          Length positionY = retrieve.getWellSamplePositionY(plate, w, wellSample);
-          Length configX = config.getWellSamplePositionX();
-          Length configY = config.getWellSamplePositionY();
-          if (positionX != null || configX != null) {
-            if (positionX == null || !positionX.equals(configX)) {
-              result(testName, false, "WellSample position X" + failureSuffix);
+            int wellSample = config.getWellSample();
+            String image = retrieve.getImageID(s);
+            if (wellSample >= retrieve.getWellSampleCount(p, w) ||
+              wellSample < 0 ||
+              !image.equals(retrieve.getWellSampleImageRef(p, w, wellSample)))
+            {
+              result(testName, false, "WellSample index" + failureSuffix);
             }
-          }
-          if (positionY != null || configY != null) {
-            if (positionY == null || !positionY.equals(configY)) {
-              result(testName, false, "WellSample position Y" + failureSuffix);
-            }
-          }
 
-          int plateAcq = config.getPlateAcquisition();
-          int plateAcqCount = retrieve.getPlateAcquisitionCount(plate);
-          if (plateAcq >= plateAcqCount) {
-            result(testName, false, "PlateAcquisition index" + failureSuffix);
-          }
-          else if (plateAcq < 0 && plateAcqCount > 0) {
-            // special case where this WellSample isn't
-            // linked to a PlateAcquisition,
-            // but multiple PlateAcquisitions exist
-            String wellSampleID =
-              retrieve.getWellSampleID(plate, w, wellSample);
-            for (int pa=0; pa<plateAcqCount; pa++) {
-              int wsCount = retrieve.getWellSampleRefCount(plate, pa);
-              for (int wsRef=0; wsRef<wsCount; wsRef++) {
-                String wellSampleRef =
-                  retrieve.getPlateAcquisitionWellSampleRef(plate, pa, wsRef);
-                if (wellSampleID.equals(wellSampleRef)) {
-                  result(testName, false,
-                    "PlateAcquisition-WellSample link" + failureSuffix);
+            Length positionX = retrieve.getWellSamplePositionX(p, w, wellSample);
+            Length positionY = retrieve.getWellSamplePositionY(p, w, wellSample);
+            Length configX = config.getWellSamplePositionX();
+            Length configY = config.getWellSamplePositionY();
+            if (positionX != null || configX != null) {
+              if (positionX == null || !positionX.equals(configX)) {
+                result(testName, false, "WellSample position X" + failureSuffix);
+              }
+            }
+            if (positionY != null || configY != null) {
+              if (positionY == null || !positionY.equals(configY)) {
+                result(testName, false, "WellSample position Y" + failureSuffix);
+              }
+            }
+
+            int plateAcq = config.getPlateAcquisition();
+            int plateAcqCount = retrieve.getPlateAcquisitionCount(p);
+            if (plateAcq >= plateAcqCount) {
+              result(testName, false, "PlateAcquisition index" + failureSuffix);
+            }
+            else if (plateAcq < 0 && plateAcqCount > 0) {
+              // special case where this WellSample isn't
+              // linked to a PlateAcquisition,
+              // but multiple PlateAcquisitions exist
+              String wellSampleID = retrieve.getWellSampleID(p, w, wellSample);
+              for (int pa=0; pa<plateAcqCount; pa++) {
+                int wsCount = retrieve.getWellSampleRefCount(p, pa);
+                for (int wsRef=0; wsRef<wsCount; wsRef++) {
+                  String wellSampleRef =
+                    retrieve.getPlateAcquisitionWellSampleRef(p, pa, wsRef);
+                  if (wellSampleID.equals(wellSampleRef)) {
+                    result(testName, false,
+                      "PlateAcquisition-WellSample link" + failureSuffix);
+                  }
                 }
               }
             }
-          }
-          else if (plateAcq >= 0 && plateAcqCount > 0) {
-            String wellSampleID = retrieve.getWellSampleID(plate, w, wellSample);
-            boolean foundWellSampleRef = false;
-            for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(plate, plateAcq); wsRef++) {
-              String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
-                plate, plateAcq, wsRef);
-              if (wellSampleID.equals(wellSampleRef)) {
-                foundWellSampleRef = true;
-                break;
+            else if (plateAcq >= 0 && plateAcqCount > 0) {
+              String wellSampleID = retrieve.getWellSampleID(p, w, wellSample);
+              boolean foundWellSampleRef = false;
+              for (int wsRef=0; wsRef<retrieve.getWellSampleRefCount(p, plateAcq); wsRef++) {
+                String wellSampleRef = retrieve.getPlateAcquisitionWellSampleRef(
+                  p, plateAcq, wsRef);
+                if (wellSampleID.equals(wellSampleRef)) {
+                  foundWellSampleRef = true;
+                  break;
+                }
+              }
+              if (!foundWellSampleRef) {
+                result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
               }
             }
-            if (!foundWellSampleRef) {
-              result(testName, false, "PlateAcquisition missing WellSampleRef" + failureSuffix);
-            }
+          }
+          if (foundWell) {
+            break;
           }
         }
-        if (foundWell) {
-          break;
-        }
       }
-      if (!foundWell) {
+      if (!foundWell && plate >= 0) {
         result(testName, false, "Well indexes" + failureSuffix);
       }
     }
@@ -1687,9 +1750,7 @@ public class FormatReaderTest {
   @Test(groups = {"all", "type", "automated"})
   public void testRequiredDirectories() {
     if (!initFile()) return;
-    if (reader.getFormat().equals("Woolz") ||
-      reader.getFormat().startsWith("CellH5"))
-    {
+    if (reader.getFormat().startsWith("CellH5")) {
       throw new SkipException(SKIP_MESSAGE);
     }
     String testName = "testRequiredDirectories";
@@ -1745,7 +1806,7 @@ public class FormatReaderTest {
 
       String newFile = null;
       for (int i=0; i<usedFiles.length; i++) {
-        newFiles[i] = usedFiles[i].replaceAll(toRemove.toString(), "");
+        newFiles[i] = usedFiles[i].replace(toRemove.toString(), "");
         LOGGER.debug("mapping {} to {}", newFiles[i], usedFiles[i]);
         Location.mapId(newFiles[i], usedFiles[i]);
 
@@ -1759,7 +1820,8 @@ public class FormatReaderTest {
 
       LOGGER.debug("newFile = {}", newFile);
 
-      IFormatReader check = new FileStitcher();
+      IFormatReader check = new ImageReader();
+      check.setMetadataOptions(new DynamicMetadataOptions());
       try {
         check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
@@ -1810,7 +1872,7 @@ public class FormatReaderTest {
       else if (success) {
         Arrays.sort(base);
         IFormatReader r =
-          /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
+          /*config.noStitching() ? new ImageReader() :*/ new ImageReader();
 
         int maxFiles = (int) Math.min(base.length, 100);
 
@@ -1830,6 +1892,12 @@ public class FormatReaderTest {
             {
               continue;
             }
+          }
+
+          // Options files
+          if (base[i].toLowerCase().endsWith(".bfoptions"))
+          {
+            continue;
           }
 
           // extra metadata files in Harmony/Operetta datasets
@@ -1938,7 +2006,9 @@ public class FormatReaderTest {
           }
 
           // CellWorx datasets can only be reliably detected with the .HTD file
-          if (reader.getFormat().equals("CellWorx")) {
+          if (reader.getFormat().equals("CellWorx") ||
+            reader.getFormat().equals("MetaXpress TIFF"))
+          {
             continue;
           }
 
@@ -1961,6 +2031,46 @@ public class FormatReaderTest {
             {
               continue;
             }
+          }
+
+          // Cellomics datasets cannot be reliably detected with the .mdb file
+          if (reader.getFormat().equals("Cellomics C01") &&
+            base[i].toLowerCase().endsWith(".mdb"))
+          {
+            continue;
+          }
+
+          // Tecan datasets can only be detected with the .db file
+          if (reader.getFormat().equals("Tecan Spark Cyto") &&
+            !base[i].toLowerCase().endsWith(".db"))
+          {
+            continue;
+          }
+
+          // .omp2info datasets can only be detected with the .omp2info file
+          if (reader.getFormat().equals("Olympus .omp2info") &&
+            !base[i].toLowerCase().endsWith(".omp2info"))
+          {
+            continue;
+          }
+
+          // .vsi datasets can only be detected with .vsi and frame*.ets
+          if (reader.getFormat().equals("CellSens VSI") &&
+            ((!base[i].toLowerCase().endsWith(".vsi") && !base[i].toLowerCase().endsWith(".ets")) ||
+            (base[i].toLowerCase().endsWith(".ets") && !base[i].toLowerCase().startsWith("frame"))))
+          {
+            continue;
+          }
+
+          // XLef datasets not detected from xlif/lof file
+          if (reader.getFormat().equals("Extended leica file") &&
+            (base[i].toLowerCase().endsWith("xlif") || base[i].toLowerCase().endsWith("lof") 
+                || base[i].toLowerCase().endsWith("xlcf") || base[i].toLowerCase().endsWith("jpeg")
+                || base[i].toLowerCase().endsWith("tif") || base[i].toLowerCase().endsWith("tiff")
+                || base[i].toLowerCase().endsWith("bmp") || base[i].toLowerCase().endsWith("jpg")
+                || base[i].toLowerCase().endsWith("png")))
+          {
+            continue;
           }
 
           r.setId(base[i]);
@@ -2412,6 +2522,32 @@ public class FormatReaderTest {
       "open = " + isThisTypeOpen + ", !open = " + isThisTypeNotOpen);
   }
 
+  /**
+   * In most cases, this test will:
+   *  - get the lowest-level reader for the file being tested
+   *  - iterate over each used file in the fileset
+   *      * iterate over each available reader (i.e. all of readers.txt)
+   *          - check if the reader picks up the used file
+   *          - fail the test if either is true:
+   *              * the reader picks up the file, but is not an instance of the original lowest-level reader
+   *              * the reader does not pick up the file, and is an instance of the original lowest-level reader
+   *
+   * There are a number of special cases, as many formats cannot be reliably
+   * detected from all files in the fileset. TIFF-based formats are especially
+   * prone to this issue. When adding a special case, take care to choose
+   * the appropriate location (type checking can be expensive for filesets with many files):
+   *  - inside the used file loop, but outside the reader loop
+   *     * if some used files are not expected to be passed to setId,
+   *       and could be picked up by many different readers, then a special case
+   *       in this location can save a lot of time. TIFF-based HCS formats
+   *       usually belong here.
+   *  - inside both the used file and reader loops, before type checking occurs
+   *     * if some files are expected to be picked up by one different reader in particular,
+   *       this allows bypassing the type check for specific file/reader combinations
+   *  - inside both the used file and reader loops, after type checking occurs
+   *     * this is the most expensive option in terms of time, but necessary
+   *       in the common case where the type check matters
+   */
   @Test(groups = {"all", "fast", "automated"})
   public void testIsThisType() {
     String testName = "testIsThisType";
@@ -2425,9 +2561,6 @@ public class FormatReaderTest {
         if (r instanceof ReaderWrapper) {
           r = ((ReaderWrapper) r).getReader();
         }
-        else if (r instanceof FileStitcher) {
-          r = ((FileStitcher) r).getReader();
-        }
         else break;
       }
       if (r instanceof ImageReader) {
@@ -2436,10 +2569,81 @@ public class FormatReaderTest {
         IFormatReader[] readers = ir.getReaders();
         String[] used = reader.getUsedFiles();
         for (int i=0; i<used.length && success; i++) {
+          // ignore anything other than .wpi for CV7000
+          if (!used[i].toLowerCase().endsWith(".wpi") &&
+            r instanceof CV7000Reader)
+          {
+            continue;
+          }
+
+          // the pattern reader only picks up pattern files
+          if (!used[i].toLowerCase().endsWith(".pattern") &&
+            r instanceof FilePatternReader)
+          {
+            continue;
+          }
+
+          // ignore companion files for Leica LIF
+          if (!used[i].toLowerCase().endsWith(".lif") &&
+            r instanceof LIFReader)
+          {
+            continue;
+          }
+
+          if (!used[i].toLowerCase().endsWith(".vff") &&
+            r instanceof MicroCTReader)
+          {
+            continue;
+          }
+
+          // CellWorx datasets can only be reliably detected with the .HTD file
+          if (!used[i].toLowerCase().endsWith(".htd") &&
+            r instanceof CellWorxReader)
+          {
+            continue;
+          }
+
+          // Cellomics datasets cannot be reliably detected with .mdb file
+          if (used[i].toLowerCase().endsWith(".mdb") &&
+            r instanceof CellomicsReader)
+          {
+            continue;
+          }
+
           // for each used file, make sure that one reader,
           // and only one reader, identifies the dataset as its own
           for (int j=0; j<readers.length; j++) {
+            // AFI reader is not expected to pick up .svs files
+            if (r instanceof AFIReader && (readers[j] instanceof AFIReader ||
+              readers[j] instanceof SVSReader))
+            {
+              continue;
+            }
+
+            if ((readers[j] instanceof NDPISReader ||
+              r instanceof NDPISReader) &&
+              used[i].toLowerCase().endsWith(".ndpi"))
+            {
+              continue;
+            }
+
+            // the JPEG reader can pick up JPEG files associated with a
+            // Hamamatsu VMS dataset
+            if (readers[j] instanceof JPEGReader &&
+              r instanceof HamamatsuVMSReader &&
+              used[i].toLowerCase().endsWith(".jpg"))
+            {
+              continue;
+            }
+
+
             boolean result = readers[j].isThisType(used[i]);
+
+            // Options files
+            if (!result && used[i].toLowerCase().endsWith(".bfoptions"))
+            {
+              continue;
+            }
 
             // Companion file grouping non-ome-tiff files:
             // setId must be called on the companion file
@@ -2602,30 +2806,7 @@ public class FormatReaderTest {
               continue;
             }
 
-            // AFI reader is not expected to pick up .svs files
-            if (r instanceof AFIReader && (readers[j] instanceof AFIReader ||
-              readers[j] instanceof SVSReader))
-            {
-              continue;
-            }
-
             if (!result && readers[j] instanceof MIASReader) {
-              continue;
-            }
-
-            if ((readers[j] instanceof NDPISReader ||
-              r instanceof NDPISReader) &&
-              used[i].toLowerCase().endsWith(".ndpi"))
-            {
-              continue;
-            }
-
-            // the JPEG reader can pick up JPEG files associated with a
-            // Hamamatsu VMS dataset
-            if (readers[j] instanceof JPEGReader &&
-              r instanceof HamamatsuVMSReader &&
-              used[i].toLowerCase().endsWith(".jpg"))
-            {
               continue;
             }
 
@@ -2648,26 +2829,6 @@ public class FormatReaderTest {
               continue;
             }
 
-            // the pattern reader only picks up pattern files
-            if (!used[i].toLowerCase().endsWith(".pattern") &&
-              r instanceof FilePatternReader)
-            {
-              continue;
-            }
-
-            // ignore companion files for Leica LIF
-            if (!used[i].toLowerCase().endsWith(".lif") &&
-              r instanceof LIFReader)
-            {
-              continue;
-            }
-
-            if (!used[i].toLowerCase().endsWith(".vff") &&
-              r instanceof MicroCTReader)
-            {
-              continue;
-            }
-
             // Inveon only reliably detected from header file
             if (!result && r instanceof InveonReader) {
               continue;
@@ -2678,13 +2839,6 @@ public class FormatReaderTest {
               continue;
             }
 
-            // ignore anything other than .wpi for CV7000
-            if (!used[i].toLowerCase().endsWith(".wpi") &&
-              r instanceof CV7000Reader)
-            {
-              continue;
-            }
-
             // Deltavision reader can pick up .rcpnl files
             if (result && (r instanceof RCPNLReader) &&
               (readers[j] instanceof DeltavisionReader))
@@ -2692,12 +2846,70 @@ public class FormatReaderTest {
               continue;
             }
 
-            // CellWorx datasets can only be reliably detected with the .HTD file
-            if (!used[i].toLowerCase().endsWith(".htd") &&
-              r instanceof CellWorxReader)
+            // MetaXpress TIFF reader can flag .HTD files from CellWorX
+            if (result && r instanceof CellWorxReader &&
+              readers[j] instanceof MetaxpressTiffReader)
             {
               continue;
             }
+
+            // Tecan data can only be detected with the .db file
+            if (!result && readers[j] instanceof TecanReader &&
+              !used[i].toLowerCase().endsWith(".db"))
+            {
+              continue;
+            }
+
+            // OK for other readers to flag Tecan files other than .db
+            if (result && r instanceof TecanReader &&
+              !used[i].toLowerCase().endsWith(".db"))
+            {
+              continue;
+            }
+
+            // OK for OIRReader to flag .oir files in .omp2info dataset
+            // expected that .oir files not picked up by .omp2info reader
+            if (result && r instanceof OlympusTileReader &&
+              readers[j] instanceof OIRReader)
+            {
+              continue;
+            }
+            else if (!result && r instanceof OlympusTileReader &&
+              !used[i].toLowerCase().endsWith(".omp2info"))
+            {
+              continue;
+            }
+
+            // .vsi data can only be detected from .vsi and frame*.ets
+            if (!result && r instanceof CellSensReader &&
+              ((!used[i].endsWith(".vsi") && !used[i].endsWith(".ets")) ||
+              (used[i].endsWith(".ets") && !used[i].startsWith("frame"))))
+            {
+              continue;
+            }
+
+            // XLEF data can only be detected from xlef file
+            if (!result && readers[j] instanceof XLEFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif") || used[i].endsWith(".tiff") ||
+                used[i].endsWith(".lof") || used[i].endsWith(".jpg")
+                || used[i].endsWith(".png") || used[i].endsWith(".bmp")))
+            {
+              continue;
+            }
+            if (!result && readers[j] instanceof LOFReader &&
+                (used[i].endsWith(".xlif") || used[i].endsWith(".xlcf") ||
+                used[i].endsWith(".tif")))
+            {
+              continue;
+            }
+
+            if (result && r instanceof XLEFReader &&
+                (readers[j] instanceof LOFReader || readers[j] instanceof APNGReader
+                || readers[j] instanceof BMPReader || readers[j] instanceof JPEGReader))
+              {
+                continue;
+              }   
 
             boolean expected = r == readers[j];
             if (result != expected) {
@@ -2834,7 +3046,7 @@ public class FormatReaderTest {
       String configDir = configTree.getConfigDirectory();
       String rootDir = configTree.getRootDirectory();
       if (configDir != null) {
-        parent = parent.replaceAll(rootDir, configDir);
+        parent = parent.replace(rootDir, configDir);
         File parentDir = new File(parent);
         if (!parentDir.exists()) {
           parentDir.mkdirs();
@@ -2940,11 +3152,11 @@ public class FormatReaderTest {
     IFormatReader ir = null;
     if (flattened) {
       ir = new ImageReader();
-      ir = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
-      ir.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+      ir = new BufferedImageReader(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File("")));
+      ir.setMetadataOptions(new DynamicMetadataOptions(MetadataLevel.NO_OVERLAYS));
     }
     else {
-      ir = new BufferedImageReader(new FileStitcher());
+      ir = new BufferedImageReader(new ImageReader());
       ir.setFlattenedResolutions(false);
     }
 

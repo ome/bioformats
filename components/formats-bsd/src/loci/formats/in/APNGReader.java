@@ -149,7 +149,7 @@ public class APNGReader extends FormatReader {
       try (PNGInputStream stream = new PNGInputStream("IDAT")) {
         int decodeHeight = y + h;
         if (decodeHeight < getSizeY() && decodeHeight % 8 != 0) {
-          decodeHeight += 8 - (decodeHeight % 8);
+          decodeHeight += Math.min(8 - (decodeHeight % 8), getSizeY() - decodeHeight);
         }
         lastImage = decode(stream, getSizeX(), decodeHeight);
       }
@@ -358,6 +358,14 @@ public class APNGReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int rowLen = width * getRGBChannelCount() * bpp;
 
+    if (width > getSizeX()) {
+      throw new FormatException(
+        "Width (" + width + ") exceeds image width (" +  getSizeX() + ")");
+    }
+    if (height > getSizeY()) {
+      throw new FormatException(
+        "Height (" + height + ") exceeds image height (" +  getSizeY() + ")");
+    }
     if (getBitsPerPixel() < bpp * 8) {
       int div = (bpp * 8) / getBitsPerPixel();
       if (div < rowLen) {

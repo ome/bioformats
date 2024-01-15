@@ -178,7 +178,7 @@ public class SDTReader extends FormatReader {
     if (info.mcstaPoints == getSizeT()) {
       times = getSizeT();
     }
-    int planeSize = paddedWidth * sizeY * times * bpp;
+    long planeSize = (long) paddedWidth * sizeY * times * bpp;
 
     // remove width padding if we can be reasonably certain
     // that the unpadded width is correct
@@ -316,11 +316,12 @@ public class SDTReader extends FormatReader {
         codec.skip(channel * planeSize + y * paddedWidth * bpp * times);
       }
       else {
-        in.skipBytes(channel * planeSize + y * paddedWidth * bpp * times);
+        in.skipBytes(
+          channel * planeSize + (long) y * paddedWidth * bpp * times);
       }
 
       for (int row = 0; row < h; row++) {
-        readPixels(rowBuf, in, codec, x * bpp * times);
+        readPixels(rowBuf, in, codec, (long) x * bpp * times);
         if (intensity) {
           System.arraycopy(rowBuf, 0, b, row * bpp * times * w, b.length);
         }
@@ -334,7 +335,7 @@ public class SDTReader extends FormatReader {
           }
         }
         if (codec == null) {
-          in.skipBytes(bpp * times * (paddedWidth - x - w));
+          in.skipBytes((long) bpp * times * (paddedWidth - x - w));
         }
         else {
           codec.skip(bpp * times * (paddedWidth - x - w));
@@ -469,7 +470,7 @@ public class SDTReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
   }
 
-  private void readPixels(byte[] rowBuf, RandomAccessInputStream in, ZipInputStream codec, int skip)
+  private void readPixels(byte[] rowBuf, RandomAccessInputStream in, ZipInputStream codec, long skip)
     throws IOException
   {
     if (codec == null) {

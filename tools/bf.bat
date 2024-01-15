@@ -50,8 +50,6 @@ if not "%BF_DEVEL%" == "" (
 rem Developer environment variable unset; add JAR libraries to classpath.
 if exist "%BF_JAR_DIR%\bioformats_package.jar" (
     set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bioformats_package.jar"
-) else if exist "%BF_JAR_DIR%\loci_tools.jar" (
-    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\loci_tools.jar"
 ) else if exist "%BF_JAR_DIR%\formats-gpl.jar" (
     set BF_CP=%BF_CP%;"%BF_JAR_DIR%\formats-gpl.jar";"%BF_JAR_DIR%\bio-formats-tools.jar"
 ) else (
@@ -62,6 +60,9 @@ if exist "%BF_JAR_DIR%\bioformats_package.jar" (
   echo   https://downloads.openmicroscopy.org/latest/bio-formats/artifacts/
   echo and place in the same directory as the command line tools.
   goto end
+)
+if exist "%BF_JAR_DIR/bio-formats-testing-framework.jar" (
+  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bio-formats-testing-framework.jar"
 )
 
 java %BF_FLAGS% -cp "%BF_DIR%";%BF_CP% %BF_PROG% %*

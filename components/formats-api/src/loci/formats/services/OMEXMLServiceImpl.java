@@ -174,6 +174,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
             /* from specification.jar */
             return getClass().getResourceAsStream("/released-schema/" +
                  matcher.group(1) + "/" + matcher.group(2) + ".xsd");
+          } else if(url.equals("http://www.w3.org/2001/xml.xsd")) {
+            return getClass().getResourceAsStream(
+              "/released-schema/external/xml.xsd");
           } else {
             return null;
           }

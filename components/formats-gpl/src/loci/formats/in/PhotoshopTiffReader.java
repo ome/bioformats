@@ -101,6 +101,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
       offsetIndex += core.get(i, 0).sizeC;
     }
 
+    openPixelTag();
     tag.seek(layerOffset[offsetIndex]);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -149,18 +150,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    Object sourceData = ifds.get(0).getIFDValue(IMAGE_SOURCE_DATA);
-    byte[] b = null;
-    if (sourceData instanceof byte[]) {
-      b = (byte[]) sourceData;
-    }
-    else if (sourceData instanceof TiffIFDEntry) {
-      b = (byte[]) tiffParser.getIFDValue((TiffIFDEntry) sourceData);
-    }
-    if (b == null) return;
-
-    tag = new RandomAccessInputStream(b);
-    tag.order(isLittleEndian());
+    openPixelTag();
 
     String checkString = tag.readCString();
 
@@ -248,7 +238,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
             addGlobalMetaList("Layer name", layerNames[layer]);
             core.add(layerCore);
           }
-          tag.skipBytes((int) (fp + len - tag.getFilePointer()));
+          tag.skipBytes(fp + len - tag.getFilePointer());
         }
 
         nLayers = core.size() - 1;
@@ -282,7 +272,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           }
         }
       }
-      else tag.skipBytes(length + skip);
+      else tag.skipBytes((long) length + skip);
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -294,6 +284,24 @@ public class PhotoshopTiffReader extends BaseTiffReader {
         store.setImageName(layerNames[layer], layer + 1);
       }
     }
+  }
+
+  private void openPixelTag() throws IOException {
+    if (tag != null) {
+      return;
+    }
+    Object sourceData = ifds.get(0).getIFDValue(IMAGE_SOURCE_DATA);
+    byte[] b = null;
+    if (sourceData instanceof byte[]) {
+      b = (byte[]) sourceData;
+    }
+    else if (sourceData instanceof TiffIFDEntry) {
+      b = (byte[]) tiffParser.getIFDValue((TiffIFDEntry) sourceData);
+    }
+    if (b == null) return;
+
+    tag = new RandomAccessInputStream(b);
+    tag.order(isLittleEndian());
   }
 
 }

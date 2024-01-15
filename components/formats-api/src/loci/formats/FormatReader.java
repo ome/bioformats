@@ -32,6 +32,7 @@
 
 package loci.formats;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -47,7 +48,9 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMetadata;
@@ -177,6 +180,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not to group multi-file formats. */
   protected boolean group = true;
 
+  /** Fill value for undefined pixels. */
+  protected Byte fillColor = null;
+
   /** List of domains in which this format is used. */
   protected String[] domains = new String[0];
 
@@ -242,8 +248,24 @@ public abstract class FormatReader extends FormatHandler
     // reinitialize the MetadataStore
     // NB: critical for metadata conversion to work properly!
     getMetadataStore().createRoot();
+
+    String optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(id);
+    if (optionsFile != null) {
+      MetadataOptions options = getMetadataOptions();
+      if (options != null && options instanceof DynamicMetadataOptions) {
+        ((DynamicMetadataOptions) options).loadOptions(optionsFile, getAvailableOptions());
+      }
+    }
   }
 
+  /** Returns the list of available metadata options. */
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = new ArrayList<String>();
+    optionsList.add(DynamicMetadataOptions.METADATA_LEVEL_KEY);
+    optionsList.add(DynamicMetadataOptions.READER_VALIDATE_KEY);
+    return optionsList;
+  }
+  
   /** Returns true if the given file name is in the used files list. */
   protected boolean isUsedFile(String file) {
     String[] usedFiles = getUsedFiles();
@@ -377,7 +399,16 @@ public abstract class FormatReader extends FormatHandler
   protected void addMetaList(String key, Object value,
     Hashtable<String, Object> meta)
   {
-    Vector list = (Vector) meta.remove(key);
+    Object v = meta.remove(key);
+    Vector list = null;
+    if (v != null && v instanceof Vector) {
+      list = (Vector) v;
+    }
+    else if (v != null) {
+      list = new Vector();
+      list.add(v);
+    }
+
     addMeta(key, value, meta);
     Object newValue = meta.remove(key);
     if (newValue != null) {
@@ -439,17 +470,23 @@ public abstract class FormatReader extends FormatHandler
       Object v = meta.get(key);
       if (v instanceof Vector) {
         Vector list = (Vector) v;
-        int digits = String.valueOf(list.size()).length();
 
-        for (int i=0; i<list.size(); i++) {
-          String index = String.valueOf(i + 1);
-          while (index.length() < digits) {
-            index = "0" + index;
-          }
-          meta.put(key + " #" + index, list.get(i));
+        if (list.size() == 1) {
+          meta.put(key, list.get(0));
         }
+        else {
+          int digits = String.valueOf(list.size()).length();
 
-        meta.remove(key);
+          for (int i=0; i<list.size(); i++) {
+            String index = String.valueOf(i + 1);
+            while (index.length() < digits) {
+              index = "0" + index;
+            }
+            meta.put(key + " #" + index, list.get(i));
+          }
+
+          meta.remove(key);
+        }
       }
     }
   }
@@ -515,32 +552,39 @@ public abstract class FormatReader extends FormatHandler
   protected byte[] readPlane(RandomAccessInputStream s, int x, int y,
     int w, int h, int scanlinePad, byte[] buf) throws IOException
   {
+    return readPlane(s, x, y, w, h, scanlinePad, getSizeX(), getSizeY(), buf);
+  }
+
+  protected byte[] readPlane(RandomAccessInputStream s, int x, int y,
+    int w, int h, int scanlinePad, int imageWidth, int imageHeight, byte[] buf)
+    throws IOException
+  {
     int c = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY() &&
+    if (x == 0 && y == 0 && w == imageWidth && h == imageHeight &&
       scanlinePad == 0)
     {
       s.read(buf);
     }
-    else if (x == 0 && w == getSizeX() && scanlinePad == 0) {
+    else if (x == 0 && w == imageWidth && scanlinePad == 0) {
       if (isInterleaved()) {
-        s.skipBytes(y * w * bpp * c);
+        s.skipBytes((long) y * w * bpp * c);
         s.read(buf, 0, h * w * bpp * c);
       }
       else {
         int rowLen = w * bpp;
         for (int channel=0; channel<c; channel++) {
-          s.skipBytes(y * rowLen);
+          s.skipBytes((long) y * rowLen);
           s.read(buf, channel * h * rowLen, h * rowLen);
           if (channel < c - 1) {
             // no need to skip bytes after reading final channel
-            s.skipBytes((getSizeY() - y - h) * rowLen);
+            s.skipBytes((long) (imageHeight - y - h) * rowLen);
           }
         }
       }
     }
     else {
-      int scanlineWidth = getSizeX() + scanlinePad;
+      long scanlineWidth = imageWidth + scanlinePad;
       if (isInterleaved()) {
         s.skipBytes(y * scanlineWidth * bpp * c);
         for (int row=0; row<h; row++) {
@@ -565,7 +609,7 @@ public abstract class FormatReader extends FormatHandler
           }
           if (channel < c - 1) {
             // no need to skip bytes after reading final channel
-            s.skipBytes(scanlineWidth * bpp * (getSizeY() - y - h));
+            s.skipBytes(scanlineWidth * bpp * (imageHeight - y - h));
           }
         }
       }
@@ -957,6 +1001,26 @@ public abstract class FormatReader extends FormatHandler
     return FormatTools.CANNOT_GROUP;
   }
 
+  /* @see IFormatReader#setFillColor(Byte) */
+  @Override
+  public void setFillColor(Byte color) {
+    fillColor = color;
+  }
+
+  /**
+   * @see IFormatReader#getFillColor()
+   *
+   * If a fill color was not defined by the reader or
+   * {@link #setFillColor(Byte)}, then 0 is returned.
+   */
+  @Override
+  public Byte getFillColor() {
+    if (fillColor == null) {
+      return 0;
+    }
+    return fillColor;
+  }
+
   /* @see IFormatReader#isMetadataComplete() */
   @Override
   public boolean isMetadataComplete() {
@@ -999,25 +1063,35 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getUsedFiles() */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
-    String[] seriesUsedFiles;
+    String[] seriesUsedFiles;    
+    Set<String> files = new LinkedHashSet<String>();
+
     int seriesCount = getSeriesCount();
     if (seriesCount == 1) {
       seriesUsedFiles = getSeriesUsedFiles(noPixels);
       if (null == seriesUsedFiles) {
         seriesUsedFiles = new String[] {};
       }
-      return seriesUsedFiles;
+      files.addAll(Arrays.asList(seriesUsedFiles));
     }
-    int oldSeries = getSeries();
-    Set<String> files = new LinkedHashSet<String>();
-    for (int i = 0; i < seriesCount; i++) {
-      setSeries(i);
-      seriesUsedFiles = getSeriesUsedFiles(noPixels);
-      if (seriesUsedFiles != null) {
-        files.addAll(Arrays.asList(seriesUsedFiles));
+    else {
+      int oldSeries = getSeries();
+  
+      for (int i = 0; i < seriesCount; i++) {
+        setSeries(i);
+        seriesUsedFiles = getSeriesUsedFiles(noPixels);
+        if (seriesUsedFiles != null) {
+          files.addAll(Arrays.asList(seriesUsedFiles));
+        }
       }
+      setSeries(oldSeries);
     }
-    setSeries(oldSeries);
+
+    String optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(currentId);
+    if (optionsFile != null && new Location(optionsFile).exists()) {
+      files.add(optionsFile);
+    }
+
     return files.toArray(new String[files.size()]);
   }
 
@@ -1236,6 +1310,20 @@ public abstract class FormatReader extends FormatHandler
      return (int) Math.min(maxHeight, getSizeY());
   }
 
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    double rows = (double) getSizeY() / getOptimalTileHeight();
+    return (int) Math.ceil(rows);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    double cols = (double) getSizeX() / getOptimalTileWidth();
+    return (int) Math.ceil(cols);
+  }
+
   // -- Sub-resolution API methods --
 
   @Override
@@ -1381,7 +1469,10 @@ public abstract class FormatReader extends FormatHandler
    */
   @Override
   public void setId(String id) throws FormatException, IOException {
-    LOGGER.debug("{} initializing {}", this.getClass().getSimpleName(), id);
+    if (!isOmero(id)) {
+      LOGGER.debug("{} initializing {}", this.getClass().getSimpleName(), id);
+    }
+    
 
     if (currentId == null || !new Location(id).getAbsolutePath().equals(
       new Location(currentId).getAbsolutePath()))
@@ -1796,6 +1887,11 @@ public abstract class FormatReader extends FormatHandler
     transform.setA01(Math.sin(theta));
     transform.setA10(-1 * Math.sin(theta));
     return transform;
+  }
+
+  private boolean isOmero(String id) {
+    return id != null && id.toLowerCase().startsWith("omero:") &&
+    id.indexOf("\n") > 0;
   }
 
 }

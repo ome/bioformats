@@ -324,8 +324,18 @@ public class ClassList<T> {
     return options;
   }
 
-  /** Returns whether a given key is a whitelisted option.*/
+  /**
+   * Returns whether a given key is an allowed option.
+   *
+   * @deprecated Use {@link #isAllowedKey(String)} instead.
+   */
+  @Deprecated
   public boolean isWhitelistedKey(String s) {
+    return isAllowedKey(s);
+  }
+
+  /** Returns whether a given key is an allowed option.*/
+  public boolean isAllowedKey(String s) {
     String key = s.substring(s.lastIndexOf(".") + 1);
     for (String k: KEYS) {
       if (key.equals(k)) return true;
@@ -335,8 +345,8 @@ public class ClassList<T> {
 
   /** Add a key/value pair to the list of options.*/
   public void addOption(String key, String value) {
-    if (!isWhitelistedKey(key)) {
-      LOGGER.debug("{} is not a whitelisted key", key);
+    if (!isAllowedKey(key)) {
+      LOGGER.debug("{} is not an allowed key", key);
     }
     options.put(key, value);
   }

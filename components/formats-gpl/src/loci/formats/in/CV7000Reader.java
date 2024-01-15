@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -69,6 +70,9 @@ public class CV7000Reader extends FormatReader {
 
   // -- Constants --
 
+  public static final String DUPLICATE_PLANES_KEY = "cv7000.duplicate_missing_planes";
+  public static final boolean DUPLICATE_PLANES_DEFAULT = true;
+
   private static final Logger LOGGER = LoggerFactory.getLogger(CV7000Reader.class);
 
   private static final String MEASUREMENT_FILE = "MeasurementData.mlf";
@@ -78,7 +82,6 @@ public class CV7000Reader extends FormatReader {
   // -- Fields --
 
   private String[] allFiles;
-  private Location parent;
   private MinimalTiffReader reader;
   private String wppPath;
   private String detailPath;
@@ -92,6 +95,8 @@ public class CV7000Reader extends FormatReader {
   private String startTime, endTime;
   private ArrayList<String> extraFiles;
 
+  private transient Map<String, Boolean> acquiredWells = new HashMap<String, Boolean>();
+
   // -- Constructor --
 
   /** Constructs a new Yokogawa CV7000 reader. */
@@ -100,6 +105,17 @@ public class CV7000Reader extends FormatReader {
     hasCompanionFiles = true;
     domains = new String[] {FormatTools.HCS_DOMAIN};
     datasetDescription = "Directory with XML files and one .tif/.tiff file per plane";
+  }
+
+  // -- CV7000Reader API methods --
+
+  public boolean duplicatePlanes() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       DUPLICATE_PLANES_KEY, DUPLICATE_PLANES_DEFAULT);
+    }
+    return DUPLICATE_PLANES_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -130,7 +146,7 @@ public class CV7000Reader extends FormatReader {
     ArrayList<String> files = new ArrayList<String>();
     files.add(new Location(currentId).getAbsolutePath());
     for (String file : allFiles) {
-      if (!files.contains(file) && (!noPixels || !checkSuffix(file, "tif"))) {
+      if (file != null && !files.contains(file) && (!noPixels || !checkSuffix(file, "tif"))) {
         files.add(file);
       }
     }
@@ -176,7 +192,7 @@ public class CV7000Reader extends FormatReader {
     }
     files.addAll(extraFiles);
     for (String file : allFiles) {
-      if (!checkSuffix(file, "tif") && !(new Location(file).isDirectory())) {
+      if (file != null && !checkSuffix(file, "tif") && !(new Location(file).isDirectory())) {
         files.add(file);
       }
     }
@@ -206,6 +222,7 @@ public class CV7000Reader extends FormatReader {
       endTime = null;
       reversePlaneLookup = null;
       extraFiles = null;
+      acquiredWells.clear();
     }
   }
 
@@ -218,12 +235,25 @@ public class CV7000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    Arrays.fill(buf, (byte) 0);
+    Arrays.fill(buf, getFillColor());
     Plane p = lookupPlane(getSeries(), no);
     LOGGER.trace("series = {}, no = {}, file = {}", series, no, p == null ? null : p.file);
     if (p != null && p.file != null) {
       reader.setId(p.file);
       return reader.openBytes(0, buf, x, y, w, h);
+    }
+    else if (duplicatePlanes() && no > 0) {
+      int[] zct = getZCTCoords(no);
+      // pick the first plane in the same channel
+      int dupPlane = getIndex(0, zct[1], 0);
+
+      // very unlikely to happen, but catching the case
+      // where no is the first plane in the channel prevents
+      // a potential infinite loop
+      if (dupPlane == no) {
+        dupPlane = 0;
+      }
+      return openBytes(dupPlane, buf, x, y, w, h);
     }
     return buf;
   }
@@ -238,11 +268,17 @@ public class CV7000Reader extends FormatReader {
     String wpiXML = readSanitizedXML(id);
     XMLTools.parseXML(wpiXML, plate);
 
-    parent = new Location(id).getAbsoluteFile().getParentFile();
+    Location parent = new Location(id).getAbsoluteFile().getParentFile();
     allFiles = parent.list(true);
     Arrays.sort(allFiles);
     for (int i=0; i<allFiles.length; i++) {
-      allFiles[i] = new Location(parent, allFiles[i]).getAbsolutePath();
+      Location file = new Location(parent, allFiles[i]);
+      if (!file.isDirectory() && file.canRead()) {
+        allFiles[i] = file.getAbsolutePath();
+      }
+      else {
+        allFiles[i] = null;
+      }
     }
     Location measurementData = new Location(parent, MEASUREMENT_FILE);
 
@@ -282,6 +318,16 @@ public class CV7000Reader extends FormatReader {
       }
     }
 
+    channels.sort(new Comparator<Channel>() {
+      @Override
+      public int compare(Channel c1, Channel c2) {
+        if (c1.actionIndex != c2.actionIndex) {
+          return c1.actionIndex - c2.actionIndex;
+        }
+        return c1.index - c2.index;
+      }
+    });
+
     for (Channel ch : channels) {
       if (ch.correctionFile != null) {
         ch.correctionFile = new Location(parent, ch.correctionFile).getAbsolutePath();
@@ -293,10 +339,17 @@ public class CV7000Reader extends FormatReader {
 
     fields = 0;
     HashSet<Integer> uniqueWells = new HashSet<Integer>();
+    HashSet<Integer> uniqueChannels = new HashSet<Integer>();
 
     for (Plane p : planeData) {
       if (p != null) {
-        int wellIndex = p.row * plate.getPlateColumns() + p.column;
+        if (!isWellAcquired(p.field.row, p.field.column)) {
+          continue;
+        }
+
+        p.channelIndex = getChannelIndex(p);
+
+        int wellIndex = p.field.row * plate.getPlateColumns() + p.field.column;
         if (!minMax.containsKey(wellIndex)) {
           minMax.put(wellIndex, new MinMax());
         }
@@ -318,15 +371,20 @@ public class CV7000Reader extends FormatReader {
         if (p.z < m.minZ) {
           m.minZ = p.z;
         }
+
+        // min and max channel indexes not currently used,
+        // but continue to calculate for completeness
+        // they may be needed in future CV7000/8000 work
         if (p.channelIndex > m.maxC) {
           m.maxC = p.channelIndex;
         }
         if (p.channelIndex < m.minC) {
           m.minC = p.channelIndex;
         }
+        uniqueChannels.add(p.channelIndex);
 
-        if (p.field >= fields) {
-          fields = p.field + 1;
+        if (p.field.field >= fields) {
+          fields = p.field.field + 1;
         }
 
         uniqueWells.add(wellIndex);
@@ -345,6 +403,9 @@ public class CV7000Reader extends FormatReader {
     Arrays.sort(wells);
     reversePlaneLookup = new int[realWells * fields][];
 
+    Integer[] channelIndexes = uniqueChannels.toArray(new Integer[uniqueChannels.size()]);
+    Arrays.sort(channelIndexes);
+
     for (int i=0; i<realWells * fields; i++) {
       if (i > 0) {
         core.add(new CoreMetadata(core.get(0)));
@@ -354,7 +415,7 @@ public class CV7000Reader extends FormatReader {
       MinMax m = minMax.get(wellIndex);
       core.get(i).sizeZ = (m.maxZ - m.minZ) + 1;
       core.get(i).sizeT = (m.maxT - m.minT) + 1;
-      core.get(i).sizeC = reader.getSizeC() * ((m.maxC - m.minC) + 1);
+      core.get(i).sizeC = reader.getSizeC() * uniqueChannels.size();
       core.get(i).imageCount = core.get(i).sizeZ * core.get(i).sizeT *
         (core.get(i).sizeC / reader.getSizeC());
       reversePlaneLookup[i] = new int[core.get(i).imageCount];
@@ -364,14 +425,24 @@ public class CV7000Reader extends FormatReader {
     int[] seriesLengths = new int[] {fields, realWells};
     int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
 
-
     extraFiles = new ArrayList<String>();
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
-      int wellNumber = p.row * plate.getPlateColumns() + p.column;
+
+      // reindex so that the plane's channel index is into
+      // the list of unique acquired channels, not the list of all channels
+      // that might have been acquired
+      // this eliminates the need to correct for the minimum C index later on
+      p.channelIndex = Arrays.binarySearch(channelIndexes, p.channelIndex);
+
+      Field f = p.field;
+      if (!isWellAcquired(f.row, f.column)) {
+        continue;
+      }
+      int wellNumber = f.row * plate.getPlateColumns() + f.column;
       int wellIndex = Arrays.binarySearch(wells, wellNumber);
       p.series = FormatTools.positionToRaster(seriesLengths,
-        new int[] {p.field, wellIndex});
+        new int[] {f.field, wellIndex});
       MinMax m = minMax.get(wellNumber);
 
       planeLengths[0] = core.get(p.series).sizeC / reader.getSizeC();
@@ -379,7 +450,8 @@ public class CV7000Reader extends FormatReader {
       planeLengths[2] = core.get(p.series).sizeT;
 
       p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {p.channelIndex - m.minC, p.z - m.minZ, p.timepoint - m.minT});
+        new int[] {p.channelIndex, p.z - m.minZ, p.timepoint - m.minT});
+
       if (reversePlaneLookup[p.series][p.no] < 0) {
         reversePlaneLookup[p.series][p.no] = i;
       }
@@ -439,7 +511,8 @@ public class CV7000Reader extends FormatReader {
           store.setImageID(imageID, nextImage);
           store.setWellSampleImageRef(imageID, 0, nextWell, field);
 
-          String name = "Well " + ((char) ('A' + row)) + (col + 1) + ", Field " + (field + 1);
+          String name = "Well " + FormatTools.getWellRowName(row) +
+            (col + 1) + ", Field " + (field + 1);
           store.setImageName(name, nextImage);
           store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
 
@@ -512,13 +585,7 @@ public class CV7000Reader extends FormatReader {
               // particular plane.  Skip it.
               continue;
             }
-            Channel channel = null;
-            for (Channel ch : channels) {
-              if (ch.index == p.channelIndex) {
-                channel = ch;
-                break;
-              }
-            }
+            Channel channel = lookupChannel(p);
             if (channel == null) {
               continue;
             }
@@ -541,10 +608,16 @@ public class CV7000Reader extends FormatReader {
               store.setObjectiveSettingsID(objectiveID, i);
             }
 
-            store.setChannelName("Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
+            // the index here is the original bts:Ch index in
+            // the *.mes and *.mrf files
+            store.setChannelName("Action #" + (p.actionIndex + 1) +
+              ", Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
 
             if (channel.color != null) {
               store.setChannelColor(channel.color, i, c);
+            }
+            if (channel.fluor != null && !channel.fluor.isEmpty()) {
+              store.setChannelFluor(channel.fluor, i, c);
             }
 
             if (channel.excitation != null && channel.lightSourceRefs != null) {
@@ -591,6 +664,32 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
+  private int getChannelIndex(Plane p) {
+    int index = -1;
+    for (int action=0; action<=p.actionIndex; action++) {
+      for (Channel ch : channels) {
+        if (ch.timelineIndex == p.timelineIndex &&
+          ch.actionIndex == action)
+        {
+          index++;
+          if (ch.index == p.channel && ch.actionIndex == p.actionIndex) {
+            return index;
+          }
+        }
+      }
+    }
+    return index;
+  }
+
+  private Channel lookupChannel(Plane p) {
+    for (Channel ch : channels) {
+      if (ch.index == p.channel) {
+        return ch;
+      }
+    }
+    return null;
+  }
+
   private String readSanitizedXML(String filename) throws IOException {
     String xml = DataTools.readFile(filename).trim();
     if (xml.endsWith(">>")) {
@@ -600,18 +699,25 @@ public class CV7000Reader extends FormatReader {
   }
 
   private boolean isWellAcquired(int row, int col) {
+    String key = row + "-" + col;
+    if (acquiredWells.containsKey(key)) {
+      return acquiredWells.get(key);
+    }
     if (planeData != null) {
       for (Plane p : planeData) {
-        if (p != null && p.file != null && p.row == row && p.column == col) {
+        if (p != null && p.file != null && p.field.row == row && p.field.column == col) {
+          acquiredWells.put(key, true);
           return true;
         }
       }
     }
+    acquiredWells.put(key, false);
     return false;
   }
 
   private Plane lookupPlane(int series, int no) {
     int index = reversePlaneLookup[series][no];
+    LOGGER.trace("lookupPlane(series={}, no={}), index = {}", series, no, index);
     if (index < 0 || index >= planeData.size()) {
       return null;
     }
@@ -672,7 +778,6 @@ public class CV7000Reader extends FormatReader {
     private String parentDir;
 
     private int currentField = -1;
-    private HashMap<Integer, Integer> channelMap = new HashMap<Integer, Integer>();
 
     public MeasurementDataHandler(String parentDir) {
       super();
@@ -703,23 +808,19 @@ public class CV7000Reader extends FormatReader {
           // When the instrument is recording an acquisition error the "type"
           // will be "ERR" so we can skip those.
           Plane p = new Plane();
-          p.row = Integer.parseInt(attributes.getValue("bts:Row")) - 1;
-          p.column = Integer.parseInt(attributes.getValue("bts:Column")) - 1;
+          p.field = new Field();
+          p.field.row = Integer.parseInt(attributes.getValue("bts:Row")) - 1;
+          p.field.column = Integer.parseInt(attributes.getValue("bts:Column")) - 1;
           p.timepoint = Integer.parseInt(attributes.getValue("bts:TimePoint")) - 1;
-          p.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
+          p.field.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
           p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
           p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
+          p.actionIndex = Integer.parseInt(attributes.getValue("bts:ActionIndex")) - 1;
+          p.timelineIndex = Integer.parseInt(attributes.getValue("bts:TimelineIndex")) - 1;
 
-          if (p.field != currentField) {
-            currentField = p.field;
-            channelMap.clear();
+          if (p.field.field != currentField) {
+            currentField = p.field.field;
           }
-
-          if (!channelMap.containsKey(p.channel)) {
-            channelMap.put(p.channel, channelMap.size());
-          }
-
-          p.channelIndex = channelMap.get(p.channel);
 
           p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
           p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
@@ -785,6 +886,12 @@ public class CV7000Reader extends FormatReader {
         startTime = attributes.getValue("bts:BeginTime");
         endTime = attributes.getValue("bts:EndTime");
         settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
+
+        String system = attributes.getValue("bts:TargetSystem");
+        addGlobalMeta("Acquisition system", system);
+        if (!system.toLowerCase().startsWith("cv7000")) {
+          LOGGER.warn("Found data from {}; this is not well-supported", system);
+        }
       }
     }
 
@@ -793,6 +900,8 @@ public class CV7000Reader extends FormatReader {
   class MeasurementSettingsHandler extends BaseHandler {
     private Channel currentChannel = null;
     private StringBuffer currentValue = new StringBuffer();
+    private int timelineIndex = -1;
+    private int actionIndex = -1;
 
     // -- DefaultHandler API methods --
 
@@ -862,8 +971,17 @@ public class CV7000Reader extends FormatReader {
                 currentChannel.excitation = DataTools.parseDouble(wave);
               }
             }
+
+            currentChannel.fluor = attributes.getValue("bts:Fluorophore");
           }
         }
+      }
+      else if (qName.equals("bts:Timeline")) {
+        timelineIndex++;
+        actionIndex = -1;
+      }
+      else if (qName.startsWith("bts:ActionAcquire")) {
+        actionIndex++;
       }
     }
 
@@ -882,6 +1000,27 @@ public class CV7000Reader extends FormatReader {
           currentChannel.lightSourceRefs.add(index);
         }
       }
+      else if (qName.equals("bts:Ch")) {
+        int channelIndex = Integer.parseInt(value) - 1;
+        if (channelIndex >= 0 && channelIndex < channels.size()) {
+          // the same channel may be acquired multiple times
+          // if this is the first time the channel is acquired, set the indexes
+          // if this is the second (or more) time the channel is acquired,
+          // duplicate the channel so that each action has its own copy with
+          // the correct indexes
+          Channel ch = channels.get(channelIndex);
+          if (ch.timelineIndex == -1 && ch.actionIndex == -1) {
+            ch.timelineIndex = timelineIndex;
+            ch.actionIndex = actionIndex;
+          }
+          else {
+            Channel duplicate = new Channel(ch);
+            duplicate.timelineIndex = timelineIndex;
+            duplicate.actionIndex = actionIndex;
+            channels.add(duplicate);
+          }
+        }
+      }
     }
 
   }
@@ -894,6 +1033,8 @@ public class CV7000Reader extends FormatReader {
   }
 
   class Channel {
+    public int timelineIndex = -1;
+    public int actionIndex = -1;
     public int index;
     public double xSize;
     public double ySize;
@@ -908,15 +1049,40 @@ public class CV7000Reader extends FormatReader {
     public Double exposureTime;
     public String binning;
     public Color color;
+
+    public String fluor;
+
+    public Channel() {
+    }
+
+    public Channel(Channel ch) {
+      index = ch.index;
+      xSize = ch.xSize;
+      ySize = ch.ySize;
+      cameraNumber = ch.cameraNumber;
+      correctionFile = ch.correctionFile;
+      lightSourceRefs = ch.lightSourceRefs;
+      excitation = ch.excitation;
+      objectiveID = ch.objectiveID;
+      objective = ch.objective;
+      magnification = ch.magnification;
+      exposureTime = ch.exposureTime;
+      binning = ch.binning;
+      color = ch.color;
+      fluor = ch.fluor;
+    }
+
+    @Override
+    public String toString() {
+      return "timelineIndex=" + timelineIndex + ", actionIndex=" + actionIndex + ", index=" + index;
+    }
   }
 
   class Plane {
     public String file;
     public String timestamp;
-    public int row;
-    public int column;
+    public Field field;
     public int timepoint;
-    public int field;
     public int z;
     // this is the original channel value stored in the XML
     public int channel;
@@ -927,6 +1093,29 @@ public class CV7000Reader extends FormatReader {
     public double zpos;
     public int series;
     public int no;
+    public int actionIndex;
+    public int timelineIndex;
+  }
+
+  class Field {
+    public int row;
+    public int column;
+    public int field;
+
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof Field)) {
+        return false;
+      }
+      Field f = (Field) o;
+      return f.row == row && f.column == column && f.field == field;
+    }
+
+    @Override
+    public int hashCode() {
+      // allows up to 256 rows and columns, up to 65536 fields
+      return (row & 0xff) << 24 | (column & 0xff) << 16 | (field & 0xffff);
+    }
   }
 
   class MinMax {

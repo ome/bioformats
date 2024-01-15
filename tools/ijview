@@ -3,7 +3,7 @@
 # ijview: a script for displaying an image file in ImageJ
 #         using the Bio-Formats Importer plugin
 
-# Required JARs: loci_tools.jar or bioformats_package.jar, ij.jar
+# Required JARs: bioformats_package.jar, ij.jar
 
 
 RESOLVED_PATH=$(readlink -f "$0" 2>/dev/null \
@@ -32,7 +32,7 @@ then
   if [ -e "$BF_JAR_DIR/bio-formats_plugins.jar" ]
   then
     BF_CP="$BF_CP:$BF_JAR_DIR/bio-formats_plugins.jar"
-  elif [ ! -e "$BF_JAR_DIR/loci_tools.jar" -a ! -e "$BF_JAR_DIR/bioformats_package.jar" ]
+  elif [ -e "$BF_JAR_DIR/bioformats_package.jar" ]
   then
     # Libraries not found; issue an error
     echo "Required JAR libraries not found. Please download:"

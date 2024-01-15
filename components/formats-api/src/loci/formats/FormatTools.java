@@ -54,6 +54,7 @@ import loci.common.ReflectedUniverse;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.codec.Codec;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -632,7 +633,7 @@ public final class FormatTools {
 
     // check image count
     if (num <= 0) {
-      throw new IllegalArgumentException("Invalid image count: " + num);
+      throw new IllegalArgumentException("Invalid plane count: " + num);
     }
     if (num != zSize * cSize * tSize) {
       // if this happens, there is probably a bug in metadata population --
@@ -643,7 +644,7 @@ public final class FormatTools {
         ", total=" + num + ")");
     }
     if (index < 0 || index >= num) {
-      throw new IllegalArgumentException("Invalid image index: " +
+      throw new IllegalArgumentException("Invalid plane index: " +
         index + "/" + num);
     }
 
@@ -1346,6 +1347,57 @@ public final class FormatTools {
       }
     }
     return rtn;
+  }
+
+  /**
+   * Create a simple name for the well at the given row and column.
+   * The row is assigned one or two letters, the column is assigned 2 digits.
+   * For example:
+   *
+   * A01, A02, A03, ...
+   * B01, B02, B03, ...
+   * ...
+   * Z01, Z02, Z03, ...
+   * AA01, AA02, AA03, ...
+   *
+   * @param row the well row index, starting from 0
+   * @param col the well column index, starting from 0
+   * @return a well name of the format described above
+   */
+  public static String getWellName(int row, int col) {
+    if (col < 0) {
+      // negative row index will be checked when getting the row name
+      throw new IllegalArgumentException("Negative column index not allowed: " + col);
+    }
+    String name = String.valueOf(col + 1);
+    if (name.length() == 1) {
+      name = "0" + name;
+    }
+    return getWellRowName(row) + name;
+  }
+
+  /**
+   * Create a simple name for the given row of wells.
+   * The row is assigned one or two letters, for example:
+   *
+   * A
+   * B
+   * ...
+   * Z
+   * AA
+   *
+   * @param row the well row index, starting from 0
+   * @return a well row name of the format described above
+   */
+  public static String getWellRowName(int row) {
+    if (row < 0) {
+      throw new IllegalArgumentException("Negative row index not allowed: " + row);
+    }
+    String name = String.valueOf((char) ('A' + (row % 26)));
+    if (row >= 26) {
+      name = (char) ('A' + ((row / 26) - 1)) + name;
+    }
+    return name;
   }
 
   // -- Conversion convenience methods --
@@ -2076,4 +2128,57 @@ public final class FormatTools {
 
     return (int) Math.max(maxDirCount - dirCount, 0);
   }
+
+  /**
+   * Compare the given reader and writer at the specified series and resolution to
+   * see if pre-compressed tiles can be transferred directly from the reader to the writer.
+   */
+  public static boolean canUsePrecompressedTiles(IFormatReader reader, IFormatWriter writer,
+    int series, int resolution)
+    throws FormatException, IOException
+  {
+    if (!(reader instanceof ICompressedTileReader)) {
+      return false;
+    }
+    if (!(writer instanceof ICompressedTileWriter)) {
+      return false;
+    }
+
+    int readerSeries = reader.getSeries();
+    int readerRes = reader.getResolution();
+    reader.setSeries(series);
+    reader.setResolution(resolution);
+
+    int writerSeries = writer.getSeries();
+    int writerRes = writer.getResolution();
+    writer.setSeries(series);
+    writer.setResolution(resolution);
+
+    boolean sameTileWidth = reader.getOptimalTileWidth() == writer.getTileSizeX();
+    boolean sameTileHeight = reader.getOptimalTileHeight() == writer.getTileSizeY();
+
+    // reader and writer must use equivalent codecs
+    // the Codec objects are not expected to be strictly equal,
+    // but both should either be null, or non-null and instances of the same class
+    boolean sameCodec = true;
+    Codec writerCodec = ((ICompressedTileWriter) writer).getCodec();
+    for (int no=0; no<reader.getImageCount(); no++) {
+      Codec readerCodec = ((ICompressedTileReader) reader).getTileCodec(no);
+      if ((writerCodec == null && readerCodec != null) ||
+        (writerCodec != null && readerCodec == null) ||
+        !writerCodec.getClass().equals(readerCodec.getClass()))
+      {
+        sameCodec = false;
+        break;
+      }
+    }
+
+    reader.setSeries(readerSeries);
+    reader.setResolution(resolution);
+    writer.setSeries(series);
+    writer.setResolution(resolution);
+
+    return sameTileWidth && sameTileHeight && sameCodec;
+  }
+
 }

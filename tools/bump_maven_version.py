@@ -9,7 +9,7 @@ import argparse
 
 def check_version_format(version):
     """Check format of version number"""
-    pattern = '^[0-9]+[\.][0-9]+[\.][0-9]+(\-.+)*$'
+    pattern = r'^[0-9]+[\.][0-9]+[\.][0-9]+(\-.+)*$'
     return re.match(pattern, version) is not None
 
 
@@ -17,6 +17,7 @@ BIO_FORMATS_ARTIFACT = (
     r"(<groupId>%s</groupId>\n"
     ".*<artifactId>pom-bio-formats</artifactId>\n"
     ".*<version>).*(</version>)")
+
 
 class Replacer(object):
 
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     ns = parser.parse_args()
 
     if not check_version_format(ns.version):
-        print "Invalid version format"
+        print("Invalid version format")
         sys.exit(1)
 
     replacer = Replacer(old_group=ns.old_group, new_group=ns.new_group)
