@@ -389,10 +389,13 @@ public class SVSReader extends BaseTiffReader {
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       int index = i;
-      tiffParser.fillInIFD(ifds.get(index));
 
-      String comment = ifds.get(index).getComment();
-      if (comment == null) {
+      IFD currentIFD = ifds.get(index);
+      tiffParser.fillInIFD(currentIFD);
+
+      String comment = currentIFD.getComment();
+      int subfileType = currentIFD.getIFDIntValue(IFD.NEW_SUBFILE_TYPE);
+      if (comment == null || subfileType != 0) {
         if (labelIndex == -1) {
           labelIndex = i;
         }
