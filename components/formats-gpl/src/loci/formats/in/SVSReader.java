@@ -409,7 +409,10 @@ public class SVSReader extends BaseTiffReader {
 
       String comment = currentIFD.getComment();
       int subfileType = currentIFD.getIFDIntValue(IFD.NEW_SUBFILE_TYPE);
-      if (comment == null || subfileType != 0) {
+
+      // if there is no identifying comment, assign this IFD
+      // to the label or macro (if a label or macro was not already found)
+      if (comment == null) {
         if (labelIndex == -1) {
           labelIndex = i;
         }
@@ -418,10 +421,15 @@ public class SVSReader extends BaseTiffReader {
         }
         continue;
       }
+
+      // when the comment exists, check it for any information that
+      // identifies the image type
       comments[i] = comment;
       String[] lines = comment.split("\n");
       String[] tokens;
       String key, value;
+      boolean foundLabel = false;
+      boolean foundMacro = false;
       for (String line : lines) {
         tokens = line.split("[|]");
         for (String t : tokens) {
@@ -437,14 +445,27 @@ public class SVSReader extends BaseTiffReader {
           }
           else if (t.toLowerCase().indexOf("label") >= 0) {
             labelIndex = i;
+            foundLabel = true;
           }
           else if (t.toLowerCase().indexOf("macro") >= 0) {
             macroIndex = i;
+            foundMacro = true;
           }
         }
       }
       if (zPosition[index] != null) {
         uniqueZ.add(zPosition[index]);
+      }
+
+      // if the comment existed but didn't identify a label or macro
+      // check the subfile type to see if we suspect a label or macro anyway
+      if (!foundLabel && !foundMacro && subfileType != 0) {
+        if (labelIndex == -1) {
+          labelIndex = i;
+        }
+        else if (macroIndex == -1) {
+          macroIndex = i;
+        }
       }
     }
     setSeries(0);
@@ -627,7 +648,17 @@ public class SVSReader extends BaseTiffReader {
       // remove it by default, see https://github.com/ome/bioformats/issues/3757
       IFD lastResolution = ifds.get(getIFDIndex(core.size(0) - 1, 0));
       if (lastResolution.get(IFD.STRIP_BYTE_COUNTS) != null) {
+        int index = core.flattenedIndex(0, core.size(0) - 1);
         core.remove(0, core.size(0) - 1);
+
+        // update the label and macro indexes
+        // otherwise image names won't be set correctly
+        if (index < labelIndex) {
+          labelIndex--;
+        }
+        if (index < macroIndex) {
+          macroIndex--;
+        }
       }
     }
   }
