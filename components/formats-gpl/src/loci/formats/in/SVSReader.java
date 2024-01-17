@@ -71,6 +71,9 @@ public class SVSReader extends BaseTiffReader {
 
   // -- Constants --
 
+  public static final String REMOVE_THUMBNAIL_KEY = "svs.remove_thumbnail";
+  public static final boolean REMOVE_THUMBNAIL_DEFAULT = true;
+
   /** Logger for this class. */
   private static final Logger LOGGER =
     LoggerFactory.getLogger(SVSReader.class);
@@ -118,8 +121,19 @@ public class SVSReader extends BaseTiffReader {
 
   public SVSReader(String name, String[] suffixes) {
     super(name, suffixes);
-  }  
-  
+  }
+
+  // -- SVSReader API methods --
+
+  public boolean removeThumbnail() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        REMOVE_THUMBNAIL_KEY, REMOVE_THUMBNAIL_DEFAULT);
+    }
+    return REMOVE_THUMBNAIL_DEFAULT;
+  }
+
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -606,6 +620,16 @@ public class SVSReader extends BaseTiffReader {
     setSeries(0);
 
     core.reorder();
+
+    if (removeThumbnail()) {
+      // if the smallest resolution uses strips instead of tiles
+      // then it's a "thumbnail" image instead of a real resolution
+      // remove it by default, see https://github.com/ome/bioformats/issues/3757
+      IFD lastResolution = ifds.get(getIFDIndex(core.size(0) - 1, 0));
+      if (lastResolution.get(IFD.STRIP_BYTE_COUNTS) != null) {
+        core.remove(0, core.size(0) - 1);
+      }
+    }
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
