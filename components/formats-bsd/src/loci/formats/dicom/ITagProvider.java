@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2023 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,33 +30,29 @@
  * #L%
  */
 
-package loci.formats.codec;
+package loci.formats.dicom;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
-import loci.common.DataTools;
-import loci.common.RandomAccessInputStream;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.formats.FormatException;
-import loci.formats.MissingLibraryException;
-import loci.formats.UnsupportedCompressionException;
-import loci.formats.services.LuraWaveService;
-import loci.formats.services.LuraWaveServiceImpl;
+import java.util.List;
 
 /**
- * This class provides LuraWave decompression, using LuraWave's Java decoding
- * library. Compression is not supported. Decompression requires a LuraWave
- * license code, specified in the lurawave.license system property (e.g.,
- * <code>-Dlurawave.license=XXXX</code> on the command line).
- *
- * @author Curtis Rueden ctrueden at wisc.edu
+ * Interface used to provide DICOM tags.
+ * Implementations may parse tags from a file or other source;
+ * loci.formats.out.DicomWriter makes use of this interface
+ * to accept supplementary tags.
  */
-public class LuraWaveCodec extends WrappedCodec {
-  public LuraWaveCodec() {
-    super(new ome.codecs.LuraWaveCodec());
-  }
+public interface ITagProvider {
+
+  /**
+   * Read tags from the given location.
+   * The interpretation of 'location' is implementation-dependent.
+   * This method must be called before retrieving tags.
+   */
+  void readTagSource(String location) throws IOException;
+
+  /**
+   * Retrieve the tags defined by this provider.
+   */
+  List<DicomTag> getTags();
+
 }

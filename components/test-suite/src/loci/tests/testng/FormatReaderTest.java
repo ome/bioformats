@@ -963,7 +963,7 @@ public class FormatReaderTest {
 
     if (expected == null && real == null) {
       return true;
-    } else if (expected.equals("null")  && real == null) {
+    } else if ("null".equals(expected) && real == null) {
       return true;
     } else if (expected == null) {
       return false;
@@ -1422,6 +1422,51 @@ public class FormatReaderTest {
   }
 
   @Test(groups = {"all", "fast", "automated"})
+  public void testUnflattenedImageNames() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testUnflattenedImageNames";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    IFormatReader resolutionReader = setupReader(false, true);
+    try {
+      IMetadata retrieve = (IMetadata) resolutionReader.getMetadataStore();
+
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
+
+      for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
+        config.setSeries(i, false);
+
+        String realName = retrieve.getImageName(i);
+        String expectedName = config.getImageName();
+
+        if (!isEqual(expectedName, realName)) {
+          String unflattenedName = config.getUnflattenedImageName();
+          if (!isEqual(unflattenedName, realName)) {
+            msg = "Series " + i + " (got '" + realName +
+              "', expected '" + expectedName + "' or '" + unflattenedName + "')";
+            success = false;
+          }
+        }
+      }
+    }
+    finally {
+      try {
+        resolutionReader.close();
+      }
+      catch (IOException e) {
+        success = false;
+        msg = "Could not close reader";
+      }
+    }
+    result(testName, success, msg);
+  }
+
+  @Test(groups = {"all", "fast", "automated"})
   public void testImageDescriptions() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ImageDescriptions";
@@ -1705,9 +1750,7 @@ public class FormatReaderTest {
   @Test(groups = {"all", "type", "automated"})
   public void testRequiredDirectories() {
     if (!initFile()) return;
-    if (reader.getFormat().equals("Woolz") ||
-      reader.getFormat().startsWith("CellH5"))
-    {
+    if (reader.getFormat().startsWith("CellH5")) {
       throw new SkipException(SKIP_MESSAGE);
     }
     String testName = "testRequiredDirectories";
@@ -2479,6 +2522,32 @@ public class FormatReaderTest {
       "open = " + isThisTypeOpen + ", !open = " + isThisTypeNotOpen);
   }
 
+  /**
+   * In most cases, this test will:
+   *  - get the lowest-level reader for the file being tested
+   *  - iterate over each used file in the fileset
+   *      * iterate over each available reader (i.e. all of readers.txt)
+   *          - check if the reader picks up the used file
+   *          - fail the test if either is true:
+   *              * the reader picks up the file, but is not an instance of the original lowest-level reader
+   *              * the reader does not pick up the file, and is an instance of the original lowest-level reader
+   *
+   * There are a number of special cases, as many formats cannot be reliably
+   * detected from all files in the fileset. TIFF-based formats are especially
+   * prone to this issue. When adding a special case, take care to choose
+   * the appropriate location (type checking can be expensive for filesets with many files):
+   *  - inside the used file loop, but outside the reader loop
+   *     * if some used files are not expected to be passed to setId,
+   *       and could be picked up by many different readers, then a special case
+   *       in this location can save a lot of time. TIFF-based HCS formats
+   *       usually belong here.
+   *  - inside both the used file and reader loops, before type checking occurs
+   *     * if some files are expected to be picked up by one different reader in particular,
+   *       this allows bypassing the type check for specific file/reader combinations
+   *  - inside both the used file and reader loops, after type checking occurs
+   *     * this is the most expensive option in terms of time, but necessary
+   *       in the common case where the type check matters
+   */
   @Test(groups = {"all", "fast", "automated"})
   public void testIsThisType() {
     String testName = "testIsThisType";
@@ -2500,9 +2569,74 @@ public class FormatReaderTest {
         IFormatReader[] readers = ir.getReaders();
         String[] used = reader.getUsedFiles();
         for (int i=0; i<used.length && success; i++) {
+          // ignore anything other than .wpi for CV7000
+          if (!used[i].toLowerCase().endsWith(".wpi") &&
+            r instanceof CV7000Reader)
+          {
+            continue;
+          }
+
+          // the pattern reader only picks up pattern files
+          if (!used[i].toLowerCase().endsWith(".pattern") &&
+            r instanceof FilePatternReader)
+          {
+            continue;
+          }
+
+          // ignore companion files for Leica LIF
+          if (!used[i].toLowerCase().endsWith(".lif") &&
+            r instanceof LIFReader)
+          {
+            continue;
+          }
+
+          if (!used[i].toLowerCase().endsWith(".vff") &&
+            r instanceof MicroCTReader)
+          {
+            continue;
+          }
+
+          // CellWorx datasets can only be reliably detected with the .HTD file
+          if (!used[i].toLowerCase().endsWith(".htd") &&
+            r instanceof CellWorxReader)
+          {
+            continue;
+          }
+
+          // Cellomics datasets cannot be reliably detected with .mdb file
+          if (used[i].toLowerCase().endsWith(".mdb") &&
+            r instanceof CellomicsReader)
+          {
+            continue;
+          }
+
           // for each used file, make sure that one reader,
           // and only one reader, identifies the dataset as its own
           for (int j=0; j<readers.length; j++) {
+            // AFI reader is not expected to pick up .svs files
+            if (r instanceof AFIReader && (readers[j] instanceof AFIReader ||
+              readers[j] instanceof SVSReader))
+            {
+              continue;
+            }
+
+            if ((readers[j] instanceof NDPISReader ||
+              r instanceof NDPISReader) &&
+              used[i].toLowerCase().endsWith(".ndpi"))
+            {
+              continue;
+            }
+
+            // the JPEG reader can pick up JPEG files associated with a
+            // Hamamatsu VMS dataset
+            if (readers[j] instanceof JPEGReader &&
+              r instanceof HamamatsuVMSReader &&
+              used[i].toLowerCase().endsWith(".jpg"))
+            {
+              continue;
+            }
+
+
             boolean result = readers[j].isThisType(used[i]);
 
             // Options files
@@ -2672,30 +2806,7 @@ public class FormatReaderTest {
               continue;
             }
 
-            // AFI reader is not expected to pick up .svs files
-            if (r instanceof AFIReader && (readers[j] instanceof AFIReader ||
-              readers[j] instanceof SVSReader))
-            {
-              continue;
-            }
-
             if (!result && readers[j] instanceof MIASReader) {
-              continue;
-            }
-
-            if ((readers[j] instanceof NDPISReader ||
-              r instanceof NDPISReader) &&
-              used[i].toLowerCase().endsWith(".ndpi"))
-            {
-              continue;
-            }
-
-            // the JPEG reader can pick up JPEG files associated with a
-            // Hamamatsu VMS dataset
-            if (readers[j] instanceof JPEGReader &&
-              r instanceof HamamatsuVMSReader &&
-              used[i].toLowerCase().endsWith(".jpg"))
-            {
               continue;
             }
 
@@ -2718,26 +2829,6 @@ public class FormatReaderTest {
               continue;
             }
 
-            // the pattern reader only picks up pattern files
-            if (!used[i].toLowerCase().endsWith(".pattern") &&
-              r instanceof FilePatternReader)
-            {
-              continue;
-            }
-
-            // ignore companion files for Leica LIF
-            if (!used[i].toLowerCase().endsWith(".lif") &&
-              r instanceof LIFReader)
-            {
-              continue;
-            }
-
-            if (!used[i].toLowerCase().endsWith(".vff") &&
-              r instanceof MicroCTReader)
-            {
-              continue;
-            }
-
             // Inveon only reliably detected from header file
             if (!result && r instanceof InveonReader) {
               continue;
@@ -2748,30 +2839,9 @@ public class FormatReaderTest {
               continue;
             }
 
-            // ignore anything other than .wpi for CV7000
-            if (!used[i].toLowerCase().endsWith(".wpi") &&
-              r instanceof CV7000Reader)
-            {
-              continue;
-            }
-
             // Deltavision reader can pick up .rcpnl files
             if (result && (r instanceof RCPNLReader) &&
               (readers[j] instanceof DeltavisionReader))
-            {
-              continue;
-            }
-
-            // CellWorx datasets can only be reliably detected with the .HTD file
-            if (!used[i].toLowerCase().endsWith(".htd") &&
-              r instanceof CellWorxReader)
-            {
-              continue;
-            }
-
-            // Cellomics datasets cannot be reliably detected with .mdb file
-            if (used[i].toLowerCase().endsWith(".mdb") &&
-              r instanceof CellomicsReader)
             {
               continue;
             }

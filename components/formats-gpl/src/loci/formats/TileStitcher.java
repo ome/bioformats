@@ -32,6 +32,8 @@ import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Region;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -304,6 +306,38 @@ public class TileStitcher extends ReaderWrapper {
         }
       }
     }
+  }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    return tileY;
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    return tileX;
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("TileStitcher does not support pre-compressed tile access");
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("TileStitcher does not support pre-compressed tile access");
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    throw new UnsupportedOperationException("TileStitcher does not support pre-compressed tile access");
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("TileStitcher does not support pre-compressed tile access");
   }
 
   // -- IFormatHandler API methods --

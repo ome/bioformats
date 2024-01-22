@@ -250,7 +250,7 @@ public class ZeissCZIReader extends FormatReader {
 
     String color = channels.get(previousChannel).color;
     if (color != null) {
-      color = color.replaceAll("#", "");
+      color = normalizeColor(color);
       try {
         int colorValue = Integer.parseInt(color, 16);
 
@@ -287,7 +287,7 @@ public class ZeissCZIReader extends FormatReader {
 
     String color = channels.get(previousChannel).color;
     if (color != null) {
-      color = color.replaceAll("#", "");
+      color = normalizeColor(color);
       try {
         int colorValue = Integer.parseInt(color, 16);
 
@@ -1406,14 +1406,9 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
-      else if (extraIndex == 0) {
-        store.setImageName("label image", i);
-      }
-      else if (extraIndex == 1) {
-        store.setImageName("macro image", i);
-      }
-      else {
-        store.setImageName("thumbnail image", i);
+      else if (extraIndex >= 0 && extraIndex < extraImages.size()) {
+        AttachmentEntry entry = extraImages.get(extraIndex).attachment;
+        store.setImageName(entry.getNormalizedName(), i);
       }
 
       // remaining acquisition settings (esp. channels) do not apply to
@@ -1678,10 +1673,7 @@ public class ZeissCZIReader extends FormatReader {
 
           String color = channels.get(c).color;
           if (color != null && !isRGB()) {
-            color = color.replaceAll("#", "");
-            if (color.length() > 6) {
-              color = color.substring(2, color.length());
-            }
+            color = normalizeColor(color);
             try {
               // shift by 8 to allow alpha in the final byte
               store.setChannelColor(
@@ -3395,7 +3387,8 @@ public class ZeissCZIReader extends FormatReader {
                   platePositions.add(value);
                 }
                 String name = well.getAttribute("Name");
-                for (int f=0; f<well.getElementsByTagName("SingleTileRegion").getLength(); f++) {
+                int tileRegionCount = (int) Math.max(1, well.getElementsByTagName("SingleTileRegion").getLength());
+                for (int f=0; f<tileRegionCount; f++) {
                   imageNames.add(name);
                 }
               }
@@ -4334,6 +4327,15 @@ public class ZeissCZIReader extends FormatReader {
     return a & 0xff;
   }
 
+  private String normalizeColor(String color) {
+    String c = color.replaceAll("#", "");
+    if (c.length() > 6) {
+      c = c.substring(2, (int) Math.min(8, c.length()));
+      LOGGER.debug("Replaced color {} with {}", color, c);
+    }
+    return c;
+  }
+
   /** Segment with ID "ZISRAWDIRECTORY". */
   class Directory extends Segment {
     public DirectoryEntry[] entries;
@@ -4549,6 +4551,20 @@ public class ZeissCZIReader extends FormatReader {
       return "schemaType = " + schemaType + ", filePosition = " + filePosition +
         ", filePart = " + filePart + ", contentGUID = " + contentGUID +
         ", contentFileType = " + contentFileType;
+    }
+
+    public String getNormalizedName() {
+      if (name == null) {
+        return "";
+      }
+      String n = name.trim();
+      if (n.toLowerCase().startsWith("label")) {
+        return "label image";
+      }
+      else if (n.toLowerCase().startsWith("slidepreview")) {
+        return "macro image";
+      }
+      return n;
     }
   }
 

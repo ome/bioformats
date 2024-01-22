@@ -661,12 +661,12 @@ public class OIRReader extends FormatReader {
         break;
       }
       long fp = s.getFilePointer();
-      String xml = s.readString(length).trim();
+      String xml = s.readString(length);
       if (!xml.startsWith("<?xml")) {
         s.seek(fp - 2);
         continue;
       }
-      LOGGER.trace("xml = {}", xml);
+      xml = xml.trim();
       if (((channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) &&
         isCurrentFile(file)) || xml.indexOf("lut:LUT") > 0)
       {
@@ -687,7 +687,9 @@ public class OIRReader extends FormatReader {
     }
     // total block length could include multiple strings of XML
     int totalBlockLength = s.readInt();
+    LOGGER.debug("total block length = {}", totalBlockLength);
     long end = s.getFilePointer() + totalBlockLength - 4;
+    LOGGER.debug("end = {}", end);
     s.skipBytes(4);
 
     while (s.getFilePointer() < end) {
@@ -735,6 +737,9 @@ public class OIRReader extends FormatReader {
       long fp = s.getFilePointer();
       String xml = s.readString(xmlLength).trim();
       LOGGER.trace("xml = {}", xml);
+      if (!xml.startsWith("<?xml")) {
+        break;
+      }
       if (isCurrentFile(file) || xml.indexOf("lut:LUT") > 0) {
         parseXML(s, xml, fp);
       }
@@ -1249,6 +1254,15 @@ public class OIRReader extends FormatReader {
           parseChannel(channel, appendChannels);
         }
       }
+
+      // calls to parseChannel may have reset the channels list
+      // so there may be null elements that need to be removed
+      for (int i=0; i<channels.size(); i++) {
+        if (channels.get(i) == null) {
+          channels.remove(i);
+          i--;
+        }
+      }
     }
   }
 
@@ -1277,9 +1291,14 @@ public class OIRReader extends FormatReader {
       channelName = name.getTextContent();
     }
 
+    int index = Integer.parseInt(channel.getAttribute("order")) - 1;
+
     if (id != null) {
       boolean foundChannel = false;
       for (Channel ch : channels) {
+        if (ch == null) {
+          continue;
+        }
         if (ch.id.equals(id)) {
           foundChannel = true;
           if (laserId != null) {
@@ -1306,7 +1325,16 @@ public class OIRReader extends FormatReader {
             }
           }
         }
-        channels.add(c);
+
+        while (index > channels.size()) {
+          channels.add(null);
+        }
+        if (index == channels.size()) {
+          channels.add(c);
+        }
+        else {
+          channels.set(index, c);
+        }
       }
     }
   }

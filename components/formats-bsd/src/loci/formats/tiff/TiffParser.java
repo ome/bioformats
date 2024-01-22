@@ -546,6 +546,9 @@ public class TiffParser implements Closeable {
         offset &= 0xffffffffL;
         offset += 0x100000000L;
       }
+      if (offset >= in.length()) {
+        return null;
+      }
       in.seek(offset);
     }
 

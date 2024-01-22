@@ -123,7 +123,7 @@
 00080124, "Mapping Resource Identification Sequence", SQ
 00080201, "Timezone Offset from UTC", SH
 00080220, "Responsible Group Code Sequence", SQ
-00080220, "Equipment Modality", CS
+00080221, "Equipment Modality", CS
 00080222, "Manufacturer's Related Model Group", LO
 00080300, "Private Data Element Characteristics Sequence", SQ
 00080301, "Private Group Reference", US
@@ -285,7 +285,7 @@
 00100221, "Genetic Modifications Sequence", SQ
 00100222, "Genetic Modifications Description", UC
 00100223, "Genetic Modifications Nomenclature", LO
-00100229, "Genetic Modifications Sequence", SQ
+00100229, "Genetic Modifications Code Sequence", SQ
 00101000, "Other Patient IDs", LO
 00101001, "Other Patient Names", PN
 00101002, "Other Patient IDs Sequence", SQ
@@ -385,7 +385,7 @@
 00142002, "Evaluator Sequence", SQ
 00142004, "Evaluator Number", IS
 00142006, "Evaluator Name", PN
-00142006, "Evaluator Attempt", IS
+00142008, "Evaluation Attempt", IS
 00142012, "Indication Sequence", SQ
 00142014, "Indication Number", IS
 00142016, "Indication Label", SH

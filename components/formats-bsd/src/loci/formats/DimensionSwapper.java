@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataStore;
 import loci.formats.CoreMetadata;
 
@@ -306,8 +308,30 @@ public class DimensionSwapper extends ReaderWrapper {
     }
   }
 
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    return super.openCompressedBytes(reorder(no), x, y);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    return super.openCompressedBytes(reorder(no), buf, x, y);
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    return super.getTileCodec(reorder(no));
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    return super.getTileCodecOptions(reorder(no), x, y);
+  }
+
   // -- Helper methods --
-  
+
   protected int reorder(int no) {
     if (getInputOrder() == null) return no;
     return FormatTools.getReorderedIndex(getInputOrder(), getDimensionOrder(),

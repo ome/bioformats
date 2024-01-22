@@ -523,6 +523,13 @@ public class OperettaReader extends FormatReader {
           }
           // Check the next plane if possible
           planeIndex++;
+
+          // The next plane may be null, in which case we need to move to the next non-null one
+          while (planeIndex < planes[i].length && planes[i][planeIndex] == null) {
+            LOGGER.debug("skipping null plane series = {}, plane = {}", i, planeIndex);
+            planeIndex++;
+          }
+
           if (planeIndex >= planes[i].length) {
               break;
           }

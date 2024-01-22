@@ -44,6 +44,7 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 import loci.formats.tiff.TiffSaver;
@@ -71,13 +72,6 @@ public class TiffWriter extends FormatWriter {
     CompressionType.ZLIB.getCompression();
 
   private static final String[] BIG_TIFF_SUFFIXES = {"tf2", "tf8", "btf"};
-
-  /**
-   * Number of bytes at which to automatically switch to BigTIFF
-   * This is approximately 3.9 GB instead of 4 GB,
-   * to allow space for the IFDs.
-   */
-  private static final long BIG_TIFF_CUTOFF = (long) 1024 * 1024 * 3990;
 
   /** TIFF tiles must be of a height and width divisible by 16. */
   private static final int TILE_GRANULARITY = 16;
@@ -185,7 +179,7 @@ public class TiffWriter extends FormatWriter {
           totalBytes += (long)sizeX * (long)sizeY * (long)sizeZ * (long)sizeC * (long)sizeT * bpp;
         }
 
-        if (totalBytes >= BIG_TIFF_CUTOFF) {
+        if (totalBytes >= TiffConstants.BIG_TIFF_CUTOFF) {
           if (canDetectBigTiff) {
             LOGGER.info("Switching to BigTIFF (by file size)");
             isBigTiff = true;

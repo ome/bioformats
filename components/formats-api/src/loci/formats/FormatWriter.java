@@ -266,6 +266,11 @@ public abstract class FormatWriter extends FormatHandler
     this.options = options;
   }
 
+  @Override
+  public CodecOptions getCodecOptions() {
+    return options;
+  }
+
   /* @see IFormatWriter#getCompression() */
   @Override
   public String getCompression() {

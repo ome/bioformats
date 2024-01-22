@@ -47,7 +47,7 @@ import static loci.formats.dicom.DicomVR.*;
  * Represents a complete DICOM tag, including the dictionary attribute,
  * actual VR, value, and any "child" tags (in the case of a sequence).
  */
-public class DicomTag {
+public class DicomTag implements Comparable<DicomTag> {
   public DicomTag parent = null;
   public List<DicomTag> children = new ArrayList<DicomTag>();
 
@@ -65,6 +65,10 @@ public class DicomTag {
   private boolean bigEndianTransferSyntax = false;
   private boolean oddLocations = false;
 
+  // optional indicator of how to handle this tag when merging
+  // into an existing tag list
+  public ResolutionStrategy strategy = null;
+
   public DicomTag(DicomAttribute attribute) {
     this(attribute, null);
   }
@@ -78,6 +82,17 @@ public class DicomTag {
       this.vr = attribute.getDefaultVR();
     }
     this.tag = attribute.getTag();
+  }
+
+  public DicomTag(int tag, DicomVR vr) {
+    this.tag = tag;
+    this.attribute = DicomAttribute.get(tag);
+    if (vr != null) {
+      this.vr = vr; 
+    }
+    else if (attribute != null) {
+      this.vr = attribute.getDefaultVR();
+    }
   }
 
   /**
@@ -134,7 +149,11 @@ public class DicomTag {
       vr = DicomAttribute.getDefaultVR(tag);
     }
 
-    if (!readValue) {
+    if (!readValue || attribute == PIXEL_DATA) {
+      long skip = elementLength & 0xffffffffL;
+      if (skip > 0 && skip <= in.length() - in.getFilePointer()) {
+        in.skipBytes(skip);
+      }
       return;
     }
 
@@ -352,10 +371,20 @@ public class DicomTag {
       return tag;
     }
 
-    if (elementLength < 0 && groupWord == 0x7fe0) {
-      in.skipBytes(12);
-      elementLength = in.readInt();
-      if (elementLength < 0) elementLength = in.readInt();
+    // indicates that we have found pixel data
+    if (groupWord == 0x7fe0) {
+      // the length may legitimately be between 2 and 4 GB
+      long length = elementLength & 0xffffffffL;
+
+      // length of 0xffffffff means undefined length, which is uncommon but allowed
+      if (elementLength == -1 || (length > 0 && length < in.length())) {
+        return tag;
+      }
+      else {
+        in.skipBytes(12);
+        elementLength = in.readInt();
+        if (elementLength < 0) elementLength = in.readInt();
+      }
     }
 
     if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {
@@ -522,9 +551,174 @@ public class DicomTag {
     return null;
   }
 
+  /**
+   * Check this tag against a list of existing tags.
+   * If this tag is a duplicate of an existing tag or otherwise deemed invalid,
+   * return false. Otherwise return true.
+   */
+  public boolean validate(List<DicomTag> tags) {
+    for (DicomTag t : tags) {
+      if (this.tag == t.tag) {
+        return strategy != ResolutionStrategy.IGNORE;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Compare the value type to the VR.
+   * If the two types do not match, attempt to conver the value
+   * into the VR's type.
+   * Usually this means parsing numerical values from a String.
+   */
+  public void validateValue() {
+    if (value == null) {
+      return;
+    }
+    switch (vr) {
+      case AE:
+      case AS:
+      case CS:
+      case DA:
+      case DS:
+      case DT:
+      case IS:
+      case LO:
+      case LT:
+      case PN:
+      case SH:
+      case ST:
+      case TM:
+      case UC:
+      case UI:
+      case UR:
+      case UT:
+        value = value.toString();
+        break;
+      case AT:
+      case SS:
+      case US:
+        if (value instanceof Short) {
+          value = new short[] {(short) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          short[] v = new short[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Short.decode(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof short[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case FL:
+        if (value instanceof Float) {
+          value = new float[] {(float) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          float[] v = new float[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Float.parseFloat(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof float[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case FD:
+        if (value instanceof Double) {
+          value = new double[] {(double) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          double[] v = new double[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Double.parseDouble(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof double[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case OB:
+      case IMPLICIT:
+        if (value instanceof Byte) {
+          value = new byte[] {(byte) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          byte[] v = new byte[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Byte.decode(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof byte[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case SL:
+        if (value instanceof Integer) {
+          value = new int[] {(int) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          int[] v = new int[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Integer.decode(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof int[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      case SV:
+      case UL:
+        if (value instanceof Long) {
+          value = new long[] {(long) value};
+        }
+        else if (value instanceof String) {
+          String[] values = ((String) value).split(",");
+          long[] v = new long[values.length];
+          for (int i=0; i<values.length; i++) {
+            v[i] = Long.decode(values[i]);
+          }
+          value = v;
+        }
+        else if (!(value instanceof long[])) {
+          throw new IllegalArgumentException("Incorrect value type " + value.getClass() + " for VR " + vr);
+        }
+        break;
+      default:
+        throw new IllegalArgumentException(String.valueOf(vr.getCode()));
+    }
+  }
+
   @Override
   public String toString() {
+    if (key == null) {
+      if (attribute != null) {
+        key = attribute.getDescription();
+      }
+      else {
+        key = DicomAttribute.getDescription(tag);
+      }
+    }
     return key + " = " + value;
+  }
+
+  @Override
+  public int compareTo(DicomTag o) {
+    int thisTag = this.attribute == null ? this.tag : this.attribute.getTag();
+    int otherTag = o.attribute == null ? o.tag : o.attribute.getTag();
+
+    return thisTag - otherTag;
   }
 
 }

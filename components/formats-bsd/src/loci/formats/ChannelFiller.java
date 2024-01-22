@@ -35,6 +35,8 @@ package loci.formats;
 import java.io.IOException;
 
 import loci.common.DataTools;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -218,6 +220,28 @@ public class ChannelFiller extends ReaderWrapper {
       }
     }
     return buf;
+  }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("ChannelFiller does not support pre-compressed tile access");
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("ChannelFiller does not support pre-compressed tile access");
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    throw new UnsupportedOperationException("ChannelFiller does not support pre-compressed tile access");
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    throw new UnsupportedOperationException("ChannelFiller does not support pre-compressed tile access");
   }
 
   // -- IFormatHandler API methods --

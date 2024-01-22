@@ -670,6 +670,7 @@ public enum DicomAttribute {
     ITEM(0xFFFEE000),
     ITEM_DELIMITATION_ITEM(0xFFFEE00D),
     SEQUENCE_DELIMITATION_ITEM(0xFFFEE0DD),
+    TRAILING_PADDING(0xFFFCFFFC),
 
     // directory structuring elements
     FILE_SET_ID(0x00041130),
@@ -786,6 +787,8 @@ public enum DicomAttribute {
 
     private static final Map<Integer, String[]> dict =
       new HashMap<Integer, String[]>();
+    private static final Map<String, Integer> nameLookup =
+      new HashMap<String, Integer>();
 
 		static {
       try (InputStream stream = DicomAttribute.class.getResourceAsStream("dicom-dictionary.txt")) {
@@ -801,7 +804,9 @@ public enum DicomAttribute {
           if (tokens.length > 2) {
             tokens[2] = tokens[2].trim();
           }
-          dict.put((int) Long.parseLong(tokens[0], 16), tokens);
+          int key = (int) Long.parseLong(tokens[0], 16);
+          dict.put(key, tokens);
+          nameLookup.put(tokens[1].replaceAll("\\s", "").toLowerCase(), key);
         }
       }
       catch (Exception e) {
@@ -869,6 +874,10 @@ public enum DicomAttribute {
         return dict.get(newTag)[1];
       }
       return null;
+    }
+
+    public static Integer getTag(String description) {
+      return nameLookup.get(description.toLowerCase());
     }
 
     /**
