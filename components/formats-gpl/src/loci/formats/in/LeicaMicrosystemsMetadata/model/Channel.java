@@ -35,7 +35,7 @@ import ome.xml.model.primitives.Color;
 public class Channel {
   // -- Fields --
   public int channelTag;
-  public int resolution;
+  public int resolution; // bits per pixel
   public double min;
   public double max;
   public String unit;
@@ -78,21 +78,24 @@ public class Channel {
 
   // -- Constructor --
   public Channel() {
-    setChannelType();
   }
 
   //-- Methods --
-  private void setChannelType(){
-    if (channelTag == 0) {
-      channelType = ChannelType.MONO;
-    } else {
-      if (lutName.equals("Red")){
+  public void setChannelType(){
+    switch(channelTag){
+      case 1:
         channelType = ChannelType.RED;
-      } else if (lutName.equals("Green")){
+        break;
+      case 2:
         channelType = ChannelType.GREEN;
-      } else if (lutName.equals("Blue")){
+        break;
+      case 3:
         channelType = ChannelType.BLUE;
-      }
+        break;
+      case 0:
+      default:
+        channelType = ChannelType.MONO;
+        break;
     }
   }
 }

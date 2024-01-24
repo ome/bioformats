@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel.ChannelType;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 import ome.units.quantity.Length;
 
@@ -41,6 +42,8 @@ import ome.units.quantity.Length;
 public class DimensionStore {
     public List<Dimension> dimensions = new ArrayList<Dimension>();
     public List<Channel> channels = new ArrayList<Channel>();
+    public boolean rgb = false;
+    public boolean inverseRgb = false;
     public double physicalSizeX;
     public double physicalSizeY;
     public double zBegin;
@@ -227,5 +230,13 @@ public class DimensionStore {
     int zSize = getDimension(DimensionKey.Z).size;
     int tSize = getDimension(DimensionKey.T).size;
     return zSize * tSize * channels.size();
+  }
+
+  public void setChannels(List<Channel> channels){
+    this.channels = channels;
+    this.rgb = this.channels.get(0).channelType != ChannelType.MONO;
+
+    // RGB order is defined by ChannelTag order (1,2,3 = RGB, 3,2,1=BGR)
+    this.inverseRgb = this.rgb && this.channels.get(0).channelType == ChannelType.BLUE;
   }
 }

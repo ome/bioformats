@@ -51,13 +51,16 @@ public class HardwareSettingsExtractor {
     //common hardware setting node for "newer" images
     xmlNodes.hardwareSetting = (Element)Extractor.getNodeWithAttribute(attachments, "Name", "HardwareSetting");
 
-    //hardware setting node for e.g. SP5 images
-    if (xmlNodes.hardwareSetting == null){
-      xmlNodes.hardwareSettingLayout = HardwareSettingLayout.OLD;
+    if (xmlNodes.hardwareSetting != null){
+      //new hardware settings layout
+      xmlNodes.hardwareSettingLayout = HardwareSettingLayout.NEW;
+    } else {
+      //look for old hardware setting layout
       Element hardwareSettingParent = (Element)Extractor.getNodeWithAttribute(attachments, "Name", "HardwareSettingList");
       xmlNodes.hardwareSetting = hardwareSettingParent != null ? (Element)Extractor.getChildNodeWithNameAsElement(hardwareSettingParent, "HardwareSetting") : null;
-    } else {
-      xmlNodes.hardwareSettingLayout = HardwareSettingLayout.NEW;
+
+      // no hardware setting found until here: it is assumed that it doesn't exist (e.g. multifocus / depth map images)
+      xmlNodes.hardwareSettingLayout = xmlNodes.hardwareSetting != null ? HardwareSettingLayout.OLD : HardwareSettingLayout.NONE;
     }
   }
 

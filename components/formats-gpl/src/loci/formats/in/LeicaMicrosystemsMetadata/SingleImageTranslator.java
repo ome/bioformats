@@ -77,6 +77,7 @@ import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.xml.model.enums.MicroscopeType;
+import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -108,7 +109,6 @@ public class SingleImageTranslator {
   boolean alternateCenter = false;
 
   int imageCount;
-  public boolean inverseRgb = false;
   boolean useOldPhysicalSizeCalculation;
   int extras = 1;
 
@@ -258,11 +258,13 @@ public class SingleImageTranslator {
     //pinhole size
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
       Channel channel = dimensionStore.channels.get(channelIndex);
-      int sequenceIndex = channel.detectorSetting.sequenceIndex;
-      String pinholeSizeS = Extractor.getAttributeValue(xmlNodes.sequentialConfocalSettings.get(sequenceIndex), "Pinhole");
-      channel.pinholeSize = Extractor.parseDouble(pinholeSizeS) * METER_MULTIPLY;
-
-      store.setChannelPinholeSize(new Length(channel.pinholeSize, UNITS.MICROMETER), seriesIndex, channelIndex);
+      if (channel.detectorSetting != null){
+        int sequenceIndex = channel.detectorSetting.sequenceIndex;
+        String pinholeSizeS = Extractor.getAttributeValue(xmlNodes.sequentialConfocalSettings.get(sequenceIndex), "Pinhole");
+        channel.pinholeSize = Extractor.parseDouble(pinholeSizeS) * METER_MULTIPLY;
+  
+        store.setChannelPinholeSize(new Length(channel.pinholeSize, UNITS.MICROMETER), seriesIndex, channelIndex);
+      }
     }
   }
 
@@ -377,14 +379,16 @@ public class SingleImageTranslator {
 
     for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
       int t = reader.getZCTCoords(planeIndex)[2];
-      double timestamp = timestamps.get(t);
-      if (timestamps.get(0) == acquiredDate) {
-        timestamp -= acquiredDate;
-      } else if (timestamp == acquiredDate && t > 0) {
-        timestamp = timestamps.get(0);
+      if (t < timestamps.size()){
+        double timestamp = timestamps.get(t);
+        if (timestamps.get(0) == acquiredDate) {
+          timestamp -= acquiredDate;
+        } else if (timestamp == acquiredDate && t > 0) {
+          timestamp = timestamps.get(0);
+        }
+  
+        store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), seriesIndex, planeIndex);
       }
-
-      store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), seriesIndex, planeIndex);
     }
   }
 
@@ -392,7 +396,8 @@ public class SingleImageTranslator {
     if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL) return;
 
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
-      String exposureTimeS = Extractor.getAttributeValue(xmlNodes.widefieldChannelInfos.get(channelIndex), "ExposureTime");
+      int logicalChannelIndex = dimensionStore.rgb ? channelIndex / 3 : channelIndex;
+      String exposureTimeS = Extractor.getAttributeValue(xmlNodes.widefieldChannelInfos.get(logicalChannelIndex), "ExposureTime");
       dimensionStore.channels.get(channelIndex).exposureTime = Extractor.parseDouble(exposureTimeS);
     }
 
@@ -404,22 +409,13 @@ public class SingleImageTranslator {
 
   private void translateChannels(){
     Element channelsNode = (Element) xmlNodes.imageDescription.getElementsByTagName("Channels").item(0);
-    NodeList channelNodes = channelsNode.getElementsByTagName("ChannelDescription");;
+    NodeList channelNodes = channelsNode.getElementsByTagName("ChannelDescription");
     core.sizeC = channelNodes.getLength();
 
-    dimensionStore.channels = ChannelExtractor.extractChannels(channelNodes);
-
-    // RGB order is defined by ChannelTag order (1,2,3 = RGB, 3,2,1=BGR)
-    inverseRgb = dimensionStore.channels.size() >= 3 && dimensionStore.channels.get(0).channelTag == 3;
-
-    for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
-      Channel channel = dimensionStore.channels.get(channelIndex);
-
-      if (!reader.isRGB()) {
-        store.setChannelColor(channel.lutColor, seriesIndex, channelIndex);
-      }
-    }
-
+    List<Channel> channels = ChannelExtractor.extractChannels(channelNodes);
+    dimensionStore.setChannels(channels);
+    
+    DimensionWriter.setChannels(core, store, dimensionStore, reader.getImageFormat(), seriesIndex);
   }
 
   private void translateDimensions(){
@@ -436,7 +432,7 @@ public class SingleImageTranslator {
     dimensionStore.addChannelDimension();
     dimensionStore.addMissingDimensions();
 
-    DimensionWriter.setupCoreDimensionParameters(reader.getImageFormat(), core, dimensionStore, extras);
+    DimensionWriter.setupCoreDimensionParameters(core, dimensionStore, extras);
   }
 
   public void translateFieldPositions() {

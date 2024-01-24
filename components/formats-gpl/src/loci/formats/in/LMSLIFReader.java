@@ -99,6 +99,7 @@ public class LMSLIFReader extends LMSFileReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    // return false;
     final int blockLen = 1;
     if (!FormatTools.validStream(stream, blockLen, true))
       return false;
@@ -255,7 +256,7 @@ public class LMSLIFReader extends LMSFileReader {
       }
     }
 
-    if (getRGBChannelCount() == 3 && metadataTranslators.get(0).inverseRgb) {
+    if (getRGBChannelCount() == 3 && metadataTranslators.get(series).dimensionStore.inverseRgb) {
       ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
 

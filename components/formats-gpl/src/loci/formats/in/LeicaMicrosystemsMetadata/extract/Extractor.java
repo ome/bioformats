@@ -98,6 +98,8 @@ public class Extractor {
    * Returns the first node of a NodeList that has an attribute with a certain value 
    */
   public static Node getNodeWithAttribute(NodeList nodes, String attributeName, String attributeValue) {
+    if (nodes == null) return null;
+    
     for (int i = 0; i < nodes.getLength(); i++) {
       Node node = nodes.item(i);
       Node attribute = node.getAttributes().getNamedItem(attributeName);

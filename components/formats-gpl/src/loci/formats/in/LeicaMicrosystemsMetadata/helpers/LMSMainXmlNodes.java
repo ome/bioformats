@@ -56,7 +56,8 @@ public class LMSMainXmlNodes {
 
   public enum HardwareSettingLayout {
     OLD, // e.g. SP5                      --> <Attachment Name "HardwareSettingList" .. > <HardwareSetting...>
-    NEW // e.g. SP8, STELLARIS, MICA, ... --> <Attachment Name="HardwareSetting" ...>
+    NEW, // e.g. SP8, STELLARIS, MICA, ... --> <Attachment Name="HardwareSetting" ...>
+    NONE // e.g. some depth map or multifocus images don't have a hardware setting
   }
   public HardwareSettingLayout hardwareSettingLayout;
 

@@ -26,10 +26,13 @@
 package loci.formats.in.LeicaMicrosystemsMetadata.writeCore;
 
 import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
+import loci.formats.meta.MetadataStore;
 
 /**
  * DimensionWriter sets up CoreMetadata dimension parameters and related image parameters
@@ -38,17 +41,9 @@ import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
  */
 public class DimensionWriter {
   
-  public static void setupCoreDimensionParameters(ImageFormat imageFormat, CoreMetadata core, DimensionStore dimensionStore, int extras){
+  public static void setupCoreDimensionParameters(CoreMetadata core, DimensionStore dimensionStore, int extras){
     setCoreDimensionSizes(core, dimensionStore, extras);
-    setPixelType(core, dimensionStore);
-
-    // TIFF and JPEG files not interleaved
-    if (imageFormat == ImageFormat.TIF || imageFormat == ImageFormat.JPEG) {
-      core.interleaved = false;
-    } else {
-      core.interleaved = core.rgb;
-    }
-    core.indexed = !core.rgb;
+    
     core.imageCount = core.sizeZ * core.sizeT;
     if (!core.rgb)
       core.imageCount *= core.sizeC;
@@ -67,7 +62,7 @@ public class DimensionWriter {
     core.sizeY = dimensionStore.getDimension(DimensionKey.Y).size;
     core.sizeZ = dimensionStore.getDimension(DimensionKey.Z).size;
     core.sizeT = dimensionStore.getDimension(DimensionKey.T).size;
-    core.rgb = (dimensionStore.getDimension(DimensionKey.X).bytesInc % 3) == 0;
+
     if (core.rgb)
     dimensionStore.getDimension(DimensionKey.X).bytesInc /= 3;
 
@@ -94,20 +89,34 @@ public class DimensionWriter {
       core.sizeT = 1;
   }
 
-  /**
-   * Sets CoreMetadata.pixelType depending on extracted x bytesInc
-   * 
-   * @param coreIndex
-   * @throws FormatException
-   */
-  private static void setPixelType(CoreMetadata core, DimensionStore dimensionStore) {
+  public static void setChannels(CoreMetadata core, MetadataStore store, DimensionStore dimensionStore, ImageFormat imageFormat, int seriesIndex){
+    core.rgb = dimensionStore.rgb;
     //assuming that all channels of one image have the same resolution
-    int resolutionBytes = dimensionStore.channels.get(0).resolution / 8;
+    core.bitsPerPixel = dimensionStore.channels.get(0).resolution;
+
+    int bytesPerPixel = core.bitsPerPixel > 8 ? 2 : 1;
     try {
-      core.pixelType = FormatTools.pixelTypeFromBytes((int) resolutionBytes, false, true);
+      core.pixelType = FormatTools.pixelTypeFromBytes(bytesPerPixel, false, true);
     } catch (Exception e){
-      System.out.println("Could not render pixel type from channel resolution (in bytes): " + resolutionBytes);
+      System.out.println("Could not render pixel type from channel resolution (in bytes): " + bytesPerPixel);
       e.printStackTrace();
     }
+
+    for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
+      Channel channel = dimensionStore.channels.get(channelIndex);
+      store.setChannelName(channel.channelName, seriesIndex, channelIndex);
+      if (!dimensionStore.rgb){
+        store.setChannelColor(channel.lutColor, seriesIndex, channelIndex);
+      }
+    }
+
+    // TIFF and JPEG files not interleaved
+    if (imageFormat == ImageFormat.TIF || imageFormat == ImageFormat.JPEG) {
+      core.interleaved = false;
+    } else {
+      core.interleaved = core.rgb;
+    }
+
+    core.indexed = !core.rgb;
   }
 }

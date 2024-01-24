@@ -60,6 +60,7 @@ public class ChannelExtractor extends Extractor {
       channel.unit = channelElement.getAttribute("Unit");
       channel.lutName = channelElement.getAttribute("LUTName");
       channel.bytesInc = parseLong(channelElement.getAttribute("BytesInc"));
+      channel.setChannelType();
 
       channels.add(channel);
     }
