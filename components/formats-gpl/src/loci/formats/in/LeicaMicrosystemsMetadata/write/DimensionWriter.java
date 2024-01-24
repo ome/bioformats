@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.writeCore;
+package loci.formats.in.LeicaMicrosystemsMetadata.write;
 
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;

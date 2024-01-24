@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.writeOME;
+package loci.formats.in.LeicaMicrosystemsMetadata.write;
 
 import java.util.List;
 
