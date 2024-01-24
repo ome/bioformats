@@ -136,7 +136,12 @@ public class HardwareSettingsExtractor {
       NodeList sequentialCameraSettings = ldmBlockSequentialList.getChildNodes();
 
       for (int channelIndex = 0; channelIndex < sequentialCameraSettings.getLength(); channelIndex++){
-        Element sequentialCameraSetting = (Element)sequentialCameraSettings.item(channelIndex);
+        Element sequentialCameraSetting;
+        try {
+          sequentialCameraSetting = (Element)sequentialCameraSettings.item(channelIndex);
+        } catch (Exception e){
+          continue;
+        }
         xmlNodes.sequentialCameraSettings.add(sequentialCameraSetting);
       }
     }
