@@ -256,7 +256,7 @@ public class LMSLIFReader extends LMSFileReader {
       }
     }
 
-    if (getRGBChannelCount() == 3 && metadataTranslators.get(series).dimensionStore.inverseRgb) {
+    if (getRGBChannelCount() == 3 && metadataTranslators.get(index).dimensionStore.inverseRgb) {
       ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
 

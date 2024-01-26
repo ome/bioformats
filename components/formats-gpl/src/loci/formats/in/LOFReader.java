@@ -316,7 +316,7 @@ public class LOFReader extends LMSFileReader {
     }
 
     // rearrange if color planes are stored in BGR order
-    if (getRGBChannelCount() == 3 && metadataTranslators.get(0).dimensionStore.inverseRgb) {
+    if (getRGBChannelCount() == 3 && metadataTranslators.get(tileIndex).dimensionStore.inverseRgb) {
       ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
 
