@@ -182,10 +182,15 @@ public class SingleImageTranslator {
     HardwareSettingsExtractor.extractDataSourceType(xmlNodes);
     if (xmlNodes.dataSourceType == null) return;
 
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
+    if (xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL) {
+      HardwareSettingsExtractor.extractWidefocalSettings(xmlNodes);
+    } else if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
       HardwareSettingsExtractor.extractConfocalSettings(xmlNodes);
-    } else {
+    } else if (xmlNodes.dataSourceType == DataSourceType.CAMERA) {
       HardwareSettingsExtractor.extractCameraSettings(xmlNodes);
+    } else {
+      System.out.println("Image data source type currently not supported!");
+      return;
     }
 
     if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
@@ -421,12 +426,10 @@ public class SingleImageTranslator {
   private void translateDimensions(){
     List<Dimension> dimensions = DimensionExtractor.extractDimensions(xmlNodes.imageDescription, useOldPhysicalSizeCalculation);
 
-    //for all dimensions
     for (Dimension dimension : dimensions){
       dimensionStore.addDimension(dimension);
       if(dimension.key == null)
         extras *= dimension.size;
-
     }
   
     dimensionStore.addChannelDimension();

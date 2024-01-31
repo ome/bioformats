@@ -41,13 +41,13 @@ public class LMSMainXmlNodes {
   public Element imageDescription;
   public Element hardwareSetting;
   
-  public Element mainConfocalSetting;
-  public Element masterConfocalSetting;
-  public List<Element> sequentialConfocalSettings = new ArrayList<Element>();
+  public Element mainConfocalSetting; // ATLConfocalSettingDefinition under HardwareSetting attachment
+  public Element masterConfocalSetting; //ATLConfocalSettingDefinition under LDM_Block_Sequential_Master
+  public List<Element> sequentialConfocalSettings = new ArrayList<Element>(); //ATLConfocalSettingDefinitions under LDM_Block_Sequential_List
   
-  public Element mainCameraSetting;
-  public Element masterCameraSetting;
-  public List<Element> sequentialCameraSettings = new ArrayList<Element>();
+  public Element mainCameraSetting; // ATLCameraSettingDefinition under HardwareSetting attachment
+  public Element masterCameraSetting; //ATLCameraSettingDefinition under LDM_Block_Sequential_Master
+  public List<Element> sequentialCameraSettings = new ArrayList<Element>(); //ATLCameraSettingDefinitions under LDM_Block_Sequential_List
   public Element widefieldChannelConfig;
   public List<Element> widefieldChannelInfos = new ArrayList<Element>();
 
@@ -62,7 +62,11 @@ public class LMSMainXmlNodes {
   public HardwareSettingLayout hardwareSettingLayout;
 
   public enum DataSourceType {
-    CAMERA, CONFOCAL
+    UNDEFINED,
+    CAMERA, // images acquired with widefield systems or widefield images acquired with MICA
+    CONFOCAL, // images acquired with confocal systems or confocal images acquired with MICA
+    SPIM,
+    WIDEFOCAL // e.g. confocal images acquired with MICA with additional TL channel
   }
   public DataSourceType dataSourceType;
 

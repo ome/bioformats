@@ -35,6 +35,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,6 +56,8 @@ public class Extractor {
    * Returns the first direct child node with passed name that is found
    */
   public static Node getChildNodeWithName(Node node, String nodeName) {
+    if (node == null || nodeName == null || nodeName.isEmpty()) return null;
+
     NodeList children = node.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       if (children.item(i).getNodeName().equals(nodeName))
@@ -146,7 +149,7 @@ public class Extractor {
     } else
       return nodes;
   }
-
+  
   public static long parseLong(String value) {
     return value == null || value.trim().isEmpty() ? 0 : Long.parseLong(value.trim());
   }

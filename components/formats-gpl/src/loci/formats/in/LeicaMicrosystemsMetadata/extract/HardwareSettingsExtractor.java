@@ -25,6 +25,8 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata.extract;
 
+import java.util.List;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -33,6 +35,7 @@ import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.CameraSettingsLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
+import ucar.nc2.constants.DataFormatType;
 
 /**
  * HardwareSettingsExtractor is a helper class for extracting hardware setting nodes from LMS XML files with different layouts.
@@ -86,8 +89,25 @@ public class HardwareSettingsExtractor {
         xmlNodes.dataSourceType = DataSourceType.CAMERA;
       }
     } else {
-      String dataSourceTypeS = Extractor.getAttributeValue(xmlNodes.hardwareSetting, "DataSourceTypeName");
-      xmlNodes.dataSourceType = dataSourceTypeS.equals("Confocal") ? DataSourceType.CONFOCAL : DataSourceType.CAMERA;
+      String dataSourceTypeS = Extractor.getAttributeValue(xmlNodes.hardwareSetting, "DataSourceType");
+      int dataSourceType = Extractor.parseInt(dataSourceTypeS);
+      switch(dataSourceType){
+        case 0:
+          xmlNodes.dataSourceType = DataSourceType.CONFOCAL;
+          break;
+        case 1:
+          xmlNodes.dataSourceType = DataSourceType.CAMERA;
+          break;
+        case 2:
+          xmlNodes.dataSourceType = DataSourceType.SPIM;
+          break;
+        case 3:
+          xmlNodes.dataSourceType = DataSourceType.WIDEFOCAL;
+          break;
+        default:
+          xmlNodes.dataSourceType = DataSourceType.UNDEFINED;
+          break;
+      }
     }
   }
 
@@ -167,6 +187,62 @@ public class HardwareSettingsExtractor {
       for (int channelIndex = 0; channelIndex < widefieldChannelInfos.getLength(); channelIndex++){
         Element widefieldChannelInfo = (Element)widefieldChannelInfos.item(channelIndex);
         xmlNodes.widefieldChannelInfos.add(widefieldChannelInfo);
+      }
+    }
+  }
+
+  /**
+   * Adds main, master and sequential camera and confocal settings, if existing, from MICA xml to passed LMSMainXmlNodes
+   * @param xmlNodes has to contain hardware setting
+   */
+  public static void extractWidefocalSettings(LMSMainXmlNodes xmlNodes){
+    Element blockWidefocal = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "Block_Widefocal");
+    
+    //widefield
+    xmlNodes.mainCameraSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ATLCameraSettingDefinition");
+
+    Element ldmBlockWidefieldSequential = Extractor.getChildNodeWithNameAsElement(blockWidefocal, "LDM_Block_Widefield_Sequential");
+    Element ldmBlockWidefieldSequentialMaster = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_Master");
+    xmlNodes.masterCameraSetting = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequentialMaster, "ATLCameraSettingDefinition ");
+
+    Element ldmBlockWidefieldSequentialList = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_List");
+
+    if (ldmBlockWidefieldSequentialList != null){
+      NodeList sequentialCameraSettings = ldmBlockWidefieldSequentialList.getChildNodes();
+
+      for (int channelIndex = 0; channelIndex < sequentialCameraSettings.getLength(); channelIndex++){
+        Element sequentialCameraSetting;
+        try {
+          sequentialCameraSetting = (Element)sequentialCameraSettings.item(channelIndex);
+        } catch (Exception e){
+          continue;
+        }
+        xmlNodes.sequentialCameraSettings.add(sequentialCameraSetting);
+        Element widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(sequentialCameraSetting, "WideFieldChannelConfigurator");
+        Element widefieldChannelInfo = Extractor.getChildNodeWithNameAsElement(widefieldChannelConfig, "WideFieldChannelInfo");
+        xmlNodes.widefieldChannelInfos.add(widefieldChannelInfo);
+      }
+    }
+
+    //confocal
+    Element ldmBlockConfocalSequential = Extractor.getChildNodeWithNameAsElement(blockWidefocal, "LDM_Block_Sequential");
+    Element ldmBlockConfocalSequentialMaster = Extractor.getChildNodeWithNameAsElement(ldmBlockConfocalSequential, "LDM_Block_Sequential_Master");
+    xmlNodes.masterConfocalSetting = Extractor.getChildNodeWithNameAsElement(ldmBlockConfocalSequentialMaster, "ATLConfocalSettingDefinition");
+    //the main setting under HardwareSettings is a camera setting in widefocal, which is why we use the master confocal setting also as main confocal setting
+    xmlNodes.mainConfocalSetting = xmlNodes.masterConfocalSetting; 
+
+    Element ldmBlockConfocalSequentialList = Extractor.getChildNodeWithNameAsElement(ldmBlockConfocalSequential, "LDM_Block_Sequential_List");
+    if (ldmBlockConfocalSequentialList != null){
+      NodeList sequentialConfocalSettings = ldmBlockConfocalSequentialList.getChildNodes();
+
+      for (int channelIndex = 0; channelIndex < sequentialConfocalSettings.getLength(); channelIndex++){
+        Element sequentialConfocalSetting;
+        try {
+          sequentialConfocalSetting = (Element)sequentialConfocalSettings.item(channelIndex);
+        } catch (Exception e){
+          continue;
+        }
+        xmlNodes.sequentialConfocalSettings.add(sequentialConfocalSetting);
       }
     }
   }
