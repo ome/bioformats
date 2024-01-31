@@ -83,7 +83,7 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
   @Override
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
-    if (box.equals(getWidgets()[1])) {
+    if (box.equals(getWidgets()[0])) {
       Prefs.set(LociPrefs.PREF_ND2_CHUNKMAP, box.isSelected());
     }
   }
