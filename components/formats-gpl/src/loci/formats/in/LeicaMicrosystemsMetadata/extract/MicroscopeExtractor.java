@@ -72,7 +72,8 @@ public class MicroscopeExtractor {
       Element systemNumberNode = (Element)Extractor.getNodeWithAttribute(xmlNodes.filterSettingRecords, "Description", "System Number");
       return Extractor.getAttributeValue(systemNumberNode, "Variant");
     } else {
-      Element setting = xmlNodes.dataSourceType == DataSourceType.CONFOCAL ? xmlNodes.mainConfocalSetting : xmlNodes.mainCameraSetting;
+      Element setting = xmlNodes.dataSourceType == DataSourceType.CONFOCAL || xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL ?
+        xmlNodes.mainConfocalSetting : xmlNodes.mainCameraSetting;
       return Extractor.getAttributeValue(setting, "SystemSerialNumber");
     }
   }

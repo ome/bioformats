@@ -147,7 +147,14 @@ public class HardwareSettingsExtractor {
   public static void extractCameraSettings(LMSMainXmlNodes xmlNodes){
     xmlNodes.mainCameraSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ATLCameraSettingDefinition");
 
-    Element ldmBlockWidefieldSequential = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "LDM_Block_Widefield_Sequential");
+    Element ldmBlockWidefieldSequential;
+    if (xmlNodes.isMicaImage){
+      Element blockWidefocal = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "Block_Widefocal");
+      ldmBlockWidefieldSequential = Extractor.getChildNodeWithNameAsElement(blockWidefocal, "LDM_Block_Widefield_Sequential");
+    } else {
+      ldmBlockWidefieldSequential = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "LDM_Block_Widefield_Sequential");
+    }
+
     if (ldmBlockWidefieldSequential != null){
       Element ldmBlockSequentialMaster = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_Master");
       xmlNodes.masterCameraSetting = Extractor.getChildNodeWithNameAsElement(ldmBlockSequentialMaster, "ATLCameraSettingDefinition");
@@ -167,7 +174,7 @@ public class HardwareSettingsExtractor {
     }
     
     if (xmlNodes.sequentialCameraSettings.size() > 0){
-      //sequential camera settings > config > info
+      //sequential camera settings > widefield channel config > widefield channel info
       xmlNodes.cameraSettingsLayout = CameraSettingsLayout.SEQUENTIAL;
       
       for (int channelIndex = 0; channelIndex < xmlNodes.sequentialCameraSettings.size(); channelIndex++){
@@ -177,7 +184,7 @@ public class HardwareSettingsExtractor {
         xmlNodes.widefieldChannelInfos.add(widefieldChannelInfo);
       }
     } else {
-      //main camera setting > config > infos
+      //main camera setting > widefield channel config > widefield channel infos
       xmlNodes.cameraSettingsLayout = CameraSettingsLayout.SIMPLE;
 
       xmlNodes.widefieldChannelConfig = Extractor.getChildNodeWithNameAsElement(xmlNodes.mainCameraSetting, "WideFieldChannelConfigurator");

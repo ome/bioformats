@@ -54,8 +54,10 @@ public class LMSMainXmlNodes {
   public NodeList scannerSettingRecords;
   public NodeList filterSettingRecords;
 
+  public boolean isMicaImage;
+
   public enum HardwareSettingLayout {
-    OLD, // e.g. SP5                      --> <Attachment Name "HardwareSettingList" .. > <HardwareSetting...>
+    OLD, // e.g. SP5 --> <Attachment Name "HardwareSettingList" .. > <HardwareSetting...>
     NEW, // e.g. SP8, STELLARIS, MICA, ... --> <Attachment Name="HardwareSetting" ...>
     NONE // e.g. some depth map or multifocus images don't have a hardware setting
   }
@@ -85,7 +87,8 @@ public class LMSMainXmlNodes {
     if (hardwareSettingLayout == HardwareSettingLayout.OLD){
       return dataSourceType == DataSourceType.CONFOCAL ? masterConfocalSetting : masterCameraSetting;
     } else {
-      return dataSourceType == DataSourceType.CONFOCAL ? mainConfocalSetting : mainCameraSetting;
+      return dataSourceType == DataSourceType.CONFOCAL || dataSourceType == DataSourceType.WIDEFOCAL ?
+       mainConfocalSetting : mainCameraSetting;
     }
   }
 }

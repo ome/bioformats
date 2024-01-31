@@ -151,20 +151,18 @@ public class SingleImageTranslator {
     //instrument metadata
     translateObjective();
 
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL || xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL){
       translateDetectors();
       translateDetectorSettings();
     }
       
-    translateFilters(); //checks for detector settings
+    translateFilters(); //confocal checks for detector settings
     translateFilterSettings();
     
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL || xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL){
       translateLasers();
       translateLaserSettings(); //checks for channel filter
     }
-
-    //translateChannelNames();
 
     translateROIs();
 
@@ -181,6 +179,9 @@ public class SingleImageTranslator {
 
     HardwareSettingsExtractor.extractDataSourceType(xmlNodes);
     if (xmlNodes.dataSourceType == null) return;
+
+    microscopeModel = MicroscopeExtractor.extractMicroscopeModel(xmlNodes);
+    xmlNodes.isMicaImage = microscopeModel.equals("MICA");
 
     if (xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL) {
       HardwareSettingsExtractor.extractWidefocalSettings(xmlNodes);
