@@ -132,6 +132,27 @@ public class MetadataList<T> {
   }
 
   /**
+   * Remove the array element at the specified indexes.
+   *
+   * @param i1 The primary array index
+   * @param i2 The secondary array index
+   * @return the removed element
+   */
+  public T remove(int i1, int i2) {
+    return data.get(i1).remove(i2);
+  }
+
+  /**
+   * Remove the entire primary array element at the specified index.
+   *
+   * @param i1 The primary array index
+   * @return the removed element
+   */
+  public List<T> remove(int i1) {
+    return data.remove(i1);
+  }
+
+  /**
    * Add a empty primary array element.
    */
   public void add() {
