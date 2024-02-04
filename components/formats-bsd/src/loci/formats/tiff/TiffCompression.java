@@ -268,6 +268,13 @@ public enum TiffCompression implements CodedEnum {
     return codecName;
   }
 
+  /**
+   * @return the codec instance for this TIFF compression.
+   */
+  public Codec getCodec() {
+    return codec;
+  }
+
   // -- TiffCompression methods - decompression --
 
   /** Decodes a strip of data. */

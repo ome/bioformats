@@ -88,6 +88,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   private long sos;
   private long imageDimensions;
 
+  private int mcuWidth;
+  private int mcuHeight;
   private int tileWidth;
   private int tileHeight;
   private int xTiles;
@@ -106,9 +108,6 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     logger.setLevel(Level.SEVERE);
     if (!libraryLoaded) {
       libraryLoaded = NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
-      if (!libraryLoaded) {
-        throw new RuntimeException("TurboJPEG could not be loaded");
-      }
     }
   }
 
@@ -158,6 +157,10 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       }
       else if (marker == SOF0) {
         imageDimensions = in.getFilePointer() + 1;
+        parseSOF();
+      }
+      else if (marker > 0xFFC0 && marker < 0xFFD0 && marker % 4 != 0) {
+        throw new IOException("Unsupported JPEG SOF marker: " + marker);
       }
       else if (marker == SOS) {
         sos = end;
@@ -208,7 +211,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       }
     }
 
-    tileWidth = restartInterval * 8;
+    tileWidth = restartInterval * mcuWidth;
     tileHeight = (int) Math.min(tileWidth, 512);
 
     xTiles = imageWidth / tileWidth;
@@ -222,8 +225,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
 
     if (restartInterval == 1 && restartMarkers.size() <= 1) {
-      // interval and markers are not present or invalid
-      throw new IOException("Restart interval and markers invalid");
+      throw new IOException("The tiled-JPEG reader only supports images encoded with restart markers");
     }
   }
 
@@ -291,9 +293,9 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
     long dataLength = header.length + 2;
 
-    int mult = tileHeight / 8; // was restartInterval
+    int mult = tileHeight / mcuHeight; // was restartInterval
     int start = tileX + (tileY * xTiles * mult);
-    for (int row=0; row<tileHeight/8; row++) {
+    for (int row=0; row<tileHeight/mcuHeight; row++) {
       int end = start + 1;
 
       long startOffset = restartMarkers.get(start);
@@ -316,7 +318,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     offset += header.length;
 
     start = tileX + (tileY * xTiles * mult);
-    for (int row=0; row<tileHeight/8; row++) {
+    for (int row=0; row<tileHeight/mcuHeight; row++) {
       int end = start + 1;
 
       long endOffset = in.length();
@@ -376,11 +378,18 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     restartInterval = 1;
     sos = 0;
     imageDimensions = 0;
+    mcuWidth = 0;
+    mcuHeight = 0;
     tileWidth = 0;
     tileHeight = 0;
     xTiles = 0;
     yTiles = 0;
     header = null;
+  }
+
+  @Override
+  public boolean isLibraryLoaded() {
+    return libraryLoaded;
   }
 
   // -- Helper methods --
@@ -396,6 +405,50 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     DataTools.unpackBytes(tileWidth, header, index + 2, 2, false);
 
     return header;
+  }
+
+  private void parseSOF() throws IOException {
+    // https://mykb.cipindanci.com/archive/SuperKB/1294/JPEG%20File%20Layout%20and%20Format.htm
+    // example: FFC00011 08001100 11030122 00021101 031101
+    int bpc = in.readByte() & 0xff;
+    if (bpc != 8) {
+      throw new IOException("Only 8-bit channels supported by this reader");
+    }
+    in.skipBytes(4);
+    int channels = in.readByte() & 0xff;
+    if (channels != 3) {
+      // https://stackoverflow.com/questions/51008883/is-there-a-grayscale-jpg-format
+      throw new IOException("Only images with 3 channels are supported by this reader");
+    }
+
+    // Sampling factors: https://stackoverflow.com/q/43225439
+    // https://stackoverflow.com/q/27918757 https://stackoverflow.com/q/43225439
+    // mcu_tool.sh shows MCU size for some images
+    // JpegSnoop or identify -verbose show subsampling rates
+    // convert -sampling rate 2x2 or ffmpeg -i .. -vf format=yuv420p for making images
+
+    // MCU size in X direction divided by 8 is taken as the largest X.
+    // Likewise for Y. For each coomponent, first 4 bits is X, the next 4 bits is Y.
+    // some examples: 2x1,2x1,2x1 (0x21,0x21,0x21) is 16x8.
+    // 2x1,1x1,1x1 is 16x8. 3x2,1x1,1x1 is 24x16
+
+    int maxX = 0x00;
+    int maxY = 0x00;
+
+    for (int i = 0; i < channels; i++) {
+      int componentId = in.readByte() & 0xff;
+
+      int rates = in.readByte();
+      int X = rates & 0xf0; // Shift right later
+      int Y = rates & 0x0f;
+      maxX = Math.max(maxX, X);
+      maxY = Math.max(maxY, Y);
+
+      int quantTableNumber = in.readByte() & 0xff;
+    }
+
+    mcuWidth = (maxX >> 4) * 8;
+    mcuHeight = maxY * 8;
   }
 
 }

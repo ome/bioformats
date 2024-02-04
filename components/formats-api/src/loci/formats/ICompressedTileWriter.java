@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2023 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,35 +30,47 @@
  * #L%
  */
 
-package loci.formats.services;
+package loci.formats;
 
 import java.io.IOException;
-
-import loci.common.RandomAccessInputStream;
-import loci.common.services.Service;
-import loci.common.services.ServiceException;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 
 /**
- *
- * @author Melissa Linkert <melissa at glencoesoftware.com>
+ * Interface for writing pre-compressed image tiles.
  */
-public interface JPEGTurboService extends Service {
+public interface ICompressedTileWriter {
 
-  long[] getRestartMarkers();
+  /**
+   * Save a compressed tile to the current output file.
+   * The compression type of the tile should match the compression type
+   * set in the writer.
+   *
+   * @param no plane index
+   * @param buf compressed tile bytes
+   * @param x pixel X coordinate of the upper-left corner of the tile
+   * @param y pixel Y coordinate of the upper-left corner of the tile
+   * @param w width in pixels of the compressed tile
+   * @param h height in pixels of the compressed tile
+   */
+  default void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    throw new UnsupportedOperationException("Writer does not support pre-compressed tile writing");
+  }
 
-  void setRestartMarkers(long[] markers);
+  /**
+   * @return the codec that can be used to compress tiles
+   */
+  default Codec getCodec() {
+    throw new UnsupportedOperationException("Writer does not support pre-compressed tile writing");
+  }
 
-  void initialize(RandomAccessInputStream jpeg, int width, int height)
-    throws ServiceException, IOException;
-
-  byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate, int width,
-    int height)
-    throws IOException;
-
-  byte[] getTile(int xTile, int yTile) throws IOException;
-
-  void close() throws IOException;
-  
-  boolean isLibraryLoaded();
+  /**
+   * @return the codec options that can be used to compress tiles
+   */
+  default CodecOptions getCodecOptions() {
+    throw new UnsupportedOperationException("Writer does not support pre-compressed tile writing");
+  }
 
 }

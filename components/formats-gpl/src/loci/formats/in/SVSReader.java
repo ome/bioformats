@@ -41,6 +41,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
@@ -68,6 +70,9 @@ class SVSCoreMetadata extends CoreMetadata {
 public class SVSReader extends BaseTiffReader {
 
   // -- Constants --
+
+  public static final String REMOVE_THUMBNAIL_KEY = "svs.remove_thumbnail";
+  public static final boolean REMOVE_THUMBNAIL_DEFAULT = true;
 
   /** Logger for this class. */
   private static final Logger LOGGER =
@@ -116,8 +121,19 @@ public class SVSReader extends BaseTiffReader {
 
   public SVSReader(String name, String[] suffixes) {
     super(name, suffixes);
-  }  
-  
+  }
+
+  // -- SVSReader API methods --
+
+  public boolean removeThumbnail() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        REMOVE_THUMBNAIL_KEY, REMOVE_THUMBNAIL_DEFAULT);
+    }
+    return REMOVE_THUMBNAIL_DEFAULT;
+  }
+
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -179,11 +195,8 @@ public class SVSReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    if (tiffParser == null) {
-      initTiffParser();
-    }
-    int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[no];
-    tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
+    IFD ifd = getIFD(no);
+    tiffParser.getSamples(ifd, buf, x, y, w, h);
     return buf;
   }
 
@@ -238,8 +251,8 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[0];
-      return (int) ifds.get(ifd).getTileWidth();
+      IFD ifd = getIFD(0);
+      return (int) ifd.getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -252,13 +265,118 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[0];
-      return (int) ifds.get(ifd).getTileLength();
+      IFD ifd = getIFD(0);
+      return (int) ifd.getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
     }
     return super.getOptimalTileHeight();
+  }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      IFD ifd = getIFD(no);
+      return (int) ifd.getTilesPerColumn();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not get tile row count", e);
+    }
+    return super.getTileRows(no);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      IFD ifd = getIFD(no);
+      return (int) ifd.getTilesPerRow();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not get tile column count", e);
+    }
+    return super.getTileColumns(no);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    IFD ifd = getIFD(no);
+    long[] byteCounts = ifd.getStripByteCounts();
+    int tileIndex = getTileIndex(ifd, x, y);
+
+    byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
+    int jpegTableBytes = jpegTable == null ? 0 : jpegTable.length - 2;
+    long expectedBytes = byteCounts[tileIndex];
+    if (expectedBytes > 0) {
+      expectedBytes += jpegTableBytes;
+    }
+
+    if (expectedBytes < 0 || expectedBytes > Integer.MAX_VALUE) {
+      throw new IOException("Invalid compressed tile size: " + expectedBytes);
+    }
+
+    byte[] buf = new byte[(int) expectedBytes];
+    return openCompressedBytes(no, buf, x, y);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    IFD ifd = getIFD(no);
+    long[] offsets = ifd.getStripOffsets();
+    long[] byteCounts = ifd.getStripByteCounts();
+
+    int tileIndex = getTileIndex(ifd, x, y);
+
+    byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
+    int jpegTableBytes = jpegTable == null ? 0 : jpegTable.length - 2;
+    long expectedBytes = byteCounts[tileIndex];
+    if (expectedBytes > 0) {
+      expectedBytes += jpegTableBytes;
+    }
+
+    if (buf.length < expectedBytes) {
+      throw new IllegalArgumentException("Tile buffer too small: expected >=" +
+        expectedBytes + ", got " + buf.length);
+    }
+    else if (expectedBytes < 0 || expectedBytes > Integer.MAX_VALUE) {
+      throw new IOException("Invalid compressed tile size: " + expectedBytes);
+    }
+
+    if (jpegTable != null && expectedBytes > 0) {
+      System.arraycopy(jpegTable, 0, buf, 0, jpegTable.length - 2);
+      // skip over the duplicate SOI marker
+      tiffParser.getStream().seek(offsets[tileIndex] + 2);
+      tiffParser.getStream().readFully(buf, jpegTable.length - 2, (int) byteCounts[tileIndex]);
+    }
+    else if (byteCounts[tileIndex] > 0) {
+      tiffParser.getStream().seek(offsets[tileIndex]);
+      tiffParser.getStream().readFully(buf, 0, (int) byteCounts[tileIndex]);
+    }
+
+    return buf;
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    IFD ifd = getIFD(no);
+    return ifd.getCompression().getCodec();
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    IFD ifd = getIFD(no);
+    CodecOptions options = ifd.getCompression().getCompressionCodecOptions(ifd);
+    options.width = (int) ifd.getTileWidth();
+    options.height = (int) ifd.getTileLength();
+    return options;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -285,9 +403,15 @@ public class SVSReader extends BaseTiffReader {
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       int index = i;
-      tiffParser.fillInIFD(ifds.get(index));
 
-      String comment = ifds.get(index).getComment();
+      IFD currentIFD = ifds.get(index);
+      tiffParser.fillInIFD(currentIFD);
+
+      String comment = currentIFD.getComment();
+      int subfileType = currentIFD.getIFDIntValue(IFD.NEW_SUBFILE_TYPE);
+
+      // if there is no identifying comment, assign this IFD
+      // to the label or macro (if a label or macro was not already found)
       if (comment == null) {
         if (labelIndex == -1) {
           labelIndex = i;
@@ -297,10 +421,15 @@ public class SVSReader extends BaseTiffReader {
         }
         continue;
       }
+
+      // when the comment exists, check it for any information that
+      // identifies the image type
       comments[i] = comment;
       String[] lines = comment.split("\n");
       String[] tokens;
       String key, value;
+      boolean foundLabel = false;
+      boolean foundMacro = false;
       for (String line : lines) {
         tokens = line.split("[|]");
         for (String t : tokens) {
@@ -316,14 +445,27 @@ public class SVSReader extends BaseTiffReader {
           }
           else if (t.toLowerCase().indexOf("label") >= 0) {
             labelIndex = i;
+            foundLabel = true;
           }
           else if (t.toLowerCase().indexOf("macro") >= 0) {
             macroIndex = i;
+            foundMacro = true;
           }
         }
       }
       if (zPosition[index] != null) {
         uniqueZ.add(zPosition[index]);
+      }
+
+      // if the comment existed but didn't identify a label or macro
+      // check the subfile type to see if we suspect a label or macro anyway
+      if (!foundLabel && !foundMacro && subfileType != 0) {
+        if (labelIndex == -1) {
+          labelIndex = i;
+        }
+        else if (macroIndex == -1) {
+          macroIndex = i;
+        }
       }
     }
     setSeries(0);
@@ -499,6 +641,26 @@ public class SVSReader extends BaseTiffReader {
     setSeries(0);
 
     core.reorder();
+
+    if (removeThumbnail()) {
+      // if the smallest resolution uses strips instead of tiles
+      // then it's a "thumbnail" image instead of a real resolution
+      // remove it by default, see https://github.com/ome/bioformats/issues/3757
+      IFD lastResolution = ifds.get(getIFDIndex(core.size(0) - 1, 0));
+      if (lastResolution.get(IFD.STRIP_BYTE_COUNTS) != null) {
+        int index = core.flattenedIndex(0, core.size(0) - 1);
+        core.remove(0, core.size(0) - 1);
+
+        // update the label and macro indexes
+        // otherwise image names won't be set correctly
+        if (index < labelIndex) {
+          labelIndex--;
+        }
+        if (index < macroIndex) {
+          macroIndex--;
+        }
+      }
+    }
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -694,6 +856,44 @@ public class SVSReader extends BaseTiffReader {
 
   protected Color getDisplayColor() {
     return displayColor;
+  }
+
+  /**
+   * Get the IFD corresponding to the given plane in the current series.
+   * Initializes the underlying TiffParser if necessary.
+   *
+   * @param plane index
+   * @return corresponding IFD
+   */
+  protected IFD getIFD(int no) {
+    if (tiffParser == null) {
+      initTiffParser();
+    }
+    int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[no];
+    return ifds.get(ifd);
+  }
+
+  /**
+   * Get the index of the tile corresponding to given IFD (plane)
+   * and tile XY indexes.
+   *
+   * @param ifd IFD for the requested tile's plane
+   * @param x tile X index
+   * @param y tile Y index
+   * @return corresponding tile index
+   */
+  protected int getTileIndex(IFD ifd, int x, int y) throws FormatException {
+    int rows = (int) ifd.getTilesPerColumn();
+    int cols = (int) ifd.getTilesPerRow();
+
+    if (x < 0 || x >= cols) {
+      throw new IllegalArgumentException("X index " + x + " not in range [0, " + cols + ")");
+    }
+    if (y < 0 || y >= rows) {
+      throw new IllegalArgumentException("Y index " + y + " not in range [0, " + rows + ")");
+    }
+
+    return (cols * y) + x;
   }
 
 }

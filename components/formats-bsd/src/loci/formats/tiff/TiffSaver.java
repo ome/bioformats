@@ -1021,13 +1021,18 @@ public class TiffSaver implements Closeable {
     if (nChannels == 1 && ifd.getIFDValue(IFD.COLOR_MAP) != null) {
       pi = PhotoInterp.RGB_PALETTE;
     }
-    else if (nChannels == 3) {
+    else if (nChannels == 3 || nChannels == 4) {
+      // TODO: handle CMYK; nChannels == 4, EXTRA_SAMPLES must not be present
       if (ifd.getIFDValue(IFD.COMPRESSION).equals(TiffCompression.JPEG.getCode())) {
         // see https://github.com/ome/bioformats/issues/3856
         pi = PhotoInterp.Y_CB_CR;
       }
       else {
         pi = PhotoInterp.RGB;
+      }
+      if (nChannels == 4) {
+        int[] extraSamplesArray = {0};
+        ifd.putIFDValue(IFD.EXTRA_SAMPLES, extraSamplesArray);
       }
     }
     ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION, pi.getCode());

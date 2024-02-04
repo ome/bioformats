@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2023 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,35 +30,29 @@
  * #L%
  */
 
-package loci.formats.services;
+package loci.formats.dicom;
 
 import java.io.IOException;
-
-import loci.common.RandomAccessInputStream;
-import loci.common.services.Service;
-import loci.common.services.ServiceException;
+import java.util.List;
 
 /**
- *
- * @author Melissa Linkert <melissa at glencoesoftware.com>
+ * Interface used to provide DICOM tags.
+ * Implementations may parse tags from a file or other source;
+ * loci.formats.out.DicomWriter makes use of this interface
+ * to accept supplementary tags.
  */
-public interface JPEGTurboService extends Service {
+public interface ITagProvider {
 
-  long[] getRestartMarkers();
+  /**
+   * Read tags from the given location.
+   * The interpretation of 'location' is implementation-dependent.
+   * This method must be called before retrieving tags.
+   */
+  void readTagSource(String location) throws IOException;
 
-  void setRestartMarkers(long[] markers);
-
-  void initialize(RandomAccessInputStream jpeg, int width, int height)
-    throws ServiceException, IOException;
-
-  byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate, int width,
-    int height)
-    throws IOException;
-
-  byte[] getTile(int xTile, int yTile) throws IOException;
-
-  void close() throws IOException;
-  
-  boolean isLibraryLoaded();
+  /**
+   * Retrieve the tags defined by this provider.
+   */
+  List<DicomTag> getTags();
 
 }

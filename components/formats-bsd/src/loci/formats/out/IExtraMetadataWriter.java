@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2023 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,35 +30,24 @@
  * #L%
  */
 
-package loci.formats.services;
+package loci.formats.out;
 
 import java.io.IOException;
 
-import loci.common.RandomAccessInputStream;
-import loci.common.services.Service;
-import loci.common.services.ServiceException;
+public interface IExtraMetadataWriter {
 
-/**
- *
- * @author Melissa Linkert <melissa at glencoesoftware.com>
- */
-public interface JPEGTurboService extends Service {
-
-  long[] getRestartMarkers();
-
-  void setRestartMarkers(long[] markers);
-
-  void initialize(RandomAccessInputStream jpeg, int width, int height)
-    throws ServiceException, IOException;
-
-  byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate, int width,
-    int height)
-    throws IOException;
-
-  byte[] getTile(int xTile, int yTile) throws IOException;
-
-  void close() throws IOException;
-  
-  boolean isLibraryLoaded();
+  /**
+   * Provide additional metadata that should be written
+   * as part of this dataset. Primarily intended for DicomWriter.
+   *
+   * Calling this method is optional. Multiple calls are allowed,
+   * e.g. if tags come from multiple external sources.
+   * If multiple calls to this method are made then the order matters,
+   * with earlier calls implying higher priority when resolving duplicate
+   * or conflicting tags.
+   *
+   * All calls to this method must occur before setId is called.
+   */
+  void setExtraMetadata(String metadataSource);
 
 }
