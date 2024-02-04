@@ -120,7 +120,8 @@ public class LibCZI {
                 }
                 return directorySegment;
             } else {
-                throw new IOException(ZISRAWDIRECTORY+" segment expected, found "+segmentID+" instead.");
+                logger.warn(ZISRAWDIRECTORY+" segment expected, found "+segmentID+" instead.");
+                return null; // Some multipart file could be deprived of this segment. The reader needs to deal with null in this case
             }
         }
     }
@@ -159,13 +160,12 @@ public class LibCZI {
             } else {
                 logger.warn("No "+ZISRAWATTDIR+" segment found.");
                 return null;
-                //throw new IOException(ZISRAWATTDIR+" segment expected, found "+segmentID+" instead.");
             }
         }
     }
 
     /**
-     * @param blockPosition position of the expected MetaData Segment
+     * @param blockPosition position  of th file header segment of the referenced czi file
      * @param id a czi file path
      * @param BUFFER_SIZE the size of the caching buffer in bytes
      * @param isLittleEndian endianness of the data
@@ -193,6 +193,7 @@ public class LibCZI {
             } else {
                 metadataSegmentFound = true;
             }
+
             if (metadataSegmentFound) {
                 MetaDataSegment metaDataSegment = new MetaDataSegment();
                 // read the segment header
@@ -222,6 +223,32 @@ public class LibCZI {
         entry.contentFileType = in.readString(8).trim();
         entry.name = in.readString(80).trim();
         return entry;
+    }
+
+    // If blocks have been deleted, they are appended at the end of the file. This method looks for the location of the last known block and
+    // iterates over the next blocks until the end of the file. This method returns whether some orphan blocks have been found
+    static long findOrphanBlock(String id, int BUFFER_SIZE, boolean isLittleEndian, long positionOfLastKnownBlock, String blockType) throws IOException {
+        try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
+            long eof = in.length();
+            in.order(isLittleEndian);
+            long positionBlockStart = positionOfLastKnownBlock;
+            in.seek(positionBlockStart);
+            String segmentID = in.readString(16).trim();
+
+            long allocatedSize = in.readLong();
+            long usedSize = in.readLong();
+            while (positionBlockStart + allocatedSize + 32 <eof) {
+                positionBlockStart += allocatedSize + 32;
+                in.seek(positionBlockStart);
+                segmentID = in.readString(16).trim();
+                if (segmentID.equals(blockType)) {
+                    return positionBlockStart;
+                }
+                allocatedSize = in.readLong();
+                usedSize = in.readLong();
+            }
+            return -1;
+        }
     }
 
     /**
@@ -528,40 +555,6 @@ public class LibCZI {
         return subBlockMeta;
     }
 
-    // If blocks have been deleted, they are appended at the end of the file. This method looks for the location of the last known block and
-    // iterates over the next blocks until the end of the file. This method returns whether some orphan blocks have been found
-    static long findOrphanBlock(String id, int BUFFER_SIZE, boolean isLittleEndian, long positionOfLastKnownBlock, String blockType) throws IOException {
-        try (RandomAccessInputStream in = new RandomAccessInputStream(id, BUFFER_SIZE)) {
-            long eof = in.length();
-            in.order(isLittleEndian);
-            long positionBlockStart = positionOfLastKnownBlock;
-            in.seek(positionBlockStart);
-            String segmentID = in.readString(16).trim();
-
-            long allocatedSize = in.readLong();
-            long usedSize = in.readLong();
-            while (positionBlockStart + allocatedSize + 32 <eof) {
-                positionBlockStart += allocatedSize + 32;
-                in.seek(positionBlockStart);
-                segmentID = in.readString(16).trim();
-                if (segmentID.equals(blockType)) {
-                    return positionBlockStart;
-                }
-                allocatedSize = in.readLong();
-                usedSize = in.readLong();
-            }
-            return -1;
-        }
-    }
-
-    public static long getPositionLastBlock(SubBlockDirectorySegment segment) {
-        long lastBlockPosition = -1;
-        for (SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry entry: segment.data.entries) {
-            lastBlockPosition = Math.max(lastBlockPosition, entry.getFilePosition());
-        }
-        return lastBlockPosition;
-    }
-
     // --------------------------- PUBLIC TRANSLATED CZI STRUCTS TO JAVA CLASSES
     public static class SubBlockMeta {
         public double exposureTime = Double.NaN;
@@ -584,6 +577,15 @@ public class LibCZI {
     public static class GUID {
         final byte[] bytes = new byte[16]; // 128 bits identifier = 16 bytes, or 2 longs
     }
+
+    public static long getPositionLastBlock(SubBlockDirectorySegment segment) {
+        long lastBlockPosition = -1;
+        for (SubBlockDirectorySegment.SubBlockDirectorySegmentData.SubBlockDirectoryEntry entry: segment.data.entries) {
+            lastBlockPosition = Math.max(lastBlockPosition, entry.getFilePosition());
+        }
+        return lastBlockPosition;
+    }
+
     public static class SubBlockDirectorySegment {
         /*
         // SubBlockDirectorySegment: size = 128(fixed) + EntryCount * [128 bytes fixed (or variable if DV)]
@@ -610,6 +612,18 @@ public class LibCZI {
             public SubBlockDirectoryEntry[] entries;
 
             public static class SubBlockDirectoryEntry {
+                @Override
+                public String toString() {
+                    if (entryDV!=null) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("pixelType "+this.getPixelType()+" compression = "+getCompression()+"\n");
+                        for (SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDV.DimensionEntry entry: getDimensionEntries()) {
+                            sb.append(entry+"\n");
+                        }
+                        return sb.toString();
+                    } else return "entryDE not supported";
+                }
+
                 public SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDV entryDV;
                 public SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDE entryDE;
 
@@ -681,21 +695,6 @@ public class LibCZI {
                         return -1;
                     }
                 }
-
-                @Override
-                public String toString() {
-                    if (entryDV!=null) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("pixelType "+this.getPixelType()+" compression = "+getCompression()+"\n");
-                        for (SubBlockSegment.SubBlockSegmentData.SubBlockDirectoryEntryDV.DimensionEntry entry: getDimensionEntries()) {
-                            sb.append(entry+"\n");
-                        }
-                        return sb.toString();
-                    } else {
-                        return "entryDE not supported";
-                    }
-                }
-
             }
         }
 
