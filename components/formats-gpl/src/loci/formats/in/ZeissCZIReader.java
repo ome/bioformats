@@ -4187,7 +4187,7 @@ public class ZeissCZIReader extends FormatReader {
             }
           }
           else {
-            LOGGER.warn("ZSTD-1 compression used, but no high/low byte unpacking");
+            LOGGER.debug("ZSTD-1 compression used, but no high/low byte unpacking");
             data = decoded;
           }
 
