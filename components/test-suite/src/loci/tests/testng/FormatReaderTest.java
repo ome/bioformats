@@ -963,7 +963,7 @@ public class FormatReaderTest {
 
     if (expected == null && real == null) {
       return true;
-    } else if (expected.equals("null")  && real == null) {
+    } else if ("null".equals(expected) && real == null) {
       return true;
     } else if (expected == null) {
       return false;
@@ -1419,6 +1419,51 @@ public class FormatReaderTest {
       }
     }
     result(testName, true);
+  }
+
+  @Test(groups = {"all", "fast", "automated"})
+  public void testUnflattenedImageNames() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testUnflattenedImageNames";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    IFormatReader resolutionReader = setupReader(false, true);
+    try {
+      IMetadata retrieve = (IMetadata) resolutionReader.getMetadataStore();
+
+      if (resolutionReader.getSeriesCount() != config.getSeriesCount(false)) {
+        success = false;
+        msg = "incorrect unflattened series count";
+      }
+
+      for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
+        config.setSeries(i, false);
+
+        String realName = retrieve.getImageName(i);
+        String expectedName = config.getImageName();
+
+        if (!isEqual(expectedName, realName)) {
+          String unflattenedName = config.getUnflattenedImageName();
+          if (!isEqual(unflattenedName, realName)) {
+            msg = "Series " + i + " (got '" + realName +
+              "', expected '" + expectedName + "' or '" + unflattenedName + "')";
+            success = false;
+          }
+        }
+      }
+    }
+    finally {
+      try {
+        resolutionReader.close();
+      }
+      catch (IOException e) {
+        success = false;
+        msg = "Could not close reader";
+      }
+    }
+    result(testName, success, msg);
   }
 
   @Test(groups = {"all", "fast", "automated"})

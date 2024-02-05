@@ -71,6 +71,9 @@ public class SVSReader extends BaseTiffReader {
 
   // -- Constants --
 
+  public static final String REMOVE_THUMBNAIL_KEY = "svs.remove_thumbnail";
+  public static final boolean REMOVE_THUMBNAIL_DEFAULT = true;
+
   /** Logger for this class. */
   private static final Logger LOGGER =
     LoggerFactory.getLogger(SVSReader.class);
@@ -118,8 +121,19 @@ public class SVSReader extends BaseTiffReader {
 
   public SVSReader(String name, String[] suffixes) {
     super(name, suffixes);
-  }  
-  
+  }
+
+  // -- SVSReader API methods --
+
+  public boolean removeThumbnail() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        REMOVE_THUMBNAIL_KEY, REMOVE_THUMBNAIL_DEFAULT);
+    }
+    return REMOVE_THUMBNAIL_DEFAULT;
+  }
+
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -389,9 +403,15 @@ public class SVSReader extends BaseTiffReader {
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       int index = i;
-      tiffParser.fillInIFD(ifds.get(index));
 
-      String comment = ifds.get(index).getComment();
+      IFD currentIFD = ifds.get(index);
+      tiffParser.fillInIFD(currentIFD);
+
+      String comment = currentIFD.getComment();
+      int subfileType = currentIFD.getIFDIntValue(IFD.NEW_SUBFILE_TYPE);
+
+      // if there is no identifying comment, assign this IFD
+      // to the label or macro (if a label or macro was not already found)
       if (comment == null) {
         if (labelIndex == -1) {
           labelIndex = i;
@@ -401,10 +421,15 @@ public class SVSReader extends BaseTiffReader {
         }
         continue;
       }
+
+      // when the comment exists, check it for any information that
+      // identifies the image type
       comments[i] = comment;
       String[] lines = comment.split("\n");
       String[] tokens;
       String key, value;
+      boolean foundLabel = false;
+      boolean foundMacro = false;
       for (String line : lines) {
         tokens = line.split("[|]");
         for (String t : tokens) {
@@ -420,14 +445,27 @@ public class SVSReader extends BaseTiffReader {
           }
           else if (t.toLowerCase().indexOf("label") >= 0) {
             labelIndex = i;
+            foundLabel = true;
           }
           else if (t.toLowerCase().indexOf("macro") >= 0) {
             macroIndex = i;
+            foundMacro = true;
           }
         }
       }
       if (zPosition[index] != null) {
         uniqueZ.add(zPosition[index]);
+      }
+
+      // if the comment existed but didn't identify a label or macro
+      // check the subfile type to see if we suspect a label or macro anyway
+      if (!foundLabel && !foundMacro && subfileType != 0) {
+        if (labelIndex == -1) {
+          labelIndex = i;
+        }
+        else if (macroIndex == -1) {
+          macroIndex = i;
+        }
       }
     }
     setSeries(0);
@@ -603,6 +641,26 @@ public class SVSReader extends BaseTiffReader {
     setSeries(0);
 
     core.reorder();
+
+    if (removeThumbnail()) {
+      // if the smallest resolution uses strips instead of tiles
+      // then it's a "thumbnail" image instead of a real resolution
+      // remove it by default, see https://github.com/ome/bioformats/issues/3757
+      IFD lastResolution = ifds.get(getIFDIndex(core.size(0) - 1, 0));
+      if (lastResolution.get(IFD.STRIP_BYTE_COUNTS) != null) {
+        int index = core.flattenedIndex(0, core.size(0) - 1);
+        core.remove(0, core.size(0) - 1);
+
+        // update the label and macro indexes
+        // otherwise image names won't be set correctly
+        if (index < labelIndex) {
+          labelIndex--;
+        }
+        if (index < macroIndex) {
+          macroIndex--;
+        }
+      }
+    }
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
