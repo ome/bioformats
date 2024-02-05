@@ -374,7 +374,7 @@ public class SingleImageTranslator {
   }
 
   private void translateTimestamps(){
-    timestamps = TimestampExtractor.translateTimestamps(xmlNodes.imageNode, imageCount);
+    timestamps = TimestampExtractor.translateTimestamps(xmlNodes.imageNode, reader.getImageCount());
     if (timestamps.size() == 0) return;
 
     double acquiredDate = timestamps.get(0);

@@ -44,7 +44,7 @@ public class TimestampExtractor extends Extractor {
   /**
    * Extracts and returns timestamps from image node
    */
-  public static List<Double> translateTimestamps(Element imageNode, int imageCount) {
+  public static List<Double> translateTimestamps(Element imageNode, int planeCount) {
     List<Double> timestamps = new ArrayList<Double>();
 
     NodeList timeStampLists = getDescendantNodesWithName(imageNode, "TimeStampList");
@@ -60,7 +60,7 @@ public class TimestampExtractor extends Extractor {
       String timeStampsRaw = timeStampList.getTextContent();
       List<String> timeStamps = Arrays.asList(timeStampsRaw.split(" "));
       for (int stamp = 0; stamp < timeStamps.size(); stamp++) {
-        if (stamp < imageCount) {
+        if (stamp < planeCount) {
           String timestamp = timeStamps.get(stamp);
           timestamps.add(translateSingleTimestamp(timestamp));
         }
@@ -71,7 +71,7 @@ public class TimestampExtractor extends Extractor {
       if (timestampNodes != null) {
         // LAS AF 3.0 (or older) timestamps are available
         for (int stamp = 0; stamp < timestampNodes.getLength(); stamp++) {
-          if (stamp < imageCount) {
+          if (stamp < planeCount) {
             Element timestamp = (Element) timestampNodes.item(stamp);
             timestamps.add(translateSingleTimestamp(timestamp));
           }
