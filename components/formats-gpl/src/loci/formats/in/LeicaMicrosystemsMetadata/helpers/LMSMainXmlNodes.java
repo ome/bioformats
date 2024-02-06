@@ -39,6 +39,8 @@ import org.w3c.dom.NodeList;
 public class LMSMainXmlNodes {
   public Element imageNode;
   public Element imageDescription;
+  public NodeList attachments;
+
   public Element hardwareSetting;
   
   public Element mainConfocalSetting; // ATLConfocalSettingDefinition under HardwareSetting attachment
@@ -50,6 +52,8 @@ public class LMSMainXmlNodes {
   public List<Element> sequentialCameraSettings = new ArrayList<Element>(); //ATLCameraSettingDefinitions under LDM_Block_Sequential_List
   public Element widefieldChannelConfig;
   public List<Element> widefieldChannelInfos = new ArrayList<Element>();
+
+  public Element widefocalExperimentSettings; // attachment, only for MICA
 
   public NodeList scannerSettingRecords;
   public NodeList filterSettingRecords;

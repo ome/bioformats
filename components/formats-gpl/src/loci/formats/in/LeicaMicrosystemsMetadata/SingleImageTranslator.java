@@ -63,6 +63,7 @@ import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dye;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
@@ -77,7 +78,6 @@ import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.xml.model.enums.MicroscopeType;
-import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -153,16 +153,30 @@ public class SingleImageTranslator {
 
     if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL || xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL){
       translateDetectors();
-      translateDetectorSettings();
+      // in MICA images, we cannot map detector settings to image channels, due to unmixing
+      if (!xmlNodes.isMicaImage)
+        translateDetectorSettings();
     }
       
-    translateFilters(); //confocal checks for detector settings
-    translateFilterSettings();
+    
+    // in MICA images, filter information is not available in hardware settings, 
+    // as it is available in images from "pure" confocal or widefield systems.
+    // it cannot be mapped to image channels (as FilterSetRef) anyway, due to unmixing.
+    if (!xmlNodes.isMicaImage){
+      translateFilters(); //confocal checks for detector settings
+      translateFilterSettings();
+    }
+    
     
     if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL || xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL){
       translateLasers();
-      translateLaserSettings(); //checks for channel filter
+      // in MICA images, we cannot map laser settings to image channels, due to unmixing
+      if (!xmlNodes.isMicaImage)
+        translateLaserSettings(); //checks for channel filter
     }
+
+    if (xmlNodes.isMicaImage)
+      translateMicaChannelInfos();
 
     translateROIs();
 
@@ -172,6 +186,7 @@ public class SingleImageTranslator {
 
   private void getMainNodes(){
     xmlNodes.imageDescription = (Element) xmlNodes.imageNode.getElementsByTagName("ImageDescription").item(0);
+    xmlNodes.attachments = Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "Attachment");
 
     HardwareSettingsExtractor.extractHardwareSetting(xmlNodes);
 
@@ -199,6 +214,11 @@ public class SingleImageTranslator {
       xmlNodes.scannerSettingRecords = Extractor.getDescendantNodesWithName(scannerSetting, "ScannerSettingRecord");
       Element filterSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "FilterSetting");
       xmlNodes.filterSettingRecords = Extractor.getDescendantNodesWithName(filterSetting, "FilterSettingRecord");
+    }
+
+    if (xmlNodes.isMicaImage){
+      xmlNodes.widefocalExperimentSettings = (Element)Extractor.getNodeWithAttribute(xmlNodes.attachments, 
+        "Name", "WidefocalExperimentSettings");
     }
   }
 
@@ -266,7 +286,9 @@ public class SingleImageTranslator {
       Channel channel = dimensionStore.channels.get(channelIndex);
       if (channel.detectorSetting != null){
         int sequenceIndex = channel.detectorSetting.sequenceIndex;
-        String pinholeSizeS = Extractor.getAttributeValue(xmlNodes.sequentialConfocalSettings.get(sequenceIndex), "Pinhole");
+
+        Element setting = xmlNodes.sequentialConfocalSettings.size() > 0 ? xmlNodes.sequentialConfocalSettings.get(sequenceIndex) : xmlNodes.getAtlSetting();
+        String pinholeSizeS = Extractor.getAttributeValue(setting, "Pinhole");
         channel.pinholeSize = Extractor.parseDouble(pinholeSizeS) * METER_MULTIPLY;
   
         store.setChannelPinholeSize(new Length(channel.pinholeSize, UNITS.MICROMETER), seriesIndex, channelIndex);
@@ -275,16 +297,12 @@ public class SingleImageTranslator {
   }
 
   private void translateFilters(){
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
-      filters = FilterExtractor.translateConfocalFilters(xmlNodes.sequentialConfocalSettings, detectorSettings);
-    } else {
-      filters = FilterExtractor.translateWidefieldFilters(xmlNodes);
-    }
-    
+    filters = FilterExtractor.translateFilters(xmlNodes, detectorSettings);
     FilterWriter.initFilters(filters, detectorSettings, seriesIndex, store, xmlNodes.dataSourceType);
   }
 
   private void translateFilterSettings(){
+
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++) {
       if (channelIndex >= filters.size())
         break;
@@ -422,6 +440,11 @@ public class SingleImageTranslator {
     dimensionStore.setChannels(channels);
     
     DimensionWriter.setChannels(core, store, dimensionStore, reader.getImageFormat(), seriesIndex);
+  }
+
+  private void translateMicaChannelInfos(){
+    List<Dye> dyes = ChannelExtractor.getMicaDyes(xmlNodes);
+    DimensionWriter.addDyeInfosToChannels(store, dyes, dimensionStore, seriesIndex);
   }
 
   private void translateDimensions(){

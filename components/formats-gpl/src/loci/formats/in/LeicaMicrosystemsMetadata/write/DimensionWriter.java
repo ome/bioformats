@@ -25,14 +25,17 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata.write;
 
+import java.util.List;
+
 import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dye;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 import loci.formats.meta.MetadataStore;
+import ome.units.quantity.Length;
 
 /**
  * DimensionWriter sets up CoreMetadata dimension parameters and related image parameters
@@ -118,5 +121,21 @@ public class DimensionWriter {
     }
 
     core.indexed = !core.rgb;
+  }
+
+  public static void addDyeInfosToChannels(MetadataStore store, List<Dye> dyes, DimensionStore dimensionStore, int seriesIndex){
+    for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
+      Channel channel = dimensionStore.channels.get(channelIndex);
+      for (Dye dye : dyes){
+        if (dye.lutName.equals(channel.channelProperties.detectorName)){
+          Length emissionWavelength = FormatTools.getWavelength(dye.emissionWavelength);
+          store.setChannelEmissionWavelength(emissionWavelength, seriesIndex, channelIndex);
+          Length excitationWavelength = FormatTools.getWavelength(dye.excitationWavelength);
+          store.setChannelExcitationWavelength(excitationWavelength, seriesIndex, channelIndex);
+          store.setChannelFluor(dye.fluochromeName, seriesIndex, channelIndex);
+          break;
+        }
+      }
+    }
   }
 }

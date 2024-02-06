@@ -36,6 +36,7 @@ import org.w3c.dom.NodeList;
 
 import loci.common.DataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 
@@ -47,46 +48,117 @@ import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 public class FilterExtractor extends Extractor {
 
   /**
+   * Returns a list of {@link Filter}s for a confocal or widefield setup
+   */
+  public static List<Filter> translateFilters(LMSMainXmlNodes xmlNodes, List<DetectorSetting> detectorSettings){
+    List<Filter> filters = new ArrayList<Filter>();
+    
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
+      filters.addAll(translateConfocalFilters(xmlNodes, detectorSettings));
+    } else if (xmlNodes.dataSourceType == DataSourceType.CAMERA){
+      filters.addAll(translateWidefieldFilters(xmlNodes));
+    }
+    
+    return filters;
+  }
+
+  /**
+   * Returns a list of {@link Filter}s created from multiband info and detector settings
+   */
+  public static List<Filter> translateConfocalFilters(LMSMainXmlNodes xmlNodes, List<DetectorSetting> detectorSettings) {
+    List<Filter> filters = new ArrayList<Filter>();
+
+    if (xmlNodes.sequentialConfocalSettings.size() > 0){
+       filters = FilterExtractor.translateConfocalFiltersFromSequentialSettings(xmlNodes.sequentialConfocalSettings, detectorSettings);
+
+       //sometimes, sequential settings exist, but do not contain spectro elements... then we extract them from the main / master setting
+       if (filters.size() == 0)
+        filters = FilterExtractor.translateConfocalFiltersFromAtlSetting(xmlNodes.getAtlSetting(), detectorSettings);
+    }
+    else {
+      filters = FilterExtractor.translateConfocalFiltersFromAtlSetting(xmlNodes.getAtlSetting(), detectorSettings);
+    }
+
+    return filters;
+  }
+
+  /**
+   * Returns a list of {@link Filter}s created from multiband info and detector settings found in a single hardware setting (main, master or sequential),
+   */
+  private static List<Filter> translateConfocalFiltersFromHardwareSetting(Element confocalSetting, List<DetectorSetting> detectorSettings, int sequenceIndex) {
+    List<Filter> filters = new ArrayList<Filter>();
+
+    Node spectro = getChildNodeWithName(confocalSetting, "Spectro");
+    if (spectro == null)
+      return filters;
+
+    NodeList multibands = spectro.getChildNodes();
+    int multibandIndex = 0;
+    for (int k = 0; k < multibands.getLength(); k++) {
+      Element multiband;
+      try {
+        multiband = (Element) multibands.item(k);
+      } catch (Exception e) {
+        continue;
+      }
+
+      // assuming that multiband index maps detector index within a sequential setting,
+      // only translate filter information for active detectors (= existing detector settings)
+      DetectorSetting setting = getDetectorSetting(detectorSettings, sequenceIndex, multibandIndex);
+      if (setting != null) {
+        Filter filter = new Filter();
+        filter.cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
+        filter.cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
+        filter.dye = multiband.getAttribute("DyeName");
+        filter.sequenceIndex = sequenceIndex;
+        filter.multibandIndex = multibandIndex;
+
+        filters.add(filter);
+      }
+
+      multibandIndex++;
+    }
+
+    return filters;
+  }
+
+  /**
+   * Returns a list of {@link Filter}s created from multiband info and detector settings found in a single hardware setting (main or master),
+   * if sequential information is not available
+   */
+  private static List<Filter> translateConfocalFiltersFromAtlSetting(Element atlSetting, List<DetectorSetting> detectorSettings) {
+    // add multiband cutin/out information to channel as filter
+    List<Filter> filters = translateConfocalFiltersFromHardwareSetting(atlSetting, detectorSettings, 0);
+
+    // PMT transmission detectors don't have a matching multiband, so we
+    // manually create a filter for them
+    for (DetectorSetting setting : detectorSettings) {
+      if (setting.transmittedLightMode) {
+        Filter filter = new Filter();
+        filter.sequenceIndex = setting.sequenceIndex;
+        filter.multibandIndex = setting.detectorListIndex;
+        filters.add(filter);
+      }
+    }
+
+    Collections.sort(filters, new FilterComparator());
+    
+    return filters;
+  }
+
+  /**
    * Returns a list of {@link Filter}s created from sequential multiband info and detector settings 
    */
-  public static List<Filter> translateConfocalFilters(List<Element> sequentialConfocalSettings, List<DetectorSetting> detectorSettings) {
+  private static List<Filter> translateConfocalFiltersFromSequentialSettings(List<Element> sequentialConfocalSettings, List<DetectorSetting> detectorSettings) {
     List<Filter> filters = new ArrayList<Filter>();
 
     // add multiband cutin/out information to channel as filter
     int sequenceIndex = 0;
     for (int i = 0; i < sequentialConfocalSettings.size(); i++) {
-      Node spectro = getChildNodeWithName(sequentialConfocalSettings.get(i), "Spectro");
-      if (spectro == null)
-        continue;
-
-      NodeList multibands = spectro.getChildNodes();
-      int multibandIndex = 0;
-      for (int k = 0; k < multibands.getLength(); k++) {
-        Element multiband;
-        try {
-          multiband = (Element) multibands.item(k);
-        } catch (Exception e) {
-          continue;
-        }
-
-        // assuming that multiband index maps detector index within a sequential setting,
-        // only translate filter information for active detectors (= existing detector settings)
-        DetectorSetting setting = getDetectorSetting(detectorSettings, sequenceIndex, multibandIndex);
-        if (setting != null) {
-          Filter filter = new Filter();
-          filter.cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
-          filter.cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
-          filter.dye = multiband.getAttribute("DyeName");
-          filter.sequenceIndex = sequenceIndex;
-          filter.multibandIndex = multibandIndex;
-
-          filters.add(filter);
-
-        }
-
-        multibandIndex++;
-      }
-      sequenceIndex++;
+      List<Filter> seqFilters = translateConfocalFiltersFromHardwareSetting(sequentialConfocalSettings.get(i), detectorSettings, sequenceIndex);
+      filters.addAll(seqFilters);
+      // only count "non-empty" sequential hardware settings where filters were found
+      if (seqFilters.size() > 0) sequenceIndex++;
     }
 
     // PMT transmission detectors don't have a matching multiband, so we

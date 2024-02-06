@@ -44,6 +44,20 @@ public class Channel {
   public Color lutColor;
   public int lutColorIndex;
 
+
+  public class ChannelProperties {
+    public int channelGroup;
+    public String channelType;
+    public String beamRoute;
+    public String detectorName;
+    public String dyeName;
+    public int sequentialSettingIndex;
+    public String digitalGatingMode;
+    public double tauScanLine;
+  }
+
+  public ChannelProperties channelProperties = new ChannelProperties();
+
   public boolean isLutInverted;
   public long bitInc;
   public int dataType;

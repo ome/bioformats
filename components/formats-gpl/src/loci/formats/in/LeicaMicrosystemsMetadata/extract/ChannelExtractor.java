@@ -33,7 +33,10 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dye;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel.ChannelProperties;
 import ome.xml.model.primitives.Color;
 
 /**
@@ -62,6 +65,31 @@ public class ChannelExtractor extends Extractor {
       channel.bytesInc = parseLong(channelElement.getAttribute("BytesInc"));
       channel.setChannelType();
 
+      List<Element> channelProperties = Extractor.getChildNodesWithNameAsElement(channelElement, "ChannelProperty");
+      for (Element channelProperty : channelProperties){
+        Element key = Extractor.getChildNodeWithNameAsElement(channelProperty, "Key");
+        String keyS = key.getTextContent();
+        Element value = Extractor.getChildNodeWithNameAsElement(channelProperty, "Value");
+        String valueS = value.getTextContent();
+
+        if (keyS.equals("ChannelGroup"))
+          channel.channelProperties.channelGroup = Extractor.parseInt(valueS);
+        else if (keyS.equals("ChannelType"))
+          channel.channelProperties.channelType = valueS;
+        else if (keyS.equals("BeamRoute"))
+          channel.channelProperties.beamRoute = valueS;
+        else if (keyS.equals("DetectorName"))
+          channel.channelProperties.detectorName = valueS;
+        else if (keyS.equals("DyeName"))
+          channel.channelProperties.dyeName = valueS;
+        else if (keyS.equals("SequentialSettingIndex"))
+          channel.channelProperties.sequentialSettingIndex = Extractor.parseInt(valueS);
+        else if (keyS.equals("DigitalGatingMode"))
+          channel.channelProperties.digitalGatingMode = valueS;
+        else if (keyS.equals("TauScanLine"))
+          channel.channelProperties.tauScanLine = Extractor.parseDouble(valueS);
+      }
+
       channels.add(channel);
     }
 
@@ -78,6 +106,34 @@ public class ChannelExtractor extends Extractor {
       channel.lutColor = translateLut(channel.lutName);
       channel.lutColorIndex = getLutColorIndex(channel.lutName);
     }
+  }
+
+  public static List<Dye> getMicaDyes(LMSMainXmlNodes xmlNodes){
+    Element sampleData = Extractor.getChildNodeWithNameAsElement(xmlNodes.widefocalExperimentSettings, "SampleData"); 
+    Element samplePattern = Extractor.getChildNodeWithNameAsElement(sampleData, "SamplePattern"); 
+    Element structuresElement = Extractor.getChildNodeWithNameAsElement(samplePattern, "Structures"); 
+    List<Element> structures = Extractor.getChildNodesWithNameAsElement(structuresElement, "Structure");
+
+    List<Dye> dyes = new ArrayList<Dye>();
+
+    for (Element structure : structures){
+      Dye dye = new Dye();
+      Element name = Extractor.getChildNodeWithNameAsElement(structure, "Name");
+      Element fluochrome = Extractor.getChildNodeWithNameAsElement(structure, "Fluochrome");
+      Element lutName = Extractor.getChildNodeWithNameAsElement(structure, "LutName");
+      Element emissionWavelength = Extractor.getChildNodeWithNameAsElement(structure, "EmissionWavelength");
+      Element excitationWavelength = Extractor.getChildNodeWithNameAsElement(structure, "ExcitationWavelength");
+      Element isAutofluo = Extractor.getChildNodeWithNameAsElement(structure, "IsAutoFluorescence");
+      dye.name = name.getTextContent();
+      dye.fluochromeName = fluochrome.getTextContent();
+      dye.lutName = lutName.getTextContent();
+      dye.emissionWavelength = Extractor.parseDouble(emissionWavelength.getTextContent());
+      dye.excitationWavelength = Extractor.parseDouble(excitationWavelength.getTextContent());
+      dye.isAutofluorescence = isAutofluo.getTextContent().equals("true");
+      dyes.add(dye);
+    }
+
+    return dyes;
   }
 
   /**

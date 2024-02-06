@@ -49,17 +49,15 @@ public class HardwareSettingsExtractor {
  * @param xmlNodes has to contain the imageNode, its hardwareSetting will be updated
  */
   public static void extractHardwareSetting(LMSMainXmlNodes xmlNodes){
-    NodeList attachments = Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "Attachment");
-
     //common hardware setting node for "newer" images
-    xmlNodes.hardwareSetting = (Element)Extractor.getNodeWithAttribute(attachments, "Name", "HardwareSetting");
+    xmlNodes.hardwareSetting = (Element)Extractor.getNodeWithAttribute(xmlNodes.attachments, "Name", "HardwareSetting");
 
     if (xmlNodes.hardwareSetting != null){
       //new hardware settings layout
       xmlNodes.hardwareSettingLayout = HardwareSettingLayout.NEW;
     } else {
       //look for old hardware setting layout
-      Element hardwareSettingParent = (Element)Extractor.getNodeWithAttribute(attachments, "Name", "HardwareSettingList");
+      Element hardwareSettingParent = (Element)Extractor.getNodeWithAttribute(xmlNodes.attachments, "Name", "HardwareSettingList");
       xmlNodes.hardwareSetting = hardwareSettingParent != null ? (Element)Extractor.getChildNodeWithNameAsElement(hardwareSettingParent, "HardwareSetting") : null;
 
       // no hardware setting found until here: it is assumed that it doesn't exist (e.g. multifocus / depth map images)
