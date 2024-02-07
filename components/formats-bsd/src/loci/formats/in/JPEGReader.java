@@ -65,6 +65,15 @@ public class JPEGReader extends DelegateReader {
 
   private static final int MAX_SIZE = 8192;
 
+  /**
+   * setId may alter the "useLegacy" variable depending upon
+   * the type of JPEG encountered. Storing the state of
+   * the "useLegacy" variable prior to any internal changes
+   * allows the reader to reset "useLegacy" to its original
+   * state upon close.
+   */
+  private boolean initialUseLegacy;
+
   // -- Constructor --
 
   /** Constructs a new JPEGReader. */
@@ -83,6 +92,10 @@ public class JPEGReader extends DelegateReader {
   /* @see FormatReader#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
+    // capture the current state of "useLegacy"
+    // it may be updated later in this method and should be reset upon close
+    initialUseLegacy = isLegacy();
+
     try {
       super.setId(id);
     }
@@ -176,6 +189,10 @@ public class JPEGReader extends DelegateReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     Location.mapId(currentId, null);
+
+    // reset to whatever legacy setting was originally requested
+    // this erases any changes made during setId
+    setLegacy(initialUseLegacy);
   }
 
   // -- Helper reader --
