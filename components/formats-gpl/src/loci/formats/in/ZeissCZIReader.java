@@ -734,7 +734,6 @@ public class ZeissCZIReader extends FormatReader {
     convertPixelType(planes.get(0).directoryEntry.pixelType);
 
     // remove any invalid SubBlocks
-
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     if (isRGB()) {
       bpp *= (getSizeC() / originalC);
@@ -743,16 +742,18 @@ public class ZeissCZIReader extends FormatReader {
     for (int i=0; i<planes.size(); i++) {
       long planeSize = (long) planes.get(i).x * planes.get(i).y * bpp;
       int compression = planes.get(i).directoryEntry.compression;
-      if (compression == UNCOMPRESSED || compression == JPEGXR) {
+      boolean isCompressed = compression == JPEGXR || compression == ZSTD_0 || compression == ZSTD_1;
+      if (compression == UNCOMPRESSED || isCompressed) {
         long size = planes.get(i).dataSize;
         if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
           // check for reduced resolution in the pyramid
           DimensionEntry[] entries = planes.get(i).directoryEntry.dimensionEntries;
           int pyramidType = planes.get(i).directoryEntry.pyramidType;
-          if ((pyramidType == 1 || pyramidType == 2 || compression == JPEGXR) &&
-            (compression == JPEGXR || size == entries[0].storedSize * entries[1].storedSize * bpp))
+          if (isCompressed || 
+              ((pyramidType == 1 || pyramidType == 2 ) && (size == entries[0].storedSize * entries[1].storedSize * bpp)))
           {
-            int scale = planes.get(i).x / entries[0].storedSize;
+        	// circumvent integer arithmetic rounding issue by using floating point precision calculation (see issue #4102)
+        	int scale = (int)((double)planes.get(i).x / (double)entries[0].storedSize + 0.5);
             if (scale == 1 || (((scale % 2) == 0 || (scale % 3) == 0) && allowAutostitching())) {
               if (scale > 1 && scaleFactor == 0) {
                 scaleFactor = scale % 2 == 0 ? 2 : 3;
@@ -1395,7 +1396,7 @@ public class ZeissCZIReader extends FormatReader {
         else {
           if (i < imageNames.size()) {
             String completeName = imageNames.get(i);
-            if (i < fieldNames.size()) {
+            if (i < fieldNames.size() && !fieldNames.get(i).equals(completeName)) {
               completeName += " " + fieldNames.get(i);
             }
             store.setImageName(completeName, i);
@@ -2330,10 +2331,19 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
 
+
       Element sNode = getFirstNode(dimensions, "S");
       if (sNode != null) {
         NodeList scenes = sNode.getElementsByTagName("Scene");
         int nextPosition = 0;
+
+        boolean isPlate = platePositions.size() > 0;
+        if (isPlate) {
+          platePositions.clear();
+          fieldNames.clear();
+          imageNames.clear();
+        }
+
         for (int i=0; i<scenes.getLength(); i++) {
           Element scene = (Element) scenes.item(i);
           NodeList positions = scene.getElementsByTagName("Position");
@@ -2358,6 +2368,21 @@ public class ZeissCZIReader extends FormatReader {
               positionsY[nextPosition] = new Length(DataTools.parseDouble(pos[1]), UNITS.MICROMETER);
             }
             nextPosition++;
+          }
+
+          if (isPlate) {
+            String sceneName = scene.getAttribute("Name");
+            NodeList shapes = scene.getElementsByTagName("Shape");
+            for (int shapeIndex=0; shapeIndex<shapes.getLength(); shapeIndex++) {
+              Element shape = (Element) shapes.item(shapeIndex);
+              String id = shape.getAttribute("Id");
+              if (!platePositions.contains(id)) {
+                platePositions.add(id);
+              }
+              String name = shape.getAttribute("Name");
+              imageNames.add(name);
+              fieldNames.add(sceneName);
+            }
           }
         }
       }
@@ -4162,7 +4187,7 @@ public class ZeissCZIReader extends FormatReader {
             }
           }
           else {
-            LOGGER.warn("ZSTD-1 compression used, but no high/low byte unpacking");
+            LOGGER.debug("ZSTD-1 compression used, but no high/low byte unpacking");
             data = decoded;
           }
 
