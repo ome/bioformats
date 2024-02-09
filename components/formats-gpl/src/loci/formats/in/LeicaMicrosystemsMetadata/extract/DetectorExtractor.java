@@ -95,13 +95,13 @@ public class DetectorExtractor extends Extractor {
     int sequenceIndex = 0;
     if (xmlNodes.sequentialConfocalSettings.size() > 0){
       for (int i = 0; i < xmlNodes.sequentialConfocalSettings.size(); i++) {
-        detectorSettings = extractDetectorSettingsFromHardwareSettings(atlSetting, xmlNodes.sequentialConfocalSettings.get(i), sequenceIndex, detectors);
+        detectorSettings.addAll(extractDetectorSettingsFromHardwareSettings(atlSetting, xmlNodes.sequentialConfocalSettings.get(i), sequenceIndex, detectors));
   
         // if a sequential hardware setting contained detector settings, increase sequence index, "empty" sequential settings are not counted
         if (detectorSettings.size() > 0) sequenceIndex++;
       }
     } else {
-      // some images have no LMD_Blocks, detector settings are instead taken from the main ATL confocal setting
+      // some images have no LDM_Blocks, detector settings are instead taken from the main ATL confocal setting
       detectorSettings = extractDetectorSettingsFromHardwareSettings(atlSetting, atlSetting, sequenceIndex, detectors);
     }
     
