@@ -52,14 +52,8 @@ public class PositionExtractor extends Extractor {
    * @param dimensionStore
    */
   public static void extractFieldPositions(LMSMainXmlNodes xmlNodes, DimensionStore dimensionStore){
-    Element mainSetting;
+    Element mainSetting = xmlNodes.getAtlSetting();
 
-    if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
-      mainSetting = xmlNodes.dataSourceType == DataSourceType.CONFOCAL ? xmlNodes.masterConfocalSetting : xmlNodes.masterCameraSetting;
-    } else {
-      mainSetting = xmlNodes.dataSourceType == DataSourceType.CONFOCAL ? xmlNodes.mainConfocalSetting : xmlNodes.mainCameraSetting;
-    }
-    
     NodeList attachments = Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "Attachment");
     Element tilescanInfo = (Element)Extractor.getNodeWithAttribute(attachments, "Name", "TileScanInfo");
     

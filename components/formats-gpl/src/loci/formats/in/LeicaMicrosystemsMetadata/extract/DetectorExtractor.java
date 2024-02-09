@@ -50,7 +50,7 @@ public class DetectorExtractor extends Extractor {
    */
   public static List<Detector> extractDetectors(LMSMainXmlNodes xmlNodes)
   {
-    Element setting = xmlNodes.getAtlSetting();
+    Element setting = xmlNodes.getAtlConfocalSetting();
 
     String zoomS = getAttributeValue(setting, "Zoom");
     double zoom = parseDouble(zoomS);
@@ -84,7 +84,7 @@ public class DetectorExtractor extends Extractor {
    * Returns a list of detector settings it creates from Detectors and LMS XML sequential detector nodes
    */
   public static List<DetectorSetting> extractDetectorSettings(LMSMainXmlNodes xmlNodes, List<Detector> detectors){
-    Element atlSetting = xmlNodes.getAtlSetting();
+    Element atlSetting = xmlNodes.getAtlConfocalSetting();
 
     String readOutRateS = getAttributeValue(atlSetting, "ScanSpeed");
     double readOutRate = parseDouble(readOutRateS);

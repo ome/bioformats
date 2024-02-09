@@ -26,10 +26,9 @@
 package loci.formats.in.LeicaMicrosystemsMetadata.extract;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
 import ome.xml.model.enums.MicroscopeType;
 
@@ -42,7 +41,9 @@ public class MicroscopeExtractor {
   
   public static String extractMicroscopeModel(LMSMainXmlNodes xmlNodes){
     if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
-      Element systemTypeNode = (Element)Extractor.getNodeWithAttribute(xmlNodes.scannerSettingRecords, "Identifier", "SystemType");
+      Element scannerSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ScannerSetting");
+      NodeList scannerSettingRecords = Extractor.getDescendantNodesWithName(scannerSetting, "ScannerSettingRecord");
+      Element systemTypeNode = (Element)Extractor.getNodeWithAttribute(scannerSettingRecords, "Identifier", "SystemType");
       return Extractor.getAttributeValue(systemTypeNode, "Variant");
     } else {
       return Extractor.getAttributeValue(xmlNodes.hardwareSetting, "SystemTypeName");
@@ -50,17 +51,10 @@ public class MicroscopeExtractor {
   }
 
   public static MicroscopeType extractMicroscopeType(LMSMainXmlNodes xmlNodes){
-    MicroscopeType micType = null;
-    
-    if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
-      try {
-        micType = MetadataTools.getMicroscopeType("Other");
-      } catch (Exception e){
-        e.printStackTrace();
-      }
-    } else {
-      Element setting = xmlNodes.dataSourceType == DataSourceType.CONFOCAL ? xmlNodes.mainConfocalSetting : xmlNodes.mainCameraSetting;
-      String isInverse = Extractor.getAttributeValue(setting, "IsInverseMicroscopeModel");
+    MicroscopeType micType = MicroscopeType.OTHER;
+    Element setting = xmlNodes.getAtlSetting();
+    String isInverse = Extractor.getAttributeValue(setting, "IsInverseMicroscopeModel");
+    if (isInverse != ""){
       micType = isInverse.equals("1") ? MicroscopeType.INVERTED : MicroscopeType.UPRIGHT;
     }
 
@@ -68,13 +62,13 @@ public class MicroscopeExtractor {
   }
 
   public static String extractMicroscopeSerialNumber(LMSMainXmlNodes xmlNodes) {
-    if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
+    if (xmlNodes.masterConfocalSetting != null){
+        return Extractor.getAttributeValue(xmlNodes.masterConfocalSetting, "SystemSerialNumber");
+    } else if (xmlNodes.filterSettingRecords != null){
       Element systemNumberNode = (Element)Extractor.getNodeWithAttribute(xmlNodes.filterSettingRecords, "Description", "System Number");
       return Extractor.getAttributeValue(systemNumberNode, "Variant");
     } else {
-      Element setting = xmlNodes.dataSourceType == DataSourceType.CONFOCAL || xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL ?
-        xmlNodes.mainConfocalSetting : xmlNodes.mainCameraSetting;
-      return Extractor.getAttributeValue(setting, "SystemSerialNumber");
+      return "";
     }
   }
 }

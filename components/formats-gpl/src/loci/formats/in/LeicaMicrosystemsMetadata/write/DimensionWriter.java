@@ -127,7 +127,7 @@ public class DimensionWriter {
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
       Channel channel = dimensionStore.channels.get(channelIndex);
       for (Dye dye : dyes){
-        if (dye.lutName.equals(channel.channelProperties.detectorName)){
+        if (dye.lutName.equals(channel.lutName)){
           Length emissionWavelength = FormatTools.getWavelength(dye.emissionWavelength);
           store.setChannelEmissionWavelength(emissionWavelength, seriesIndex, channelIndex);
           Length excitationWavelength = FormatTools.getWavelength(dye.excitationWavelength);

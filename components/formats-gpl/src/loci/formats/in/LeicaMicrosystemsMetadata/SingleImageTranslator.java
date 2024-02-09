@@ -56,6 +56,7 @@ import loci.formats.in.LeicaMicrosystemsMetadata.extract.ROIExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.TimestampExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.AtlSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
@@ -151,33 +152,33 @@ public class SingleImageTranslator {
     //instrument metadata
     translateObjective();
 
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL || xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL){
-      translateDetectors();
-      // in MICA images, we cannot map detector settings to image channels, due to unmixing
-      if (!xmlNodes.isMicaImage)
+    switch(xmlNodes.atlSettingLayout){
+      case CONFOCAL_OLD:
+      case CONFOCAL_NEW:
+        translateDetectors();
         translateDetectorSettings();
-    }
-      
-    
-    // in MICA images, filter information is not available in hardware settings, 
-    // as it is available in images from "pure" confocal or widefield systems.
-    // it cannot be mapped to image channels (as FilterSetRef) anyway, due to unmixing.
-    if (!xmlNodes.isMicaImage){
-      translateFilters(); //confocal checks for detector settings
-      translateFilterSettings();
-    }
-    
-    
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL || xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL){
-      translateLasers();
-      // in MICA images, we cannot map laser settings to image channels, due to unmixing
-      if (!xmlNodes.isMicaImage)
+        translateFilters(); //confocal checks for detector settings
+        translateFilterSettings();
+        translateLasers();
         translateLaserSettings(); //checks for channel filter
+        break;
+      case WIDEFIELD:
+        translateFilters();
+        translateFilterSettings();
+        break;
+      case MICA_CONFOCAL:
+      case MICA_WIDEFIELD:
+      case MICA_WIDEFOCAL:
+        // in MICA images, due to spectral unmixing, we cannot map detector, filter and laser settings to image channels.
+        // also, filter information is not available in hardware settings, 
+        // as it is available in images from "pure" confocal or widefield systems.
+        translateDetectors();
+        translateLasers();
+        translateMicaChannelInfos();
+        break;
+      default: break;
     }
-
-    if (xmlNodes.isMicaImage)
-      translateMicaChannelInfos();
-
+    
     translateROIs();
 
     final Deque<String> nameStack = new ArrayDeque<String>();
@@ -193,37 +194,23 @@ public class SingleImageTranslator {
     if (xmlNodes.hardwareSetting == null) return;
 
     HardwareSettingsExtractor.extractDataSourceType(xmlNodes);
-    if (xmlNodes.dataSourceType == null) return;
+    if (xmlNodes.dataSourceType == null || xmlNodes.dataSourceType == DataSourceType.SPIM || 
+      xmlNodes.dataSourceType == DataSourceType.UNDEFINED){
+        System.out.println("Image data source type currently not supported!");
+        return;
+      }
 
     microscopeModel = MicroscopeExtractor.extractMicroscopeModel(xmlNodes);
     xmlNodes.isMicaImage = microscopeModel.equals("MICA");
 
-    if (xmlNodes.dataSourceType == DataSourceType.WIDEFOCAL) {
-      HardwareSettingsExtractor.extractWidefocalSettings(xmlNodes);
-    } else if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
-      HardwareSettingsExtractor.extractConfocalSettings(xmlNodes);
-    } else if (xmlNodes.dataSourceType == DataSourceType.CAMERA) {
-      HardwareSettingsExtractor.extractCameraSettings(xmlNodes);
-    } else {
-      System.out.println("Image data source type currently not supported!");
-      return;
-    }
+    HardwareSettingsExtractor.extractAtlSettingLayout(xmlNodes);
+    if (xmlNodes.atlSettingLayout == AtlSettingLayout.UNKNOWN) return;
 
-    if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
-      Element scannerSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ScannerSetting");
-      xmlNodes.scannerSettingRecords = Extractor.getDescendantNodesWithName(scannerSetting, "ScannerSettingRecord");
-      Element filterSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "FilterSetting");
-      xmlNodes.filterSettingRecords = Extractor.getDescendantNodesWithName(filterSetting, "FilterSettingRecord");
-    }
-
-    if (xmlNodes.isMicaImage){
-      xmlNodes.widefocalExperimentSettings = (Element)Extractor.getNodeWithAttribute(xmlNodes.attachments, 
-        "Name", "WidefocalExperimentSettings");
-    }
+    HardwareSettingsExtractor.extractHardwareSettingChildNodes(xmlNodes);
   }
 
   private void translateLasers(){
-    Element setting = xmlNodes.getAtlSetting();
+    Element setting = xmlNodes.getAtlConfocalSetting();
     lasers = LaserExtractor.extractLasers(setting);
     LaserWriter.initLasers(lasers, seriesIndex, store);
   }

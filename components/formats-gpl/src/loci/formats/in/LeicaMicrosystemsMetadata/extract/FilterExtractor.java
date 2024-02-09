@@ -73,10 +73,10 @@ public class FilterExtractor extends Extractor {
 
        //sometimes, sequential settings exist, but do not contain spectro elements... then we extract them from the main / master setting
        if (filters.size() == 0)
-        filters = FilterExtractor.translateConfocalFiltersFromAtlSetting(xmlNodes.getAtlSetting(), detectorSettings);
+        filters = FilterExtractor.translateConfocalFiltersFromAtlSetting(xmlNodes.getAtlConfocalSetting(), detectorSettings);
     }
     else {
-      filters = FilterExtractor.translateConfocalFiltersFromAtlSetting(xmlNodes.getAtlSetting(), detectorSettings);
+      filters = FilterExtractor.translateConfocalFiltersFromAtlSetting(xmlNodes.getAtlConfocalSetting(), detectorSettings);
     }
 
     return filters;

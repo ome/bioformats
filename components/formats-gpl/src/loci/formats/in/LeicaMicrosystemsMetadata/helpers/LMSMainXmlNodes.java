@@ -31,6 +31,8 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
+
 /**
  * LMSMainXmlNodes is a storage class that holds the main XML nodes and XML layout information from LMS XML files.
  * 
@@ -67,6 +69,18 @@ public class LMSMainXmlNodes {
   }
   public HardwareSettingLayout hardwareSettingLayout;
 
+  public enum AtlSettingLayout {
+    CONFOCAL_OLD,
+    CONFOCAL_NEW,
+    WIDEFIELD,
+    MICA_CONFOCAL,
+    MICA_WIDEFIELD,
+    MICA_WIDEFOCAL,
+    UNKNOWN
+  }
+
+  public AtlSettingLayout atlSettingLayout;
+
   public enum DataSourceType {
     UNDEFINED,
     CAMERA, // images acquired with widefield systems or widefield images acquired with MICA
@@ -76,23 +90,42 @@ public class LMSMainXmlNodes {
   }
   public DataSourceType dataSourceType;
 
-  public enum CameraSettingsLayout {
-    SIMPLE, //main AtlCameraSettingsDefinition exists and contains e.g. all widefield channel infos
-    SEQUENTIAL // sequential AtlCameraSettingsDefinitions within LDM_Block_Widefield_Sequential exist and contain e.g. widefield channel infos
-  }
-
-  public CameraSettingsLayout cameraSettingsLayout;
-
   /**
    * Depending on hardware setting layout and data source type, it returns the main ATL setting that
    * shall be used for extracting further hardware settings information.
    */
   public Element getAtlSetting(){
-    if (hardwareSettingLayout == HardwareSettingLayout.OLD){
-      return dataSourceType == DataSourceType.CONFOCAL ? masterConfocalSetting : masterCameraSetting;
-    } else {
-      return dataSourceType == DataSourceType.CONFOCAL || dataSourceType == DataSourceType.WIDEFOCAL ?
-       mainConfocalSetting : mainCameraSetting;
+    switch (atlSettingLayout){
+      case CONFOCAL_OLD:
+        return masterConfocalSetting;
+      case CONFOCAL_NEW:
+      case MICA_CONFOCAL:
+        return mainConfocalSetting;
+      case WIDEFIELD:
+      case MICA_WIDEFIELD:
+      case MICA_WIDEFOCAL:
+        return mainCameraSetting != null ? mainCameraSetting : masterCameraSetting;
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Depending on hardware setting layout and data source type, it returns the main ATL confocal setting that
+   * shall be used for extracting further hardware settings information.
+   */
+  public Element getAtlConfocalSetting(){
+    switch (atlSettingLayout){
+      case CONFOCAL_OLD:
+      case MICA_WIDEFIELD:
+      case MICA_WIDEFOCAL:
+        return masterConfocalSetting;
+      case CONFOCAL_NEW:
+      case MICA_CONFOCAL:
+        return mainConfocalSetting;
+      case WIDEFIELD:
+      default:
+        return null;
     }
   }
 }

@@ -83,6 +83,8 @@ public class Extractor {
    * Returns all direct child nodes with passed name and tries to cast them to Element
    */
   public static List<Element> getChildNodesWithNameAsElement(Node node, String nodeName){
+    if (node == null || nodeName == null || nodeName.isEmpty()) return null;
+    
     List<Element> children = new ArrayList<Element>();
     NodeList childNodes = node.getChildNodes();
 
@@ -149,7 +151,7 @@ public class Extractor {
     } else
       return nodes;
   }
-  
+
   public static long parseLong(String value) {
     return value == null || value.trim().isEmpty() ? 0 : Long.parseLong(value.trim());
   }
