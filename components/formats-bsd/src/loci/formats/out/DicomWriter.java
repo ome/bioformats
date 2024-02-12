@@ -78,6 +78,9 @@ import ome.xml.model.enums.DimensionOrder;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
+
 import static loci.formats.dicom.DicomAttribute.*;
 import static loci.formats.dicom.DicomVR.*;
 
@@ -143,6 +146,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
   public void setExtraMetadata(String tagSource) {
     FormatTools.assertId(currentId, false, 1);
 
+    StopWatch metadataWatch = stopWatch();
+
     // get the provider (parser) from the source name
     // uses the file extension, this might need improvement
 
@@ -163,6 +168,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         LOGGER.error("Could not parse extra metadata: " + tagSource, e);
       }
     }
+    metadataWatch.stop("parsed extra metadata from " + tagSource);
   }
 
   /**
@@ -193,22 +199,30 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
   @Override
   public void setSeries(int s) throws FormatException {
     super.setSeries(s);
+    StopWatch seriesWatch = stopWatch();
     try {
       openFile(series, resolution);
     }
     catch (IOException e) {
       LOGGER.error("Could not open file for series #" + s, e);
     }
+    finally {
+      seriesWatch.stop("setSeries(" + s + ")");
+    }
   }
 
   @Override
   public void setResolution(int r) {
     super.setResolution(r);
+    StopWatch resolutionWatch = stopWatch();
     try {
       openFile(series, resolution);
     }
     catch (IOException e) {
       LOGGER.error("Could not open file for series #" + series + ", resolution #" + r, e);
+    }
+    finally {
+      resolutionWatch.stop("setResolution(" + r + ")");
     }
   }
 
@@ -240,6 +254,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     {
       throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
     }
+
+    StopWatch precompressedWatch = stopWatch();
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
@@ -297,6 +313,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         ifds[resolutionIndex][no].put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.Y_CB_CR.getCode());
       }
     }
+    precompressedWatch.stop("precompressed tile setup");
+
+    precompressedWatch.start();
 
     out.seek(out.length());
     long start = out.getFilePointer();
@@ -321,6 +340,10 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if (pad) {
       out.writeByte(0);
     }
+
+    precompressedWatch.stop("wrote precompressed tile");
+
+    precompressedWatch.start();
 
     // update the IFD to include this tile
     int xTiles = (int) Math.ceil((double) getSizeX() / tileWidth[resolutionIndex]);
@@ -351,6 +374,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       end.elementLength = 0;
       writeTag(end);
     }
+    precompressedWatch.stop("updated IFD");
   }
 
   /**
@@ -380,6 +404,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       throw new FormatException("Tile too small, expected " + thisTileWidth + "x" + thisTileHeight +
         ". Setting the tile size to " + getSizeX() + "x" + getSizeY() + " or smaller may work.");
     }
+    StopWatch tileWatch = stopWatch();
     checkPixelCount(false);
 
     boolean first = x == 0 && y == 0;
@@ -437,6 +462,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         }
       }
     }
+    tileWatch.stop("setup tile writing");
+
+    tileWatch.start();
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
@@ -491,8 +519,11 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
       paddedBuf = interleavedBuf;
     }
+    tileWatch.stop("repacked tile for compression");
 
     // now we actually compress and write the pixel data
+
+    tileWatch.start();
 
     // we need to know the tile index to write save the tile offset
     // in the IFD
@@ -577,7 +608,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         writeTag(end);
       }
     }
-
+    tileWatch.stop("compressed and wrote tile");
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -608,6 +639,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       }
       out.close();
     }
+
+    StopWatch initWatch = stopWatch();
 
     checkPixelCount(true);
 
@@ -647,6 +680,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     String seriesInstanceUID = uids.getUID();
     String studyInstanceUID = uids.getUID();
 
+    initWatch.stop("setup data structures");
+    initWatch.start();
+
     for (int pyramid=0; pyramid<r.getImageCount(); pyramid++) {
       series = pyramid;
       int resolutionCount = 1;
@@ -654,6 +690,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         resolutionCount = ((IPyramidStore) r).getResolutionCount(pyramid);
       }
       for (int res=0; res<resolutionCount; res++) {
+        StopWatch resolutionWatch = stopWatch();
         instanceUIDValue = uids.getUID();
 
         resolution = res;
@@ -1319,15 +1356,18 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
             ifds[resolutionIndex][plane] = ifd;
           }
         }
+        resolutionWatch.stop("wrote metadata for series=" + pyramid + ", resolution=" + res);
       }
     }
     setSeries(0);
+    initWatch.stop("finished initialization");
   }
 
   /* @see loci.formats.FormatWriter#close() */
   @Override
   public void close() throws IOException {
     if (writeDualPersonality()) {
+      StopWatch ifdWatch = stopWatch();
       // write IFDs to the end of each file
 
       MetadataRetrieve r = getMetadataRetrieve();
@@ -1360,6 +1400,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
           out.writeInt((int) length);
         }
       }
+      ifdWatch.stop("wrote final IFDs");
     }
 
     super.close();
@@ -1444,6 +1485,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
   }
 
   private void writeTag(DicomTag tag) throws IOException {
+    StopWatch tagWatch = stopWatch();
     int tagCode = tag.attribute == null ? tag.tag : tag.attribute.getTag();
 
     out.writeShort((short) ((tagCode & 0xffff0000) >> 16));
@@ -1627,6 +1669,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
           throw new IllegalArgumentException(String.valueOf(tag.vr.getCode()));
       }
     }
+    tagWatch.stop("wrote single tag: " + tag);
   }
 
   /**
@@ -1710,6 +1753,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       // filename for this series/resolution
       return;
     }
+    StopWatch openWatch = stopWatch();
     if (out != null) {
       out.close();
     }
@@ -1731,6 +1775,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if (out.length() == 0) {
       writeHeader();
     }
+    openWatch.stop("opened " + filename);
   }
 
   /**
@@ -1738,6 +1783,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
    * See http://dicom.nema.org/medical/dicom/current/output/html/part10.html#sect_7.1
    */
   private void writeHeader() throws IOException {
+    StopWatch headerWatch = stopWatch();
     boolean littleEndian = out.isLittleEndian();
     if (writeDualPersonality()) {
       // write a TIFF header in the preamble
@@ -1811,6 +1857,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     out.skipBytes(fileMetaBytes);
 
     out.order(littleEndian);
+    headerWatch.stop("wrote header for series = " + series + ", resolution = " + resolution);
   }
 
   private String getFilename(int pyramid, int res) {
@@ -2041,6 +2088,10 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if (validPixelCount == null) {
       validPixelCount = true;
     }
+  }
+
+  protected Slf4JStopWatch stopWatch() {
+    return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
   }
 
   class PlaneOffset {

@@ -65,6 +65,8 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 import loci.formats.dicom.DicomAttribute;
 import loci.formats.dicom.DicomFileInfo;
@@ -275,6 +277,8 @@ public class DicomReader extends SubResolutionFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    StopWatch watch = stopWatch();
+
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
     Region currentRegion = new Region(x, y, w, h);
@@ -289,12 +293,16 @@ public class DicomReader extends SubResolutionFormatReader {
     // look for any tiles that match the requested tile and plane
     List<Double> zs = zOffsets.get(getCoreIndex());
     List<DicomTile> tiles = tilePositions.get(getCoreIndex());
+    watch.stop("openBytes setup, w=" + w + ", h=" + h);
+    watch.start();
+    // TODO: stop tile scan as soon as whole requested area is read?
     for (int t=0; t<tiles.size(); t++) {
       DicomTile tile = tiles.get(t);
       if ((getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(z))) || (getSizeZ() == tiles.size() && t == z)) &&
         (tile.channel == c || getEffectiveSizeC() == 1) &&
         tile.region.intersects(currentRegion))
       {
+        StopWatch tileWatch = stopWatch();
         byte[] tileBuf = new byte[tile.region.width * tile.region.height * pixel];
         Region intersection = tile.region.intersection(currentRegion);
         getTile(tile, tileBuf, intersection.x - tile.region.x, intersection.y - tile.region.y,
@@ -305,10 +313,13 @@ public class DicomReader extends SubResolutionFormatReader {
           int destIndex = pixel * ((intersection.y - y + row) * w + (intersection.x - x));
           System.arraycopy(tileBuf, srcIndex, buf, destIndex, intersection.width * pixel);
         }
+        tileWatch.stop("copy tile #" + t);
       }
     }
+    watch.stop("scanned all tiles");
 
     if (inverted) {
+      watch.start();
       // pixels are stored such that white -> 0; invert the values so that
       // white -> 255 (or 65535)
       if (bpp == 1) {
@@ -327,6 +338,7 @@ public class DicomReader extends SubResolutionFormatReader {
           DataTools.unpackBytes(maxPixelValue - s, buf, i, 2, little);
         }
       }
+      watch.stop("inverted pixel values");
     }
 
     // NB: do *not* apply the rescale function
@@ -377,6 +389,9 @@ public class DicomReader extends SubResolutionFormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    StopWatch watch = stopWatch();
+
     if (in != null) {
       in.close();
     }
@@ -384,8 +399,14 @@ public class DicomReader extends SubResolutionFormatReader {
     in.order(true);
     CoreMetadata m = core.get(0, 0);
 
+    watch.stop("open selected file");
+
     // look for companion files
+    watch.start();
     attachCompanionFiles();
+    watch.stop("companion file scan");
+
+    watch.start();
 
     m.littleEndian = true;
     long location = 0;
@@ -432,7 +453,9 @@ public class DicomReader extends SubResolutionFormatReader {
     int opticalChannels = 0;
 
     List<Integer> opticalPathIDs = new ArrayList<Integer>();
+    watch.stop("header check and variable init");
 
+    watch.start();
     while (decodingTags) {
       if (in.getFilePointer() + 4 >= in.length()) {
         break;
@@ -682,9 +705,11 @@ public class DicomReader extends SubResolutionFormatReader {
         decodingTags = false;
       }
     }
+    watch.stop("tag decoding");
     if (imagesPerFile == 0) imagesPerFile = 1;
 
     if (new Location(currentId).getName().equals("DICOMDIR")) {
+      watch.start();
       String parent = new Location(currentId).getAbsoluteFile().getParent();
       Integer[] fileKeys = fileList.keySet().toArray(new Integer[0]);
       Arrays.sort(fileKeys);
@@ -705,8 +730,10 @@ public class DicomReader extends SubResolutionFormatReader {
       tilePositions = new HashMap<Integer, List<DicomTile>>();
       zOffsets = new HashMap<Integer, List<Double>>();
       core.clear();
+      watch.stop("DICOMDIR parsing");
     }
     else {
+      watch.start();
       if (m.sizeZ == 0) {
         m.sizeZ = 1;
       }
@@ -787,7 +814,10 @@ public class DicomReader extends SubResolutionFormatReader {
       LOGGER.info("Calculating image offsets");
 
       calculatePixelsOffsets(baseOffset);
+
+      watch.stop("tile and dimension calculation");
     }
+    watch.start();
     makeFileList();
 
     LOGGER.info("Populating metadata");
@@ -796,6 +826,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
+    watch.stop("assembled file list");
 
     // at this point, we have a list of all files to be grouped together
     // and have parsed tags from the current file
@@ -804,6 +835,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
     if (seriesCount > 1) {
       for (int i=0; i<seriesCount; i++) {
+        StopWatch seriesWatch = stopWatch();
         List<String> currentFileList = fileList.get(keys[i]);
         DicomFileInfo fileInfo = createFileInfo(currentFileList.get(0));
         zOffsets.put(i, fileInfo.zOffsets);
@@ -827,17 +859,22 @@ public class DicomReader extends SubResolutionFormatReader {
         fileInfo.positionZ = z;
         metadataInfo.add(fileInfo);
         tilePositions.put(i, positions);
+        seriesWatch.stop("populated series #" + i);
       }
     }
     else {
       List<String> allFiles = fileList.get(keys[0]);
       List<DicomFileInfo> infos = new ArrayList<DicomFileInfo>();
 
+      StopWatch singleSeriesWatch = stopWatch();
+
       // parse tags for each file
       for (String file : allFiles) {
         DicomFileInfo info = createFileInfo(file);
         infos.add(info);
       }
+      singleSeriesWatch.stop("created " + infos.size() + " file infos");
+      singleSeriesWatch.start();
 
       if (infos.size() > 1) {
         infos.sort(null);
@@ -931,7 +968,10 @@ public class DicomReader extends SubResolutionFormatReader {
         metadataInfo.add(infos.get(0));
         zOffsets.put(0, infos.get(0).zOffsets);
       }
+      singleSeriesWatch.stop("updated metadata from file infos");
     }
+
+    watch.start();
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
@@ -1001,6 +1041,7 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
     setSeries(0);
+    watch.stop("populated MetadataStore");
   }
 
   // -- Helper methods --
@@ -1008,6 +1049,7 @@ public class DicomReader extends SubResolutionFormatReader {
   // TODO: target for refactoring, this can possibly be combined with the
   // tag parsing loop that calls this
   private void addInfo(DicomTag info) throws IOException {
+    StopWatch infoWatch = stopWatch();
     CoreMetadata m = core.get(0, 0);
     m.littleEndian = in.isLittleEndian();
 
@@ -1152,6 +1194,7 @@ public class DicomReader extends SubResolutionFormatReader {
         addOriginalMetadata(key, info);
       }
     }
+    infoWatch.stop("addInfo attribute = " + info.attribute);
   }
 
   /**
@@ -1195,6 +1238,7 @@ public class DicomReader extends SubResolutionFormatReader {
    * Build a list of files that belong with the current file.
    */
   private void makeFileList() throws FormatException, IOException {
+    StopWatch fileScanWatch = stopWatch();
     LOGGER.info("Building file list");
 
     if (fileList == null && originalInstance != null && originalDate != null &&
@@ -1227,11 +1271,13 @@ public class DicomReader extends SubResolutionFormatReader {
           }
         }
       }
+      fileScanWatch.stop("finished file scanning");
     }
     else if (fileList == null || !isGroupFiles()) {
       fileList = new HashMap<Integer, List<String>>();
       fileList.put(0, new ArrayList<String>());
       fileList.get(0).add(new Location(currentId).getAbsolutePath());
+      fileScanWatch.stop("single file, no scanning needed");
     }
   }
 
@@ -1245,6 +1291,7 @@ public class DicomReader extends SubResolutionFormatReader {
   {
     String[] files = dir.list(true);
     if (files == null) return;
+    StopWatch directoryWatch = stopWatch();
     Arrays.sort(files);
     for (String f : files) {
       String file = new Location(dir, f).getAbsolutePath();
@@ -1253,6 +1300,7 @@ public class DicomReader extends SubResolutionFormatReader {
         addFileToList(file, checkSeries);
       }
     }
+    directoryWatch.stop("scanned directory " + dir);
   }
 
   /**
@@ -1261,6 +1309,8 @@ public class DicomReader extends SubResolutionFormatReader {
   private void addFileToList(String file, boolean checkSeries)
     throws FormatException, IOException
   {
+    StopWatch addFileWatch = stopWatch();
+
     int currentX = 0, currentY = 0;
     int fileSeries = -1;
     String thisSpecimen = null;
@@ -1340,6 +1390,9 @@ public class DicomReader extends SubResolutionFormatReader {
             stream.seek(tag.getEndPointer());
         }
       }
+    }
+    finally {
+      addFileWatch.stop("checked tags from " + file);
     }
 
     LOGGER.debug("file = {}", file);
@@ -1508,6 +1561,7 @@ public class DicomReader extends SubResolutionFormatReader {
         CodecOptions options = new CodecOptions();
         options.maxBytes = tile.region.width * tile.region.height;
         for (int c=0; c<ec; c++) {
+          StopWatch packbitsChannelWatch = stopWatch();
           PackbitsCodec codec = new PackbitsCodec();
           byte[] t = null;
 
@@ -1565,6 +1619,7 @@ public class DicomReader extends SubResolutionFormatReader {
             if (len < 0) break;
             System.arraycopy(t, src, buf, dest, len);
           }
+          packbitsChannelWatch.stop("decoded packbits channel #" + c);
         }
       }
       else if (tile.isJPEG || tile.isJP2K) {
@@ -1574,6 +1629,7 @@ public class DicomReader extends SubResolutionFormatReader {
         if (b.length < 8) {
           return;
         }
+        StopWatch jpegWatch = stopWatch();
 
         if (b[2] != (byte) 0xff) {
           byte[] tmp = new byte[b.length + 1];
@@ -1615,6 +1671,10 @@ public class DicomReader extends SubResolutionFormatReader {
           LOGGER.debug("Could not read empty or invalid tile", e);
           return;
         }
+        finally {
+          jpegWatch.stop("decompressed (jpeg = " + tile.isJPEG + ")");
+        }
+        jpegWatch.start();
 
         int rowLen = w * bpp;
         int srcRowLen = tile.region.width * bpp;
@@ -1636,6 +1696,7 @@ public class DicomReader extends SubResolutionFormatReader {
             }
           }
         }
+        jpegWatch.stop("repacked tile (jpeg = " + tile.isJPEG + ")");
       }
       else if (tile.isDeflate) {
         // TODO
@@ -1643,11 +1704,13 @@ public class DicomReader extends SubResolutionFormatReader {
           "Deflate data is not supported.");
       }
       else {
+        StopWatch rawWatch = stopWatch();
         // plane is not compressed
 
         int width = tile.region.width;
         int height = tile.region.height;
         readPlane(stream, x, y, w, h, 0, width, height, buf);
+        rawWatch.stop("read raw tile");
       }
     }
   }
@@ -1710,6 +1773,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
     long offset = baseOffset;
     for (int i=0; i<imagesPerFile; i++) {
+      StopWatch offsetWatch = stopWatch();
       if (isRLE) {
         if (i == 0) in.seek(baseOffset);
         else {
@@ -1790,6 +1854,7 @@ public class DicomReader extends SubResolutionFormatReader {
       if (!zOffsets.get(getCoreIndex()).contains(z)) {
         zOffsets.get(getCoreIndex()).add(z);
       }
+      offsetWatch.stop("calculated offset #" + i);
     }
   }
 
@@ -1925,6 +1990,10 @@ public class DicomReader extends SubResolutionFormatReader {
    */
   public List<DicomTag> getTags() {
     return tags;
+  }
+
+  protected Slf4JStopWatch stopWatch() {
+    return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
   }
 
 }
