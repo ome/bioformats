@@ -41,6 +41,7 @@ public class DetectorSetting {
   public String channelName;
   public boolean transmittedLightMode;
   public double readOutRate;
+  public String name;
   //only available in STELLARIS:
   public int referenceLineWavelength;
   public String referenceLineName;

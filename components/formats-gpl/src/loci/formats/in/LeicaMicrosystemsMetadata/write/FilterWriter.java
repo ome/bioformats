@@ -69,6 +69,8 @@ public class FilterWriter {
       }
       store.setTransmittanceRangeCutIn(FormatTools.getCutIn(filter.cutIn), series, filterIndex);
       store.setTransmittanceRangeCutOut(FormatTools.getCutOut(filter.cutOut), series, filterIndex);
+
+      store.setChannelName(filter.dye, series, filterIndex);
     }
   }
   

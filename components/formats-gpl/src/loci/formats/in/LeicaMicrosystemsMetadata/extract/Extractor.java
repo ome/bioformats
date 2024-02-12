@@ -84,7 +84,7 @@ public class Extractor {
    */
   public static List<Element> getChildNodesWithNameAsElement(Node node, String nodeName){
     if (node == null || nodeName == null || nodeName.isEmpty()) return null;
-    
+
     List<Element> children = new ArrayList<Element>();
     NodeList childNodes = node.getChildNodes();
 
@@ -112,6 +112,26 @@ public class Extractor {
         return node;
     }
     return null;
+  }
+
+   /**
+   * Returns the first node of a NodeList that has an attribute with a certain value 
+   */
+  public static List<Element> getNodesWithAttributeAsElements(NodeList nodes, String attributeName, String attributeValue) {
+    if (nodes == null) return null;
+    
+    List<Element> childNodes = new ArrayList<Element>();
+
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node node = nodes.item(i);
+      Node attribute = node.getAttributes().getNamedItem(attributeName);
+      if (attribute != null && attribute.getTextContent().equals(attributeValue))
+      try {
+        childNodes.add((Element)node);
+      } catch (Exception e){}
+    }
+
+    return childNodes;
   }
 
   /**

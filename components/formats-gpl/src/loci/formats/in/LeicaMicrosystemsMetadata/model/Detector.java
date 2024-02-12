@@ -35,4 +35,5 @@ public class Detector {
   public String model;
   public String type;
   public double zoom;
+  public int detectorListIndex;
 }

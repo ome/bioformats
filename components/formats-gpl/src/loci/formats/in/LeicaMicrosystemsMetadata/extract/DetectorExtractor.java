@@ -33,6 +33,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.AtlSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 
@@ -60,6 +61,7 @@ public class DetectorExtractor extends Extractor {
     NodeList detectorNodes = detectorList.getChildNodes();
     List<Detector> detectors = new ArrayList<Detector>();
 
+    int detectorListIndex = 0;
     for (int i = 0; i < detectorNodes.getLength(); i++) {
       Element detectorNode;
       try {
@@ -73,8 +75,26 @@ public class DetectorExtractor extends Extractor {
       detector.model = detectorNode.getAttribute("Name");
       detector.type = detectorNode.getAttribute("Type");
       detector.zoom = zoom;
+      detector.detectorListIndex = detectorListIndex;
 
       detectors.add(detector);
+
+      detectorListIndex++;
+    }
+
+    if (xmlNodes.atlSettingLayout == AtlSettingLayout.CONFOCAL_OLD){
+      List<String> detectorNames = new ArrayList<String>();
+      List<Element> detectorRecords = Extractor.getNodesWithAttributeAsElements(xmlNodes.filterSettingRecords, "ClassName", "CDetectionUnit");
+      for (Element detectorRecord : detectorRecords){
+        String name = Extractor.getAttributeValue(detectorRecord, "ObjectName");
+        if (!name.isEmpty() && !detectorNames.contains(name))
+          detectorNames.add(name);
+      }
+
+      for (int i = 0; i < detectors.size(); i++){
+        if (detectors.get(i).model.isEmpty() && i < detectorNames.size())
+          detectors.get(i).model = detectorNames.get(i);
+      }
     }
 
     return detectors;
@@ -95,14 +115,14 @@ public class DetectorExtractor extends Extractor {
     int sequenceIndex = 0;
     if (xmlNodes.sequentialConfocalSettings.size() > 0){
       for (int i = 0; i < xmlNodes.sequentialConfocalSettings.size(); i++) {
-        detectorSettings.addAll(extractDetectorSettingsFromHardwareSettings(atlSetting, xmlNodes.sequentialConfocalSettings.get(i), sequenceIndex, detectors));
+        detectorSettings.addAll(extractDetectorSettingsFromHardwareSettings(xmlNodes.sequentialConfocalSettings.get(i), sequenceIndex, detectors));
   
         // if a sequential hardware setting contained detector settings, increase sequence index, "empty" sequential settings are not counted
         if (detectorSettings.size() > 0) sequenceIndex++;
       }
     } else {
       // some images have no LDM_Blocks, detector settings are instead taken from the main ATL confocal setting
-      detectorSettings = extractDetectorSettingsFromHardwareSettings(atlSetting, atlSetting, sequenceIndex, detectors);
+      detectorSettings = extractDetectorSettingsFromHardwareSettings(atlSetting, sequenceIndex, detectors);
     }
     
     for (DetectorSetting setting : detectorSettings) {
@@ -112,18 +132,19 @@ public class DetectorExtractor extends Extractor {
       }
     }
 
+    mapDetectorSettingsToDetectors(activeDetectorSettings, detectors);
+
     return activeDetectorSettings;
   }
 
   /**
    * Extracts detector settings from given hardware settings
-   * @param hardwareSettingForScanSpeed main / master setting from which ScanSpeed is extracted (not included in sequential settings)
    * @param setting setting (main, master or sequential) from which the other detector settings are extracted
    * @param sequenceIndex
    * @param detectors
    * @return
    */
-  private static List<DetectorSetting> extractDetectorSettingsFromHardwareSettings(Element hardwareSettingForScanSpeed, Element setting, int sequenceIndex, List<Detector> detectors){
+  private static List<DetectorSetting> extractDetectorSettingsFromHardwareSettings(Element setting, int sequenceIndex, List<Detector> detectors){
     List<DetectorSetting> detectorSettings = new ArrayList<DetectorSetting>();
     
     Node seqDetectorList = getChildNodeWithName(setting, "DetectorList");
@@ -160,11 +181,10 @@ public class DetectorExtractor extends Extractor {
       detectorSetting.sequenceIndex = sequenceIndex;
       detectorSetting.detectorListIndex = detectorListIndex;
 
-      String detectorName = detectorNode.getAttribute("Name");
+      detectorSetting.name = detectorNode.getAttribute("Name");
 
-      detectorSetting.transmittedLightMode = detectorName.toLowerCase().contains("trans")
+      detectorSetting.transmittedLightMode = detectorSetting.name.toLowerCase().contains("trans")
           && detectorSetting.channelName.equals("Transmission Channel");
-
       
       //only in STELLARIS
       Element detectionReferenceLine;
@@ -177,17 +197,53 @@ public class DetectorExtractor extends Extractor {
         }
       } catch (Exception e) {}
 
-      for (Detector detector : detectors) {
-        if (detectorName.equals(detector.model)) {
-          detectorSetting.detector = detector;
-          break;
-        }
-      }
-
       detectorSettings.add(detectorSetting);
       detectorListIndex++;
     }
 
+
+
     return detectorSettings;
+  }
+
+  private static void mapDetectorSettingsToDetectors(List<DetectorSetting> detectorSettings, List<Detector> detectors){
+    // in e.g. STELLARIS images, all detector nodes should contain names, so that we can map sequential detector information
+    //(used for detector settings) to main detector information (used for detectors) using these names. this is what we try first.
+    boolean mapByNames = true;
+    for (Detector detector : detectors) {
+      if (detector.model == null || detector.model.isEmpty()){
+        mapByNames = false;
+        break;
+      }
+    }
+    if (mapByNames){
+      for (DetectorSetting detectorSetting : detectorSettings){
+        if (detectorSetting.name == null || detectorSetting.name.isEmpty()){
+          mapByNames = false;
+        }
+      }
+    }
+
+    if (mapByNames){
+      for (int i = 0; i < detectorSettings.size(); i++) {
+        for (Detector detector : detectors){
+          if (detector.model.equals(detectorSettings.get(i).name)){
+            detectorSettings.get(i).detector = detector;
+            break;
+          }
+        }
+      }
+    } else {
+      // detector names do not exist in e.g. SP5 images. in this case, we rely on the assumption that
+      // the indices of detectors in sequential detector lists are the same as in the main detector list.
+      for (int i = 0; i < detectorSettings.size(); i++) {
+        for (Detector detector : detectors){
+          if (detector.detectorListIndex == detectorSettings.get(i).detectorListIndex){
+            detectorSettings.get(i).detector = detector;
+            break;
+          }
+        }
+      }
+    }
   }
 }
