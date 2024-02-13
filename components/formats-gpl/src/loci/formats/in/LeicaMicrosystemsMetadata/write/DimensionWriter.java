@@ -29,6 +29,7 @@ import java.util.List;
 
 import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader.ImageFormat;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dye;
@@ -107,6 +108,8 @@ public class DimensionWriter {
 
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
       Channel channel = dimensionStore.channels.get(channelIndex);
+      String channelId = MetadataTools.createLSID("Channel", channelIndex);
+      store.setChannelID(channelId, seriesIndex, channelIndex);
       store.setChannelName(channel.channelName, seriesIndex, channelIndex);
       if (!dimensionStore.rgb){
         store.setChannelColor(channel.lutColor, seriesIndex, channelIndex);

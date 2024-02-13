@@ -53,10 +53,20 @@ public class FilterExtractor extends Extractor {
   public static List<Filter> translateFilters(LMSMainXmlNodes xmlNodes, List<DetectorSetting> detectorSettings){
     List<Filter> filters = new ArrayList<Filter>();
     
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL){
-      filters.addAll(translateConfocalFilters(xmlNodes, detectorSettings));
-    } else if (xmlNodes.dataSourceType == DataSourceType.CAMERA){
-      filters.addAll(translateWidefieldFilters(xmlNodes));
+    switch (xmlNodes.atlSettingLayout){
+      case CONFOCAL_OLD:
+      case CONFOCAL_NEW:
+        filters.addAll(translateConfocalFilters(xmlNodes, detectorSettings));
+        break;
+      case WIDEFIELD:
+        filters.addAll(translateWidefieldFilters(xmlNodes));
+        break;
+      // currently, for MICA no filters are translated
+      case MICA_CONFOCAL:
+      case MICA_WIDEFIELD:
+      case MICA_WIDEFOCAL:
+      default: break;
+
     }
     
     return filters;
@@ -112,13 +122,13 @@ public class FilterExtractor extends Extractor {
         filter.dye = multiband.getAttribute("DyeName");
         filter.sequenceIndex = sequenceIndex;
         filter.multibandIndex = multibandIndex;
+        // name of detector is used as filter model and filter set model
+        filter.name = setting.detector.model;
 
         filters.add(filter);
       }
-
       multibandIndex++;
     }
-
     return filters;
   }
 

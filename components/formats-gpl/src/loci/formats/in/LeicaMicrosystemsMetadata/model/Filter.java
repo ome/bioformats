@@ -31,6 +31,7 @@ package loci.formats.in.LeicaMicrosystemsMetadata.model;
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
 public class Filter {
+  public String id;
   public String filterSetId;
   public double cutIn;
   public double cutOut;

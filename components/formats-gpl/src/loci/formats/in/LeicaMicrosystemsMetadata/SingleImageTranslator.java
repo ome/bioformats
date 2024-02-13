@@ -285,20 +285,22 @@ public class SingleImageTranslator {
 
   private void translateFilters(){
     filters = FilterExtractor.translateFilters(xmlNodes, detectorSettings);
-    FilterWriter.initFilters(filters, detectorSettings, seriesIndex, store, xmlNodes.dataSourceType);
+    FilterWriter.initFilters(filters, seriesIndex, store);
   }
 
   private void translateFilterSettings(){
-
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++) {
       if (channelIndex >= filters.size())
         break;
   
+      Channel channel = dimensionStore.channels.get(channelIndex);
       // map filters to channels
-      dimensionStore.channels.get(channelIndex).filter = filters.get(channelIndex);
-      dimensionStore.channels.get(channelIndex).dye = dimensionStore.channels.get(channelIndex).filter.dye;
+      // the assumption is that for each channel, one filter was created, so that filter index = channel index
+      channel.filter = filters.get(channelIndex);
+      channel.dye = channel.filter.dye;
 
-      store.setChannelFilterSetRef(dimensionStore.channels.get(channelIndex).filter.filterSetId, seriesIndex, channelIndex);
+      store.setChannelName(channel.dye, seriesIndex, channelIndex);
+      store.setLightPathEmissionFilterRef(channel.filter.id, seriesIndex, channelIndex, 0);
     }
   }
 
