@@ -24,7 +24,7 @@ jobs:
       - name: Upload artifacts
         # upload just one set of artifacts for easier PR review
         if: matrix.os == 'ubuntu-latest' && matrix.java == '8'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: artifacts/
           retention-days: 30
