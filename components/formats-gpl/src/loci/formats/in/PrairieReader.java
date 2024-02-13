@@ -184,7 +184,7 @@ public class PrairieReader extends FormatReader {
     final int blockLen = (int) Math.min(1048608, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String s = stream.readString(blockLen);
-    if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
+    if (s.indexOf("xml") != -1 && s.indexOf("<PV") != -1) return true;
 
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
