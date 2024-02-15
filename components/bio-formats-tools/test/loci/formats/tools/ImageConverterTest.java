@@ -61,6 +61,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -72,44 +73,15 @@ public class ImageConverterTest {
   private File outFile;
   private int width = 512;
   private int resolutionCount;
-  private final SecurityManager oldSecurityManager = System.getSecurityManager();
   private final PrintStream oldOut = System.out;
   private final PrintStream oldErr = System.err;
 
-  protected static class ExitException extends SecurityException {
-    public final int status;
-    public ExitException(int status) {
-      this.status = status;
-    }
-  }
-
-  private static class NoExitSecurityManager extends SecurityManager {
-    @Override
-    public void checkPermission(Permission perm) {}
-
-    @Override
-    public void checkPermission(Permission perm, Object context) {}
-
-    @Override
-    public void checkExit(int status) {
-      super.checkExit(status);
-      throw new ExitException(status);
-    }
-  }
-
   @BeforeMethod
   public void setUp() throws IOException {
-    System.setSecurityManager(new NoExitSecurityManager());
-
     tempDir = Files.createTempDirectory(this.getClass().getName());
     tempDir.toFile().deleteOnExit();
     width = 512;
     resolutionCount = 1;
-  }
-
-  @AfterMethod
-  public void resetSecurityManager() {
-    System.setSecurityManager(oldSecurityManager);
   }
 
   @AfterClass
@@ -166,21 +138,25 @@ public class ImageConverterTest {
   }
 
   public void assertConversion(String[] args, String outFileToCheck, int expectedWidth, int expectedTileWidth) throws FormatException, IOException {
+    boolean success = false;
     try {
-      ImageConverter.main(args);
-    } catch (ExitException e) {
+      ImageConverter converter = new ImageConverter();
+      success = converter.testConvert(new ImageWriter(), args);
+    } finally {
       outFile.deleteOnExit();
-      assertEquals(e.status, 0);
+      assertTrue(success);
       checkImage(outFileToCheck, expectedWidth, expectedTileWidth);
     }
   }
 
   public void assertConversion(String[] args, String outFileToCheck, int expectedWidth) throws FormatException, IOException {
+    boolean success = false;
     try {
-      ImageConverter.main(args);
-    } catch (ExitException e) {
+      ImageConverter converter = new ImageConverter();
+      success = converter.testConvert(new ImageWriter(), args);
+    } finally {
       outFile.deleteOnExit();
-      assertEquals(e.status, 0);
+      assertTrue(success);
       checkImage(outFileToCheck, expectedWidth);
     }
   }
@@ -225,13 +201,15 @@ public class ImageConverterTest {
     System.setOut(new PrintStream(outContent));
     outFile = getOutFile("test.ome.tiff");
     String[] args = {"-foo", "test.fake", outFile.getAbsolutePath()};
+    boolean success = false;
     try {
-      ImageConverter.main(args);
-    } catch (ExitException e) {
-      assertEquals(e.status, 1);
-      assertEquals(
+      ImageConverter converter = new ImageConverter();
+      success = converter.testConvert(new ImageWriter(), args);
+    } finally {
+      assertFalse(success);
+      assertTrue(outContent.toString().endsWith(
         "Found unknown command flag: -foo; exiting." +
-        System.getProperty("line.separator"), outContent.toString());
+        System.getProperty("line.separator")));
     }
   }
 
@@ -244,12 +222,14 @@ public class ImageConverterTest {
       "-option", OMETiffWriter.COMPANION_KEY, compFile.getAbsolutePath(),
       "test.fake", outFile.getAbsolutePath()
     };
+    boolean success = false;
     try {
-      ImageConverter.main(args);
-    } catch (ExitException e) {
+      ImageConverter converter = new ImageConverter();
+      success = converter.testConvert(new ImageWriter(), args);
+    } finally {
       outFile.deleteOnExit();
       compFile.deleteOnExit();
-      assertEquals(e.status, 0);
+      assertTrue(success);
       assertTrue(compFile.exists());
       checkImage();
     }
@@ -272,11 +252,13 @@ public class ImageConverterTest {
       "-tilex", "128", "-tiley", "128",
       "-crop", "256,256,256,256", "test.fake", outFile.getAbsolutePath()};
     width = 256;
+    boolean success = false;
     try {
-      ImageConverter.main(args);
-    } catch (ExitException e) {
+      ImageConverter converter = new ImageConverter();
+      success = converter.testConvert(new ImageWriter(), args);
+    } finally {
       outFile.deleteOnExit();
-      assertEquals(e.status, 0);
+      assertTrue(success);
       checkImage();
     }
   }
@@ -289,12 +271,13 @@ public class ImageConverterTest {
       "-crop", "123,127,129,131", "test.fake", outFile.getAbsolutePath()
     };
     width = 129;
+    boolean success = false;
     try {
-      ImageConverter.main(args);
-    }
-    catch (ExitException e) {
+      ImageConverter converter = new ImageConverter();
+      success = converter.testConvert(new ImageWriter(), args);
+    } finally {
       outFile.deleteOnExit();
-      assertEquals(e.status, 0);
+      assertTrue(success);
       checkImage();
     }
   }
@@ -307,12 +290,13 @@ public class ImageConverterTest {
       "-crop", "0,0,256,256", "test&sizeX=128&sizeY=128.fake", outFile.getAbsolutePath()
     };
     width = 128;
+    boolean success = false;
     try {
-      ImageConverter.main(args);
-    }
-    catch (ExitException e) {
+      ImageConverter converter = new ImageConverter();
+      success = converter.testConvert(new ImageWriter(), args);
+    } finally {
       outFile.deleteOnExit();
-      assertEquals(e.status, 0);
+      assertTrue(success);
       checkImage();
     }
   }
