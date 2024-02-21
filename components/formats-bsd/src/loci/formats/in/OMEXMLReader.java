@@ -35,6 +35,7 @@ package loci.formats.in;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import loci.common.CBZip2InputStream;
@@ -269,9 +270,10 @@ public class OMEXMLReader extends FormatReader {
 
     hasSPW = omexmlMeta.getPlateCount() > 0;
 
-    // TODO
-    //Hashtable originalMetadata = omexmlMeta.getOriginalMetadata();
-    //if (originalMetadata != null) metadata = originalMetadata;
+    Hashtable originalMetadata = service.getOriginalMetadata(omexmlMeta);
+    if (originalMetadata != null) {
+      metadata = originalMetadata;
+    }
 
     int numDatasets = omexmlMeta.getImageCount();
 
