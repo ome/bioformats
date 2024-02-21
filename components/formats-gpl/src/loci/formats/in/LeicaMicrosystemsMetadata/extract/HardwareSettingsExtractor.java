@@ -180,7 +180,7 @@ public class HardwareSettingsExtractor {
    * @param xmlNodes has to contain hardware setting
    */
   public static void extractMainCameraSetting(LMSMainXmlNodes xmlNodes){
-    xmlNodes.mainConfocalSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ATLCameraSettingDefinition");
+    xmlNodes.mainCameraSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ATLCameraSettingDefinition");
   }
 
 
