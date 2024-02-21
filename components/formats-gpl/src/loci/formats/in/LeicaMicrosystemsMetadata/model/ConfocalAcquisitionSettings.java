@@ -25,15 +25,20 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Data structure for laser settings information extracted from LMS XML
+ * Data structure for confocal acquisition settings of an image extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class LaserSetting {
-  public Laser laser;
-  public double intensity;
-  public int sequenceIndex;
-  public int laserSettingIndex;
-  public double wavelength;
+public class ConfocalAcquisitionSettings {
+  public List<Detector> detectors = new ArrayList<>();
+  public List<Laser> lasers = new ArrayList<>();
+  public List<Filter> filters = new ArrayList<>();
+  public List<ConfocalChannelSetting> channelSettings = new ArrayList<>();
+  public double readOutRate;
+  public double zoom;
+  public double pinholeSize;
 }

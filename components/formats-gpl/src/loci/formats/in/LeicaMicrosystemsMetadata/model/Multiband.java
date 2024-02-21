@@ -26,14 +26,13 @@
 package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
- * Data structure for laser settings information extracted from LMS XML
+ * Data structure for multiband (detector range) information extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class LaserSetting {
-  public Laser laser;
-  public double intensity;
-  public int sequenceIndex;
-  public int laserSettingIndex;
-  public double wavelength;
+public class Multiband {
+  public int channel;
+  public double leftWorld; // cut in
+  public double rightWorld; // cut out
+  public String dyeName;
 }

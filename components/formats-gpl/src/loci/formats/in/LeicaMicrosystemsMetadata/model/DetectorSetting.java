@@ -32,16 +32,22 @@ package loci.formats.in.LeicaMicrosystemsMetadata.model;
  */
 public class DetectorSetting {
   public Detector detector;
+
+  public int channel;
+  public String name; //HyD S 4, Trans PMT, ...
   public double gain;
   public double offset;
-  public boolean isActive;
+  public String type; //SiPM, PMT, ...
+  public String dyeName;
+
   public int sequenceIndex;
   public int detectorListIndex;
   public int channelIndex;
   public String channelName;
   public boolean transmittedLightMode;
   public double readOutRate;
-  public String name;
+  public double cutIn;
+  public double cutOut;
   //only available in STELLARIS:
   public int referenceLineWavelength;
   public String referenceLineName;

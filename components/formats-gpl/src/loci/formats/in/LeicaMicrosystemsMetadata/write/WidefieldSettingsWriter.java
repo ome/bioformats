@@ -29,21 +29,20 @@ import java.util.List;
 
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 import loci.formats.meta.MetadataStore;
 
 /**
- * DetectorWriter writes filter and filter set information to the MetadataStore
+ * WidefieldSettingsWriter writes widefield instrument and channel settings to the MetadataStore
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class FilterWriter {
+public class WidefieldSettingsWriter {
   
   /**
    * Adds filters and filter sets to OME metadata store 
    */
-  public static void initFilters(List<Filter> filters, int series, MetadataStore store) {
+  public static void initFilters(List<Filter> filters, int channelCount, int series, MetadataStore store) {
     for (int filterIndex = 0; filterIndex < filters.size(); filterIndex++) {
       Filter filter = filters.get(filterIndex);
 
@@ -57,6 +56,10 @@ public class FilterWriter {
       store.setFilterSetID(filter.filterSetId, series, filterIndex);
       store.setFilterSetEmissionFilterRef(filter.id, series, filterIndex, filterIndex);
       store.setFilterSetModel(filter.name, series, filterIndex);
+
+      //map widefield channel info to image channels by assuming same indices
+      if (filterIndex < channelCount)
+        store.setLightPathEmissionFilterRef(filter.id, series, filterIndex, 0);
     }
   }
 }

@@ -25,6 +25,9 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Data structure for laser information extracted from LMS XML
  * 
@@ -37,4 +40,6 @@ public class Laser {
   public String wavelengthUnit;
   public boolean isActive;
   public boolean isFrap;
+
+  public final List<Double> argonWavelengths = Arrays.asList(458.0, 476.0, 488.0, 496.0, 514.0);
 }

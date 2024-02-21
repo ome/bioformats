@@ -44,12 +44,11 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ChannelExtractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.extract.DetectorExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.DimensionExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.extract.FilterExtractor;
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.WidefieldSettingsExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.HardwareSettingsExtractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.extract.LaserExtractor;
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.ConfocalSettingsExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.MicroscopeExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.PositionExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ROIExtractor;
@@ -58,8 +57,8 @@ import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.AtlSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalAcquisitionSettings;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
@@ -70,10 +69,9 @@ import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.ROI;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore.ZDriveMode;
-import loci.formats.in.LeicaMicrosystemsMetadata.write.DetectorWriter;
+import loci.formats.in.LeicaMicrosystemsMetadata.write.ConfocalSettingsWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.write.DimensionWriter;
-import loci.formats.in.LeicaMicrosystemsMetadata.write.FilterWriter;
-import loci.formats.in.LeicaMicrosystemsMetadata.write.LaserWriter;
+import loci.formats.in.LeicaMicrosystemsMetadata.write.WidefieldSettingsWriter;
 import loci.formats.meta.MetadataStore;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -88,8 +86,6 @@ import ome.xml.model.primitives.Timestamp;
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
 public class SingleImageTranslator {
-  private static final long METER_MULTIPLY = 1000000;
-
   //XML nodes
   LMSMainXmlNodes xmlNodes = new LMSMainXmlNodes();
 
@@ -155,12 +151,7 @@ public class SingleImageTranslator {
     switch(xmlNodes.atlSettingLayout){
       case CONFOCAL_OLD:
       case CONFOCAL_NEW:
-        translateDetectors();
-        translateDetectorSettings();
-        translateFilters(); //confocal checks for detector settings
-        translateFilterSettings();
-        translateLasers();
-        translateLaserSettings(); //checks for channel filter
+        translateConfocalAcquisitionSettings();
         break;
       case WIDEFIELD:
         translateFilters();
@@ -169,12 +160,7 @@ public class SingleImageTranslator {
       case MICA_CONFOCAL:
       case MICA_WIDEFIELD:
       case MICA_WIDEFOCAL:
-        // in MICA images, due to spectral unmixing, we cannot map detector, filter and laser settings to image channels.
-        // also, filter information is not available in hardware settings, 
-        // as it is available in images from "pure" confocal or widefield systems.
-        translateDetectors();
-        translateLasers();
-        translateMicaChannelInfos();
+        translateMicaAcquisitionSettings();
         break;
       default: break;
     }
@@ -209,83 +195,29 @@ public class SingleImageTranslator {
     HardwareSettingsExtractor.extractHardwareSettingChildNodes(xmlNodes);
   }
 
-  private void translateLasers(){
-    Element setting = xmlNodes.getAtlConfocalSetting();
-    lasers = LaserExtractor.extractLasers(setting);
-    LaserWriter.initLasers(lasers, seriesIndex, store);
+  private void translateConfocalAcquisitionSettings(){
+    ConfocalAcquisitionSettings acquisitionSettings = new ConfocalAcquisitionSettings();
+    ConfocalSettingsExtractor.extractInstrumentSettings(xmlNodes, acquisitionSettings);
+    ConfocalSettingsExtractor.extractChannelSettings(xmlNodes, acquisitionSettings);
+
+    ConfocalSettingsWriter.initConfocalInstrumentSettings(acquisitionSettings, seriesIndex, store);
+    ConfocalSettingsWriter.initConfocalChannelSettings(acquisitionSettings, seriesIndex, store);
   }
 
-  //link laser setting and channel information
-  private void translateLaserSettings(){
-    laserSettings = LaserExtractor.extractLaserSettings(xmlNodes.sequentialConfocalSettings, lasers);
+  private void translateMicaAcquisitionSettings(){
+    ConfocalAcquisitionSettings acquisitionSettings = new ConfocalAcquisitionSettings();
 
-    // <= SP8: laser wavelength is assumed to lie left of detected emission spectrum
-    if (microscopeModel.contains("SP")){
-      for (Channel channel : dimensionStore.channels) {
-        if (channel.filter == null)
-          continue;
+    // in MICA images, due to spectral unmixing, we cannot map detector, filter and laser settings to image channels.
+    // also, filter information is not available in hardware settings, 
+    // as it is available in images from "pure" confocal or widefield systems.
+    ConfocalSettingsExtractor.extractInstrumentSettings(xmlNodes, acquisitionSettings);
+    ConfocalSettingsWriter.initConfocalInstrumentSettings(acquisitionSettings, seriesIndex, store);
+    translateMicaChannelInfos();
+  }
   
-        LaserSetting selectedLaserSetting = null;
-        for (LaserSetting laserSetting : laserSettings) {
-          if (laserSetting.laser != null && laserSetting.laser.wavelength < channel.filter.cutIn) {
-            if (selectedLaserSetting == null || selectedLaserSetting.laser.wavelength < laserSetting.laser.wavelength)
-              selectedLaserSetting = laserSetting;
-          }
-        }
-  
-        channel.laserSetting = selectedLaserSetting;
-      }
-    // STELLARIS: reference line info exists in detector node
-    } else if (microscopeModel.contains("STELLARIS")){
-      for (Channel channel: dimensionStore.channels){
-        for (LaserSetting laserSetting : laserSettings){
-          if (laserSetting.laser != null && channel.detectorSetting.referenceLineWavelength == laserSetting.laser.wavelength)
-            channel.laserSetting = laserSetting;
-        }
-      }
-    }
-
-    LaserWriter.initLaserSettings(dimensionStore.channels, seriesIndex, store);
-  }
-
-  private void translateDetectors(){
-      detectors = DetectorExtractor.extractDetectors(xmlNodes);
-      DetectorWriter.initDetectors(detectors, seriesIndex, store);
-  }
-
-  private void translateDetectorSettings(){
-    detectorSettings = DetectorExtractor.extractDetectorSettings(xmlNodes, detectors);
-
-    // link detector and channel information
-    // assuming that the order of channels in LMS XML maps the order of active
-    // detectors over all LDM block sequential lists
-    for (int i = 0; i < detectorSettings.size(); i++) {
-      if (i < dimensionStore.channels.size()) {
-        dimensionStore.channels.get(i).detectorSetting = detectorSettings.get(i);
-        dimensionStore.channels.get(i).channelName = detectorSettings.get(i).channelName;
-      }
-    }
-
-    DetectorWriter.initDetectorSettings(dimensionStore.channels, seriesIndex, store);
-
-    //pinhole size
-    for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
-      Channel channel = dimensionStore.channels.get(channelIndex);
-      if (channel.detectorSetting != null){
-        int sequenceIndex = channel.detectorSetting.sequenceIndex;
-
-        Element setting = xmlNodes.sequentialConfocalSettings.size() > 0 ? xmlNodes.sequentialConfocalSettings.get(sequenceIndex) : xmlNodes.getAtlSetting();
-        String pinholeSizeS = Extractor.getAttributeValue(setting, "Pinhole");
-        channel.pinholeSize = Extractor.parseDouble(pinholeSizeS) * METER_MULTIPLY;
-  
-        store.setChannelPinholeSize(new Length(channel.pinholeSize, UNITS.MICROMETER), seriesIndex, channelIndex);
-      }
-    }
-  }
-
   private void translateFilters(){
-    filters = FilterExtractor.translateFilters(xmlNodes, detectorSettings);
-    FilterWriter.initFilters(filters, seriesIndex, store);
+    filters = WidefieldSettingsExtractor.translateWidefieldFilters(xmlNodes);
+    WidefieldSettingsWriter.initFilters(filters, dimensionStore.channels.size(), seriesIndex, store);
   }
 
   private void translateFilterSettings(){
