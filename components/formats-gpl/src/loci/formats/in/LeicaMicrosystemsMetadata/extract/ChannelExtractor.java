@@ -36,7 +36,6 @@ import org.w3c.dom.NodeList;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dye;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel.ChannelProperties;
 import ome.xml.model.primitives.Color;
 
 /**

@@ -31,7 +31,6 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
 
 /**
  * LMSMainXmlNodes is a storage class that holds the main XML nodes and XML layout information from LMS XML files.

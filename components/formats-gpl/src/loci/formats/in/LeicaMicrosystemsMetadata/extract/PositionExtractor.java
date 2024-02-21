@@ -32,8 +32,6 @@ import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore.ZDriveMode;
 import ome.units.UNITS;
