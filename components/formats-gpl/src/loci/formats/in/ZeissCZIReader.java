@@ -3300,6 +3300,7 @@ public class ZeissCZIReader extends FormatReader {
       List<MinDimEntry> blocks = mapCoreCZTToBlocks.get(coreIdx).get(czt);
       if ((blocks==null) || (blocks.size()==0)) return null;
       LibCZI.SubBlockSegment block = LibCZI.getBlock(reader.getStream(blocks.get(0).filePart), blocks.get(0).filePosition);
+      if (block == null) return null;
       return LibCZI.readSubBlockMeta(reader.getStream(blocks.get(0).filePart), block, parser);
     }
 
