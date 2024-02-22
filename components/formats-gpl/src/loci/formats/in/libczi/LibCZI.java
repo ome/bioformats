@@ -448,7 +448,9 @@ public class LibCZI {
      */
     public static SubBlockSegment getBlock(RandomAccessInputStream in, long filePosition) throws IOException {
         SubBlockSegment subBlock = new SubBlockSegment();
-
+        if (filePosition + HEADER_SIZE + 16 + subBlock.data.metadataSize > in.length())  {
+          return null;
+        }
         in.seek(filePosition
                 // Jumps 16 bytes to avoid reading the id, which should be ZISRAWSUBBLOCK anyway
                 // Jumps 8 bytes for used size
@@ -480,7 +482,8 @@ public class LibCZI {
      */
     public static SubBlockMeta readSubBlockMeta(RandomAccessInputStream in, SubBlockSegment subBlock, DocumentBuilder parser) throws IOException {
         SubBlockMeta subBlockMeta = new SubBlockMeta();
-        if (subBlock.dataOffset + subBlock.data.dataSize + subBlock.data.attachmentSize < in.length()) {
+        if (subBlock.dataOffset + subBlock.data.dataSize + subBlock.data.attachmentSize < in.length() && 
+            subBlock.data.metadataOffset + subBlock.data.metadataSize < in.length() && subBlock.data.metadataSize > 0) {
             in.seek(subBlock.data.metadataOffset);
             //System.out.println("Offs= "+subBlock.data.metadataOffset);
 
