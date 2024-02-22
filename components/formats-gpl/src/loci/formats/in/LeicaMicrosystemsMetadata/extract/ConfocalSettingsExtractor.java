@@ -32,6 +32,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal.DetectorExtractor;
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal.LaserExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.AtlSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
@@ -53,8 +55,8 @@ public class ConfocalSettingsExtractor extends Extractor {
   public static void extractInstrumentSettings(LMSMainXmlNodes xmlNodes, ConfocalAcquisitionSettings acquisitionSettings){
     Element atlConfocalSetting = xmlNodes.getAtlConfocalSetting();
 
-    acquisitionSettings.lasers = getLasers(atlConfocalSetting, atlConfocalSetting);
-    acquisitionSettings.detectors = getDetectors(xmlNodes);
+    acquisitionSettings.lasers = LaserExtractor.getLasers(atlConfocalSetting, atlConfocalSetting, xmlNodes.filterSettingRecords);
+    acquisitionSettings.detectors = DetectorExtractor.getDetectors(xmlNodes);
   }
 
   public static ConfocalAcquisitionSettings extractChannelSettings(LMSMainXmlNodes xmlNodes, ConfocalAcquisitionSettings acquisitionSettings){
@@ -70,10 +72,10 @@ public class ConfocalSettingsExtractor extends Extractor {
     
     if (xmlNodes.sequentialConfocalSettings.size() > 0){
       for (Element setting : xmlNodes.sequentialConfocalSettings){
-        acquisitionSettings.channelSettings.addAll(extractChannelSettings(setting, atlConfocalSetting));
+        acquisitionSettings.channelSettings.addAll(extractChannelSettings(setting, atlConfocalSetting, xmlNodes.filterSettingRecords));
      }
     } else {
-      acquisitionSettings.channelSettings.addAll(extractChannelSettings(atlConfocalSetting, atlConfocalSetting));
+      acquisitionSettings.channelSettings.addAll(extractChannelSettings(atlConfocalSetting, atlConfocalSetting, xmlNodes.filterSettingRecords));
     }
 
     mapInstrumentDetectorsToChannelDetectorSettings(acquisitionSettings);
@@ -82,246 +84,32 @@ public class ConfocalSettingsExtractor extends Extractor {
     return acquisitionSettings;
   }
 
-  private static List<Laser> getLasers(Element atlConfocalSetting, Element alternativeSetting){
-    Node laserArray = getChildNodeWithName(atlConfocalSetting, "LaserArray");
-    // in STELLARIS, laser array nodes are not included in sequential settings
-    if (laserArray == null)
-      laserArray = getChildNodeWithName(alternativeSetting, "LaserArray");
 
-    NodeList laserNodes = laserArray.getChildNodes();
-    List<Laser> lasers = new ArrayList<Laser>();
-
-    for (int i = 0; i < laserNodes.getLength(); i++) {
-      Element laserNode;
-      try {
-        laserNode = (Element) laserNodes.item(i);
-      } catch (Exception e) {
-        continue;
-      }
-
-      Laser laser = new Laser();
-      laser.name = laserNode.getAttribute("LaserName");
-      String wavelengthS = laserNode.getAttribute("Wavelength");
-      laser.wavelength = parseDouble(wavelengthS);
-
-      lasers.add(laser);
-    }
-
-    return lasers;
-  }
-
-  /**
-   * Returns a list of detectors it extracts from LMS XML detector nodes
-   * @param xmlNodes
-   * @return
-   */
-  private static List<Detector> getDetectors(LMSMainXmlNodes xmlNodes)
-  {
-    Element setting = xmlNodes.getAtlConfocalSetting();
-
-    String zoomS = getAttributeValue(setting, "Zoom");
-    double zoom = parseDouble(zoomS);
-
-    // main confocal settings > detector list: instrument detectors
-    Node detectorList = getChildNodeWithName(setting, "DetectorList");
-    NodeList detectorNodes = detectorList.getChildNodes();
-    List<Detector> detectors = new ArrayList<Detector>();
-
-    int detectorListIndex = 0;
-    for (int i = 0; i < detectorNodes.getLength(); i++) {
-      Element detectorNode;
-      try {
-        detectorNode = (Element) detectorNodes.item(i);
-      } catch (Exception e) {
-        continue;
-      }
-
-      Detector detector = new Detector();
-
-      detector.model = detectorNode.getAttribute("Name");
-      detector.type = detectorNode.getAttribute("Type");
-      detector.zoom = zoom;
-      detector.detectorListIndex = detectorListIndex;
-
-      detectors.add(detector);
-
-      detectorListIndex++;
-    }
-
-    if (xmlNodes.atlSettingLayout == AtlSettingLayout.CONFOCAL_OLD){
-      List<String> detectorNames = new ArrayList<String>();
-      List<Element> detectorRecords = Extractor.getNodesWithAttributeAsElements(xmlNodes.filterSettingRecords, "ClassName", "CDetectionUnit");
-      for (Element detectorRecord : detectorRecords){
-        String name = Extractor.getAttributeValue(detectorRecord, "ObjectName");
-        if (!name.isEmpty() && !detectorNames.contains(name))
-          detectorNames.add(name);
-      }
-
-      for (int i = 0; i < detectors.size(); i++){
-        if (detectors.get(i).model.isEmpty() && i < detectorNames.size())
-          detectors.get(i).model = detectorNames.get(i);
-      }
-    }
-
-    return detectors;
-  }
-
-  private static List<ConfocalChannelSetting> extractChannelSettings(Element atlConfocalSetting, Element alternativeSetting){
+  private static List<ConfocalChannelSetting> extractChannelSettings(Element atlConfocalSetting, Element alternativeSetting, NodeList filterSettingRecords){
     // get + map detector and multiband info
-    List<DetectorSetting> detectorSettings = getActiveDetectorSettings(atlConfocalSetting);
-    List<Multiband> multibands = getMultibands(atlConfocalSetting, alternativeSetting);
-    addMultibandInfoToDetectorSettings(detectorSettings, multibands);
+    List<DetectorSetting> detectorSettings = DetectorExtractor.getActiveDetectorSettings(atlConfocalSetting);
+    List<Multiband> multibands = DetectorExtractor.getMultibands(atlConfocalSetting, alternativeSetting);
+    DetectorExtractor.addMultibandInfoToDetectorSettings(detectorSettings, multibands);
 
     // get + map laser and AOTF laser line setting info
-    List<Laser> lasers = getLasers(atlConfocalSetting, alternativeSetting);
-    List<LaserSetting> laserSettings = getLaserSettings(atlConfocalSetting);
-    mapLasersToLaserSettings(lasers, laserSettings);
+    List<Laser> lasers = LaserExtractor.getLasers(atlConfocalSetting, alternativeSetting, filterSettingRecords);
+    LaserExtractor.addShutterInfoToLasers(lasers, atlConfocalSetting, alternativeSetting);
+    List<LaserSetting> laserSettings = LaserExtractor.getLaserSettings(atlConfocalSetting);
+    LaserExtractor.mapLasersToLaserSettings(lasers, laserSettings);
 
-    return createChannelSettings(detectorSettings, laserSettings);
+    // map detector and laser settings
+    List<ConfocalChannelSetting> channelSettings = createChannelSettings(detectorSettings, laserSettings);
+
+    return channelSettings;
   }
 
-  private static List<DetectorSetting> getActiveDetectorSettings(Element atlConfocalSetting){
-    Node detectorList = getChildNodeWithName(atlConfocalSetting, "DetectorList");
-    NodeList detectorNodes = detectorList.getChildNodes();
-    List<DetectorSetting> detectorSettings = new ArrayList<DetectorSetting>();
 
-    int detectorListIndex = 0; // store order of appearance of detector, for later mapping to channels
-    for (int i = 0; i < detectorNodes.getLength(); i++) {
-      Element detectorNode;
-      try {
-        detectorNode = (Element) detectorNodes.item(i);
-      } catch (Exception e) {
-        continue;
-      }
-
-      String isActive = detectorNode.getAttribute("IsActive");
-      if (!isActive.equals("1")) continue;
-
-      DetectorSetting detectorSetting = new DetectorSetting();
-
-      detectorSetting.name = detectorNode.getAttribute("Name");
-      detectorSetting.type = detectorNode.getAttribute("Type");
-      String channelS = detectorNode.getAttribute("Channel");
-      detectorSetting.channel = parseInt(channelS);
-      String gainS = detectorNode.getAttribute("Gain");
-      detectorSetting.gain = parseDouble(gainS);
-      String offsetS = detectorNode.getAttribute("Offset");
-      detectorSetting.offset = parseDouble(offsetS);
-      detectorSetting.detectorListIndex = detectorListIndex;
-
-      //only in STELLARIS
-      Element detectionReferenceLine;
-      try {
-        detectionReferenceLine = (Element)getChildNodeWithName(detectorNode, "DetectionReferenceLine");
-        if (detectionReferenceLine != null){
-          detectorSetting.referenceLineName = getAttributeValue(detectionReferenceLine, "LaserName");
-          String referenceWavelengthS = getAttributeValue(detectionReferenceLine, "LaserWavelength");
-          detectorSetting.referenceLineWavelength = parseInt(referenceWavelengthS);
-        }
-      } catch (Exception e) {}
-
-      detectorSettings.add(detectorSetting);
-
-      detectorListIndex++;
-    }
-
-    return detectorSettings;
-  }
-
-  private static List<Multiband> getMultibands(Element atlConfocalSetting, Element alternativeSetting){
-    Node spectro = getChildNodeWithName(atlConfocalSetting, "Spectro");
-    // in STELLARIS, spectro nodes are not included in sequential settings
-    if (spectro == null)
-      spectro = getChildNodeWithName(alternativeSetting, "Spectro");
-
-    NodeList multibandNodes = spectro.getChildNodes();
-    List<Multiband> multibands = new ArrayList<Multiband>();
-
-    for (int i = 0; i < multibandNodes.getLength(); i++) {
-      Element multibandNode;
-      try {
-        multibandNode = (Element) multibandNodes.item(i);
-      } catch (Exception e) {
-        continue;
-      }
-
-      Multiband multiband = new Multiband();
-
-      String channelS = multibandNode.getAttribute("Channel");
-      multiband.channel = parseInt(channelS);
-      String leftWorldS = multibandNode.getAttribute("LeftWorld");
-      multiband.leftWorld = parseDouble(leftWorldS);
-      String rightWorldS = multibandNode.getAttribute("RightWorld");
-      multiband.rightWorld = parseDouble(rightWorldS);
-      multiband.dyeName = multibandNode.getAttribute("DyeName");
-
-      multibands.add(multiband);
-    }
-
-    return multibands;
-  }
-
-  private static void addMultibandInfoToDetectorSettings(List<DetectorSetting> detectorSettings, List<Multiband> multibands){
-    for (DetectorSetting detectorSetting : detectorSettings){
-      for (Multiband multiband : multibands){
-        if (multiband.channel == detectorSetting.channel){
-          detectorSetting.cutIn = multiband.leftWorld;
-          detectorSetting.cutOut = multiband.rightWorld;
-          detectorSetting.dyeName = multiband.dyeName;
-          break;
-        }
-      }
-    }
-  }
-
-  private static List<LaserSetting> getLaserSettings(Element atlConfocalSetting){
-    Node aotfList = getChildNodeWithName(atlConfocalSetting, "AotfList");
-    List<Element> aotfs = getChildNodesWithNameAsElement(aotfList, "Aotf");
-
-    List<LaserSetting> laserSettings = new ArrayList<>();
-
-    for (Element aotf : aotfs){
-      List<Element> laserLineSettingNodes = getChildNodesWithNameAsElement(aotf, "LaserLineSetting");
-      for (Element laserLineSettingNode : laserLineSettingNodes){
-        String intensityDevS = laserLineSettingNode.getAttribute("IntensityDev");
-        double intensityDev = parseDouble(intensityDevS);
-        if(intensityDev == 0)
-          continue;
-
-        LaserSetting laserSetting = new LaserSetting();
-        laserSetting.intensity = intensityDev;
-        String waveLengthS = laserLineSettingNode.getAttribute("LaserLine");
-        laserSetting.wavelength = parseDouble(waveLengthS);
-
-        laserSettings.add(laserSetting);
-      }
-    }
-
-    return laserSettings;
-  }
-
-  private static void mapLasersToLaserSettings(List<Laser> lasers, List<LaserSetting> laserSettings){
-    for (LaserSetting laserSetting : laserSettings){
-      for (Laser laser : lasers){
-        if (laser.wavelength == laserSetting.wavelength || 
-        laser.name.equals("Argon") && laser.argonWavelengths.contains(laserSetting.wavelength)){
-          laserSetting.laser = laser;
-          break;
-        }
-      }
-
-      // if no matching laser was found, map WLL
-      if (laserSetting.laser == null){
-        for (Laser laser : lasers){
-          if (laser.name.equals("WLL")){
-            laserSetting.laser = laser;
-            break;
-          }
-        }
-      }
-    }
-  }
-
+  /**
+   * Creates confocal channel settings by mapping detector and laser settings extracted from one sequential confocal setting
+   * @param detectorSettings
+   * @param laserSettings
+   * @return
+   */
   private static List<ConfocalChannelSetting> createChannelSettings(List<DetectorSetting> detectorSettings, List<LaserSetting> laserSettings){
     List<ConfocalChannelSetting> channelSettings = new ArrayList<>();
 
@@ -353,6 +141,7 @@ public class ConfocalSettingsExtractor extends Extractor {
     return channelSettings;
   }
 
+
   private static void mapInstrumentDetectorsToChannelDetectorSettings(ConfocalAcquisitionSettings acquisitionSettings){
     for (ConfocalChannelSetting channelSetting : acquisitionSettings.channelSettings){
       for (Detector detector : acquisitionSettings.detectors){
@@ -363,6 +152,7 @@ public class ConfocalSettingsExtractor extends Extractor {
       }
     }
   }
+
 
   private static void mapInstrumentLasersToChannelLaserSettings(ConfocalAcquisitionSettings acquisitionSettings){
     for (ConfocalChannelSetting channelSetting : acquisitionSettings.channelSettings){

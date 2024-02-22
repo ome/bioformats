@@ -28,6 +28,7 @@ package loci.formats.in.LeicaMicrosystemsMetadata.model;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * Data structure for laser information extracted from LMS XML
  * 
@@ -40,6 +41,89 @@ public class Laser {
   public String wavelengthUnit;
   public boolean isActive;
   public boolean isFrap;
+  public LaserSetting laserSetting;
+
+  //SP5
+  public enum LmsLightSourceQualifier
+  {
+    Unknown(0),
+    Visible(10),
+    PulsedVis(11),
+    UV(20),
+    IR(30),
+    MP(40),
+    MP2(41),
+    ChaserVis(50),
+    ChaserUV(60),
+    WLL(70),
+    STED1(80),
+    STED2(81),
+    STED3(82),
+    STED4(83),
+    CARS(90),
+    Pump(91),
+    Stokes(92),
+    FSOPO(100);
+
+    public final int value;
+
+    private LmsLightSourceQualifier(int value){
+      this.value = value;
+    }
+
+    public boolean Compare(int i){return value == i;}
+
+    public static LmsLightSourceQualifier getValue(int id){
+      LmsLightSourceQualifier[] values = LmsLightSourceQualifier.values();
+      for (int i = 0; i < values.length; i++){
+        if (values[i].Compare(id))
+          return values[i];
+      }
+      return LmsLightSourceQualifier.Unknown;
+    }
+  }
+
+  // SP8, STELLARIS
+  public enum LmsLightSourceType
+  {
+    Unknown(-1),
+    Visible(0),
+    UV(1),
+    PulsedSMD(2),
+    MP(3),
+    WLL(4),
+    Sted(5),
+    Cars(6),
+    ExternSpecial(7);
+
+    public final int value;
+
+    private LmsLightSourceType(int value){
+      this.value = value;
+    }
+
+    public boolean Compare(int i){return value == i;}
+
+    public static LmsLightSourceType getValue(int id){
+      LmsLightSourceType[] values = LmsLightSourceType.values();
+      for (int i = 0; i < values.length; i++){
+        if (values[i].Compare(id))
+          return values[i];
+      }
+      return LmsLightSourceType.Unknown;
+    }
+  }
+
+  public LmsLightSourceQualifier lightSourceQualifier;
+  public LmsLightSourceType lightSourceType;
 
   public final List<Double> argonWavelengths = Arrays.asList(458.0, 476.0, 488.0, 496.0, 514.0);
+
+  public boolean hasSameLightSourceType(LaserSetting laserSetting){
+    return this.lightSourceQualifier != null && laserSetting.lightSourceQualifier != null ? 
+    this.lightSourceQualifier == laserSetting.lightSourceQualifier : 
+    this.lightSourceType != null && laserSetting.lightSourceType != null ?
+    this.lightSourceType == laserSetting.lightSourceType : 
+    false;
+  }
 }

@@ -25,6 +25,9 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser.LmsLightSourceQualifier;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser.LmsLightSourceType;
+
 /**
  * Data structure for laser settings information extracted from LMS XML
  * 
@@ -33,7 +36,8 @@ package loci.formats.in.LeicaMicrosystemsMetadata.model;
 public class LaserSetting {
   public Laser laser;
   public double intensity;
-  public int sequenceIndex;
-  public int laserSettingIndex;
   public double wavelength;
+
+  public LmsLightSourceQualifier lightSourceQualifier;
+  public LmsLightSourceType lightSourceType;
 }
