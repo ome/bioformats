@@ -43,7 +43,7 @@ public class WidefieldSettingsExtractor extends Extractor {
   /**
    * Returns a list of {@link Filter}s created from widefield channel information
    */
-  public static List<Filter> translateWidefieldFilters(LMSMainXmlNodes xmlNodes){
+  public static List<Filter> extractWidefieldFilters(LMSMainXmlNodes xmlNodes){
     List<Filter> filters = new ArrayList<Filter>();
 
     for (Element widefieldChannelInfo : xmlNodes.widefieldChannelInfos){

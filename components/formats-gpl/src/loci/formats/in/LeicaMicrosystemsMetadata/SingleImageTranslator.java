@@ -28,19 +28,11 @@ package loci.formats.in.LeicaMicrosystemsMetadata;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import loci.common.DateTools;
 import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ChannelExtractor;
@@ -48,36 +40,33 @@ import loci.formats.in.LeicaMicrosystemsMetadata.extract.DimensionExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.WidefieldSettingsExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.HardwareSettingsExtractor;
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.ImageSettingsExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ConfocalSettingsExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.MicroscopeExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.PositionExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ROIExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.TimestampExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.AtlSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalAcquisitionSettings;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dye;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.ImageDetails;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.MicroscopeDetails;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.ROI;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore.ZDriveMode;
 import loci.formats.in.LeicaMicrosystemsMetadata.write.ConfocalSettingsWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.write.DimensionWriter;
+import loci.formats.in.LeicaMicrosystemsMetadata.write.ImageSettingsWriter;
+import loci.formats.in.LeicaMicrosystemsMetadata.write.InstrumentWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.write.WidefieldSettingsWriter;
 import loci.formats.meta.MetadataStore;
-import ome.units.UNITS;
-import ome.units.quantity.Length;
-import ome.units.quantity.Time;
-import ome.xml.model.enums.MicroscopeType;
-import ome.xml.model.primitives.Timestamp;
 
 /**
  * SingleImageTranslator translates image and instrument metadata of one LMS image to
@@ -99,15 +88,15 @@ public class SingleImageTranslator {
   List<ROI> rois = new ArrayList<ROI>();
   List<ROI> singleRois = new ArrayList<ROI>();
   List<Double> timestamps = new ArrayList<Double>();
+  List<Dye> dyes = new ArrayList<>();
 
-  String microscopeModel;
-  public String imageName;
-  String description;
+  MicroscopeDetails microscopeDetails = new MicroscopeDetails();
+  public ImageDetails imageDetails = new ImageDetails();
+  ConfocalAcquisitionSettings confocalAcquisitionSettings = new ConfocalAcquisitionSettings();
   boolean alternateCenter = false;
 
   int imageCount;
   boolean useOldPhysicalSizeCalculation;
-  int extras = 1;
 
   int seriesIndex;
   LMSFileReader reader;
@@ -116,10 +105,10 @@ public class SingleImageTranslator {
 
   public SingleImageTranslator(LMSImageXmlDocument doc, int seriesIndex, int imageCount, LMSFileReader reader){
     this.xmlNodes.imageNode = (Element)doc.getImageNode();
-    this.imageName = doc.getImageName();
+    this.imageDetails.imageName = doc.getImageName();
     this.reader = reader;
     reader.setSeries(seriesIndex);
-    reader.addSeriesMeta("Image name", imageName);
+    reader.addSeriesMeta("Image name", imageDetails.imageName);
 
     this.seriesIndex = seriesIndex;
     this.store = reader.getMetadataStore();
@@ -128,47 +117,92 @@ public class SingleImageTranslator {
     this.useOldPhysicalSizeCalculation = reader.useOldPhysicalSizeCalculation();
   }
 
-  public void translate(){
+  public void extract(){
     getMainNodes();
 
     //image metadata
-    translateImageDetails();
-    translateChannels();
-    translateDimensions();
-    translateTimestamps();
+    ImageSettingsExtractor.extractImageDetails(xmlNodes, imageDetails);
+    DimensionExtractor.extractChannels(xmlNodes, dimensionStore);
+    DimensionExtractor.extractDimensions(xmlNodes.imageDescription, useOldPhysicalSizeCalculation, dimensionStore);
+    timestamps = TimestampExtractor.extractTimestamps(xmlNodes.imageNode, reader.getImageCount());
+    microscopeDetails = MicroscopeExtractor.extractMicroscopeDetails(xmlNodes);
 
+    if (xmlNodes.hardwareSetting == null)
+      return;
 
-    translateStandDetails();
-    if (xmlNodes.hardwareSetting == null) return;
-
-    translatePhysicalSizes();
-    translateFieldPositions();
-    translateExposureTimes();
-
-    //instrument metadata
-    translateObjective();
+    PositionExtractor.extractFieldPositions(xmlNodes, dimensionStore);
+    DimensionExtractor.extractExposureTimes(xmlNodes, dimensionStore);
 
     switch(xmlNodes.atlSettingLayout){
       case CONFOCAL_OLD:
       case CONFOCAL_NEW:
-        translateConfocalAcquisitionSettings();
+        ConfocalSettingsExtractor.extractInstrumentSettings(xmlNodes, confocalAcquisitionSettings);
+        ConfocalSettingsExtractor.extractChannelSettings(xmlNodes, confocalAcquisitionSettings);
         break;
       case WIDEFIELD:
-        translateFilters();
-        translateFilterSettings();
+        filters = WidefieldSettingsExtractor.extractWidefieldFilters(xmlNodes);
         break;
       case MICA_CONFOCAL:
       case MICA_WIDEFIELD:
       case MICA_WIDEFOCAL:
-        translateMicaAcquisitionSettings();
+        ConfocalSettingsExtractor.extractInstrumentSettings(xmlNodes, confocalAcquisitionSettings);
+        dyes = ChannelExtractor.extractMicaDyes(xmlNodes);
         break;
       default: break;
     }
-    
-    translateROIs();
+
+    extractROIs();
+  }
+
+  public void write(){
+    ImageSettingsWriter.writeImageDetails(store, reader, imageDetails, seriesIndex);
+    DimensionWriter.writeChannels(core, store, dimensionStore, reader.getImageFormat(), seriesIndex);
+    DimensionWriter.writeDimensions(core, dimensionStore);
+    DimensionWriter.writeTimestamps(store, reader, timestamps, seriesIndex);
+
+    if (xmlNodes.hardwareSetting == null){
+      //an empty instrument is created even when there are no hardware settings for the image (e.g. depth map image, EDF image),
+      //since this is bioformats' expectation (see OMEXMLMetadataImpl, line 7801)
+      String instrumentID = MetadataTools.createLSID("Instrument", seriesIndex);
+      store.setInstrumentID(instrumentID, seriesIndex);
+      store.setImageInstrumentRef(instrumentID, seriesIndex);
+      return;
+    }
+
+    DimensionWriter.writePhysicalSizes(store, dimensionStore, seriesIndex);
+    DimensionWriter.writeFieldPositions(store, dimensionStore, reader, seriesIndex);
+    DimensionWriter.writeExposureTimes(store, dimensionStore, reader, seriesIndex);
+
+    //instrument metadata
+    InstrumentWriter.writeMicroscopeDetails(store, xmlNodes, microscopeDetails, seriesIndex);
+
+    switch(xmlNodes.atlSettingLayout){
+      case CONFOCAL_OLD:
+      case CONFOCAL_NEW:
+        ConfocalSettingsWriter.initConfocalInstrumentSettings(confocalAcquisitionSettings, seriesIndex, store);
+        ConfocalSettingsWriter.initConfocalChannelSettings(confocalAcquisitionSettings, seriesIndex, store);
+        break;
+      case WIDEFIELD:
+        WidefieldSettingsWriter.initFilters(filters, dimensionStore.channels.size(), seriesIndex, store);
+        break;
+      case MICA_CONFOCAL:
+      case MICA_WIDEFIELD:
+      case MICA_WIDEFOCAL:
+        ConfocalSettingsWriter.initConfocalInstrumentSettings(confocalAcquisitionSettings, seriesIndex, store);
+        DimensionWriter.addDyeInfosToChannels(store, dyes, dimensionStore, seriesIndex);
+        break;
+      default: break;
+    }
+
+    writeROIs();
 
     final Deque<String> nameStack = new ArrayDeque<String>();
-    populateOriginalMetadata(xmlNodes.imageNode, nameStack);
+    ImageSettingsWriter.populateOriginalMetadata(xmlNodes.imageNode, nameStack, reader);
+  }
+
+  public void translate(){
+    extract();
+    write();
   }
 
   private void getMainNodes(){
@@ -186,7 +220,7 @@ public class SingleImageTranslator {
         return;
       }
 
-    microscopeModel = MicroscopeExtractor.extractMicroscopeModel(xmlNodes);
+    String microscopeModel = MicroscopeExtractor.extractMicroscopeModel(xmlNodes);
     xmlNodes.isMicaImage = microscopeModel.equals("MICA");
 
     HardwareSettingsExtractor.extractAtlSettingLayout(xmlNodes);
@@ -195,113 +229,17 @@ public class SingleImageTranslator {
     HardwareSettingsExtractor.extractHardwareSettingChildNodes(xmlNodes);
   }
 
-  private void translateConfocalAcquisitionSettings(){
-    ConfocalAcquisitionSettings acquisitionSettings = new ConfocalAcquisitionSettings();
-    ConfocalSettingsExtractor.extractInstrumentSettings(xmlNodes, acquisitionSettings);
-    ConfocalSettingsExtractor.extractChannelSettings(xmlNodes, acquisitionSettings);
 
-    ConfocalSettingsWriter.initConfocalInstrumentSettings(acquisitionSettings, seriesIndex, store);
-    ConfocalSettingsWriter.initConfocalChannelSettings(acquisitionSettings, seriesIndex, store);
-  }
-
-  private void translateMicaAcquisitionSettings(){
-    ConfocalAcquisitionSettings acquisitionSettings = new ConfocalAcquisitionSettings();
-
-    // in MICA images, due to spectral unmixing, we cannot map detector, filter and laser settings to image channels.
-    // also, filter information is not available in hardware settings, 
-    // as it is available in images from "pure" confocal or widefield systems.
-    ConfocalSettingsExtractor.extractInstrumentSettings(xmlNodes, acquisitionSettings);
-    ConfocalSettingsWriter.initConfocalInstrumentSettings(acquisitionSettings, seriesIndex, store);
-    translateMicaChannelInfos();
-  }
-  
-  private void translateFilters(){
-    filters = WidefieldSettingsExtractor.translateWidefieldFilters(xmlNodes);
-    WidefieldSettingsWriter.initFilters(filters, dimensionStore.channels.size(), seriesIndex, store);
-  }
-
-  private void translateFilterSettings(){
-    for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++) {
-      if (channelIndex >= filters.size())
-        break;
-  
-      Channel channel = dimensionStore.channels.get(channelIndex);
-      // map filters to channels
-      // the assumption is that for each channel, one filter was created, so that filter index = channel index
-      channel.filter = filters.get(channelIndex);
-      channel.dye = channel.filter.dye;
-
-      store.setChannelName(channel.dye, seriesIndex, channelIndex);
-      store.setLightPathEmissionFilterRef(channel.filter.id, seriesIndex, channelIndex, 0);
-    }
-  }
-
-  private void translateStandDetails()  {
-    String instrumentID = MetadataTools.createLSID("Instrument", seriesIndex);
-    store.setInstrumentID(instrumentID, seriesIndex);
-    
-    //an empty instrument is created even when there are no hardware settings for the image (e.g. depth map image, EDF image),
-    //since this is bioformats' expectation (see OMEXMLMetadataImpl, line 7801)
-    if (xmlNodes.hardwareSetting == null) return;
-
-    microscopeModel = MicroscopeExtractor.extractMicroscopeModel(xmlNodes);
-    store.setMicroscopeModel(microscopeModel, seriesIndex);
-
-    MicroscopeType micType = MicroscopeExtractor.extractMicroscopeType(xmlNodes);
-    store.setMicroscopeType(micType, seriesIndex);
-
-    String serialNumber = MicroscopeExtractor.extractMicroscopeSerialNumber(xmlNodes);
-    store.setMicroscopeSerialNumber(serialNumber, seriesIndex);
-
-    store.setImageInstrumentRef(instrumentID, seriesIndex);
-  }
-
-  private void translateObjective() {
-    String objectiveID = MetadataTools.createLSID("Objective", seriesIndex, 0);
-    store.setObjectiveID(objectiveID, seriesIndex, 0);
-
-    Element setting = xmlNodes.getAtlSetting();
-
-    String model = setting.getAttribute("ObjectiveName");
-    store.setObjectiveModel(model, seriesIndex, 0);
-
-    String naS = setting.getAttribute("NumericalAperture");
-    double na = Extractor.parseDouble(naS);
-    store.setObjectiveLensNA(na, seriesIndex, 0);
-
-    String nr = setting.getAttribute("ObjectiveNumber");
-    store.setObjectiveSerialNumber(nr, seriesIndex, 0);
-
-    String magnificationS = setting.getAttribute("Magnification");
-    double magnification = Extractor.parseDouble(magnificationS);
-    store.setObjectiveNominalMagnification(magnification, seriesIndex, 0);
-
-    try {
-
-      String immersion = setting.getAttribute("Immersion");
-      store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), seriesIndex, 0);
-    } catch (Exception e){
-      System.out.println("Objective immersion could not be read.");
-      e.printStackTrace();
-    }
-
-    String refractionIndexS = setting.getAttribute("RefractionIndex");
-    double refractionIndex = Extractor.parseDouble(refractionIndexS);
-
-    store.setObjectiveSettingsID(objectiveID, seriesIndex);
-    store.setObjectiveSettingsRefractiveIndex(refractionIndex, seriesIndex);
-    // store.setObjectiveCorrection(MetadataTools.getCorrection(r.metaTemp.corrections[index]),
-    // series, 0);
-  }
-
-  private void translateROIs(){
+  private void extractROIs(){
     if (Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "ROI") != null) {
       alternateCenter = true;
     }
 
     rois = ROIExtractor.translateROIs(xmlNodes.imageNode, dimensionStore.physicalSizeX, dimensionStore.physicalSizeY);
     singleRois = ROIExtractor.translateSingleROIs(xmlNodes.imageNode, dimensionStore.physicalSizeX, dimensionStore.physicalSizeY);
+  }
 
+  private void writeROIs(){
     int roiCount = 0;
     for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
       for (int roi = 0; roi < rois.size(); roi++) {
@@ -309,191 +247,6 @@ public class SingleImageTranslator {
           reader.getCore().get(seriesIndex).sizeX, reader.getCore().get(seriesIndex).sizeY, alternateCenter,
           reader.getMetadataOptions().getMetadataLevel());
       }
-    }
-  }
-
-  private void translateTimestamps(){
-    timestamps = TimestampExtractor.translateTimestamps(xmlNodes.imageNode, reader.getImageCount());
-    if (timestamps.size() == 0) return;
-
-    double acquiredDate = timestamps.get(0);
-
-    store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
-      (long) (acquiredDate * 1000), DateTools.COBOL,
-      DateTools.ISO8601_FORMAT, false)), seriesIndex);
-
-    for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
-      int t = reader.getZCTCoords(planeIndex)[2];
-      if (t < timestamps.size()){
-        double timestamp = timestamps.get(t);
-        if (timestamps.get(0) == acquiredDate) {
-          timestamp -= acquiredDate;
-        } else if (timestamp == acquiredDate && t > 0) {
-          timestamp = timestamps.get(0);
-        }
-  
-        store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), seriesIndex, planeIndex);
-      }
-    }
-  }
-
-  private void translateExposureTimes(){
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL) return;
-
-    for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
-      int logicalChannelIndex = dimensionStore.rgb ? channelIndex / 3 : channelIndex;
-      String exposureTimeS = Extractor.getAttributeValue(xmlNodes.widefieldChannelInfos.get(logicalChannelIndex), "ExposureTime");
-      dimensionStore.channels.get(channelIndex).exposureTime = Extractor.parseDouble(exposureTimeS);
-    }
-
-    for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
-      int channelIndex = reader.getZCTCoords(planeIndex)[1];
-        store.setPlaneExposureTime(new Time(dimensionStore.channels.get(channelIndex).exposureTime, UNITS.SECOND), seriesIndex, planeIndex);
-    }
-  }
-
-  private void translateChannels(){
-    Element channelsNode = (Element) xmlNodes.imageDescription.getElementsByTagName("Channels").item(0);
-    NodeList channelNodes = channelsNode.getElementsByTagName("ChannelDescription");
-    core.sizeC = channelNodes.getLength();
-
-    List<Channel> channels = ChannelExtractor.extractChannels(channelNodes);
-    dimensionStore.setChannels(channels);
-    
-    DimensionWriter.setChannels(core, store, dimensionStore, reader.getImageFormat(), seriesIndex);
-  }
-
-  private void translateMicaChannelInfos(){
-    List<Dye> dyes = ChannelExtractor.getMicaDyes(xmlNodes);
-    DimensionWriter.addDyeInfosToChannels(store, dyes, dimensionStore, seriesIndex);
-  }
-
-  private void translateDimensions(){
-    List<Dimension> dimensions = DimensionExtractor.extractDimensions(xmlNodes.imageDescription, useOldPhysicalSizeCalculation);
-
-    for (Dimension dimension : dimensions){
-      dimensionStore.addDimension(dimension);
-      if(dimension.key == null)
-        extras *= dimension.size;
-    }
-  
-    dimensionStore.addChannelDimension();
-    dimensionStore.addMissingDimensions();
-
-    DimensionWriter.setupCoreDimensionParameters(core, dimensionStore, extras);
-  }
-
-  public void translateFieldPositions() {
-    //XY
-    PositionExtractor.extractFieldPositions(xmlNodes, dimensionStore);
-
-    reader.addSeriesMeta("Reverse X orientation", dimensionStore.flipX);
-    reader.addSeriesMeta("Reverse Y orientation", dimensionStore.flipY);
-    reader.addSeriesMeta("Swap XY orientation", dimensionStore.swapXY);
-
-    for (int tileIndex = 0; tileIndex < dimensionStore.fieldPositions.size(); tileIndex++){
-      Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(tileIndex);
-      int nPlanesPerTile = dimensionStore.getNumberOfPlanesPerTile();
-      for (int planeIndexWithinTile = 0; planeIndexWithinTile < nPlanesPerTile; planeIndexWithinTile++){
-        int absolutePlaneIndex = tileIndex * nPlanesPerTile + planeIndexWithinTile;
-        store.setPlanePositionX(fieldPosition.x, seriesIndex, absolutePlaneIndex);
-        store.setPlanePositionY(fieldPosition.y, seriesIndex, absolutePlaneIndex);
-      }
-    }
-
-    //Z
-    for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
-      int sign = dimensionStore.zBegin <= dimensionStore.zEnd ? 1 : -1;
-      int zIndex = reader.getZCTCoords(planeIndex)[0];
-      double otherZDrivePos = dimensionStore.zDriveMode == ZDriveMode.ZGalvo ? dimensionStore.zWidePosition : dimensionStore.zGalvoPosition;
-      Length zPos = FormatTools.createLength(otherZDrivePos + dimensionStore.zBegin + dimensionStore.zStep * sign * zIndex, UNITS.METER);
-      store.setPlanePositionZ(zPos, seriesIndex, planeIndex);
-    }
-  }
-
-  private void translatePhysicalSizes(){
-    store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(dimensionStore.physicalSizeX), seriesIndex);
-    store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(dimensionStore.physicalSizeY), seriesIndex);
-    store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(dimensionStore.zStep), seriesIndex);
-    store.setPixelsTimeIncrement(new Time(dimensionStore.tStep, UNITS.SECOND), seriesIndex);
-  }
-
-  /**
-   * Extracts user comments and adds them to the reader's {@link CoreMetadata}
-   * 
-   * @param imageNode
-   * @param image
-   * @throws FormatException
-   */
-  private void translateImageDetails() {
-    store.setImageName(imageName, seriesIndex);
-
-    NodeList attachmentNodes = Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "User-Comment");
-    if (attachmentNodes != null){
-      for (int i = 0; i < attachmentNodes.getLength(); i++) {
-        Node attachment = attachmentNodes.item(i);
-        reader.addSeriesMeta("User-Comment[" + i + "]", attachment.getTextContent());
-        if (i == 0)
-          description = attachment.getTextContent();
-      }
-  
-      store.setImageDescription(description, seriesIndex);
-    }
-  }
-
-  /**
-   * Creates key value pairs from attributes of the root's child nodes (tag |
-   * attribute name : attribute value) and adds them to reader's
-   * {@link CoreMetadata}
-   * 
-   * @param root
-   *          xml node
-   * @param nameStack
-   *          list of node names to be prepended to key name
-   */
-  private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
-    String name = root.getNodeName();
-    if (root.hasAttributes() && !name.equals("Element") && !name.equals("Attachment")
-        && !name.equals("LMSDataContainerHeader")) {
-      nameStack.push(name);
-
-      String suffix = root.getAttribute("Identifier");
-      String value = root.getAttribute("Variant");
-      if (suffix == null || suffix.trim().length() == 0) {
-        suffix = root.getAttribute("Description");
-      }
-      final StringBuilder key = new StringBuilder();
-      final Iterator<String> nameStackIterator = nameStack.descendingIterator();
-      while (nameStackIterator.hasNext()) {
-        final String k = nameStackIterator.next();
-        key.append(k);
-        key.append("|");
-      }
-      if (suffix != null && value != null && suffix.length() > 0 && value.length() > 0 && !suffix.equals("HighInteger")
-          && !suffix.equals("LowInteger")) {
-        reader.addSeriesMetaList(key.toString() + suffix, value);
-      } else {
-        NamedNodeMap attributes = root.getAttributes();
-        for (int i = 0; i < attributes.getLength(); i++) {
-          Attr attr = (Attr) attributes.item(i);
-          if (!attr.getName().equals("HighInteger") && !attr.getName().equals("LowInteger")) {
-            reader.addSeriesMeta(key.toString() + attr.getName(), attr.getValue());
-          }
-        }
-      }
-    }
-
-    NodeList children = root.getChildNodes();
-    for (int i = 0; i < children.getLength(); i++) {
-      Object child = children.item(i);
-      if (child instanceof Element) {
-        populateOriginalMetadata((Element) child, nameStack);
-      }
-    }
-
-    if (root.hasAttributes() && !name.equals("Element") && !name.equals("Attachment")
-        && !name.equals("LMSDataContainerHeader")) {
-      nameStack.pop();
     }
   }
 }

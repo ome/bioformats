@@ -57,12 +57,21 @@ public class LMSMetadataTranslator {
     initCoreMetadata(docs.size());
     r.setSeries(0);
 
+    int seriesIndex = 0;
     for (int i = 0; i < docs.size(); i++) {
-      r.setSeries(i);
-
-      SingleImageTranslator translator = new SingleImageTranslator(docs.get(i), i, docs.size(), r);
+      r.setSeries(seriesIndex);
+      SingleImageTranslator translator = new SingleImageTranslator(docs.get(i), seriesIndex, docs.size(), r);
       r.metadataTranslators.add(translator);
       translator.translate();
+
+      for (int tileIndex = 0; tileIndex < translator.dimensionStore.tileCount; tileIndex++){
+        r.setSeries(seriesIndex + tileIndex);
+        translator = new SingleImageTranslator(docs.get(i), seriesIndex + tileIndex, docs.size(), r);
+        r.metadataTranslators.add(translator);
+        translator.translate();
+      }
+
+      seriesIndex += translator.dimensionStore.tileCount;
     }
     r.setSeries(0);
 

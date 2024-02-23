@@ -44,7 +44,7 @@ public class TimestampExtractor extends Extractor {
   /**
    * Extracts and returns timestamps from image node
    */
-  public static List<Double> translateTimestamps(Element imageNode, int planeCount) {
+  public static List<Double> extractTimestamps(Element imageNode, int planeCount) {
     List<Double> timestamps = new ArrayList<Double>();
 
     NodeList timeStampLists = getDescendantNodesWithName(imageNode, "TimeStampList");

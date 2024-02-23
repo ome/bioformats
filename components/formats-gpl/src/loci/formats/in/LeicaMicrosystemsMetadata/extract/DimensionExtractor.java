@@ -31,7 +31,11 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 
 /**
@@ -66,5 +70,62 @@ public class DimensionExtractor extends Extractor {
     }
 
     return dimensions;
+  }
+
+  /**
+   * Extracts dimension info from LMS XML
+   */
+  public static void extractDimensions(Element imageDescription, boolean useOldPhysicalSizeCalculation, DimensionStore dimensionStore){
+    List<Dimension> dimensions = new ArrayList<Dimension>();
+
+    Element dimensionsNode = (Element) imageDescription.getElementsByTagName("Dimensions").item(0);
+    NodeList dimensionNodes = dimensionsNode.getElementsByTagName("DimensionDescription");
+
+    // add dimensions
+    for (int i = 0; i < dimensionNodes.getLength(); i++) {
+      Element dimensionElement = (Element) dimensionNodes.item(i);
+
+      int id = parseInt(dimensionElement.getAttribute("DimID"));
+      int size = parseInt(dimensionElement.getAttribute("NumberOfElements"));
+      long bytesInc = parseLong(dimensionElement.getAttribute("BytesInc"));
+      Double length = parseDouble(dimensionElement.getAttribute("Length"));
+      String unit = dimensionElement.getAttribute("Unit");
+      double origin = parseDouble(dimensionElement.getAttribute("Origin"));
+
+      Dimension dimension = new Dimension(DimensionKey.with(id), size, bytesInc, unit, length, origin, useOldPhysicalSizeCalculation);
+      dimensions.add(dimension);
+    }
+
+    for (Dimension dimension : dimensions){
+      dimensionStore.addDimension(dimension);
+      if(dimension.key == null)
+        dimensionStore.extras *= dimension.size;
+    }
+  
+    dimensionStore.addChannelDimension();
+    dimensionStore.addMissingDimensions();
+  }
+
+  /**
+   * Extracts exposure times from LMS XML
+   */
+  public static void extractExposureTimes(LMSMainXmlNodes xmlNodes, DimensionStore dimensionStore){
+    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL) return;
+
+    for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
+      int logicalChannelIndex = dimensionStore.rgb ? channelIndex / 3 : channelIndex;
+      String exposureTimeS = Extractor.getAttributeValue(xmlNodes.widefieldChannelInfos.get(logicalChannelIndex), "ExposureTime");
+      dimensionStore.channels.get(channelIndex).exposureTime = Extractor.parseDouble(exposureTimeS);
+    }
+  }
+
+  /**
+   * Extracts channel information from LMS XML
+   */
+  public static void extractChannels(LMSMainXmlNodes xmlNodes, DimensionStore dimensionStore){
+    Element channelsNode = (Element) xmlNodes.imageDescription.getElementsByTagName("Channels").item(0);
+    NodeList channelNodes = channelsNode.getElementsByTagName("ChannelDescription");
+    List<Channel> channels = ChannelExtractor.extractChannels(channelNodes);
+    dimensionStore.setChannels(channels);
   }
 }

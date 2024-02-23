@@ -30,6 +30,8 @@ import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.HardwareSettingLayout;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.MicroscopeDetails;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Objective;
 import ome.xml.model.enums.MicroscopeType;
 
 /**
@@ -39,6 +41,17 @@ import ome.xml.model.enums.MicroscopeType;
  */
 public class MicroscopeExtractor {
   
+  public static MicroscopeDetails extractMicroscopeDetails(LMSMainXmlNodes xmlNodes){
+    MicroscopeDetails micDetails = new MicroscopeDetails();
+
+    micDetails.microscopeModel = MicroscopeExtractor.extractMicroscopeModel(xmlNodes);
+    micDetails.microscopeType = MicroscopeExtractor.extractMicroscopeType(xmlNodes);
+    micDetails.serialNumber = MicroscopeExtractor.extractMicroscopeSerialNumber(xmlNodes);
+    micDetails.objective = MicroscopeExtractor.extractObjective(xmlNodes);
+
+    return micDetails;
+  }
+
   public static String extractMicroscopeModel(LMSMainXmlNodes xmlNodes){
     if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
       Element scannerSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ScannerSetting");
@@ -70,5 +83,22 @@ public class MicroscopeExtractor {
     } else {
       return "";
     }
+  }
+
+  public static Objective extractObjective(LMSMainXmlNodes xmlNodes){
+    Element setting = xmlNodes.getAtlSetting();
+
+    Objective objective = new Objective();
+    objective.model = setting.getAttribute("ObjectiveName");
+    String naS = setting.getAttribute("NumericalAperture");
+    objective.numericalAperture = Extractor.parseDouble(naS);
+    objective.objectiveNumber = setting.getAttribute("ObjectiveNumber");
+    String magnificationS = setting.getAttribute("Magnification");
+    objective.magnification = Extractor.parseDouble(magnificationS);
+    objective.immersion = setting.getAttribute("Immersion");
+    String refractionIndexS = setting.getAttribute("RefractionIndex");
+    objective.refractionIndex = Extractor.parseDouble(refractionIndexS);
+
+    return objective;
   }
 }

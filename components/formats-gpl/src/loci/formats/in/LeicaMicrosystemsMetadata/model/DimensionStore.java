@@ -59,6 +59,7 @@ public class DimensionStore {
     public double tStep;
     public int tileCount = 1;
     public long tileBytesInc;
+    public int extras = 1;
 
     public enum ZDriveMode {
       ZGalvo,

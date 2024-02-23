@@ -58,8 +58,10 @@ public class WidefieldSettingsWriter {
       store.setFilterSetModel(filter.name, series, filterIndex);
 
       //map widefield channel info to image channels by assuming same indices
-      if (filterIndex < channelCount)
+      if (filterIndex < channelCount){
+        store.setChannelName(filter.dye, series, filterIndex);
         store.setLightPathEmissionFilterRef(filter.id, series, filterIndex, 0);
+      }
     }
   }
 }

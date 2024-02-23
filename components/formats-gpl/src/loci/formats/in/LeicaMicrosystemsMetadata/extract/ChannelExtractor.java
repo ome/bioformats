@@ -107,7 +107,7 @@ public class ChannelExtractor extends Extractor {
     }
   }
 
-  public static List<Dye> getMicaDyes(LMSMainXmlNodes xmlNodes){
+  public static List<Dye> extractMicaDyes(LMSMainXmlNodes xmlNodes){
     Element sampleData = Extractor.getChildNodeWithNameAsElement(xmlNodes.widefocalExperimentSettings, "SampleData"); 
     Element samplePattern = Extractor.getChildNodeWithNameAsElement(sampleData, "SamplePattern"); 
     Element structuresElement = Extractor.getChildNodeWithNameAsElement(samplePattern, "Structures"); 
