@@ -933,6 +933,9 @@ public class ZeissCZIReader extends FormatReader {
     if ((in != null)&&(streamCurrentPart == filePart)) {
       return in;
     }
+    if (in != null) {
+      in.close();
+    }
     streamCurrentPart = filePart;
     RandomAccessInputStream ris = new RandomAccessInputStream(filePartToFileName.get(filePart), BUFFER_SIZE);
     in = ris;
@@ -1555,6 +1558,8 @@ public class ZeissCZIReader extends FormatReader {
         CoreMetadata c = labelReader.getCoreMetadataList().get(0);
 
         if (c.sizeZ > 1 || c.sizeT > 1) {
+          stream.close();
+          labelReader.close();
           return;
         }
         core.add(new CoreMetadata(c));
@@ -1594,6 +1599,8 @@ public class ZeissCZIReader extends FormatReader {
         CoreMetadata c = labelReader.getCoreMetadataList().get(0);
 
         if (c.sizeZ > 1 || c.sizeT > 1) {
+          stream.close();
+          labelReader.close();
           return;
         }
         core.add(new CoreMetadata(c));
