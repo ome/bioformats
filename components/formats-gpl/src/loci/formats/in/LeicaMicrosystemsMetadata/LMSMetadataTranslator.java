@@ -54,32 +54,41 @@ public class LMSMetadataTranslator {
   }
 
   public void translateMetadata(List<LMSImageXmlDocument> docs) throws FormatException, IOException {
-    initCoreMetadata(docs.size());
-    r.setSeries(0);
+    // extract metadata info
+    for (int i = 0; i < docs.size(); i++) {
+      SingleImageTranslator translator = new SingleImageTranslator(docs.get(i), i, docs.size(), r);
+      r.metadataTranslators.add(translator);
+      translator.extract();
+    }
+
+    // get series count (one per image tile)
+    int seriesCount = 0;
+    for (SingleImageTranslator translator : r.metadataTranslators){
+      seriesCount += translator.dimensionStore.tileCount;
+    }
+
+    initCoreMetadata(seriesCount);
 
     int seriesIndex = 0;
-    for (int i = 0; i < docs.size(); i++) {
-      r.setSeries(seriesIndex);
-      SingleImageTranslator translator = new SingleImageTranslator(docs.get(i), seriesIndex, docs.size(), r);
-      r.metadataTranslators.add(translator);
-      translator.translate();
-
+    int translatorIndex = 0;
+    while (seriesIndex < seriesCount){
+      SingleImageTranslator translator = r.metadataTranslators.get(translatorIndex);
       for (int tileIndex = 0; tileIndex < translator.dimensionStore.tileCount; tileIndex++){
-        r.setSeries(seriesIndex + tileIndex);
-        translator = new SingleImageTranslator(docs.get(i), seriesIndex + tileIndex, docs.size(), r);
-        r.metadataTranslators.add(translator);
-        translator.translate();
+        String imageName = translator.imageDetails.originalImageName;
+        if (translator.dimensionStore.tileCount > 1)
+          imageName += " / tile " + (tileIndex + 1);
+
+        translator.setTarget(seriesIndex + tileIndex, imageName, tileIndex);
+        translator.write();
       }
 
       seriesIndex += translator.dimensionStore.tileCount;
+      translatorIndex++;
     }
+
     r.setSeries(0);
 
     MetadataTools.populatePixels(store, this.r, true, false);
-
-    // after the following call, we don't have 1 CoreMetadata per xlif-referenced
-    // image, but 1 CoreMetadata per series ( = tile )!
-    setCoreMetadataForTiles();
   }
 
   private void initCoreMetadata(int len) {
@@ -94,15 +103,5 @@ public class LMSMetadataTranslator {
       ms.falseColor = true;
       r.getCore().add(ms);
     }
-  }
-
-  private void setCoreMetadataForTiles() {
-    ArrayList<CoreMetadata> core = new ArrayList<CoreMetadata>();
-    for (int i = 0; i < r.getCore().size(); i++) {
-      for (int tile = 0; tile < r.metadataTranslators.get(i).dimensionStore.tileCount; tile++) {
-        core.add(r.getCore().get(i));
-      }
-    }
-    r.setCore(core);
   }
 }

@@ -2,7 +2,6 @@ package loci.formats.in.LeicaMicrosystemsMetadata.write;
 
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.List;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -20,13 +19,13 @@ public class ImageSettingsWriter {
    *  Writes image details to the reader's {@link CoreMetadata}
    * @param store
    * @param reader
-   * @param imageName
+   * @param originalImageName
    * @param description
    * @param userComments
    * @param seriesIndex
    */
   public static void writeImageDetails(MetadataStore store, LMSFileReader reader, ImageDetails imageDetails, int seriesIndex){
-    store.setImageName(imageDetails.imageName, seriesIndex);
+    store.setImageName(imageDetails.targetImageName, seriesIndex);
     store.setImageDescription(imageDetails.description, seriesIndex);
     for (int i = 0; i < imageDetails.userComments.size(); i++){
       reader.addSeriesMeta("User-Comment[" + i + "]", imageDetails.userComments.get(i));

@@ -310,7 +310,7 @@ public class LMSLIFReader extends LMSFileReader {
     Location parent = currentFile.getParentFile();
     if (parent != null && getSeries() < metadataTranslators.size()) {
       // look for an XML file with the same name as this series
-      Location xmlFile = new Location(parent, metadataTranslators.get(getSeries()).imageDetails.imageName.trim() + ".xml");
+      Location xmlFile = new Location(parent, metadataTranslators.get(getSeries()).imageDetails.originalImageName.trim() + ".xml");
       if (xmlFile.exists()) {
         files.add(xmlFile.getAbsolutePath());
       }

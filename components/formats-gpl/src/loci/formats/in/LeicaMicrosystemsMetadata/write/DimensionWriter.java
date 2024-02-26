@@ -184,20 +184,17 @@ public class DimensionWriter {
   /**
    * Writes field positions to reader's {@link MetadataStore}
    */
-  public static void writeFieldPositions(MetadataStore store, DimensionStore dimensionStore, LMSFileReader reader, int seriesIndex) {
+  public static void writeFieldPositions(MetadataStore store, DimensionStore dimensionStore, LMSFileReader reader, int seriesIndex, int tileIndex) {
     //XY
     reader.addSeriesMeta("Reverse X orientation", dimensionStore.flipX);
     reader.addSeriesMeta("Reverse Y orientation", dimensionStore.flipY);
     reader.addSeriesMeta("Swap XY orientation", dimensionStore.swapXY);
 
-    for (int tileIndex = 0; tileIndex < dimensionStore.fieldPositions.size(); tileIndex++){
-      Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(tileIndex);
-      int nPlanesPerTile = dimensionStore.getNumberOfPlanesPerTile();
-      for (int planeIndexWithinTile = 0; planeIndexWithinTile < nPlanesPerTile; planeIndexWithinTile++){
-        int absolutePlaneIndex = tileIndex * nPlanesPerTile + planeIndexWithinTile;
-        store.setPlanePositionX(fieldPosition.x, seriesIndex, absolutePlaneIndex);
-        store.setPlanePositionY(fieldPosition.y, seriesIndex, absolutePlaneIndex);
-      }
+    Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(tileIndex);
+    int nPlanesPerTile = dimensionStore.getNumberOfPlanesPerTile();
+    for (int planeIndexWithinTile = 0; planeIndexWithinTile < nPlanesPerTile; planeIndexWithinTile++){
+      store.setPlanePositionX(fieldPosition.x, seriesIndex, planeIndexWithinTile);
+      store.setPlanePositionY(fieldPosition.y, seriesIndex, planeIndexWithinTile);
     }
 
     //Z

@@ -49,7 +49,6 @@ import loci.formats.in.LeicaMicrosystemsMetadata.extract.TimestampExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.AtlSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalAcquisitionSettings;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
@@ -97,6 +96,7 @@ public class SingleImageTranslator {
 
   int imageCount;
   boolean useOldPhysicalSizeCalculation;
+  public int currentTileIndex = 0;
 
   int seriesIndex;
   LMSFileReader reader;
@@ -105,16 +105,25 @@ public class SingleImageTranslator {
 
   public SingleImageTranslator(LMSImageXmlDocument doc, int seriesIndex, int imageCount, LMSFileReader reader){
     this.xmlNodes.imageNode = (Element)doc.getImageNode();
-    this.imageDetails.imageName = doc.getImageName();
+    this.imageDetails.originalImageName = doc.getImageName();
+    imageDetails.targetImageName = this.imageDetails.originalImageName;
+
     this.reader = reader;
-    reader.setSeries(seriesIndex);
-    reader.addSeriesMeta("Image name", imageDetails.imageName);
 
     this.seriesIndex = seriesIndex;
     this.store = reader.getMetadataStore();
-    this.core = reader.getCore().get(seriesIndex);
     this.imageCount = imageCount;
     this.useOldPhysicalSizeCalculation = reader.useOldPhysicalSizeCalculation();
+  }
+
+  public void setTarget(int seriesIndex, String imageName, int tileIndex){
+    imageDetails.targetImageName = imageName;
+    this.seriesIndex = seriesIndex;
+    currentTileIndex = tileIndex;
+
+    reader.setSeries(seriesIndex);
+    reader.addSeriesMeta("Image name", imageDetails.targetImageName);
+    this.core = reader.getCore().get(seriesIndex);
   }
 
   public void extract(){
@@ -125,11 +134,11 @@ public class SingleImageTranslator {
     DimensionExtractor.extractChannels(xmlNodes, dimensionStore);
     DimensionExtractor.extractDimensions(xmlNodes.imageDescription, useOldPhysicalSizeCalculation, dimensionStore);
     timestamps = TimestampExtractor.extractTimestamps(xmlNodes.imageNode, reader.getImageCount());
-    microscopeDetails = MicroscopeExtractor.extractMicroscopeDetails(xmlNodes);
 
     if (xmlNodes.hardwareSetting == null)
       return;
 
+    microscopeDetails = MicroscopeExtractor.extractMicroscopeDetails(xmlNodes);
     PositionExtractor.extractFieldPositions(xmlNodes, dimensionStore);
     DimensionExtractor.extractExposureTimes(xmlNodes, dimensionStore);
 
@@ -170,7 +179,7 @@ public class SingleImageTranslator {
     }
 
     DimensionWriter.writePhysicalSizes(store, dimensionStore, seriesIndex);
-    DimensionWriter.writeFieldPositions(store, dimensionStore, reader, seriesIndex);
+    DimensionWriter.writeFieldPositions(store, dimensionStore, reader, seriesIndex, currentTileIndex);
     DimensionWriter.writeExposureTimes(store, dimensionStore, reader, seriesIndex);
 
     //instrument metadata
