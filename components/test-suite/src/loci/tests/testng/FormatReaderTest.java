@@ -1136,25 +1136,32 @@ public class FormatReaderTest {
       }
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (config.hasExposureTime(c)) {
-          Time exposureTime = config.getExposureTime(c);
+        Time exposureTime = config.getExposureTime(c);
 
-          for (int p=0; p<reader.getImageCount(); p++) {
-            int[] zct = reader.getZCTCoords(p);
-            if (zct[1] == c && p < retrieve.getPlaneCount(i)) {
-              Time planeExposureTime = retrieve.getPlaneExposureTime(i, p);
+        for (int p=0; p<reader.getImageCount(); p++) {
+          int[] zct = reader.getZCTCoords(p);
+          if (zct[1] == c && p < retrieve.getPlaneCount(i)) {
+            Time planeExposureTime = retrieve.getPlaneExposureTime(i, p);
 
-              if (exposureTime == null && planeExposureTime == null) {
-                continue;
-              }
+            // usually, the exposure time will be the same for every plane in a channel
+            // sometimes a particular plane is expected to have a slightly different exposure time
+            // the channel-wide exposure time is checked by default, but a plane-specific time
+            // will be used instead if it is present
+            // plane-specific times are not automatically written to the configuration file
+            if (config.hasPlaneExposureTime(p)) {
+              exposureTime = config.getPlaneExposureTime(p);
+            }
 
-              if (exposureTime == null || planeExposureTime == null ||
-                !exposureTime.equals(planeExposureTime))
-              {
-                result(testName, false, "Series " + i + " plane " + p +
-                  " channel " + c + " (got " + planeExposureTime +
-                  ", expected " + exposureTime + ")");
-              }
+            if (exposureTime == null && planeExposureTime == null) {
+              continue;
+            }
+
+            if (exposureTime == null || planeExposureTime == null ||
+              !exposureTime.equals(planeExposureTime))
+            {
+              result(testName, false, "Series " + i + " plane " + p +
+                " channel " + c + " (got " + planeExposureTime +
+                ", expected " + exposureTime + ")");
             }
           }
         }

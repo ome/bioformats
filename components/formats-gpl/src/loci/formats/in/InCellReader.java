@@ -898,7 +898,7 @@ public class InCellReader extends FormatReader {
           lastImage.max = DataTools.parseDouble(attributes.getValue("max"));
         }
       }
-      else if (qName.equals("offset_point")) {
+      else if (qName.equals("offset_point") || qName.equals("Point")) {
         fieldCount++;
       }
       else if (qName.equals("TimePoint") && doT) {
@@ -1026,8 +1026,12 @@ public class InCellReader extends FormatReader {
         int z = Integer.parseInt(attributes.getValue("z_index"));
         int c = Integer.parseInt(attributes.getValue("wave_index"));
         int t = Integer.parseInt(attributes.getValue("time_index"));
+        int channels = channelsPerTimepoint.get(t).intValue();
+
         currentImage = t;
-        currentPlane = z * getSizeC() + c;
+        currentPlane = FormatTools.getIndex("XYZCT", getSizeZ(),
+          channels, 1, getSizeZ() * channels, z, c, 0);
+
         int well = currentRow * wellCols + currentCol;
         Image img = imageFiles[well][currentField][currentImage][currentPlane];
         if (img != null) {
