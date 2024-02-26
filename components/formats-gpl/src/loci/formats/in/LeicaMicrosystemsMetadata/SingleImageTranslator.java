@@ -133,7 +133,7 @@ public class SingleImageTranslator {
     ImageSettingsExtractor.extractImageDetails(xmlNodes, imageDetails);
     DimensionExtractor.extractChannels(xmlNodes, dimensionStore);
     DimensionExtractor.extractDimensions(xmlNodes.imageDescription, useOldPhysicalSizeCalculation, dimensionStore);
-    timestamps = TimestampExtractor.extractTimestamps(xmlNodes.imageNode, reader.getImageCount());
+    timestamps = TimestampExtractor.extractTimestamps(xmlNodes.imageNode, dimensionStore.getNumberOfPlanesPerTile() * dimensionStore.tileCount);
 
     if (xmlNodes.hardwareSetting == null)
       return;
@@ -167,7 +167,7 @@ public class SingleImageTranslator {
     ImageSettingsWriter.writeImageDetails(store, reader, imageDetails, seriesIndex);
     DimensionWriter.writeChannels(core, store, dimensionStore, reader.getImageFormat(), seriesIndex);
     DimensionWriter.writeDimensions(core, dimensionStore);
-    DimensionWriter.writeTimestamps(store, reader, timestamps, seriesIndex);
+    DimensionWriter.writeTimestamps(store, reader, dimensionStore, timestamps, seriesIndex);
 
     if (xmlNodes.hardwareSetting == null){
       //an empty instrument is created even when there are no hardware settings for the image (e.g. depth map image, EDF image),

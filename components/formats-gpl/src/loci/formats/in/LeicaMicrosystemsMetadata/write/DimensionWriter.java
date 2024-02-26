@@ -150,7 +150,8 @@ public class DimensionWriter {
     }
   }
 
-  public static void writeTimestamps(MetadataStore store, LMSFileReader reader, List<Double> timestamps, int seriesIndex){
+  public static void writeTimestamps(MetadataStore store, LMSFileReader reader, DimensionStore dimensionStore, List<Double> timestamps,
+    int seriesIndex){
     if (timestamps.size() == 0) return;
 
     double acquiredDate = timestamps.get(0);
@@ -159,13 +160,12 @@ public class DimensionWriter {
       (long) (acquiredDate * 1000), DateTools.COBOL,
       DateTools.ISO8601_FORMAT, false)), seriesIndex);
 
-    for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
-      int t = reader.getZCTCoords(planeIndex)[2];
-      if (t < timestamps.size()){
-        double timestamp = timestamps.get(t);
+    for (int planeIndex = 0; planeIndex < dimensionStore.getNumberOfPlanesPerTile(); planeIndex++){
+      if (planeIndex < timestamps.size()){
+        double timestamp = timestamps.get(planeIndex);
         if (timestamps.get(0) == acquiredDate) {
           timestamp -= acquiredDate;
-        } else if (timestamp == acquiredDate && t > 0) {
+        } else if (timestamp == acquiredDate && planeIndex > 0) {
           timestamp = timestamps.get(0);
         }
   
