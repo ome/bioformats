@@ -19,6 +19,8 @@ public class InstrumentWriter {
     store.setMicroscopeSerialNumber(micDetails.serialNumber, seriesIndex);
     store.setImageInstrumentRef(instrumentID, seriesIndex);
 
+    if (micDetails.objective == null) return;
+    
     String objectiveID = MetadataTools.createLSID("Objective", seriesIndex, 0);
     store.setObjectiveID(objectiveID, seriesIndex, 0);
     store.setObjectiveModel(micDetails.objective.model, seriesIndex, 0);

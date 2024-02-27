@@ -78,7 +78,7 @@ public class LMSMainXmlNodes {
     UNKNOWN
   }
 
-  public AtlSettingLayout atlSettingLayout;
+  public AtlSettingLayout atlSettingLayout = AtlSettingLayout.UNKNOWN;
 
   public enum DataSourceType {
     UNDEFINED,

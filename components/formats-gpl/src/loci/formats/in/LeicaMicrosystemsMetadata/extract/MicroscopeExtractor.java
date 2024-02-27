@@ -87,6 +87,7 @@ public class MicroscopeExtractor {
 
   public static Objective extractObjective(LMSMainXmlNodes xmlNodes){
     Element setting = xmlNodes.getAtlSetting();
+    if (setting == null) return null;
 
     Objective objective = new Objective();
     // e.g. "HC PL APO    20x/0.70 DRY" or "HCX PL FLUOTAR    40x/0.75 DRY"

@@ -110,7 +110,7 @@ public class DimensionExtractor extends Extractor {
    * Extracts exposure times from LMS XML
    */
   public static void extractExposureTimes(LMSMainXmlNodes xmlNodes, DimensionStore dimensionStore){
-    if (xmlNodes.dataSourceType == DataSourceType.CONFOCAL) return;
+    if (xmlNodes.dataSourceType != DataSourceType.CAMERA && xmlNodes.dataSourceType != DataSourceType.WIDEFOCAL) return;
 
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
       int logicalChannelIndex = dimensionStore.rgb ? channelIndex / 3 : channelIndex;
