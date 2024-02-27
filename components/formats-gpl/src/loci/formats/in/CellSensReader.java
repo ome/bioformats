@@ -1325,9 +1325,12 @@ public class CellSensReader extends FormatReader {
       int maxPixelWidth  = (maxXAtRes0 + 1) * tileX.get(tileX.size()-1);
       int maxPixelHeight = (maxYAtRes0 + 1) * tileY.get(tileY.size()-1);
       for (Pyramid p : pyramids) {
+        if (p.HasAssociatedEtsFile) // If this pyramid has already been linked to an ETS
+          continue;                 // then don't allow it to be linked to another.
         if (  (p.width  <= maxPixelWidth ) && (p.width  >= maxPixelWidth  - tileX.get(tileX.size()-1))
            && (p.height <= maxPixelHeight) && (p.height >= maxPixelHeight - tileY.get(tileY.size()-1)) ) {
             pyramid = p;
+            p.HasAssociatedEtsFile = true; // Rememeber that this pyramid is now taken by an Ets.
             break;
         }
       }
@@ -2664,6 +2667,7 @@ public class CellSensReader extends FormatReader {
     public transient Double zStart;
     public transient Double zIncrement;
     public transient ArrayList<Double> zValues = new ArrayList<Double>();
+    public boolean   HasAssociatedEtsFile = false;
   }
 
 }
