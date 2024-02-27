@@ -64,4 +64,16 @@ public class LofXmlDocument extends LMSImageXmlDocument {
   public String getImageName(){
     return name;
   }
+
+  @Override
+  public String getCollectionPath(){
+    String path = "";
+    LMSXmlDocument parent = this.parent;
+    while (parent != null && parent instanceof XlcfDocument){
+      path = ((XlcfDocument)parent).getName() + "/" + path;
+      parent = parent.parent;
+    }
+
+    return path;
+  }
 }
