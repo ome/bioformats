@@ -181,6 +181,9 @@ public class HardwareSettingsExtractor {
    */
   public static void extractMainCameraSetting(LMSMainXmlNodes xmlNodes){
     xmlNodes.mainCameraSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ATLCameraSettingDefinition");
+    Element seeSequentialBlock = Extractor.getChildNodeWithNameAsElement(xmlNodes.mainCameraSetting, "SEE_SEQUENTIAL_BLOCK");
+    if (seeSequentialBlock != null)
+      xmlNodes.mainCameraSetting = null;
   }
 
 
@@ -237,6 +240,8 @@ public class HardwareSettingsExtractor {
     if (ldmBlockWidefieldSequential != null){
       Element ldmBlockSequentialMaster = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_Master");
       xmlNodes.masterCameraSetting = Extractor.getChildNodeWithNameAsElement(ldmBlockSequentialMaster, "ATLCameraSettingDefinition");
+      if (xmlNodes.mainCameraSetting == null)
+        xmlNodes.mainCameraSetting = xmlNodes.masterCameraSetting;
 
       Element ldmBlockSequentialList = Extractor.getChildNodeWithNameAsElement(ldmBlockWidefieldSequential, "LDM_Block_Sequential_List");
       NodeList sequentialCameraSettings = ldmBlockSequentialList.getChildNodes();
