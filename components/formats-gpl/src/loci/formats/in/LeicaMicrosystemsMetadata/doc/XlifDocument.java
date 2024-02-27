@@ -149,4 +149,16 @@ public class XlifDocument extends LMSImageXmlDocument {
   public boolean isValid(){
     return imagePaths.size() > 0;
   }
+
+  @Override
+  public String getCollectionPath(){
+    String path = "";
+    LMSXmlDocument parent = this.parent;
+    while (parent != null && parent instanceof XlcfDocument){
+      path = ((XlcfDocument)parent).getName() + "/" + path;
+      parent = parent.parent;
+    }
+
+    return path;
+  }
 }

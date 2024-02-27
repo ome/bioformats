@@ -35,9 +35,11 @@ import org.w3c.dom.Node;
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
 public class LifImageXmlDocument extends LMSImageXmlDocument {
+  private String collectionPath;
 
-  public LifImageXmlDocument(Node root) {
+  public LifImageXmlDocument(Node root, String collectionPath) {
     super(root);
+    this.collectionPath = collectionPath;
   }
 
   @Override
@@ -57,5 +59,10 @@ public class LifImageXmlDocument extends LMSImageXmlDocument {
   @Override
   public String getImageName() {
     return getAttr(doc.getDocumentElement(), "Name");
+  }
+
+  @Override
+  public String getCollectionPath(){
+    return collectionPath;
   }
 }

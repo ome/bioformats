@@ -75,9 +75,7 @@ public abstract class LMSXmlDocument {
   protected XPath xPath;
   protected String dir;
   protected String filepath;
-  protected static final Logger LOGGER =
-
-  LoggerFactory.getLogger(LMSXmlDocument.class);
+  protected static final Logger LOGGER = LoggerFactory.getLogger(LMSXmlDocument.class);
   
   public enum InitFrom {
     XML,

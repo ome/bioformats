@@ -25,6 +25,10 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata.doc;
 
+import org.w3c.dom.Node;
+
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
+
 /**
  * This class loads and represents a Leica Microsystems XLCF xml document
  * 
@@ -36,5 +40,10 @@ public class XlcfDocument extends LMSCollectionXmlDocument {
   public XlcfDocument(String filepath, LMSCollectionXmlDocument parent) {
     super(filepath, parent);
     initChildren();
+  }
+
+  public String getName(){
+    Node element = GetChildWithName(doc.getDocumentElement(), "Element");
+    return Extractor.getAttributeValue(element, "Name");
   }
 }

@@ -107,6 +107,7 @@ public class SingleImageTranslator {
     this.xmlNodes.imageNode = (Element)doc.getImageNode();
     this.imageDetails.originalImageName = doc.getImageName();
     imageDetails.targetImageName = this.imageDetails.originalImageName;
+    imageDetails.collectionPrefix = doc.getCollectionPath();
 
     this.reader = reader;
 

@@ -137,6 +137,7 @@ public class Extractor {
    * Returns the value of an attribute of a node
    */
   public static String getAttributeValue(Node node, String attributeName) {
+    if (node == null || attributeName.isEmpty()) return "";
     Node attribute = node.getAttributes().getNamedItem(attributeName);
     if (attribute != null)
       return attribute.getTextContent();

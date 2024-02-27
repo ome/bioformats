@@ -7,5 +7,6 @@ public class ImageDetails {
   public String originalImageName;
   public String targetImageName; // differs for tiles which are treated as separate series
   public String description;
+  public String collectionPrefix = "";
   public List<String> userComments = new ArrayList<>();
 }

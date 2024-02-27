@@ -76,9 +76,9 @@ public class LMSMetadataTranslator {
       for (int tileIndex = 0; tileIndex < translator.dimensionStore.tileCount; tileIndex++){
         String imageName = translator.imageDetails.originalImageName;
         if (translator.dimensionStore.tileCount > 1)
-          imageName += " / tile " + (tileIndex + 1);
+          imageName += " - tile " + (tileIndex + 1);
 
-        translator.setTarget(seriesIndex + tileIndex, imageName, tileIndex);
+        translator.setTarget(seriesIndex + tileIndex, translator.imageDetails.collectionPrefix + imageName, tileIndex);
         translator.write();
       }
 

@@ -30,6 +30,8 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
+
 /**
  * This class loads and represents a Leica Microsystems XML document that has
  * been extracted from a LIF file
@@ -49,31 +51,41 @@ public class LifXmlDocument extends LMSXmlDocument {
       return null;
 
     Node rootElement = GetChildWithName(doc.getDocumentElement(), "Element");
-    imageXmlDocs.addAll(GetImageChildren(rootElement));
+    imageXmlDocs.addAll(GetImageChildren(rootElement, ""));
 
     return imageXmlDocs;
   }
 
-  private List<LifImageXmlDocument> GetImageChildren(Node elementNode){
+  /**
+   * Creates LifImageXmlDocuments for the passed node (if it is an image) or for its descendants (if it is not)
+   * @param elementNode
+   * @return
+   */
+  private List<LifImageXmlDocument> GetImageChildren(Node elementNode, String parentPath){
     List<LifImageXmlDocument> imageXmlDocs = new ArrayList<LifImageXmlDocument>();
     
     Node data = GetChildWithName(elementNode, "Data");
-    //Element is Experiment or Image Element
     if (data != null){
+      //Element is Experiment or Image Element
       Node image = GetChildWithName(data, "Image");
-    //Element is Image Element
-    if (image != null){
-        imageXmlDocs.add(new LifImageXmlDocument(elementNode));
+      if (image != null){
+        //Element is Image Element
+        imageXmlDocs.add(new LifImageXmlDocument(elementNode, parentPath));
       }
     } 
     
     Node children = GetChildWithName(elementNode, "Children");
-    //Element is Collection Element
     if (children != null){
+      //Element is Experiment or Collection Element
+      //only attach name to path if element is a collection
+      Node experiment = GetChildWithName(data, "Experiment");
+      if (experiment == null)
+        parentPath += Extractor.getAttributeValue(elementNode, "Name") + "/";
+
       for (int i = 0; i < children.getChildNodes().getLength(); i++) {
         Node child = children.getChildNodes().item(i);
         if (child.getNodeName().equals("Element")) {
-          imageXmlDocs.addAll(GetImageChildren(child));
+          imageXmlDocs.addAll(GetImageChildren(child, parentPath));
         }
       }
     }

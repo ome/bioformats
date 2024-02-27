@@ -54,4 +54,9 @@ public abstract class LMSImageXmlDocument extends LMSXmlDocument {
    * Returns the name of the image (it might be contained in the XML or otherwise e.g. in the file name)
    */
   public abstract String getImageName();
+
+  /**
+   * Returns the path of collections the image is in (e.g. "Collection1/Collection2")
+   */
+  public abstract String getCollectionPath();
 }
