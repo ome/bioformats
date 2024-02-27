@@ -7,4 +7,5 @@ public class Objective {
   public double magnification;
   public String immersion;
   public double refractionIndex;
+  public String correction;
 }

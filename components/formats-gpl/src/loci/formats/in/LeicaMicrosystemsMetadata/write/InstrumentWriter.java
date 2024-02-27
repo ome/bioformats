@@ -33,6 +33,13 @@ public class InstrumentWriter {
       e.printStackTrace();
     }
 
+    try {
+      store.setObjectiveCorrection(MetadataTools.getCorrection(micDetails.objective.correction), seriesIndex, 0);
+    } catch (Exception e){
+      System.out.println("Objective correction could not be read.");
+      e.printStackTrace();
+    }
+
     store.setObjectiveSettingsID(objectiveID, seriesIndex);
     store.setObjectiveSettingsRefractiveIndex(micDetails.objective.refractionIndex, seriesIndex);
   }

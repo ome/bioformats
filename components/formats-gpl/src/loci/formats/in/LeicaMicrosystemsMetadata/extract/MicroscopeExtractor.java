@@ -89,7 +89,10 @@ public class MicroscopeExtractor {
     Element setting = xmlNodes.getAtlSetting();
 
     Objective objective = new Objective();
+    // e.g. "HC PL APO    20x/0.70 DRY" or "HCX PL FLUOTAR    40x/0.75 DRY"
     objective.model = setting.getAttribute("ObjectiveName");
+    String[] objValues = objective.model.split(" +");
+    objective.correction = objValues[2];
     String naS = setting.getAttribute("NumericalAperture");
     objective.numericalAperture = Extractor.parseDouble(naS);
     objective.objectiveNumber = setting.getAttribute("ObjectiveNumber");
