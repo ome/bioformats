@@ -46,13 +46,13 @@ public class LaserExtractor extends Extractor {
         String attribute = Extractor.getAttributeValue(laserRecord, "Attribute");
         String variant = Extractor.getAttributeValue(laserRecord, "Variant");
         if (name.contains(laser.name) && attribute.equals("Power State")){
-          laser.isActive = variant.equals("On");
+          laser.powerStateOn = variant.equals("On");
           break;
         }
       }
       } else {
         // SP8, STELLARIS
-        laser.isActive = powerState.equals("On");
+        laser.powerStateOn = powerState.equals("On");
       }
 
       String lightSourceQualifierS = laserNode.getAttribute("LightSourceQualifier");
@@ -99,7 +99,7 @@ public class LaserExtractor extends Extractor {
         LmsLightSourceQualifier lightSourceQualifier = LmsLightSourceQualifier.getValue(lightSourceQualifierInt);
         for (Laser laser : lasers){
           if (laser.lightSourceQualifier == lightSourceQualifier){
-            laser.isActive = isActive;
+            laser.shutterOpen = isActive;
             break;
           }
         }
@@ -110,7 +110,7 @@ public class LaserExtractor extends Extractor {
         LmsLightSourceType lightSourceType = LmsLightSourceType.getValue(lightSourceTypeInt);
         for (Laser laser : lasers){
           if (laser.lightSourceType == lightSourceType){
-            laser.isActive = isActive;
+            laser.shutterOpen = isActive;
             break;
           }
         }
@@ -159,18 +159,18 @@ public class LaserExtractor extends Extractor {
   public static void mapLasersToLaserSettings(List<Laser> lasers, List<LaserSetting> laserSettings){
     for (LaserSetting laserSetting : laserSettings){
       for (Laser laser : lasers){
-        if (laser.hasSameLightSourceType(laserSetting) && (laser.wavelength == laserSetting.wavelength || 
-        laser.name.equals("Argon") && laser.argonWavelengths.contains(laserSetting.wavelength))){
+        if (laser.powerStateOn && laser.shutterOpen && laser.hasSameLightSourceType(laserSetting) && 
+        (laser.wavelength == laserSetting.wavelength || laser.name.equals("Argon") && laser.argonWavelengths.contains(laserSetting.wavelength))){
           laserSetting.laser = laser;
           laser.laserSetting = laserSetting;
           break;
         }
       }
 
-      // if no matching laser was found, map WLL
+      // after lasers with matching wavelengths were matched and there are still unmatched laser line settings, look for active WLL lasers
       if (laserSetting.laser == null){
         for (Laser laser : lasers){
-          if (laser.name.equals("WLL")){
+          if (laser.powerStateOn && laser.shutterOpen && laser.name.equals("WLL") && laser.hasSameLightSourceType(laserSetting)){
             laserSetting.laser = laser;
             laser.laserSetting = laserSetting;
             break;
@@ -180,7 +180,7 @@ public class LaserExtractor extends Extractor {
     }
 
     for (Laser laser : lasers){
-      if (laser.laserSetting == null && laser.isActive){
+      if (laser.laserSetting == null && laser.powerStateOn && laser.shutterOpen){
         // laser is not connected to an AOTF, but it is switched on and its associated shutter is open.
         // therefore, we assume here that it is connected to the light path and we create a laser setting for it.
         LaserSetting laserSetting = new LaserSetting();

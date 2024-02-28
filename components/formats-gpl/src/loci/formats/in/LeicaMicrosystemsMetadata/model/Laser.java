@@ -39,7 +39,8 @@ public class Laser {
   public String name;
   public double wavelength;
   public String wavelengthUnit;
-  public boolean isActive;
+  public boolean powerStateOn = false;
+  public boolean shutterOpen = false;
   public boolean isFrap;
   public LaserSetting laserSetting;
 
