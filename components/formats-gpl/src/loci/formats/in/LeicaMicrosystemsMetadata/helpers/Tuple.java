@@ -1,11 +1,11 @@
 package loci.formats.in.LeicaMicrosystemsMetadata.helpers;
 
-public class Tuple<X, Y> {
-    public X x;
-    public Y y;
+public class Tuple<T1, T2> {
+    public T1 first;
+    public T2 second;
 
-    public Tuple(X x, Y y){
-      this.x = x;
-      this.y = y;
+    public Tuple(T1 first, T2 second){
+      this.first = first;
+      this.second = second;
     }
 }

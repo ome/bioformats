@@ -193,8 +193,8 @@ public class DimensionWriter {
     Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(tileIndex);
     int nPlanesPerTile = dimensionStore.getNumberOfPlanesPerTile();
     for (int planeIndexWithinTile = 0; planeIndexWithinTile < nPlanesPerTile; planeIndexWithinTile++){
-      store.setPlanePositionX(fieldPosition.x, seriesIndex, planeIndexWithinTile);
-      store.setPlanePositionY(fieldPosition.y, seriesIndex, planeIndexWithinTile);
+      store.setPlanePositionX(fieldPosition.first, seriesIndex, planeIndexWithinTile);
+      store.setPlanePositionY(fieldPosition.second, seriesIndex, planeIndexWithinTile);
     }
 
     //Z

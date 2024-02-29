@@ -105,16 +105,16 @@ public class PositionExtractor extends Extractor {
       Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(planeIndex);
 
       if (dimensionStore.swapXY){
-        Length temp = fieldPosition.x;
-        fieldPosition.x = fieldPosition.y;
-        fieldPosition.y = temp;
+        Length temp = fieldPosition.first;
+        fieldPosition.first = fieldPosition.second;
+        fieldPosition.second = temp;
       }
   
       if (dimensionStore.flipX)
-        fieldPosition.x = flip(fieldPosition.x);
+        fieldPosition.first = flip(fieldPosition.first);
   
       if (dimensionStore.flipY)
-        fieldPosition.y = flip(fieldPosition.y);
+        fieldPosition.second = flip(fieldPosition.second);
     }
 
     //Z
