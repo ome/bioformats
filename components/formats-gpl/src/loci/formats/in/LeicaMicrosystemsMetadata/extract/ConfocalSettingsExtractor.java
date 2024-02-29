@@ -59,6 +59,7 @@ public class ConfocalSettingsExtractor extends Extractor {
 
   public static ConfocalAcquisitionSettings extractChannelSettings(LMSMainXmlNodes xmlNodes, ConfocalAcquisitionSettings acquisitionSettings){
     Element atlConfocalSetting = xmlNodes.getAtlConfocalSetting();
+    if (atlConfocalSetting == null) return acquisitionSettings;
 
     String zoomS = getAttributeValue(atlConfocalSetting, "Zoom");
     String readOutRateS = getAttributeValue(atlConfocalSetting, "ScanSpeed");

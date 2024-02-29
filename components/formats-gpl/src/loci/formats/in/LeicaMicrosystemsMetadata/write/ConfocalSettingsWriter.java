@@ -54,7 +54,7 @@ public class ConfocalSettingsWriter {
       store.setDetectorID(detector.detectorId, seriesIndex, i);
       store.setDetectorModel(detector.model, seriesIndex, i);
       store.setDetectorZoom(acquisitionSettings.zoom, seriesIndex, i);
-      store.setDetectorType(detector.type.equals("PMT") ? DetectorType.PMT : DetectorType.OTHER, seriesIndex, i);
+      store.setDetectorType(detector.type != null && detector.type.equals("PMT") ? DetectorType.PMT : DetectorType.OTHER, seriesIndex, i);
     }
 
     for (int i = 0; i < acquisitionSettings.lasers.size(); i++) {

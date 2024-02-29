@@ -23,7 +23,56 @@ public class DetectorExtractor extends Extractor {
    */
   public static List<Detector> getDetectors(LMSMainXmlNodes xmlNodes)
   {
+    List<Detector> detectors = new ArrayList<Detector>();
+
     Element setting = xmlNodes.getAtlConfocalSetting();
+
+    // SP5 images with LDM block, SP8 and STELLARIS
+    if (setting != null){
+      detectors = extractDetectorsFromAtlConfocalSetting(setting);
+
+      // SP5: detectors in ATL settings have no names, this information can be found in filter setting records
+      if (xmlNodes.atlSettingLayout == AtlSettingLayout.CONFOCAL_OLD){
+        List<String> detectorNames = new ArrayList<String>();
+        List<Element> detectorRecords = getNodesWithAttributeAsElements(xmlNodes.filterSettingRecords, "ClassName", "CDetectionUnit");
+        for (Element detectorRecord : detectorRecords){
+          String name = Extractor.getAttributeValue(detectorRecord, "ObjectName");
+          if (!name.isEmpty() && !detectorNames.contains(name))
+            detectorNames.add(name);
+        }
+  
+        for (int i = 0; i < detectors.size(); i++){
+          if (detectors.get(i).model.isEmpty() && i < detectorNames.size())
+            detectors.get(i).model = detectorNames.get(i);
+        }
+      }
+    // SP5 images without LDM block (--> no ATL settings, need to look into filter settings records)
+    } else {
+      detectors = extractDetectorsFromFilterSettingRecords(xmlNodes.filterSettingRecords);
+    }
+
+    return detectors;
+  }
+
+  private static List<Detector> extractDetectorsFromFilterSettingRecords(NodeList filterSettingRecords){
+    List<Detector> detectors = new ArrayList<>();
+
+    List<Element> detectorRecords = getNodesWithAttributeAsElements(filterSettingRecords, "ClassName", "CDetectionUnit");
+    List<String> detectorNames = new ArrayList<String>();
+    for (Element detectorRecord : detectorRecords){
+    String name = Extractor.getAttributeValue(detectorRecord, "ObjectName");
+    if (!name.isEmpty() && !detectorNames.contains(name))
+      detectorNames.add(name);
+      Detector detector = new Detector();
+      detector.model = name;
+      detectors.add(detector);
+    }
+
+      return detectors;
+  }
+
+  private static List<Detector> extractDetectorsFromAtlConfocalSetting(Element setting){
+    List<Detector> detectors = new ArrayList<>();
 
     String zoomS = getAttributeValue(setting, "Zoom");
     double zoom = parseDouble(zoomS);
@@ -31,7 +80,6 @@ public class DetectorExtractor extends Extractor {
     // main confocal settings > detector list: instrument detectors
     Node detectorList = getChildNodeWithName(setting, "DetectorList");
     NodeList detectorNodes = detectorList.getChildNodes();
-    List<Detector> detectors = new ArrayList<Detector>();
 
     int detectorListIndex = 0;
     for (int i = 0; i < detectorNodes.getLength(); i++) {
@@ -54,24 +102,8 @@ public class DetectorExtractor extends Extractor {
       detectorListIndex++;
     }
 
-    if (xmlNodes.atlSettingLayout == AtlSettingLayout.CONFOCAL_OLD){
-      List<String> detectorNames = new ArrayList<String>();
-      List<Element> detectorRecords = getNodesWithAttributeAsElements(xmlNodes.filterSettingRecords, "ClassName", "CDetectionUnit");
-      for (Element detectorRecord : detectorRecords){
-        String name = Extractor.getAttributeValue(detectorRecord, "ObjectName");
-        if (!name.isEmpty() && !detectorNames.contains(name))
-          detectorNames.add(name);
-      }
-
-      for (int i = 0; i < detectors.size(); i++){
-        if (detectors.get(i).model.isEmpty() && i < detectorNames.size())
-          detectors.get(i).model = detectorNames.get(i);
-      }
-    }
-
     return detectors;
   }
-
 
   public static List<DetectorSetting> getActiveDetectorSettings(Element atlConfocalSetting){
     Node detectorList = getChildNodeWithName(atlConfocalSetting, "DetectorList");
