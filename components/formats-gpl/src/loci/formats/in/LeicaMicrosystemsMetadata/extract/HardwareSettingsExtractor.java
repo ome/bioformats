@@ -73,6 +73,9 @@ public class HardwareSettingsExtractor {
     if (xmlNodes.hardwareSettingLayout == HardwareSettingLayout.OLD){
       Element scannerSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ScannerSetting");
       List<Element> scannerSettingRecords = Extractor.getChildNodesWithNameAsElement(scannerSetting, "ScannerSettingRecord");
+
+      String systemType = "";
+
       for (Element scannerSettingRecord : scannerSettingRecords){
         String identifier = scannerSettingRecord.getAttribute("Identifier");
         if (identifier.equals("eDataSource")){
@@ -80,6 +83,14 @@ public class HardwareSettingsExtractor {
           dataSourceType = Extractor.parseInt(variant);
           break;
         }
+        //while navigating scanner setting records, look up system type in case the eDataSource record doesn't exist
+        if (systemType.isEmpty() && identifier.equals("SystemType")){
+          systemType = scannerSettingRecord.getAttribute("Variant");
+        }
+      }
+      // older SP5 images do not have the eDataSource record
+      if (dataSourceType == -1){
+        dataSourceType = systemType.contains("SP5") ? 0 : -1;
       }
     } else {
       String dataSourceTypeS = Extractor.getAttributeValue(xmlNodes.hardwareSetting, "DataSourceType");
