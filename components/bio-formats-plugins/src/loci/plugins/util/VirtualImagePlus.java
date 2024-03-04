@@ -86,6 +86,28 @@ public class VirtualImagePlus extends ImagePlus {
       }
       // Keep the user-defined color limits
       proc.getChild().setMinAndMax(this.getDisplayRangeMin(), this.getDisplayRangeMax());
+      int bitDepth = this.getBitDepth();
+      int range = 256;
+      if (bitDepth==16) {
+        range = 65536;
+        int defaultRange = this.getDefault16bitRange();
+        if (defaultRange>0)
+          range = (int)Math.pow(2,defaultRange)-1;
+      }
+      int tableSize = bitDepth==16?65536:256;
+      int[] table = new int[tableSize];
+      int min = (int)this.getDisplayRangeMin();
+      int max = (int)this.getDisplayRangeMax();
+      for (int i=0; i<tableSize; i++) {
+        if (i<=min)
+          table[i] = 0;
+        else if (i>=max)
+          table[i] = range-1;
+        else
+          table[i] = (int)(((double)(i-min)/(max-min))*range);
+      }
+      proc.getChild().applyTable(table);
+
       // if we call setProcessor(getTitle(), proc), the type will be set
       // to GRAY32 (regardless of the actual processor type)
       setProcessor(getTitle(), proc.getChild());
