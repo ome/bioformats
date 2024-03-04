@@ -280,6 +280,7 @@ public class DicomReader extends SubResolutionFormatReader {
     Region currentRegion = new Region(x, y, w, h);
     int z = getZCTCoords(no)[0];
     int c = getZCTCoords(no)[1];
+    int timepoint = getZCTCoords(no)[2];
 
     if (!tilePositions.containsKey(getCoreIndex())) {
       LOGGER.warn("No tiles for core index = {}", getCoreIndex());
@@ -295,15 +296,18 @@ public class DicomReader extends SubResolutionFormatReader {
         (tile.channel == c || getEffectiveSizeC() == 1) &&
         tile.region.intersects(currentRegion))
       {
-        byte[] tileBuf = new byte[tile.region.width * tile.region.height * pixel];
-        Region intersection = tile.region.intersection(currentRegion);
-        getTile(tile, tileBuf, intersection.x - tile.region.x, intersection.y - tile.region.y,
-          intersection.width, intersection.height);
+        // this is very basic timelapse support, and assumes only one tile is needed per plane
+        if (getSizeT() == 1 || (tiles.size() == getSizeT() && t == timepoint)) {
+          byte[] tileBuf = new byte[tile.region.width * tile.region.height * pixel];
+          Region intersection = tile.region.intersection(currentRegion);
+          getTile(tile, tileBuf, intersection.x - tile.region.x, intersection.y - tile.region.y,
+            intersection.width, intersection.height);
 
-        for (int row=0; row<intersection.height; row++) {
-          int srcIndex = row * intersection.width * pixel;
-          int destIndex = pixel * ((intersection.y - y + row) * w + (intersection.x - x));
-          System.arraycopy(tileBuf, srcIndex, buf, destIndex, intersection.width * pixel);
+          for (int row=0; row<intersection.height; row++) {
+            int srcIndex = row * intersection.width * pixel;
+            int destIndex = pixel * ((intersection.y - y + row) * w + (intersection.x - x));
+            System.arraycopy(tileBuf, srcIndex, buf, destIndex, intersection.width * pixel);
+          }
         }
       }
     }
@@ -430,6 +434,7 @@ public class DicomReader extends SubResolutionFormatReader {
     tags = new ArrayList<DicomTag>();
     int frameOffsetNumber = 0;
     int opticalChannels = 0;
+    boolean timelapse = false;
 
     List<Integer> opticalPathIDs = new ArrayList<Integer>();
 
@@ -675,6 +680,16 @@ public class DicomReader extends SubResolutionFormatReader {
         case TRAILING_PADDING:
           decodingTags = false;
           break;
+        case SEQUENCE_OF_ULTRASOUND_REGIONS:
+          for (DicomTag child : tag.children) {
+            if (child.attribute == REGION_DATA_TYPE) {
+              Number v = child.getNumberValue();
+              // ECG trace, see https://dicom.nema.org/dicom/2013/output/chtml/part03/sect_C.8.html#sect_C.8.5.5.1.2
+              if (v != null && v.intValue() == 10) {
+                timelapse = true;
+              }
+            }
+          }
         default:
           in.seek(tag.getEndPointer());
       }
@@ -683,6 +698,11 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
     if (imagesPerFile == 0) imagesPerFile = 1;
+
+    if (timelapse) {
+      m.sizeT = m.sizeZ;
+      m.sizeZ = 1;
+    }
 
     if (new Location(currentId).getName().equals("DICOMDIR")) {
       String parent = new Location(currentId).getAbsoluteFile().getParent();
@@ -808,7 +828,7 @@ public class DicomReader extends SubResolutionFormatReader {
         DicomFileInfo fileInfo = createFileInfo(currentFileList.get(0));
         zOffsets.put(i, fileInfo.zOffsets);
         fileInfo.coreMetadata.sizeZ *= currentFileList.size();
-        fileInfo.coreMetadata.imageCount = fileInfo.coreMetadata.sizeZ;
+        fileInfo.coreMetadata.imageCount = fileInfo.coreMetadata.sizeZ * fileInfo.coreMetadata.sizeT;
         core.add(fileInfo.coreMetadata);
 
         List<DicomTile> positions = new ArrayList<DicomTile>();
@@ -1824,13 +1844,17 @@ public class DicomReader extends SubResolutionFormatReader {
   }
 
   private void updateCoreMetadata(CoreMetadata ms) {
-    if (ms.sizeC == 0) ms.sizeC = 1;
-    ms.sizeT = 1;
+    if (ms.sizeC == 0) {
+      ms.sizeC = 1;
+    }
+    if (ms.sizeT == 0) {
+      ms.sizeT = 1;
+    }
     ms.dimensionOrder = "XYCZT";
     ms.metadataComplete = true;
     ms.falseColor = false;
     if (isRLE) ms.interleaved = false;
-    ms.imageCount = ms.sizeZ;
+    ms.imageCount = ms.sizeZ * ms.sizeT;
     if (!ms.rgb) {
       ms.imageCount *= ms.sizeC;
     }
