@@ -8,70 +8,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.AtlSettingLayout;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalSettingRecords;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Multiband;
 
 public class DetectorExtractor extends Extractor {
-  
+
   /**
    * Returns a list of detectors it extracts from LMS XML detector nodes
-   * @param xmlNodes
+   * @param setting atl confocal setting from which detector info is extracted
+   * @param records these are required to look up detector names for SP5 images
    * @return
    */
-  public static List<Detector> getDetectors(LMSMainXmlNodes xmlNodes)
-  {
-    List<Detector> detectors = new ArrayList<Detector>();
-
-    Element setting = xmlNodes.getAtlConfocalSetting();
-
-    // SP5 images with LDM block, SP8 and STELLARIS
-    if (setting != null){
-      detectors = extractDetectorsFromAtlConfocalSetting(setting);
-
-      // SP5: detectors in ATL settings have no names, this information can be found in filter setting records
-      if (xmlNodes.atlSettingLayout == AtlSettingLayout.CONFOCAL_OLD){
-        List<String> detectorNames = new ArrayList<String>();
-        List<Element> detectorRecords = getNodesWithAttributeAsElements(xmlNodes.filterSettingRecords, "ClassName", "CDetectionUnit");
-        for (Element detectorRecord : detectorRecords){
-          String name = Extractor.getAttributeValue(detectorRecord, "ObjectName");
-          if (!name.isEmpty() && !detectorNames.contains(name))
-            detectorNames.add(name);
-        }
-  
-        for (int i = 0; i < detectors.size(); i++){
-          if (detectors.get(i).model.isEmpty() && i < detectorNames.size())
-            detectors.get(i).model = detectorNames.get(i);
-        }
-      }
-    // SP5 images without LDM block (--> no ATL settings, need to look into filter settings records)
-    } else {
-      detectors = extractDetectorsFromFilterSettingRecords(xmlNodes.filterSettingRecords);
-    }
-
-    return detectors;
-  }
-
-  private static List<Detector> extractDetectorsFromFilterSettingRecords(NodeList filterSettingRecords){
-    List<Detector> detectors = new ArrayList<>();
-
-    List<Element> detectorRecords = getNodesWithAttributeAsElements(filterSettingRecords, "ClassName", "CDetectionUnit");
-    List<String> detectorNames = new ArrayList<String>();
-    for (Element detectorRecord : detectorRecords){
-    String name = Extractor.getAttributeValue(detectorRecord, "ObjectName");
-    if (!name.isEmpty() && !detectorNames.contains(name))
-      detectorNames.add(name);
-      Detector detector = new Detector();
-      detector.model = name;
-      detectors.add(detector);
-    }
-
-      return detectors;
-  }
-
-  private static List<Detector> extractDetectorsFromAtlConfocalSetting(Element setting){
+  public static List<Detector> getDetectors(Element setting, ConfocalSettingRecords records){
     List<Detector> detectors = new ArrayList<>();
 
     String zoomS = getAttributeValue(setting, "Zoom");
@@ -96,6 +46,10 @@ public class DetectorExtractor extends Extractor {
       detector.type = detectorNode.getAttribute("Type");
       detector.zoom = zoom;
       detector.detectorListIndex = detectorListIndex;
+
+        // SP5: detectors in ATL settings have no names, this information can be found in filter setting records
+      if (detector.model.isEmpty() && records != null && records.detectorRecords.size() > i)
+        detector.model = records.detectorRecords.get(i).model;
 
       detectors.add(detector);
 

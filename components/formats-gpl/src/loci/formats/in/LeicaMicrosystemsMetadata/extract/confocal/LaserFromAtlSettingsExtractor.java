@@ -2,114 +2,31 @@ package loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalSettingRecords;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser.LmsLightSourceQualifier;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser.LmsLightSourceType;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
 
-public class LaserExtractor extends Extractor {
+public class LaserFromAtlSettingsExtractor extends Extractor {
   
-  public static List<Laser> getLasers(Element atlConfocalSetting, Element alternativeSetting, NodeList filterSettingRecords){
+  /**
+   * Creates Lasers from information extracted from ATL confocal settings
+   * @param atlConfocalSetting the ATL confocal setting from which laser info shall be extracted
+   * @param alternativeSetting the alternative ATL confocal setting (main ATL confocal setting) to look up laser array info for STELLARIS
+   * @param confocalSettingRecords these are required to look up laser power states for SP5 images
+   * @return
+   */
+  public static List<Laser> getLasers(Element atlConfocalSetting, Element alternativeSetting, ConfocalSettingRecords confocalSettingRecords){
     List<Laser> lasers = new ArrayList<Laser>();
 
-    if (atlConfocalSetting == null && alternativeSetting == null){
-      //SP5 images without LDM block
-      lasers = extractLasersFromFilterSettingRecords(filterSettingRecords);
-    } else {
-      //SP5 images with LDM block, SP8, STELLARIS
-      lasers = extractLasersFromAtlConfocalSetting(atlConfocalSetting, alternativeSetting);
-
-      if (lasers.size() == 0) return lasers;
-
-      // power state attribute could not be found in ATL setting > laser array > lasers
-      if (lasers.get(0).powerState.isEmpty() && filterSettingRecords != null){
-        // extract power state info from filter setting records
-        List<Tuple<String, Boolean>> powerStateTuples = new ArrayList<>();
-        List<Element> laserRecords = Extractor.getNodesWithAttributeAsElements(filterSettingRecords, "ClassName", "CLaser");
-          for (Element laserRecord : laserRecords){
-            String objectName = Extractor.getAttributeValue(laserRecord, "ObjectName");
-            String attribute = Extractor.getAttributeValue(laserRecord, "Attribute");
-            String variant = Extractor.getAttributeValue(laserRecord, "Variant");
-
-            Pattern pattern = Pattern.compile("Laser \\(([a-zA-Z | \\d | \\w]+), ([a-zA-Z | \\d | \\w]+)\\)");
-            Matcher matcher = pattern.matcher(objectName);
-            if (!matcher.find()) continue;
-
-            String name = matcher.group(1);
-
-            if (attribute.equals("Power State")){
-              Tuple<String, Boolean> tuple = new Tuple<String,Boolean>(name, variant.equals("On"));
-              powerStateTuples.add(tuple);
-            }
-          }
-
-        // add power state info to lasers
-        for (Tuple<String, Boolean> tuple : powerStateTuples){
-          for (Laser laser : lasers){
-            if (laser.name.equals(tuple.first)){
-              laser.powerStateOn = tuple.second;
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    return lasers;
-  }
-
-  private static List<Laser> extractLasersFromFilterSettingRecords(NodeList filterSettingRecords){
-    List<Laser> lasers = new ArrayList<Laser>();
-
-    List<Element> laserRecords = Extractor.getNodesWithAttributeAsElements(filterSettingRecords, "ClassName", "CLaser");
-    for (Element laserRecord : laserRecords){
-      String objectName = Extractor.getAttributeValue(laserRecord, "ObjectName");
-      String attribute = Extractor.getAttributeValue(laserRecord, "Attribute");
-      String variant = Extractor.getAttributeValue(laserRecord, "Variant");
-      //e.g. "Laser (HeNe 543, visible)"
-      Pattern pattern = Pattern.compile("Laser \\(([a-zA-Z | \\d | \\w]+), ([a-zA-Z | \\d | \\w]+)\\)");
-      Matcher matcher = pattern.matcher(objectName);
-      if (!matcher.find()) continue;
-
-      String name = matcher.group(1);
-
-      Laser currentLaser = new Laser();
-      boolean laserAlreadyExists = false;
-      for (Laser laser : lasers){
-        if (laser.name.equals(name)){
-          laserAlreadyExists = true;
-          currentLaser = laser;
-          break;
-        }
-      }
-
-      if(attribute.equals("Wavelength"))
-        currentLaser.wavelength = parseDouble(variant);
-      else if (attribute.equals("Power State"))
-        currentLaser.powerStateOn = variant.equals("On");
-
-      if (!laserAlreadyExists){
-        currentLaser.name = name;
-        lasers.add(currentLaser);
-      }
-    }
-
-    return lasers;
-  }
-
-  private static List<Laser> extractLasersFromAtlConfocalSetting(Element atlConfocalSetting, Element alternativeSetting){
-    List<Laser> lasers = new ArrayList<Laser>();
-
-    //SP5 images with LDM block, SP8
+    //SP5, SP8
     Node laserArray = getChildNodeWithName(atlConfocalSetting, "LaserArray");
     // in STELLARIS, laser array nodes are not included in sequential settings
     if (laserArray == null)
@@ -146,6 +63,17 @@ public class LaserExtractor extends Extractor {
         String lightSourceTypeS = laserNode.getAttribute("LightSourceType");
         int lightSourceType = parseInt(lightSourceTypeS);
         laser.lightSourceType = LmsLightSourceType.getValue(lightSourceType);
+      }
+
+      // in SP5 images, the power state attribute can not be found in ATL setting > laser array > lasers,
+      // in this case we need to look into the laser info extracted from filter setting records.
+      if (laser.powerState.isEmpty() && confocalSettingRecords != null){
+        for (Laser laserRecord : confocalSettingRecords.laserRecords){
+          if (laserRecord.name.equals(laser.name)){
+            laser.powerStateOn = laserRecord.powerStateOn;
+            break;
+          }
+        }
       }
 
       lasers.add(laser);

@@ -75,7 +75,8 @@ public class ConfocalSettingsWriter {
 
       // Detector settings
       if (channelSetting.detectorSetting != null){
-        store.setDetectorSettingsID(channelSetting.detectorSetting.detector.detectorId, seriesIndex, i);
+        if (channelSetting.detectorSetting.detector != null)
+          store.setDetectorSettingsID(channelSetting.detectorSetting.detector.detectorId, seriesIndex, i);
         store.setDetectorSettingsOffset(channelSetting.detectorSetting.offset, seriesIndex, i);
         store.setDetectorSettingsGain(channelSetting.detectorSetting.gain, seriesIndex, i);
         store.setDetectorSettingsZoom(acquisitionSettings.zoom, seriesIndex, i);

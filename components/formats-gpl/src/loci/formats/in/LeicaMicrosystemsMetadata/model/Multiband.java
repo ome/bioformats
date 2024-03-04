@@ -35,4 +35,5 @@ public class Multiband {
   public double leftWorld; // cut in
   public double rightWorld; // cut out
   public String dyeName;
+  public String name;
 }

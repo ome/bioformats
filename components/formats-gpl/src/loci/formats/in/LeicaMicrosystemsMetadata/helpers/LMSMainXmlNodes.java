@@ -31,6 +31,8 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalSettingRecords;
+
 
 /**
  * LMSMainXmlNodes is a storage class that holds the main XML nodes and XML layout information from LMS XML files.
@@ -58,6 +60,7 @@ public class LMSMainXmlNodes {
 
   public NodeList scannerSettingRecords;
   public NodeList filterSettingRecords;
+  public ConfocalSettingRecords confocalSettingRecords = new ConfocalSettingRecords();
 
   public boolean isMicaImage;
 

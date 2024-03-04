@@ -30,6 +30,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal.ConfocalSettingRecordsExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.AtlSettingLayout;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.DataSourceType;
@@ -40,7 +41,7 @@ import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes.Hardwar
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class HardwareSettingsExtractor {
+public class HardwareSettingsExtractor extends Extractor {
 
 /**
  * Adds the hardware setting node to the passed LMSMainXmlNodes
@@ -144,10 +145,7 @@ public class HardwareSettingsExtractor {
     switch (xmlNodes.atlSettingLayout){
       case CONFOCAL_OLD:
         extractLDMConfocalSettings(xmlNodes);
-        Element scannerSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "ScannerSetting");
-        xmlNodes.scannerSettingRecords = Extractor.getDescendantNodesWithName(scannerSetting, "ScannerSettingRecord");
-        Element filterSetting = Extractor.getChildNodeWithNameAsElement(xmlNodes.hardwareSetting, "FilterSetting");
-        xmlNodes.filterSettingRecords = Extractor.getDescendantNodesWithName(filterSetting, "FilterSettingRecord");
+        ConfocalSettingRecordsExtractor.extractSettingRecords(xmlNodes);
         break;
       case CONFOCAL_NEW:
         extractMainConfocalSetting(xmlNodes);

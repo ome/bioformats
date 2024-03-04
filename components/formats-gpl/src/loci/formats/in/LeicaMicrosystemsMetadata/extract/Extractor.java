@@ -50,6 +50,7 @@ import ome.units.unit.Unit;
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
 public class Extractor {
+  protected static final long METER_MULTIPLY = 1000000;
 
   /**
    * Returns the first direct child node with passed name that is found

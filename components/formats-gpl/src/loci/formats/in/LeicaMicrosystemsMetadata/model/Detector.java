@@ -36,4 +36,10 @@ public class Detector {
   public String type;
   public double zoom;
   public int detectorListIndex;
+
+  //filter setting record info
+  public boolean isActive;
+  public double offset;
+  public double gain;
+  public int channel;
 }
