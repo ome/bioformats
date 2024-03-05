@@ -83,19 +83,6 @@
       <artifactId>assumeng</artifactId>
       <version>1.2.4</version>
     </dependency>
-    <dependency>
-      <groupId>org.kohsuke</groupId>
-      <artifactId>file-leak-detector</artifactId>
-      <version>1.15</version>
-      <!-- the regular jar does not specify a main class -->
-      <classifier>jar-with-dependencies</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>com.sun</groupId>
-          <artifactId>tools</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
   </dependencies>
 
   <properties>
@@ -128,6 +115,51 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>jdk8-compatible</id>
+      <activation>
+        <jdk>(,11)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.kohsuke</groupId>
+          <artifactId>file-leak-detector</artifactId>
+          <version>1.15</version>
+          <!-- the regular jar does not specify a main class -->
+          <classifier>jar-with-dependencies</classifier>
+          <exclusions>
+            <exclusion>
+              <groupId>com.sun</groupId>
+              <artifactId>tools</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>jdk21-compatible</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.kohsuke</groupId>
+          <artifactId>file-leak-detector</artifactId>
+          <version>1.18</version>
+          <!-- the regular jar does not specify a main class -->
+          <classifier>jar-with-dependencies</classifier>
+          <exclusions>
+            <exclusion>
+              <groupId>com.sun</groupId>
+              <artifactId>tools</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
   <developers>
     <developer>
