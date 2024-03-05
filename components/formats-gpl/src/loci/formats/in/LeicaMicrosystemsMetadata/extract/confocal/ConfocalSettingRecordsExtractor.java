@@ -8,12 +8,12 @@ import org.w3c.dom.Node;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Aotf;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalSettingRecords;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Multiband;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Aotf;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalSettingRecords;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Detector;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.LaserSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Multiband;
 
 public class ConfocalSettingRecordsExtractor extends Extractor {
   public static void extractSettingRecords(LMSMainXmlNodes xmlNodes){

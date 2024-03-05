@@ -8,13 +8,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalSettingRecords;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser.LmsLightSourceQualifier;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser.LmsLightSourceType;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalSettingRecords;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.LaserSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser.LmsLightSourceQualifier;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser.LmsLightSourceType;
 
-public class LaserFromAtlSettingsExtractor extends Extractor {
+public class LaserExtractor extends Extractor {
   
   /**
    * Creates Lasers from information extracted from ATL confocal settings

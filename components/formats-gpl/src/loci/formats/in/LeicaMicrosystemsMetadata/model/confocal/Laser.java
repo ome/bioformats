@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.model;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
 import java.util.Arrays;
 import java.util.List;

@@ -25,6 +25,8 @@
 
 package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.DetectorSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.LaserSetting;
 import ome.xml.model.primitives.Color;
 
 /**

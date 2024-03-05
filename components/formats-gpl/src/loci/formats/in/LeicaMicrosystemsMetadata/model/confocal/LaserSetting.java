@@ -23,32 +23,21 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.model;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
+
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser.LmsLightSourceQualifier;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser.LmsLightSourceType;
 
 /**
- * Data structure for channel associated detector settings extracted from LMS XML
+ * Data structure for laser settings information extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class DetectorSetting {
-  public Detector detector;
+public class LaserSetting {
+  public Laser laser;
+  public double intensity;
+  public double wavelength;
 
-  public int channel;
-  public String name; //HyD S 4, Trans PMT, ...
-  public double gain;
-  public double offset;
-  public String type; //SiPM, PMT, ...
-  public String dyeName;
-
-  public int sequenceIndex;
-  public int detectorListIndex;
-  public int channelIndex;
-  public String channelName;
-  public boolean transmittedLightMode;
-  public double readOutRate;
-  public double cutIn;
-  public double cutOut;
-  //only available in STELLARIS:
-  public int referenceLineWavelength;
-  public String referenceLineName;
+  public LmsLightSourceQualifier lightSourceQualifier;
+  public LmsLightSourceType lightSourceType;
 }

@@ -27,10 +27,10 @@ package loci.formats.in.LeicaMicrosystemsMetadata.write;
 
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalChannelSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalAcquisitionSettings;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalAcquisitionSettings;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalChannelSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Detector;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser;
 import loci.formats.meta.MetadataStore;
 import ome.units.UNITS;
 import ome.units.quantity.Frequency;

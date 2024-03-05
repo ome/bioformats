@@ -23,17 +23,23 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.model;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
 /**
- * Data structure for multiband (detector range) information extracted from LMS XML
+ * Data structure for instrument associated detector information extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class Multiband {
+public class Detector {
+  public String detectorId;
+  public String model;
+  public String type;
+  public double zoom;
+  public int detectorListIndex;
+
+  //filter setting record info
+  public boolean isActive;
+  public double offset;
+  public double gain;
   public int channel;
-  public double leftWorld; // cut in
-  public double rightWorld; // cut out
-  public String dyeName;
-  public String name;
 }

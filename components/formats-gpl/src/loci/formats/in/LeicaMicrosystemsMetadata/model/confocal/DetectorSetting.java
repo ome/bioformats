@@ -23,22 +23,32 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.model;
-
-import java.util.ArrayList;
-import java.util.List;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
 /**
- * Data structure for confocal acquisition settings of an image extracted from LMS XML
+ * Data structure for channel associated detector settings extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class ConfocalAcquisitionSettings {
-  public List<Detector> detectors = new ArrayList<>();
-  public List<Laser> lasers = new ArrayList<>();
-  public List<Filter> filters = new ArrayList<>();
-  public List<ConfocalChannelSetting> channelSettings = new ArrayList<>();
+public class DetectorSetting {
+  public Detector detector;
+
+  public int channel;
+  public String name; //HyD S 4, Trans PMT, ...
+  public double gain;
+  public double offset;
+  public String type; //SiPM, PMT, ...
+  public String dyeName;
+
+  public int sequenceIndex;
+  public int detectorListIndex;
+  public int channelIndex;
+  public String channelName;
+  public boolean transmittedLightMode;
   public double readOutRate;
-  public double zoom;
-  public double pinholeSize;
+  public double cutIn;
+  public double cutOut;
+  //only available in STELLARIS:
+  public int referenceLineWavelength;
+  public String referenceLineName;
 }

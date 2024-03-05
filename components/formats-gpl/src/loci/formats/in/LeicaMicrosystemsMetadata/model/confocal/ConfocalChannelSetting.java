@@ -23,23 +23,15 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.model;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
 /**
- * Data structure for instrument associated detector information extracted from LMS XML
+ * Data structure for confocal acquisition settings of one image channel extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class Detector {
-  public String detectorId;
-  public String model;
-  public String type;
-  public double zoom;
-  public int detectorListIndex;
-
-  //filter setting record info
-  public boolean isActive;
-  public double offset;
-  public double gain;
-  public int channel;
+public class ConfocalChannelSetting {
+  public int channelIndex;
+  public DetectorSetting detectorSetting;
+  public LaserSetting laserSetting;
 }

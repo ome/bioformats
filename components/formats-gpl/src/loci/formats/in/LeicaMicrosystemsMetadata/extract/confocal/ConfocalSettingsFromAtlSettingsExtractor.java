@@ -7,14 +7,14 @@ import org.w3c.dom.Element;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalAcquisitionSettings;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalChannelSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalSettingRecords;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.LaserSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Multiband;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalAcquisitionSettings;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalChannelSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalSettingRecords;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Detector;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.DetectorSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.LaserSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Multiband;
 
 public class ConfocalSettingsFromAtlSettingsExtractor extends Extractor {
 
@@ -49,10 +49,10 @@ public class ConfocalSettingsFromAtlSettingsExtractor extends Extractor {
     DetectorExtractor.addMultibandInfoToDetectorSettings(detectorSettings, multibands);
 
     // get + map laser and AOTF laser line setting info
-    List<Laser> lasers = LaserFromAtlSettingsExtractor.getLasers(atlConfocalSetting, alternativeSetting, records);
-    LaserFromAtlSettingsExtractor.addShutterInfoToLasers(lasers, atlConfocalSetting, alternativeSetting);
-    List<LaserSetting> laserSettings = LaserFromAtlSettingsExtractor.getLaserSettings(atlConfocalSetting);
-    LaserFromAtlSettingsExtractor.mapLasersToLaserSettings(lasers, laserSettings);
+    List<Laser> lasers = LaserExtractor.getLasers(atlConfocalSetting, alternativeSetting, records);
+    LaserExtractor.addShutterInfoToLasers(lasers, atlConfocalSetting, alternativeSetting);
+    List<LaserSetting> laserSettings = LaserExtractor.getLaserSettings(atlConfocalSetting);
+    LaserExtractor.mapLasersToLaserSettings(lasers, laserSettings);
 
     // map detector and laser settings
     List<ConfocalChannelSetting> channelSettings = createChannelSettings(detectorSettings, laserSettings);

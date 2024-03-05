@@ -23,16 +23,13 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.extract;
+package loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal;
 
 import org.w3c.dom.Element;
 
-import loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal.ConfocalSettingsFromAtlSettingsExtractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal.ConfocalSettingsFromSettingRecordsExtractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal.DetectorExtractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal.LaserFromAtlSettingsExtractor;
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalAcquisitionSettings;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalAcquisitionSettings;
 
 /**
  * This is a helper class for extracting confocal acquisition settings from LMS XML.
@@ -49,7 +46,7 @@ public class ConfocalSettingsExtractor extends Extractor {
       acquisitionSettings.detectors = xmlNodes.confocalSettingRecords.detectorRecords;
     }
     else {
-      acquisitionSettings.lasers = LaserFromAtlSettingsExtractor.getLasers(atlConfocalSetting, atlConfocalSetting, 
+      acquisitionSettings.lasers = LaserExtractor.getLasers(atlConfocalSetting, atlConfocalSetting, 
         xmlNodes.confocalSettingRecords);
       acquisitionSettings.detectors = DetectorExtractor.getDetectors(atlConfocalSetting, xmlNodes.confocalSettingRecords);
     }

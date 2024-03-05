@@ -1,7 +1,9 @@
-package loci.formats.in.LeicaMicrosystemsMetadata.model;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Objective;
 
 public class ConfocalSettingRecords {
   // scanner setting records

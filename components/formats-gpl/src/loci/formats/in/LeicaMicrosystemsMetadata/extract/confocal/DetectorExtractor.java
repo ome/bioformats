@@ -8,15 +8,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalSettingRecords;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Multiband;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalSettingRecords;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Detector;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.DetectorSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Multiband;
 
 public class DetectorExtractor extends Extractor {
 
   /**
-   * Returns a list of detectors it extracts from LMS XML detector nodes
+   * Creates Detectors from information extracted from ATL confocal settings
    * @param setting atl confocal setting from which detector info is extracted
    * @param records these are required to look up detector names for SP5 images
    * @return

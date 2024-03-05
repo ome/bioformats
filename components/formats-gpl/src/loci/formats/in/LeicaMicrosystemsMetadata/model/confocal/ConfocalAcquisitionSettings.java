@@ -23,42 +23,24 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.extract;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Element;
-
-import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 
 /**
- * WidefieldSettingsExtractor is a helper class for extracting widefield acquisition settings from LMS XML files.
+ * Data structure for confocal acquisition settings of an image extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class WidefieldSettingsExtractor extends Extractor {
-
-  /**
-   * Returns a list of {@link Filter}s created from widefield channel information
-   */
-  public static List<Filter> extractWidefieldFilters(LMSMainXmlNodes xmlNodes){
-    List<Filter> filters = new ArrayList<Filter>();
-
-    for (Element widefieldChannelInfo : xmlNodes.widefieldChannelInfos){
-      Filter filter = new Filter();
-
-      String wavelengthS = Extractor.getAttributeValue(widefieldChannelInfo, "EmissionWavelength");
-      double waveLength = Extractor.parseDouble(wavelengthS);
-      filter.cutIn = waveLength;
-      filter.cutOut = waveLength;
-      filter.dye = Extractor.getAttributeValue(widefieldChannelInfo, "UserDefName");
-      filter.name = Extractor.getAttributeValue(widefieldChannelInfo, "FFW_Emission1FilterName");
-
-      filters.add(filter);
-    }
-
-    return filters;
-  }
+public class ConfocalAcquisitionSettings {
+  public List<Detector> detectors = new ArrayList<>();
+  public List<Laser> lasers = new ArrayList<>();
+  public List<Filter> filters = new ArrayList<>();
+  public List<ConfocalChannelSetting> channelSettings = new ArrayList<>();
+  public double readOutRate;
+  public double zoom;
+  public double pinholeSize;
 }

@@ -23,21 +23,17 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.model;
-
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser.LmsLightSourceQualifier;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Laser.LmsLightSourceType;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
 /**
- * Data structure for laser settings information extracted from LMS XML
+ * Data structure for multiband (detector range) information extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class LaserSetting {
-  public Laser laser;
-  public double intensity;
-  public double wavelength;
-
-  public LmsLightSourceQualifier lightSourceQualifier;
-  public LmsLightSourceType lightSourceType;
+public class Multiband {
+  public int channel;
+  public double leftWorld; // cut in
+  public double rightWorld; // cut out
+  public String dyeName;
+  public String name;
 }

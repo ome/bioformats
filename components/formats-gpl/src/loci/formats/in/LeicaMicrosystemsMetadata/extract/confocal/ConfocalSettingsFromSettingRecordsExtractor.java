@@ -2,11 +2,11 @@ package loci.formats.in.LeicaMicrosystemsMetadata.extract.confocal;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalAcquisitionSettings;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalChannelSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Detector;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.DetectorSetting;
-import loci.formats.in.LeicaMicrosystemsMetadata.model.Multiband;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalAcquisitionSettings;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalChannelSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Detector;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.DetectorSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Multiband;
 
 public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
 

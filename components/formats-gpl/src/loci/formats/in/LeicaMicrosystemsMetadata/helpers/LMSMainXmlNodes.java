@@ -31,7 +31,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import loci.formats.in.LeicaMicrosystemsMetadata.model.ConfocalSettingRecords;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.ConfocalSettingRecords;
 
 
 /**
