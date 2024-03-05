@@ -33,7 +33,7 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
       if (!detector.isActive) continue;
       
       DetectorSetting detectorSetting = new DetectorSetting();
-      detectorSetting = new DetectorSetting();
+      detectorSetting.detector = detector;
       detectorSetting.name = detector.model;
       detectorSetting.gain = detector.gain;
       detectorSetting.offset = detector.offset;
