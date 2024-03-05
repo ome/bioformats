@@ -6,7 +6,7 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="tests" default="jar" basedir="." xmlns:if="ant:if">
+<project name="tests" default="jar" basedir=".">
   <description>Build file for Bio-Formats testing framework project</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
@@ -236,12 +236,6 @@ Type "ant -p" for a list of targets.
   <target name="test-automated" depends="compile-tests"
     description="run automated tests in group 'automated'">
 
-    <condition property="compatibleJavaVersion">
-      <not>
-        <equals arg1="${ant.java.version}" arg2="21"/>
-      </not>
-    </condition>
-
     <testng groups="automated" testname="Automated tests"
       listeners="loci.tests.testng.OrderingListener"
       suitename="Bio-Formats software test suite"
@@ -271,7 +265,7 @@ Type "ant -p" for a list of targets.
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
       <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
-      <jvmarg if:set="compatibleJavaVersion" value="-javaagent:${dep.org.kohsuke:file-leak-detector:jar:jar-with-dependencies}=strong"/>
+      <jvmarg value="-javaagent:${dep.org.kohsuke:file-leak-detector:jar:jar-with-dependencies}=strong"/>
     </testng>
     <fail if="failedTest"/>
   </target>
