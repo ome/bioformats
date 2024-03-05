@@ -87,6 +87,8 @@ public class LaserExtractor extends Extractor {
     // in STELLARIS, shutterlist nodes are not included in sequential settings
     if (shutterList == null)
       shutterList = getChildNodeWithName(alternativeSetting, "ShutterList");
+    // in some SP5 images, there is no ShutterList in ATL confocal settings
+    if (shutterList == null) return;
 
     NodeList shutterNodes = shutterList.getChildNodes();
     

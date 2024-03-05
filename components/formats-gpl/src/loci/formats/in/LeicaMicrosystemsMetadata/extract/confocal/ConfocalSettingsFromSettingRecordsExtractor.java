@@ -60,7 +60,7 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
     for (Aotf aotf : xmlNodes.confocalSettingRecords.aotfRecords){
       for (LaserSetting laserLineSetting : aotf.laserLineSettings){
         for (Laser laser : xmlNodes.confocalSettingRecords.laserRecords){
-          if (laser.powerStateOn && (laser.wavelength == laserLineSetting.wavelength || 
+          if (laser.powerStateOn && laser.shutterOpen && (laser.wavelength == laserLineSetting.wavelength || 
             laser.name.equals("Argon") && laser.argonWavelengths.contains(laserLineSetting.wavelength))){
               laserLineSetting.laser = laser;
               laser.laserSetting = laserLineSetting;
@@ -75,7 +75,7 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
     for (LaserSetting laserSetting : laserSettings){
       if (laserSetting.laser == null){
         for (Laser laser : xmlNodes.confocalSettingRecords.laserRecords){
-          if (laser.powerStateOn && laser.name.equals("WLL")){
+          if (laser.powerStateOn && laser.shutterOpen && laser.name.equals("WLL")){
             laserSetting.laser = laser;
             laser.laserSetting = laserSetting;
             break;
@@ -85,7 +85,7 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
     }
 
     for (Laser laser : xmlNodes.confocalSettingRecords.laserRecords){
-      if (laser.laserSetting == null && laser.powerStateOn){
+      if (laser.laserSetting == null && laser.powerStateOn && laser.shutterOpen){
         // laser is not connected to an AOTF, but it is switched on and its associated shutter is open.
         // therefore, we assume here that it is connected to the light path and we create a laser setting for it.
         LaserSetting laserSetting = new LaserSetting();
