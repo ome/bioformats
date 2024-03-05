@@ -55,7 +55,7 @@ public class ConfocalSettingsExtractor extends Extractor {
   public static void extractChannelSettings(LMSMainXmlNodes xmlNodes, ConfocalAcquisitionSettings acquisitionSettings){
     Element atlConfocalSetting = xmlNodes.getAtlConfocalSetting();
     if (atlConfocalSetting == null && xmlNodes.sequentialConfocalSettings.size() == 0 && xmlNodes.confocalSettingRecords != null)
-      ConfocalSettingsFromSettingRecordsExtractor.extractChannelSettingsFromSettingRecords(xmlNodes, acquisitionSettings);
+      ConfocalSettingsFromSettingRecordsExtractor.extractChannelSettings(xmlNodes, acquisitionSettings);
     else
       ConfocalSettingsFromAtlSettingsExtractor.extractChannelSettings(xmlNodes, acquisitionSettings);
   }

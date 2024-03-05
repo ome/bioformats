@@ -82,14 +82,24 @@ public class ConfocalSettingsFromAtlSettingsExtractor extends Extractor {
         }
       // OLDER
       } else {
-        LaserSetting selectedLaserSetting = null;
-        for (LaserSetting laserSetting : laserSettings) {
-          if (laserSetting.wavelength < detectorSetting.cutIn) {
-            if (selectedLaserSetting == null || selectedLaserSetting.laser.wavelength < laserSetting.laser.wavelength)
-              selectedLaserSetting = laserSetting;
+        if (detectorSetting.name.contains("NDD")){
+          // map MP lasers to NDD detectors 
+            for (LaserSetting laserSetting : laserSettings){
+              if (laserSetting.laser.name.contains("MP")){
+                channelSetting.laserSetting = laserSetting;
+                break;
+              }
+            }
+        } else {
+          LaserSetting selectedLaserSetting = null;
+          for (LaserSetting laserSetting : laserSettings) {
+            if (laserSetting.wavelength < detectorSetting.cutIn) {
+              if (selectedLaserSetting == null || selectedLaserSetting.laser.wavelength < laserSetting.laser.wavelength)
+                selectedLaserSetting = laserSetting;
+            }
           }
+          channelSetting.laserSetting = selectedLaserSetting;
         }
-        channelSetting.laserSetting = selectedLaserSetting;
       }
 
       channelSettings.add(channelSetting);
