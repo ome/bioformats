@@ -1339,6 +1339,7 @@ public class CellSensReader extends FormatReader {
       * all the data elements that have been gathered up for this .ets file.
       **/
       if (pyramid == null) {
+        fileMap.remove(core.size() - 1);
         nDimensions.remove(nDimensions.size() - 1);
         compressionType.remove(compressionType.size() - 1);
         tileX.remove(tileX.size() - 1);
