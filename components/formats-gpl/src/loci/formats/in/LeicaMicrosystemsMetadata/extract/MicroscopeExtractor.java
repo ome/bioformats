@@ -87,21 +87,22 @@ public class MicroscopeExtractor {
 
   public static Objective extractObjective(LMSMainXmlNodes xmlNodes){
     Element setting = xmlNodes.getAtlSetting();
-    if (setting == null) return null;
-
-    Objective objective = new Objective();
-    // e.g. "HC PL APO    20x/0.70 DRY" or "HCX PL FLUOTAR    40x/0.75 DRY"
-    objective.model = setting.getAttribute("ObjectiveName");
-    objective.setCorrectionFromObjectiveName(objective.model);
-    String naS = setting.getAttribute("NumericalAperture");
-    objective.numericalAperture = Extractor.parseDouble(naS);
-    objective.objectiveNumber = setting.getAttribute("ObjectiveNumber");
-    String magnificationS = setting.getAttribute("Magnification");
-    objective.magnification = Extractor.parseDouble(magnificationS);
-    objective.immersion = setting.getAttribute("Immersion");
-    String refractionIndexS = setting.getAttribute("RefractionIndex");
-    objective.refractionIndex = Extractor.parseDouble(refractionIndexS);
-
-    return objective;
+    if (setting == null){
+      return xmlNodes.confocalSettingRecords.objectiveRecord;
+    } else {
+      Objective objective = new Objective();
+      // e.g. "HC PL APO    20x/0.70 DRY" or "HCX PL FLUOTAR    40x/0.75 DRY"
+      objective.model = setting.getAttribute("ObjectiveName");
+      objective.setCorrectionFromObjectiveName(objective.model);
+      String naS = setting.getAttribute("NumericalAperture");
+      objective.numericalAperture = Extractor.parseDouble(naS);
+      objective.objectiveNumber = setting.getAttribute("ObjectiveNumber");
+      String magnificationS = setting.getAttribute("Magnification");
+      objective.magnification = Extractor.parseDouble(magnificationS);
+      objective.immersion = setting.getAttribute("Immersion");
+      String refractionIndexS = setting.getAttribute("RefractionIndex");
+      objective.refractionIndex = Extractor.parseDouble(refractionIndexS);
+      return objective;
+    }
   }
 }
