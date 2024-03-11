@@ -34,6 +34,7 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
 
       String identifier = getAttributeValue(scannerRecord, "Identifier");
       String variant = getAttributeValue(scannerRecord, "Variant");
+      String description = getAttributeValue(scannerRecord, "Description");
 
       if (identifier.equals("dblPinhole")){
         records.pinholeSize = Extractor.parseDouble(variant) * METER_MULTIPLY;
@@ -43,6 +44,8 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
         records.reverseX = variant.equals("1");
       } else if (identifier.equals("eDirectionalY")){
         records.reverseY = variant.equals("1");
+      } else if (identifier.contains("Shutter") || description.contains("Shutter")){
+        extractShutterRecord(records, identifier, variant);
       }
     }
 
@@ -72,7 +75,44 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
     }
   }
 
-  public static void extractLaserRecord(ConfocalSettingRecords records, String objectName, String attribute, String variant){
+  private static void extractShutterRecord(ConfocalSettingRecords records, String identifier, String variant){
+    if (identifier.equals("bUseCARSLight"))
+      records.shutterInfo.cars = variant.equals("1");
+    else if (identifier.equals("bUseChaserUVShutter"))
+      records.shutterInfo.chaserUv = variant.equals("1");
+    else if (identifier.equals("bUseChaserVisibleShutter"))
+      records.shutterInfo.chaserVisible = variant.equals("1");
+    else if (identifier.equals("bUseFSOPOLight"))
+      records.shutterInfo.fsopo = variant.equals("1");
+    else if (identifier.equals("bUseMP2Shutter"))
+      records.shutterInfo.mp2 = variant.equals("1");
+    else if (identifier.equals("bUseMPShutter"))
+      records.shutterInfo.mp = variant.equals("1");
+    else if (identifier.equals("bUsePulsed635VisibleLight"))
+      records.shutterInfo.pulsed635 = variant.equals("1");
+    else if (identifier.equals("bUsePumpLight"))
+      records.shutterInfo.pump = variant.equals("1");
+    else if (identifier.equals("bUseSTED1Light"))
+      records.shutterInfo.sted1 = variant.equals("1");
+    else if (identifier.equals("bUseSTED2Light"))
+      records.shutterInfo.sted2 = variant.equals("1");
+    else if (identifier.equals("bUseSTED3Light"))
+      records.shutterInfo.sted3 = variant.equals("1");
+    else if (identifier.equals("bUseSTED4Light"))
+      records.shutterInfo.sted4 = variant.equals("1");
+    else if (identifier.equals("bUseStokesLight"))
+      records.shutterInfo.stokes = variant.equals("1");
+    else if (identifier.equals("bUseSuperContVisibleShutter"))
+      records.shutterInfo.superContinuumVisible = variant.equals("1");
+    else if (identifier.equals("bUseUV405Shutter"))
+      records.shutterInfo.uv405 = variant.equals("1");
+    else if (identifier.equals("bUseUVShutter"))
+      records.shutterInfo.uv = variant.equals("1");
+    else if (identifier.equals("bUseVisibleShutter"))
+      records.shutterInfo.visible = variant.equals("1");
+  }
+
+  private static void extractLaserRecord(ConfocalSettingRecords records, String objectName, String attribute, String variant){
     //e.g. "Laser (HeNe 543, visible)"
     Pattern pattern = Pattern.compile("Laser \\(([a-zA-Z | \\d | \\w]+), ([a-zA-Z | \\d | \\w]+)\\)");
     Matcher matcher = pattern.matcher(objectName);
@@ -102,7 +142,7 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
     }
   }
 
-  public static void extractDetectorRecord(ConfocalSettingRecords records, String objectName, String attribute, String data, String variant){
+  private static void extractDetectorRecord(ConfocalSettingRecords records, String objectName, String attribute, String data, String variant){
     Detector currentDetector = new Detector();
     boolean detectorAlreadyExists = false;
     
@@ -128,7 +168,7 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
     }
   }
 
-  public static void extractTurretRecord(ConfocalSettingRecords records, String objectName, String attribute, String variant){
+  private static void extractTurretRecord(ConfocalSettingRecords records, String objectName, String attribute, String variant){
     if (attribute.equals("Objective")){
       records.objectiveRecord.model = variant;
       records.objectiveRecord.setCorrectionFromObjectiveName(variant);
@@ -142,7 +182,7 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
     }
   }
 
-  public static void extractAotfRecord(ConfocalSettingRecords records, String objectName, String attribute, String data, String variant){
+  private static void extractAotfRecord(ConfocalSettingRecords records, String objectName, String attribute, String data, String variant){
     if (objectName.endsWith("Low") || objectName.contains("AOBS")) return;
 
     Aotf currentAotf = new Aotf();
@@ -184,6 +224,12 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
 
     if (!aotfAlreadyExists){
       currentAotf.name = objectName;
+      Pattern pattern = Pattern.compile("(\\S+) [AOTF|EOM].*");
+      Matcher matcher = pattern.matcher(objectName);
+      if (matcher.find()){
+        currentAotf.type = matcher.group(1);
+      }
+      
       records.aotfRecords.add(currentAotf);
     }
   }

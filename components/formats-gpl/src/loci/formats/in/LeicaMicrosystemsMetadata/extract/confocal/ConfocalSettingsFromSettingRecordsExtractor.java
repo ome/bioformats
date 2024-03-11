@@ -55,9 +55,27 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
   }
 
   private static List<LaserSetting> getLaserSettings(LMSMainXmlNodes xmlNodes){
+    // getting AOTF shutter info
+    for (Aotf aotf : xmlNodes.confocalSettingRecords.aotfRecords){
+      if (aotf.type.equals("Visible"))
+        aotf.shutterOpen = xmlNodes.confocalSettingRecords.shutterInfo.visible;
+      else if (aotf.type.equals("UV"))
+        aotf.shutterOpen = xmlNodes.confocalSettingRecords.shutterInfo.uv;
+      else if (aotf.type.equals("MP"))
+      aotf.shutterOpen = xmlNodes.confocalSettingRecords.shutterInfo.mp;
+    }
+
+    // getting laser shutter info
+    for (Laser laser : xmlNodes.confocalSettingRecords.laserRecords){
+      if (laser.wavelength == 405)
+        laser.shutterOpen = xmlNodes.confocalSettingRecords.shutterInfo.uv405;
+    }
+
     //map lasers to AOTFs' laser line settings
     List<LaserSetting> laserSettings = new ArrayList<>();
     for (Aotf aotf : xmlNodes.confocalSettingRecords.aotfRecords){
+      if (!aotf.shutterOpen) continue;
+      
       for (LaserSetting laserLineSetting : aotf.laserLineSettings){
         for (Laser laser : xmlNodes.confocalSettingRecords.laserRecords){
           if (laser.powerStateOn && laser.shutterOpen && (laser.wavelength == laserLineSetting.wavelength || 
@@ -92,7 +110,7 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
         laserSetting.intensity = 1;
         laserSetting.wavelength = laser.wavelength;
         laserSetting.laser = laser;
-        laserSettings.add(laserSetting); 
+        laserSettings.add(laserSetting);
       }
     }
 
