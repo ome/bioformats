@@ -186,7 +186,7 @@ public class ColumbusReader extends FormatReader {
     Plane p = null;
     for (Plane plane : planes) {
       if (plane.series == getSeries() && plane.timepoint == zct[2] &&
-        plane.channel == zct[1])
+        plane.channel == zct[1] && plane.z == zct[0])
       {
         p = plane;
         break;
@@ -287,6 +287,9 @@ public class ColumbusReader extends FormatReader {
         if (p1.channel != p2.channel) {
           return p1.channel - p2.channel;
         }
+        if (p1.z != p2.z) {
+          return p1.z - p2.z;
+        }
 
         return 0;
       }
@@ -303,6 +306,7 @@ public class ColumbusReader extends FormatReader {
 
     m.sizeC = 0;
     m.sizeT = 0;
+    m.sizeZ = 0;
 
     ArrayList<Integer> uniqueSamples = new ArrayList<Integer>();
     ArrayList<Integer> uniqueRows = new ArrayList<Integer>();
@@ -332,10 +336,12 @@ public class ColumbusReader extends FormatReader {
       if (p.timepoint >= getSizeT()) {
         m.sizeT = p.timepoint + 1;
       }
-
+      if (p.z >= getSizeZ()) {
+        m.sizeZ = p.z + 1;
+      }
     }
 
-    m.sizeZ = 1;
+    
     m.imageCount = getSizeZ() * getSizeC() * getSizeT();
     m.dimensionOrder = "XYCTZ";
     m.rgb = false;
@@ -376,7 +382,7 @@ public class ColumbusReader extends FormatReader {
         store.setWellColumn(new NonNegativeInteger(col), 0, nextWell);
 
         for (int field=0; field<nFields; field++) {
-          Plane p = lookupPlane(row, col, field, 0, 0);
+          Plane p = lookupPlane(row, col, field, 0, 0, 0);
           String wellSampleID = MetadataTools.createLSID("WellSample", 0, nextWell, field);
           store.setWellSampleID(wellSampleID, 0, nextWell, field);
           store.setWellSampleIndex(new NonNegativeInteger(wellSample), 0, nextWell, field);
@@ -401,7 +407,7 @@ public class ColumbusReader extends FormatReader {
             store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(p.sizeY), p.series);
 
             for (int c=0; c<getSizeC(); c++) {
-              p = lookupPlane(row, col, field, 0, c);
+              p = lookupPlane(row, col, field, 0, c, 0);
               if (p != null) {
                 p.series = wellSample;
                 store.setChannelName(p.channelName, p.series, p.channel);
@@ -417,10 +423,20 @@ public class ColumbusReader extends FormatReader {
               }
 
               for (int t=0; t<getSizeT(); t++) {
-                p = lookupPlane(row, col, field, t, c);
+                p = lookupPlane(row, col, field, t, c, 0);
                 if (p != null) {
                   p.series = wellSample;
                   store.setPlaneDeltaT(new Time(p.deltaT - timestampSeconds, UNITS.SECOND), p.series, getIndex(0, c, t));
+                }
+                for (int z=0; z<getSizeZ(); z++) {
+                  p = lookupPlane(row, col, field, t, c, z);
+                  if (p != null) {
+                    p.series = wellSample;
+                    
+                    store.setPlanePositionX(new Length(p.positionX, UNITS.REFERENCEFRAME), p.series, getIndex(z, c, t));
+                    store.setPlanePositionY(new Length(p.positionY, UNITS.REFERENCEFRAME), p.series, getIndex(z, c, t));
+                    store.setPlanePositionZ(new Length(p.positionZ, UNITS.REFERENCEFRAME), p.series, getIndex(z, c, t));
+                  }
                 }
               }
             }
@@ -504,6 +520,9 @@ public class ColumbusReader extends FormatReader {
         else if (name.equals("FieldID")) {
           p.field = Integer.parseInt(value) - 1;
         }
+        else if (name.equals("PlaneID")) {
+          p.z = Integer.parseInt(value) - 1;
+        }
         else if (name.equals("TimepointID")) {
           p.timepoint = Integer.parseInt(value) - 1;
           if (p.timepoint == 0) {
@@ -584,16 +603,16 @@ public class ColumbusReader extends FormatReader {
     return v;
   }
 
-  private Plane lookupPlane(int row, int col, int field, int t, int c) {
+  private Plane lookupPlane(int row, int col, int field, int t, int c, int z) {
     for (Plane p : planes) {
       if (p.row == row && p.col == col && p.field == field &&
-        p.timepoint == t && p.channel == c)
+        p.timepoint == t && p.channel == c && p.z == z)
       {
         return p;
       }
     }
-    LOGGER.warn("Could not find plane for row={}, column={}, field={}, t={}, c={}",
-      new Object[] {row, col, field, t, c});
+    LOGGER.warn("Could not find plane for row={}, column={}, field={}, t={}, c={}, z={}",
+      new Object[] {row, col, field, t, c, z});
     return null;
   }
 
@@ -725,6 +744,7 @@ public class ColumbusReader extends FormatReader {
     public int field;
     public int timepoint;
     public int channel;
+    public int z;
     public double deltaT;
     public double emWavelength;
     public double exWavelength;
