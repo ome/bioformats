@@ -44,12 +44,19 @@ public class DetectorExtractor extends Extractor {
 
       detector.model = detectorNode.getAttribute("Name");
       detector.type = detectorNode.getAttribute("Type");
+      detector.channel = parseInt(detectorNode.getAttribute("Channel"));
       detector.zoom = zoom;
       detector.detectorListIndex = detectorListIndex;
 
         // SP5: detectors in ATL settings have no names, this information can be found in filter setting records
-      if (detector.model.isEmpty() && records != null && records.detectorRecords.size() > i)
-        detector.model = records.detectorRecords.get(i).model;
+      if (detector.model.isEmpty() && records != null){
+        for (Detector detectorRecord : records.detectorRecords){
+          if (detector.channel == detectorRecord.channel){
+            detector.model = detectorRecord.model;
+            break;
+          }
+        }
+      }
 
       detectors.add(detector);
 

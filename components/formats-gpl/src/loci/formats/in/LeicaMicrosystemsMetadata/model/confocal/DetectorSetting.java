@@ -48,6 +48,7 @@ public class DetectorSetting {
   public double readOutRate;
   public double cutIn;
   public double cutOut;
+  public Multiband multiband;
   //only available in STELLARIS:
   public int referenceLineWavelength;
   public String referenceLineName;

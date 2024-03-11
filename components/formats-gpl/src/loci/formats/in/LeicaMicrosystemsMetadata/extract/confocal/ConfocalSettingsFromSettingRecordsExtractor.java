@@ -44,6 +44,7 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
           detectorSetting.cutIn = multiband.leftWorld;
           detectorSetting.cutOut = multiband.rightWorld;
           detectorSetting.dyeName = multiband.dyeName;
+          detectorSetting.multiband = multiband;
           break;
         }
       }

@@ -88,6 +88,9 @@ public class ConfocalSettingsWriter {
       // Filter settings
       String filterId = MetadataTools.createLSID("Filter", seriesIndex, i);
       store.setFilterID(filterId, seriesIndex, i);
+      if (channelSetting.detectorSetting.multiband != null && !channelSetting.detectorSetting.multiband.name.isEmpty())
+        store.setFilterModel(channelSetting.detectorSetting.multiband.name, seriesIndex, i);
+      else
       store.setFilterModel(channelSetting.detectorSetting.name, seriesIndex, i);
       store.setTransmittanceRangeCutIn(FormatTools.getCutIn(channelSetting.detectorSetting.cutIn), seriesIndex, i);
       store.setTransmittanceRangeCutOut(FormatTools.getCutOut(channelSetting.detectorSetting.cutOut), seriesIndex, i);
@@ -95,7 +98,10 @@ public class ConfocalSettingsWriter {
       String filterSetId = MetadataTools.createLSID("FilterSet", seriesIndex, i);
       store.setFilterSetID(filterSetId, seriesIndex, i);
       store.setFilterSetEmissionFilterRef(filterId, seriesIndex, i, i);
-      store.setFilterSetModel(channelSetting.detectorSetting.name, seriesIndex, i);
+      if (channelSetting.detectorSetting.multiband != null && !channelSetting.detectorSetting.multiband.name.isEmpty())
+        store.setFilterSetModel(channelSetting.detectorSetting.multiband.name, seriesIndex, i);
+      else
+        store.setFilterSetModel(channelSetting.detectorSetting.name, seriesIndex, i);
       store.setLightPathEmissionFilterRef(filterId, seriesIndex, i, 0);
 
       // Laser / light source settings

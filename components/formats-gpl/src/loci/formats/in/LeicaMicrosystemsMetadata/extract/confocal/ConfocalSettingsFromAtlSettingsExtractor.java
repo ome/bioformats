@@ -112,8 +112,11 @@ public class ConfocalSettingsFromAtlSettingsExtractor extends Extractor {
   private static void mapInstrumentDetectorsToChannelDetectorSettings(ConfocalAcquisitionSettings acquisitionSettings){
     for (ConfocalChannelSetting channelSetting : acquisitionSettings.channelSettings){
       for (Detector detector : acquisitionSettings.detectors){
-        if (channelSetting.detectorSetting.name.equals(detector.model) || channelSetting.detectorSetting.detectorListIndex == detector.detectorListIndex){
+        if (channelSetting.detectorSetting.name.equals(detector.model) || //SP8, STELLARIS
+          channelSetting.detectorSetting.channel == detector.channel || // SP5
+          channelSetting.detectorSetting.detectorListIndex == detector.detectorListIndex){
           channelSetting.detectorSetting.detector = detector;
+          channelSetting.detectorSetting.name = detector.model;
           break;
         }
       }
