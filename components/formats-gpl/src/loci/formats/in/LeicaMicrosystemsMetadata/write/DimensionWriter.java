@@ -160,7 +160,9 @@ public class DimensionWriter {
       (long) (acquiredDate * 1000), DateTools.COBOL,
       DateTools.ISO8601_FORMAT, false)), seriesIndex);
 
-    for (int planeIndex = 0; planeIndex < dimensionStore.getNumberOfPlanesPerTile(); planeIndex++){
+    int nPlanesPerTile = dimensionStore.getNumberOfPlanesPerTile();
+    if (reader.isRGB()) nPlanesPerTile /= 3;
+    for (int planeIndex = 0; planeIndex < nPlanesPerTile; planeIndex++){
       if (planeIndex < timestamps.size()){
         double timestamp = timestamps.get(planeIndex);
         if (timestamps.get(0) == acquiredDate) {
@@ -192,6 +194,7 @@ public class DimensionWriter {
 
     Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(tileIndex);
     int nPlanesPerTile = dimensionStore.getNumberOfPlanesPerTile();
+    if (reader.isRGB()) nPlanesPerTile /= 3;
     for (int planeIndexWithinTile = 0; planeIndexWithinTile < nPlanesPerTile; planeIndexWithinTile++){
       store.setPlanePositionX(fieldPosition.first, seriesIndex, planeIndexWithinTile);
       store.setPlanePositionY(fieldPosition.second, seriesIndex, planeIndexWithinTile);
