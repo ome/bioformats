@@ -228,7 +228,7 @@ public class PCIReader extends FormatReader {
     for (String name : allFiles) {
       int separator = name.lastIndexOf(File.separator);
       String parent = name.substring(0, separator);
-      String relativePath = name.substring(separator + 1);
+      String relativePath = name.substring(separator + 1).trim();
       RandomAccessInputStream stream = null;
 
       if (!(relativePath.startsWith("Bitmap") ||
@@ -296,7 +296,7 @@ public class PCIReader extends FormatReader {
           else if (relativePath.indexOf("Time_From_Start") != -1) {
             timestamps.put(getTimestampIndex(parent), stream.readDouble());
           }
-          else if (relativePath.indexOf("Position_Z") != -1) {
+          else if (relativePath.endsWith("Position_Z")) {
             double zPos = stream.readDouble();
             if (!uniqueZ.contains(zPos) && getSizeZ() <= 1)
             {
