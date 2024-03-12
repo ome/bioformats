@@ -228,7 +228,7 @@ public class PCIReader extends FormatReader {
     for (String name : allFiles) {
       int separator = name.lastIndexOf(File.separator);
       String parent = name.substring(0, separator);
-      String relativePath = name.substring(separator + 1);
+      String relativePath = name.substring(separator + 1).trim();
       RandomAccessInputStream stream = null;
 
       if (!(relativePath.startsWith("Bitmap") ||
