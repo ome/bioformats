@@ -41,10 +41,10 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader;
-import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
-import loci.formats.in.LeicaMicrosystemsMetadata.doc.LifImageXmlDocument;
-import loci.formats.in.LeicaMicrosystemsMetadata.doc.LifXmlDocument;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LMSImageXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LifImageXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LifXmlDocument;
 import loci.formats.services.OMEXMLService;
 
 /**

@@ -37,9 +37,9 @@ import org.apache.commons.io.comparator.PathFileComparator;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.*;
-import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
-import loci.formats.in.LeicaMicrosystemsMetadata.doc.XlefDocument;
-import loci.formats.in.LeicaMicrosystemsMetadata.doc.XlifDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LMSImageXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.XlefDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.XlifDocument;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 

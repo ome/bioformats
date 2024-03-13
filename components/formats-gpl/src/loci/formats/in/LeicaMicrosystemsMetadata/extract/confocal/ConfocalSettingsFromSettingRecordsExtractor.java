@@ -40,7 +40,8 @@ import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.LaserSetting;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Multiband;
 
 /**
- * Helper class for extracting confocal acquisition settings from filter and scanner setting records
+ * Helper class for extracting confocal acquisition settings from preprocessed filter and scanner setting records
+ * (see {@link ConfocalSettingRecords})
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */

@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.doc;
+package loci.formats.in.LeicaMicrosystemsMetadata.xml;
 
 import java.io.File;
 import java.io.FileInputStream;

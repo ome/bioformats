@@ -32,7 +32,7 @@ import java.util.List;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LMSImageXmlDocument;
 import loci.formats.meta.MetadataStore;
 
 /**

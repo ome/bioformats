@@ -34,7 +34,6 @@ import org.w3c.dom.Element;
 
 import loci.formats.CoreMetadata;
 import loci.formats.MetadataTools;
-import loci.formats.in.LeicaMicrosystemsMetadata.doc.LMSImageXmlDocument;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.ChannelExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.DimensionExtractor;
 import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
@@ -65,6 +64,7 @@ import loci.formats.in.LeicaMicrosystemsMetadata.write.DimensionWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.write.ImageSettingsWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.write.InstrumentWriter;
 import loci.formats.in.LeicaMicrosystemsMetadata.write.WidefieldSettingsWriter;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LMSImageXmlDocument;
 import loci.formats.meta.MetadataStore;
 
 /**

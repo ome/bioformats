@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata.doc;
+package loci.formats.in.LeicaMicrosystemsMetadata.xml;
 
 import org.w3c.dom.Node;
 
