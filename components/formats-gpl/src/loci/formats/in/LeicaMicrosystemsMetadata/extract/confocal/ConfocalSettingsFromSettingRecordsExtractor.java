@@ -89,6 +89,7 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
   private static List<LaserSetting> getLaserSettings(LMSMainXmlNodes xmlNodes){
     // getting AOTF shutter info
     for (Aotf aotf : xmlNodes.confocalSettingRecords.aotfRecords){
+      if (aotf.type == null) continue;
       if (aotf.type.equals("Visible"))
         aotf.shutterOpen = xmlNodes.confocalSettingRecords.shutterInfo.visible;
       else if (aotf.type.equals("UV"))
@@ -169,7 +170,7 @@ public class ConfocalSettingsFromSettingRecordsExtractor extends Extractor {
         LaserSetting selectedLaserSetting = null;
         for (LaserSetting laserSetting : laserSettings) {
           if (laserSetting.wavelength < detectorSetting.cutIn) {
-            if (selectedLaserSetting == null || selectedLaserSetting.laser.wavelength < laserSetting.laser.wavelength)
+            if (selectedLaserSetting == null || (laserSetting.laser != null && selectedLaserSetting.laser.wavelength < laserSetting.laser.wavelength))
               selectedLaserSetting = laserSetting;
           }
         }

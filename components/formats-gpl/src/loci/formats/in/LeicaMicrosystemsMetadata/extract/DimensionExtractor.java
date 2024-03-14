@@ -102,7 +102,16 @@ public class DimensionExtractor extends Extractor {
         dimensionStore.extras *= dimension.size;
     }
   
-    dimensionStore.addChannelDimension();
+    if (dimensionStore.getDimension(DimensionKey.X) == null) {
+      dimensionStore.addDimension(new Dimension(DimensionKey.X, 1, 1, "m", 1.0, 0.0, useOldPhysicalSizeCalculation));
+    }
+    if (dimensionStore.getDimension(DimensionKey.Y) == null) {
+      dimensionStore.addDimension(new Dimension(DimensionKey.Y, 1, 1, "m", 1.0, 0.0, useOldPhysicalSizeCalculation));
+    }
+
+    if (dimensionStore.getDimension(DimensionKey.C) == null) 
+      dimensionStore.addChannelDimension();
+
     dimensionStore.addMissingDimensions();
   }
 
@@ -114,6 +123,8 @@ public class DimensionExtractor extends Extractor {
 
     for (int channelIndex = 0; channelIndex < dimensionStore.channels.size(); channelIndex++){
       int logicalChannelIndex = dimensionStore.rgb ? channelIndex / 3 : channelIndex;
+      if (xmlNodes.widefieldChannelInfos.size() <= logicalChannelIndex) break;
+
       String exposureTimeS = Extractor.getAttributeValue(xmlNodes.widefieldChannelInfos.get(logicalChannelIndex), "ExposureTime");
       dimensionStore.channels.get(channelIndex).exposureTime = Extractor.parseDouble(exposureTimeS);
     }

@@ -62,6 +62,8 @@ public class LaserExtractor extends Extractor {
     if (laserArray == null)
       laserArray = getChildNodeWithName(alternativeSetting, "LaserArray");
 
+    if (laserArray == null) return lasers;
+
     NodeList laserNodes = laserArray.getChildNodes();
 
     for (int i = 0; i < laserNodes.getLength(); i++) {

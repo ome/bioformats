@@ -106,7 +106,8 @@ public class ConfocalSettingsWriter {
 
       // Laser / light source settings
       if (channelSetting.laserSetting != null){
-        store.setChannelLightSourceSettingsID(channelSetting.laserSetting.laser.laserId, seriesIndex, i);
+        if (channelSetting.laserSetting.laser != null)
+          store.setChannelLightSourceSettingsID(channelSetting.laserSetting.laser.laserId, seriesIndex, i);
         PercentFraction attenuation = new PercentFraction((float) channelSetting.laserSetting.intensity / 100f);
         store.setChannelLightSourceSettingsAttenuation(attenuation, seriesIndex, i);
         store.setChannelExcitationWavelength(FormatTools.getWavelength(channelSetting.laserSetting.wavelength), seriesIndex, i);

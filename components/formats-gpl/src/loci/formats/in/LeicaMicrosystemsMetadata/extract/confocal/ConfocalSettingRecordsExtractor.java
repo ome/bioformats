@@ -258,6 +258,8 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
       Matcher matcher = pattern.matcher(objectName);
       if (matcher.find()){
         currentAotf.type = matcher.group(1);
+      } else {
+        System.out.println("aotf type could not be detected: " + objectName);
       }
       
       records.aotfRecords.add(currentAotf);
