@@ -310,15 +310,33 @@ public class DicomTag implements Comparable<DicomTag> {
                 break;
               }
               else if (child.attribute == PIXEL_DATA) {
-                stop = fp;
-                break;
+                child.parent = this;
+                children.add(child);
+                if (child.elementLength == -1) {
+                  // look for end of sequence
+                  long seek = fp - 2;
+                  int nextTag = 0;
+                  while (seek < in.length() && (nextTag != SEQUENCE_DELIMITATION_ITEM.getTag() && nextTag != ITEM_DELIMITATION_ITEM.getTag())) {
+                    seek += 2;
+                    in.seek(seek);
+                    try {
+                      nextTag = getNextTag(in);
+                    }
+                    catch (Exception e) {
+                    }
+                    if (nextTag == 0xfeffdde0 || nextTag == 0xfeff0d0e) {
+                      in.order(!in.isLittleEndian());
+                      break;
+                    }
+                  }
+                }
               }
               else if (child.attribute != ITEM && child.attribute != ITEM_DELIMITATION_ITEM) {
                 child.parent = this;
                 children.add(child);
               }
             }
-            if (elementLength == 0) {
+            if (elementLength <= 0) {
               elementLength = (int) (stop - start);
             }
             in.seek(stop);
@@ -438,6 +456,7 @@ public class DicomTag implements Comparable<DicomTag> {
 
     switch (vr) {
       case OB:
+      case OV:
       case OW:
       case SQ:
       case UN:
