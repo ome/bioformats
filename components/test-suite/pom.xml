@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>file-leak-detector</artifactId>
-      <version>1.15</version>
+      <version>${file-leak-detector.version}</version>
       <!-- the regular jar does not specify a main class -->
       <classifier>jar-with-dependencies</classifier>
       <exclusions>
@@ -128,6 +128,27 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>jdk8-compatible</id>
+      <activation>
+        <jdk>(,11)</jdk>
+      </activation>
+      <properties>
+        <file-leak-detector.version>1.15</file-leak-detector.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>jdk21-compatible</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <file-leak-detector.version>1.18</file-leak-detector.version>
+      </properties>
+    </profile>
+  </profiles>
 
   <developers>
     <developer>
