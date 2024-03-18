@@ -82,9 +82,20 @@ plane = r.openBytes(...
     ip.Results.iPlane - 1, ip.Results.x - 1, ip.Results.y - 1, ...
     ip.Results.width, ip.Results.height);
 
-% Convert byte array to MATLAB image
-I = javaMethod('makeDataArray2D', 'loci.common.DataTools', plane, ...
-    bpp, fp, little, ip.Results.height);
+% Convert byte array into the appropriate primitive type array which
+% Octave and Matlab then autobox into their own array type.
+if is_octave()
+    % Octave will not autobox multi-dimensional arrays, so use
+    % makeDataArray (returns 1D vector) instead of makeDataArray2D
+    % See https://github.com/ome/bio-formats-octave-docker/issues/29
+    I = javaMethod('makeDataArray', 'loci.common.DataTools', plane, ...
+        bpp, fp, little);
+    I = reshape(I, [ip.Results.width ip.Results.height]).';
+else
+    I = javaMethod('makeDataArray2D', 'loci.common.DataTools', plane, ...
+        bpp, fp, little, ip.Results.height);
+end
+
 if ~sgn
     % Java does not have explicitly unsigned data types;
     % hence, we must inform MATLAB when the data is unsigned
