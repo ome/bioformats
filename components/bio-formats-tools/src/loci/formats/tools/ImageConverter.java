@@ -70,6 +70,7 @@ import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
+import loci.formats.codec.CodecOptions;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
@@ -132,6 +133,8 @@ public final class ImageConverter {
   private Byte fillColor = null;
   private boolean precompressed = false;
   private boolean tryPrecompressed = false;
+
+  private Double compressionQuality = null;
 
   private String extraMetadata = null;
 
@@ -273,6 +276,9 @@ public final class ImageConverter {
         else if (args[i].equals("-extra-metadata")) {
           extraMetadata = args[++i];
         }
+        else if (args[i].equals("-quality")) {
+          compressionQuality = DataTools.parseDouble(args[++i]);
+        }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -349,7 +355,7 @@ public final class ImageConverter {
       "    [-option key value] [-novalid] [-validate] [-tilex tileSizeX]", 
       "    [-tiley tileSizeY] [-pyramid-scale scale]", 
       "    [-swap dimensionsOrderString] [-fill color]",
-      "    [-precompressed]",
+      "    [-precompressed] [-quality compressionQuality]",
       "    [-pyramid-resolutions numResolutionLevels] in_file out_file",
       "",
       "            -version: print the library version and exit",
@@ -398,6 +404,7 @@ public final class ImageConverter {
       "                      Most input and output formats do not support this option.",
       "                      Do not use -crop, -fill, or -autoscale, or pyramid generation options",
       "                      with this option.",
+      "            -quality: double quality value for JPEG compression (0-1)",
       "",
       "The extension of the output file specifies the file format to use",
       "for the conversion. The list of available formats and extensions is:",
@@ -774,6 +781,7 @@ public final class ImageConverter {
             if (!ok) {
               return false;
             }
+            setCodecOptions(writer);
             writer.setId(outputName);
             if (compression != null) writer.setCompression(compression);
           }
@@ -793,6 +801,7 @@ public final class ImageConverter {
               if (!ok) {
                 return false;
               }
+              setCodecOptions(writer);
               writer.setId(tileName);
               if (compression != null) writer.setCompression(compression);
             }
@@ -995,6 +1004,7 @@ public final class ImageConverter {
           writer.setMetadataRetrieve(retrieve);
 
           overwriteCheck(tileName, true);
+          setCodecOptions(writer);
           writer.setId(tileName);
           if (compression != null) writer.setCompression(compression);
 
@@ -1265,6 +1275,14 @@ public final class ImageConverter {
     }
     checkedPaths.put(path, true);
     return true;
+  }
+
+  private void setCodecOptions(IFormatWriter writer) {
+    if (compressionQuality != null) {
+      CodecOptions codecOptions = CodecOptions.getDefaultOptions();
+      codecOptions.quality = compressionQuality;
+      writer.setCodecOptions(codecOptions);
+    }
   }
 
   // -- Main method --

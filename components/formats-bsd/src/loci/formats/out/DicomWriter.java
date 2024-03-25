@@ -532,7 +532,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     }
     else {
       Codec codec = getCodec();
-      CodecOptions options = new CodecOptions();
+      CodecOptions options = new CodecOptions(getCodecOptions());
       options.width = tileWidth[resolutionIndex];
       options.height = tileHeight[resolutionIndex];
       options.channels = getSamplesPerPixel();
