@@ -1866,10 +1866,12 @@ public class FormatReaderTest {
         msg = "Used files list contains duplicates";
       }
 
-      if (base.length == 1) {
-        if (!base[0].equals(file)) success = false;
+      if (!base[0].equals(file)) {
+          success = false;
+          msg = "Used files does not start with getCurrentFile";
       }
-      else if (success) {
+
+      if (success) {
         Arrays.sort(base);
         IFormatReader r =
           /*config.noStitching() ? new ImageReader() :*/ new ImageReader();
