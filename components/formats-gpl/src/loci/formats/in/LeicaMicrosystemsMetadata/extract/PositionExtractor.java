@@ -55,7 +55,7 @@ public class PositionExtractor extends Extractor {
     NodeList attachments = Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "Attachment");
     Element tilescanInfo = (Element)Extractor.getNodeWithAttribute(attachments, "Name", "TileScanInfo");
     
-    //XY positions
+    // flipX, flipY, swapXY
     if (tilescanInfo != null){
       String flipXS = getAttributeValue(tilescanInfo, "FlipX");
       dimensionStore.flipX = flipXS.equals("1");
@@ -65,7 +65,19 @@ public class PositionExtractor extends Extractor {
 
       String swapXYS = getAttributeValue(tilescanInfo, "SwapXY");
       dimensionStore.swapXY = swapXYS.equals("1");
+    } else {
+      String flipXS = getAttributeValue(mainSetting, "FlipX");
+      dimensionStore.flipX = flipXS.equals("1");
+      
+      String flipYS = getAttributeValue(mainSetting, "FlipY");
+      dimensionStore.flipY = flipYS.equals("1");
+  
+      String swapXYS = getAttributeValue(mainSetting, "SwapXY");
+      dimensionStore.swapXY = swapXYS.equals("1");
+    }
 
+    // get XY(Z) field positions from tilescan info
+    if (tilescanInfo != null){
       NodeList tiles = tilescanInfo.getChildNodes();
       for (int i = 0; i < tiles.getLength(); i++){
         Element tile;
@@ -79,30 +91,25 @@ public class PositionExtractor extends Extractor {
         Length fieldPosX = parseLength(fieldPosXS, UNITS.METER);
         String fieldPosYS = getAttributeValue(tile, "PosY");
         Length fieldPosY = parseLength(fieldPosYS, UNITS.METER);
-        dimensionStore.fieldPositions.add(new Tuple<Length,Length>(fieldPosX, fieldPosY));
-
+        String fieldPosZS = getAttributeValue(tile, "PosZ");
+        Length fieldPosZ = null;
+        if (!fieldPosZS.isEmpty()){
+          dimensionStore.tilescanInfoHasZ = true;
+          fieldPosZ = parseLength(fieldPosZS, UNITS.METER);
+        }
+        dimensionStore.fieldPositions.add(new Tuple<Length,Length,Length>(fieldPosX, fieldPosY, fieldPosZ));
       }
     } else {
-      String flipXS = getAttributeValue(mainSetting, "FlipX");
-      dimensionStore.flipX = flipXS.equals("1");
-      
-      String flipYS = getAttributeValue(mainSetting, "FlipY");
-      dimensionStore.flipY = flipYS.equals("1");
-  
-      String swapXYS = getAttributeValue(mainSetting, "SwapXY");
-      dimensionStore.swapXY = swapXYS.equals("1");
-    }
-
-    if (dimensionStore.fieldPositions.size() == 0){
       String fieldPosXS = getAttributeValue(mainSetting, "StagePosX");
       Length fieldPosX = parseLength(fieldPosXS, UNITS.METER);
       String fieldPosYS = getAttributeValue(mainSetting, "StagePosY");
       Length fieldPosY = parseLength(fieldPosYS, UNITS.METER);
-      dimensionStore.fieldPositions.add(new Tuple<Length,Length>(fieldPosX, fieldPosY));
+      dimensionStore.fieldPositions.add(new Tuple<Length,Length,Length>(fieldPosX, fieldPosY, null));
     }
 
+    // swapping and flipping
     for (int planeIndex = 0; planeIndex < dimensionStore.fieldPositions.size(); planeIndex++){
-      Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(planeIndex);
+      Tuple<Length,Length,Length> fieldPosition = dimensionStore.fieldPositions.get(planeIndex);
 
       if (dimensionStore.swapXY){
         Length temp = fieldPosition.first;
@@ -117,7 +124,7 @@ public class PositionExtractor extends Extractor {
         fieldPosition.second = flip(fieldPosition.second);
     }
 
-    //Z
+    // extract additional Z drive / position values
     String beginS = getAttributeValue(mainSetting, "Begin");
     dimensionStore.zBegin = parseDouble(beginS);
     String endS = getAttributeValue(mainSetting, "End");

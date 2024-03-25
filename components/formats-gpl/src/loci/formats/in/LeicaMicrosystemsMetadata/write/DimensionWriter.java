@@ -187,26 +187,30 @@ public class DimensionWriter {
    * Writes field positions to reader's {@link MetadataStore}
    */
   public static void writeFieldPositions(MetadataStore store, DimensionStore dimensionStore, LMSFileReader reader, int seriesIndex, int tileIndex) {
-    //XY
+    //XY(Z)
     reader.addSeriesMeta("Reverse X orientation", dimensionStore.flipX);
     reader.addSeriesMeta("Reverse Y orientation", dimensionStore.flipY);
     reader.addSeriesMeta("Swap XY orientation", dimensionStore.swapXY);
 
-    Tuple<Length,Length> fieldPosition = dimensionStore.fieldPositions.get(tileIndex);
+    Tuple<Length,Length, Length> fieldPosition = dimensionStore.fieldPositions.get(tileIndex);
     int nPlanesPerTile = dimensionStore.getNumberOfPlanesPerTile();
     if (reader.isRGB()) nPlanesPerTile /= 3;
     for (int planeIndexWithinTile = 0; planeIndexWithinTile < nPlanesPerTile; planeIndexWithinTile++){
       store.setPlanePositionX(fieldPosition.first, seriesIndex, planeIndexWithinTile);
       store.setPlanePositionY(fieldPosition.second, seriesIndex, planeIndexWithinTile);
+      if (fieldPosition.third != null)
+        store.setPlanePositionZ(fieldPosition.third, seriesIndex, planeIndexWithinTile);
     }
 
     //Z
-    for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
-      int sign = dimensionStore.zBegin <= dimensionStore.zEnd ? 1 : -1;
-      int zIndex = reader.getZCTCoords(planeIndex)[0];
-      double otherZDrivePos = dimensionStore.zDriveMode == ZDriveMode.ZGalvo ? dimensionStore.zWidePosition : dimensionStore.zGalvoPosition;
-      Length zPos = FormatTools.createLength(otherZDrivePos + dimensionStore.zBegin + dimensionStore.zStep * sign * zIndex, UNITS.METER);
-      store.setPlanePositionZ(zPos, seriesIndex, planeIndex);
+    if (!dimensionStore.tilescanInfoHasZ){
+      for (int planeIndex = 0; planeIndex < reader.getImageCount(); planeIndex++){
+        int sign = dimensionStore.zBegin <= dimensionStore.zEnd ? 1 : -1;
+        int zIndex = reader.getZCTCoords(planeIndex)[0];
+        double otherZDrivePos = dimensionStore.zDriveMode == ZDriveMode.ZGalvo ? dimensionStore.zWidePosition : dimensionStore.zGalvoPosition;
+        Length zPos = FormatTools.createLength(otherZDrivePos + dimensionStore.zBegin + dimensionStore.zStep * sign * zIndex, UNITS.METER);
+        store.setPlanePositionZ(zPos, seriesIndex, planeIndex);
+      }
     }
   }
 

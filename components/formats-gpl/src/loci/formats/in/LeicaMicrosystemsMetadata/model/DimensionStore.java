@@ -50,8 +50,8 @@ public class DimensionStore {
     public double zEnd;
     public double zWidePosition = 0;
     public double zGalvoPosition = 0;
-    public List<Tuple<Length, Length>> fieldPositions = new ArrayList<Tuple<Length,Length>>();
-    public List<Length> zPositions = new ArrayList<Length>();
+    public List<Tuple<Length, Length, Length>> fieldPositions = new ArrayList<Tuple<Length,Length, Length>>();
+    public boolean tilescanInfoHasZ = false;
     public boolean flipX;
     public boolean flipY;
     public boolean swapXY;
