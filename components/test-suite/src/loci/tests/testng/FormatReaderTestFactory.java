@@ -67,6 +67,8 @@ public class FormatReaderTestFactory {
 
   @Factory
   public Object[] createInstances() {
+    LOGGER.info("java.version = {}", System.getProperty("java.version"));
+
     List<String> files = new ArrayList<String>();
 
     // parse explicit filename, if any
