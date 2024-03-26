@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import ome.units.quantity.Length;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-class ROI {
+public class ROI {
     // -- Constants --
 
     public static final int TEXT = 512;

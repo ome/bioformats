@@ -35,7 +35,9 @@ import loci.formats.FormatReader;
 import loci.formats.in.LOFReader;
 import loci.formats.in.JPEGReader;
 import loci.formats.in.TiffDelegateReader;
-import loci.formats.in.LeicaMicrosystemsMetadata.Dimension.DimensionKey;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.XlifDocument;
 import loci.formats.in.BMPReader;
 import loci.formats.in.APNGReader;
 
@@ -183,10 +185,6 @@ public class MultipleImagesReader extends LMSFileReader {
     return imageFormat;
   }
 
-  public void setMetadataTempBuffer(MetadataTempBuffer metaTemp){
-    this.metaTemp = metaTemp;
-  }
-
   public void setCoreMetadata(CoreMetadata cmd){
     if (core == null){
       core = new ArrayList<CoreMetadata>();
@@ -207,12 +205,12 @@ public class MultipleImagesReader extends LMSFileReader {
       int sizeS = tileCount;
 
       List<FormatReader> newOrder = new ArrayList<FormatReader>();
-      List<Dimension> dimensions = metaTemp.getDimensions(imageIndex);
+      List<Dimension> dimensions = metadataTranslators.get(imageIndex).dimensionStore.getDimensions();
 
-      Dimension dimZ = metaTemp.getDimension(imageIndex, DimensionKey.Z);
-      Dimension dimC = metaTemp.getDimension(imageIndex, DimensionKey.C);
-      Dimension dimT = metaTemp.getDimension(imageIndex, DimensionKey.T);
-      Dimension dimS = metaTemp.getDimension(imageIndex, DimensionKey.S);
+      Dimension dimZ = metadataTranslators.get(imageIndex).dimensionStore.getDimension(DimensionKey.Z);
+      Dimension dimC = metadataTranslators.get(imageIndex).dimensionStore.getDimension(DimensionKey.C);
+      Dimension dimT = metadataTranslators.get(imageIndex).dimensionStore.getDimension(DimensionKey.T);
+      Dimension dimS = metadataTranslators.get(imageIndex).dimensionStore.getDimension(DimensionKey.S);
 
       //iterating through dimensions in desired order
       for (int indexDim5 = 0; indexDim5 < dimensions.get(5).size; indexDim5++){

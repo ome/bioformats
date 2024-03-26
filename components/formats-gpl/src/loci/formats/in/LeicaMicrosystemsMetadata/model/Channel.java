@@ -23,7 +23,11 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
+
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.DetectorSetting;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.LaserSetting;
+import ome.xml.model.primitives.Color;
 
 /**
  * This class represents image channels extracted from LMS image xmls.
@@ -33,12 +37,28 @@ package loci.formats.in.LeicaMicrosystemsMetadata;
 public class Channel {
   // -- Fields --
   public int channelTag;
-  public int resolution;
+  public int resolution; // bits per pixel
   public double min;
   public double max;
   public String unit;
   public String lutName;
   public long bytesInc;
+  public Color lutColor;
+  public int lutColorIndex;
+
+
+  public class ChannelProperties {
+    public int channelGroup;
+    public String channelType;
+    public String beamRoute;
+    public String detectorName;
+    public String dyeName;
+    public int sequentialSettingIndex;
+    public String digitalGatingMode;
+    public double tauScanLine;
+  }
+
+  public ChannelProperties channelProperties = new ChannelProperties();
 
   public boolean isLutInverted;
   public long bitInc;
@@ -54,33 +74,44 @@ public class Channel {
     // ARRIVAL_TIME
   }
 
+  public static final int RED = 0;
+  public static final int GREEN = 1;
+  public static final int BLUE = 2;
+  public static final int CYAN = 3;
+  public static final int MAGENTA = 4;
+  public static final int YELLOW = 5;
+  public static final int GREY = 6;
+
   public ChannelType channelType;
 
+  public String dye;
+  public DetectorSetting detectorSetting;
+  public LaserSetting laserSetting;
+  public Filter filter;
+  public double pinholeSize;
+  public double exposureTime;
+  public String channelName;
+
   // -- Constructor --
-  public Channel(int channelTag, int resolution, double min, double max, String unit,
-      String lutName, long bytesInc) {
-    this.channelTag = channelTag;
-    this.resolution = resolution;
-    this.min = min;
-    this.max = max;
-    this.unit = unit;
-    this.lutName = lutName;
-    this.bytesInc = bytesInc;
-    setChannelType();
+  public Channel() {
   }
 
   //-- Methods --
-  private void setChannelType(){
-    if (channelTag == 0) {
-      channelType = ChannelType.MONO;
-    } else {
-      if (lutName.equals("Red")){
+  public void setChannelType(){
+    switch(channelTag){
+      case 1:
         channelType = ChannelType.RED;
-      } else if (lutName.equals("Green")){
+        break;
+      case 2:
         channelType = ChannelType.GREEN;
-      } else if (lutName.equals("Blue")){
+        break;
+      case 3:
         channelType = ChannelType.BLUE;
-      }
+        break;
+      case 0:
+      default:
+        channelType = ChannelType.MONO;
+        break;
     }
   }
 }

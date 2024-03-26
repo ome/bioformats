@@ -23,18 +23,20 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
- * This class loads and represents a Leica Microsystems XLCF xml document
+ * Data structure for filter information extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class XlcfDocument extends LMSCollectionXmlDocument {
-
-  // -- Constructor --
-  public XlcfDocument(String filepath, LMSCollectionXmlDocument parent) {
-    super(filepath, parent);
-    initChildren();
-  }
+public class Filter {
+  public String id;
+  public String filterSetId;
+  public double cutIn;
+  public double cutOut;
+  public int sequenceIndex;
+  public int multibandIndex;
+  public String dye;
+  public String name;
 }
