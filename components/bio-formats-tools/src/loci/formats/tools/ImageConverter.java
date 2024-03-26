@@ -41,6 +41,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.SortedMap;
 
@@ -84,6 +85,7 @@ import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.Pixels;
 import ome.xml.model.enums.PixelType;
@@ -591,11 +593,22 @@ public final class ImageConverter {
         String xml = service.getOMEXML(service.asRetrieve(store));
         OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
         IMetadata meta = service.createOMEXMLMetadata(xml);
+        OMEXMLMetadataRoot newRoot = (OMEXMLMetadataRoot) meta.getRoot();
         if (series >= 0) {
-          Image exportImage = new Image(root.getImage(series));
-          Pixels exportPixels = new Pixels(root.getImage(series).getPixels());
+          Image exportImage = newRoot.getImage(series);
+          Pixels exportPixels = newRoot.getImage(series).getPixels();
+
+          if (channel >= 0) {
+            List<Channel> channels = exportPixels.copyChannelList();
+
+            for (int c=0; c<channels.size(); c++) {
+              if (c != channel) {
+                exportPixels.removeChannel(channels.get(c));
+              }
+            }
+          }
+
           exportImage.setPixels(exportPixels);
-          OMEXMLMetadataRoot newRoot = (OMEXMLMetadataRoot) meta.getRoot();
           while (newRoot.sizeOfImageList() > 0) {
             newRoot.removeImage(newRoot.getImage(0));
           }
@@ -637,6 +650,17 @@ public final class ImageConverter {
             meta.setPixelsSizeY(new PositiveInteger(height), i);
             if (autoscale) {
               store.setPixelsType(PixelType.UINT8, i);
+            }
+
+            if (channel >= 0) {
+              Pixels exportPixels = newRoot.getImage(i).getPixels();
+              List<Channel> channels = exportPixels.copyChannelList();
+
+              for (int c=0; c<channels.size(); c++) {
+                if (c != channel) {
+                  exportPixels.removeChannel(channels.get(c));
+                }
+              }
             }
 
             if (channel >= 0) {
