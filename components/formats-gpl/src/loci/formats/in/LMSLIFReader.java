@@ -41,6 +41,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.LMSFileReader;
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
 import loci.formats.in.LeicaMicrosystemsMetadata.xml.LMSImageXmlDocument;
 import loci.formats.in.LeicaMicrosystemsMetadata.xml.LifImageXmlDocument;
@@ -73,9 +74,11 @@ public class LMSLIFReader extends LMSFileReader {
 
   /** Offsets to memory blocks, paired with their corresponding description. */
   private List<Long> offsets;
+  private List<String> memoryBlockIds = new ArrayList<>();
 
   private int lastChannelLutColorIndex = 0;
   private long endPointer;
+  List<LifImageXmlDocument> imageXmls = new ArrayList<>();
 
   // -- Constructor --
 
@@ -364,30 +367,32 @@ public class LMSLIFReader extends LMSFileReader {
 
     LOGGER.info("Reading header");
 
-    byte checkOne = in.readByte();
-    in.skipBytes(2);
-    byte checkTwo = in.readByte();
-    if (checkOne != LIF_MAGIC_BYTE && checkTwo != LIF_MAGIC_BYTE) {
+    // --- 1: XML ---
+    // 4 bytes: test value 0x70
+    if (in.readInt() != LIF_MAGIC_BYTE)
       throw new FormatException(id + " is not a valid Leica LIF file");
-    }
 
+    // 4 bytes: length of the following binary chunk to read (1.1). we don't use it
     in.skipBytes(4);
 
-    // read and parse the XML description
+    // --- 1.1: XML content ---
+    // 1 byte: test value 0x2A
+    if (in.readByte() != LIF_MEMORY_BYTE)
+      throw new FormatException(id + " is not a valid Leica LIF file");
 
-    if (in.read() != LIF_MEMORY_BYTE) {
-      throw new FormatException("Invalid XML description");
-    }
-
-    // number of Unicode characters in the XML block
+    // 4 bytes: number of unicode characters in the XML block (NC)
     int nc = in.readInt();
+    // NC * 2 bytes: XML object description
     String xml = DataTools.stripString(in.readString(nc * 2));
 
     LOGGER.info("Finding image offsets");
 
+    // --- 2: Object memory block(s) ---
     while (in.getFilePointer() < in.length()) {
       LOGGER.debug("Looking for a block at {}; {} blocks read",
           in.getFilePointer(), offsets.size());
+
+      // 4 bytes: test value 0x70
       int check = in.readInt();
       if (check != LIF_MAGIC_BYTE) {
         if (check == 0 && offsets.size() > 0) {
@@ -399,12 +404,21 @@ public class LMSLIFReader extends LMSFileReader {
             check + ", expected " + LIF_MAGIC_BYTE);
       }
 
+      // 4 bytes: length of the following binary chunk to read (2.1). we don't use it
       in.skipBytes(4);
-      check = in.read();
-      if (check != LIF_MEMORY_BYTE) {
+
+      // --- 2.1: memory description ---
+      
+      // 1 byte: test value 0x2A
+      byte checkByte = in.readByte();
+      if (checkByte != LIF_MEMORY_BYTE) {
         throw new FormatException("Invalid Memory Description: found magic " +
-            "byte " + check + ", expected " + LIF_MEMORY_BYTE);
+            "byte " + checkByte + ", expected " + LIF_MEMORY_BYTE);
       }
+
+      // LIF version 1: 4 bytes: size of memory (2.2)
+      // LIF version 2: 8 bytes: size of memory (2.2)
+      // 1 byte: test value 0x2A
 
       long blockLength = in.readInt();
       if (in.read() != LIF_MEMORY_BYTE) {
@@ -417,13 +431,16 @@ public class LMSLIFReader extends LMSFileReader {
         }
       }
 
-      int descrLength = in.readInt() * 2;
+      // 4 bytes: number of unicode characters
+      int descrLength = in.readInt();
 
-      if (blockLength > 0) {
-        offsets.add(in.getFilePointer() + descrLength);
-      }
+      // NC * 2 bytes: XML object description
+      String description = DataTools.stripString(in.readString(descrLength * 2));
 
-      in.seek(in.getFilePointer() + descrLength + blockLength);
+      memoryBlockIds.add(description);
+      offsets.add(in.getFilePointer());
+
+      in.seek(in.getFilePointer() + blockLength);
     }
 
     String name = id.replaceAll("^.*[\\/\\\\]", "").replace(".lof", "");
@@ -434,26 +451,20 @@ public class LMSLIFReader extends LMSFileReader {
       endPointer = in.length();
     }
 
-    // correct offsets, if necessary
-    if (offsets.size() > getSeriesCount()) {
-      Long[] storedOffsets = offsets.toArray(new Long[offsets.size()]);
-      offsets.clear();
-      int index = 0;
-      for (int i = 0; i < getSeriesCount(); i++) {
-        setSeries(i);
-        long nBytes = (long) FormatTools.getPlaneSize(this) * getImageCount();
-        long start = storedOffsets[index];
-        long end = index == storedOffsets.length - 1 ? in.length() : storedOffsets[index + 1];
-        while (end - start < nBytes && ((end - start) / nBytes) != 1) {
-          index++;
-          start = storedOffsets[index];
-          end = index == storedOffsets.length - 1 ? in.length() : storedOffsets[index + 1];
+    // remove offsets of unused memory blocks (e.g. frame properties)
+    List<Long> temp = new ArrayList<>();
+
+    for (LifImageXmlDocument imageXml : imageXmls){
+      String memoryBlockId = imageXml.getMemoryBlockId();
+      for (int i = 0; i < memoryBlockIds.size(); i++){
+        if (memoryBlockIds.get(i).equals(memoryBlockId)){
+          temp.add(offsets.get(i));
+          break;
         }
-        offsets.add(storedOffsets[index]);
-        index++;
       }
-      setSeries(0);
     }
+
+    offsets = temp;
   }
 
   // -- LeicaFileReader methods --
@@ -480,7 +491,7 @@ public class LMSLIFReader extends LMSFileReader {
     LOGGER.trace(xml);
 
     LifXmlDocument doc = new LifXmlDocument(xml);
-    List<LifImageXmlDocument> imageXmls = doc.getImageXmlDocuments();
+    imageXmls = doc.getImageXmlDocuments();
 
     translateMetadata((List<LMSImageXmlDocument>) (List<? extends LMSImageXmlDocument>) imageXmls);
   }

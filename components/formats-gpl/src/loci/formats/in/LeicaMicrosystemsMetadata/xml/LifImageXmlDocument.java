@@ -27,6 +27,8 @@ package loci.formats.in.LeicaMicrosystemsMetadata.xml;
 
 import org.w3c.dom.Node;
 
+import loci.formats.in.LeicaMicrosystemsMetadata.extract.Extractor;
+
 /**
  * This class loads and represents a Leica Microsystems XML document for one
  * image that has
@@ -64,5 +66,10 @@ public class LifImageXmlDocument extends LMSImageXmlDocument {
   @Override
   public String getCollectionPath(){
     return collectionPath;
+  }
+
+  public String getMemoryBlockId(){
+    Node memory = GetChildWithName(doc.getDocumentElement(), "Memory");
+    return Extractor.getAttributeValue(memory, "MemoryBlockID");
   }
 }
