@@ -71,6 +71,7 @@ import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
@@ -1279,7 +1280,7 @@ public final class ImageConverter {
 
   private void setCodecOptions(IFormatWriter writer) {
     if (compressionQuality != null) {
-      CodecOptions codecOptions = CodecOptions.getDefaultOptions();
+      CodecOptions codecOptions = JPEG2000CodecOptions.getDefaultOptions();
       codecOptions.quality = compressionQuality;
       writer.setCodecOptions(codecOptions);
     }
