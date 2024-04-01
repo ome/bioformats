@@ -37,9 +37,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -126,6 +128,8 @@ public class DicomReader extends SubResolutionFormatReader {
   private boolean edf = false;
 
   private List<DicomTag> tags;
+
+  private Set<Integer> privateContentHighWords = new HashSet<Integer>();
 
   // -- Constructor --
 
@@ -368,6 +372,7 @@ public class DicomReader extends SubResolutionFormatReader {
       concatenationNumber = null;
       edf = false;
       tags = null;
+      privateContentHighWords.clear();
     }
   }
 
@@ -1168,6 +1173,10 @@ public class DicomReader extends SubResolutionFormatReader {
    * rely upon the original metadata table.
    */
   private void addOriginalMetadata(String key, DicomTag info) {
+    if (info.isPrivateContentCreator()) {
+      privateContentHighWords.add(info.tag >> 16);
+    }
+
     if (info.value != null && !(info.value instanceof byte[]) &&
       !(info.value instanceof short[]))
     {
@@ -1179,7 +1188,8 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
     if (info.attribute != PER_FRAME_FUNCTIONAL_GROUPS_SEQUENCE &&
-      info.attribute != REFERENCED_IMAGE_NAVIGATION_SEQUENCE)
+      info.attribute != REFERENCED_IMAGE_NAVIGATION_SEQUENCE &&
+      !privateContentHighWords.contains(info.tag >> 16))
     {
       for (DicomTag child : info.children) {
         String childKey = DicomAttribute.formatTag(child.tag);

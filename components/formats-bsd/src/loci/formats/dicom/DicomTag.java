@@ -719,6 +719,17 @@ public class DicomTag implements Comparable<DicomTag> {
     }
   }
 
+  /**
+   * See https://dicom.nema.org/dicom/2013/output/chtml/part05/sect_7.8.html
+   *
+   * @return true if this is a private content creator tag
+   */
+  public boolean isPrivateContentCreator() {
+    int highWord = (tag >> 16) & 0xffff;
+    int lowWord = tag & 0xffff;
+    return highWord % 2 == 1 && lowWord == 0x0010;
+  }
+
   @Override
   public String toString() {
     if (key == null) {
