@@ -36,13 +36,15 @@ import java.util.List;
  */
 public class Laser {
   public String laserId;
-  public String name;
-  public double wavelength;
-  public String wavelengthUnit;
-  public String powerState;
+  public String name = "";
+  public double wavelength = 0;
+  public String wavelengthUnit = "";
+  // we have a dedicated power state string here to check if a power state attribute could be found in ATL confocal
+  //settings (string not empty) or if we need to look into confocal setting records (-> string = empty, true for SP5 images)
+  public String powerState = ""; 
   public boolean powerStateOn = false;
   public boolean shutterOpen = true;
-  public boolean isFrap;
+  public boolean isFrap = false;
   public LaserSetting laserSetting;
 
   //SP5

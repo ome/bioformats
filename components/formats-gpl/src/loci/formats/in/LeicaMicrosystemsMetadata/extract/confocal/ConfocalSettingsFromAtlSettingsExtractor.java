@@ -157,7 +157,8 @@ public class ConfocalSettingsFromAtlSettingsExtractor extends Extractor {
   private static void mapInstrumentLasersToChannelLaserSettings(ConfocalAcquisitionSettings acquisitionSettings){
     for (ConfocalChannelSetting channelSetting : acquisitionSettings.channelSettings){
       for (Laser laser : acquisitionSettings.lasers){
-        if (channelSetting.laserSetting != null && channelSetting.laserSetting.laser.name.equals(laser.name)){
+        if (channelSetting.laserSetting != null && channelSetting.laserSetting.laser != null &&
+         channelSetting.laserSetting.laser.name.equals(laser.name)){
           channelSetting.laserSetting.laser = laser;
           break;
         }

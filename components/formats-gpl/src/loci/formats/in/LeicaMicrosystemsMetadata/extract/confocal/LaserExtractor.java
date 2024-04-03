@@ -202,21 +202,12 @@ public class LaserExtractor extends Extractor {
     for (LaserSetting laserSetting : laserSettings){
       for (Laser laser : lasers){
         if (laser.powerStateOn && laser.shutterOpen && laser.hasSameLightSourceType(laserSetting) && 
-        (laser.wavelength == laserSetting.wavelength || laser.name.equals("Argon") && laser.argonWavelengths.contains(laserSetting.wavelength))){
+        (laser.wavelength == laserSetting.wavelength  
+        || laser.lightSourceQualifier == LmsLightSourceQualifier.WLL || laser.lightSourceType == LmsLightSourceType.WLL 
+        || laser.name.equals("Argon") && laser.argonWavelengths.contains(laserSetting.wavelength))){
           laserSetting.laser = laser;
           laser.laserSetting = laserSetting;
           break;
-        }
-      }
-
-      // after lasers with matching wavelengths were matched and there are still unmatched laser line settings, look for active WLL lasers
-      if (laserSetting.laser == null){
-        for (Laser laser : lasers){
-          if (laser.powerStateOn && laser.shutterOpen && laser.name.equals("WLL") && laser.hasSameLightSourceType(laserSetting)){
-            laserSetting.laser = laser;
-            laser.laserSetting = laserSetting;
-            break;
-          }
         }
       }
     }
