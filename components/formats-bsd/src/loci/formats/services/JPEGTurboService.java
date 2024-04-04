@@ -44,21 +44,90 @@ import loci.common.services.ServiceException;
  */
 public interface JPEGTurboService extends Service {
 
+  /**
+   * @return the restart markers associated with the current JPEG stream
+   */
   long[] getRestartMarkers();
 
+  /**
+   * @param markers precalculated restart markers associated with
+   *                the current JPEG stream
+   */
   void setRestartMarkers(long[] markers);
 
+  /**
+   * Initialize the given stream, which represents an image of the given
+   * width and height. This service is primarily intended for very large
+   * JPEG images whose width and/or height exceed 65535 (the maximum
+   * that can be recorded in a JPEG stream).
+   *
+   * @param jpeg open stream containing JPEG data
+   * @param width total image width
+   * @param height total image height
+   */
   void initialize(RandomAccessInputStream jpeg, int width, int height)
     throws ServiceException, IOException;
 
+  /**
+   * @return the width (in pixels) of a tile
+   */
+  int getTileWidth();
+
+  /**
+   * @return the height (in pixels) of a tile
+   */
+  int getTileHeight();
+
+  /**
+   * @return the number of rows of tiles
+   */
+  int getTileRows();
+
+  /**
+   * @return the number of columns of tiles
+   */
+  int getTileColumns();
+
+  /**
+   * Get the uncompressed bytes representing the given bounding box.
+   *
+   * @param buf array in which to store uncompressed bytes
+   * @param xCoordinate upper-left X coordinate of bounding box
+   * @param yCoordinate upper-left Y coordinate of bounding box
+   * @param width width of bounding box
+   * @param height height of bounding box
+   * @return uncompressed bytes
+   */
   byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate, int width,
     int height)
     throws IOException;
 
+  /**
+   * Get the uncompressed bytes representing the given tile index.
+   *
+   * @param xTile column index of the tile
+   * @param yTile row index of the tile
+   * @return uncompressed bytes
+   */
   byte[] getTile(int xTile, int yTile) throws IOException;
 
+  /**
+   * Similar to getTile(int, int), but returns the JPEG-compressed bytes.
+   *
+   * @param xTile column index of the tile
+   * @param yTile row index of the tile
+   * @return JPEG-compressed bytes
+   */
+  byte[] getCompressedTile(int xTile, int yTile) throws IOException;
+
+  /**
+   * Free resources associated with the initialized stream.
+   */
   void close() throws IOException;
-  
+
+  /**
+   * @return true if the underlying native library was successfully loaded
+   */
   boolean isLibraryLoaded();
 
 }

@@ -230,6 +230,26 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   }
 
   @Override
+  public int getTileWidth() {
+    return tileWidth;
+  }
+
+  @Override
+  public int getTileHeight() {
+    return tileHeight;
+  }
+
+  @Override
+  public int getTileRows() {
+    return yTiles;
+  }
+
+  @Override
+  public int getTileColumns() {
+    return xTiles;
+  }
+
+  @Override
   public byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate,
     int width, int height)
     throws IOException
@@ -287,6 +307,30 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   @Override
   public byte[] getTile(int tileX, int tileY) throws IOException {
+    byte[] compressedData = getCompressedTile(tileX, tileY);
+
+    // and here we actually decompress it...
+
+    try {
+      int pixelType = TJ.PF_RGB;
+      int pixelSize = TJ.getPixelSize(pixelType);
+
+      TJDecompressor decoder = new TJDecompressor(compressedData);
+      byte[] decompressed = decoder.decompress(tileWidth, tileWidth * pixelSize,
+        tileHeight, pixelType, pixelType);
+      compressedData = null;
+      decoder.close();
+      return decompressed;
+    }
+    catch (Exception e) {
+      IOException ioe = new IOException(e.getMessage());
+      ioe.initCause(e);
+      throw ioe;
+    }
+  }
+
+  @Override
+  public byte[] getCompressedTile(int tileX, int tileY) throws IOException {
     if (header == null) {
       header = getFixedHeader();
     }
@@ -343,25 +387,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
 
     DataTools.unpackBytes(EOI, data, offset, 2, false);
-
-    // and here we actually decompress it...
-
-    try {
-      int pixelType = TJ.PF_RGB;
-      int pixelSize = TJ.getPixelSize(pixelType);
-
-      TJDecompressor decoder = new TJDecompressor(data);
-      byte[] decompressed = decoder.decompress(tileWidth, tileWidth * pixelSize,
-        tileHeight, pixelType, pixelType);
-      data = null;
-      decoder.close();
-      return decompressed;
-    }
-    catch (Exception e) {
-      IOException ioe = new IOException(e.getMessage());
-      ioe.initCause(e);
-      throw ioe;
-    }
+    return data;
   }
 
   @Override
