@@ -357,7 +357,7 @@ public class OBFReader extends FormatReader {
       for (int dimension = 0; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS; ++ dimension) {
         final double length = in.readDouble();
         if (dimension < numberOfDimensions) {
-          lengths.add(new Double(length));
+          lengths.add(length);
         }
       }
       meta_data.seriesMetadata.put("Lengths", lengths);
@@ -366,7 +366,7 @@ public class OBFReader extends FormatReader {
       for (int dimension = 0; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS; ++ dimension) {
         final double offset = in.readDouble();
         if (dimension < numberOfDimensions) {
-          offsets.add(new Double(offset));
+          offsets.add(offset);
         }
       }
       meta_data.seriesMetadata.put("Offsets", offsets);
@@ -462,14 +462,14 @@ public class OBFReader extends FormatReader {
         for (int dimension = 0; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS; ++ dimension) {
           final int present = in.readInt();
           if (dimension < numberOfDimensions) {
-            stepsPresent.add(new Boolean(present != 0));
+            stepsPresent.add(present != 0);
           }
         }
         List<Boolean> stepLabelsPresent = new ArrayList<Boolean>();
         for (int dimension = 0; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS; ++ dimension) {
           final int present = in.readInt();
           if (dimension < numberOfDimensions) {
-            stepLabelsPresent.add(new Boolean(present != 0));
+            stepLabelsPresent.add(present != 0);
           }
         }
 
@@ -536,7 +536,7 @@ public class OBFReader extends FormatReader {
           if (stepsPresent.get(dimension)) {
             for (int position = 0; position != sizes[dimension]; ++ position) {
               final double step = in.readDouble();
-              list.add(new Double(step));
+              list.add(step);
             }
           }
           steps.add(list);
