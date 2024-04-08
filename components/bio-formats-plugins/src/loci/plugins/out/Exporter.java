@@ -517,7 +517,7 @@ public class Exporter {
             store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(cal.pixelWidth, cal.getXUnit()), 0);
             store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(cal.pixelHeight, cal.getYUnit()), 0);
             store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(cal.pixelDepth, cal.getZUnit()), 0);
-            store.setPixelsTimeIncrement(FormatTools.getTime(new Double(cal.frameInterval), cal.getTimeUnit()), 0);
+            store.setPixelsTimeIncrement(FormatTools.getTime(Double.valueOf(cal.frameInterval), cal.getTimeUnit()), 0);
 
             if (imp.getImageStackSize() !=
                     imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
