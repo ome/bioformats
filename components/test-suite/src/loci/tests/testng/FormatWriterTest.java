@@ -110,16 +110,15 @@ public class FormatWriterTest {
       String[] compressionTypes = writers[i].getCompressionTypes();
       if (compressionTypes == null) {
         try {
-          IFormatWriter w = (IFormatWriter) writers[i].getClass().newInstance();
+          IFormatWriter w = (IFormatWriter) writers[i].getClass().getDeclaredConstructor().newInstance();
           tmp.add(w);
         }
-        catch (InstantiationException ie) { }
-        catch (IllegalAccessException iae) { }
+        catch (ReflectiveOperationException roe) { }
         continue;
       }
       for (int q=0; q<compressionTypes.length; q++) {
         try {
-          IFormatWriter w = (IFormatWriter) writers[i].getClass().newInstance();
+          IFormatWriter w = (IFormatWriter) writers[i].getClass().getDeclaredConstructor().newInstance();
           if (DataTools.containsValue(w.getPixelTypes(compressionTypes[q]),
             reader.getPixelType()))
           {
@@ -128,8 +127,7 @@ public class FormatWriterTest {
           }
         }
         catch (FormatException fe) { }
-        catch (InstantiationException ie) { }
-        catch (IllegalAccessException iae) { }
+        catch (ReflectiveOperationException roe) { }
       }
     }
     IFormatWriter[][] writersToUse = new IFormatWriter[tmp.size()][1];

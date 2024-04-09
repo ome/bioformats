@@ -202,12 +202,12 @@ public class Configuration {
     if (delim >= 0) {
       test = test.substring(0, delim);
     }
-    return new Boolean(test.trim()).booleanValue();
+    return Boolean.parseBoolean(test.trim());
   }
 
   public boolean hasValidXML() {
     if (globalTable.get(HAS_VALID_XML) == null) return true;
-    return new Boolean(globalTable.get(HAS_VALID_XML)).booleanValue();
+    return Boolean.parseBoolean(globalTable.get(HAS_VALID_XML));
   }
 
   public String getReader() {
@@ -261,19 +261,19 @@ public class Configuration {
   }
 
   public boolean isInterleaved() {
-    return new Boolean(currentTable.get(IS_INTERLEAVED)).booleanValue();
+    return Boolean.parseBoolean(currentTable.get(IS_INTERLEAVED));
   }
 
   public boolean isIndexed() {
-    return new Boolean(currentTable.get(IS_INDEXED)).booleanValue();
+    return Boolean.parseBoolean(currentTable.get(IS_INDEXED));
   }
 
   public boolean isFalseColor() {
-    return new Boolean(currentTable.get(IS_FALSE_COLOR)).booleanValue();
+    return Boolean.parseBoolean(currentTable.get(IS_FALSE_COLOR));
   }
 
   public boolean isRGB() {
-    return new Boolean(currentTable.get(IS_RGB)).booleanValue();
+    return Boolean.parseBoolean(currentTable.get(IS_RGB));
   }
 
   public int getThumbSizeX() {
@@ -289,7 +289,7 @@ public class Configuration {
   }
 
   public boolean isLittleEndian() {
-    return new Boolean(currentTable.get(IS_LITTLE_ENDIAN)).booleanValue();
+    return Boolean.parseBoolean(currentTable.get(IS_LITTLE_ENDIAN));
   }
 
   public String getMD5() {
@@ -324,7 +324,7 @@ public class Configuration {
     String timeIncrement = currentTable.get(TIME_INCREMENT);
     String timeIncrementUnits = currentTable.get(TIME_INCREMENT_UNIT);
     try {
-      return timeIncrement == null ? null : FormatTools.getTime(new Double(timeIncrement), timeIncrementUnits);
+      return timeIncrement == null ? null : FormatTools.getTime(DataTools.parseDouble(timeIncrement), timeIncrementUnits);
     }
     catch (NumberFormatException e) { 
       return null; 
@@ -351,7 +351,7 @@ public class Configuration {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
     String exposureUnits = currentTable.get(EXPOSURE_TIME_UNIT + channel);
     try {
-      return exposure == null ? null : FormatTools.getTime(new Double(exposure), exposureUnits);
+      return exposure == null ? null : FormatTools.getTime(DataTools.parseDouble(exposure), exposureUnits);
     }
     catch (NumberFormatException e) { 
       return null; 
@@ -360,12 +360,12 @@ public class Configuration {
 
   public Double getDeltaT(int plane) {
     String deltaT = currentTable.get(DELTA_T + plane);
-    return deltaT == null ? null : new Double(deltaT);
+    return deltaT == null ? null : DataTools.parseDouble(deltaT);
   }
 
   public Double getPositionX(int plane) {
     String pos = currentTable.get(X_POSITION + plane);
-    return pos == null ? null : new Double(pos);
+    return pos == null ? null : DataTools.parseDouble(pos);
   }
   
   public String getPositionXUnit(int plane) {
@@ -374,7 +374,7 @@ public class Configuration {
 
   public Double getPositionY(int plane) {
     String pos = currentTable.get(Y_POSITION + plane);
-    return pos == null ? null : new Double(pos);
+    return pos == null ? null : DataTools.parseDouble(pos);
   }
   
   public String getPositionYUnit(int plane) {
@@ -383,7 +383,7 @@ public class Configuration {
 
   public Double getPositionZ(int plane) {
     String pos = currentTable.get(Z_POSITION + plane);
-    return pos == null ? null : new Double(pos);
+    return pos == null ? null : DataTools.parseDouble(pos);
   }
 
   public String getPositionZUnit(int plane) {
@@ -394,7 +394,7 @@ public class Configuration {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
     String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT + channel);
     try {
-      return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), emissionUnits);
+      return wavelength == null ? null : FormatTools.getWavelength(DataTools.parseDouble(wavelength), emissionUnits);
     }
     catch (NumberFormatException e) { 
       return null;
@@ -405,7 +405,7 @@ public class Configuration {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
     String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNIT + channel);
     try {
-      return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), excitationUnits);
+      return wavelength == null ? null : FormatTools.getWavelength(DataTools.parseDouble(wavelength), excitationUnits);
     }
     catch (NumberFormatException e) { 
       return null;
@@ -828,7 +828,7 @@ public class Configuration {
     String units = currentTable.get(unitKey);
     try {
       UnitsLength unit = units == null ? UnitsLength.MICROMETER : UnitsLength.fromString(units);
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), unit);
+      return physicalSize == null ? null : UnitsLength.create(DataTools.parseDouble(physicalSize), unit);
     }
     catch (NumberFormatException e) { }
     catch (EnumerationException e) { }
