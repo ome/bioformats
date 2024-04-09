@@ -158,17 +158,7 @@ public class NDPIReader extends BaseTiffReader {
       initializedSeries = getCoreIndex();
       initializedPlane = no;
     }
-    if ((x % service.getTileWidth()) != 0) {
-      throw new FormatException("Invalid x: " + x + " must be multiple of " +
-        service.getTileWidth());
-    }
-    if ((y % service.getTileHeight()) != 0) {
-      throw new FormatException("Invalid y: " + y + " must be multiple of " +
-        service.getTileHeight());
-    }
-    int tileRow = y / service.getTileHeight();
-    int tileColumn = x / service.getTileWidth();
-    return service.getCompressedTile(tileColumn, tileRow);
+    return service.getCompressedTile(x, y);
   }
 
   @Override
@@ -188,17 +178,7 @@ public class NDPIReader extends BaseTiffReader {
       initializedSeries = getCoreIndex();
       initializedPlane = no;
     }
-    if ((x % service.getTileWidth()) != 0) {
-      throw new FormatException("Invalid x: " + x + " must be multiple of " +
-        service.getTileWidth());
-    }
-    if ((y % service.getTileHeight()) != 0) {
-      throw new FormatException("Invalid y: " + y + " must be multiple of " +
-        service.getTileHeight());
-    }
-    int tileRow = y / service.getTileHeight();
-    int tileColumn = x / service.getTileWidth();
-    service.getCompressedTile(buf, tileColumn, tileRow);
+    service.getCompressedTile(buf, x, y);
     return buf;
   }
 
