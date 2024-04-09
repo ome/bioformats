@@ -35,6 +35,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
@@ -119,6 +121,106 @@ public class NDPIReader extends BaseTiffReader {
     canSeparateSeries = false;
   }
 
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    FormatTools.assertId(currentId, true, 1);
+
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    //service.initialize();
+    return service.getTileRows();
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    FormatTools.assertId(currentId, true, 1);
+
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    //service.initialize();
+    return service.getTileColumns();
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    IFD ifd = ifds.get(ifdIndex);
+
+    if (useTiffParser(ifd)) {
+      // TODO
+      return null;
+    }
+
+    if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+      resetStream(ifd);
+      initializedSeries = getCoreIndex();
+      initializedPlane = no;
+    }
+    if ((x % service.getTileWidth()) != 0) {
+      throw new FormatException("Invalid x: " + x + " must be multiple of " +
+        service.getTileWidth());
+    }
+    if ((y % service.getTileHeight()) != 0) {
+      throw new FormatException("Invalid y: " + y + " must be multiple of " +
+        service.getTileHeight());
+    }
+    int tileRow = y / service.getTileHeight();
+    int tileColumn = x / service.getTileWidth();
+    return service.getCompressedTile(tileColumn, tileRow);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    IFD ifd = ifds.get(ifdIndex);
+
+    if (useTiffParser(ifd)) {
+      // TODO
+      return buf;
+    }
+
+    if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+      resetStream(ifd);
+      initializedSeries = getCoreIndex();
+      initializedPlane = no;
+    }
+    if ((x % service.getTileWidth()) != 0) {
+      throw new FormatException("Invalid x: " + x + " must be multiple of " +
+        service.getTileWidth());
+    }
+    if ((y % service.getTileHeight()) != 0) {
+      throw new FormatException("Invalid y: " + y + " must be multiple of " +
+        service.getTileHeight());
+    }
+    int tileRow = y / service.getTileHeight();
+    int tileColumn = x / service.getTileWidth();
+    service.getCompressedTile(buf, tileColumn, tileRow);
+    return buf;
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    IFD ifd = ifds.get(ifdIndex);
+    return ifd.getCompression().getCodec();
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    IFD ifd = ifds.get(ifdIndex);
+    CodecOptions options = ifd.getCompression().getCompressionCodecOptions(ifd);
+    options.width = getOptimalTileWidth();
+    options.height = getOptimalTileHeight();
+    return options;
+  }
+
   // -- IFormatReader API methods --
 
   /* (non-Javadoc)
@@ -185,56 +287,7 @@ public class NDPIReader extends BaseTiffReader {
 
     if (initializedSeries != getCoreIndex() || initializedPlane != no) {
       IFD ifd = ifds.get(ifdIndex);
-
-      long offset = ifd.getStripOffsets()[0];
-      long byteCount = ifd.getStripByteCounts()[0];
-      if (in != null) {
-        in.close();
-      }
-      in = new RandomAccessInputStream(currentId);
-      in.seek(offset);
-      in.setLength(offset + byteCount);
-
-      try {
-        service.close();
-        long[] markers = ifd.getIFDLongArray(MARKER_TAG);
-        long[] markerHighBytes = ifd.getIFDLongArray(MARKER_TAG_HIGH_BYTES);
-        if (!use64Bit) {
-          for (int i=0; i<markers.length; i++) {
-            markers[i] = markers[i] & 0xffffffffL;
-          }
-        }
-        else if (markerHighBytes != null) {
-          // 64-bit offsets expected
-          // markers need to be reconstructed from MARKER_TAG (lower 32 bits)
-          // and MARKER_TAG_HIGH_BYTES (upper 32 bits)
-          for (int i=0; i<markers.length; i++) {
-            if (i < markerHighBytes.length) {
-              markers[i] = markers[i] & 0xffffffffL;
-              markers[i] += (markerHighBytes[i] << 32);
-            }
-          }
-        }
-        else {
-          // 64-bit offsets expected, but upper 32 bits not found
-          // this can happen in sub-resolution IFDs
-          // try to correct for offset overflow by adding 4GB to offsets, if appropriate
-          LOGGER.debug("Optional tag {} missing or unreadable", MARKER_TAG_HIGH_BYTES);
-          for (int i=1; i<markers.length; i++) {
-            if (markers[i] < markers[i - 1]) {
-              markers[i] += (long) Math.pow(2, 32);
-            }
-          }
-        }
-        if (markers != null) {
-          service.setRestartMarkers(markers);
-        }
-        service.initialize(in, getSizeX(), getSizeY());
-      }
-      catch (ServiceException e) {
-        throw new FormatException(e);
-      }
-
+      resetStream(ifd);
       initializedSeries = getCoreIndex();
       initializedPlane = no;
     }
@@ -314,14 +367,54 @@ public class NDPIReader extends BaseTiffReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return 1024;
+
+    int no = 0;
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    IFD ifd = ifds.get(ifdIndex);
+    try {
+      if (useTiffParser(ifd)) {
+        // TODO:
+        return 1024;
+      }
+
+      if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+        resetStream(ifd);
+        initializedSeries = getCoreIndex();
+        initializedPlane = no;
+      }
+    }
+    catch (FormatException|IOException e) {
+      return 1024;
+    }
+
+    return service.getTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return 1024;
+
+    int no = 0;
+    int ifdIndex = getIFDIndex(getCoreIndex(), no);
+    IFD ifd = ifds.get(ifdIndex);
+    try {
+      if (useTiffParser(ifd)) {
+        // TODO:
+        return 1024;
+      }
+
+      if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+        resetStream(ifd);
+        initializedSeries = getCoreIndex();
+        initializedPlane = no;
+      }
+    }
+    catch (FormatException|IOException e) {
+      return 1024;
+    }
+
+    return service.getTileHeight();
   }
 
   // -- Internal FormatReader API methods --
@@ -792,6 +885,73 @@ public class NDPIReader extends BaseTiffReader {
         return 16;
     }
     return -1;
+  }
+
+  /**
+   * Get the array of restart markers (offsets) for the given IFD.
+   *
+   * Reads both the marker tag and marker high bytes tag (if present)
+   * to build the array of 64-bit offsets.
+   */
+  private long[] getMarkers(IFD ifd) throws FormatException {
+    long[] markers = ifd.getIFDLongArray(MARKER_TAG);
+    long[] markerHighBytes = ifd.getIFDLongArray(MARKER_TAG_HIGH_BYTES);
+    if (!use64Bit) {
+      for (int i=0; i<markers.length; i++) {
+        markers[i] = markers[i] & 0xffffffffL;
+      }
+    }
+    else if (markerHighBytes != null) {
+      // 64-bit offsets expected
+      // markers need to be reconstructed from MARKER_TAG (lower 32 bits)
+      // and MARKER_TAG_HIGH_BYTES (upper 32 bits)
+      for (int i=0; i<markers.length; i++) {
+        if (i < markerHighBytes.length) {
+          markers[i] = markers[i] & 0xffffffffL;
+          markers[i] += (markerHighBytes[i] << 32);
+        }
+      }
+    }
+    else {
+      // 64-bit offsets expected, but upper 32 bits not found
+      // this can happen in sub-resolution IFDs
+      // try to correct for offset overflow by adding 4GB to offsets, if appropriate
+      LOGGER.debug("Optional tag {} missing or unreadable", MARKER_TAG_HIGH_BYTES);
+      for (int i=1; i<markers.length; i++) {
+        if (markers[i] < markers[i - 1]) {
+          markers[i] += (long) Math.pow(2, 32);
+        }
+      }
+    }
+    return markers;
+  }
+
+  private void resetStream(IFD ifd) throws IOException, FormatException {
+    // get the size and location of the single tile
+    long offset = ifd.getStripOffsets()[0];
+    long byteCount = ifd.getStripByteCounts()[0];
+
+    // reopen the stream
+    if (in != null) {
+      in.close();
+    }
+    in = new RandomAccessInputStream(currentId);
+    in.seek(offset);
+    // don't allow seeking past the end of the tile
+    in.setLength(offset + byteCount);
+
+    // initialize stream for the current plane
+    try {
+      service.close();
+      long[] markers = getMarkers(ifd);
+      if (markers != null) {
+        service.setRestartMarkers(markers);
+      }
+      service.initialize(in, getSizeX(), getSizeY());
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
   }
 
 }

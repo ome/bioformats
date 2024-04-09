@@ -121,6 +121,16 @@ public interface JPEGTurboService extends Service {
   byte[] getCompressedTile(int xTile, int yTile) throws IOException;
 
   /**
+   * Similar to getTile(int, int), but returns the JPEG-compressed bytes.
+   *
+   * @param data preallocated array for storing tile
+   * @param xTile column index of the tile
+   * @param yTile row index of the tile
+   * @return JPEG-compressed bytes
+   */
+  byte[] getCompressedTile(byte[] data, int xTile, int yTile) throws IOException;
+
+  /**
    * Free resources associated with the initialized stream.
    */
   void close() throws IOException;

@@ -356,12 +356,21 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
 
     byte[] data = new byte[(int) dataLength];
+    return getCompressedTile(data, tileX, tileY);
+  }
+
+  @Override
+  public byte[] getCompressedTile(byte[] data, int tileX, int tileY) throws IOException {
+    if (header == null) {
+      header = getFixedHeader();
+    }
 
     int offset = 0;
     System.arraycopy(header, 0, data, offset, header.length);
     offset += header.length;
 
-    start = tileX + (tileY * xTiles * mult);
+    int mult = tileHeight / mcuHeight; // was restartInterval
+    int start = tileX + (tileY * xTiles * mult);
     for (int row=0; row<tileHeight/mcuHeight; row++) {
       int end = start + 1;
 
