@@ -149,8 +149,8 @@ public class NDPIReader extends BaseTiffReader {
     IFD ifd = ifds.get(ifdIndex);
 
     if (useTiffParser(ifd)) {
-      // TODO
-      return null;
+      byte[] buf = new byte[(int) getCompressedByteCount(ifd, x, y)];
+      return openCompressedBytes(no, buf, x, y);
     }
 
     if (initializedSeries != getCoreIndex() || initializedPlane != no) {
@@ -169,8 +169,7 @@ public class NDPIReader extends BaseTiffReader {
     IFD ifd = ifds.get(ifdIndex);
 
     if (useTiffParser(ifd)) {
-      // TODO
-      return buf;
+      return copyTile(ifd, buf, x, y);
     }
 
     if (initializedSeries != getCoreIndex() || initializedPlane != no) {
