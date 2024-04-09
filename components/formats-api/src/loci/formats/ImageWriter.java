@@ -121,10 +121,9 @@ public class ImageWriter implements IFormatWriter {
     for (int i=0; i<c.length; i++) {
       IFormatWriter writer = null;
       try {
-        writer = c[i].newInstance();
+        writer = c[i].getDeclaredConstructor().newInstance();
       }
-      catch (IllegalAccessException exc) { }
-      catch (InstantiationException exc) { }
+      catch (ReflectiveOperationException exc) { }
       if (writer == null) {
         LOGGER.error("{} cannot be instantiated.", c[i].getName());
         continue;
