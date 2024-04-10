@@ -155,7 +155,7 @@ public class PositionExtractor extends Extractor {
       Dimension dimZ = dimensionStore.getDimension(DimensionKey.Z);
       dimensionStore.zBegin = dimZ.origin;
       int sign = xmlNodes.confocalSettingRecords.reverseZ ? -1 : 1;
-      dimensionStore.zEnd = dimensionStore.zBegin + sign * dimZ.getPhysicalStepSize();
+      dimensionStore.zEnd = dimensionStore.zBegin + sign * dimZ.getPhysicalStepSize() * dimZ.size;
     }
   }
 
