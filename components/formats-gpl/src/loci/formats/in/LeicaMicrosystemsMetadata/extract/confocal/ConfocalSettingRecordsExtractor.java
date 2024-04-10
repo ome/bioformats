@@ -101,6 +101,12 @@ public class ConfocalSettingRecordsExtractor extends Extractor {
         extractTurretRecord(records, objectName, attribute, variant);
       } else if (className.equals("CSpectrophotometerUnit")){
         extractMultibandRecord(records, objectName, attribute, data, variant);
+      } else if (className.equals("CMicroscopeStand")){
+        //z scan direction depends on the microscope stand
+        // upright stand (DM6000, DM5000): positive
+        // inverse stand (DMI6000): negative / reverse Z
+        if (objectName.equals("DMI6000"))
+          records.reverseZ = true;
       }
     }
   }

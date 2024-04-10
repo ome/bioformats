@@ -42,6 +42,7 @@ public class ConfocalSettingRecords {
   public double readOutRate;
   public boolean reverseX;
   public boolean reverseY;
+  public boolean reverseZ;
   public ShutterInfo shutterInfo = new ShutterInfo();
   // filter setting records
   public List<Laser> laserRecords = new ArrayList<>();

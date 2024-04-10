@@ -115,7 +115,11 @@ public class Dimension {
     offByOneLengthPerPixel *= METER_MULTIPLY;
   }
 
-  public Double getLengthPerUnit() {
+  /**
+   * Returns the physical distance between two neighboring steps in a dimension (e.g. pixels, slices, points in time, etc.)
+   * @return
+   */
+  public Double getPhysicalStepSize() {
     if (key == DimensionKey.X || key == DimensionKey.Y) {
       return oldPhysicalSize ? offByOneLengthPerPixel : lengthPerUnit;
     } else {

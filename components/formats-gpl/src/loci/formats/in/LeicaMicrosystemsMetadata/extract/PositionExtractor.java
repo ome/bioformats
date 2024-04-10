@@ -32,6 +32,8 @@ import org.w3c.dom.NodeList;
 
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
 import loci.formats.in.LeicaMicrosystemsMetadata.helpers.Tuple;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Dimension.DimensionKey;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore;
 import loci.formats.in.LeicaMicrosystemsMetadata.model.DimensionStore.ZDriveMode;
 import ome.units.UNITS;
@@ -134,17 +136,26 @@ public class PositionExtractor extends Extractor {
     dimensionStore.zDriveMode = zUseMode.equals("1") ? ZDriveMode.ZGalvo : ZDriveMode.ZWide;
 
     Element zPositionList = getChildNodeWithNameAsElement(mainSetting, "AdditionalZPositionList");
-    if (zPositionList == null) return;
-    List<Element> zPositions = getChildNodesWithNameAsElement(zPositionList, "AdditionalZPosition");
-    for (Element zPosition : zPositions){
-      String positionS = getAttributeValue(zPosition, "ZPosition");
-      double position = parseDouble(positionS);
-      String useMode = getAttributeValue(zPosition, "ZUseModeName");
-      if (useMode.equals("z-galvo")){
-        dimensionStore.zGalvoPosition = position;
-      } else if (useMode.equals("z-wide")){
-        dimensionStore.zWidePosition = position;
+    if (zPositionList != null){
+      List<Element> zPositions = getChildNodesWithNameAsElement(zPositionList, "AdditionalZPosition");
+      for (Element zPosition : zPositions){
+        String positionS = getAttributeValue(zPosition, "ZPosition");
+        double position = parseDouble(positionS);
+        String useMode = getAttributeValue(zPosition, "ZUseModeName");
+        if (useMode.equals("z-galvo")){
+          dimensionStore.zGalvoPosition = position;
+        } else if (useMode.equals("z-wide")){
+          dimensionStore.zWidePosition = position;
+        }
       }
+    }
+    
+    //SP5 images without ATL settings: main ATLConfocalSetting > begin / end do not exist, neither does AdditionalZPositionList
+    if (dimensionStore.zBegin == 0 && dimensionStore.zEnd == 0){
+      Dimension dimZ = dimensionStore.getDimension(DimensionKey.Z);
+      dimensionStore.zBegin = dimZ.origin;
+      int sign = xmlNodes.confocalSettingRecords.reverseZ ? -1 : 1;
+      dimensionStore.zEnd = dimensionStore.zBegin + sign * dimZ.getPhysicalStepSize();
     }
   }
 

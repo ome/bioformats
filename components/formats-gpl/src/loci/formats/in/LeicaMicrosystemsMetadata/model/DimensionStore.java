@@ -46,8 +46,8 @@ public class DimensionStore {
     public boolean inverseRgb = false;
     public double physicalSizeX;
     public double physicalSizeY;
-    public double zBegin;
-    public double zEnd;
+    public double zBegin = 0;
+    public double zEnd = 0;
     public double zWidePosition = 0;
     public double zGalvoPosition = 0;
     public List<Tuple<Length, Length, Length>> fieldPositions = new ArrayList<Tuple<Length,Length, Length>>();
@@ -78,15 +78,15 @@ public class DimensionStore {
   public void addDimension(Dimension dimension) {
     dimensions.add(dimension);
     if (dimension.key == DimensionKey.X) {
-      physicalSizeX = dimension.getLengthPerUnit();
+      physicalSizeX = dimension.getPhysicalStepSize();
     } else if (dimension.key == DimensionKey.Y) {
-      physicalSizeY = dimension.getLengthPerUnit();
+      physicalSizeY = dimension.getPhysicalStepSize();
     } else if (dimension.key == DimensionKey.Z) {
-      if (dimension.getLengthPerUnit() != null) {
-        zStep = Math.abs(dimension.getLengthPerUnit());
+      if (dimension.getPhysicalStepSize() != null) {
+        zStep = Math.abs(dimension.getPhysicalStepSize());
       }
     } else if (dimension.key == DimensionKey.T){
-      tStep = dimension.getLengthPerUnit();
+      tStep = dimension.getPhysicalStepSize();
     }
      else if (dimension.key == DimensionKey.S) {
       tileCount *= dimension.size;
