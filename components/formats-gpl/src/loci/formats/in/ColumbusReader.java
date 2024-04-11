@@ -388,8 +388,8 @@ public class ColumbusReader extends FormatReader {
           store.setWellSampleIndex(new NonNegativeInteger(wellSample), 0, nextWell, field);
 
           if (p != null) {
-            store.setWellSamplePositionX(new Length(p.positionX, UNITS.REFERENCEFRAME), 0, nextWell, field);
-            store.setWellSamplePositionY(new Length(p.positionY, UNITS.REFERENCEFRAME), 0, nextWell, field);
+            store.setWellSamplePositionX(new Length(p.positionX, UNITS.MICROMETER), 0, nextWell, field);
+            store.setWellSamplePositionY(new Length(p.positionY, UNITS.MICROMETER), 0, nextWell, field);
           }
 
           String imageID = MetadataTools.createLSID("Image", wellSample);
@@ -432,10 +432,10 @@ public class ColumbusReader extends FormatReader {
                   p = lookupPlane(row, col, field, t, c, z);
                   if (p != null) {
                     p.series = wellSample;
-                    
-                    store.setPlanePositionX(new Length(p.positionX, UNITS.REFERENCEFRAME), p.series, getIndex(z, c, t));
-                    store.setPlanePositionY(new Length(p.positionY, UNITS.REFERENCEFRAME), p.series, getIndex(z, c, t));
-                    store.setPlanePositionZ(new Length(p.positionZ, UNITS.REFERENCEFRAME), p.series, getIndex(z, c, t));
+
+                    store.setPlanePositionX(new Length(p.positionX, UNITS.MICROMETER), p.series, getIndex(z, c, t));
+                    store.setPlanePositionY(new Length(p.positionY, UNITS.MICROMETER), p.series, getIndex(z, c, t));
+                    store.setPlanePositionZ(new Length(p.positionZ, UNITS.MICROMETER), p.series, getIndex(z, c, t));
                   }
                 }
               }
@@ -586,6 +586,9 @@ public class ColumbusReader extends FormatReader {
 
   }
 
+  /**
+   * Calculate value in micrometers based on input value and units.
+   */
   private Double correctUnits(Double v, String unit) {
     if (unit == null) {
       return v;
