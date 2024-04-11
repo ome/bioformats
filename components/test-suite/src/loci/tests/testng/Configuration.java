@@ -324,7 +324,8 @@ public class Configuration {
     String timeIncrement = currentTable.get(TIME_INCREMENT);
     String timeIncrementUnits = currentTable.get(TIME_INCREMENT_UNIT);
     try {
-      return timeIncrement == null ? null : FormatTools.getTime(DataTools.parseDouble(timeIncrement), timeIncrementUnits);
+      Double time = DataTools.parseDouble(timeIncrement);
+      return time == null ? null : FormatTools.getTime(time, timeIncrementUnits);
     }
     catch (NumberFormatException e) { 
       return null; 
@@ -351,7 +352,8 @@ public class Configuration {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
     String exposureUnits = currentTable.get(EXPOSURE_TIME_UNIT + channel);
     try {
-      return exposure == null ? null : FormatTools.getTime(DataTools.parseDouble(exposure), exposureUnits);
+      Double exp = DataTools.parseDouble(exposure);
+      return exp == null ? null : FormatTools.getTime(exp, exposureUnits);
     }
     catch (NumberFormatException e) { 
       return null; 
@@ -394,7 +396,8 @@ public class Configuration {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
     String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT + channel);
     try {
-      return wavelength == null ? null : FormatTools.getWavelength(DataTools.parseDouble(wavelength), emissionUnits);
+      Double wave = DataTools.parseDouble(wavelength);
+      return wave == null ? null : FormatTools.getWavelength(wave, emissionUnits);
     }
     catch (NumberFormatException e) { 
       return null;
@@ -405,7 +408,8 @@ public class Configuration {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
     String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNIT + channel);
     try {
-      return wavelength == null ? null : FormatTools.getWavelength(DataTools.parseDouble(wavelength), excitationUnits);
+      Double wave = DataTools.parseDouble(wavelength);
+      return wave == null ? null : FormatTools.getWavelength(wave, excitationUnits);
     }
     catch (NumberFormatException e) { 
       return null;
@@ -828,7 +832,8 @@ public class Configuration {
     String units = currentTable.get(unitKey);
     try {
       UnitsLength unit = units == null ? UnitsLength.MICROMETER : UnitsLength.fromString(units);
-      return physicalSize == null ? null : UnitsLength.create(DataTools.parseDouble(physicalSize), unit);
+      Double size = DataTools.parseDouble(physicalSize);
+      return size == null ? null : UnitsLength.create(size, unit);
     }
     catch (NumberFormatException e) { }
     catch (EnumerationException e) { }
