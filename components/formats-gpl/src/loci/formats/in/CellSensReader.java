@@ -1746,7 +1746,7 @@ public class CellSensReader extends FormatReader {
                 value = String.valueOf(vsi.readDouble());
                 break;
               case BOOLEAN:
-                value = new Boolean(vsi.readBoolean()).toString();
+                value = Boolean.valueOf(vsi.readBoolean()).toString();
                 break;
               case TCHAR:
               case UNICODE_TCHAR:
@@ -1884,72 +1884,72 @@ public class CellSensReader extends FormatReader {
                 pyramid.deviceManufacturers.add(value);
               }
               else if (tag == EXPOSURE_TIME && tagPrefix.length() == 0) {
-                pyramid.exposureTimes.add(new Long(value));
+                pyramid.exposureTimes.add(Long.parseLong(value));
               }
               else if (tag == EXPOSURE_TIME) {
-                pyramid.defaultExposureTime = new Long(value);
+                pyramid.defaultExposureTime = Long.parseLong(value);
                 pyramid.otherExposureTimes.add(pyramid.defaultExposureTime);
               }
               else if (tag == CREATION_TIME && pyramid.acquisitionTime == null) {
-                pyramid.acquisitionTime = new Long(value);
+                pyramid.acquisitionTime = Long.parseLong(value);
               }
               else if (tag == REFRACTIVE_INDEX) {
-                pyramid.refractiveIndex = new Double(value);
+                pyramid.refractiveIndex = DataTools.parseDouble(value);
               }
               else if (tag == OBJECTIVE_MAG) {
-                pyramid.magnification = new Double(value);
+                pyramid.magnification = DataTools.parseDouble(value);
               }
               else if (tag == NUMERICAL_APERTURE) {
-                pyramid.numericalAperture = new Double(value);
+                pyramid.numericalAperture = DataTools.parseDouble(value);
               }
               else if (tag == WORKING_DISTANCE) {
-                pyramid.workingDistance = new Double(value);
+                pyramid.workingDistance = DataTools.parseDouble(value);
               }
               else if (tag == OBJECTIVE_NAME) {
                 pyramid.objectiveNames.add(value);
               }
               else if (tag == OBJECTIVE_TYPE) {
-                pyramid.objectiveTypes.add(new Integer(value));
+                pyramid.objectiveTypes.add(Integer.parseInt(value));
               }
               else if (tag == BIT_DEPTH) {
-                pyramid.bitDepth = new Integer(value);
+                pyramid.bitDepth = Integer.parseInt(value);
               }
               else if (tag == X_BINNING) {
-                pyramid.binningX = new Integer(value);
+                pyramid.binningX = Integer.parseInt(value);
               }
               else if (tag == Y_BINNING) {
-                pyramid.binningY = new Integer(value);
+                pyramid.binningY = Integer.parseInt(value);
               }
               else if (tag == CAMERA_GAIN) {
-                pyramid.gain = new Double(value);
+                pyramid.gain = DataTools.parseDouble(value);
               }
               else if (tag == CAMERA_OFFSET) {
-                pyramid.offset = new Double(value);
+                pyramid.offset = DataTools.parseDouble(value);
               }
               else if (tag == RED_GAIN) {
-                pyramid.redGain = new Double(value);
+                pyramid.redGain = DataTools.parseDouble(value);
               }
               else if (tag == GREEN_GAIN) {
-                pyramid.greenGain = new Double(value);
+                pyramid.greenGain = DataTools.parseDouble(value);
               }
               else if (tag == BLUE_GAIN) {
-                pyramid.blueGain = new Double(value);
+                pyramid.blueGain = DataTools.parseDouble(value);
               }
               else if (tag == RED_OFFSET) {
-                pyramid.redOffset = new Double(value);
+                pyramid.redOffset = DataTools.parseDouble(value);
               }
               else if (tag == GREEN_OFFSET) {
-                pyramid.greenOffset = new Double(value);
+                pyramid.greenOffset = DataTools.parseDouble(value);
               }
               else if (tag == BLUE_OFFSET) {
-                pyramid.blueOffset = new Double(value);
+                pyramid.blueOffset = DataTools.parseDouble(value);
               }
               else if (tag == VALUE) {
                 if (tagPrefix.equals("Channel Wavelength ")) {
-                  pyramid.channelWavelengths.add(new Double(value));
+                  pyramid.channelWavelengths.add(DataTools.parseDouble(value));
                 }
                 else if (tagPrefix.startsWith("Objective Working Distance")) {
-                  pyramid.workingDistance = new Double(value);
+                  pyramid.workingDistance = DataTools.parseDouble(value);
                 }
                 else if (tagPrefix.equals("Z start position")) {
                   pyramid.zStart = DataTools.parseDouble(value);

@@ -859,17 +859,17 @@ public class DeltavisionReader extends FormatReader {
         }
       }
 
-      Double x = new Double(pixX);
+      Double x = Double.valueOf(pixX);
       Length sizeX = FormatTools.getPhysicalSizeX(x);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, series);
       }
-      Double y = new Double(pixY);
+      Double y = Double.valueOf(pixY);
       Length sizeY = FormatTools.getPhysicalSizeY(y);
       if (sizeY != null) {
         store.setPixelsPhysicalSizeY(sizeY, series);
       }
-      Double z = new Double(pixZ);
+      Double z = Double.valueOf(pixZ);
       Length sizeZ = FormatTools.getPhysicalSizeZ(z);
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, series);
@@ -948,12 +948,12 @@ public class DeltavisionReader extends FormatReader {
 
         DVExtHdrFields hdr = extHdrFields[getPlaneIndex(seriesIndex, i)];
         if (expTime[coords[1]] == null) {
-          expTime[coords[1]] = new Double(hdr.expTime);
+          expTime[coords[1]] = Double.valueOf(hdr.expTime);
         }
 
         // plane timing
         store.setPlaneDeltaT(
-          new Time(new Double(hdr.timeStampSeconds), UNITS.SECOND), series, i);
+          new Time(Double.valueOf(hdr.timeStampSeconds), UNITS.SECOND), series, i);
         store.setPlaneExposureTime(new Time(expTime[coords[1]], UNITS.SECOND), series, i);
 
         // stage position
@@ -967,9 +967,9 @@ public class DeltavisionReader extends FormatReader {
           int w = coords[1];
 
           Length emission =
-            FormatTools.getEmissionWavelength(new Double(waves[w]));
+            FormatTools.getEmissionWavelength(Double.valueOf(waves[w]));
           Length excitation =
-            FormatTools.getExcitationWavelength(new Double(hdr.exWavelen));
+            FormatTools.getExcitationWavelength(Double.valueOf(hdr.exWavelen));
 
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, series, w);
@@ -977,7 +977,7 @@ public class DeltavisionReader extends FormatReader {
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, series, w);
           }
-          if (ndFilters[w] == null) ndFilters[w] = new Double(hdr.ndFilter);
+          if (ndFilters[w] == null) ndFilters[w] = Double.valueOf(hdr.ndFilter);
           store.setChannelNDFilter(ndFilters[w], series, w);
         }
       }
@@ -1262,14 +1262,14 @@ public class DeltavisionReader extends FormatReader {
             }
 
             try {
-              Double mag = new Double(magnification);
+              Double mag = DataTools.parseDouble(magnification);
               store.setObjectiveNominalMagnification(mag, 0, 0);
             }
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse magnification '{}'", magnification);
             }
             try {
-              store.setObjectiveLensNA(new Double(na), 0, 0);
+              store.setObjectiveLensNA(DataTools.parseDouble(na), 0, 0);
             }
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse N.A. '{}'", na);
@@ -1308,7 +1308,7 @@ public class DeltavisionReader extends FormatReader {
           for (int q=0; q<pixelSizes.length; q++) {
             Double size = null;
             try {
-              size = new Double(pixelSizes[q].trim());
+              size = DataTools.parseDouble(pixelSizes[q].trim());
             }
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse pixel size '{}'",
@@ -1364,7 +1364,7 @@ public class DeltavisionReader extends FormatReader {
             store.setDetectorID(detectorID, 0, 0);
             for (int series=0; series<getSeriesCount(); series++) {
               for (int c=0; c<getSizeC(); c++) {
-                store.setDetectorSettingsGain(new Double(value), series, c);
+                store.setDetectorSettingsGain(DataTools.parseDouble(value), series, c);
                 store.setDetectorSettingsID(detectorID, series, c);
               }
             }

@@ -31,6 +31,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -142,8 +143,8 @@ public class FluoviewReader extends BaseTiffReader {
     String com = ifd.getComment();
     if (com == null) com = "";
     return (com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
-      ifd.containsKey(new Integer(MMHEADER)) ||
-      ifd.containsKey(new Integer(MMSTAMP))) ||
+      ifd.containsKey(Integer.valueOf(MMHEADER)) ||
+      ifd.containsKey(Integer.valueOf(MMSTAMP))) ||
       com.startsWith(ANDOR_MAGIC_STRING);
   }
 
@@ -534,13 +535,13 @@ public class FluoviewReader extends BaseTiffReader {
     for (int i=0; i<getSizeC(); i++) {
       if (voltages != null && voltages[i] != null) {
         store.setDetectorSettingsVoltage(
-                new ElectricPotential(new Double(voltages[i]), UNITS.VOLT), 0, i);
+                new ElectricPotential(DataTools.parseDouble(voltages[i]), UNITS.VOLT), 0, i);
       }
       if (gains != null && gains[i] != null) {
-        store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
+        store.setDetectorSettingsGain(DataTools.parseDouble(gains[i]), 0, i);
       }
       if (offsets != null && offsets[i] != null) {
-        store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
+        store.setDetectorSettingsOffset(DataTools.parseDouble(offsets[i]), 0, i);
       }
       store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, i);
       if (detectorManufacturer != null) {
@@ -572,13 +573,13 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     if (mag != null) {
-      store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
+      store.setObjectiveCalibratedMagnification(DataTools.parseDouble(mag), 0, 0);
     }
 
     if (lensNA != null) {
       for (int i=0; i<getSizeC(); i++) {
         if (lensNA[i] != null) {
-          store.setObjectiveLensNA(new Double(lensNA[i]), 0, i);
+          store.setObjectiveLensNA(DataTools.parseDouble(lensNA[i]), 0, i);
         }
       }
     }
@@ -649,7 +650,7 @@ public class FluoviewReader extends BaseTiffReader {
   private void initAlternateMetadataStore() throws FormatException {
     MetadataStore store = makeFilterMetadata();
     store.setImagingEnvironmentTemperature(
-      new Temperature(new Double(temperature.floatValue()), UNITS.CELSIUS), 0);
+      new Temperature(Double.valueOf(temperature.floatValue()), UNITS.CELSIUS), 0);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -661,14 +662,14 @@ public class FluoviewReader extends BaseTiffReader {
 
     if (exposureTime != null) {
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.SECOND), 0, i);
+        store.setPlaneExposureTime(new Time(Double.valueOf(exposureTime.floatValue()), UNITS.SECOND), 0, i);
       }
     }
 
     for (int i=0; i<getEffectiveSizeC(); i++) {
       store.setDetectorSettingsID(detectorID, 0, i);
       store.setDetectorSettingsReadOutRate(
-        new Frequency(new Double(readoutTime.floatValue()), UNITS.HERTZ), 0, i);
+        new Frequency(Double.valueOf(readoutTime.floatValue()), UNITS.HERTZ), 0, i);
     }
   }
 

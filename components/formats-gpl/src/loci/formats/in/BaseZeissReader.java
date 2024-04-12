@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.lang.Math;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
@@ -400,10 +401,12 @@ public abstract class BaseZeissReader extends FormatReader {
             exposure = exposureTime.values().iterator().next();
           }
           Double exp = 0d;
-          try { exp = new Double(exposure); }
+          try { exp = DataTools.parseDouble(exposure); }
           catch (NumberFormatException e) { }
           catch (NullPointerException e) { }
-          store.setPlaneExposureTime(new Time(exp, UNITS.SECOND), i, plane);
+          if (exp != null) {
+            store.setPlaneExposureTime(new Time(exp, UNITS.SECOND), i, plane);
+          }
 
           int posIndex = i * getImageCount() + plane;
 
@@ -844,12 +847,13 @@ public abstract class BaseZeissReader extends FormatReader {
         }
 
         if (key.startsWith("ImageTile") && !(store instanceof DummyMetadata)) {
-          if (!tiles.containsKey(new Integer(value))) {
-            tiles.put(Integer.valueOf(value), 1);
+          Integer intValue = Integer.parseInt(value);
+          if (!tiles.containsKey(intValue)) {
+            tiles.put(intValue, 1);
           }
           else {
-            int v = tiles.get(new Integer(value)).intValue() + 1;
-            tiles.put(new Integer(value), new Integer(v));
+            int v = tiles.get(intValue).intValue() + 1;
+            tiles.put(intValue, Integer.valueOf(v));
           }
         }
 
@@ -909,7 +913,7 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1) {
-            Double wave = new Double(value);
+            Double wave = DataTools.parseDouble(value);
             Length emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               emWavelength.put(cIndex, emission);
@@ -918,7 +922,7 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Excitation Wavelength")) {
           if (cIndex != -1) {
-            Double wave = new Double(Double.parseDouble(value));
+            Double wave = DataTools.parseDouble(value);
             Length excitation = FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               exWavelength.put(cIndex, excitation);
@@ -931,9 +935,9 @@ public abstract class BaseZeissReader extends FormatReader {
           }
         }
         else if (key.startsWith("Exposure Time [ms]")) {
-          if (exposureTime.get(new Integer(cIndex)) == null) {
+          if (exposureTime.get(Integer.valueOf(cIndex)) == null) {
             double exp = Double.parseDouble(value) / 1000;
-            exposureTime.put(new Integer(cIndex), String.valueOf(exp));
+            exposureTime.put(Integer.valueOf(cIndex), String.valueOf(exp));
           }
         }
         else if (key.startsWith("User Name")) {
@@ -960,7 +964,7 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
         }
         else if (key.startsWith("Objective N.A.")) {
-          store.setObjectiveLensNA(new Double(value), 0, 0);
+          store.setObjectiveLensNA(DataTools.parseDouble(value), 0, 0);
         }
         else if (key.startsWith("Objective Name")) {
           String[] tokens = value.split(" ");
@@ -971,14 +975,14 @@ public abstract class BaseZeissReader extends FormatReader {
                   Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
               store.setObjectiveNominalMagnification(mag, 0, 0);
-              store.setObjectiveLensNA(new Double(na), 0, 0);
+              store.setObjectiveLensNA(DataTools.parseDouble(na), 0, 0);
               store.setObjectiveCorrection(MetadataTools.getCorrection(tokens[q - 1]), 0, 0);
               break;
             }
           }
         }
         else if (key.startsWith("Objective Working Distance")) {
-          store.setObjectiveWorkingDistance(new Length(new Double(value), UNITS.MICROMETER), 0, 0);
+          store.setObjectiveWorkingDistance(new Length(DataTools.parseDouble(value), UNITS.MICROMETER), 0, 0);
         }
         else if (key.startsWith("Objective Immersion Type")) {
           String immersion = "Other";
@@ -1004,10 +1008,10 @@ public abstract class BaseZeissReader extends FormatReader {
           addGlobalMetaList("Y position for position", value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
-          detectorGain.put(cIndex, new Double(value));
+          detectorGain.put(cIndex, DataTools.parseDouble(value));
         }
         else if (key.startsWith("Orca Analog Offset")) {
-          detectorOffset.put(cIndex, new Double(value));
+          detectorOffset.put(cIndex, DataTools.parseDouble(value));
         }
         else if (key.startsWith("Comments")) {
           imageDescription = value;

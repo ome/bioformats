@@ -551,7 +551,7 @@ public class NDPIReader extends BaseTiffReader {
 
         // key name not a typo
         if (key.equals("Objective.Lens.Magnificant") && magnification == null) {
-          magnification = new Double(value);
+          magnification = DataTools.parseDouble(value);
         }
         else if (key.equals("NDP.S/N")) {
           serialNumber = value;

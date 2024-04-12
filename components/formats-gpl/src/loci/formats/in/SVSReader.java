@@ -437,7 +437,7 @@ public class SVSReader extends BaseTiffReader {
             key = t.substring(0, t.indexOf('=')).trim();
             value = t.substring(t.indexOf('=') + 1).trim();
             if (key.equals("TotalDepth")) {
-              zPosition[index] = new Double(0);
+              zPosition[index] = 0d;
             }
             else if (key.equals("OffsetZ")) {
               zPosition[index] = DataTools.parseDouble(value);
@@ -689,13 +689,13 @@ public class SVSReader extends BaseTiffReader {
 
       if (i == 0) {
         if (physicalDistanceFromTopEdge != null) {
-          Length yPos = FormatTools.getStagePosition(physicalDistanceFromTopEdge, UNITS.MM);
+          Length yPos = FormatTools.getStagePosition(physicalDistanceFromTopEdge, UNITS.MILLIMETER);
           for (int p=0; p<getImageCount(); p++) {
             store.setPlanePositionY(yPos, i, p);
           }
         }
         if (physicalDistanceFromLeftEdge != null) {
-          Length xPos = FormatTools.getStagePosition(physicalDistanceFromLeftEdge, UNITS.MM);
+          Length xPos = FormatTools.getStagePosition(physicalDistanceFromLeftEdge, UNITS.MILLIMETER);
           for (int p=0; p<getImageCount(); p++) {
             store.setPlanePositionX(xPos, i, p);
           }

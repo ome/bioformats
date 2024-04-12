@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -131,13 +132,13 @@ public class INRReader extends FormatReader {
           nBits = Integer.parseInt(bits);
         }
         else if (key.equals("VX")) {
-          physicalSizeX = new Double(value);
+          physicalSizeX = DataTools.parseDouble(value);
         }
         else if (key.equals("VY")) {
-          physicalSizeY = new Double(value);
+          physicalSizeY = DataTools.parseDouble(value);
         }
         else if (key.equals("VZ")) {
-          physicalSizeZ = new Double(value);
+          physicalSizeZ = DataTools.parseDouble(value);
         }
       }
     }

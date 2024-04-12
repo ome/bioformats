@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -152,13 +153,13 @@ public class AIMReader extends FormatReader {
             token = token.trim();
             if (token.length() > 0) {
               if (xSize == null) {
-                xSize = new Double(token);
+                xSize = DataTools.parseDouble(token);
               }
               else if (ySize == null) {
-                ySize = new Double(token);
+                ySize = DataTools.parseDouble(token);
               }
               else if (zSize == null) {
-                zSize = new Double(token);
+                zSize = DataTools.parseDouble(token);
               }
             }
           }
@@ -169,13 +170,13 @@ public class AIMReader extends FormatReader {
             token = token.trim();
             if (token.length() > 0) {
               if (xLength == null) {
-                xLength = new Double(token);
+                xLength = DataTools.parseDouble(token);
               }
               else if (yLength == null) {
-                yLength = new Double(token);
+                yLength = DataTools.parseDouble(token);
               }
               else if (zLength == null) {
-                zLength = new Double(token);
+                zLength = DataTools.parseDouble(token);
               }
             }
           }

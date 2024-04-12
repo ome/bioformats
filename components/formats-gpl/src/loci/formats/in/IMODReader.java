@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -307,16 +308,16 @@ public class IMODReader extends FormatReader {
               store.setPointID(shapeID, obj, nextShape);
               store.setPointStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              l = new Length(Double.valueOf(lineWidth2D), UNITS.PIXEL);
               store.setPointStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPointStrokeDashArray("5", obj, nextShape);
               }
 
               store.setPointX(
-                new Double(points[obj][contour][i][0]), obj, nextShape);
+                Double.valueOf(points[obj][contour][i][0]), obj, nextShape);
               store.setPointY(
-                new Double(points[obj][contour][i][1]), obj, nextShape);
+                Double.valueOf(points[obj][contour][i][1]), obj, nextShape);
               if (points[obj][contour][i][2] >= 0) {
                 store.setPointTheZ(new NonNegativeInteger(
                   (int) points[obj][contour][i][2]), obj, nextShape);
@@ -347,7 +348,7 @@ public class IMODReader extends FormatReader {
               store.setPolygonID(shapeID, obj, nextShape);
               store.setPolygonStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              l = new Length(Double.valueOf(lineWidth2D), UNITS.PIXEL);
               store.setPolygonStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPolygonStrokeDashArray("5", obj, nextShape);
@@ -363,7 +364,7 @@ public class IMODReader extends FormatReader {
               store.setPolylineID(shapeID, obj, nextShape);
               store.setPolylineStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              l = new Length(Double.valueOf(lineWidth2D), UNITS.PIXEL);
               store.setPolylineStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPolylineStrokeDashArray("5", obj, nextShape);
