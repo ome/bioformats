@@ -169,7 +169,14 @@ public class NDPIReader extends BaseTiffReader {
     IFD ifd = ifds.get(ifdIndex);
 
     if (useTiffParser(ifd)) {
-      return copyTile(ifd, buf, x, y);
+      try (RandomAccessInputStream s = new RandomAccessInputStream(currentId)) {
+        tiffParser = new TiffParser(s);
+        tiffParser.setUse64BitOffsets(true);
+        return copyTile(ifd, buf, x, y);
+      }
+      finally {
+        tiffParser.getStream().close();
+      }
     }
 
     if (initializedSeries != getCoreIndex() || initializedPlane != no) {
@@ -352,8 +359,7 @@ public class NDPIReader extends BaseTiffReader {
     IFD ifd = ifds.get(ifdIndex);
     try {
       if (useTiffParser(ifd)) {
-        // TODO:
-        return 1024;
+        return (int) ifd.getTileWidth();
       }
 
       if (initializedSeries != getCoreIndex() || initializedPlane != no) {
@@ -379,8 +385,7 @@ public class NDPIReader extends BaseTiffReader {
     IFD ifd = ifds.get(ifdIndex);
     try {
       if (useTiffParser(ifd)) {
-        // TODO:
-        return 1024;
+        return (int) ifd.getTileLength();
       }
 
       if (initializedSeries != getCoreIndex() || initializedPlane != no) {
