@@ -63,6 +63,7 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
+import loci.formats.codec.PassthroughCodec;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
@@ -143,6 +144,91 @@ public class DicomReader extends SubResolutionFormatReader {
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
     datasetDescription = "One or more .dcm or .dicom files";
     hasCompanionFiles = true;
+  }
+
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    FormatTools.assertId(currentId, true, 1);
+
+    return (int) Math.ceil((double) getSizeY() / originalY);
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    FormatTools.assertId(currentId, true, 1);
+
+    return (int) Math.ceil((double) getSizeX() / originalY);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    Region boundingBox = new Region(x * originalX, y * originalY, originalX, originalY);
+
+    List<DicomTile> tiles = getTileList(no, boundingBox, true);
+    if (tiles == null || tiles.size() == 0) {
+      throw new FormatException("Could not find valid tile; no=" + no + ", x=" + x + ", y=" + y);
+    }
+    DicomTile tile = tiles.get(0);
+    byte[] buf = new byte[(int) (tile.endOffset - tile.fileOffset)];
+    try (RandomAccessInputStream stream = new RandomAccessInputStream(tile.file)) {
+      if (tile.fileOffset >= stream.length()) {
+        LOGGER.error("attempted to read beyond end of file ({}, {})", tile.fileOffset, tile.file);
+        return buf;
+      }
+      LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
+      stream.seek(tile.fileOffset);
+      stream.read(buf, 0, (int) (tile.endOffset - tile.fileOffset));
+    }
+    return buf;
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    Region boundingBox = new Region(x * originalX, y * originalY, originalX, originalY);
+
+    List<DicomTile> tiles = getTileList(no, boundingBox, true);
+    if (tiles == null || tiles.size() == 0) {
+      throw new FormatException("Could not find valid tile; no=" + no + ", x=" + x + ", y=" + y);
+    }
+    DicomTile tile = tiles.get(0);
+    try (RandomAccessInputStream stream = new RandomAccessInputStream(tile.file)) {
+      if (tile.fileOffset >= stream.length()) {
+        LOGGER.error("attempted to read beyond end of file ({}, {})", tile.fileOffset, tile.file);
+        return buf;
+      }
+      LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
+      stream.seek(tile.fileOffset);
+      stream.read(buf, 0, (int) (tile.endOffset - tile.fileOffset));
+    }
+    return buf;
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    List<DicomTile> tiles = getTileList(no, null, true);
+    if (tiles == null || tiles.size() == 0) {
+      throw new FormatException("Could not find valid tile; no=" + no);
+    }
+    return getTileCodec(tiles.get(0));
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    List<DicomTile> tiles = getTileList(no, null, true);
+    if (tiles == null || tiles.size() == 0) {
+      throw new FormatException("Could not find valid tile; no=" + no + ", x=" + x + ", y=" + y);
+    }
+    return getTileCodecOptions(tiles.get(0));
   }
 
   // -- IFormatReader API methods --
@@ -282,33 +368,18 @@ public class DicomReader extends SubResolutionFormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
     Region currentRegion = new Region(x, y, w, h);
-    int z = getZCTCoords(no)[0];
-    int c = getZCTCoords(no)[1];
 
-    if (!tilePositions.containsKey(getCoreIndex())) {
-      LOGGER.warn("No tiles for core index = {}", getCoreIndex());
-      return buf;
-    }
+    List<DicomTile> tiles = getTileList(no, currentRegion, false);
+    for (DicomTile tile : tiles) {
+      byte[] tileBuf = new byte[tile.region.width * tile.region.height * pixel];
+      Region intersection = tile.region.intersection(currentRegion);
+      getTile(tile, tileBuf, intersection.x - tile.region.x, intersection.y - tile.region.y,
+        intersection.width, intersection.height);
 
-    // look for any tiles that match the requested tile and plane
-    List<Double> zs = zOffsets.get(getCoreIndex());
-    List<DicomTile> tiles = tilePositions.get(getCoreIndex());
-    for (int t=0; t<tiles.size(); t++) {
-      DicomTile tile = tiles.get(t);
-      if ((getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(z))) || (getSizeZ() == tiles.size() && t == z)) &&
-        (tile.channel == c || getEffectiveSizeC() == 1) &&
-        tile.region.intersects(currentRegion))
-      {
-        byte[] tileBuf = new byte[tile.region.width * tile.region.height * pixel];
-        Region intersection = tile.region.intersection(currentRegion);
-        getTile(tile, tileBuf, intersection.x - tile.region.x, intersection.y - tile.region.y,
-          intersection.width, intersection.height);
-
-        for (int row=0; row<intersection.height; row++) {
-          int srcIndex = row * intersection.width * pixel;
-          int destIndex = pixel * ((intersection.y - y + row) * w + (intersection.x - x));
-          System.arraycopy(tileBuf, srcIndex, buf, destIndex, intersection.width * pixel);
-        }
+      for (int row=0; row<intersection.height; row++) {
+        int srcIndex = row * intersection.width * pixel;
+        int destIndex = pixel * ((intersection.y - y + row) * w + (intersection.x - x));
+        System.arraycopy(tileBuf, srcIndex, buf, destIndex, intersection.width * pixel);
       }
     }
 
@@ -1497,6 +1568,70 @@ public class DicomReader extends SubResolutionFormatReader {
   }
 
   /**
+   * Get a Codec that can be used to decompress the given tile.
+    */
+  private Codec getTileCodec(DicomTile tile) {
+    Codec codec = new PassthroughCodec();
+    if (tile.isRLE) {
+      codec = new PackbitsCodec();
+    }
+    else if (tile.isJPEG) {
+      codec = new JPEGCodec();
+    }
+    else if (tile.isJP2K) {
+      codec = new JPEG2000Codec();
+    }
+    return codec;
+  }
+
+  /**
+   * Get a CodecOptions that can be used to decompress the given tile.
+   */
+  private CodecOptions getTileCodecOptions(DicomTile tile) {
+    CodecOptions options = new CodecOptions();
+    options.maxBytes = tile.region.width * tile.region.height;
+    options.littleEndian = isLittleEndian();
+    options.interleaved = isInterleaved();
+
+    return options;
+  }
+
+  /**
+   * Get a list of tiles corresponding to the given plane.
+   * If the bounding box is not null, then only tiles intersecting with
+   * the bounding box will be returned.
+   * If the "firstTileOnly" flag is set, then this will return as soon
+   * as one matching tile is found.
+   */
+  private List<DicomTile> getTileList(int no, Region boundingBox, boolean firstTileOnly) {
+    int z = getZCTCoords(no)[0];
+    int c = getZCTCoords(no)[1];
+
+    List<DicomTile> tileList = new ArrayList<DicomTile>();
+    if (!tilePositions.containsKey(getCoreIndex())) {
+      LOGGER.warn("No tiles for core index = {}", getCoreIndex());
+      return tileList;
+    }
+
+    // look for any tiles that match the requested tile and plane
+    List<Double> zs = zOffsets.get(getCoreIndex());
+    List<DicomTile> tiles = tilePositions.get(getCoreIndex());
+    for (int t=0; t<tiles.size(); t++) {
+      DicomTile tile = tiles.get(t);
+      if ((getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(z))) || (getSizeZ() == tiles.size() && t == z)) &&
+        (tile.channel == c || getEffectiveSizeC() == 1) &&
+        (boundingBox == null || tile.region.intersects(boundingBox)))
+      {
+        tileList.add(tile);
+        if (firstTileOnly) {
+          break;
+        }
+      }
+    }
+    return tileList;
+  }
+
+  /**
    * Decompress pixel data associated with the given DicomTile.
    */
   private void getTile(DicomTile tile, byte[] buf, int x, int y, int w, int h)
@@ -1513,12 +1648,12 @@ public class DicomReader extends SubResolutionFormatReader {
       LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
       stream.seek(tile.fileOffset);
 
+      Codec codec = getTileCodec(tile);
+      CodecOptions options = getTileCodecOptions(tile);
+
       if (tile.isRLE) {
         // plane is compressed using run-length encoding
-        CodecOptions options = new CodecOptions();
-        options.maxBytes = tile.region.width * tile.region.height;
         for (int c=0; c<ec; c++) {
-          PackbitsCodec codec = new PackbitsCodec();
           byte[] t = null;
 
           if (bpp > 1) {
@@ -1610,13 +1745,6 @@ public class DicomReader extends SubResolutionFormatReader {
           b = new byte[pt + 2];
           System.arraycopy(tmp, 0, b, 0, b.length);
         }
-
-        Codec codec = null;
-        CodecOptions options = new CodecOptions();
-        options.littleEndian = isLittleEndian();
-        options.interleaved = isInterleaved();
-        if (tile.isJPEG) codec = new JPEGCodec();
-        else codec = new JPEG2000Codec();
 
         try {
           b = codec.decompress(b, options);
