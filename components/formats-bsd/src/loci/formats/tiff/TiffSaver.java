@@ -450,7 +450,7 @@ public class TiffSaver implements Closeable {
    * @throws FormatException
    * @throws IOException
    */
-  private void writeImageIFD(IFD ifd, int no, byte[][] strips,
+  public void writeImageIFD(IFD ifd, int no, byte[][] strips,
       int nChannels, boolean last, int x, int y)
   throws FormatException, IOException {
     LOGGER.debug("Attempting to write image IFD.");
@@ -1003,7 +1003,7 @@ public class TiffSaver implements Closeable {
    * @param pixelType The pixel type.
    * @param nChannels The number of channels.
    */
-  private void makeValidIFD(IFD ifd, int pixelType, int nChannels) {
+  public void makeValidIFD(IFD ifd, int pixelType, int nChannels) {
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
     int bps = 8 * bytesPerPixel;
     int[] bpsArray = new int[nChannels];
