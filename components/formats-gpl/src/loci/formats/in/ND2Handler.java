@@ -154,7 +154,7 @@ public class ND2Handler extends BaseHandler {
           store.setLabelFontSize(new Length(fontSize, UNITS.POINT), r, 0);
         }
         store.setLabelText(roi.get("eval-text"), r, 0);
-        Length l = new Length(DataTools.parseDouble(roi.get("line-width")), UNITS.PIXEL);
+        Length l = new Length(Double.parseDouble(roi.get("line-width")), UNITS.PIXEL);
         store.setLabelStrokeWidth(l, r, 0);
 
         String rectangle = roi.get("rectangle");
@@ -885,11 +885,11 @@ public class ND2Handler extends BaseHandler {
       }
       else if (key.equalsIgnoreCase("Emission wavelength")) {
         String[] v = value.split(" ");
-        emWave.add(DataTools.parseDouble(v[0]));
+        emWave.add(Double.parseDouble(v[0]));
       }
       else if (key.equalsIgnoreCase("Excitation wavelength")) {
         String[] v = value.split(" ");
-        exWave.add(DataTools.parseDouble(v[0]));
+        exWave.add(Double.parseDouble(v[0]));
       }
       else if (key.equals("Power")) {
         power.add(DataTools.parseDouble(value).intValue());
@@ -898,10 +898,7 @@ public class ND2Handler extends BaseHandler {
         cameraModel = value;
       }
       else if (key.equals("ExposureTime")) {
-        Double time = DataTools.parseDouble(value);
-        if (time != null) {
-          exposureTime.add(time / 1000d);
-        }
+        exposureTime.add(Double.parseDouble(value) / 1000d);
       }
       else if (key.equals("sDate")) {
         date = DateTools.formatDate(value, DATE_FORMAT);

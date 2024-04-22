@@ -778,8 +778,8 @@ public class CellWorxReader extends FormatReader {
       }
       else if (key.equals("Scan Origin")) {
         String[] axes = value.split(",");
-        Double posX = DataTools.parseDouble(axes[0]);
-        Double posY = DataTools.parseDouble(axes[1]);
+        Double posX = Double.parseDouble(axes[0]);
+        Double posY = Double.parseDouble(axes[1]);
         for (int fieldRow=0; fieldRow<fieldMap.length; fieldRow++) {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
@@ -799,8 +799,8 @@ public class CellWorxReader extends FormatReader {
         int s = value.indexOf('x');
         if (s > 0) {
           int end = value.indexOf(" ", s + 2);
-          Double xSize = DataTools.parseDouble(value.substring(0, s).trim());
-          Double ySize = DataTools.parseDouble(value.substring(s + 1, end).trim());
+          Double xSize = Double.parseDouble(value.substring(0, s).trim());
+          Double ySize = Double.parseDouble(value.substring(s + 1, end).trim());
 
           Length x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
           Length y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
@@ -827,7 +827,7 @@ public class CellWorxReader extends FormatReader {
           token = token.trim();
           if (token.startsWith("gain")) {
             String instrumentID = MetadataTools.createLSID("Instrument", 0);
-            Double gain = DataTools.parseDouble(token.replaceAll("gain ", ""));
+            Double gain = Double.parseDouble(token.replaceAll("gain ", ""));
             String detectorID = MetadataTools.createLSID("Detector", 0, 0);
 
             store.setInstrumentID(instrumentID, 0);
@@ -854,8 +854,8 @@ public class CellWorxReader extends FormatReader {
                 }
               }
 
-              Double emission = DataTools.parseDouble(em);
-              Double excitation = DataTools.parseDouble(ex);
+              Double emission = Double.parseDouble(em);
+              Double excitation = Double.parseDouble(ex);
 
               Length exWave = FormatTools.getExcitationWavelength(excitation);
               Length emWave = FormatTools.getEmissionWavelength(emission);
