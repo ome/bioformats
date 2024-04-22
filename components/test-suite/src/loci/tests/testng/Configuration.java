@@ -324,8 +324,7 @@ public class Configuration {
     String timeIncrement = currentTable.get(TIME_INCREMENT);
     String timeIncrementUnits = currentTable.get(TIME_INCREMENT_UNIT);
     try {
-      Double time = DataTools.parseDouble(timeIncrement);
-      return time == null ? null : FormatTools.getTime(time, timeIncrementUnits);
+      return timeIncrement == null ? null : FormatTools.getTime(Double.parseDouble(timeIncrement), timeIncrementUnits);
     }
     catch (NumberFormatException e) { 
       return null; 
@@ -352,8 +351,7 @@ public class Configuration {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
     String exposureUnits = currentTable.get(EXPOSURE_TIME_UNIT + channel);
     try {
-      Double exp = DataTools.parseDouble(exposure);
-      return exp == null ? null : FormatTools.getTime(exp, exposureUnits);
+      return exposure == null ? null : FormatTools.getTime(Double.parseDouble(exposure), exposureUnits);
     }
     catch (NumberFormatException e) { 
       return null; 
@@ -362,12 +360,12 @@ public class Configuration {
 
   public Double getDeltaT(int plane) {
     String deltaT = currentTable.get(DELTA_T + plane);
-    return deltaT == null ? null : DataTools.parseDouble(deltaT);
+    return deltaT == null ? null : Double.parseDouble(deltaT);
   }
 
   public Double getPositionX(int plane) {
     String pos = currentTable.get(X_POSITION + plane);
-    return pos == null ? null : DataTools.parseDouble(pos);
+    return pos == null ? null : Double.parseDouble(pos);
   }
   
   public String getPositionXUnit(int plane) {
@@ -376,7 +374,7 @@ public class Configuration {
 
   public Double getPositionY(int plane) {
     String pos = currentTable.get(Y_POSITION + plane);
-    return pos == null ? null : DataTools.parseDouble(pos);
+    return pos == null ? null : Double.parseDouble(pos);
   }
   
   public String getPositionYUnit(int plane) {
@@ -385,7 +383,7 @@ public class Configuration {
 
   public Double getPositionZ(int plane) {
     String pos = currentTable.get(Z_POSITION + plane);
-    return pos == null ? null : DataTools.parseDouble(pos);
+    return pos == null ? null : Double.parseDouble(pos);
   }
 
   public String getPositionZUnit(int plane) {
@@ -396,8 +394,7 @@ public class Configuration {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
     String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT + channel);
     try {
-      Double wave = DataTools.parseDouble(wavelength);
-      return wave == null ? null : FormatTools.getWavelength(wave, emissionUnits);
+      return wavelength == null ? null : FormatTools.getWavelength(Double.parseDouble(wavelength), emissionUnits);
     }
     catch (NumberFormatException e) { 
       return null;
@@ -408,8 +405,7 @@ public class Configuration {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
     String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNIT + channel);
     try {
-      Double wave = DataTools.parseDouble(wavelength);
-      return wave == null ? null : FormatTools.getWavelength(wave, excitationUnits);
+      return wavelength == null ? null : FormatTools.getWavelength(Double.parseDouble(wavelength), excitationUnits);
     }
     catch (NumberFormatException e) { 
       return null;
@@ -832,8 +828,7 @@ public class Configuration {
     String units = currentTable.get(unitKey);
     try {
       UnitsLength unit = units == null ? UnitsLength.MICROMETER : UnitsLength.fromString(units);
-      Double size = DataTools.parseDouble(physicalSize);
-      return size == null ? null : UnitsLength.create(size, unit);
+      return physicalSize == null ? null : UnitsLength.create(Double.parseDouble(physicalSize), unit);
     }
     catch (NumberFormatException e) { }
     catch (EnumerationException e) { }
