@@ -1552,7 +1552,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Wavelength") && populateCore) {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
-        Double wavelength = DataTools.parseDouble(value);
+        Double wavelength = Double.parseDouble(value);
         Length wave = FormatTools.getWavelength(wavelength);
         if (wave != null) {
           store.setLaserWavelength(wave, 0, nextLaser);
@@ -1566,11 +1566,11 @@ public class FlexReader extends FormatReader {
         }
       }
       else if (qName.equals("Magnification") && populateCore) {
-        store.setObjectiveCalibratedMagnification(DataTools.parseDouble(value), 0,
+        store.setObjectiveCalibratedMagnification(Double.parseDouble(value), 0,
           nextObjective);
       }
       else if (qName.equals("NumAperture") && populateCore) {
-        store.setObjectiveLensNA(DataTools.parseDouble(value), 0, nextObjective);
+        store.setObjectiveLensNA(Double.parseDouble(value), 0, nextObjective);
       }
       else if (qName.equals("Immersion") && populateCore) {
         String immersion = "Other";
@@ -1656,10 +1656,10 @@ public class FlexReader extends FormatReader {
           }
         }
         else if (qName.equals("TimepointOffsetUsed")) {
-          planeDeltaT.add(DataTools.parseDouble(value));
+          planeDeltaT.add(Double.parseDouble(value));
         }
         else if (qName.equals("CameraExposureTime")) {
-          planeExposureTime.add(DataTools.parseDouble(value));
+          planeExposureTime.add(Double.parseDouble(value));
         }
         else if (qName.equals("LightSourceCombinationRef")) {
           lightSourceCombinationRefs.add(value);
