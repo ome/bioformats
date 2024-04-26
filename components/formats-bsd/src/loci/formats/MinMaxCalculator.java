@@ -119,7 +119,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
       return null;
     }
-    return new Double(chanMin[series][theC]);
+    return chanMin[series][theC];
   }
 
   /**
@@ -141,7 +141,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
       return null;
     }
-    return new Double(chanMax[series][theC]);
+    return chanMax[series][theC];
   }
 
   /**
@@ -155,7 +155,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return chanMin == null ? null : new Double(chanMin[getCoreIndex()][theC]);
+    return chanMin == null ? null : chanMin[getCoreIndex()][theC];
   }
 
   /**
@@ -169,7 +169,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return chanMax == null ? null : new Double(chanMax[getCoreIndex()][theC]);
+    return chanMax == null ? null : chanMax[getCoreIndex()][theC];
   }
 
   /**
@@ -192,7 +192,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     Double[] min = new Double[numRGB];
     for (int c=0; c<numRGB; c++) {
-      min[c] = new Double(planeMin[series][pBase + c]);
+      min[c] = planeMin[series][pBase + c];
     }
     return min;
   }
@@ -217,7 +217,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     Double[] max = new Double[numRGB];
     for (int c=0; c<numRGB; c++) {
-      max[c] = new Double(planeMax[series][pBase + c]);
+      max[c] = planeMax[series][pBase + c];
     }
     return max;
   }

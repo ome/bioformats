@@ -43,6 +43,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -950,7 +951,7 @@ public class ICSReader extends FormatReader {
               if (key.equalsIgnoreCase("parameter ch")) {
                 String[] names = value.split(" ");
                 for (int n=0; n<names.length; n++) {
-                  channelNames.put(new Integer(n), names[n].trim());
+                  channelNames.put(n, names[n].trim());
                 }
               }
             }
@@ -964,7 +965,7 @@ public class ICSReader extends FormatReader {
 
             Double doubleValue = null;
             try {
-              doubleValue = new Double(value);
+              doubleValue = DataTools.parseDouble(value);
             }
             catch (NumberFormatException e) {
               // ARG this happens a lot; spurious error in most cases
@@ -1009,10 +1010,10 @@ public class ICSReader extends FormatReader {
                 metadata.remove(key);
               }
               else if (key.startsWith("history gain")) {
-                Integer n = 0;
+                int n = 0;
                 try {
-                  n = new Integer(key.substring(12).trim());
-                  n = new Integer(n.intValue() - 1);
+                  n = Integer.parseInt(key.substring(12).trim());
+                  n--;
                 }
                 catch (NumberFormatException e) { }
                 if (doubleValue != null) {
@@ -1023,7 +1024,7 @@ public class ICSReader extends FormatReader {
                 int laser = Integer.parseInt(key.substring(13, key.indexOf(" ", 13))) - 1;
                 value = value.replaceAll("nm", "").trim();
                 try {
-                  wavelengths.put(new Integer(laser), new Double(value));
+                  wavelengths.put(laser, DataTools.parseDouble(value));
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse wavelength", e);
@@ -1032,7 +1033,7 @@ public class ICSReader extends FormatReader {
              else if (key.equalsIgnoreCase("history Wavelength*")) {
                String[] waves = value.split(" ");
                for (int i=0; i<waves.length; i++) {
-                 wavelengths.put(new Integer(i), new Double(waves[i]));
+                 wavelengths.put(i, DataTools.parseDouble(waves[i]));
                }
              }
              else if (key.equalsIgnoreCase("history laser manufacturer")) {
@@ -1043,7 +1044,7 @@ public class ICSReader extends FormatReader {
              }
              else if (key.equalsIgnoreCase("history laser power")) {
                try {
-                 laserPower = new Double(value); //TODO ARG i.e. doubleValue
+                 laserPower = DataTools.parseDouble(value); //TODO ARG i.e. doubleValue
                }
                catch (NumberFormatException e) { }
              }
@@ -1052,7 +1053,7 @@ public class ICSReader extends FormatReader {
                if (repRate.indexOf(' ') != -1) {
                  repRate = repRate.substring(0, repRate.lastIndexOf(" "));
                }
-               laserRepetitionRate = new Double(repRate);
+               laserRepetitionRate = DataTools.parseDouble(repRate);
              }
              else if (key.equalsIgnoreCase("history objective type") ||
                       key.equalsIgnoreCase("history objective"))
@@ -1134,7 +1135,7 @@ public class ICSReader extends FormatReader {
                description = value;
              }
              else if (key.startsWith("history step") && key.endsWith("name")) {
-               Integer n = new Integer(key.substring(12, key.indexOf(" ", 12)));
+               Integer n = Integer.valueOf(key.substring(12, key.indexOf(" ", 12)));
                channelNames.put(n, value);
              }
              else if (key.equalsIgnoreCase("history cube")) {
@@ -1144,13 +1145,13 @@ public class ICSReader extends FormatReader {
                if (emWaves == null) {
                  emWaves = new Double[1];
                }
-               emWaves[0] = new Double(value.split(" ")[1].trim());
+               emWaves[0] = DataTools.parseDouble(value.split(" ")[1].trim());
              }
              else if (key.equalsIgnoreCase("history cube exc nm")) {
                if (exWaves == null) {
                  exWaves = new Double[1];
                }
-               exWaves[0] = new Double(value.split(" ")[1].trim());
+               exWaves[0] = DataTools.parseDouble(value.split(" ")[1].trim());
              }
              else if (key.equalsIgnoreCase("history microscope")) {
                microscopeModel = value;
@@ -1163,7 +1164,7 @@ public class ICSReader extends FormatReader {
                if (expTime.indexOf(' ') != -1) {
                  expTime = expTime.substring(0, expTime.indexOf(' '));
                }
-               Double expDouble = new Double(expTime);
+               Double expDouble = DataTools.parseDouble(expTime);
                if (expDouble != null) {
                  exposureTime = new Time(expDouble, UNITS.SECOND);
                }
@@ -1204,7 +1205,7 @@ public class ICSReader extends FormatReader {
                emWaves = new Double[waves.length];
                for (int n=0; n<emWaves.length; n++) {
                  try {
-                   emWaves[n] = new Double(Double.parseDouble(waves[n]));
+                   emWaves[n] = DataTools.parseDouble(waves[n]);
                  }
                  catch (NumberFormatException e) {
                    LOGGER.debug("Could not parse emission wavelength", e);
@@ -1216,7 +1217,7 @@ public class ICSReader extends FormatReader {
                exWaves = new Double[waves.length];
                for (int n=0; n<exWaves.length; n++) {
                  try {
-                   exWaves[n] = new Double(Double.parseDouble(waves[n]));
+                   exWaves[n] = DataTools.parseDouble(waves[n]);
                  }
                  catch (NumberFormatException e) {
                    LOGGER.debug("Could not parse excitation wavelength", e);
@@ -1229,7 +1230,7 @@ public class ICSReader extends FormatReader {
               for (int n=0; n<pins.length; n++) {
                 if (pins[n].trim().equals("")) continue;
                 try {
-                  pinholes.put(new Integer(channel++), new Double(pins[n]));
+                  pinholes.put(channel++, DataTools.parseDouble(pins[n]));
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse pinhole", e);
@@ -1341,7 +1342,7 @@ public class ICSReader extends FormatReader {
       else {
         if (m.sizeC == 0) m.sizeC = axisLengths[i];
         else m.sizeC *= axisLengths[i];
-        channelLengths.add(new Integer(axisLengths[i]));
+        channelLengths.add(axisLengths[i]);
         storedRGB = getSizeX() == 0;
         m.rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
         if (getDimensionOrder().indexOf('C') == -1) {
@@ -1919,7 +1920,7 @@ public class ICSReader extends FormatReader {
     for (int n=0; n<values.length; n++) {
       String token = t.nextToken().trim();
       try {
-        values[n] = new Double(token);
+        values[n] = DataTools.parseDouble(token);
       }
       catch (NumberFormatException e) {
         LOGGER.debug("Could not parse double value '{}'", token, e);
