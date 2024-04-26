@@ -745,10 +745,10 @@ public class ROIHandler {
   private static void storeLine(Line roi, MetadataStore store,
       int roiNum, int shape, int c, int z, int t)
   {
-    store.setLineX1(new Double(roi.x1), roiNum, shape);
-    store.setLineX2(new Double(roi.x2), roiNum, shape);
-    store.setLineY1(new Double(roi.y1), roiNum, shape);
-    store.setLineY2(new Double(roi.y2), roiNum, shape);
+    store.setLineX1(Double.valueOf(roi.x1), roiNum, shape);
+    store.setLineX2(Double.valueOf(roi.x2), roiNum, shape);
+    store.setLineY1(Double.valueOf(roi.y1), roiNum, shape);
+    store.setLineY2(Double.valueOf(roi.y2), roiNum, shape);
     if (c >= 0) {
       store.setLineTheC(unwrap(c), roiNum, shape);
     }
@@ -787,10 +787,10 @@ public class ROIHandler {
       int roiNum, int shape, int c, int z, int t)
   {
     Rectangle bounds = roi.getBounds();
-    store.setRectangleX(new Double(bounds.x), roiNum, shape);
-    store.setRectangleY(new Double(bounds.y), roiNum, shape);
-    store.setRectangleWidth(new Double(bounds.width), roiNum, shape);
-    store.setRectangleHeight(new Double(bounds.height), roiNum, shape);
+    store.setRectangleX(Double.valueOf(bounds.x), roiNum, shape);
+    store.setRectangleY(Double.valueOf(bounds.y), roiNum, shape);
+    store.setRectangleWidth(Double.valueOf(bounds.width), roiNum, shape);
+    store.setRectangleHeight(Double.valueOf(bounds.height), roiNum, shape);
     if (c >= 0) {
       store.setRectangleTheC(unwrap(c), roiNum, shape);
     }
