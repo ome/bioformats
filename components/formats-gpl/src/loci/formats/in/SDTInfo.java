@@ -458,24 +458,24 @@ public class SDTInfo {
     // save bhfileHeader to metadata table
     if (meta != null) {
       final String bhfileHeader = "bhfileHeader.";
-      meta.put(bhfileHeader + "revision", new Short(revision));
-      meta.put(bhfileHeader + "infoOffs", new Integer(infoOffs));
-      meta.put(bhfileHeader + "infoLength", new Short(infoLength));
-      meta.put(bhfileHeader + "setupOffs", new Integer(setupOffs));
-      meta.put(bhfileHeader + "dataBlockOffs", new Integer(dataBlockOffs));
-      meta.put(bhfileHeader + "noOfDataBlocks", new Short(noOfDataBlocks));
+      meta.put(bhfileHeader + "revision", Short.valueOf(revision));
+      meta.put(bhfileHeader + "infoOffs", Integer.valueOf(infoOffs));
+      meta.put(bhfileHeader + "infoLength", Short.valueOf(infoLength));
+      meta.put(bhfileHeader + "setupOffs", Integer.valueOf(setupOffs));
+      meta.put(bhfileHeader + "dataBlockOffs", Integer.valueOf(dataBlockOffs));
+      meta.put(bhfileHeader + "noOfDataBlocks", Short.valueOf(noOfDataBlocks));
       meta.put(bhfileHeader + "dataBlockLength",
-        new Integer(dataBlockLength));
+        Integer.valueOf(dataBlockLength));
       meta.put(bhfileHeader + "measDescBlockOffs",
-        new Integer(measDescBlockOffs));
+        Integer.valueOf(measDescBlockOffs));
       meta.put(bhfileHeader + "noOfMeasDescBlocks",
-        new Short(noOfMeasDescBlocks));
+        Short.valueOf(noOfMeasDescBlocks));
       meta.put(bhfileHeader + "measDescBlockLength",
-        new Integer(measDescBlockLength));
-      meta.put(bhfileHeader + "headerValid", new Integer(headerValid));
-      meta.put(bhfileHeader + "reserved1", new Long(reserved1));
-      meta.put(bhfileHeader + "reserved2", new Integer(reserved2));
-      meta.put(bhfileHeader + "chksum", new Integer(chksum));
+        Integer.valueOf(measDescBlockLength));
+      meta.put(bhfileHeader + "headerValid", Integer.valueOf(headerValid));
+      meta.put(bhfileHeader + "reserved1", Long.valueOf(reserved1));
+      meta.put(bhfileHeader + "reserved2", Integer.valueOf(reserved2));
+      meta.put(bhfileHeader + "chksum", Integer.valueOf(chksum));
     }
 
     // read file info
@@ -716,61 +716,61 @@ public class SDTInfo {
           meta.put(measureInfo + "time", time);
           meta.put(measureInfo + "date", date);
           meta.put(measureInfo + "modSerNo", modSerNo);
-          meta.put(measureInfo + "measMode", new Short(measMode));
-          meta.put(measureInfo + "cfdLL", new Float(cfdLL));
-          meta.put(measureInfo + "cfdLH", new Float(cfdLH));
-          meta.put(measureInfo + "cfdZC", new Float(cfdZC));
-          meta.put(measureInfo + "cfdHF", new Float(cfdHF));
-          meta.put(measureInfo + "synZC", new Float(synZC));
-          meta.put(measureInfo + "synFD", new Short(synFD));
-          meta.put(measureInfo + "synHF", new Float(synHF));
-          meta.put(measureInfo + "tacR", new Float(tacR));
-          meta.put(measureInfo + "tacG", new Short(tacG));
-          meta.put(measureInfo + "tacOF", new Float(tacOF));
-          meta.put(measureInfo + "tacLL", new Float(tacLL));
-          meta.put(measureInfo + "tacLH", new Float(tacLH));
-          meta.put(measureInfo + "adcRE", new Short(adcRE));
-          meta.put(measureInfo + "ealDE", new Short(ealDE));
-          meta.put(measureInfo + "ncx", new Short(ncx));
-          meta.put(measureInfo + "ncy", new Short(ncy));
-          meta.put(measureInfo + "page", new Integer(page));
-          meta.put(measureInfo + "colT", new Float(colT));
-          meta.put(measureInfo + "repT", new Float(repT));
-          meta.put(measureInfo + "stopt", new Short(stopt));
-          meta.put(measureInfo + "overfl", new Integer(overfl));
-          meta.put(measureInfo + "useMotor", new Short(useMotor));
-          meta.put(measureInfo + "steps", new Integer(steps));
-          meta.put(measureInfo + "offset", new Float(offset));
-          meta.put(measureInfo + "dither", new Short(dither));
-          meta.put(measureInfo + "incr", new Short(incr));
-          meta.put(measureInfo + "memBank", new Short(memBank));
+          meta.put(measureInfo + "measMode", Short.valueOf(measMode));
+          meta.put(measureInfo + "cfdLL", Float.valueOf(cfdLL));
+          meta.put(measureInfo + "cfdLH", Float.valueOf(cfdLH));
+          meta.put(measureInfo + "cfdZC", Float.valueOf(cfdZC));
+          meta.put(measureInfo + "cfdHF", Float.valueOf(cfdHF));
+          meta.put(measureInfo + "synZC", Float.valueOf(synZC));
+          meta.put(measureInfo + "synFD", Short.valueOf(synFD));
+          meta.put(measureInfo + "synHF", Float.valueOf(synHF));
+          meta.put(measureInfo + "tacR", Float.valueOf(tacR));
+          meta.put(measureInfo + "tacG", Short.valueOf(tacG));
+          meta.put(measureInfo + "tacOF", Float.valueOf(tacOF));
+          meta.put(measureInfo + "tacLL", Float.valueOf(tacLL));
+          meta.put(measureInfo + "tacLH", Float.valueOf(tacLH));
+          meta.put(measureInfo + "adcRE", Short.valueOf(adcRE));
+          meta.put(measureInfo + "ealDE", Short.valueOf(ealDE));
+          meta.put(measureInfo + "ncx", Short.valueOf(ncx));
+          meta.put(measureInfo + "ncy", Short.valueOf(ncy));
+          meta.put(measureInfo + "page", Integer.valueOf(page));
+          meta.put(measureInfo + "colT", Float.valueOf(colT));
+          meta.put(measureInfo + "repT", Float.valueOf(repT));
+          meta.put(measureInfo + "stopt", Short.valueOf(stopt));
+          meta.put(measureInfo + "overfl", Integer.valueOf(overfl));
+          meta.put(measureInfo + "useMotor", Short.valueOf(useMotor));
+          meta.put(measureInfo + "steps", Integer.valueOf(steps));
+          meta.put(measureInfo + "offset", Float.valueOf(offset));
+          meta.put(measureInfo + "dither", Short.valueOf(dither));
+          meta.put(measureInfo + "incr", Short.valueOf(incr));
+          meta.put(measureInfo + "memBank", Short.valueOf(memBank));
           meta.put(measureInfo + "modType", modType);
-          meta.put(measureInfo + "synTH", new Float(synTH));
-          meta.put(measureInfo + "deadTimeComp", new Short(deadTimeComp));
-          meta.put(measureInfo + "polarityL", new Short(polarityL));
-          meta.put(measureInfo + "polarityF", new Short(polarityF));
-          meta.put(measureInfo + "polarityP", new Short(polarityP));
-          meta.put(measureInfo + "linediv", new Short(linediv));
-          meta.put(measureInfo + "accumulate", new Short(accumulate));
-          meta.put(measureInfo + "flbckY", new Integer(flbckY));
-          meta.put(measureInfo + "flbckX", new Integer(flbckX));
-          meta.put(measureInfo + "bordU", new Integer(bordU));
-          meta.put(measureInfo + "bordL", new Integer(bordL));
-          meta.put(measureInfo + "pixTime", new Float(pixTime));
-          meta.put(measureInfo + "pixClk", new Short(pixClk));
-          meta.put(measureInfo + "trigger", new Short(trigger));
-          meta.put(measureInfo + "scanX", new Integer(scanX));
-          meta.put(measureInfo + "scanY", new Integer(scanY));
-          meta.put(measureInfo + "scanRX", new Integer(scanRX));
-          meta.put(measureInfo + "scanRY", new Integer(scanRY));
-          meta.put(measureInfo + "fifoTyp", new Short(fifoTyp));
-          meta.put(measureInfo + "epxDiv", new Integer(epxDiv));
-          meta.put(measureInfo + "modTypeCode", new Integer(modTypeCode));
-          meta.put(measureInfo + "modFpgaVer", new Integer(modFpgaVer));
+          meta.put(measureInfo + "synTH", Float.valueOf(synTH));
+          meta.put(measureInfo + "deadTimeComp", Short.valueOf(deadTimeComp));
+          meta.put(measureInfo + "polarityL", Short.valueOf(polarityL));
+          meta.put(measureInfo + "polarityF", Short.valueOf(polarityF));
+          meta.put(measureInfo + "polarityP", Short.valueOf(polarityP));
+          meta.put(measureInfo + "linediv", Short.valueOf(linediv));
+          meta.put(measureInfo + "accumulate", Short.valueOf(accumulate));
+          meta.put(measureInfo + "flbckY", Integer.valueOf(flbckY));
+          meta.put(measureInfo + "flbckX", Integer.valueOf(flbckX));
+          meta.put(measureInfo + "bordU", Integer.valueOf(bordU));
+          meta.put(measureInfo + "bordL", Integer.valueOf(bordL));
+          meta.put(measureInfo + "pixTime", Float.valueOf(pixTime));
+          meta.put(measureInfo + "pixClk", Short.valueOf(pixClk));
+          meta.put(measureInfo + "trigger", Short.valueOf(trigger));
+          meta.put(measureInfo + "scanX", Integer.valueOf(scanX));
+          meta.put(measureInfo + "scanY", Integer.valueOf(scanY));
+          meta.put(measureInfo + "scanRX", Integer.valueOf(scanRX));
+          meta.put(measureInfo + "scanRY", Integer.valueOf(scanRY));
+          meta.put(measureInfo + "fifoTyp", Short.valueOf(fifoTyp));
+          meta.put(measureInfo + "epxDiv", Integer.valueOf(epxDiv));
+          meta.put(measureInfo + "modTypeCode", Integer.valueOf(modTypeCode));
+          meta.put(measureInfo + "modFpgaVer", Integer.valueOf(modFpgaVer));
           meta.put(measureInfo + "overflowCorrFactor",
-            new Float(overflowCorrFactor));
-          meta.put(measureInfo + "adcZoom", new Integer(adcZoom));
-          meta.put(measureInfo + "cycles", new Integer(cycles));
+            Float.valueOf(overflowCorrFactor));
+          meta.put(measureInfo + "adcZoom", Integer.valueOf(adcZoom));
+          meta.put(measureInfo + "cycles", Integer.valueOf(cycles));
         }
 
         // extract dimensional parameters from measure info
@@ -817,22 +817,22 @@ public class SDTInfo {
         // save MeasStopInfo to metadata table
         if (meta != null) {
           final String measStopInfo = "MeasStopInfo.";
-          meta.put(measStopInfo + "status", new Integer(status));
-          meta.put(measStopInfo + "flags", new Integer(flags));
-          meta.put(measStopInfo + "stopTime", new Float(stopTime));
-          meta.put(measStopInfo + "curStep", new Integer(curStep));
-          meta.put(measStopInfo + "curCycle", new Integer(curCycle));
-          meta.put(measStopInfo + "curPage", new Integer(curPage));
-          meta.put(measStopInfo + "minSyncRate", new Float(minSyncRate));
-          meta.put(measStopInfo + "minCfdRate", new Float(minCfdRate));
-          meta.put(measStopInfo + "minTacRate", new Float(minTacRate));
-          meta.put(measStopInfo + "minAdcRate", new Float(minAdcRate));
-          meta.put(measStopInfo + "maxSyncRate", new Float(maxSyncRate));
-          meta.put(measStopInfo + "maxCfdRate", new Float(maxCfdRate));
-          meta.put(measStopInfo + "maxTacRate", new Float(maxTacRate));
-          meta.put(measStopInfo + "maxAdcRate", new Float(maxAdcRate));
-          meta.put(measStopInfo + "reserved1", new Integer(mReserved1));
-          meta.put(measStopInfo + "reserved2", new Float(mReserved2));
+          meta.put(measStopInfo + "status", Integer.valueOf(status));
+          meta.put(measStopInfo + "flags", Integer.valueOf(flags));
+          meta.put(measStopInfo + "stopTime", Float.valueOf(stopTime));
+          meta.put(measStopInfo + "curStep", Integer.valueOf(curStep));
+          meta.put(measStopInfo + "curCycle", Integer.valueOf(curCycle));
+          meta.put(measStopInfo + "curPage", Integer.valueOf(curPage));
+          meta.put(measStopInfo + "minSyncRate", Float.valueOf(minSyncRate));
+          meta.put(measStopInfo + "minCfdRate", Float.valueOf(minCfdRate));
+          meta.put(measStopInfo + "minTacRate", Float.valueOf(minTacRate));
+          meta.put(measStopInfo + "minAdcRate", Float.valueOf(minAdcRate));
+          meta.put(measStopInfo + "maxSyncRate", Float.valueOf(maxSyncRate));
+          meta.put(measStopInfo + "maxCfdRate", Float.valueOf(maxCfdRate));
+          meta.put(measStopInfo + "maxTacRate", Float.valueOf(maxTacRate));
+          meta.put(measStopInfo + "maxAdcRate", Float.valueOf(maxAdcRate));
+          meta.put(measStopInfo + "reserved1", Integer.valueOf(mReserved1));
+          meta.put(measStopInfo + "reserved2", Float.valueOf(mReserved2));
         }
       }
 
@@ -855,19 +855,19 @@ public class SDTInfo {
         // save MeasFCSInfo to metadata table
         if (meta != null) {
           final String measFCSInfo = "MeasFCSInfo.";
-          meta.put(measFCSInfo + "chan", new Integer(chan));
-          meta.put(measFCSInfo + "fcsDecayCalc", new Integer(fcsDecayCalc));
-          meta.put(measFCSInfo + "mtResol", new Long(mtResol));
-          meta.put(measFCSInfo + "cortime", new Float(cortime));
-          meta.put(measFCSInfo + "calcPhotons", new Long(calcPhotons));
-          meta.put(measFCSInfo + "fcsPoints", new Integer(fcsPoints));
-          meta.put(measFCSInfo + "endTime", new Float(endTime));
-          meta.put(measFCSInfo + "overruns", new Integer(overruns));
-          meta.put(measFCSInfo + "fcsType", new Integer(fcsType));
-          meta.put(measFCSInfo + "crossChan", new Integer(crossChan));
-          meta.put(measFCSInfo + "mod", new Integer(mod));
-          meta.put(measFCSInfo + "crossMod", new Integer(crossMod));
-          meta.put(measFCSInfo + "crossMtResol", new Float(crossMtResol));
+          meta.put(measFCSInfo + "chan", Integer.valueOf(chan));
+          meta.put(measFCSInfo + "fcsDecayCalc", Integer.valueOf(fcsDecayCalc));
+          meta.put(measFCSInfo + "mtResol", Long.valueOf(mtResol));
+          meta.put(measFCSInfo + "cortime", Float.valueOf(cortime));
+          meta.put(measFCSInfo + "calcPhotons", Long.valueOf(calcPhotons));
+          meta.put(measFCSInfo + "fcsPoints", Integer.valueOf(fcsPoints));
+          meta.put(measFCSInfo + "endTime", Float.valueOf(endTime));
+          meta.put(measFCSInfo + "overruns", Integer.valueOf(overruns));
+          meta.put(measFCSInfo + "fcsType", Integer.valueOf(fcsType));
+          meta.put(measFCSInfo + "crossChan", Integer.valueOf(crossChan));
+          meta.put(measFCSInfo + "mod", Integer.valueOf(mod));
+          meta.put(measFCSInfo + "crossMod", Integer.valueOf(crossMod));
+          meta.put(measFCSInfo + "crossMtResol", Float.valueOf(crossMtResol));
         }
       }
 
@@ -885,15 +885,15 @@ public class SDTInfo {
         // save extra MeasureInfo to metadata table
         if (meta != null) {
           final String measureInfo = "MeasureInfo.";
-          meta.put(measureInfo + "imageX", new Integer(imageX));
-          meta.put(measureInfo + "imageY", new Integer(imageY));
-          meta.put(measureInfo + "imageRX", new Integer(imageRX));
-          meta.put(measureInfo + "imageRY", new Integer(imageRY));
-          meta.put(measureInfo + "xyGain", new Short(xyGain));
-          meta.put(measureInfo + "masterClock", new Short(masterClock));
-          meta.put(measureInfo + "adcDE", new Short(adcDE));
-          meta.put(measureInfo + "detType", new Short(detType));
-          meta.put(measureInfo + "xAxis", new Short(xAxis));
+          meta.put(measureInfo + "imageX", Integer.valueOf(imageX));
+          meta.put(measureInfo + "imageY", Integer.valueOf(imageY));
+          meta.put(measureInfo + "imageRX", Integer.valueOf(imageRX));
+          meta.put(measureInfo + "imageRY", Integer.valueOf(imageRY));
+          meta.put(measureInfo + "xyGain", Short.valueOf(xyGain));
+          meta.put(measureInfo + "masterClock", Short.valueOf(masterClock));
+          meta.put(measureInfo + "adcDE", Short.valueOf(adcDE));
+          meta.put(measureInfo + "detType", Short.valueOf(detType));
+          meta.put(measureInfo + "xAxis", Short.valueOf(xAxis));
         }
       }
 
@@ -910,12 +910,12 @@ public class SDTInfo {
         // save MeasHISTInfo to metadata table
         if (meta != null) {
           final String measHISTInfo = "MeasHISTInfo.";
-          meta.put(measHISTInfo + "fidaTime", new Float(fidaTime));
-          meta.put(measHISTInfo + "fildaTime", new Float(fildaTime));
-          meta.put(measHISTInfo + "fidaPoints", new Integer(fidaPoints));
-          meta.put(measHISTInfo + "fildaPoints", new Integer(fildaPoints));
-          meta.put(measHISTInfo + "mcsTime", new Float(mcsTime));
-          meta.put(measHISTInfo + "mcsPoints", new Integer(mcsPoints));
+          meta.put(measHISTInfo + "fidaTime", Float.valueOf(fidaTime));
+          meta.put(measHISTInfo + "fildaTime", Float.valueOf(fildaTime));
+          meta.put(measHISTInfo + "fidaPoints", Integer.valueOf(fidaPoints));
+          meta.put(measHISTInfo + "fildaPoints", Integer.valueOf(fildaPoints));
+          meta.put(measHISTInfo + "mcsTime", Float.valueOf(mcsTime));
+          meta.put(measHISTInfo + "mcsPoints", Integer.valueOf(mcsPoints));
         }
       }
     }
@@ -942,15 +942,15 @@ public class SDTInfo {
       // save BHFileBlockHeader to metadata table
       if (meta != null) {
         final String bhFileBlockHeader = "BHFileBlockHeader.";
-        meta.put(bhFileBlockHeader + "blockNo", new Short(blockNo));
-        meta.put(bhFileBlockHeader + "dataOffs", new Integer(dataOffs));
+        meta.put(bhFileBlockHeader + "blockNo", Short.valueOf(blockNo));
+        meta.put(bhFileBlockHeader + "dataOffs", Integer.valueOf(dataOffs));
         meta.put(bhFileBlockHeader + "nextBlockOffs",
-          new Integer(nextBlockOffs));
-        meta.put(bhFileBlockHeader + "blockType", new Integer(blockType));
+          Integer.valueOf(nextBlockOffs));
+        meta.put(bhFileBlockHeader + "blockType", Integer.valueOf(blockType));
         meta.put(bhFileBlockHeader + "measDescBlockNo",
-          new Short(measDescBlockNo));
-        meta.put(bhFileBlockHeader + "lblockNo", new Long(lblockNo));
-        meta.put(bhFileBlockHeader + "blockLength", new Long(blockLength));
+          Short.valueOf(measDescBlockNo));
+        meta.put(bhFileBlockHeader + "lblockNo", Long.valueOf(lblockNo));
+        meta.put(bhFileBlockHeader + "blockLength", Long.valueOf(blockLength));
       }
 
       in.seek(nextBlockOffs);

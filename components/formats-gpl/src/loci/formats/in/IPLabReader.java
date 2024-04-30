@@ -302,10 +302,10 @@ public class IPLabReader extends FormatReader {
         int numRoiPts = in.readInt();
 
         store.setRectangleID(MetadataTools.createLSID("Shape", 0, 0), 0, 0);
-        store.setRectangleX(new Double(roiLeft), 0, 0);
-        store.setRectangleY(new Double(roiTop), 0, 0);
-        store.setRectangleWidth(new Double(roiRight - roiLeft), 0, 0);
-        store.setRectangleHeight(new Double(roiBottom - roiTop), 0, 0);
+        store.setRectangleX(Double.valueOf(roiLeft), 0, 0);
+        store.setRectangleY(Double.valueOf(roiTop), 0, 0);
+        store.setRectangleWidth(Double.valueOf(roiRight - roiLeft), 0, 0);
+        store.setRectangleHeight(Double.valueOf(roiBottom - roiTop), 0, 0);
         String roiID = MetadataTools.createLSID("ROI", 0, 0);
         store.setROIID(roiID, 0);
         store.setImageROIRef(roiID, 0, 0);
@@ -345,7 +345,7 @@ public class IPLabReader extends FormatReader {
               break;
           }
 
-          if (i == 0) pixelSize = new Double(unitsPerPixel);
+          if (i == 0) pixelSize = Double.valueOf(unitsPerPixel);
 
           addGlobalMetaList("UnitName", xUnitName);
         }
@@ -396,11 +396,11 @@ public class IPLabReader extends FormatReader {
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {
               int plane = getIndex(z, c, i);
-              store.setPlaneDeltaT(new Time(new Double(timepoint), UNITS.SECOND), 0, plane);
+              store.setPlaneDeltaT(new Time(Double.valueOf(timepoint), UNITS.SECOND), 0, plane);
             }
           }
           if (i == 1) {
-            timeIncrement = new Double(timepoint);
+            timeIncrement = Double.valueOf(timepoint);
           }
         }
       }

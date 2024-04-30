@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -238,7 +239,7 @@ public class AliconaReader extends FormatReader {
       // used when the dataset was acquired, i.e. detector settings.
       if (voltage != null) {
         store.setDetectorSettingsVoltage(
-                new ElectricPotential(new Double(voltage), UNITS.VOLT), 0, 0);
+                new ElectricPotential(DataTools.parseDouble(voltage), UNITS.VOLT), 0, 0);
 
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -253,11 +254,11 @@ public class AliconaReader extends FormatReader {
 
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(
-          new Double(magnification), 0, 0);
+          DataTools.parseDouble(magnification), 0, 0);
       }
 
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
+        store.setObjectiveWorkingDistance(new Length(DataTools.parseDouble(workingDistance), UNITS.MICROMETER), 0, 0);
       }
 
       store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);

@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import loci.common.DataTools;
+
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
@@ -492,7 +494,7 @@ public class PrairieMetadata {
   private Double d(final String value) {
     if (value == null) return null;
     try {
-      return new Double(value);
+      return DataTools.parseDouble(value);
     }
     catch (final NumberFormatException exc) {
       // TODO: log it
@@ -506,7 +508,7 @@ public class PrairieMetadata {
   private Integer i(final String value) {
     if (value == null) return null;
     try {
-      return new Integer(value);
+      return Integer.parseInt(value);
     }
     catch (final NumberFormatException exc) {
       // TODO: log it

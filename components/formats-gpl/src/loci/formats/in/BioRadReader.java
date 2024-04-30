@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
@@ -502,8 +503,8 @@ public class BioRadReader extends FormatReader {
       store.setObjectiveID(objectiveID, 0, 0);
       store.setObjectiveSettingsID(objectiveID, 0);
 
-      store.setObjectiveLensNA(new Double(lens), 0, 0);
-      store.setObjectiveNominalMagnification(new Double(magFactor), 0, 0);
+      store.setObjectiveLensNA(Double.valueOf(lens), 0, 0);
+      store.setObjectiveNominalMagnification(Double.valueOf(magFactor), 0, 0);
       store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
 
@@ -673,7 +674,7 @@ public class BioRadReader extends FormatReader {
                         while (nextDetector > offset.size()) {
                           offset.add(null);
                         }
-                        offset.add(new Double(value));
+                        offset.add(DataTools.parseDouble(value));
                       }
                     }
                     else if (key.endsWith("GAIN")) {
@@ -684,7 +685,7 @@ public class BioRadReader extends FormatReader {
                         while (nextDetector > gain.size()) {
                           gain.add(null);
                         }
-                        gain.add(new Double(value));
+                        gain.add(DataTools.parseDouble(value));
                       }
                     }
                     nextDetector++;
@@ -698,7 +699,7 @@ public class BioRadReader extends FormatReader {
                     int type = Integer.parseInt(values[0]);
                     if (type == 257 && values.length >= 3) {
                       // found length of axis in um
-                      Double pixelSize = new Double(values[2]);
+                      Double pixelSize = DataTools.parseDouble(values[2]);
                       if (key.equals("AXIS_2")) {
                         Length size =
                           FormatTools.getPhysicalSizeX(pixelSize);
@@ -722,7 +723,7 @@ public class BioRadReader extends FormatReader {
             }
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
-              Double pixelSize = new Double(values[3]);
+              Double pixelSize = DataTools.parseDouble(values[3]);
               Length size = FormatTools.getPhysicalSizeX(pixelSize);
               if (size != null) {
                 store.setPixelsPhysicalSizeX(size, 0);
@@ -730,7 +731,7 @@ public class BioRadReader extends FormatReader {
             }
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
-              Double pixelSize = new Double(values[3]);
+              Double pixelSize = DataTools.parseDouble(values[3]);
               Length size = FormatTools.getPhysicalSizeY(pixelSize);
               if (size != null) {
                 store.setPixelsPhysicalSizeY(size, 0);
@@ -754,7 +755,7 @@ public class BioRadReader extends FormatReader {
                   Double mag = Double.parseDouble(values[11]);
                   store.setObjectiveNominalMagnification(mag, 0, 0);
 
-                  Double sizeZ = new Double(values[14]);
+                  Double sizeZ = DataTools.parseDouble(values[14]);
                   Length size = FormatTools.getPhysicalSizeZ(sizeZ);
                   if (size != null) {
                     store.setPixelsPhysicalSizeZ(size, 0);
@@ -851,8 +852,8 @@ public class BioRadReader extends FormatReader {
                     String detectorID =
                       MetadataTools.createLSID("Detector", 0, i);
                     store.setDetectorID(detectorID, 0, i);
-                    store.setDetectorOffset(new Double(values[i * 3]), 0, i);
-                    store.setDetectorGain(new Double(values[i * 3 + 1]), 0, i);
+                    store.setDetectorOffset(DataTools.parseDouble(values[i * 3]), 0, i);
+                    store.setDetectorGain(DataTools.parseDouble(values[i * 3 + 1]), 0, i);
                     store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, i);
                   }
                   break;

@@ -304,7 +304,7 @@ public class HitachiReader extends FormatReader {
 
     String modelNumber = image.get("InstructName");
     String serialNumber = image.get("SerialNumber");
-    Double pixelSize = new Double(image.get("PixelSize"));
+    Double pixelSize = DataTools.parseDouble(image.get("PixelSize"));
 
     String workingDistance = image.get("WorkingDistance");
 
@@ -349,7 +349,7 @@ public class HitachiReader extends FormatReader {
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
       store.setObjectiveSettingsID(objective, 0);
-      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(DataTools.parseDouble(workingDistance), UNITS.MICROMETER), 0, 0);
     }
   }
 }

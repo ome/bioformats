@@ -45,6 +45,7 @@ import ome.units.quantity.Length;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Timestamp;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -395,8 +396,8 @@ public class LeicaSCNReader extends BaseTiffReader {
         // Leica units are nanometres; convert to µm
         double sizeX = i.vSizeX / 1000.0;
         double sizeY = i.vSizeY / 1000.0;
-        final Length offsetX = new Length(i.vOffsetX, UNITS.NM);
-        final Length offsetY = new Length(i.vOffsetY, UNITS.NM);
+        final Length offsetX = new Length(i.vOffsetX, UNITS.NANOMETER);
+        final Length offsetY = new Length(i.vOffsetY, UNITS.NANOMETER);
         double sizeZ = i.vSpacingZ / 1000.0;
 
         store.setPixelsPhysicalSizeX(
@@ -422,7 +423,7 @@ public class LeicaSCNReader extends BaseTiffReader {
           Double mag = Double.parseDouble(i.objMag);
           store.setObjectiveNominalMagnification(mag, inst, objectiveidno);
           store.setObjectiveCalibratedMagnification(mag, inst, objectiveidno);
-          store.setObjectiveLensNA(new Double(i.illumNA), inst, objectiveidno);
+          store.setObjectiveLensNA(DataTools.parseDouble(i.illumNA), inst, objectiveidno);
           objectiveidno++;
         }
 

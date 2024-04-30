@@ -303,11 +303,11 @@ public class NiftiReader extends FormatReader {
       store.setImageDescription(description, 0);
 
       Length sizeX =
-        FormatTools.getPhysicalSizeX(new Double(voxelWidth), spatialUnit);
+        FormatTools.getPhysicalSizeX(Double.valueOf(voxelWidth), spatialUnit);
       Length sizeY =
-        FormatTools.getPhysicalSizeY(new Double(voxelHeight), spatialUnit);
+        FormatTools.getPhysicalSizeY(Double.valueOf(voxelHeight), spatialUnit);
       Length sizeZ =
-        FormatTools.getPhysicalSizeZ(new Double(sliceThickness), spatialUnit);
+        FormatTools.getPhysicalSizeZ(Double.valueOf(sliceThickness), spatialUnit);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -318,7 +318,7 @@ public class NiftiReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(new Time(new Double(deltaT), timeUnit), 0);
+      store.setPixelsTimeIncrement(new Time(Double.valueOf(deltaT), timeUnit), 0);
     }
   }
 

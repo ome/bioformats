@@ -129,14 +129,14 @@ public class HRDGDFReader extends FormatReader {
     // size stored in kilometers
     String pixelSize =
       data[1].substring(data[1].indexOf(' ') + 1, data[1].lastIndexOf(" "));
-    Double physicalSize = new Double(pixelSize) * 1000000000.0;
+    Double physicalSize = DataTools.parseDouble(pixelSize) * 1000000000.0;
 
     // parse the center coordinates
     String centerLine = data[2];
     centerLine = centerLine.replaceAll("STORM CENTER LOCALE IS ", "");
     String[] center = centerLine.split(" ");
-    Double centerLongitude = new Double(center[0]);
-    Double centerLatitude = new Double(center[5]);
+    Double centerLongitude = DataTools.parseDouble(center[0]);
+    Double centerLatitude = DataTools.parseDouble(center[5]);
 
     // skip ahead to the surface wind section
 
@@ -161,9 +161,9 @@ public class HRDGDFReader extends FormatReader {
 
         int comma = pixel.indexOf(',');
 
-        surfaceWind[0][pixIndex] = new Double(pixel.substring(0, comma).trim());
+        surfaceWind[0][pixIndex] = DataTools.parseDouble(pixel.substring(0, comma).trim());
         surfaceWind[1][pixIndex] =
-          new Double(pixel.substring(comma + 1).trim());
+          DataTools.parseDouble(pixel.substring(comma + 1).trim());
         pixIndex++;
       }
     }

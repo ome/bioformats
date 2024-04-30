@@ -1026,8 +1026,8 @@ public class MIASReader extends FormatReader {
     store.setEllipseID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
     store.setEllipseTheT(new NonNegativeInteger(time), roi, 0);
     store.setEllipseTheZ(new NonNegativeInteger(z), roi, 0);
-    store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 0);
-    store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 0);
+    store.setEllipseX(DataTools.parseDouble(data[columns.indexOf("Col")]), roi, 0);
+    store.setEllipseY(DataTools.parseDouble(data[columns.indexOf("Row")]), roi, 0);
     store.setEllipseText(data[columns.indexOf("Label")], roi, 0);
 
     double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
@@ -1085,10 +1085,10 @@ public class MIASReader extends FormatReader {
           store.setPlateName(value, 0);
         }
         else if (key.equals("Pixel_X")) {
-          physicalSizeX = new Double(value);
+          physicalSizeX = DataTools.parseDouble(value);
         }
         else if (key.equals("Pixel_Y")) {
-          physicalSizeY = new Double(value);
+          physicalSizeY = DataTools.parseDouble(value);
         }
         else if (key.equals("Objective_ID")) {
           store.setObjectiveID(
@@ -1109,7 +1109,7 @@ public class MIASReader extends FormatReader {
           date += " " + value;
         }
         else if (key.equals("Exposure")) {
-          exposure = new Double(value);
+          exposure = DataTools.parseDouble(value);
         }
       }
     }

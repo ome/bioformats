@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import loci.common.ByteArrayHandle;
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.ChannelSeparator;
@@ -597,8 +598,8 @@ public class OpenlabReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       // populate MetadataStore
 
-      Length sizeX = FormatTools.getPhysicalSizeX(new Double(xcal));
-      Length sizeY = FormatTools.getPhysicalSizeY(new Double(ycal));
+      Length sizeX = FormatTools.getPhysicalSizeX(Double.valueOf(xcal));
+      Length sizeY = FormatTools.getPhysicalSizeY(Double.valueOf(ycal));
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -614,13 +615,13 @@ public class OpenlabReader extends FormatReader {
 
       try {
         if (gain != null) {
-          store.setDetectorSettingsGain(new Double(gain), 0, 0);
+          store.setDetectorSettingsGain(DataTools.parseDouble(gain), 0, 0);
         }
       }
       catch (NumberFormatException e) { }
       try {
         if (detectorOffset != null) {
-          store.setDetectorSettingsOffset(new Double(detectorOffset), 0, 0);
+          store.setDetectorSettingsOffset(DataTools.parseDouble(detectorOffset), 0, 0);
         }
       }
       catch (NumberFormatException e) { }

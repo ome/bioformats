@@ -1199,6 +1199,7 @@ public class OperettaReader extends FormatReader {
   }
 
   @Override
+  @Deprecated
   protected AcquisitionMode getAcquisitionMode(String mode) throws FormatException {
     if (mode == null) {
       return null;

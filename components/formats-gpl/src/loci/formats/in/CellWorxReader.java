@@ -149,7 +149,7 @@ public class CellWorxReader extends FormatReader {
             int row = Integer.parseInt(key.substring(14)) - 1;
             String[] mapping = value.split(",");
             for (int col=0; col<xWells; col++) {
-              if (new Boolean(mapping[col].trim()).booleanValue()) {
+              if (Boolean.parseBoolean(mapping[col].trim())) {
                 String base = plate + FormatTools.getWellName(row, col);
                 Location pnl = new Location(base + ".pnl");
                 if (pnl.exists()) {
@@ -600,7 +600,7 @@ public class CellWorxReader extends FormatReader {
         int row = Integer.parseInt(key.substring(14)) - 1;
         String[] mapping = value.split(",");
         for (int col=0; col<xWells; col++) {
-          if (new Boolean(mapping[col].trim()).booleanValue()) {
+          if (Boolean.parseBoolean(mapping[col].trim())) {
             wellFiles[row][col] = new String[1];
           }
         }
@@ -633,11 +633,11 @@ public class CellWorxReader extends FormatReader {
         int row = Integer.parseInt(key.substring(13)) - 1;
         String[] mapping = value.split(",");
         for (int col=0; col<xFields; col++) {
-          fieldMap[row][col] = new Boolean(mapping[col].trim()).booleanValue();
+          fieldMap[row][col] = Boolean.parseBoolean(mapping[col].trim());
         }
       }
       else if (key.equals("Waves")) {
-        doChannels = new Boolean(value.toLowerCase());
+        doChannels = Boolean.parseBoolean(value.toLowerCase());
       }
       else if (key.equals("NWavelengths")) {
         wavelengths = new String[Integer.parseInt(value)];
@@ -778,8 +778,8 @@ public class CellWorxReader extends FormatReader {
       }
       else if (key.equals("Scan Origin")) {
         String[] axes = value.split(",");
-        Double posX = new Double(axes[0]);
-        Double posY = new Double(axes[1]);
+        Double posX = Double.parseDouble(axes[0]);
+        Double posY = Double.parseDouble(axes[1]);
         for (int fieldRow=0; fieldRow<fieldMap.length; fieldRow++) {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
@@ -799,8 +799,8 @@ public class CellWorxReader extends FormatReader {
         int s = value.indexOf('x');
         if (s > 0) {
           int end = value.indexOf(" ", s + 2);
-          Double xSize = new Double(value.substring(0, s).trim());
-          Double ySize = new Double(value.substring(s + 1, end).trim());
+          Double xSize = Double.parseDouble(value.substring(0, s).trim());
+          Double ySize = Double.parseDouble(value.substring(s + 1, end).trim());
 
           Length x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
           Length y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
@@ -827,7 +827,7 @@ public class CellWorxReader extends FormatReader {
           token = token.trim();
           if (token.startsWith("gain")) {
             String instrumentID = MetadataTools.createLSID("Instrument", 0);
-            Double gain = new Double(token.replaceAll("gain ", ""));
+            Double gain = Double.parseDouble(token.replaceAll("gain ", ""));
             String detectorID = MetadataTools.createLSID("Detector", 0, 0);
 
             store.setInstrumentID(instrumentID, 0);
@@ -854,8 +854,8 @@ public class CellWorxReader extends FormatReader {
                 }
               }
 
-              Double emission = new Double(em);
-              Double excitation = new Double(ex);
+              Double emission = Double.parseDouble(em);
+              Double excitation = Double.parseDouble(ex);
 
               Length exWave = FormatTools.getExcitationWavelength(excitation);
               Length emWave = FormatTools.getEmissionWavelength(emission);

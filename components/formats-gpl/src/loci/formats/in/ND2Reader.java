@@ -713,7 +713,7 @@ public class ND2Reader extends SubResolutionFormatReader {
 
               lastImage = entry;
 
-              imageOffsets.add(new Long(entry.position + 16));
+              imageOffsets.add(Long.valueOf(entry.position + 16));
               int realLength = (int) Math.max(entry.name.length() + 1, nameLength);
               imageLengths.add(new long[] {realLength, entry.length - nameLength - 16, getSizeX() * getSizeY()});
               imageNames.add(entry.name.substring(12));
@@ -2188,7 +2188,7 @@ public class ND2Reader extends SubResolutionFormatReader {
         name = name.trim();
 
         if (name.equals("bUseZ")) {
-          useZ = new Boolean(value.toString());
+          useZ = Boolean.parseBoolean(value.toString());
         }
         else if (name.equals("sDescription")) {
           if (currentColor != null) {
@@ -2209,7 +2209,7 @@ public class ND2Reader extends SubResolutionFormatReader {
           textEmissionWavelengths.add(wave);
         }
         else if (name.equals("dZStep")) {
-          trueSizeZ = new Double(value.toString());
+          trueSizeZ = DataTools.parseDouble(value.toString());
         }
         else if (name.equals("dZHigh")) {
           zHigh = DataTools.parseDouble(value.toString());
