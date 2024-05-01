@@ -1260,11 +1260,9 @@ public final class ImageConverter {
   private boolean doTileConversion(IFormatWriter writer, String outputFile)
     throws FormatException
   {
-    if (writer instanceof DicomWriter ||
-      (writer instanceof ImageWriter && ((ImageWriter) writer).getWriter(outputFile) instanceof DicomWriter))
-    {
-      MetadataStore r = reader.getMetadataStore();
-      return !(r instanceof IPyramidStore) || ((IPyramidStore) r).getResolutionCount(reader.getSeries()) > 1;
+    MetadataStore r = reader.getMetadataStore();
+    if ((r instanceof IPyramidStore) && ((IPyramidStore) r).getResolutionCount(reader.getSeries()) > 1) {
+      return true;
     }
     return DataTools.safeMultiply64(width, height) >= DataTools.safeMultiply64(4096, 4096) ||
       saveTileWidth > 0 || saveTileHeight > 0;
