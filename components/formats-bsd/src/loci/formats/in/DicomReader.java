@@ -166,11 +166,14 @@ public class DicomReader extends SubResolutionFormatReader {
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
-    Region boundingBox = new Region(x * originalX, y * originalY, originalX, originalY);
+    // TODO: this will result in a lot of redundant lookups, and should be optimized
+    int tileWidth = getOptimalTileWidth();
+    int tileHeight = getOptimalTileHeight();
+    Region boundingBox = new Region(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
 
     List<DicomTile> tiles = getTileList(no, boundingBox, true);
     if (tiles == null || tiles.size() == 0) {
-      throw new FormatException("Could not find valid tile; no=" + no + ", x=" + x + ", y=" + y);
+      throw new FormatException("Could not find valid tile; no=" + no + ", boundingBox=" + boundingBox);
     }
     DicomTile tile = tiles.get(0);
     byte[] buf = new byte[(int) (tile.endOffset - tile.fileOffset)];
@@ -336,7 +339,10 @@ public class DicomReader extends SubResolutionFormatReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     if (tilePositions.containsKey(getCoreIndex())) {
-      return tilePositions.get(getCoreIndex()).get(0).region.width;
+      List<DicomTile> tile = getTileList(0, null, true);
+      if (tile != null && tile.size() >= 1) {
+        return tile.get(0).region.width;
+      }
     }
     if (originalX < getSizeX() && originalX > 0) {
       return originalX;
@@ -348,7 +354,10 @@ public class DicomReader extends SubResolutionFormatReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     if (tilePositions.containsKey(getCoreIndex())) {
-      return tilePositions.get(getCoreIndex()).get(0).region.height;
+      List<DicomTile> tile = getTileList(0, null, true);
+      if (tile != null && tile.size() >= 1) {
+        return tile.get(0).region.height;
+      }
     }
     if (originalY < getSizeY() && originalY > 0) {
       return originalY;
