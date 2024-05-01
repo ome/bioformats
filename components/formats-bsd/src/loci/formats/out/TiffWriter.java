@@ -178,7 +178,7 @@ public class TiffWriter extends FormatWriter {
     LOGGER.warn("saveCompressedBytes(series={}, resolution={}, no={}, x={}, y={})",
       series, resolution, no, x, y);
 
-    IFD ifd = new IFD();
+    IFD ifd = makeIFD();
     MetadataRetrieve retrieve = getMetadataRetrieve();
     int type = FormatTools.pixelTypeFromString(
         retrieve.getPixelsType(series).toString());
@@ -191,12 +191,6 @@ public class TiffWriter extends FormatWriter {
       (currentTileSizeY != h && y + h != getSizeY()))
     {
       throw new IllegalArgumentException("Compressed tile dimensions must match tile size");
-    }
-
-    boolean usingTiling = currentTileSizeX > 0 && currentTileSizeY > 0;
-    if (usingTiling) {
-      ifd.put(new Integer(IFD.TILE_WIDTH), new Long(currentTileSizeX));
-      ifd.put(new Integer(IFD.TILE_LENGTH), new Long(currentTileSizeY));
     }
 
     // This operation is synchronized
@@ -219,6 +213,16 @@ public class TiffWriter extends FormatWriter {
     tiffSaver.makeValidIFD(ifd, type, nChannels);
     tiffSaver.writeImageIFD(ifd, index, new byte[][] {buf},
       nChannels, lastPlane && lastSeries && lastResolution, x, y);
+  }
+
+  protected IFD makeIFD() throws FormatException, IOException {
+    IFD ifd = new IFD();
+    boolean usingTiling = getTileSizeX() > 0 && getTileSizeY() > 0;
+    if (usingTiling) {
+      ifd.put(new Integer(IFD.TILE_WIDTH), new Long(getTileSizeX()));
+      ifd.put(new Integer(IFD.TILE_LENGTH), new Long(getTileSizeY()));
+    }
+    return ifd;
   }
 
   // -- FormatWriter API methods --

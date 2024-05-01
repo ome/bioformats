@@ -70,6 +70,19 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
 
   // -- IFormatWriter API methods --
 
+  protected IFD makeIFD() throws FormatException, IOException {
+    IFD ifd = super.makeIFD();
+    if (getResolution() > 0) {
+      ifd.put(IFD.NEW_SUBFILE_TYPE, 1);
+    }
+    else {
+      if (!ifd.containsKey(IFD.SUB_IFD)) {
+        ifd.put(IFD.SUB_IFD, (long) 0);
+      }
+    }
+    return ifd;
+  }
+
   @Override
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws FormatException, IOException
