@@ -135,7 +135,6 @@ public class FlexReader extends FormatReader {
   private ArrayList<Double> planeExposureTime = new ArrayList<Double>();
   private ArrayList<Double> planeDeltaT = new ArrayList<Double>();
 
-  private ArrayList<Location> runDirs;
   private ArrayList<FlexFile> flexFiles;
 
   private int nFiles = 0;
@@ -377,7 +376,7 @@ public class FlexReader extends FormatReader {
       reverseFileMapping.clear();
       dichroicMap.clear();
       filterMap.clear();
-      runDirs = null;
+
     }
   }
 
@@ -390,28 +389,6 @@ public class FlexReader extends FormatReader {
 
     measurementFiles = new ArrayList<String>();
     acquisitionDates = new HashMap<Integer, Timestamp>();
-
-    Location currentFile = new Location(id).getAbsoluteFile();
-    Location dir = currentFile.getParentFile();
-    runDirs = new ArrayList<Location>();
-    if (!dir.getName().startsWith("Meas_") || !groupPlates()) {
-      runDirs.add(dir);
-    }
-    else {
-      // look for other acquisitions of the same plate
-      dir = dir.getParentFile();
-      String[] parentDirs = dir.list(true);
-      Arrays.sort(parentDirs);
-      for (String d : parentDirs) {
-        Location f = new Location(dir.getAbsoluteFile(), d);
-        if (f.isDirectory() && d.startsWith("Meas_")) {
-          runDirs.add(f);
-        }
-      }
-    }
-    
-    runCount = runDirs.size();
-    if (runCount == 0) runCount = 1;
 
     if (checkSuffix(id, FLEX_SUFFIX)) {
       initFlexFile(id);
@@ -558,17 +535,16 @@ public class FlexReader extends FormatReader {
     if (doGrouping) {
       // group together .flex files that are in the same directory
 
-      for (Location runDir : runDirs) {
-        String[] files = runDir.list(true);
+      Location dir = currentFile.getParentFile();
+      String[] files = dir.list(true);
 
         for (String file : files) {
           // file names should be nnnnnnnnn.flex, where 'n' is 0-9
           LOGGER.debug("Checking if {} belongs in the same dataset.", file);
           if (file.endsWith(".flex") && file.length() == 14) {
-            flex.add(new Location(runDir, file).getAbsolutePath());
+            flex.add(new Location(dir, file).getAbsolutePath());
             LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
           }
-        }
       }
     }
 
@@ -604,18 +580,6 @@ public class FlexReader extends FormatReader {
     for (int run=0; run<runCount; run++) {
       String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, run);
       store.setPlateAcquisitionID(plateAcqID, 0, run);
-
-      String acqName = runDirs.get(run).getName();
-      store.setPlateAcquisitionName(acqName, 0, run);
-
-      int timeStart = acqName.indexOf("(");
-      if (timeStart > 0) {
-        String time = acqName.substring(timeStart);
-        time = DateTools.formatDate(time, "(yyyy-MM-dd_HH-mm-ss)");
-
-        store.setPlateAcquisitionStartTime(new Timestamp(time), 0, run);
-        plateAcqStartTime = null;
-      }
 
       PositiveInteger maxFieldCount = FormatTools.getMaxFieldCount(fieldCount);
       if (maxFieldCount != null) {
@@ -1419,9 +1383,7 @@ public class FlexReader extends FormatReader {
           file.column = col;
           file.field = field % (nFiles / runCount);
           file.file = files.get(field);
-          file.acquisition = (runDirs == null || runDirs.size() == 0) ? 0:
-            runDirs.indexOf(new Location(file.file).getParentFile());
-
+          
           if (file.file == null) {
             continue;
           }
