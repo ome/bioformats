@@ -1381,7 +1381,7 @@ public class FlexReader extends FormatReader {
           FlexFile file = new FlexFile();
           file.row = row;
           file.column = col;
-          file.field = field % (nFiles / runCount);
+          file.field = field;
           file.file = files.get(field);
           
           if (file.file == null) {
@@ -1482,7 +1482,7 @@ public class FlexReader extends FormatReader {
 
   private FlexFile lookupFile(int fileSeries) {
     effectiveFieldCount = fieldCount;
-    if (wellCount * plateCount * runCount == flexFiles.size()) {
+    if (wellCount * plateCount == flexFiles.size()) {
       effectiveFieldCount = 1;
     }
 
