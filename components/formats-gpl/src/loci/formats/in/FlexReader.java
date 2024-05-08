@@ -135,6 +135,7 @@ public class FlexReader extends FormatReader {
   private ArrayList<Double> planeExposureTime = new ArrayList<Double>();
   private ArrayList<Double> planeDeltaT = new ArrayList<Double>();
 
+  private ArrayList<Location> runDirs;
   private ArrayList<FlexFile> flexFiles;
 
   private int nFiles = 0;
@@ -376,7 +377,7 @@ public class FlexReader extends FormatReader {
       reverseFileMapping.clear();
       dichroicMap.clear();
       filterMap.clear();
-
+      runDirs = null;
     }
   }
 
@@ -390,6 +391,28 @@ public class FlexReader extends FormatReader {
     measurementFiles = new ArrayList<String>();
     acquisitionDates = new HashMap<Integer, Timestamp>();
 
+    Location currentFile = new Location(id).getAbsoluteFile();
+    Location dir = currentFile.getParentFile();
+    runDirs = new ArrayList<Location>();
+    if (!dir.getName().startsWith("Meas_") || !groupPlates()) {
+      runDirs.add(dir);
+    }
+    else {
+      // look for other acquisitions of the same plate
+      dir = dir.getParentFile();
+      String[] parentDirs = dir.list(true);
+      Arrays.sort(parentDirs);
+      for (String d : parentDirs) {
+        Location f = new Location(dir.getAbsoluteFile(), d);
+        if (f.isDirectory() && d.startsWith("Meas_")) {
+          runDirs.add(f);
+        }
+      }
+    }
+    
+    runCount = runDirs.size();
+    if (runCount == 0) runCount = 1;
+ 
     if (checkSuffix(id, FLEX_SUFFIX)) {
       initFlexFile(id);
     }
