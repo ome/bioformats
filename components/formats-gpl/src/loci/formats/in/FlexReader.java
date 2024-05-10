@@ -397,6 +397,23 @@ public class FlexReader extends FormatReader {
     if (!dir.getName().startsWith("Meas_") || !groupPlates()) {
       runDirs.add(dir);
     }
+    else {
+      try {
+        // look for other acquisitions of the same plate
+        dir = dir.getParentFile();
+        String[] parentDirs = dir.list(true);
+        Arrays.sort(parentDirs);
+        for (String d : parentDirs) {
+          Location f = new Location(dir.getAbsoluteFile(), d);
+          if (f.isDirectory() && d.startsWith("Meas_")) {
+            runDirs.add(f);
+          }
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("Error while traversing parent directories: ", e);
+      }
+    }
     
     runCount = runDirs.size();
     if (runCount == 0) runCount = 1;
