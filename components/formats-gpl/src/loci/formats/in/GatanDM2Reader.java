@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import ome.xml.model.primitives.Timestamp;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -382,11 +383,11 @@ public class GatanDM2Reader extends FormatReader {
           break;
         case 31:
           label = "Physical width";
-          pixelSizeX = new Double(value);
+          pixelSizeX = DataTools.parseDouble(value);
           break;
         case 32:
           label = "Physical height";
-          pixelSizeY = new Double(value);
+          pixelSizeY = DataTools.parseDouble(value);
           break;
         case 37:
           label = "Image label";

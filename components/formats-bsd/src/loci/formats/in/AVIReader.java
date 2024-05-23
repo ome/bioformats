@@ -803,8 +803,8 @@ public class AVIReader extends FormatReader {
                   foundPixels = true;
                   if (check.startsWith("d")) {
                     if (size > 0 || bmpCompression != 0) {
-                      offsets.add(new Long(in.getFilePointer()));
-                      lengths.add(new Long(size));
+                      offsets.add(in.getFilePointer());
+                      lengths.add(Long.valueOf(size));
                       in.skipBytes(size);
                     }
                   }
@@ -878,9 +878,9 @@ public class AVIReader extends FormatReader {
                           offsets.add(offsets.get(offsets.size() - 1));
                         }
                         else if (chunkSize > 0 || offsets.size() > 0) {
-                          offsets.add(new Long(useSOM ? startOfMovi + offset : offset));
+                          offsets.add(Long.valueOf(useSOM ? startOfMovi + offset : offset));
                         }
-                        lengths.add(new Long(chunkSize));
+                        lengths.add(Long.valueOf(chunkSize));
                       }
                     }
                   }

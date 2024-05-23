@@ -451,10 +451,9 @@ public abstract class WriterWrapper implements IFormatWriter {
         c = writer.getClass();
       }
       try {
-        childCopy = (IFormatWriter) c.newInstance();
+        childCopy = (IFormatWriter) c.getDeclaredConstructor().newInstance();
       }
-      catch (IllegalAccessException exc) { throw new FormatException(exc); }
-      catch (InstantiationException exc) { throw new FormatException(exc); }
+      catch (ReflectiveOperationException exc) { throw new FormatException(exc); }
     }
 
     // use crazy reflection to instantiate a writer of the proper type

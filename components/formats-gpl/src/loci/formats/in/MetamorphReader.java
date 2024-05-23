@@ -1170,7 +1170,7 @@ public class MetamorphReader extends BaseTiffReader {
                     line.lastIndexOf("\"", lastQuote - 1) + 1, lastQuote);
 
                   if (key.equals("z-position")) {
-                    xmlZPosition = new Double(value);
+                    xmlZPosition = DataTools.parseDouble(value);
                   }
                   else if (key.equals("acquisition-time-local")) {
                     timestamps.add(value);
@@ -1473,7 +1473,7 @@ public class MetamorphReader extends BaseTiffReader {
                 nextSpace = value.length();
               }
               try {
-                gain = new Double(value.substring(space, nextSpace));
+                gain = DataTools.parseDouble(value.substring(space, nextSpace));
               }
               catch (NumberFormatException e) { }
             }
@@ -2004,13 +2004,13 @@ public class MetamorphReader extends BaseTiffReader {
         if (value instanceof TiffRational) {
           sizeX = ((TiffRational) value).doubleValue();
         }
-        else sizeX = new Double(value.toString());
+        else sizeX = DataTools.parseDouble(value.toString());
       }
       if ("YCalibration".equals(key) && value != null) {
         if (value instanceof TiffRational) {
           sizeY = ((TiffRational) value).doubleValue();
         }
-        else sizeY = new Double(value.toString());
+        else sizeY = DataTools.parseDouble(value.toString());
       }
     }
     in.seek(saveLoc);

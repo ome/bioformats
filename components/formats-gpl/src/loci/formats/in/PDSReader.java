@@ -234,10 +234,10 @@ public class PDSReader extends FormatReader {
         reverseY = value.replaceAll("'", "").trim().equals("-");
       }
       else if (key.equals("DELTAX")) {
-        deltaX = new Double(value);
+        deltaX = DataTools.parseDouble(value);
       }
       else if (key.equals("DELTAY")) {
-        deltaY = new Double(value);
+        deltaY = DataTools.parseDouble(value);
       }
       else if (key.equals("COLOR")) {
         int color = Integer.parseInt(value);

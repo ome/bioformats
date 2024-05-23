@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.xml.BaseHandler;
 import loci.formats.CoreMetadata;
@@ -397,7 +398,7 @@ public class LeicaHandler extends BaseHandler {
       String bytesInc = attributes.getValue("BytesInc");
       int bytes = bytesInc == null ? 0 : Integer.parseInt(bytesInc);
       if (bytes > 0) {
-        bytesPerAxis.put(new Integer(bytes), "C");
+        bytesPerAxis.put(Integer.valueOf(bytes), "C");
       }
     }
     else if (qName.equals("DimensionDescription")) {
@@ -415,7 +416,7 @@ public class LeicaHandler extends BaseHandler {
         physicalLen *= 1000000;
       }
 
-      Double physicalSize = new Double(physicalLen);
+      Double physicalSize = Double.valueOf(physicalLen);
 
       CoreMetadata coreMeta = core.get(core.size() - 1);
 
@@ -445,11 +446,11 @@ public class LeicaHandler extends BaseHandler {
           if (coreMeta.sizeY != 0) {
             if (coreMeta.sizeZ == 1) {
               coreMeta.sizeZ = len;
-              bytesPerAxis.put(new Integer(nBytes), "Z");
+              bytesPerAxis.put(Integer.valueOf(nBytes), "Z");
             }
             else if (coreMeta.sizeT == 1) {
               coreMeta.sizeT = len;
-              bytesPerAxis.put(new Integer(nBytes), "T");
+              bytesPerAxis.put(Integer.valueOf(nBytes), "T");
             }
           }
           else {
@@ -471,11 +472,11 @@ public class LeicaHandler extends BaseHandler {
             if (sizeY != null) {
               store.setPixelsPhysicalSizeY(sizeY, numDatasets);
             }
-            bytesPerAxis.put(new Integer(nBytes), "Y");
+            bytesPerAxis.put(Integer.valueOf(nBytes), "Y");
           }
           else {
             coreMeta.sizeZ = len;
-            bytesPerAxis.put(new Integer(nBytes), "Z");
+            bytesPerAxis.put(Integer.valueOf(nBytes), "Z");
           }
           break;
         case 4: // T axis
@@ -488,11 +489,11 @@ public class LeicaHandler extends BaseHandler {
             if (sizeY != null) {
               store.setPixelsPhysicalSizeY(sizeY, numDatasets);
             }
-            bytesPerAxis.put(new Integer(nBytes), "Y");
+            bytesPerAxis.put(Integer.valueOf(nBytes), "Y");
           }
           else {
             coreMeta.sizeT = len;
-            bytesPerAxis.put(new Integer(nBytes), "T");
+            bytesPerAxis.put(Integer.valueOf(nBytes), "T");
           }
           break;
         default:
@@ -511,10 +512,10 @@ public class LeicaHandler extends BaseHandler {
         store.setMicroscopeType(MicroscopeType.OTHER, numDatasets);
       }
       else if (id.equals("dblPinhole")) {
-        pinhole = new Double(Double.parseDouble(value) * 1000000);
+        pinhole = Double.valueOf(Double.parseDouble(value) * 1000000);
       }
       else if (id.equals("dblZoom")) {
-        zoom = new Double(value);
+        zoom = DataTools.parseDouble(value);
       }
       else if (id.equals("dblStepSize")) {
         double zStep = Double.parseDouble(value) * 1000000;
@@ -524,7 +525,7 @@ public class LeicaHandler extends BaseHandler {
         }
       }
       else if (id.equals("nDelayTime_s")) {
-        Double timeIncrement = new Double(value);
+        Double timeIncrement = DataTools.parseDouble(value);
         if (timeIncrement != null) {
           store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.SECOND), numDatasets);
         }
@@ -542,7 +543,7 @@ public class LeicaHandler extends BaseHandler {
         if (channel == null) channel = new Channel();
         if (id.endsWith("ExposureTime") && c < numChannels) {
           try {
-            Double exposureTime = new Double(value);
+            Double exposureTime = DataTools.parseDouble(value);
             if (exposureTime != null) {
               store.setPlaneExposureTime(new Time(exposureTime, UNITS.SECOND), numDatasets, c);
             }
@@ -550,7 +551,7 @@ public class LeicaHandler extends BaseHandler {
           catch (IndexOutOfBoundsException e) { }
         }
         else if (id.endsWith("Gain")) {
-          channel.gain = new Double(value);
+          channel.gain = DataTools.parseDouble(value);
 
           String detectorID =
             MetadataTools.createLSID("Detector", numDatasets, 0);
@@ -559,7 +560,7 @@ public class LeicaHandler extends BaseHandler {
           store.setDetectorType(DetectorType.CCD, numDatasets, 0);
         }
         else if (id.endsWith("WaveLength")) {
-          Double exWave = new Double(value);
+          Double exWave = DataTools.parseDouble(value);
           Length ex = FormatTools.getExcitationWavelength(exWave);
           if (ex != null) {
             channel.exWave = ex;
@@ -582,7 +583,7 @@ public class LeicaHandler extends BaseHandler {
       CoreMetadata coreMeta = core.get(numDatasets);
 
       if (attribute.equals("NumericalAperture")) {
-        store.setObjectiveLensNA(new Double(variant), numDatasets, 0);
+        store.setObjectiveLensNA(DataTools.parseDouble(variant), numDatasets, 0);
       }
       else if (attribute.equals("OrderNumber")) {
         store.setObjectiveSerialNumber(variant, numDatasets, 0);
@@ -601,11 +602,11 @@ public class LeicaHandler extends BaseHandler {
         }
         else if (attribute.equals("HighVoltage")) {
           Detector d = detectors.get(detectors.size() - 1);
-          d.voltage = new Double(variant);
+          d.voltage = DataTools.parseDouble(variant);
         }
         else if (attribute.equals("VideoOffset")) {
           Detector d = detectors.get(detectors.size() - 1);
-          d.offset = new Double(variant);
+          d.offset = DataTools.parseDouble(variant);
         }
       }
       else if (attribute.equals("Objective")) {
@@ -622,7 +623,7 @@ public class LeicaHandler extends BaseHandler {
             String na = token.substring(x + 1);
 
             store.setObjectiveNominalMagnification(mag, numDatasets, 0);
-            store.setObjectiveLensNA(new Double(na), numDatasets, 0);
+            store.setObjectiveLensNA(DataTools.parseDouble(na), numDatasets, 0);
           }
           else {
             model.append(token);
@@ -664,7 +665,7 @@ public class LeicaHandler extends BaseHandler {
         String id = MetadataTools.createLSID("Objective", numDatasets, 0);
         store.setObjectiveID(id, numDatasets, 0);
         store.setObjectiveSettingsID(id, numDatasets);
-        store.setObjectiveSettingsRefractiveIndex(new Double(variant),
+        store.setObjectiveSettingsRefractiveIndex(DataTools.parseDouble(variant),
           numDatasets);
       }
       else if (attribute.equals("XPos")) {
@@ -725,9 +726,9 @@ public class LeicaHandler extends BaseHandler {
     }
     else if (qName.equals("Detector") && level != MetadataLevel.MINIMUM) {
       String v = attributes.getValue("Gain");
-      Double gain = v == null ? null : new Double(v);
+      Double gain = v == null ? null : DataTools.parseDouble(v);
       v = attributes.getValue("Offset");
-      Double offset = v == null ? null : new Double(v);
+      Double offset = v == null ? null : DataTools.parseDouble(v);
       boolean active = "1".equals(attributes.getValue("IsActive"));
 
       if (active) {
@@ -832,7 +833,7 @@ public class LeicaHandler extends BaseHandler {
       l.index += (2 - (qualifier / 10));
       if (l.index < 0) l.index = 0;
       l.id = MetadataTools.createLSID("LightSource", numDatasets, l.index);
-      l.wavelength = new Double(attributes.getValue("LaserLine"));
+      l.wavelength = DataTools.parseDouble(attributes.getValue("LaserLine"));
       while (l.index > laserCount) {
         String lsid =
           MetadataTools.createLSID("LightSource", numDatasets, laserCount);
@@ -890,7 +891,7 @@ public class LeicaHandler extends BaseHandler {
       CoreMetadata coreMeta = core.get(numDatasets);
       int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
       if (count < nImages) {
-        Double time = new Double(attributes.getValue("Time"));
+        Double time = DataTools.parseDouble(attributes.getValue("Time"));
         if (time != null) {
           store.setPlaneDeltaT(new Time(time, UNITS.SECOND), numDatasets, count++);
         }
@@ -919,11 +920,11 @@ public class LeicaHandler extends BaseHandler {
       String y = attributes.getValue("y");
       if (x != null) {
         x = x.replaceAll(",", ".");
-        roi.x.add(new Double(x));
+        roi.x.add(DataTools.parseDouble(x));
       }
       if (y != null) {
         y = y.replaceAll(",", ".");
-        roi.y.add(new Double(y));
+        roi.y.add(DataTools.parseDouble(y));
       }
     }
     else if (qName.equals("ROI")) {
@@ -1038,7 +1039,7 @@ public class LeicaHandler extends BaseHandler {
           store.setLabelFontSize(fontSize, roi, 0);
         }
       }
-      Length l = new Length(new Double(linewidth), UNITS.PIXEL);
+      Length l = new Length(Double.valueOf(linewidth), UNITS.PIXEL);
       store.setLabelStrokeWidth(l, roi, 0);
 
       if (!normalized) normalize();

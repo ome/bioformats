@@ -1079,11 +1079,11 @@ public class FakeReader extends FormatReader {
   }
 
   private Double getX(int i) {
-      return new Double(ROI_SPACING * i % sizeX);
+      return (double) (ROI_SPACING * i % sizeX);
   }
 
   private Double getY(int i) {
-      return new Double(ROI_SPACING * ((int) ROI_SPACING * i / sizeX) % sizeY);
+      return (double) (ROI_SPACING * ((int) ROI_SPACING * i / sizeX) % sizeY);
   }
 
   private String getPoints(int i) {
@@ -1111,8 +1111,8 @@ public class FakeReader extends FormatReader {
         store.setEllipseID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setEllipseX(getX(i) + ROI_SPACING / 2, roiCount, 0);
         store.setEllipseY(getY(i) + ROI_SPACING / 2, roiCount, 0);
-        store.setEllipseRadiusX(new Double(ROI_SPACING / 2), roiCount, 0);
-        store.setEllipseRadiusY(new Double(ROI_SPACING / 2), roiCount, 0);
+        store.setEllipseRadiusX(Double.valueOf(ROI_SPACING / 2), roiCount, 0);
+        store.setEllipseRadiusY(Double.valueOf(ROI_SPACING / 2), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
         roiRefCount++;
@@ -1198,8 +1198,8 @@ public class FakeReader extends FormatReader {
         store.setRectangleID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setRectangleX(getX(i) + ROI_SPACING / 4, roiCount, 0);
         store.setRectangleY(getY(i) + ROI_SPACING / 4, roiCount, 0);
-        store.setRectangleWidth(new Double(ROI_SPACING / 2), roiCount, 0);
-        store.setRectangleHeight(new Double(ROI_SPACING / 2), roiCount, 0);
+        store.setRectangleWidth(Double.valueOf(ROI_SPACING / 2), roiCount, 0);
+        store.setRectangleHeight(Double.valueOf(ROI_SPACING / 2), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
         roiRefCount++;

@@ -568,7 +568,7 @@ public class TCSReader extends FormatReader {
 
           String software = ifd.getIFDStringValue(IFD.SOFTWARE);
           if (software != null && software.trim().startsWith("TCS")) {
-            timestamps.put(file, new Long(stamp));
+            timestamps.put(file, Long.valueOf(stamp));
           }
         }
       }

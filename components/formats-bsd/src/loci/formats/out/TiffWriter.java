@@ -134,9 +134,10 @@ public class TiffWriter extends FormatWriter {
     throws FormatException
   {
     TiffCompression compressType = getTIFFCompression();
-    Object v = ifd.get(new Integer(IFD.COMPRESSION));
-    if (v == null)
-      ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
+    Object v = ifd.get(IFD.COMPRESSION);
+    if (v == null) {
+      ifd.put(IFD.COMPRESSION, compressType.getCode());
+    }
   }
 
   // -- Constructors --
@@ -306,8 +307,8 @@ public class TiffWriter extends FormatWriter {
     int currentTileSizeY = getTileSizeY();
     boolean usingTiling = currentTileSizeX > 0 && currentTileSizeY > 0;
     if (usingTiling) {
-      ifd.put(new Integer(IFD.TILE_WIDTH), new Long(currentTileSizeX));
-      ifd.put(new Integer(IFD.TILE_LENGTH), new Long(currentTileSizeY));
+      ifd.put(IFD.TILE_WIDTH, Long.valueOf(currentTileSizeX));
+      ifd.put(IFD.TILE_LENGTH, Long.valueOf(currentTileSizeY));
     }
     if (usingTiling && (currentTileSizeX < w || currentTileSizeY < h)) {
       int numTilesX = (w + (x % currentTileSizeX) + currentTileSizeX - 1) / currentTileSizeX;
@@ -431,8 +432,8 @@ public class TiffWriter extends FormatWriter {
 
     int width = getSizeX();
     int height = getSizeY();
-    ifd.put(new Integer(IFD.IMAGE_WIDTH), new Long(width));
-    ifd.put(new Integer(IFD.IMAGE_LENGTH), new Long(height));
+    ifd.put(IFD.IMAGE_WIDTH, Long.valueOf(width));
+    ifd.put(IFD.IMAGE_LENGTH, Long.valueOf(height));
 
     Length px = retrieve.getPixelsPhysicalSizeX(series);
     Double physicalSizeX = px == null || px.value(UNITS.MICROMETER) == null ? null : px.value(UNITS.MICROMETER).doubleValue();
@@ -463,7 +464,7 @@ public class TiffWriter extends FormatWriter {
     }
 
     // write the image
-    ifd.put(new Integer(IFD.LITTLE_ENDIAN), new Boolean(littleEndian));
+    ifd.put(IFD.LITTLE_ENDIAN, Boolean.valueOf(littleEndian));
     if (!ifd.containsKey(IFD.REUSE)) {
       ifd.put(IFD.REUSE, out.length());
       out.seek(out.length());

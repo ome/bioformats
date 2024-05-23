@@ -343,7 +343,7 @@ public class DataConverter extends JFrame implements
         }
         else if (series != null) {
           ((SpinnerNumberModel) series.getModel()).setMaximum(
-            new Integer(swap.getSeriesCount()));
+            swap.getSeriesCount());
           pack();
         }
         else if (swap.getSeriesCount() == 1 && series != null) {

@@ -460,11 +460,11 @@ public class BDReader extends FormatReader {
           }
         }
 
-        Double magnification = new Double(mag);
+        Double magnification = DataTools.parseDouble(mag);
         store.setObjectiveNominalMagnification(magnification, 0, 0);
         if (na != null) {
           na = na.substring(0, 1) + "." + na.substring(1);
-          store.setObjectiveLensNA(new Double(na), 0, 0);
+          store.setObjectiveLensNA(DataTools.parseDouble(na), 0, 0);
         }
         if (naIndex + 1 < tokens.length) {
           store.setObjectiveManufacturer(tokens[naIndex + 1], 0, 0);
@@ -762,10 +762,10 @@ public class BDReader extends FormatReader {
       if (cols[2].trim().length() > 0) {
         String rectangleID = MetadataTools.createLSID("Shape", i - firstRow, 0);
         store.setRectangleID(rectangleID, i - firstRow, 0);
-        store.setRectangleX(new Double(cols[2]), i - firstRow, 0);
-        store.setRectangleY(new Double(cols[3]), i - firstRow, 0);
-        store.setRectangleWidth(new Double(cols[4]), i - firstRow, 0);
-        store.setRectangleHeight(new Double(cols[5]), i - firstRow, 0);
+        store.setRectangleX(DataTools.parseDouble(cols[2]), i - firstRow, 0);
+        store.setRectangleY(DataTools.parseDouble(cols[3]), i - firstRow, 0);
+        store.setRectangleWidth(DataTools.parseDouble(cols[4]), i - firstRow, 0);
+        store.setRectangleHeight(DataTools.parseDouble(cols[5]), i - firstRow, 0);
         String roiID = MetadataTools.createLSID("ROI", i - firstRow);
         store.setROIID(roiID, i - firstRow);
         for (int s=0; s<getSeriesCount(); s++) {

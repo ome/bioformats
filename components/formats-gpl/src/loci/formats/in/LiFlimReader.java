@@ -390,7 +390,7 @@ public class LiFlimReader extends FormatReader {
           addGlobalMeta(metaKey, value);
 
           if (metaKey.startsWith(TIMESTAMP_KEY)) {
-            Integer index = new Integer(metaKey.replaceAll(TIMESTAMP_KEY, ""));
+            Integer index = Integer.parseInt(metaKey.replaceAll(TIMESTAMP_KEY, ""));
             stampValues.put(index, value);
           }
           else if (metaKey.equals("ROI: INFO - numregions")) {
@@ -401,7 +401,7 @@ public class LiFlimReader extends FormatReader {
           {
             int start = metaKey.lastIndexOf("ROI") + 3;
             int end = metaKey.indexOf(" ", start);
-            Integer index = new Integer(metaKey.substring(start, end));
+            Integer index = Integer.parseInt(metaKey.substring(start, end));
             ROI roi = rois.get(index);
             if (roi == null) roi = new ROI();
 
@@ -410,7 +410,7 @@ public class LiFlimReader extends FormatReader {
             }
             else if (metaKey.indexOf(" - p") >= 0) {
               String p = metaKey.substring(metaKey.indexOf(" - p") + 4);
-              roi.points.put(new Integer(p), value.replaceAll(" ", ","));
+              roi.points.put(Integer.parseInt(p), value.replaceAll(" ", ","));
             }
             rois.put(index, roi);
           }
@@ -423,7 +423,7 @@ public class LiFlimReader extends FormatReader {
             } else {
               exposureTimeUnit = UNITS.SECOND;
             }
-            exposureTime = new Double(expTime);
+            exposureTime = Double.valueOf(expTime);
           }
         }
       }
@@ -567,7 +567,7 @@ public class LiFlimReader extends FormatReader {
       }
       else {
         long ms = stamp - firstStamp;
-        deltaT = new Double(ms / 1000.0);
+        deltaT = Double.valueOf(ms / 1000.0);
       }
       for (int c=0; c<getEffectiveSizeC(); c++) {
         for (int z=0; z<getSizeZ(); z++) {

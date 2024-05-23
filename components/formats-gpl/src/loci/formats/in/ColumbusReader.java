@@ -536,7 +536,7 @@ public class ColumbusReader extends FormatReader {
           p.channelName = value;
         }
         else if (name.equals("ChannelColor")) {
-          Long color = new Long(value);
+          Long color = Long.parseLong(value);
           int blue = (int) ((color >> 24) & 0xff);
           int green = (int) ((color >> 16) & 0xff);
           int red = (int) ((color >> 8) & 0xff);
@@ -548,36 +548,36 @@ public class ColumbusReader extends FormatReader {
           //p.channelColor = new Color(red, green, blue, alpha);
         }
         else if (name.equals("MeasurementTimeOffset")) {
-          p.deltaT = new Double(value);
+          p.deltaT = DataTools.parseDouble(value);
         }
         else if (name.equals("AbsTime")) {
           p.deltaT = new Timestamp(value).asInstant().getMillis() / 1000d;
         }
         else if (name.equals("MainEmissionWavelength")) {
-          p.emWavelength = new Double(value);
+          p.emWavelength = DataTools.parseDouble(value);
         }
         else if (name.equals("MainExcitationWavelength")) {
-          p.exWavelength = new Double(value);
+          p.exWavelength = DataTools.parseDouble(value);
         }
         else if (name.equals("ImageResolutionX")) {
           String unit = attrs.getNamedItem("Unit").getNodeValue();
-          p.sizeX = correctUnits(new Double(value), unit);
+          p.sizeX = correctUnits(DataTools.parseDouble(value), unit);
         }
         else if (name.equals("ImageResolutionY")) {
           String unit = attrs.getNamedItem("Unit").getNodeValue();
-          p.sizeY = correctUnits(new Double(value), unit);
+          p.sizeY = correctUnits(DataTools.parseDouble(value), unit);
         }
         else if (name.equals("PositionX")) {
           String unit = attrs.getNamedItem("Unit").getNodeValue();
-          p.positionX = correctUnits(new Double(value), unit);
+          p.positionX = correctUnits(DataTools.parseDouble(value), unit);
         }
         else if (name.equals("PositionY")) {
           String unit = attrs.getNamedItem("Unit").getNodeValue();
-          p.positionY = correctUnits(new Double(value), unit);
+          p.positionY = correctUnits(DataTools.parseDouble(value), unit);
         }
         else if (name.equals("PositionZ")) {
           String unit = attrs.getNamedItem("Unit").getNodeValue();
-          p.positionZ = correctUnits(new Double(value), unit);
+          p.positionZ = correctUnits(DataTools.parseDouble(value), unit);
         }
       }
 
@@ -725,10 +725,10 @@ public class ColumbusReader extends FormatReader {
         metadataFiles.add(new Location(value).toString());
       }
       else if (currentName.equals("PlateRows")) {
-        plateRows = new Integer(value);
+        plateRows = Integer.parseInt(value);
       }
       else if (currentName.equals("PlateColumns")) {
-        plateColumns = new Integer(value);
+        plateColumns = Integer.parseInt(value);
       }
 
       currentName = null;

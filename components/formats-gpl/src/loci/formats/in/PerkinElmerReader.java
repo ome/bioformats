@@ -489,7 +489,7 @@ public class PerkinElmerReader extends FormatReader {
           if (exposure.endsWith(",")) {
             exposure = exposure.substring(0, exposure.length() - 1);
           }
-          exposureTimes.add(new Double(Double.parseDouble(exposure) / 1000));
+          exposureTimes.add(Double.parseDouble(exposure) / 1000);
 
           if (tokens[j].indexOf("nm") != -1) {
             int nmIndex = tokens[j].indexOf("nm");
@@ -497,14 +497,14 @@ public class PerkinElmerReader extends FormatReader {
             int slash = tokens[j].lastIndexOf("/", nmIndex);
             if (slash == -1) slash = nmIndex;
             emWaves.add(
-              new Double(tokens[j].substring(paren + 1, slash).trim()));
+              DataTools.parseDouble(tokens[j].substring(paren + 1, slash).trim()));
             if (tokens[j].indexOf("nm", nmIndex + 3) != -1) {
               nmIndex = tokens[j].indexOf("nm", nmIndex + 3);
               paren = tokens[j].lastIndexOf(" ", nmIndex);
               slash = tokens[j].lastIndexOf("/", nmIndex);
               if (slash == -1) slash = nmIndex + 2;
               exWaves.add(
-                new Double(tokens[j].substring(paren + 1, slash).trim()));
+                DataTools.parseDouble(tokens[j].substring(paren + 1, slash).trim()));
             }
           }
 
@@ -514,7 +514,7 @@ public class PerkinElmerReader extends FormatReader {
           for (int q=j + 2; q<tokens.length; q++) {
             if (!tokens[q].trim().equals("")) {
               try {
-                zPositions.add(new Double(tokens[q].trim()));
+                zPositions.add(DataTools.parseDouble(tokens[q].trim()));
               }
               catch (NumberFormatException e) { }
             }
