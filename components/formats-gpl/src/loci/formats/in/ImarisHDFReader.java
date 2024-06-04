@@ -408,6 +408,7 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
           catch (NumberFormatException e) { }
         }
 
+        colors.remove(null);
         if (i < colors.size()) {
           double[] color = colors.get(i);
           Color realColor = new Color(
