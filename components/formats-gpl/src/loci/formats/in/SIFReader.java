@@ -79,7 +79,7 @@ public class SIFReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(pixelOffset + no * FormatTools.getPlaneSize(this));
+    in.seek(pixelOffset + (long)no * (long)FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
     return buf;
   }
@@ -147,10 +147,10 @@ public class SIFReader extends FormatReader {
         int y2 = Integer.parseInt(tokens[4]);
         int x3 = Integer.parseInt(tokens[5]);
         int y3 = Integer.parseInt(tokens[6]);
-        m.sizeX = (int) (Math.abs(x1 - x2) + x3);
-        m.sizeY = (int) (Math.abs(y1 - y2) + y3);
+        m.sizeX = Math.abs(x1 - x2) + x3;
+        m.sizeY = Math.abs(y1 - y2) + y3;
         pixelOffset = in.length() - FOOTER_SIZE -
-          (getImageCount() * getSizeX() * getSizeY() * 4);
+          ((long)getImageCount() * (long)getSizeX() * (long)getSizeY() * 4L);
       }
     }
 
