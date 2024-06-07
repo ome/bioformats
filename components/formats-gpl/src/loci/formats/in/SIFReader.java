@@ -26,6 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -143,10 +146,9 @@ public class SIFReader extends FormatReader {
 
     // Parse timestamps for each frame
     double[] timestamp = new double[getImageCount()];
-    for (int i = 0; i < getImageCount(); i++) {
-      line = in.readLine();
-
-      timestamp[i] = Double.parseDouble(line.trim());
+    String[] lines = readFixedWidthTable(getImageCount());
+    for (int i = 0; i < lines.length; i++) {
+      timestamp[i] = Double.parseDouble(lines[i].trim());
     }
 
     pixelOffset = in.getFilePointer();
@@ -161,9 +163,7 @@ public class SIFReader extends FormatReader {
     if (flag == '1' && flagTerminator == '\n') {
       if (sifVersion == 65567) {
         // SIF Version 65567 contains an additional table for all frames
-        for (int i = 0; i < getImageCount(); i++) {
-          line = in.readLine();
-        }
+        readFixedWidthTable(getImageCount());
 
         pixelOffset = in.getFilePointer();
       }
@@ -177,13 +177,35 @@ public class SIFReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this,
-            getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM);
+      getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneDeltaT(new Time(timestamp[i], UNITS.MICROSECOND), 0, i);
       }
     }
+  }
+
+  private String[] readFixedWidthTable(int rows) throws IOException {
+    // Read a line of the fixed-width table to know total size
+    String line = in.readLine();
+    int lineSize = line.length();
+
+    // Read the entire table
+    ByteBuffer buffer = ByteBuffer.allocate(lineSize * (rows - 1));
+    in.read(buffer);
+    ((Buffer)buffer).rewind();
+
+    String[] lines = new String[rows];
+    lines[0] = line;
+
+    byte[] lineChars = new byte[lineSize];
+    for (int i = 1; i < rows; i++) {
+      buffer.get(lineChars);
+      lines[i] = new String(lineChars, StandardCharsets.ISO_8859_1);
+    }
+
+    return lines;
   }
 
 }
