@@ -129,6 +129,8 @@ public class DicomReader extends SubResolutionFormatReader {
 
   private List<DicomTag> tags;
 
+  private DicomTag frameTime = null;
+
   private Set<Integer> privateContentHighWords = new HashSet<Integer>();
 
   // -- Constructor --
@@ -282,8 +284,14 @@ public class DicomReader extends SubResolutionFormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
     Region currentRegion = new Region(x, y, w, h);
-    int z = getZCTCoords(no)[0];
-    int c = getZCTCoords(no)[1];
+    int[] coords = getZCTCoords(no);
+    int z = coords[0];
+    int c = coords[1];
+    int timepoint = coords[2];
+    if (isTimelapse()) {
+      z = coords[2];
+      timepoint = coords[1];
+    }
 
     if (!tilePositions.containsKey(getCoreIndex())) {
       LOGGER.warn("No tiles for core index = {}", getCoreIndex());
@@ -293,9 +301,10 @@ public class DicomReader extends SubResolutionFormatReader {
     // look for any tiles that match the requested tile and plane
     List<Double> zs = zOffsets.get(getCoreIndex());
     List<DicomTile> tiles = tilePositions.get(getCoreIndex());
+    int compareDimension = isTimelapse() ? getSizeT() : getSizeZ();
     for (int t=0; t<tiles.size(); t++) {
       DicomTile tile = tiles.get(t);
-      if ((getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(z))) || (getSizeZ() == tiles.size() && t == z)) &&
+      if ((compareDimension == 1 || (compareDimension <= zs.size() && tile.zOffset.equals(zs.get(z))) || (compareDimension == tiles.size() && t == z)) &&
         (tile.channel == c || getEffectiveSizeC() == 1) &&
         tile.region.intersects(currentRegion))
       {
@@ -372,6 +381,7 @@ public class DicomReader extends SubResolutionFormatReader {
       concatenationNumber = null;
       edf = false;
       tags = null;
+      frameTime = null;
       privateContentHighWords.clear();
     }
   }
@@ -437,6 +447,7 @@ public class DicomReader extends SubResolutionFormatReader {
     int opticalChannels = 0;
 
     List<Integer> opticalPathIDs = new ArrayList<Integer>();
+    DicomAttribute frameIncrementPointer = null;
 
     while (decodingTags) {
       if (in.getFilePointer() + 4 >= in.length()) {
@@ -677,6 +688,23 @@ public class DicomReader extends SubResolutionFormatReader {
         case EXTENDED_DEPTH_OF_FIELD:
           edf = tag.getStringValue().equalsIgnoreCase("yes");
           break;
+        case FRAME_INCREMENT_POINTER:
+          short[] tagParts = null;
+          if (tag.value instanceof short[][]) {
+            tagParts = ((short[][]) tag.value)[0];
+          }
+          else if (tag.value instanceof short[]) {
+            tagParts = (short[]) tag.value;
+          }
+
+          if (tagParts != null && tagParts.length >= 2) {
+            int groupWord = tagParts[0];
+            int elementWord = tagParts[1];
+            int pointerValue = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
+            frameIncrementPointer = DicomAttribute.get(pointerValue);
+          }
+          in.seek(tag.getEndPointer());
+          break;
         case TRAILING_PADDING:
           decodingTags = false;
           break;
@@ -688,6 +716,23 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
     if (imagesPerFile == 0) imagesPerFile = 1;
+
+    // pointer could be FrameTime or FrameTimeVector, or possibly something else?
+    if (frameIncrementPointer != null) {
+      // referenced tag might occur before or after the pointer tag (usually before)
+
+      for (DicomTag t : tags) {
+        if (frameIncrementPointer.equals(t.attribute)) {
+          frameTime = t;
+          break;
+        }
+      }
+    }
+
+    if (isTimelapse()) {
+      m.sizeT = m.sizeZ;
+      m.sizeZ = 1;
+    }
 
     if (new Location(currentId).getName().equals("DICOMDIR")) {
       String parent = new Location(currentId).getAbsoluteFile().getParent();
@@ -733,6 +778,7 @@ public class DicomReader extends SubResolutionFormatReader {
         int cols = (int) Math.ceil((double) getSizeX() / originalX);
         int rows = (int) Math.ceil((double) getSizeY() / originalY);
         int tilesPerPlane = rows * cols;
+
         int c = frameOffsetNumber / (tilesPerPlane * getSizeZ());
         int newOffset = frameOffsetNumber - (c * tilesPerPlane * getSizeZ());
         int z = newOffset / tilesPerPlane;
@@ -813,7 +859,7 @@ public class DicomReader extends SubResolutionFormatReader {
         DicomFileInfo fileInfo = createFileInfo(currentFileList.get(0));
         zOffsets.put(i, fileInfo.zOffsets);
         fileInfo.coreMetadata.sizeZ *= currentFileList.size();
-        fileInfo.coreMetadata.imageCount = fileInfo.coreMetadata.sizeZ;
+        fileInfo.coreMetadata.imageCount = fileInfo.coreMetadata.sizeZ * fileInfo.coreMetadata.sizeT;
         core.add(fileInfo.coreMetadata);
 
         List<DicomTile> positions = new ArrayList<DicomTile>();
@@ -1834,16 +1880,24 @@ public class DicomReader extends SubResolutionFormatReader {
   }
 
   private void updateCoreMetadata(CoreMetadata ms) {
-    if (ms.sizeC == 0) ms.sizeC = 1;
-    ms.sizeT = 1;
+    if (ms.sizeC == 0) {
+      ms.sizeC = 1;
+    }
+    if (ms.sizeT == 0) {
+      ms.sizeT = 1;
+    }
     ms.dimensionOrder = "XYCZT";
     ms.metadataComplete = true;
     ms.falseColor = false;
     if (isRLE) ms.interleaved = false;
-    ms.imageCount = ms.sizeZ;
+    ms.imageCount = ms.sizeZ * ms.sizeT;
     if (!ms.rgb) {
       ms.imageCount *= ms.sizeC;
     }
+  }
+
+  public boolean isTimelapse() {
+    return frameTime != null;
   }
 
   public String getImageType() {
