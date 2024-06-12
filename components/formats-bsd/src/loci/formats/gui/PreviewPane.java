@@ -215,7 +215,9 @@ public class PreviewPane extends JPanel
 
       try { // catch-all for unanticipated exceptions
         final String id = loadId;
-        if (id == lastId) continue;
+        if ((id == null && lastId == null) || (id != null && id.equals(lastId))) {
+          continue;
+        }
         if (id != null && lastId != null) {
           String[] files = reader.getUsedFiles();
           boolean found = false;
@@ -260,7 +262,7 @@ public class PreviewPane extends JPanel
           lastId = null;
           continue;
         }
-        if (id != loadId) {
+        if (!id.equals(loadId)) {
           SwingUtilities.invokeLater(refresher);
           continue;
         }
