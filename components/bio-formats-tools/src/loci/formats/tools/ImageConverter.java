@@ -62,6 +62,7 @@ import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.ICompressedTileReader;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
@@ -71,7 +72,9 @@ import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.in.DynamicMetadataOptions;
@@ -557,6 +560,11 @@ public final class ImageConverter {
     }
 
     reader.setId(in);
+
+    if (compression == null && precompressed) {
+      compression = getReaderCodecName();
+      LOGGER.info("Implicitly using compression = {}", compression);
+    }
 
     if (swapOrder != null) {
        dimSwapper.swapDimensions(swapOrder);
@@ -1306,6 +1314,18 @@ public final class ImageConverter {
       codecOptions.quality = compressionQuality;
       writer.setCodecOptions(codecOptions);
     }
+  }
+
+  private String getReaderCodecName() throws FormatException, IOException {
+    if (reader instanceof ICompressedTileReader) {
+      ICompressedTileReader r = (ICompressedTileReader) reader;
+      Codec c = r.getTileCodec(0);
+      CompressionType type = CompressionType.get(c);
+      if (type != null) {
+        return type.getCompression();
+      }
+    }
+    return null;
   }
 
   // -- Main method --
