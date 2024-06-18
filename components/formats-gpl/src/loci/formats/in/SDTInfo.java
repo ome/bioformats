@@ -106,7 +106,7 @@ public class SDTInfo {
   public int setupOffs;
 
   /** Length of the setup data. */
-  public short setupLength;
+  public int setupLength;
 
   /** Offset of the first data block. */
   public int dataBlockOffs;
@@ -443,7 +443,7 @@ public class SDTInfo {
     infoOffs = in.readInt();
     infoLength = in.readShort();
     setupOffs = in.readInt();
-    setupLength = in.readShort();
+    setupLength = in.readUnsignedShort();
     dataBlockOffs = in.readInt();
     noOfDataBlocks = in.readShort();
     dataBlockLength = in.readInt();
