@@ -415,6 +415,10 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     boolean first = x == 0 && y == 0;
     boolean last = x + w == getSizeX() && y + h == getSizeY();
 
+    int xTiles = (int) Math.ceil((double) getSizeX() / thisTileWidth);
+    int yTiles = (int) Math.ceil((double) getSizeY() / thisTileHeight);
+    int sizeZ = r.getPixelsSizeZ(series).getValue().intValue();
+
     // the compression type isn't supplied to the writer until
     // after setId is called, so metadata that indicates or
     // depends on the compression type needs to be set in
@@ -436,6 +440,15 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
           ifds[resolutionIndex][no].put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.Y_CB_CR.getCode());
         }
       }
+
+      out.seek(tileWidthPointer[resolutionIndex]);
+      out.writeShort((short) getTileSizeX());
+      out.seek(tileHeightPointer[resolutionIndex]);
+      out.writeShort((short) getTileSizeY());
+      out.seek(tileCountPointer[resolutionIndex]);
+
+      out.writeBytes(padString(String.valueOf(
+          xTiles * yTiles * sizeZ * r.getChannelCount(series))));
     }
 
     // TILED_SPARSE, so the tile coordinates must be written
@@ -528,7 +541,6 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     // in the IFD
     // this tries to calculate the index without assuming sequential tile
     // writing, but maybe there is a better way to calculate this?
-    int xTiles = (int) Math.ceil((double) getSizeX() / tileWidth[resolutionIndex]);
     int xTile = x / tileWidth[resolutionIndex];
     int yTile = y / tileHeight[resolutionIndex];
     int tileIndex = (yTile * xTiles) + xTile;
@@ -538,6 +550,17 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if (ifds[resolutionIndex][no] != null) {
       tileByteCounts = (long[]) ifds[resolutionIndex][no].getIFDValue(IFD.TILE_BYTE_COUNTS);
       tileOffsets = (long[]) ifds[resolutionIndex][no].getIFDValue(IFD.TILE_OFFSETS);
+
+      if (tileByteCounts.length < xTiles * yTiles) {
+        long[] newTileByteCounts = new long[xTiles * yTiles];
+        long[] newTileOffsets = new long[xTiles * yTiles];
+        System.arraycopy(tileByteCounts, 0, newTileByteCounts, 0, tileByteCounts.length);
+        System.arraycopy(tileOffsets, 0, newTileOffsets, 0, tileOffsets.length);
+        tileByteCounts = newTileByteCounts;
+        tileOffsets = newTileOffsets;
+        ifds[resolutionIndex][no].put(IFD.TILE_BYTE_COUNTS, tileByteCounts);
+        ifds[resolutionIndex][no].put(IFD.TILE_OFFSETS, tileOffsets);
+      }
     }
 
     if (compression == null || compression.equals(CompressionType.UNCOMPRESSED.getCompression())) {
