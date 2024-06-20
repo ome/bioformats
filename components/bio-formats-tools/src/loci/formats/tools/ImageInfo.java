@@ -37,6 +37,9 @@ import java.io.IOException;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.List;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -1126,7 +1129,23 @@ public class ImageInfo {
 
   public static void main(String[] args) throws Exception {
     DebugTools.enableLogging("INFO");
-    if (!new ImageInfo().testRead(args)) System.exit(1);
+
+    List<String> argsList = Arrays.asList(args);
+    int idx = argsList.indexOf("--");
+
+    if (idx >= 0) {
+      Scanner scanner = new Scanner(System.in);
+      String[] newArgs = argsList.toArray(new String[0]);
+
+      while (scanner.hasNext()) {
+        newArgs[idx] = scanner.nextLine();
+        if (!new ImageInfo().testRead(newArgs)) System.exit(1);
+      }
+      scanner.close();
+    }
+    else {
+      if (!new ImageInfo().testRead(args)) System.exit(1);
+   }
   }
 
 }
