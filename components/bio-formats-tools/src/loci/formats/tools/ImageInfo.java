@@ -314,6 +314,7 @@ public class ImageInfo {
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
+      "              reads file names line-wise from stdin if -- is passed",
       "      -nopix: read metadata only, not pixels",
       "     -nocore: do not output core metadata",
       "     -nometa: do not parse format-specific metadata table",
