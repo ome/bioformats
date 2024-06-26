@@ -235,14 +235,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     LOGGER.debug("savePrecompressedBytes(series={}, resolution={}, no={}, x={}, y={})",
       series, resolution, no, x, y);
 
-    // TODO: may want better handling of non-tiled "extra" images (e.g. label, macro)
     MetadataRetrieve r = getMetadataRetrieve();
-    if ((!(r instanceof IPyramidStore) ||
-      ((IPyramidStore) r).getResolutionCount(series) == 1) &&
-      !isFullPlane(x, y, w, h))
-    {
-      throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
-    }
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
@@ -397,13 +390,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     int thisTileHeight = tileHeight[resolutionIndex];
 
     MetadataRetrieve r = getMetadataRetrieve();
-    if ((!(r instanceof IPyramidStore) ||
-      ((IPyramidStore) r).getResolutionCount(series) == 1) &&
-      !isFullPlane(x, y, w, h))
-    {
-      throw new FormatException("DicomWriter does not allow tiles for non-pyramid images");
-    }
-    else if (x % thisTileWidth != 0 || y % thisTileHeight != 0 ||
+    if (x % thisTileWidth != 0 || y % thisTileHeight != 0 ||
       (w != thisTileWidth && x + w != getSizeX()) ||
       (h != thisTileHeight && y + h != getSizeY()))
     {
