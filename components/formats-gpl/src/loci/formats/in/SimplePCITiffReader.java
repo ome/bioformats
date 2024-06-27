@@ -31,6 +31,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
 import loci.common.IniParser;
@@ -163,7 +164,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
       String objective = microscopeTable.get("Objective");
       int space = objective.indexOf(' ');
       if (space != -1) {
-        magnification = new Double(objective.substring(0, space - 1));
+        magnification = DataTools.parseDouble(objective.substring(0, space - 1));
         immersion = objective.substring(space + 1);
       }
     }
@@ -192,7 +193,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
       int index = 1;
       for (int i=0; i<getSizeC(); i++) {
         if (captureTable.get("c_Filter" + index) != null) {
-          exposureTimes.add(new Double(captureTable.get("c_Expos" + index)));
+          exposureTimes.add(DataTools.parseDouble(captureTable.get("c_Expos" + index)));
         }
         index++;
       }

@@ -415,7 +415,7 @@ public class MicromanagerReader extends FormatReader {
 
         for (int c=0; c<p.channels.length; c++) {
           store.setDetectorSettingsBinning(MetadataTools.getBinning(p.binning), i, c);
-          store.setDetectorSettingsGain(new Double(p.gain), i, c);
+          store.setDetectorSettingsGain(Double.valueOf(p.gain), i, c);
           if (c < p.voltage.size()) {
             store.setDetectorSettingsVoltage(
                     new ElectricPotential(p.voltage.get(c), UNITS.VOLT), i, c);
@@ -1167,7 +1167,7 @@ public class MicromanagerReader extends FormatReader {
       Integer major = null;
       try {
         if (version.length > 0) {
-          major = new Integer(version[0]);
+          major = Integer.parseInt(version[0]);
         }
       }
       catch (NumberFormatException e) {

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -239,7 +240,7 @@ public class SlidebookTiffReader extends BaseTiffReader {
       IFD ifd = ifds.get(0);
       String physicalSize = ifd.getIFDTextValue(PHYSICAL_SIZE_TAG);
       if (physicalSize != null) {
-        Double size = new Double(physicalSize);
+        Double size = DataTools.parseDouble(physicalSize);
         if (size > 0) {
           store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(size), 0);
           store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(size), 0);
@@ -252,7 +253,7 @@ public class SlidebookTiffReader extends BaseTiffReader {
         store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
         store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
         store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
-        store.setObjectiveNominalMagnification(new Double(mag), 0, 0);
+        store.setObjectiveNominalMagnification(DataTools.parseDouble(mag), 0, 0);
       }
 
       final Double xn = Double.valueOf(ifd.getIFDTextValue(X_POS_TAG));

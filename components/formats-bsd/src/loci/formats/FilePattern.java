@@ -162,13 +162,13 @@ public class FilePattern {
     while (true) {
       left = pattern.indexOf(FilePatternBlock.BLOCK_START, left + 1);
       if (left < 0) break;
-      lt.add(new Integer(left));
+      lt.add(left);
     }
     int right = -1;
     while (true) {
       right = pattern.indexOf(FilePatternBlock.BLOCK_END, right + 1);
       if (right < 0) break;
-      gt.add(new Integer(right));
+      gt.add(right);
     }
 
     // assemble numerical block indices

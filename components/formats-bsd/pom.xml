@@ -97,7 +97,7 @@
     <dependency>
       <groupId>cisd</groupId>
       <artifactId>jhdf5</artifactId>
-      <version>19.04.0</version>
+      <version>19.04.1</version>
     </dependency>
     <dependency>
 	    <groupId>com.drewnoakes</groupId>

@@ -532,7 +532,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     }
     else {
       Codec codec = getCodec();
-      CodecOptions options = new CodecOptions();
+      CodecOptions options = new CodecOptions(getCodecOptions());
       options.width = tileWidth[resolutionIndex];
       options.height = tileHeight[resolutionIndex];
       options.channels = getSamplesPerPixel();
@@ -1862,10 +1862,11 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       return sizeC * sizeZ * sizeT == 1;
     }
 
+    // check that there is a single channel or Z section (so order doesn't matter)
+    // or the dimension order indicates that Z is before C
     DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
     return sequential && (sizeC == 1 || sizeZ == 1 ||
       order == DimensionOrder.XYZCT ||
-      order == DimensionOrder.XYZTC ||
       order == DimensionOrder.XYZTC ||
       order == DimensionOrder.XYTZC);
   }

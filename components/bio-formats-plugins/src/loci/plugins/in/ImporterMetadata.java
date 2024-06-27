@@ -82,18 +82,18 @@ public class ImporterMetadata extends HashMap<String, Object> {
 
       // merge core values
       final String pad = " "; // puts core values first when alphabetizing
-      put(pad + s + "SizeX", new Integer(r.getSizeX()));
-      put(pad + s + "SizeY", new Integer(r.getSizeY()));
-      put(pad + s + "SizeZ", new Integer(r.getSizeZ()));
-      put(pad + s + "SizeT", new Integer(r.getSizeT()));
-      put(pad + s + "SizeC", new Integer(r.getSizeC()));
-      put(pad + s + "IsRGB", new Boolean(r.isRGB()));
+      put(pad + s + "SizeX", Integer.valueOf(r.getSizeX()));
+      put(pad + s + "SizeY", Integer.valueOf(r.getSizeY()));
+      put(pad + s + "SizeZ", Integer.valueOf(r.getSizeZ()));
+      put(pad + s + "SizeT", Integer.valueOf(r.getSizeT()));
+      put(pad + s + "SizeC", Integer.valueOf(r.getSizeC()));
+      put(pad + s + "IsRGB", Boolean.valueOf(r.isRGB()));
       put(pad + s + "PixelType",
         FormatTools.getPixelTypeString(r.getPixelType()));
-      put(pad + s + "LittleEndian", new Boolean(r.isLittleEndian()));
+      put(pad + s + "LittleEndian", Boolean.valueOf(r.isLittleEndian()));
       put(pad + s + "DimensionOrder", r.getDimensionOrder());
-      put(pad + s + "IsInterleaved", new Boolean(r.isInterleaved()));
-      put(pad + s + "BitsPerPixel", new Integer(r.getBitsPerPixel()));
+      put(pad + s + "IsInterleaved", Boolean.valueOf(r.isInterleaved()));
+      put(pad + s + "BitsPerPixel", Integer.valueOf(r.getBitsPerPixel()));
 
       String seriesName = process.getOMEMetadata().getImageName(i);
       put(pad + "Series " + i + " Name", seriesName);

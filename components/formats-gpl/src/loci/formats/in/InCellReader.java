@@ -1047,7 +1047,7 @@ public class InCellReader extends FormatReader {
         Double mag =
           Double.parseDouble(attributes.getValue("magnification"));
         store.setObjectiveNominalMagnification(mag, 0, 0);
-        store.setObjectiveLensNA(new Double(
+        store.setObjectiveLensNA(DataTools.parseDouble(
           attributes.getValue("numerical_aperture")), 0, 0);
         try {
          store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
@@ -1068,20 +1068,20 @@ public class InCellReader extends FormatReader {
           LOGGER.warn("", e);
         }
 
-        Double pixelSizeX = new Double(attributes.getValue("pixel_width"));
-        Double pixelSizeY = new Double(attributes.getValue("pixel_height"));
-        refractive = new Double(attributes.getValue("refractive_index"));
+        Double pixelSizeX = DataTools.parseDouble(attributes.getValue("pixel_width"));
+        Double pixelSizeY = DataTools.parseDouble(attributes.getValue("pixel_height"));
+        refractive = DataTools.parseDouble(attributes.getValue("refractive_index"));
 
         x = FormatTools.getPhysicalSizeX(pixelSizeX);
         y = FormatTools.getPhysicalSizeY(pixelSizeY);
       }
       else if (qName.equals("ExcitationFilter")) {
         String wave = attributes.getValue("wavelength");
-        if (wave != null) exWaves.add(new Double(wave));
+        if (wave != null) exWaves.add(DataTools.parseDouble(wave));
       }
       else if (qName.equals("EmissionFilter")) {
         String wave = attributes.getValue("wavelength");
-        if (wave != null) emWaves.add(new Double(wave));
+        if (wave != null) emWaves.add(DataTools.parseDouble(wave));
         channelNames.add(attributes.getValue("name"));
       }
       else if (qName.equals("Camera")) {
@@ -1106,14 +1106,14 @@ public class InCellReader extends FormatReader {
           return;
         }
         try {
-          gain = new Double(value);
+          gain = DataTools.parseDouble(value);
         }
         catch (NumberFormatException e) {
           LOGGER.debug("Could not parse gain '" + value + "'", e);
         }
       }
       else if (qName.equals("PlateTemperature")) {
-        temperature = new Double(attributes.getValue("value"));
+        temperature = DataTools.parseDouble(attributes.getValue("value"));
       }
       else if (qName.equals("Plate")) {
         nextPlate++;

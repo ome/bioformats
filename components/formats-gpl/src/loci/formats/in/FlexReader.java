@@ -1552,7 +1552,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Wavelength") && populateCore) {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
-        Double wavelength = new Double(value);
+        Double wavelength = Double.parseDouble(value);
         Length wave = FormatTools.getWavelength(wavelength);
         if (wave != null) {
           store.setLaserWavelength(wave, 0, nextLaser);
@@ -1566,11 +1566,11 @@ public class FlexReader extends FormatReader {
         }
       }
       else if (qName.equals("Magnification") && populateCore) {
-        store.setObjectiveCalibratedMagnification(new Double(value), 0,
+        store.setObjectiveCalibratedMagnification(Double.parseDouble(value), 0,
           nextObjective);
       }
       else if (qName.equals("NumAperture") && populateCore) {
-        store.setObjectiveLensNA(new Double(value), 0, nextObjective);
+        store.setObjectiveLensNA(Double.parseDouble(value), 0, nextObjective);
       }
       else if (qName.equals("Immersion") && populateCore) {
         String immersion = "Other";
@@ -1586,7 +1586,7 @@ public class FlexReader extends FormatReader {
         }
       }
       else if (qName.equals("OffsetX") || qName.equals("OffsetY")) {
-        Double offset = new Double(Double.parseDouble(value) * 1000000);
+        Double offset = Double.valueOf(Double.parseDouble(value) * 1000000);
         if (qName.equals("OffsetX")) xPositions.add(offset);
         else yPositions.add(offset);
       }
@@ -1628,11 +1628,11 @@ public class FlexReader extends FormatReader {
         }
         else if (qName.equals("ImageResolutionX")) {
           double v = Double.parseDouble(value) * 1000000;
-          xSizes.add(new Double(v));
+          xSizes.add(Double.valueOf(v));
         }
         else if (qName.equals("ImageResolutionY")) {
           double v = Double.parseDouble(value) * 1000000;
-          ySizes.add(new Double(v));
+          ySizes.add(Double.valueOf(v));
         }
         else if (qName.equals("PositionX")) {
           final double v = Double.parseDouble(value) * 1000000;
@@ -1656,10 +1656,10 @@ public class FlexReader extends FormatReader {
           }
         }
         else if (qName.equals("TimepointOffsetUsed")) {
-          planeDeltaT.add(new Double(value));
+          planeDeltaT.add(Double.parseDouble(value));
         }
         else if (qName.equals("CameraExposureTime")) {
-          planeExposureTime.add(new Double(value));
+          planeExposureTime.add(Double.parseDouble(value));
         }
         else if (qName.equals("LightSourceCombinationRef")) {
           lightSourceCombinationRefs.add(value);

@@ -274,7 +274,7 @@ public class IPWReader extends FormatReader {
           idx = name.substring(21, name.indexOf(File.separator, 22));
         }
 
-        imageFiles.put(new Integer(idx), name);
+        imageFiles.put(Integer.parseInt(idx), name);
       }
     }
 

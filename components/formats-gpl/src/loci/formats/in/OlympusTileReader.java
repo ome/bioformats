@@ -295,8 +295,8 @@ public class OlympusTileReader extends FormatReader {
         int diffY = stageOverlap * rows * 4;
 
         if (stitchedWidth != null && stitchedHeight != null) {
-          int actualWidth = (int) (stitchedWidth / physicalSizeX.value(UNITS.NM).doubleValue());
-          int actualHeight = (int) (stitchedHeight / physicalSizeY.value(UNITS.NM).doubleValue());
+          int actualWidth = (int) (stitchedWidth / physicalSizeX.value(UNITS.NANOMETER).doubleValue());
+          int actualHeight = (int) (stitchedHeight / physicalSizeY.value(UNITS.NANOMETER).doubleValue());
 
           diffX = widthWithOverlaps - actualWidth;
           diffY = heightWithOverlaps - actualHeight;

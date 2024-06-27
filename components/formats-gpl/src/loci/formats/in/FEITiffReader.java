@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
 import loci.common.IniParser;
@@ -227,9 +228,9 @@ public class FEITiffReader extends BaseTiffReader {
 
           IniTable scanTable = ini.getTable("Scan");
  
-          sizeX = new Double(scanTable.get("PixelWidth"));
-          sizeY = new Double(scanTable.get("PixelHeight"));
-          timeIncrement = new Double(scanTable.get("FrameTime"));
+          sizeX = DataTools.parseDouble(scanTable.get("PixelWidth"));
+          sizeY = DataTools.parseDouble(scanTable.get("PixelHeight"));
+          timeIncrement = DataTools.parseDouble(scanTable.get("FrameTime"));
         }
       }
       else {
@@ -238,8 +239,8 @@ public class FEITiffReader extends BaseTiffReader {
         imageDescription = dataTable.get("szUserText");
 
         String magnification = ini.getTable("Vector").get("Magnification");
-        sizeX = new Double(magnification) * MAG_MULTIPLIER;
-        sizeY = new Double(magnification) * MAG_MULTIPLIER;
+        sizeX = DataTools.parseDouble(magnification) * MAG_MULTIPLIER;
+        sizeY = DataTools.parseDouble(magnification) * MAG_MULTIPLIER;
 
         IniTable scanTable = ini.getTable("Vector.Sysscan");
         final Double posX = Double.valueOf(scanTable.get("PositionX"));
@@ -421,18 +422,18 @@ public class FEITiffReader extends BaseTiffReader {
           userName = value;
         }
         else if (key.equals("Magnification")) {
-          magnification = new Double(value);
+          magnification = DataTools.parseDouble(value);
         }
 
         else if ((key.endsWith("X") && "PixelSize".equals(parent)) ||
           (key.endsWith(" pixelWidth") && "FeiImage".equals(parent)))
         {
-          sizeX = new Double(value);
+          sizeX = DataTools.parseDouble(value);
         }
         else if ((key.endsWith("Y") && "PixelSize".equals(parent)) ||
           (key.endsWith(" pixelHeight") && "FeiImage".equals(parent)))
         {
-          sizeY = new Double(value);
+          sizeY = DataTools.parseDouble(value);
         }
       }
     }

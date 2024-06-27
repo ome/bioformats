@@ -118,7 +118,7 @@ public final class ImageTools {
 
     if (pixels instanceof byte[]) b = (byte[]) pixels;
     else if (pixels instanceof short[]) {
-      if (max == null) max = new Double(0xffff);
+      if (max == null) max = Double.valueOf(0xffff);
       double range = max.doubleValue() - min.doubleValue();
       double mult = newRange / range;
 
@@ -129,7 +129,7 @@ public final class ImageTools {
       }
     }
     else if (pixels instanceof int[]) {
-      if (max == null) max = new Double(0xffffffffL);
+      if (max == null) max = Double.valueOf(0xffffffffL);
       double range = max.doubleValue() - min.doubleValue();
       double mult = newRange / range;
 
@@ -140,7 +140,7 @@ public final class ImageTools {
       }
     }
     else if (pixels instanceof float[]) {
-      if (max == null) max = new Double(Float.MAX_VALUE);
+      if (max == null) max = Double.valueOf(Float.MAX_VALUE);
       double range = max.doubleValue() - min.doubleValue();
       double mult = newRange / range;
 
@@ -151,7 +151,7 @@ public final class ImageTools {
       }
     }
     else if (pixels instanceof double[]) {
-      if (max == null) max = new Double(Double.MAX_VALUE);
+      if (max == null) max = Double.MAX_VALUE;
       double range = max.doubleValue() - min.doubleValue();
       double mult = newRange / range;
 
@@ -517,8 +517,8 @@ public final class ImageTools {
     }
 
     Double[] rtn = new Double[2];
-    rtn[0] = new Double(min);
-    rtn[1] = new Double(max);
+    rtn[0] = Double.valueOf(min);
+    rtn[1] = Double.valueOf(max);
     return rtn;
   }
 

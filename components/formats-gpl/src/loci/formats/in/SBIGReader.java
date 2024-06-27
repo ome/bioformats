@@ -160,10 +160,16 @@ public class SBIGReader extends FormatReader {
           description = value;
         }
         else if (key.equals("X_pixel_size")) {
-          sizeX = new Double(value) * 1000;
+          Double size = DataTools.parseDouble(value);
+          if (size != null) {
+            sizeX = size * 1000;
+          }
         }
         else if (key.equals("Y_pixel_size")) {
-          sizeY = new Double(value) * 1000;
+          Double size = DataTools.parseDouble(value);
+          if (size != null) {
+            sizeY = size * 1000;
+          }
         }
         else if (key.equals("Date")) {
           date = value;

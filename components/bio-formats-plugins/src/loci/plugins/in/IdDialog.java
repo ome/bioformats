@@ -167,7 +167,7 @@ public class IdDialog extends ImporterDialog {
       String group = gd.getNextString();
       Long groupID = null;
       try {
-        groupID = new Long(group);
+        groupID = Long.parseLong(group);
       }
       catch (NumberFormatException e) { }
 

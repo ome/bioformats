@@ -184,7 +184,7 @@ public class PrairieReader extends FormatReader {
     final int blockLen = (int) Math.min(1048608, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String s = stream.readString(blockLen);
-    if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
+    if (s.indexOf("xml") != -1 && s.indexOf("<PV") != -1) return true;
 
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -198,9 +198,9 @@ public class PrairieReader extends FormatReader {
     }
     if (software == null) return false;
     if (software.indexOf("Prairie") < 0) return false; // not Prairie software
-    return ifd.containsKey(new Integer(PRAIRIE_TAG_1)) &&
-      ifd.containsKey(new Integer(PRAIRIE_TAG_2)) &&
-      ifd.containsKey(new Integer(PRAIRIE_TAG_3));
+    return ifd.containsKey(Integer.valueOf(PRAIRIE_TAG_1)) &&
+      ifd.containsKey(Integer.valueOf(PRAIRIE_TAG_2)) &&
+      ifd.containsKey(Integer.valueOf(PRAIRIE_TAG_3));
   }
 
   @Override
