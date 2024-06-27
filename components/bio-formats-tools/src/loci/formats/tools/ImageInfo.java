@@ -314,7 +314,8 @@ public class ImageInfo {
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
-      "              reads file names line-wise from stdin if -- is passed",
+      "              if - is passed, process multiple files",
+      "              with file names read line-wise from stdin",
       "      -nopix: read metadata only, not pixels",
       "     -nocore: do not output core metadata",
       "     -nometa: do not parse format-specific metadata table",
@@ -1132,7 +1133,7 @@ public class ImageInfo {
     DebugTools.enableLogging("INFO");
 
     List<String> argsList = Arrays.asList(args);
-    int idx = argsList.indexOf("--");
+    int idx = argsList.indexOf("-");
 
     if (idx >= 0) {
       Scanner scanner = new Scanner(System.in);
@@ -1140,6 +1141,7 @@ public class ImageInfo {
 
       while (scanner.hasNext()) {
         newArgs[idx] = scanner.nextLine();
+	System.out.println("====% " + newArgs[idx]);
         if (!new ImageInfo().testRead(newArgs)) System.exit(1);
       }
       scanner.close();
@@ -1150,3 +1152,4 @@ public class ImageInfo {
   }
 
 }
+
