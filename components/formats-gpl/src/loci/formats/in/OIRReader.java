@@ -85,6 +85,7 @@ public class OIRReader extends FormatReader {
   private final Map<CZTKey, List<PixelBlock>> cztToPixelBlocks = new HashMap<>();
   private String baseName;
   private int lastChannel = -1;
+  private int optimalTileHeight;
 
   private int minZ = Integer.MAX_VALUE;
   private int minT = Integer.MAX_VALUE;
@@ -171,6 +172,15 @@ public class OIRReader extends FormatReader {
     return (short[][]) channels.get(lastChannel).lut;
   }
 
+  @Override
+  public int getOptimalTileHeight() {
+    return Math.min(2048, optimalTileHeight);
+  }
+
+  @Override
+  public int getOptimalTileWidth() {
+    return Math.min(2048, getSizeX());
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -184,6 +194,7 @@ public class OIRReader extends FormatReader {
     int[] zct = getZCTCoords(no);
     lastChannel = zct[1];
 
+    // Gets all the PixelBlock potentially contained within c, z and t
     List<PixelBlock> blocks = cztToPixelBlocks.get(new CZTKey(zct[1], zct[0], zct[2]));
 
     if ((blocks == null) || (blocks.isEmpty())) {
@@ -193,53 +204,44 @@ public class OIRReader extends FormatReader {
     }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int bufferOffset = bpp * ((y * getSizeX()) + x);
-    int rowLen = bpp * w;
-    int imageWidth = bpp * getSizeX();
-    int bufferEnd = bpp * (((y + h) * getSizeX()) + x + w);
-    int bufferPointer = 0;
+    int nBytesPerLineInBuf = w * bpp;            // number of bytes for one line within the exported buffer
+    int nBytesPerLineInBlock = getSizeX() * bpp; // number of bytes for one line within a PixelBlock
 
-    RandomAccessInputStream s = null;
-    String openFile = null;
-    try {
-      for (PixelBlock block : blocks) {
+    // Iterators: y position
+    int yOffsetInBuffer = 0;                     // current y offset within the exported buffer
 
-        if (bufferPointer + block.length < bufferOffset ||
-          bufferPointer >= bufferEnd)
-        {
-          bufferPointer += block.length;
-          continue;
-        }
+    for (PixelBlock block : blocks) { // This list is sorted along y
+      // Skips blocks positioned fully outside [y, y+h[
+      if (block.yEnd<y) continue;  // The pixel block is completely above the requested region - skip it
+      if (block.yStart>y+h) break; // The pixel block is completely below the requested region - skip all remaining blocks
 
-        byte[] pixels = null;
-        if (s == null || !block.file.equals(openFile)) {
-          if (s != null) {
-            s.close();
-          }
-          s = new RandomAccessInputStream(block.file, BUFFER_SIZE);
-          openFile = block.file;
-        }
-        pixels = readPixelBlock(s, block.offset);
-        if (pixels != null) {
-          int blockY = bufferPointer / imageWidth;
-          int blockH = pixels.length / imageWidth;
+      // At this point of the code we know for sure that this PixelBlock overlaps with the requested region,
+      // We need to copy lines from this PixelBlock to the buffer, cropping properly the PixelBlock
+      // and taking into account the x and y offset
 
-          for (int yy=blockY; yy<blockY+blockH; yy++) {
-            if (yy < y || yy >= y + h) {
-              continue;
-            }
-            int blockOffset = (yy - blockY) * imageWidth + x * bpp;
-            int bufOffset = (yy - y) * rowLen;
-            System.arraycopy(pixels, blockOffset, buf, bufOffset, rowLen);
-          }
-        }
-        bufferPointer += block.length;
-      }
-    }
-    finally {
-      if (s != null) {
-        s.close();
-      }
+      // Skips the first lines of the block if necessary - the result will be non-zero only for the first PixelBlock
+      // that lies within the buffer region + skips the bytes according to the x offset
+      int blockOffset =
+              ((y+yOffsetInBuffer)-block.yStart)*nBytesPerLineInBlock // y Offset
+              + (x * bpp); // x offset
+
+      // Number of lines to be copied within the PixelBlock
+      // The stop condition happens either:
+      // - if we reach the end of the bytes to be read within the requested region
+      // - or if we reach the end of the current PixelBlock
+      int nLines = Math.min(h-yOffsetInBuffer, block.yEnd-(y+yOffsetInBuffer));
+
+      // Perform the copy
+      copyPixelBlock(block, buf,
+              yOffsetInBuffer * nBytesPerLineInBuf,              // Current position within the exported buffer
+              blockOffset,  // Current position within the PixelBlock, taking into account the x offset
+              nBytesPerLineInBuf,     // number of bytes within a line of the exported buffer
+              nBytesPerLineInBlock,   // number of bytes within a line of a PixelBlock
+              nLines
+      );
+
+      // Updates new position within the exported buffer
+      yOffsetInBuffer+=nLines;                // nLines filled
     }
 
     return buf;
@@ -408,6 +410,33 @@ public class OIRReader extends FormatReader {
       if (!cztToPixelBlocks.containsKey(key)) cztToPixelBlocks.put(key, new ArrayList<>());
       PixelBlock pb = pixelBlocks.get(uid);
       cztToPixelBlocks.get(key).add(b, pb);
+    }
+
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int bytesPerLine = m.sizeX*bpp;
+    optimalTileHeight = 32;
+
+    // Let's compute the coordinates of the pixel blocks in y
+    // We also make the optimal tile height match the max size of a block in Y
+    for (List<PixelBlock> blocks : cztToPixelBlocks.values()) {
+      int yStart = 0;
+      for (PixelBlock block: blocks) {
+        block.yStart = yStart;
+        if ((block.length % bytesPerLine)!=0) {
+          LOGGER.error("A pixel block contains a partial line.");
+        }
+        int nLines = block.length/bytesPerLine;
+        if (nLines > optimalTileHeight) {
+          optimalTileHeight = nLines;
+        }
+        yStart+=block.length/bytesPerLine;
+        block.yEnd = yStart; // start of the next block = end (excluded) of the previous block
+      }
+    }
+
+    // Make sure that an optimal tile does not go beyond 2 Gbytes -> that probably shouldn't happen
+    if ((long)optimalTileHeight*(long)m.sizeX*(long)bpp > Integer.MAX_VALUE) {
+      optimalTileHeight = Integer.MAX_VALUE / (bpp  * m.sizeX) - 1;
     }
 
     // populate original metadata
@@ -1417,34 +1446,48 @@ public class OIRReader extends FormatReader {
     return true;
   }
 
-  private byte[] readPixelBlock(RandomAccessInputStream s, long offset) throws IOException {
-    s.order(true);
-    s.seek(offset);
+  private void copyPixelBlock(PixelBlock block,
+                              byte[] buf, int offsetBuf, int offsetBlock,
+                              int nBytesPerLinesBuf, int nBytesPerLineBlock, int nLines) throws IOException {
 
-    int checkLength = s.readInt();
-    int check = s.readInt();
-    if (check != 3) {
+    try (RandomAccessInputStream s = new RandomAccessInputStream(block.file, BUFFER_SIZE)) {
+
+      long offset = block.offset;
+      s.order(true);
       s.seek(offset);
-      return null;
+
+      int checkLength = s.readInt();
+      int check = s.readInt();
+      if (check != 3) {
+        s.seek(offset);
+        return;
+      }
+
+      s.skipBytes(8); // currently unknown
+
+      int uidLength = s.readInt();
+      String uid = s.readString(uidLength);
+      LOGGER.debug("reading pixel block with uid = {}", uid);
+      if (checkLength != uidLength + 12) {
+        s.seek(offset);
+        return;
+      }
+
+      int pixelBytes = s.readInt();
+      s.skipBytes(4); // currently unknown
+      s.skipBytes(offsetBlock);
+
+      if (nBytesPerLineBlock==nBytesPerLinesBuf) {
+        // Full line copy, no skip needed
+        s.read(buf, offsetBuf, nBytesPerLineBlock*nLines);
+      } else {
+        for (int i = 0; i < nLines; i++) {
+          s.read(buf, offsetBuf, nBytesPerLinesBuf);
+          s.skipBytes(nBytesPerLineBlock-nBytesPerLinesBuf);
+          offsetBuf += nBytesPerLinesBuf;
+        }
+      }
     }
-
-    s.skipBytes(8); // currently unknown
-
-    int uidLength = s.readInt();
-    String uid = s.readString(uidLength);
-    LOGGER.debug("reading pixel block with uid = {}", uid);
-    if (checkLength != uidLength + 12) {
-      s.seek(offset);
-      return null;
-    }
-
-    int pixelBytes = s.readInt();
-
-    s.skipBytes(4); // currently unknown
-
-    byte[] pixels = new byte[pixelBytes];
-    s.readFully(pixels);
-    return pixels;
   }
 
   private int getZ(String uid) {
@@ -1531,6 +1574,8 @@ public class OIRReader extends FormatReader {
     public String file;
     public long offset;
     public int length;
+    public int yStart;
+    public int yEnd;
   }
 
   /**
