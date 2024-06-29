@@ -28,10 +28,12 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
@@ -80,7 +82,7 @@ public class OIRReader extends FormatReader {
   private Timestamp acquisitionDate;
   private int defaultXMLSkip = 36;
   private int blocksPerPlane = 0;
-  private String[] pixelUIDs = null;
+  private final Map<CZTKey, List<PixelBlock>> cztToPixelBlocks = new HashMap<>();
   private String baseName;
   private int lastChannel = -1;
 
@@ -182,23 +184,9 @@ public class OIRReader extends FormatReader {
     int[] zct = getZCTCoords(no);
     lastChannel = zct[1];
 
-    int first = 0;
-    int startIndex = -1;
-    int end = 0;
-    while (first < pixelUIDs.length) {
-      if (getZ(pixelUIDs[first]) - minZ == zct[0] &&
-        getT(pixelUIDs[first]) - minT == zct[2] &&
-        pixelUIDs[first].indexOf(channels.get(zct[1] % channels.size()).id) > 0)
-      {
-        if (startIndex < 0) {
-          startIndex = first;
-        }
-        end = first;
-      }
-      first++;
-    }
+    List<PixelBlock> blocks = cztToPixelBlocks.get(new CZTKey(zct[1], zct[0], zct[2]));
 
-    if (startIndex < 0) {
+    if ((blocks == null) || (blocks.isEmpty())) {
       LOGGER.warn("No pixel blocks for plane #{}", no);
       Arrays.fill(buf, getFillColor());
       return buf;
@@ -214,8 +202,7 @@ public class OIRReader extends FormatReader {
     RandomAccessInputStream s = null;
     String openFile = null;
     try {
-      for (int i=startIndex; i<=end; i++) {
-        PixelBlock block = pixelBlocks.get(pixelUIDs[i]);
+      for (PixelBlock block : blocks) {
 
         if (bufferPointer + block.length < bufferOffset ||
           bufferPointer >= bufferEnd)
@@ -274,7 +261,7 @@ public class OIRReader extends FormatReader {
       acquisitionDate = null;
       defaultXMLSkip = 36;
       blocksPerPlane = 0;
-      pixelUIDs = null;
+      cztToPixelBlocks.clear();
       baseName = null;
       lastChannel = -1;
       minZ = Integer.MAX_VALUE;
@@ -412,51 +399,15 @@ public class OIRReader extends FormatReader {
       }
     }
 
-    pixelUIDs = pixelBlocks.keySet().toArray(new String[pixelBlocks.size()]);
-    Arrays.sort(pixelUIDs, new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        int lastUnderscore1 = s1.lastIndexOf("_");
-        int lastUnderscore2 = s2.lastIndexOf("_");
-
-        Integer block1 = Integer.parseInt(s1.substring(lastUnderscore1 + 1));
-        Integer block2 = Integer.parseInt(s2.substring(lastUnderscore2 + 1));
-
-        int underscore1 = s1.lastIndexOf("_", lastUnderscore1 - 1);
-        int underscore2 = s2.lastIndexOf("_", lastUnderscore2 - 1);
-
-        String prefix1 = s1.substring(0, underscore1);
-        String prefix2 = s2.substring(0, underscore2);
-
-        String channel1 = s1.substring(underscore1 + 1, lastUnderscore1);
-        String channel2 = s2.substring(underscore2 + 1, lastUnderscore2);
-
-        if (!prefix1.equals(prefix2)) {
-          return s1.compareTo(s2);
-        }
-
-        if (!channel1.equals(channel2)) {
-          Integer index1 = -1;
-          Integer index2 = -2;
-          for (int i=0; i<channels.size(); i++) {
-            if (channels.get(i).id.equals(channel1)) {
-              index1 = i;
-            }
-            if (channels.get(i).id.equals(channel2)) {
-              index2 = i;
-            }
-          }
-          return index1.compareTo(index2);
-        }
-
-        return block1.compareTo(block2);
-      }
-    });
-
-    if (LOGGER.isTraceEnabled()) {
-      for (int i=0; i<pixelUIDs.length; i++) {
-        LOGGER.trace("pixel UID #{} = {}", i, pixelUIDs[i]);
-      }
+    for (String uid: pixelBlocks.keySet()) {
+      int z = getZ(uid)-minZ;
+      int t = getT(uid)-minT;
+      int c = getC(uid);
+      int b = getBlock(uid);
+      CZTKey key = new CZTKey(c,z,t);
+      if (!cztToPixelBlocks.containsKey(key)) cztToPixelBlocks.put(key, new ArrayList<>());
+      PixelBlock pb = pixelBlocks.get(uid);
+      cztToPixelBlocks.get(key).add(b, pb);
     }
 
     // populate original metadata
@@ -1514,6 +1465,16 @@ public class OIRReader extends FormatReader {
     return Integer.parseInt(tSubString.substring(0, tSubString.indexOf("_"))) - 1;
   }
 
+  private int getC(String uid) {
+    String toParse = uid.substring(0,uid.lastIndexOf("_"));
+    String channelSignature = toParse.substring(toParse.lastIndexOf("_")+1);
+    for (int iCh = 0; iCh<channels.size(); iCh++) {     // Not ideal
+      if (channels.get(iCh).id.equals(channelSignature)) return iCh;
+    }
+    LOGGER.error("Unrecognized channel signature "+channelSignature);
+    return -1; // Unrecognized signature
+  }
+
   private int getBlock(String uid) {
     int index = uid.lastIndexOf("_");
     if (index < 0) {
@@ -1570,6 +1531,40 @@ public class OIRReader extends FormatReader {
     public String file;
     public long offset;
     public int length;
+  }
+
+  /**
+   * This is a class that wraps three numbers c,z,t and an object
+   * can be used as a key in a hashmap.
+   * <p>
+   * It's used to create a Map from CZTKey to PixelBlocks
+   */
+  private static class CZTKey {
+    public final int c,z,t;
+    public final int hashCode;
+    public CZTKey(int c, int z, int t) {
+      this.c = c;
+      this.z = z;
+      this.t = t;
+      hashCode = Objects.hash(c,z,t);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      CZTKey that = (CZTKey) o;
+      return (that.z == this.z)&&(that.c == this.c)&&(that.t == this.t);
+    }
+    @Override
+    public int hashCode() {
+      return hashCode;
+    }
+
+    @Override
+    public String toString() {
+      return "C:"+c+"; Z:"+z+"; T:"+t;
+    }
   }
 
 }
