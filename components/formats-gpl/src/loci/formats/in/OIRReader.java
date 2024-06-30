@@ -82,7 +82,7 @@ public class OIRReader extends FormatReader {
   private Timestamp acquisitionDate;
   private int defaultXMLSkip = 36;
   private int blocksPerPlane = 0;
-  private final Map<CZTKey, List<PixelBlock>> cztToPixelBlocks = new HashMap<>();
+  private final Map<CZTKey, PixelBlock[]> cztToPixelBlocks = new HashMap<>();
   private String baseName;
   private int lastChannel = -1;
   private int optimalTileHeight;
@@ -195,9 +195,9 @@ public class OIRReader extends FormatReader {
     lastChannel = zct[1];
 
     // Gets all the PixelBlock potentially contained within c, z and t
-    List<PixelBlock> blocks = cztToPixelBlocks.get(new CZTKey(zct[1], zct[0], zct[2]));
+    PixelBlock[] blocks = cztToPixelBlocks.get(new CZTKey(zct[1], zct[0], zct[2]));
 
-    if ((blocks == null) || (blocks.isEmpty())) {
+    if ((blocks == null) || (blocks.length == 0)) {
       LOGGER.warn("No pixel blocks for plane #{}", no);
       Arrays.fill(buf, getFillColor());
       return buf;
@@ -401,15 +401,23 @@ public class OIRReader extends FormatReader {
       }
     }
 
+    int maxNumberOfBlocks = -1;
+
+    // Get max number of blocks
+    for (String uid: pixelBlocks.keySet()) {
+      int b = getBlock(uid);
+      if (b>maxNumberOfBlocks) maxNumberOfBlocks = b+1;
+    }
+
     for (String uid: pixelBlocks.keySet()) {
       int z = getZ(uid)-minZ;
       int t = getT(uid)-minT;
       int c = getC(uid);
       int b = getBlock(uid);
       CZTKey key = new CZTKey(c,z,t);
-      if (!cztToPixelBlocks.containsKey(key)) cztToPixelBlocks.put(key, new ArrayList<>());
+      if (!cztToPixelBlocks.containsKey(key)) cztToPixelBlocks.put(key, new PixelBlock[maxNumberOfBlocks]);
       PixelBlock pb = pixelBlocks.get(uid);
-      cztToPixelBlocks.get(key).add(b, pb);
+      cztToPixelBlocks.get(key)[b] = pb;
     }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -418,7 +426,7 @@ public class OIRReader extends FormatReader {
 
     // Let's compute the coordinates of the pixel blocks in y
     // We also make the optimal tile height match the max size of a block in Y
-    for (List<PixelBlock> blocks : cztToPixelBlocks.values()) {
+    for (PixelBlock[] blocks : cztToPixelBlocks.values()) {
       int yStart = 0;
       for (PixelBlock block: blocks) {
         block.yStart = yStart;
