@@ -476,7 +476,7 @@
     <snapshotRepository>
       <id>ome.snapshots</id>
       <name>OME Snapshots Repository</name>
-      <url>https://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+      <url>https://artifacts2.openmicroscopy.org/artifactory/ome.snapshots</url>
     </snapshotRepository>
     <repository>
       <id>ome.releases</id>
