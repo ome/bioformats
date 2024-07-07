@@ -406,7 +406,7 @@ public class OIRReader extends FormatReader {
     // Get max number of blocks
     for (String uid: pixelBlocks.keySet()) {
       int b = getBlock(uid);
-      if (b>maxNumberOfBlocks) maxNumberOfBlocks = b+1;
+      if (b>=maxNumberOfBlocks) maxNumberOfBlocks = b+1;
     }
 
     for (String uid: pixelBlocks.keySet()) {
