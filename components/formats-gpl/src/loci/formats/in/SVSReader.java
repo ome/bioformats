@@ -174,7 +174,9 @@ public class SVSReader extends BaseTiffReader {
           }
           if (imageDescription != null
               && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
-            return true;
+            // reject anything with just one IFD, as that indicates there is
+            // no pyramid, thumbnail, label, or macro
+            return tiffParser.getIFDOffsets().length > 1;
           }
         }
         return false;
