@@ -130,7 +130,7 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
 
-    if (lastChannel < 0 || lastChannel >= colors.size()) {
+    if (lastChannel < 0 || lastChannel >= colors.size() || colors.get(lastChannel) == null) {
       return null;
     }
 
@@ -408,8 +408,7 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
           catch (NumberFormatException e) { }
         }
 
-        colors.remove(null);
-        if (i < colors.size()) {
+        if (i < colors.size() && colors.get(i) != null) {
           double[] color = colors.get(i);
           Color realColor = new Color(
             (int) (color[0] * 255), (int) (color[1] * 255),
