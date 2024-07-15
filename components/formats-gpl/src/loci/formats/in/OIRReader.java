@@ -429,16 +429,18 @@ public class OIRReader extends FormatReader {
     for (PixelBlock[] blocks : cztToPixelBlocks.values()) {
       int yStart = 0;
       for (PixelBlock block: blocks) {
-        block.yStart = yStart;
-        if ((block.length % bytesPerLine)!=0) {
-          LOGGER.error("A pixel block contains a partial line.");
+        if (block != null) {
+          block.yStart = yStart;
+          if ((block.length % bytesPerLine)!=0) {
+            LOGGER.error("A pixel block contains a partial line.");
+          }
+          int nLines = block.length/bytesPerLine;
+          if (nLines > optimalTileHeight) {
+            optimalTileHeight = nLines;
+          }
+          yStart+=block.length/bytesPerLine;
+          block.yEnd = yStart; // start of the next block = end (excluded) of the previous block
         }
-        int nLines = block.length/bytesPerLine;
-        if (nLines > optimalTileHeight) {
-          optimalTileHeight = nLines;
-        }
-        yStart+=block.length/bytesPerLine;
-        block.yEnd = yStart; // start of the next block = end (excluded) of the previous block
       }
     }
 
