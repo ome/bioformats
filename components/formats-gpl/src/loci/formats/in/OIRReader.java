@@ -195,7 +195,7 @@ public class OIRReader extends FormatReader {
     lastChannel = zct[1];
 
     // Gets all the PixelBlock potentially contained within c, z and t
-    PixelBlock[] blocks = cztToPixelBlocks.get(new CZTKey(zct[1], zct[0], zct[2]));
+    PixelBlock[] blocks = cztToPixelBlocks.get(new CZTKey((zct[1] % channels.size()), zct[0], zct[2]));
 
     if ((blocks == null) || (blocks.length == 0)) {
       LOGGER.warn("No pixel blocks for plane #{}", no);
