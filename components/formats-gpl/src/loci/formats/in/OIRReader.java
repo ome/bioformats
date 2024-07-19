@@ -195,7 +195,7 @@ public class OIRReader extends FormatReader {
     lastChannel = zct[1];
 
     // Gets all the PixelBlock potentially contained within c, z and t
-    PixelBlock[] blocks = cztToPixelBlocks.get(new CZTKey((zct[1] % channels.size()), zct[0], zct[2]));
+    PixelBlock[] blocks = cztToPixelBlocks.get(new CZTKey(zct[1], zct[0], zct[2]));
 
     if ((blocks == null) || (blocks.length == 0)) {
       LOGGER.warn("No pixel blocks for plane #{}", no);
@@ -412,8 +412,9 @@ public class OIRReader extends FormatReader {
     for (String uid: pixelBlocks.keySet()) {
       int z = getZ(uid)-minZ;
       int t = getT(uid)-minT;
-      int c = getC(uid);
+      int c = getC(uid) + getL(uid); // Channel index or lambda index (We suppose there's no multichannel + lambda);
       int b = getBlock(uid);
+
       CZTKey key = new CZTKey(c,z,t);
       if (!cztToPixelBlocks.containsKey(key)) cztToPixelBlocks.put(key, new PixelBlock[maxNumberOfBlocks]);
       PixelBlock pb = pixelBlocks.get(uid);
@@ -1534,6 +1535,14 @@ public class OIRReader extends FormatReader {
       return 0;
     }
     return Integer.parseInt(uid.substring(index + 1));
+  }
+
+  private int getL(String uid) {
+    // for example l001z001t001_0_1_93e4632f-0342-4d98-bdc1-4ce305b92525_46
+    // Assumes l is always first is the uid...
+    if (!uid.startsWith("l")) return 0;
+    // ... and has 3 digits
+    return Integer.parseInt(uid.substring(1, 4)) - 1;
   }
 
   private boolean isCurrentFile(String file) {
