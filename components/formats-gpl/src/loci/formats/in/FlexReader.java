@@ -174,7 +174,6 @@ public class FlexReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     final List<String> files = new ArrayList<String>();
-    files.addAll(measurementFiles);
 
     if (!noPixels) {
       if (fieldCount > 0 && wellCount > 0 && plateCount > 0) {
@@ -189,6 +188,7 @@ public class FlexReader extends FormatReader {
         }
       }
     }
+    files.addAll(measurementFiles);
     return files.toArray(new String[files.size()]);
   }
 
