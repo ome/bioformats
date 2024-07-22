@@ -692,6 +692,7 @@ public class CellSensReader extends FormatReader {
     String name = file.getName();
     name = name.substring(0, name.lastIndexOf("."));
 
+    files.add(file.getAbsolutePath());
     Location pixelsDir = new Location(dir, "_" + name + "_");
     String[] stackDirs = pixelsDir.list(true);
     if (stackDirs != null) {
@@ -712,7 +713,6 @@ public class CellSensReader extends FormatReader {
         }
       }
     }
-    files.add(file.getAbsolutePath());
     usedFiles = files.toArray(new String[files.size()]);
 
     if (expectETS && files.size() == 1) {
