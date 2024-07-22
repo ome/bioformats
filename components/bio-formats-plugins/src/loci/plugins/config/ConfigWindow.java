@@ -349,7 +349,7 @@ public class ConfigWindow extends JFrame
     log.println("-- Formats --");
     try {
       Class<?> irClass = Class.forName("loci.formats.ImageReader");
-      Object ir = irClass.newInstance();
+      Object ir = irClass.getDeclaredConstructor().newInstance();
       Method getClasses = irClass.getMethod("getReaders");
       Object[] readers = (Object[]) getClasses.invoke(ir);
       for (int i=0; i<readers.length; i++) {
@@ -395,7 +395,7 @@ public class ConfigWindow extends JFrame
     String matlabVersion = null;
     try {
       Class<?> matlabClass = Class.forName("com.mathworks.jmi.Matlab");
-      Object matlab = matlabClass.newInstance();
+      Object matlab = matlabClass.getDeclaredConstructor().newInstance();
       Method eval = matlabClass.getMethod("eval", new Class[] {String.class});
 
       String ans = (String) eval.invoke(matlab, new Object[] {"version"});

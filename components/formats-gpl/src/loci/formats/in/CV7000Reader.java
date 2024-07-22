@@ -81,7 +81,7 @@ public class CV7000Reader extends FormatReader {
 
   // -- Fields --
 
-  private String[] allFiles;
+  private List<String> allFiles = new ArrayList<String>();
   private MinimalTiffReader reader;
   private String wppPath;
   private String detailPath;
@@ -223,6 +223,7 @@ public class CV7000Reader extends FormatReader {
       reversePlaneLookup = null;
       extraFiles = null;
       acquiredWells.clear();
+      allFiles.clear();
     }
   }
 
@@ -269,15 +270,12 @@ public class CV7000Reader extends FormatReader {
     XMLTools.parseXML(wpiXML, plate);
 
     Location parent = new Location(id).getAbsoluteFile().getParentFile();
-    allFiles = parent.list(true);
-    Arrays.sort(allFiles);
-    for (int i=0; i<allFiles.length; i++) {
-      Location file = new Location(parent, allFiles[i]);
+    String[] listedFiles = parent.list(true);
+    Arrays.sort(listedFiles);
+    for (int i=0; i<listedFiles.length; i++) {
+      Location file = new Location(parent, listedFiles[i]);
       if (!file.isDirectory() && file.canRead()) {
-        allFiles[i] = file.getAbsolutePath();
-      }
-      else {
-        allFiles[i] = null;
+        allFiles.add(file.getAbsolutePath());
       }
     }
     Location measurementData = new Location(parent, MEASUREMENT_FILE);
@@ -345,6 +343,9 @@ public class CV7000Reader extends FormatReader {
       if (p != null) {
         if (!isWellAcquired(p.field.row, p.field.column)) {
           continue;
+        }
+        if (!allFiles.contains(p.file)) {
+          allFiles.add(p.file);
         }
 
         p.channelIndex = getChannelIndex(p);

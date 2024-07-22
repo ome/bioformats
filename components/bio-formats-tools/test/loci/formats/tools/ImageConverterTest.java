@@ -42,17 +42,21 @@ import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import loci.common.services.ServiceFactory;
 import loci.formats.ClassList;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.FormatException;
+import loci.formats.meta.IMetadata;
 import loci.formats.tools.ImageConverter;
 import loci.formats.in.ICSReader;
 import loci.formats.in.OMETiffReader;
 import loci.formats.in.TiffDelegateReader;
 import loci.formats.in.TiffReader;
 import loci.formats.out.OMETiffWriter;
+import loci.formats.services.OMEXMLService;
+import loci.formats.tiff.TiffParser;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.testng.annotations.AfterClass;
@@ -367,6 +371,27 @@ public class ImageConverterTest {
     };
     resolutionCount = 2;
     assertConversion(args);
+  }
+
+  @Test
+  public void testConvertSingleChannel() throws FormatException, IOException {
+    outFile = getOutFile("single-channel.ome.tiff");
+    String[] args = {
+      "single-channel&sizeC=3.fake", "-channel", "1", outFile.getAbsolutePath()
+    };
+    assertConversion(args);
+
+    try (TiffParser parser = new TiffParser(outFile.getAbsolutePath())) {
+      String comment = parser.getComment();
+
+      final OMEXMLService service =
+        new ServiceFactory().getInstance(OMEXMLService.class);
+      IMetadata meta = service.createOMEXMLMetadata(comment);
+      assertEquals(meta.getChannelCount(0), 1);
+    }
+    catch (Exception e) {
+      throw new FormatException(e);
+    }
   }
 
   private Path getTempSubdir() throws IOException {

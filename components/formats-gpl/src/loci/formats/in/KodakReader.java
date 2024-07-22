@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -204,7 +205,7 @@ public class KodakReader extends FormatReader {
         }
       }
       else if (key.equals("Exposure Time")) {
-        Double exposureTime = new Double(value.substring(0, value.indexOf(' ')));
+        Double exposureTime = DataTools.parseDouble(value.substring(0, value.indexOf(' ')));
         if (exposureTime != null) {
           store.setPlaneExposureTime(new Time(exposureTime, UNITS.SECOND), 0, 0);
         }
@@ -214,7 +215,7 @@ public class KodakReader extends FormatReader {
         if (value.indexOf(' ') > 0) {
           value = value.substring(0, value.indexOf(' '));
         }
-        Double size = new Double(value);
+        Double size = DataTools.parseDouble(value);
         size = 1.0 / (size * (1.0 / 25400));
 
         Length sizeY = FormatTools.getPhysicalSizeY(size);
@@ -227,7 +228,7 @@ public class KodakReader extends FormatReader {
         if (value.indexOf(' ') > 0) {
           value = value.substring(0, value.indexOf(' '));
         }
-        Double size = new Double(value);
+        Double size = DataTools.parseDouble(value);
         size = 1.0 / (size * (1.0 / 25400));
 
         Length sizeX = FormatTools.getPhysicalSizeX(size);
@@ -240,11 +241,11 @@ public class KodakReader extends FormatReader {
         Matcher hexMatcher = Pattern.compile("0x([0-9A-F]+)").matcher(value);
         if (hexMatcher.matches()) {
           // CCD temperature stored as a hexadecimal string such as "0xEB".
-          temp = new Double(Integer.parseInt(hexMatcher.group(1), 16));
+          temp = Double.valueOf(Integer.parseInt(hexMatcher.group(1), 16));
           LOGGER.debug("CCD temperature detected as {}; assumed to be invalid", temp);
         }
         else {
-          temp = new Double(value.substring(0, value.indexOf(' ')));
+          temp = DataTools.parseDouble(value.substring(0, value.indexOf(' ')));
           store.setImagingEnvironmentTemperature(
                 new Temperature(temp, UNITS.CELSIUS), 0);
         }

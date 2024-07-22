@@ -211,7 +211,7 @@ public class LeicaReader extends FormatReader {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
+    return ifd.containsKey(Integer.valueOf(LEICA_MAGIC_TAG));
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -1339,10 +1339,10 @@ public class LeicaReader extends FormatReader {
 
           try {
             if (tokens[2].equals("VideoOffset")) {
-              detector.offset = new Double(data);
+              detector.offset = DataTools.parseDouble(data);
             }
             else if (tokens[2].equals("HighVoltage")) {
-              detector.voltage = new Double(data);
+              detector.voltage = DataTools.parseDouble(data);
             }
             else if (tokens[2].equals("State")) {
               detector.active = data.equals("Active");
@@ -1369,7 +1369,7 @@ public class LeicaReader extends FormatReader {
 
         int objective = Integer.parseInt(tokens[3]);
         if (tokens[2].equals("NumericalAperture")) {
-          store.setObjectiveLensNA(new Double(data), series, objective);
+          store.setObjectiveLensNA(DataTools.parseDouble(data), series, objective);
         }
         else if (tokens[2].equals("Objective")) {
           String[] objectiveData = data.split(" ");
@@ -1420,7 +1420,7 @@ public class LeicaReader extends FormatReader {
           store.setObjectiveCorrection(
             MetadataTools.getCorrection(correction), series, objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
-          store.setObjectiveLensNA(new Double(na), series, objective);
+          store.setObjectiveLensNA(DataTools.parseDouble(na), series, objective);
 
           Double magnification = Double.parseDouble(mag);
           store.setObjectiveNominalMagnification(
@@ -1430,7 +1430,7 @@ public class LeicaReader extends FormatReader {
           store.setObjectiveSerialNumber(data, series, objective);
         }
         else if (tokens[2].equals("RefractionIndex")) {
-          store.setObjectiveSettingsRefractiveIndex(new Double(data), series);
+          store.setObjectiveSettingsRefractiveIndex(DataTools.parseDouble(data), series);
         }
 
         // link Objective to Image
@@ -1609,14 +1609,14 @@ public class LeicaReader extends FormatReader {
           }
         }
         if (channel < emWaves[i].size()) {
-          Double wave = new Double(emWaves[i].get(channel).toString());
+          Double wave = DataTools.parseDouble(emWaves[i].get(channel).toString());
           Length emission = FormatTools.getEmissionWavelength(wave);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, channel);
           }
         }
         if (channel < exWaves[i].size()) {
-          Double wave = new Double(exWaves[i].get(channel).toString());
+          Double wave = DataTools.parseDouble(exWaves[i].get(channel).toString());
           Length ex = FormatTools.getExcitationWavelength(wave);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, i, channel);

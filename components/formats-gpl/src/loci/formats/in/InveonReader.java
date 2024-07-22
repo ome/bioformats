@@ -335,13 +335,22 @@ public class InveonReader extends FormatReader {
         }
         // pixel sizes stored in mm
         else if (key.equals("pixel_size_x")) {
-          pixelSizeX = new Double(value) * 1000;
+          Double size = DataTools.parseDouble(value);
+          if (size != null) {
+            pixelSizeX = size * 1000;
+          }
         }
         else if (key.equals("pixel_size_y")) {
-          pixelSizeY = new Double(value) * 1000;
+          Double size = DataTools.parseDouble(value);
+          if (size != null) {
+            pixelSizeY = size * 1000;
+          }
         }
         else if (key.equals("pixel_size_z")) {
-          pixelSizeZ = new Double(value) * 1000;
+          Double size = DataTools.parseDouble(value);
+          if (size != null) {
+            pixelSizeZ = size * 1000;
+          }
         }
 
         addGlobalMeta(key, value);

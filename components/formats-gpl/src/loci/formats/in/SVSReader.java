@@ -174,7 +174,9 @@ public class SVSReader extends BaseTiffReader {
           }
           if (imageDescription != null
               && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
-            return true;
+            // reject anything with just one IFD, as that indicates there is
+            // no pyramid, thumbnail, label, or macro
+            return tiffParser.getIFDOffsets().length > 1;
           }
         }
         return false;
@@ -437,7 +439,7 @@ public class SVSReader extends BaseTiffReader {
             key = t.substring(0, t.indexOf('=')).trim();
             value = t.substring(t.indexOf('=') + 1).trim();
             if (key.equals("TotalDepth")) {
-              zPosition[index] = new Double(0);
+              zPosition[index] = 0d;
             }
             else if (key.equals("OffsetZ")) {
               zPosition[index] = DataTools.parseDouble(value);
@@ -689,13 +691,13 @@ public class SVSReader extends BaseTiffReader {
 
       if (i == 0) {
         if (physicalDistanceFromTopEdge != null) {
-          Length yPos = FormatTools.getStagePosition(physicalDistanceFromTopEdge, UNITS.MM);
+          Length yPos = FormatTools.getStagePosition(physicalDistanceFromTopEdge, UNITS.MILLIMETER);
           for (int p=0; p<getImageCount(); p++) {
             store.setPlanePositionY(yPos, i, p);
           }
         }
         if (physicalDistanceFromLeftEdge != null) {
-          Length xPos = FormatTools.getStagePosition(physicalDistanceFromLeftEdge, UNITS.MM);
+          Length xPos = FormatTools.getStagePosition(physicalDistanceFromLeftEdge, UNITS.MILLIMETER);
           for (int p=0; p<getImageCount(); p++) {
             store.setPlanePositionX(xPos, i, p);
           }

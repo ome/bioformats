@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
@@ -293,7 +294,7 @@ public class IvisionReader extends FormatReader {
       if (deltaT != null) {
         Double increment = 0d;
         try {
-          increment = new Double(deltaT);
+          increment = DataTools.parseDouble(deltaT);
         }
         catch (NumberFormatException e) {
           LOGGER.debug("Failed to parse time increment", e);
@@ -327,7 +328,7 @@ public class IvisionReader extends FormatReader {
       store.setDetectorSettingsBinning(MetadataTools.getBinning(binX + "x" + binY), 0, 0);
       if (gain != null) {
         try {
-          store.setDetectorSettingsGain(new Double(gain), 0, 0);
+          store.setDetectorSettingsGain(DataTools.parseDouble(gain), 0, 0);
         }
         catch (NumberFormatException e) {
           LOGGER.debug("Failed to parse detector gain", e);
@@ -359,19 +360,19 @@ public class IvisionReader extends FormatReader {
       else if ("iplab:Interval_T".equals(key)) deltaT = value;
       else if ("iplab:Objective_Mag".equals(key)) {
         try {
-          magnification = new Double(value);
+          magnification = DataTools.parseDouble(value);
         }
         catch (NumberFormatException e) { }
       }
       else if ("iplab:Objective_NA".equals(key)) {
         try {
-          lensNA = new Double(value);
+          lensNA = DataTools.parseDouble(value);
         }
         catch (NumberFormatException e) { }
       }
       else if ("iplab:Objective_RI".equals(key)) {
         try {
-          refractiveIndex = new Double(value);
+          refractiveIndex = DataTools.parseDouble(value);
         }
         catch (NumberFormatException e) { }
       }

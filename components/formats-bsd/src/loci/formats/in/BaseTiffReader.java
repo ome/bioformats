@@ -566,14 +566,14 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   }
 
   protected void put(String key, boolean value) {
-    put(key, new Boolean(value));
+    put(key, Boolean.valueOf(value));
   }
-  protected void put(String key, byte value) { put(key, new Byte(value)); }
-  protected void put(String key, char value) { put(key, new Character(value)); }
-  protected void put(String key, double value) { put(key, new Double(value)); }
-  protected void put(String key, float value) { put(key, new Float(value)); }
-  protected void put(String key, long value) { put(key, new Long(value)); }
-  protected void put(String key, short value) { put(key, new Short(value)); }
+  protected void put(String key, byte value) { put(key, Byte.valueOf(value)); }
+  protected void put(String key, char value) { put(key, Character.valueOf(value)); }
+  protected void put(String key, double value) { put(key, Double.valueOf(value)); }
+  protected void put(String key, float value) { put(key, Float.valueOf(value)); }
+  protected void put(String key, long value) { put(key, Long.valueOf(value)); }
+  protected void put(String key, short value) { put(key, Short.valueOf(value)); }
 
   protected void put(String key, IFD ifd, int tag) {
     put(key, ifd.getIFDValue(tag));

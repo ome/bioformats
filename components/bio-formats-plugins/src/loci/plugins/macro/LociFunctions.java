@@ -127,25 +127,25 @@ public class LociFunctions extends MacroFunctions {
   // -- LociFunctions API methods - loci.formats.IFormatReader --
 
   public void getImageCount(Double[] imageCount) {
-    imageCount[0] = new Double(r.getImageCount());
+    imageCount[0] = Double.valueOf(r.getImageCount());
   }
 
-  public void getSizeX(Double[] sizeX) { sizeX[0] = new Double(r.getSizeX()); }
-  public void getSizeY(Double[] sizeY) { sizeY[0] = new Double(r.getSizeY()); }
-  public void getSizeZ(Double[] sizeZ) { sizeZ[0] = new Double(r.getSizeZ()); }
-  public void getSizeC(Double[] sizeC) { sizeC[0] = new Double(r.getSizeC()); }
-  public void getSizeT(Double[] sizeT) { sizeT[0] = new Double(r.getSizeT()); }
+  public void getSizeX(Double[] sizeX) { sizeX[0] = Double.valueOf(r.getSizeX()); }
+  public void getSizeY(Double[] sizeY) { sizeY[0] = Double.valueOf(r.getSizeY()); }
+  public void getSizeZ(Double[] sizeZ) { sizeZ[0] = Double.valueOf(r.getSizeZ()); }
+  public void getSizeC(Double[] sizeC) { sizeC[0] = Double.valueOf(r.getSizeC()); }
+  public void getSizeT(Double[] sizeT) { sizeT[0] = Double.valueOf(r.getSizeT()); }
 
   public void getPixelType(String[] pixelType) {
     pixelType[0] = FormatTools.getPixelTypeString(r.getPixelType());
   }
 
   public void getEffectiveSizeC(Double[] effectiveSizeC) {
-    effectiveSizeC[0] = new Double(r.getEffectiveSizeC());
+    effectiveSizeC[0] = Double.valueOf(r.getEffectiveSizeC());
   }
 
   public void getRGBChannelCount(Double[] rgbChannelCount) {
-    rgbChannelCount[0] = new Double(r.getRGBChannelCount());
+    rgbChannelCount[0] = Double.valueOf(r.getRGBChannelCount());
   }
 
   public void isIndexed(String[] indexed) {
@@ -154,33 +154,33 @@ public class LociFunctions extends MacroFunctions {
 
   public void getChannelDimCount(Double[] channelDimCount) {
     Modulo moduloC = r.getModuloC();
-    channelDimCount[0] = new Double(moduloC.length() > 1 ? 2 : 1);
+    channelDimCount[0] = Double.valueOf(moduloC.length() > 1 ? 2 : 1);
   }
 
   public void getChannelDimLength(Double i, Double[] channelDimLength) {
     Modulo moduloC = r.getModuloC();
     if (i.intValue() == 0) { // index 0
-      channelDimLength[0] = new Double(moduloC.length() > 1 ? r.getSizeC() / moduloC.length() : r.getSizeC());
+      channelDimLength[0] = Double.valueOf(moduloC.length() > 1 ? r.getSizeC() / moduloC.length() : r.getSizeC());
     } else { // index 1
-      channelDimLength[0] = new Double(moduloC.length());
+      channelDimLength[0] = Double.valueOf(moduloC.length());
     }
   }
 
   public void getChannelDimType(Double i, Double[] channelDimType) {
     Modulo moduloC = r.getModuloC();
     if (i.intValue() == 0) { // index 0
-      channelDimType[0] = new Double(moduloC.length() > 1 ? moduloC.parentType : FormatTools.CHANNEL);
+      channelDimType[0] = Double.valueOf(moduloC.length() > 1 ? moduloC.parentType : FormatTools.CHANNEL);
     } else { // index 1
-      channelDimType[0] = new Double(moduloC.type);
+      channelDimType[0] = Double.valueOf(moduloC.type);
     }
   }
 
 //  public void getThumbSizeX(Double[] thumbSizeX) {
-//    thumbSizeX[0] = new Double(r.getThumbSizeX());
+//    thumbSizeX[0] = Double.valueOf(r.getThumbSizeX());
 //  }
 
 //  public void getThumbSizeY(Double[] thumbSizeY) {
-//    thumbSizeY[0] = new Double(r.getThumbSizeY());
+//    thumbSizeY[0] = Double.valueOf(r.getThumbSizeY());
 //  }
 
   public void isLittleEndian(String[] littleEndian) {
@@ -270,7 +270,7 @@ public class LociFunctions extends MacroFunctions {
     throws FormatException, IOException
   {
     openSubImage(title, no, 0d, 0d,
-      new Double(r.getSizeX()), new Double(r.getSizeY()));
+      Double.valueOf(r.getSizeX()), Double.valueOf(r.getSizeY()));
   }
 
   public void openSubImage(String title, Double no, Double x, Double y,
@@ -310,7 +310,7 @@ public class LociFunctions extends MacroFunctions {
   public void closeFileOnly() throws IOException { r.close(true); }
 
   public void getSeriesCount(Double[] seriesCount) {
-    seriesCount[0] = new Double(r.getSeriesCount());
+    seriesCount[0] = Double.valueOf(r.getSeriesCount());
   }
 
   public void setSeries(Double seriesNum) {
@@ -323,7 +323,7 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void getSeries(Double[] seriesNum) {
-    seriesNum[0] = new Double(r.getSeries());
+    seriesNum[0] = Double.valueOf(r.getSeries());
   }
 
   public void setNormalized(Boolean normalize) {
@@ -331,7 +331,7 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void isNormalized(Boolean[] normalize) {
-    normalize[0] = new Boolean(r.isNormalized());
+    normalize[0] = Boolean.valueOf(r.isNormalized());
   }
 
   public void setOriginalMetadataPopulated(Boolean populate) {
@@ -339,7 +339,7 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void isOriginalMetadataPopulated(Boolean[] populate) {
-    populate[0] = new Boolean(r.isOriginalMetadataPopulated());
+    populate[0] = Boolean.valueOf(r.isOriginalMetadataPopulated());
   }
 
   public void setGroupFiles(String groupFiles) {
@@ -373,7 +373,7 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void getUsedFileCount(Double[] count) {
-    count[0] = new Double(r.getUsedFiles().length);
+    count[0] = Double.valueOf(r.getUsedFiles().length);
   }
 
   public void getUsedFile(Double i, String[] used) {
@@ -385,14 +385,14 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void getIndex(Double z, Double c, Double t, Double[] index) {
-    index[0] = new Double(r.getIndex(z.intValue(), c.intValue(), t.intValue()));
+    index[0] = Double.valueOf(r.getIndex(z.intValue(), c.intValue(), t.intValue()));
   }
 
   public void getZCTCoords(Double index, Double[] z, Double[] c, Double[] t) {
     int[] zct = r.getZCTCoords(index.intValue());
-    z[0] = new Double(zct[0]);
-    c[0] = new Double(zct[1]);
-    t[0] = new Double(zct[2]);
+    z[0] = Double.valueOf(zct[0]);
+    c[0] = Double.valueOf(zct[1]);
+    t[0] = Double.valueOf(zct[2]);
   }
 
   public void getMetadataValue(String field, String[] value) {
@@ -472,7 +472,7 @@ public class LociFunctions extends MacroFunctions {
         val = valTime.value(UNITS.SECOND).doubleValue();
       }
     }
-    exposureTime[0] = val == null ? new Double(Double.NaN) : val;
+    exposureTime[0] = val == null ? Double.NaN : val;
   }
 
   public void getPlanePositionX(Double[] positionX, Double no) {
@@ -524,7 +524,7 @@ public class LociFunctions extends MacroFunctions {
     if (x != null) {
       sizeX[0] = x.value(UNITS.MICROMETER).doubleValue();
     }
-    if (sizeX[0] == null) sizeX[0] = new Double(Double.NaN);
+    if (sizeX[0] == null) sizeX[0] = Double.NaN;
   }
 
   public void getPixelsPhysicalSizeY(Double[] sizeY) {
@@ -534,7 +534,7 @@ public class LociFunctions extends MacroFunctions {
     if (y != null) {
       sizeY[0] = y.value(UNITS.MICROMETER).doubleValue();
     }
-    if (sizeY[0] == null) sizeY[0] = new Double(Double.NaN);
+    if (sizeY[0] == null) sizeY[0] = Double.NaN;
   }
 
   public void getPixelsPhysicalSizeZ(Double[] sizeZ) {
@@ -544,14 +544,14 @@ public class LociFunctions extends MacroFunctions {
     if (z != null) {
       sizeZ[0] = z.value(UNITS.MICROMETER).doubleValue();
     }
-    if (sizeZ[0] == null) sizeZ[0] = new Double(Double.NaN);
+    if (sizeZ[0] == null) sizeZ[0] = Double.NaN;
   }
 
   public void getPixelsTimeIncrement(Double[] sizeT) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     sizeT[0] = retrieve.getPixelsTimeIncrement(imageIndex).value(UNITS.SECOND).doubleValue();
-    if (sizeT[0] == null) sizeT[0] = new Double(Double.NaN);
+    if (sizeT[0] == null) sizeT[0] = Double.NaN;
   }
 
   // -- PlugIn API methods --

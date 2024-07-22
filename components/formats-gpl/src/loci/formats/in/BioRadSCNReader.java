@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
@@ -245,10 +246,10 @@ public class BioRadSCNReader extends FormatReader {
         core.get(0).sizeC = Integer.parseInt(value);
       }
       else if ("application_gain".equals(key)) {
-        gain = new Double(value);
+        gain = DataTools.parseDouble(value);
       }
       else if ("exposure_time".equals(key)) {
-        exposureTime = new Double(value);
+        exposureTime = DataTools.parseDouble(value);
       }
       else if ("name".equals(key)) {
         imageName = value;
@@ -287,12 +288,18 @@ public class BioRadSCNReader extends FormatReader {
         }
         else if (key.equals("size_mm")) {
           if (attrKey.equals("width")) {
-            physicalSizeX = new Double(attrValue) / getSizeX();
-            physicalSizeX *= 1000; // convert from mm to um
+            Double size = DataTools.parseDouble(attrValue);
+            if (size != null) {
+              physicalSizeX = size / getSizeX();
+              physicalSizeX *= 1000; // convert from mm to um
+            }
           }
           else if (attrKey.equals("height")) {
-            physicalSizeY = new Double(attrValue) / getSizeY();
-            physicalSizeY *= 1000; // convert from mm to um
+            Double size = DataTools.parseDouble(attrValue);
+            if (size != null) {
+              physicalSizeY = size / getSizeY();
+              physicalSizeY *= 1000; // convert from mm to um
+            }
           }
         }
         else if (key.equals("serial_number")) {

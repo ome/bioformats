@@ -513,19 +513,19 @@ public class QTReader extends FormatReader {
           if (numPlanes != getImageCount()) {
             in.seek(in.getFilePointer() - 4);
             int off = in.readInt();
-            offsets.add(new Integer(off));
+            offsets.add(off);
             for (int i=1; i<getImageCount(); i++) {
               if ((chunkSizes.size() > 0) && (i < chunkSizes.size())) {
                 rawSize = chunkSizes.get(i).intValue();
               }
               else i = getImageCount();
               off += rawSize;
-              offsets.add(new Integer(off));
+              offsets.add(off);
             }
           }
           else {
             for (int i=0; i<numPlanes; i++) {
-              offsets.add(new Integer(in.readInt()));
+              offsets.add(in.readInt());
             }
           }
         }
@@ -576,7 +576,7 @@ public class QTReader extends FormatReader {
           if (rawSize == 0) {
             in.seek(in.getFilePointer() - 4);
             for (int b=0; b<getImageCount(); b++) {
-              chunkSizes.add(new Integer(in.readInt()));
+              chunkSizes.add(in.readInt());
             }
           }
         }

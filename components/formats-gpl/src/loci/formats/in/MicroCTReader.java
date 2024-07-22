@@ -236,7 +236,7 @@ public class MicroCTReader extends FormatReader {
             ms.pixelType = FormatTools.pixelTypeFromBytes(bits / 8, true, false);
           }
           else if (key.equals("elementsize")) {
-            Double size = new Double(value);
+            Double size = DataTools.parseDouble(value);
             // physical size is stored in mm, not um
             physicalSize = new PositiveFloat(size * 1000);
           }
@@ -328,7 +328,7 @@ public class MicroCTReader extends FormatReader {
     addGlobalMeta(key, value);
 
     if (key.equals("Exposure Time (ms)")) {
-      exposureTime = new Double(value);
+      exposureTime = DataTools.parseDouble(value);
       exposureTime /= 1000.0;
     }
     else if (key.equals("Description.txt")) {

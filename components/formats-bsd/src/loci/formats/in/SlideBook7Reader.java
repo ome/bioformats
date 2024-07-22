@@ -2519,7 +2519,7 @@ public class SlideBook7Reader  extends FormatReader {
 
 									// set exposure time
 									int expTime = theCurrentImageGroup.GetExposureTime(channel);
-									store.setPlaneExposureTime(new Time(new Double(expTime), UNITS.MILLISECOND), capture, imageIndex);
+									store.setPlaneExposureTime(new Time(Double.valueOf(expTime), UNITS.MILLISECOND), capture, imageIndex);
 
 									// set tile xy position
 									double numberX = theCurrentImageGroup.GetXPosition( position);

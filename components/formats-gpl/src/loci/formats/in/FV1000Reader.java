@@ -444,13 +444,13 @@ public class FV1000Reader extends FormatReader {
       if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1 &&
         !isPreviewName(value))
       {
-        filenames.put(new Integer(key.substring(11)), value);
+        filenames.put(Integer.parseInt(key.substring(11)), value);
       }
       else if (key.startsWith("RoiFileName") && key.indexOf("Thumb") == -1 &&
         !isPreviewName(value))
       {
         try {
-          roiFilenames.put(new Integer(key.substring(11)), value);
+          roiFilenames.put(Integer.parseInt(key.substring(11)), value);
         }
         catch (NumberFormatException e) { }
       }
