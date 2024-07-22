@@ -118,7 +118,7 @@ public class FujiReader extends FormatReader {
     if (noPixels) {
       return new String[] {infFile};
     }
-    return new String[] {infFile, pixelsFile};
+    return new String[] {pixelsFile, infFile};
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
