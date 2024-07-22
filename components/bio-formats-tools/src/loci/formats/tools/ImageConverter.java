@@ -1263,6 +1263,14 @@ public final class ImageConverter {
     if (writer instanceof DicomWriter ||
       (writer instanceof ImageWriter && ((ImageWriter) writer).getWriter(outputFile) instanceof DicomWriter))
     {
+      // if we asked to try a precompressed conversion,
+      // then the writer's tile sizes will have been set automatically
+      // according to the input data
+      // the conversion must then be performed tile-wise to match the tile sizes,
+      // even if precompression doesn't end up being possible
+      if (precompressed) {
+        return true;
+      }
       MetadataStore r = reader.getMetadataStore();
       return !(r instanceof IPyramidStore) || ((IPyramidStore) r).getResolutionCount(reader.getSeries()) > 1;
     }

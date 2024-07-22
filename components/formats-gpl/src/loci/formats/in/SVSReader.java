@@ -308,21 +308,7 @@ public class SVSReader extends BaseTiffReader {
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     IFD ifd = getIFD(no);
-    long[] byteCounts = ifd.getStripByteCounts();
-    int tileIndex = getTileIndex(ifd, x, y);
-
-    byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
-    int jpegTableBytes = jpegTable == null ? 0 : jpegTable.length - 2;
-    long expectedBytes = byteCounts[tileIndex];
-    if (expectedBytes > 0) {
-      expectedBytes += jpegTableBytes;
-    }
-
-    if (expectedBytes < 0 || expectedBytes > Integer.MAX_VALUE) {
-      throw new IOException("Invalid compressed tile size: " + expectedBytes);
-    }
-
-    byte[] buf = new byte[(int) expectedBytes];
+    byte[] buf = new byte[(int) getCompressedByteCount(ifd, x, y)];
     return openCompressedBytes(no, buf, x, y);
   }
 
@@ -330,38 +316,7 @@ public class SVSReader extends BaseTiffReader {
   public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     IFD ifd = getIFD(no);
-    long[] offsets = ifd.getStripOffsets();
-    long[] byteCounts = ifd.getStripByteCounts();
-
-    int tileIndex = getTileIndex(ifd, x, y);
-
-    byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
-    int jpegTableBytes = jpegTable == null ? 0 : jpegTable.length - 2;
-    long expectedBytes = byteCounts[tileIndex];
-    if (expectedBytes > 0) {
-      expectedBytes += jpegTableBytes;
-    }
-
-    if (buf.length < expectedBytes) {
-      throw new IllegalArgumentException("Tile buffer too small: expected >=" +
-        expectedBytes + ", got " + buf.length);
-    }
-    else if (expectedBytes < 0 || expectedBytes > Integer.MAX_VALUE) {
-      throw new IOException("Invalid compressed tile size: " + expectedBytes);
-    }
-
-    if (jpegTable != null && expectedBytes > 0) {
-      System.arraycopy(jpegTable, 0, buf, 0, jpegTable.length - 2);
-      // skip over the duplicate SOI marker
-      tiffParser.getStream().seek(offsets[tileIndex] + 2);
-      tiffParser.getStream().readFully(buf, jpegTable.length - 2, (int) byteCounts[tileIndex]);
-    }
-    else if (byteCounts[tileIndex] > 0) {
-      tiffParser.getStream().seek(offsets[tileIndex]);
-      tiffParser.getStream().readFully(buf, 0, (int) byteCounts[tileIndex]);
-    }
-
-    return buf;
+    return copyTile(ifd, buf, x, y);
   }
 
   @Override
@@ -873,29 +828,6 @@ public class SVSReader extends BaseTiffReader {
     }
     int ifd = ((SVSCoreMetadata) getCurrentCore()).ifdIndex[no];
     return ifds.get(ifd);
-  }
-
-  /**
-   * Get the index of the tile corresponding to given IFD (plane)
-   * and tile XY indexes.
-   *
-   * @param ifd IFD for the requested tile's plane
-   * @param x tile X index
-   * @param y tile Y index
-   * @return corresponding tile index
-   */
-  protected int getTileIndex(IFD ifd, int x, int y) throws FormatException {
-    int rows = (int) ifd.getTilesPerColumn();
-    int cols = (int) ifd.getTilesPerRow();
-
-    if (x < 0 || x >= cols) {
-      throw new IllegalArgumentException("X index " + x + " not in range [0, " + cols + ")");
-    }
-    if (y < 0 || y >= rows) {
-      throw new IllegalArgumentException("Y index " + y + " not in range [0, " + rows + ")");
-    }
-
-    return (cols * y) + x;
   }
 
 }
