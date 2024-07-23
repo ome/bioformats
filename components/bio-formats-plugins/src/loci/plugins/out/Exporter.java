@@ -505,7 +505,7 @@ public class Exporter {
                     String lsid = MetadataTools.createLSID("Channel", 0, c);
                     store.setChannelID(lsid, 0, c);
                 }
-                store.setChannelSamplesPerPixel(new PositiveInteger(channels), 0, 0);
+                store.setChannelSamplesPerPixel(new PositiveInteger(channels), 0, c);
 
                 if (imp instanceof CompositeImage) {
                     luts[c] = ((CompositeImage) imp).getChannelLut(c + 1);
