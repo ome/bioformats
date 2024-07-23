@@ -132,10 +132,10 @@ public class BDVReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
-    super.initFile(id);
     if (checkSuffix(id, "h5")) {
-      id = fetchXMLId();
+      id = fetchXMLId(id);
     }
+    super.initFile(id);
     store = makeFilterMetadata();
     in = new RandomAccessInputStream(id);
     in.setEncoding("ASCII");
@@ -165,9 +165,9 @@ public class BDVReader extends FormatReader {
     }
   }
   
-  private String fetchXMLId() throws FormatException {
-    String xmlId = currentId;
-    Location location = new Location(currentId);
+  private String fetchXMLId(String id) throws FormatException {
+    String xmlId = id;
+    Location location = new Location(id);
     Location parent = location.getParentFile();
     String baseName = location.getName();
     baseName = baseName.substring(0, baseName.indexOf("."));
@@ -188,7 +188,7 @@ public class BDVReader extends FormatReader {
     String xmlId = currentId;
     if (checkSuffix(currentId, "h5")) {
       try {
-        xmlId = fetchXMLId();
+        xmlId = fetchXMLId(currentId);
       } catch (FormatException e) {
         LOGGER.error("Unable to locate associated BDV XML for file: " + currentId);
       }
