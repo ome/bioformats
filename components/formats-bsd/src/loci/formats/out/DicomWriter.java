@@ -1383,6 +1383,11 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         for (int res=0; res<resolutionCount; res++) {
           resolution = res;
           openFile(pyramid, resolution);
+
+          if (out == null) {
+            // already closed
+            continue;
+          }
           int resolutionIndex = getIndex(pyramid, resolution);
 
           out.seek(out.length());
