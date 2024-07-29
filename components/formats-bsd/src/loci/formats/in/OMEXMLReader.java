@@ -290,7 +290,7 @@ public class OMEXMLReader extends FormatReader {
       Integer t = omexmlMeta.getPixelsSizeT(i).getValue();
       Integer z = omexmlMeta.getPixelsSizeZ(i).getValue();
       Integer c = omexmlMeta.getPixelsSizeC(i).getValue();
-      if (w == null || h == null || t == null || z == null | c == null) {
+      if (w == null || h == null || t == null || z == null || c == null) {
         throw new FormatException("Image dimensions not found");
       }
 
