@@ -1268,16 +1268,13 @@ public final class ImageConverter {
   private boolean doTileConversion(IFormatWriter writer, String outputFile)
     throws FormatException
   {
-    MetadataStore r = reader.getMetadataStore();
-    if ((r instanceof IPyramidStore) && ((IPyramidStore) r).getResolutionCount(reader.getSeries()) > 1) {
-      // if we asked to try a precompressed conversion,
-      // then the writer's tile sizes will have been set automatically
-      // according to the input data
-      // the conversion must then be performed tile-wise to match the tile sizes,
-      // even if precompression doesn't end up being possible
-      if (precompressed) {
-        return true;
-      }
+    // if we asked to try a precompressed conversion,
+    // then the writer's tile sizes will have been set automatically
+    // according to the input data
+    // the conversion must then be performed tile-wise to match the tile sizes,
+    // even if precompression doesn't end up being possible
+    if (precompressed) {
+      return true;
     }
     return DataTools.safeMultiply64(width, height) >= DataTools.safeMultiply64(4096, 4096) ||
       saveTileWidth > 0 || saveTileHeight > 0;
