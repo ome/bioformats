@@ -176,7 +176,7 @@ public class TiffWriter extends FormatWriter {
         "Sequential tile writing must be enabled to write precompressed tiles");
     }
 
-    LOGGER.warn("saveCompressedBytes(series={}, resolution={}, no={}, x={}, y={})",
+    LOGGER.debug("saveCompressedBytes(series={}, resolution={}, no={}, x={}, y={})",
       series, resolution, no, x, y);
 
     IFD ifd = makeIFD();
