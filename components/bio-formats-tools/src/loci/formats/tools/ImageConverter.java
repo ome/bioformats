@@ -767,7 +767,9 @@ public final class ImageConverter {
         int writerSeries = series == -1 ? q : 0;
         writer.setSeries(writerSeries);
         writer.setResolution(res);
+
         writer.setInterleaved(reader.isInterleaved() && !autoscale);
+
         writer.setValidBitsPerPixel(reader.getBitsPerPixel());
         int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
 
@@ -837,6 +839,12 @@ public final class ImageConverter {
               setCodecOptions(writer);
               writer.setId(tileName);
               if (compression != null) writer.setCompression(compression);
+            }
+          }
+
+          if (precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution())) {
+            if (getReaderCodecName().startsWith("JPEG")) {
+              writer.setInterleaved(true);
             }
           }
 
