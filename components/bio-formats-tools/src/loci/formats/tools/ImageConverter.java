@@ -1284,6 +1284,14 @@ public final class ImageConverter {
     if (precompressed) {
       return true;
     }
+    // tile size has already been set in the writer,
+    // so tile-wise conversion should be performed
+    // independent of image size
+    if ((writer.getTileSizeX() > 0 && writer.getTileSizeX() < width) ||
+      (writer.getTileSizeY() > 0 && writer.getTileSizeY() < height))
+    {
+      return true;
+    }
     return DataTools.safeMultiply64(width, height) >= DataTools.safeMultiply64(4096, 4096) ||
       saveTileWidth > 0 || saveTileHeight > 0;
   }
