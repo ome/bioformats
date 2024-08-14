@@ -573,23 +573,48 @@ public class LIFReader extends FormatReader {
 
     // correct offsets, if necessary
     if (offsets.size() > getSeriesCount()) {
+      LOGGER.debug("Adjusting image offsets; found {} expected {}",
+        offsets.size(), getSeriesCount());
       Long[] storedOffsets = offsets.toArray(new Long[offsets.size()]);
+      for (int i=0; i<storedOffsets.length; i++) {
+        LOGGER.debug("original offset #{} = {}", i, storedOffsets[i]);
+        LOGGER.debug("  bytes available = {}",
+          i == storedOffsets.length - 1 ? in.length() - storedOffsets[i] :
+          storedOffsets[i + 1] - storedOffsets[i]);
+      }
+
       offsets.clear();
       int index = 0;
-      for (int i=0; i<getSeriesCount(); i++) {
+      int tileCountIndex = 0;
+      for (int i=0; i<getSeriesCount(); i++, tileCountIndex++) {
         setSeries(i);
-        long nBytes = (long) FormatTools.getPlaneSize(this) * getImageCount();
+        long tileBytes = (long) FormatTools.getPlaneSize(this) * getImageCount();
+        int currentTileCount = tileCount[tileCountIndex];
+        long nBytes = tileBytes * currentTileCount;
         long start = storedOffsets[index];
         long end = index == storedOffsets.length - 1 ? in.length() :
           storedOffsets[index + 1];
-        while (end - start < nBytes && ((end - start) / nBytes) != 1) {
+        LOGGER.debug("Series {} needs {} bytes", i, nBytes);
+        LOGGER.debug("  index = {}", index);
+        LOGGER.debug("  start = {}, end = {}, total = {}", start, end, end - start);
+        while (end - start < nBytes && ((end - start) / nBytes) != 1 && index < storedOffsets.length - 1) {
           index++;
           start = storedOffsets[index];
           end = index == storedOffsets.length - 1 ? in.length() :
             storedOffsets[index + 1];
+          LOGGER.debug("  checking index = {}, start = {}, end = {}, total = {}",
+            index, start, end, end - start);
         }
         offsets.add(storedOffsets[index]);
+
+        // tiled image will have all tiles stored together,
+        // even though we split the tiles into separate series so they could be stitched later
+        // the size of 'offsets' should match the length of 'tileCount',
+        // so we don't store a separate offset for each tile
+        i += (currentTileCount - 1);
+
         index++;
+        LOGGER.debug("offsets = {}, index = {}", offsets, index);
       }
       setSeries(0);
     }
