@@ -230,6 +230,26 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   }
 
   @Override
+  public int getTileWidth() {
+    return tileWidth;
+  }
+
+  @Override
+  public int getTileHeight() {
+    return tileHeight;
+  }
+
+  @Override
+  public int getTileRows() {
+    return yTiles;
+  }
+
+  @Override
+  public int getTileColumns() {
+    return xTiles;
+  }
+
+  @Override
   public byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate,
     int width, int height)
     throws IOException
@@ -287,6 +307,30 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   @Override
   public byte[] getTile(int tileX, int tileY) throws IOException {
+    byte[] compressedData = getCompressedTile(tileX, tileY);
+
+    // and here we actually decompress it...
+
+    try {
+      int pixelType = TJ.PF_RGB;
+      int pixelSize = TJ.getPixelSize(pixelType);
+
+      TJDecompressor decoder = new TJDecompressor(compressedData);
+      byte[] decompressed = decoder.decompress(tileWidth, tileWidth * pixelSize,
+        tileHeight, pixelType, pixelType);
+      compressedData = null;
+      decoder.close();
+      return decompressed;
+    }
+    catch (Exception e) {
+      IOException ioe = new IOException(e.getMessage());
+      ioe.initCause(e);
+      throw ioe;
+    }
+  }
+
+  @Override
+  public byte[] getCompressedTile(int tileX, int tileY) throws IOException {
     if (header == null) {
       header = getFixedHeader();
     }
@@ -312,12 +356,21 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
 
     byte[] data = new byte[(int) dataLength];
+    return getCompressedTile(data, tileX, tileY);
+  }
+
+  @Override
+  public byte[] getCompressedTile(byte[] data, int tileX, int tileY) throws IOException {
+    if (header == null) {
+      header = getFixedHeader();
+    }
 
     int offset = 0;
     System.arraycopy(header, 0, data, offset, header.length);
     offset += header.length;
 
-    start = tileX + (tileY * xTiles * mult);
+    int mult = tileHeight / mcuHeight; // was restartInterval
+    int start = tileX + (tileY * xTiles * mult);
     for (int row=0; row<tileHeight/mcuHeight; row++) {
       int end = start + 1;
 
@@ -343,25 +396,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
 
     DataTools.unpackBytes(EOI, data, offset, 2, false);
-
-    // and here we actually decompress it...
-
-    try {
-      int pixelType = TJ.PF_RGB;
-      int pixelSize = TJ.getPixelSize(pixelType);
-
-      TJDecompressor decoder = new TJDecompressor(data);
-      byte[] decompressed = decoder.decompress(tileWidth, tileWidth * pixelSize,
-        tileHeight, pixelType, pixelType);
-      data = null;
-      decoder.close();
-      return decompressed;
-    }
-    catch (Exception e) {
-      IOException ioe = new IOException(e.getMessage());
-      ioe.initCause(e);
-      throw ioe;
-    }
+    return data;
   }
 
   @Override

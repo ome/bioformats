@@ -1830,7 +1830,7 @@ public class LIFReader extends FormatReader {
           int channel = getChannelIndex(filterSetting);
           if (channel < 0) continue;
 
-          detectorIndexes[image].put(new Integer(data), object);
+          detectorIndexes[image].put(Integer.parseInt(data), object);
           activeDetector[image].add("Active".equals(variant.trim()));
         }
       }

@@ -216,12 +216,12 @@ public class BrukerReader extends FormatReader {
       public int compare(String s1, String s2) {
         Integer i1 = 0;
         try {
-          i1 = new Integer(s1);
+          i1 = Integer.parseInt(s1);
         }
         catch (NumberFormatException e) { }
         Integer i2 = 0;
         try {
-          i2 = new Integer(s2);
+          i2 = Integer.parseInt(s2);
         }
         catch (NumberFormatException e) { }
 

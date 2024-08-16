@@ -419,8 +419,8 @@ public class OIRReader extends FormatReader {
         int lastUnderscore1 = s1.lastIndexOf("_");
         int lastUnderscore2 = s2.lastIndexOf("_");
 
-        Integer block1 = new Integer(s1.substring(lastUnderscore1 + 1));
-        Integer block2 = new Integer(s2.substring(lastUnderscore2 + 1));
+        Integer block1 = Integer.parseInt(s1.substring(lastUnderscore1 + 1));
+        Integer block2 = Integer.parseInt(s2.substring(lastUnderscore2 + 1));
 
         int underscore1 = s1.lastIndexOf("_", lastUnderscore1 - 1);
         int underscore2 = s2.lastIndexOf("_", lastUnderscore2 - 1);

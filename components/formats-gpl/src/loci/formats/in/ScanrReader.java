@@ -470,8 +470,8 @@ public class ScanrReader extends FormatReader {
         char row1 = s1.charAt(0);
         char row2 = s2.charAt(0);
 
-        final Integer col1 = new Integer(s1.substring(1));
-        final Integer col2 = new Integer(s2.substring(1));
+        final Integer col1 = Integer.parseInt(s1.substring(1));
+        final Integer col2 = Integer.parseInt(s2.substring(1));
 
         if (row1 < row2) {
           return -1;
@@ -830,7 +830,7 @@ public class ScanrReader extends FormatReader {
             plateName = v;
           }
           else if (key.equals("exposure time")) {
-            exposures.add(new Double(v));
+            exposures.add(DataTools.parseDouble(v));
           }
           else if (key.equals("idle") && validChannel) {
             int lastIndex = channelNames.size() - 1;
@@ -847,15 +847,15 @@ public class ScanrReader extends FormatReader {
           else if (key.equals("well selection table + cDNA")) {
             if (Character.isDigit(v.charAt(0))) {
               wellIndex = v;
-              wellNumbers.put(wellCount, new Integer(v));
+              wellNumbers.put(wellCount, Integer.parseInt(v));
               wellCount++;
             }
             else {
-              wellLabels.put(v, new Integer(wellIndex));
+              wellLabels.put(v, Integer.parseInt(wellIndex));
             }
           }
           else if (key.equals("conversion factor um/pixel")) {
-            pixelSize = new Double(v);
+            pixelSize = DataTools.parseDouble(v);
           }
           else if (foundPositions) {
             if (nextXPos == nextYPos) {

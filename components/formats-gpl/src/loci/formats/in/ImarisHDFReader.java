@@ -130,7 +130,7 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
 
-    if (lastChannel < 0 || lastChannel >= colors.size()) {
+    if (lastChannel < 0 || lastChannel >= colors.size() || colors.get(lastChannel) == null) {
       return null;
     }
 
@@ -370,25 +370,25 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
 
         if (cIndex < gain.size()) {
           try {
-            gainValue = new Float(gain.get(cIndex));
+            gainValue = Float.parseFloat(gain.get(cIndex));
           }
           catch (NumberFormatException e) { }
         }
         if (cIndex < pinhole.size()) {
           try {
-            pinholeValue = new Integer(pinhole.get(cIndex));
+            pinholeValue = Integer.parseInt(pinhole.get(cIndex));
           }
           catch (NumberFormatException e) { }
         }
         if (cIndex < emWave.size()) {
           try {
-            emWaveValue = new Integer(emWave.get(cIndex));
+            emWaveValue = Integer.parseInt(emWave.get(cIndex));
           }
           catch (NumberFormatException e) { }
         }
         if (cIndex < exWave.size()) {
           try {
-            exWaveValue = new Integer(exWave.get(cIndex));
+            exWaveValue = Integer.parseInt(exWave.get(cIndex));
           }
           catch (NumberFormatException e) { }
         }
@@ -397,18 +397,18 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
 
         if (cIndex < channelMin.size()) {
           try {
-            minValue = new Double(channelMin.get(cIndex));
+            minValue = DataTools.parseDouble(channelMin.get(cIndex));
           }
           catch (NumberFormatException e) { }
         }
         if (cIndex < channelMax.size()) {
           try {
-            maxValue = new Double(channelMax.get(cIndex));
+            maxValue = DataTools.parseDouble(channelMax.get(cIndex));
           }
           catch (NumberFormatException e) { }
         }
 
-        if (i < colors.size()) {
+        if (i < colors.size() && colors.get(i) != null) {
           double[] color = colors.get(i);
           Color realColor = new Color(
             (int) (color[0] * 255), (int) (color[1] * 255),

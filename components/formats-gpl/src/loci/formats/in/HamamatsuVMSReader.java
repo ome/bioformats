@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -258,12 +259,12 @@ public class HamamatsuVMSReader extends FormatReader {
     String optimisationFile = slideInfo.get("OptimisationFile");
     macroFile = slideInfo.get("MacroImage");
 
-    Double physicalWidth = new Double(slideInfo.get("PhysicalWidth"));
-    Double physicalHeight = new Double(slideInfo.get("PhysicalHeight"));
-    Double magnification = new Double(slideInfo.get("SourceLens"));
+    Double physicalWidth = DataTools.parseDouble(slideInfo.get("PhysicalWidth"));
+    Double physicalHeight = DataTools.parseDouble(slideInfo.get("PhysicalHeight"));
+    Double magnification = DataTools.parseDouble(slideInfo.get("SourceLens"));
 
-    Double macroWidth = new Double(slideInfo.get("PhysicalMacroWidth"));
-    Double macroHeight = new Double(slideInfo.get("PhysicalMacroHeight"));
+    Double macroWidth = DataTools.parseDouble(slideInfo.get("PhysicalMacroWidth"));
+    Double macroHeight = DataTools.parseDouble(slideInfo.get("PhysicalMacroHeight"));
 
     for (String key : slideInfo.keySet()) {
       if (!IniTable.HEADER_KEY.equals(key)) {

@@ -208,7 +208,7 @@ public class PCORAWReader extends FormatReader {
           // set the exposure time
 
           String exp = value.substring(0, value.indexOf(' '));
-          Double parsedExp = new Double(exp);
+          Double parsedExp = DataTools.parseDouble(exp);
           Time exposure = null;
           if (parsedExp != null) {
             exposure = new Time(parsedExp / 1000, UNITS.SECOND);

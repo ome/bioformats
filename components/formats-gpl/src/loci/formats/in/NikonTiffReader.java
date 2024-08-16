@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -167,7 +168,7 @@ public class NikonTiffReader extends BaseTiffReader {
         correction = value;
       }
       else if (key.equals("history objective Magnification")) {
-        magnification = new Double(value);
+        magnification = DataTools.parseDouble(value);
       }
       else if (key.equals("history objective NA")) {
         lensNA = Double.parseDouble(value);
@@ -179,25 +180,25 @@ public class NikonTiffReader extends BaseTiffReader {
         immersion = value;
       }
       else if (key.startsWith("history gain")) {
-        gain.add(new Double(value));
+        gain.add(DataTools.parseDouble(value));
       }
       else if (key.equals("history pinhole")) {
-        pinholeSize = new Double(value.substring(0, value.indexOf(' ')));
+        pinholeSize = DataTools.parseDouble(value.substring(0, value.indexOf(' ')));
       }
       else if (key.startsWith("history laser") && key.endsWith("wavelength")) {
-        wavelength.add(new Double(value.replaceAll("\\D", "")));
+        wavelength.add(DataTools.parseDouble(value.replaceAll("\\D", "")));
       }
       else if (key.startsWith("history laser") && key.endsWith("name")) {
         laserIDs.add(value);
       }
       else if (key.equals("sensor s_params LambdaEx")) {
         for (int i=nTokensInKey; i<tokens.length; i++) {
-          exWave.add(new Double(tokens[i]));
+          exWave.add(DataTools.parseDouble(tokens[i]));
         }
       }
       else if (key.equals("sensor s_params LambdaEm")) {
         for (int i=nTokensInKey; i<tokens.length; i++) {
-          emWave.add(new Double(tokens[i]));
+          emWave.add(DataTools.parseDouble(tokens[i]));
         }
       }
 

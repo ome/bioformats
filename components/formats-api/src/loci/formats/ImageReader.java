@@ -134,11 +134,10 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<c.length; i++) {
       IFormatReader reader = null;
       try {
-        reader = c[i].newInstance();
+        reader = c[i].getDeclaredConstructor().newInstance();
         reader.setMetadataOptions(opt);
       }
-      catch (IllegalAccessException exc) { }
-      catch (InstantiationException exc) { }
+      catch (ReflectiveOperationException exc) { }
       if (reader == null) {
         LOGGER.error("{} cannot be instantiated.", c[i].getName());
         continue;

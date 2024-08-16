@@ -723,10 +723,9 @@ public abstract class ReaderWrapper implements IFormatReader {
         c = reader.getClass();
       }
       try {
-        childCopy = c.newInstance();
+        childCopy = c.getDeclaredConstructor().newInstance();
       }
-      catch (IllegalAccessException exc) { throw new FormatException(exc); }
-      catch (InstantiationException exc) { throw new FormatException(exc); }
+      catch (ReflectiveOperationException exc) { throw new FormatException(exc); }
 
       // preserve reader-specific configuration with original reader
       if (reader instanceof DelegateReader) {

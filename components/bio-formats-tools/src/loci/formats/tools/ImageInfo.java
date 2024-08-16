@@ -367,7 +367,7 @@ public class ImageInfo {
       // create reader of a specific format type
       try {
         Class<?> c = Class.forName("loci.formats.in." + format + "Reader");
-        reader = (IFormatReader) c.newInstance();
+        reader = (IFormatReader) c.getDeclaredConstructor().newInstance();
       }
       catch (ClassNotFoundException exc) {
         LOGGER.warn("Unknown reader: {}", format);
@@ -377,7 +377,7 @@ public class ImageInfo {
         LOGGER.warn("Cannot instantiate reader: {}", format);
         LOGGER.debug("", exc);
       }
-      catch (IllegalAccessException exc) {
+      catch (ReflectiveOperationException exc) {
         LOGGER.warn("Cannot access reader: {}", format);
         LOGGER.debug("", exc);
       }

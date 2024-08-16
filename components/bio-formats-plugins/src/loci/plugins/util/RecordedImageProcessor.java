@@ -124,19 +124,19 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void add(double value) {
-    record("add", new Double(value), double.class);
+    record("add", Double.valueOf(value), double.class);
     proc.add(value);
   }
 
   @Override
   public void add(int value) {
-    record("add", new Integer(value), int.class);
+    record("add", Integer.valueOf(value), int.class);
     proc.add(value);
   }
 
   @Override
   public void and(int value) {
-    record("and", new Integer(value), int.class);
+    record("and", Integer.valueOf(value), int.class);
     proc.and(value);
   }
 
@@ -154,7 +154,7 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public ImageProcessor convertToByte(boolean doScaling) {
-    record("convertToByte", new Boolean(doScaling), boolean.class);
+    record("convertToByte", Boolean.valueOf(doScaling), boolean.class);
     return proc.convertToByte(doScaling);
   }
 
@@ -172,14 +172,14 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public ImageProcessor convertToShort(boolean doScaling) {
-    record("convertToShort", new Boolean(doScaling), boolean.class);
+    record("convertToShort", Boolean.valueOf(doScaling), boolean.class);
     return proc.convertToShort(doScaling);
   }
 
   @Override
   public void convolve(float[] kernel, int kernelWidth, int kernelHeight) {
-    record("convolve", new Object[] {kernel, new Integer(kernelWidth),
-      new Integer(kernelHeight)}, new Class[] {float[].class,
+    record("convolve", new Object[] {kernel, Integer.valueOf(kernelWidth),
+      Integer.valueOf(kernelHeight)}, new Class[] {float[].class,
       int.class, int.class});
     proc.convolve(kernel, kernelWidth, kernelHeight);
   }
@@ -192,8 +192,8 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void copyBits(ImageProcessor ip, int xloc, int yloc, int mode) {
-    record("copyBits", new Object[] {ip, new Integer(xloc), new Integer(yloc),
-      new Integer(mode)}, new Class[] {ImageProcessor.class, int.class,
+    record("copyBits", new Object[] {ip, Integer.valueOf(xloc), Integer.valueOf(yloc),
+      Integer.valueOf(mode)}, new Class[] {ImageProcessor.class, int.class,
       int.class, int.class});
     proc.copyBits(ip, xloc, yloc, mode);
   }
@@ -316,8 +316,8 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public ImageProcessor createProcessor(int width, int height) {
-    record("createProcessor", new Object[] {new Integer(width),
-      new Integer(height)}, new Class[] {int.class, int.class});
+    record("createProcessor", new Object[] {Integer.valueOf(width),
+      Integer.valueOf(height)}, new Class[] {int.class, int.class});
     return proc.createProcessor(width, height);
   }
 
@@ -335,30 +335,30 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void drawDot(int xcenter, int ycenter) {
-    record("drawDot", new Object[] {new Integer(xcenter),
-      new Integer(ycenter)}, new Class[] {int.class, int.class});
+    record("drawDot", new Object[] {Integer.valueOf(xcenter),
+      Integer.valueOf(ycenter)}, new Class[] {int.class, int.class});
     proc.drawDot(xcenter, ycenter);
   }
 
   @Override
   public void drawLine(int x1, int y1, int x2, int y2) {
-    record("drawLine", new Object[] {new Integer(x1), new Integer(y1),
-      new Integer(x2), new Integer(y2)}, new Class[] {int.class, int.class,
+    record("drawLine", new Object[] {Integer.valueOf(x1), Integer.valueOf(y1),
+      Integer.valueOf(x2), Integer.valueOf(y2)}, new Class[] {int.class, int.class,
       int.class, int.class});
     proc.drawLine(x1, y1, x2, y2);
   }
 
   @Override
   public void drawOval(int x, int y, int width, int height) {
-    record("drawOval", new Object[] {new Integer(x), new Integer(y),
-      new Integer(width), new Integer(height)}, new Class[] {int.class,
+    record("drawOval", new Object[] {Integer.valueOf(x), Integer.valueOf(y),
+      Integer.valueOf(width), Integer.valueOf(height)}, new Class[] {int.class,
       int.class, int.class, int.class});
     proc.drawOval(x, y, width, height);
   }
 
   @Override
   public void drawPixel(int x, int y) {
-    record("drawPixel", new Object[] {new Integer(x), new Integer(y)},
+    record("drawPixel", new Object[] {Integer.valueOf(x), Integer.valueOf(y)},
       new Class[] {int.class, int.class});
     proc.drawPixel(x, y);
   }
@@ -371,8 +371,8 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void drawRect(int x, int y, int width, int height) {
-    record("drawRect", new Object[] {new Integer(x), new Integer(y),
-      new Integer(width), new Integer(height)}, new Class[] {int.class,
+    record("drawRect", new Object[] {Integer.valueOf(x), Integer.valueOf(y),
+      Integer.valueOf(width), Integer.valueOf(height)}, new Class[] {int.class,
       int.class, int.class, int.class});
     proc.drawRect(x, y, width, height);
   }
@@ -385,7 +385,7 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void drawString(String s, int x, int y) {
-    record("drawString", new Object[] {s, new Integer(x), new Integer(y)},
+    record("drawString", new Object[] {s, Integer.valueOf(x), Integer.valueOf(y)},
       new Class[] {String.class, int.class, int.class});
     proc.drawString(s, x, y);
   }
@@ -422,8 +422,8 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void fillOval(int x, int y, int width, int height) {
-    record("fillOval", new Object[] {new Integer(x), new Integer(y),
-      new Integer(width), new Integer(height)}, new Class[] {int.class,
+    record("fillOval", new Object[] {Integer.valueOf(x), Integer.valueOf(y),
+      Integer.valueOf(width), Integer.valueOf(height)}, new Class[] {int.class,
       int.class, int.class, int.class});
     proc.fillOval(x, y, width, height);
   }
@@ -436,7 +436,7 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void filter(int type) {
-    record("filter", new Integer(type), int.class);
+    record("filter", Integer.valueOf(type), int.class);
     proc.filter(type);
   }
 
@@ -460,19 +460,19 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void gamma(double value) {
-    record("gamma", new Double(value), double.class);
+    record("gamma", Double.valueOf(value), double.class);
     proc.gamma(value);
   }
 
   @Override
   public int get(int index) {
-    record("get", new Integer(index), int.class);
+    record("get", Integer.valueOf(index), int.class);
     return proc.get(index);
   }
 
   @Override
   public int get(int x, int y) {
-    record("get", new Object[] {new Integer(x), new Integer(y)},
+    record("get", new Object[] {Integer.valueOf(x), Integer.valueOf(y)},
       new Class[] {int.class, int.class});
     return proc.get(x, y);
   }
@@ -527,8 +527,8 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void getColumn(int x, int y, int[] data, int length) {
-    record("getColumn", new Object[] {new Integer(x), new Integer(y), data,
-      new Integer(length)}, new Class[] {int.class, int.class, int[].class,
+    record("getColumn", new Object[] {Integer.valueOf(x), Integer.valueOf(y), data,
+      Integer.valueOf(length)}, new Class[] {int.class, int.class, int[].class,
       int.class});
     proc.getColumn(x, y, data, length);
   }
@@ -547,13 +547,13 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public float getf(int index) {
-    record("getf", new Integer(index), int.class);
+    record("getf", Integer.valueOf(index), int.class);
     return proc.getf(index);
   }
 
   @Override
   public float getf(int x, int y) {
-    record("getf", new Object[] {new Integer(x), new Integer(y)},
+    record("getf", new Object[] {Integer.valueOf(x), Integer.valueOf(y)},
       new Class[] {int.class, int.class});
     return proc.getf(x, y);
   }
@@ -614,15 +614,15 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public double getInterpolatedPixel(double x, double y) {
-    record("getInterpolatedPixel", new Object[] {new Double(x), new Double(y)},
+    record("getInterpolatedPixel", new Object[] {Double.valueOf(x), Double.valueOf(y)},
       new Class[] {double.class, double.class});
     return proc.getInterpolatedPixel(x, y);
   }
 
   @Override
   public double[] getLine(double x1, double y1, double x2, double y2) {
-    record("getLine", new Object[] {new Double(x1), new Double(y1),
-      new Double(x2), new Double(y2)}, new Class[] {double.class, double.class,
+    record("getLine", new Object[] {Double.valueOf(x1), Double.valueOf(y1),
+      Double.valueOf(x2), Double.valueOf(y2)}, new Class[] {double.class, double.class,
       double.class, double.class});
     return proc.getLine(x1, y1, x2, y2);
   }
@@ -677,21 +677,21 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public int getPixel(int x, int y) {
-    record("getPixel", new Object[] {new Integer(x), new Integer(y)},
+    record("getPixel", new Object[] {Integer.valueOf(x), Integer.valueOf(y)},
       new Class[] {int.class, int.class});
     return proc.getPixel(x, y);
   }
 
   @Override
   public int[] getPixel(int x, int y, int[] iArray) {
-    record("getPixel", new Object[] {new Integer(x), new Integer(y), iArray},
+    record("getPixel", new Object[] {Integer.valueOf(x), Integer.valueOf(y), iArray},
       new Class[] {int.class, int.class, int[].class});
     return proc.getPixel(x, y, iArray);
   }
 
   @Override
   public int getPixelInterpolated(double x, double y) {
-    record("getPixelInterpolated", new Object[] {new Double(x), new Double(y)},
+    record("getPixelInterpolated", new Object[] {Double.valueOf(x), Double.valueOf(y)},
       new Class[] {double.class, double.class});
     return proc.getPixelInterpolated(x, y);
   }
@@ -716,7 +716,7 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public float getPixelValue(int x, int y) {
-    record("getPixelValue", new Object[] {new Integer(x), new Integer(y)},
+    record("getPixelValue", new Object[] {Integer.valueOf(x), Integer.valueOf(y)},
       new Class[] {int.class, int.class});
     return proc.getPixelValue(x, y);
   }
@@ -729,8 +729,8 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void getRow(int x, int y, int[] data, int length) {
-    record("getRow", new Object[] {new Integer(x), new Integer(y), data,
-      new Integer(length)}, new Class[] {int.class, int.class, int[].class,
+    record("getRow", new Object[] {Integer.valueOf(x), Integer.valueOf(y), data,
+      Integer.valueOf(length)}, new Class[] {int.class, int.class, int[].class,
       int.class});
     proc.getRow(x, y, data, length);
   }
@@ -755,7 +755,7 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void insert(ImageProcessor ip, int xloc, int yloc) {
-    record("insert", new Object[] {ip, new Integer(xloc), new Integer(yloc)},
+    record("insert", new Object[] {ip, Integer.valueOf(xloc), Integer.valueOf(yloc)},
       new Class[] {ImageProcessor.class, int.class, int.class});
     proc.insert(ip, xloc, yloc);
   }
@@ -792,7 +792,7 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   @Override
   public void lineTo(int x2, int y2) {
-    record("lineTo", new Object[] {new Integer(x2), new Integer(y2)},
+    record("lineTo", new Object[] {Integer.valueOf(x2), Integer.valueOf(y2)},
       new Class[] {int.class, int.class});
     proc.lineTo(x2, y2);
   }
@@ -803,7 +803,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void max(double value) {
-    record("max", new Double(value), double.class);
+    record("max", Double.valueOf(value), double.class);
     proc.max(value);
   }
 
@@ -818,7 +818,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void min(double value) {
-    record("min", new Double(value), double.class);
+    record("min", Double.valueOf(value), double.class);
     proc.min(value);
   }
 
@@ -828,54 +828,54 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void moveTo(int x, int y) {
-    record("moveTo", new Object[] {new Integer(x), new Integer(y)},
+    record("moveTo", new Object[] {Integer.valueOf(x), Integer.valueOf(y)},
       new Class[] {int.class, int.class});
     proc.moveTo(x, y);
   }
 
   public void multiply(double value) {
-    record("multiply", new Double(value), double.class);
+    record("multiply", Double.valueOf(value), double.class);
     proc.multiply(value);
   }
 
   public void noise(double range) {
-    record("noise", new Double(range), double.class);
+    record("noise", Double.valueOf(range), double.class);
     proc.noise(range);
   }
 
   public void or(int value) {
-    record("or", new Integer(value), int.class);
+    record("or", Integer.valueOf(value), int.class);
     proc.or(value);
   }
 
   public void putColumn(int x, int y, int[] data, int length) {
-    record("putColumn", new Object[] {new Integer(x), new Integer(y), data,
-      new Integer(length)}, new Class[] {int.class, int.class, int[].class,
+    record("putColumn", new Object[] {Integer.valueOf(x), Integer.valueOf(y), data,
+      Integer.valueOf(length)}, new Class[] {int.class, int.class, int[].class,
       int.class});
     proc.putColumn(x, y, data, length);
   }
 
   public void putPixel(int x, int y, int value) {
-    record("putPixel", new Object[] {new Integer(x), new Integer(y),
-      new Integer(value)}, new Class[] {int.class, int.class, int.class});
+    record("putPixel", new Object[] {Integer.valueOf(x), Integer.valueOf(y),
+      Integer.valueOf(value)}, new Class[] {int.class, int.class, int.class});
     proc.putPixel(x, y, value);
   }
 
   public void putPixel(int x, int y, int[] iArray) {
-    record("putPixel", new Object[] {new Integer(x), new Integer(y), iArray},
+    record("putPixel", new Object[] {Integer.valueOf(x), Integer.valueOf(y), iArray},
       new Class[] {int.class, int.class, int[].class});
     proc.putPixel(x, y, iArray);
   }
 
   public void putPixelValue(int x, int y, double value) {
-    record("putPixelValue", new Object[] {new Integer(x), new Integer(y),
-      new Double(value)}, new Class[] {int.class, int.class, double.class});
+    record("putPixelValue", new Object[] {Integer.valueOf(x), Integer.valueOf(y),
+      Double.valueOf(value)}, new Class[] {int.class, int.class, double.class});
     proc.putPixelValue(x, y, value);
   }
 
   public void putRow(int x, int y, int[] data, int length) {
-    record("putRow", new Object[] {new Integer(x), new Integer(y), data,
-      new Integer(length)}, new Class[] {int.class, int.class, int[].class,
+    record("putRow", new Object[] {Integer.valueOf(x), Integer.valueOf(y), data,
+      Integer.valueOf(length)}, new Class[] {int.class, int.class, int[].class,
       int.class});
     proc.putRow(x, y, data, length);
   }
@@ -911,18 +911,18 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public ImageProcessor resize(int dstWidth) {
-    record("resize", new Integer(dstWidth), int.class);
+    record("resize", Integer.valueOf(dstWidth), int.class);
     return proc.resize(dstWidth);
   }
 
   public ImageProcessor resize(int dstWidth, int dstHeight) {
-    record("resize", new Object[] {new Integer(dstWidth),
-      new Integer(dstHeight)}, new Class[] {int.class, int.class});
+    record("resize", new Object[] {Integer.valueOf(dstWidth),
+      Integer.valueOf(dstHeight)}, new Class[] {int.class, int.class});
     return proc.resize(dstWidth, dstHeight);
   }
 
   public void rotate(double angle) {
-    record("rotate", new Double(angle), double.class);
+    record("rotate", Double.valueOf(angle), double.class);
     proc.rotate(angle);
   }
 
@@ -937,36 +937,36 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void scale(double xScale, double yScale) {
-    record("scale", new Object[] {new Double(xScale), new Double(yScale)},
+    record("scale", new Object[] {Double.valueOf(xScale), Double.valueOf(yScale)},
       new Class[] {double.class, double.class});
     proc.scale(xScale, yScale);
   }
 
   public void set(int index, int value) {
-    record("set", new Object[] {new Integer(index), new Integer(value)},
+    record("set", new Object[] {Integer.valueOf(index), Integer.valueOf(value)},
       new Class[] {int.class, int.class});
     proc.set(index, value);
   }
 
   public void set(int x, int y, int value) {
-    record("set", new Object[] {new Integer(x), new Integer(y),
-      new Integer(value)}, new Class[] {int.class, int.class, int.class});
+    record("set", new Object[] {Integer.valueOf(x), Integer.valueOf(y),
+      Integer.valueOf(value)}, new Class[] {int.class, int.class, int.class});
     proc.set(x, y, value);
   }
 
   public void setAntialiasedText(boolean antialiased) {
-    record("setAntialiasedText", new Boolean(antialiased), boolean.class);
+    record("setAntialiasedText", Boolean.valueOf(antialiased), boolean.class);
     proc.setAntialiasedText(antialiased);
   }
 
   public void setAutoThreshold(int method, int lutUpdate) {
-    record("setAutoThreshold", new Object[] {new Integer(method),
-      new Integer(lutUpdate)}, new Class[] {int.class, int.class});
+    record("setAutoThreshold", new Object[] {Integer.valueOf(method),
+      Integer.valueOf(lutUpdate)}, new Class[] {int.class, int.class});
     proc.setAutoThreshold(method, lutUpdate);
   }
 
   public void setBackgroundValue(double value) {
-    record("setBackgroundValue", new Double(value), double.class);
+    record("setBackgroundValue", Double.valueOf(value), double.class);
     proc.setBackgroundValue(value);
   }
 
@@ -986,7 +986,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void setColor(int value) {
-    record("setColor", new Integer(value), int.class);
+    record("setColor", Integer.valueOf(value), int.class);
     proc.setColor(value);
   }
 
@@ -996,14 +996,14 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void setf(int index, float value) {
-    record("setf", new Object[] {new Integer(index), new Float(value)},
+    record("setf", new Object[] {Integer.valueOf(index), Float.valueOf(value)},
       new Class[] {int.class, float.class});
     proc.setf(index, value);
   }
 
   public void setf(int x, int y, float value) {
-    record("setf", new Object[] {new Integer(x), new Integer(y),
-      new Float(value)}, new Class[] {int.class, int.class, float.class});
+    record("setf", new Object[] {Integer.valueOf(x), Integer.valueOf(y),
+      Float.valueOf(value)}, new Class[] {int.class, int.class, float.class});
     proc.setf(x, y, value);
   }
 
@@ -1018,13 +1018,13 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void setHistogramRange(double histMin, double histMax) {
-    record("setHistogramRange", new Object[] {new Double(histMin),
-      new Double(histMax)}, new Class[] {double.class, double.class});
+    record("setHistogramRange", new Object[] {Double.valueOf(histMin),
+      Double.valueOf(histMax)}, new Class[] {double.class, double.class});
     proc.setHistogramRange(histMin, histMax);
   }
 
   public void setHistogramSize(int size) {
-    record("setHistogramSize", new Integer(size), int.class);
+    record("setHistogramSize", Integer.valueOf(size), int.class);
     proc.setHistogramSize(size);
   }
 
@@ -1034,22 +1034,22 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void setInterpolate(boolean interpolate) {
-    record("setInterpolate", new Boolean(interpolate), boolean.class);
+    record("setInterpolate", Boolean.valueOf(interpolate), boolean.class);
     proc.setInterpolate(interpolate);
   }
 
   public void setJustification(int justification) {
-    record("setJustification", new Integer(justification), int.class);
+    record("setJustification", Integer.valueOf(justification), int.class);
     proc.setJustification(justification);
   }
 
   public void setLineWidth(int width) {
-    record("setLineWidth", new Integer(width), int.class);
+    record("setLineWidth", Integer.valueOf(width), int.class);
     proc.setLineWidth(width);
   }
 
   public void setLutAnimation(boolean lutAnimation) {
-    record("setLutAnimation", new Boolean(lutAnimation), boolean.class);
+    record("setLutAnimation", Boolean.valueOf(lutAnimation), boolean.class);
     proc.setLutAnimation(lutAnimation);
   }
 
@@ -1059,13 +1059,13 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void setMinAndMax(double min, double max) {
-    record("setMinAndMax", new Object[] {new Double(min), new Double(max)},
+    record("setMinAndMax", new Object[] {Double.valueOf(min), Double.valueOf(max)},
       new Class[] {double.class, double.class});
     proc.setMinAndMax(min, max);
   }
 
   public void setPixels(int channelNumber, FloatProcessor fp) {
-    record("setPixels", new Object[] {new Integer(channelNumber), fp},
+    record("setPixels", new Object[] {Integer.valueOf(channelNumber), fp},
       new Class[] {int.class, FloatProcessor.class});
     proc.setPixels(channelNumber, fp);
   }
@@ -1081,8 +1081,8 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void setRoi(int x, int y, int rwidth, int rheight) {
-    record("setRoi", new Object[] {new Integer(x), new Integer(y),
-      new Integer(rwidth), new Integer(rheight)}, new Class[] {int.class,
+    record("setRoi", new Object[] {Integer.valueOf(x), Integer.valueOf(y),
+      Integer.valueOf(rwidth), Integer.valueOf(rheight)}, new Class[] {int.class,
       int.class, int.class, int.class});
     proc.setRoi(x, y, rwidth, rheight);
   }
@@ -1103,7 +1103,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void setSnapshotCopyMode(boolean b) {
-    record("setSnapshotCopyMode", new Boolean(b), boolean.class);
+    record("setSnapshotCopyMode", Boolean.valueOf(b), boolean.class);
     proc.setSnapshotCopyMode(b);
   }
 
@@ -1115,14 +1115,14 @@ public class RecordedImageProcessor extends ImageProcessor {
   public void setThreshold(double minThreshold, double maxThreshold,
     int lutUpdate)
   {
-    record("setThreshold", new Object[] {new Double(minThreshold),
-      new Double(maxThreshold), new Integer(lutUpdate)},
+    record("setThreshold", new Object[] {Double.valueOf(minThreshold),
+      Double.valueOf(maxThreshold), Integer.valueOf(lutUpdate)},
       new Class[] {double.class, double.class, int.class});
     proc.setThreshold(minThreshold, maxThreshold, lutUpdate);
   }
 
   public void setValue(double value) {
-    record("setValue", new Double(value), double.class);
+    record("setValue", Double.valueOf(value), double.class);
     proc.setValue(value);
   }
 
@@ -1157,12 +1157,12 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void threshold(int level) {
-    record("threshold", new Integer(level), int.class);
+    record("threshold", Integer.valueOf(level), int.class);
     proc.threshold(level);
   }
 
   public FloatProcessor toFloat(int channelNumber, FloatProcessor fp) {
-    record("toFloat", new Object[] {new Integer(channelNumber), fp},
+    record("toFloat", new Object[] {Integer.valueOf(channelNumber), fp},
       new Class[] {int.class, FloatProcessor.class});
     return proc.toFloat(channelNumber, fp);
   }
@@ -1174,19 +1174,19 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   public void translate(int xOffset, int yOffset) {
     record("translate",
-      new Object[] {new Integer(xOffset), new Integer(yOffset)},
+      new Object[] {Integer.valueOf(xOffset), Integer.valueOf(yOffset)},
       new Class[] {int.class, int.class});
     proc.translate(xOffset, yOffset);
   }
 
   public void updateComposite(int[] rgbPixels, int channel) {
-    record("updateComposite", new Object[] {rgbPixels, new Integer(channel)},
+    record("updateComposite", new Object[] {rgbPixels, Integer.valueOf(channel)},
       new Class[] {int[].class, int.class});
     proc.updateComposite(rgbPixels, channel);
   }
 
   public void xor(int value) {
-    record("xor", new Integer(value), int.class);
+    record("xor", Integer.valueOf(value), int.class);
     proc.xor(value);
   }
 

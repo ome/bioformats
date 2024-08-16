@@ -1134,7 +1134,7 @@ public class ZeissLSMReader extends FormatReader {
             // if this is not the first channel, copy the color from the
             // previous channel (necessary for SIM data)
             // otherwise set the color to white, as this will display better
-            if (red == 0 && green == 0 & blue == 0) {
+            if (red == 0 && green == 0 && blue == 0) {
               if (i > 0 && isSIM) {
                 red = channelColor[i - 1].getRed();
                 green = channelColor[i - 1].getGreen();
@@ -1486,7 +1486,7 @@ public class ZeissLSMReader extends FormatReader {
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
           try {
-            final Double cutIn = new Double(v[0].trim());
+            final Double cutIn = DataTools.parseDouble(v[0].trim());
             Length in = FormatTools.getCutIn(cutIn);
             if (in != null) {
               store.setTransmittanceRangeCutIn(in, instrument, nextFilter);
@@ -1495,7 +1495,7 @@ public class ZeissLSMReader extends FormatReader {
           catch (NumberFormatException e) { }
           if (v.length > 1) {
             try {
-              final Double cutOut = new Double(v[1].trim());
+              final Double cutOut = DataTools.parseDouble(v[1].trim());
               Length out = FormatTools.getCutOut(cutOut);
               if (out != null) {
                 store.setTransmittanceRangeCutOut(out, instrument, nextFilter);
@@ -2410,13 +2410,13 @@ public class ZeissLSMReader extends FormatReader {
         int slash = p.indexOf('/');
         if (slash > 0) {
           try {
-            magnification = new Double(p.substring(0, slash - 1));
+            magnification = DataTools.parseDouble(p.substring(0, slash - 1));
           }
           catch (NumberFormatException e) { }
         }
         if (slash >= 0 && slash < p.length() - 1) {
           try {
-            lensNA = new Double(p.substring(slash + 1));
+            lensNA = DataTools.parseDouble(p.substring(slash + 1));
           }
           catch (NumberFormatException e) { }
         }
@@ -2519,7 +2519,7 @@ public class ZeissLSMReader extends FormatReader {
 
       name = getStringValue(ILLUM_CHANNEL_NAME);
       try {
-        wavelength = new Double(name);
+        wavelength = DataTools.parseDouble(name);
       }
       catch (NumberFormatException e) { }
     }

@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.DataTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -145,11 +146,11 @@ public class ImarisTiffReader extends BaseTiffReader {
             description = value;
           }
           else if (key.equals("LSMEmissionWavelength") && !value.equals("0")) {
-            emWave.add(new Double(value));
+            emWave.add(DataTools.parseDouble(value));
           }
           else if (key.equals("LSMExcitationWavelength") && !value.equals("0"))
           {
-            exWave.add(new Double(value));
+            exWave.add(DataTools.parseDouble(value));
           }
           else if (key.equals("Name") && !currentId.endsWith(value)) {
             channelNames.add(value);

@@ -128,7 +128,7 @@ public class AVIWriter extends FormatWriter {
 
     out.seek(idx1Pos);
     out.writeBytes(DATA_SIGNATURE);
-    savedbLength.add(new Long(out.getFilePointer()));
+    savedbLength.add(out.getFilePointer());
 
     // Write the data length
     out.writeInt(bytesPerPixel * xDim * yDim);
@@ -285,8 +285,8 @@ public class AVIWriter extends FormatWriter {
     Time timeIncrement = meta.getPixelsTimeIncrement(series);
     if (timeIncrement != null) {
       double timeIncValue = timeIncrement.value(UNITS.SECOND).doubleValue();
-      if (timeIncValue != 0) { 
-        fps = new Double(1 / timeIncValue).intValue();
+      if (timeIncValue != 0) {
+        fps = Double.valueOf(1 / timeIncValue).intValue();
       }
     }
 

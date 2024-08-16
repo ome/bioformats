@@ -314,7 +314,7 @@ public class CacheComponent extends JPanel
         int[] rng = strategy.getRange();
         for (int i=0; i<rng.length; i++) {
           range[i].removeChangeListener(this);
-          range[i].setValue(new Integer(rng[i]));
+          range[i].setValue(rng[i]);
           range[i].addChangeListener(this);
         }
         break;
