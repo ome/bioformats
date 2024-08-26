@@ -62,6 +62,7 @@ import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.ICompressedTileReader;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
@@ -71,7 +72,9 @@ import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.in.DynamicMetadataOptions;
@@ -558,6 +561,11 @@ public final class ImageConverter {
 
     reader.setId(in);
 
+    if (compression == null && precompressed) {
+      compression = getReaderCodecName();
+      LOGGER.info("Implicitly using compression = {}", compression);
+    }
+
     if (swapOrder != null) {
        dimSwapper.swapDimensions(swapOrder);
     }
@@ -759,7 +767,9 @@ public final class ImageConverter {
         int writerSeries = series == -1 ? q : 0;
         writer.setSeries(writerSeries);
         writer.setResolution(res);
+
         writer.setInterleaved(reader.isInterleaved() && !autoscale);
+
         writer.setValidBitsPerPixel(reader.getBitsPerPixel());
         int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
 
@@ -829,6 +839,12 @@ public final class ImageConverter {
               setCodecOptions(writer);
               writer.setId(tileName);
               if (compression != null) writer.setCompression(compression);
+            }
+          }
+
+          if (precompressed && FormatTools.canUsePrecompressedTiles(reader, writer, writer.getSeries(), writer.getResolution())) {
+            if (getReaderCodecName().startsWith("JPEG")) {
+              writer.setInterleaved(true);
             }
           }
 
@@ -1260,19 +1276,21 @@ public final class ImageConverter {
   private boolean doTileConversion(IFormatWriter writer, String outputFile)
     throws FormatException
   {
-    if (writer instanceof DicomWriter ||
-      (writer instanceof ImageWriter && ((ImageWriter) writer).getWriter(outputFile) instanceof DicomWriter))
+    // if we asked to try a precompressed conversion,
+    // then the writer's tile sizes will have been set automatically
+    // according to the input data
+    // the conversion must then be performed tile-wise to match the tile sizes,
+    // even if precompression doesn't end up being possible
+    if (precompressed) {
+      return true;
+    }
+    // tile size has already been set in the writer,
+    // so tile-wise conversion should be performed
+    // independent of image size
+    if ((writer.getTileSizeX() > 0 && writer.getTileSizeX() < width) ||
+      (writer.getTileSizeY() > 0 && writer.getTileSizeY() < height))
     {
-      // if we asked to try a precompressed conversion,
-      // then the writer's tile sizes will have been set automatically
-      // according to the input data
-      // the conversion must then be performed tile-wise to match the tile sizes,
-      // even if precompression doesn't end up being possible
-      if (precompressed) {
-        return true;
-      }
-      MetadataStore r = reader.getMetadataStore();
-      return !(r instanceof IPyramidStore) || ((IPyramidStore) r).getResolutionCount(reader.getSeries()) > 1;
+      return true;
     }
     return DataTools.safeMultiply64(width, height) >= DataTools.safeMultiply64(4096, 4096) ||
       saveTileWidth > 0 || saveTileHeight > 0;
@@ -1316,6 +1334,18 @@ public final class ImageConverter {
       codecOptions.quality = compressionQuality;
       writer.setCodecOptions(codecOptions);
     }
+  }
+
+  private String getReaderCodecName() throws FormatException, IOException {
+    if (reader instanceof ICompressedTileReader) {
+      ICompressedTileReader r = (ICompressedTileReader) reader;
+      Codec c = r.getTileCodec(0);
+      CompressionType type = CompressionType.get(c);
+      if (type != null) {
+        return type.getCompression();
+      }
+    }
+    return null;
   }
 
   // -- Main method --
