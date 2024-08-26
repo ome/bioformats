@@ -115,5 +115,27 @@ public enum CompressionType implements CodedEnum {
   public String getCompression() {
     return compression;
   }
-  
+
+  /**
+   * Look up the compression type by Codec instance.
+   */
+  public static CompressionType get(Codec c) {
+    if (c instanceof ZlibCodec) {
+      return ZLIB;
+    }
+    if (c instanceof LZWCodec) {
+      return LZW;
+    }
+    if (c instanceof JPEGCodec) {
+      return JPEG;
+    }
+    if (c instanceof JPEG2000Codec) {
+      return J2K;
+    }
+    if (c instanceof PassthroughCodec) {
+      return UNCOMPRESSED;
+    }
+    return null;
+  }
+
 }

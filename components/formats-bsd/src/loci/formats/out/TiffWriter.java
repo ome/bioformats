@@ -39,6 +39,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CompressionType;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataRetrieve;
@@ -100,13 +101,10 @@ public class TiffWriter extends FormatWriter {
   protected int tileSizeY;
 
   /**
-   * Sets the compression code for the specified IFD.
-   * 
-   * @param ifd The IFD table to handle.
+   * Get the TIFF compression enum value that corresponds to
+   * the current compression type.
    */
-  private void formatCompression(IFD ifd)
-    throws FormatException
-  {
+  private TiffCompression getTIFFCompression() {
     if (compression == null) compression = "";
     TiffCompression compressType = TiffCompression.UNCOMPRESSED;
     if (compression.equals(COMPRESSION_LZW)) {
@@ -124,9 +122,22 @@ public class TiffWriter extends FormatWriter {
     else if (compression.equals(COMPRESSION_ZLIB)) {
       compressType = TiffCompression.DEFLATE;
     }
+    return compressType;
+  }
+
+  /**
+   * Sets the compression code for the specified IFD.
+   * 
+   * @param ifd The IFD table to handle.
+   */
+  private void formatCompression(IFD ifd)
+    throws FormatException
+  {
+    TiffCompression compressType = getTIFFCompression();
     Object v = ifd.get(IFD.COMPRESSION);
-    if (v == null)
+    if (v == null) {
       ifd.put(IFD.COMPRESSION, compressType.getCode());
+    }
   }
 
   // -- Constructors --
@@ -147,6 +158,72 @@ public class TiffWriter extends FormatWriter {
       COMPRESSION_ZLIB
     };
     isBigTiff = false;
+  }
+
+  // -- ICompressedTileWriter API methods --
+
+  @Override
+  public Codec getCodec() {
+    return getTIFFCompression().getCodec();
+  }
+
+  @Override
+  public void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    if (!sequential) {
+      throw new UnsupportedOperationException(
+        "Sequential tile writing must be enabled to write precompressed tiles");
+    }
+
+    LOGGER.debug("saveCompressedBytes(series={}, resolution={}, no={}, x={}, y={})",
+      series, resolution, no, x, y);
+
+    IFD ifd = makeIFD();
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    int type = FormatTools.pixelTypeFromString(
+        retrieve.getPixelsType(series).toString());
+    int index = no;
+    int currentTileSizeX = getTileSizeX();
+    int currentTileSizeY = getTileSizeY();
+
+    if (x % currentTileSizeX != 0 || y % currentTileSizeY != 0 ||
+      (currentTileSizeX != w && x + w != getSizeX()) ||
+      (currentTileSizeY != h && y + h != getSizeY()))
+    {
+      throw new IllegalArgumentException("Compressed tile dimensions must match tile size");
+    }
+
+    // This operation is synchronized
+    synchronized (this) {
+      // This operation is synchronized against the TIFF saver.
+      synchronized (tiffSaver) {
+        index = prepareToWriteImage(no, buf, ifd, x, y, w, h);
+        if (index == -1) {
+          return;
+        }
+      }
+    }
+
+    boolean lastPlane = no == getPlaneCount() - 1;
+    boolean lastSeries = getSeries() == retrieve.getImageCount() - 1;
+    boolean lastResolution = getResolution() == getResolutionCount() - 1;
+
+    int nChannels = getSamplesPerPixel();
+
+    tiffSaver.makeValidIFD(ifd, type, nChannels);
+    tiffSaver.writeImageIFD(ifd, index, new byte[][] {buf},
+      nChannels, lastPlane && lastSeries && lastResolution, x, y);
+  }
+
+  protected IFD makeIFD() throws FormatException, IOException {
+    IFD ifd = new IFD();
+    boolean usingTiling = getTileSizeX() > 0 && getTileSizeY() > 0;
+    if (usingTiling) {
+      ifd.put(new Integer(IFD.TILE_WIDTH), new Long(getTileSizeX()));
+      ifd.put(new Integer(IFD.TILE_LENGTH), new Long(getTileSizeY()));
+    }
+    return ifd;
   }
 
   // -- FormatWriter API methods --

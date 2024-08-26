@@ -66,7 +66,7 @@ public interface ICompressedTileReader {
    *
    * @param no plane index
    * @param x tile X index (indexed from 0, @see getTileColumns(int))
-   * @param y tile Y index (indexed frmo 0, @see getTileRows(int))
+   * @param y tile Y index (indexed from 0, @see getTileRows(int))
    * @return compressed tile bytes
    */
   default byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
@@ -79,7 +79,7 @@ public interface ICompressedTileReader {
    * @param no plane index
    * @param buf pre-allocated buffer in which to store compressed bytes
    * @param x tile X index (indexed from 0, @see getTileColumns(int))
-   * @param y tile Y index (indexed frmo 0, @see getTileRows(int))
+   * @param y tile Y index (indexed from 0, @see getTileRows(int))
    * @return compressed tile bytes
    */
   default byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
@@ -102,7 +102,7 @@ public interface ICompressedTileReader {
    *
    * @param no plane index
    * @param x tile X index (indexed from 0, @see getTileColumns(int))
-   * @param y tile Y index (indexed frmo 0, @see getTileRows(int))
+   * @param y tile Y index (indexed from 0, @see getTileRows(int))
    * @return codec options
    * @see getTileCodec(int)
    */

@@ -350,15 +350,22 @@ public class TiffSaver implements Closeable {
             stripOut[strip].write(buf, strip * stripSize, stripSize);
           }
         } else {
-          for (int strip = 0; strip < nStrips - 1; strip++) {
-            stripOut[strip].write(buf, strip * stripSize, stripSize);
-          }
-          // Sigh.  Need to pad the last strip.
-          int pos = (nStrips - 1) * stripSize;
-          int len = buf.length - pos;
-          stripOut[nStrips - 1].write(buf, pos, len);
-          for (int n = len; n < stripSize; n++) {
-            stripOut[nStrips - 1].writeByte(0);
+          int effectiveStrips = !interleaved ? nStrips / nChannels : nStrips;
+          int planarChannels = !interleaved ? nChannels : 1;
+          int totalBytesPerChannel = buf.length / planarChannels;
+          for (int p=0; p<planarChannels; p++) {
+            for (int strip = 0; strip < effectiveStrips - 1; strip++) {
+              stripOut[p * effectiveStrips + strip].write(buf, strip * stripSize, stripSize);
+            }
+            // Sigh.  Need to pad the last strip.
+            int pos = p * totalBytesPerChannel + (effectiveStrips - 1) * stripSize;
+            int len = (p + 1)*totalBytesPerChannel - pos;
+            int lastStripIndex = p * effectiveStrips + (effectiveStrips - 1);
+            stripOut[lastStripIndex].write(buf, pos, len);
+
+            byte[] extra = new byte[stripSize - len];
+            Arrays.fill(extra, (byte) 0);
+            stripOut[lastStripIndex].write(extra);
           }
         }
       } else {
@@ -450,7 +457,7 @@ public class TiffSaver implements Closeable {
    * @throws FormatException
    * @throws IOException
    */
-  private void writeImageIFD(IFD ifd, int no, byte[][] strips,
+  public void writeImageIFD(IFD ifd, int no, byte[][] strips,
       int nChannels, boolean last, int x, int y)
   throws FormatException, IOException {
     LOGGER.debug("Attempting to write image IFD.");
@@ -1003,7 +1010,7 @@ public class TiffSaver implements Closeable {
    * @param pixelType The pixel type.
    * @param nChannels The number of channels.
    */
-  private void makeValidIFD(IFD ifd, int pixelType, int nChannels) {
+  public void makeValidIFD(IFD ifd, int pixelType, int nChannels) {
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
     int bps = 8 * bytesPerPixel;
     int[] bpsArray = new int[nChannels];

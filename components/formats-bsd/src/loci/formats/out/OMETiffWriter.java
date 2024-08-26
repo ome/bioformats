@@ -199,6 +199,24 @@ public class OMETiffWriter extends TiffWriter {
 
   // -- IFormatWriter API methods --
 
+  @Override
+  public void saveCompressedBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    super.saveCompressedBytes(no, buf, x, y, w, h);
+
+    int index = no;
+    while (imageLocations[series][index] != null) {
+      if (index < imageLocations[series].length - 1) {
+        index++;
+      }
+      else {
+        break;
+      }
+    }
+    imageLocations[series][index] = currentId;
+  }
+
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
