@@ -500,6 +500,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
       r.getPixelsType(series).toString()));
+    int samplesPerPixel = getSamplesPerPixel();
 
     out.seek(out.length());
     long start = out.getFilePointer();
@@ -512,9 +513,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if ((x + w == getSizeX() && w < thisTileWidth) ||
       (y + h == getSizeY() && h < thisTileHeight))
     {
-      if (interleaved || getSamplesPerPixel() == 1) {
-        int srcRowLen = w * bytesPerPixel * getSamplesPerPixel();
-        int destRowLen = thisTileWidth * bytesPerPixel * getSamplesPerPixel();
+      if (interleaved || samplesPerPixel == 1) {
+        int srcRowLen = w * bytesPerPixel * samplesPerPixel;
+        int destRowLen = thisTileWidth * bytesPerPixel * samplesPerPixel;
         paddedBuf = new byte[thisTileHeight * destRowLen];
 
         for (int row=0; row<h; row++) {
@@ -524,9 +525,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       else {
         int srcRowLen = w * bytesPerPixel;
         int destRowLen = thisTileWidth * bytesPerPixel;
-        paddedBuf = new byte[thisTileHeight * destRowLen * getSamplesPerPixel()];
+        paddedBuf = new byte[thisTileHeight * destRowLen * samplesPerPixel];
 
-        for (int c=0; c<getSamplesPerPixel(); c++) {
+        for (int c=0; c<samplesPerPixel; c++) {
           for (int row=0; row<h; row++) {
             int src = srcRowLen * ((c * h) + row);
             int dest = destRowLen * ((c * thisTileHeight) + row);
@@ -540,10 +541,13 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     }
     if (!isInterleaved()) {
       byte[] interleavedBuf = new byte[paddedBuf.length];
-      for (int c=0; c<getSamplesPerPixel(); c++) {
-        for (int px=0; px<thisTilePixels; px++) {
+      for (int c=0; c<samplesPerPixel; c++) {
+        int channelIndex = c * bytesPerPixel;
+        int splitChannelIndex = thisTilePixels * channelIndex;
+        for (int px=0, pixelIndex=0; px<thisTilePixels; px++, pixelIndex+=bytesPerPixel) {
+          int interleavedPixelIndex = pixelIndex * samplesPerPixel;
           for (int b=0; b<bytesPerPixel; b++) {
-            interleavedBuf[px * getSamplesPerPixel() * bytesPerPixel + c * bytesPerPixel + b] = paddedBuf[c * thisTilePixels * bytesPerPixel + px * bytesPerPixel + b];
+            interleavedBuf[interleavedPixelIndex + channelIndex + b] = paddedBuf[splitChannelIndex + pixelIndex + b];
           }
         }
       }
@@ -607,7 +611,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       CodecOptions options = new CodecOptions(getCodecOptions());
       options.width = tileWidth[resolutionIndex];
       options.height = tileHeight[resolutionIndex];
-      options.channels = getSamplesPerPixel();
+      options.channels = samplesPerPixel;
       options.bitsPerSample = bytesPerPixel * 8;
       options.littleEndian = out.isLittleEndian();
       options.interleaved = true;
