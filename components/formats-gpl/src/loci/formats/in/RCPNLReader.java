@@ -99,6 +99,16 @@ public class RCPNLReader extends DeltavisionReader {
           MetadataTools.getCorrection("PlanApo"), 0, 0);
         store.setObjectiveManufacturer("Nikon", 0, 0);
         break;
+      case 18112:
+        store.setObjectiveNominalMagnification(20.0, 0, 0);
+        store.setObjectiveLensNA(0.8, 0, 0);
+        store.setObjectiveWorkingDistance(
+          new Length(0.8, UNITS.MILLIMETER), 0, 0);
+        store.setObjectiveImmersion(MetadataTools.getImmersion("Air"), 0, 0);
+        store.setObjectiveCorrection(
+          MetadataTools.getCorrection("PlanApo"), 0, 0);
+        store.setObjectiveManufacturer("Nikon", 0, 0);
+        break;
     }
   }
 
