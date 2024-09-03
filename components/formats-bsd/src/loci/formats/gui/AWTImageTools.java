@@ -1655,7 +1655,7 @@ public final class AWTImageTools {
           else if (ints[i][j] <= min) out[i][j] = 0;
           else {
             int diff = max - min;
-            float dist = (ints[i][j] - min) / diff;
+            float dist = (float) (ints[i][j] - min) / diff;
             out[i][j] = (byte) (dist * 256);
           }
         }
