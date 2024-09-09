@@ -174,11 +174,13 @@ public class OIRReader extends FormatReader {
 
   @Override
   public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
     return Math.min(2048, optimalTileHeight);
   }
 
   @Override
   public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
     return Math.min(2048, getSizeX());
   }
 
@@ -211,6 +213,10 @@ public class OIRReader extends FormatReader {
     int yOffsetInBuffer = 0;                     // current y offset within the exported buffer
 
     for (PixelBlock block : blocks) { // This list is sorted along y
+      if (block == null) {
+        LOGGER.warn("Block not found.");
+        continue;
+      }
       // Skips blocks positioned fully outside [y, y+h[
       if (block.yEnd<y) continue;  // The pixel block is completely above the requested region - skip it
       if (block.yStart>y+h) break; // The pixel block is completely below the requested region - skip all remaining blocks
@@ -264,6 +270,7 @@ public class OIRReader extends FormatReader {
       defaultXMLSkip = 36;
       blocksPerPlane = 0;
       cztToPixelBlocks.clear();
+      optimalTileHeight = 0;
       baseName = null;
       lastChannel = -1;
       minZ = Integer.MAX_VALUE;
