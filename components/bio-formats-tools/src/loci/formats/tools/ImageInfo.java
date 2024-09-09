@@ -77,6 +77,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
+import loci.formats.UnknownFormatException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1141,8 +1142,14 @@ public class ImageInfo {
 
       while (scanner.hasNext()) {
         newArgs[idx] = scanner.nextLine();
-	System.out.println("====% " + newArgs[idx]);
-        if (!new ImageInfo().testRead(newArgs)) System.exit(1);
+        System.out.println("====% " + newArgs[idx]);
+        try {
+        	new ImageInfo().testRead(newArgs);
+        }
+        catch (UnknownFormatException e) {
+			LOGGER.warn("Unknown file format: " + newArgs[idx]);
+        	continue;
+        }
       }
       scanner.close();
     }
