@@ -155,7 +155,7 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
             long nextPointer = index < allOffsets.length ? allOffsets[index] : 0;
 
             saver.overwriteIFDOffset(in, allOffsets[mainIFDIndex], nextPointer);
-            saver.overwriteIFDValue(in, currentFullResolution, IFD.SUB_IFD, subIFDOffsets);
+            saver.overwriteIFDValue(in, allOffsets[mainIFDIndex], IFD.SUB_IFD, subIFDOffsets, true);
           }
 
           mainIFDIndex++;
