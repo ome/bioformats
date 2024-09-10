@@ -28,10 +28,12 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
@@ -80,9 +82,10 @@ public class OIRReader extends FormatReader {
   private Timestamp acquisitionDate;
   private int defaultXMLSkip = 36;
   private int blocksPerPlane = 0;
-  private String[] pixelUIDs = null;
+  private final Map<CZTKey, PixelBlock[]> cztToPixelBlocks = new HashMap<>();
   private String baseName;
   private int lastChannel = -1;
+  private int optimalTileHeight;
 
   private int minZ = Integer.MAX_VALUE;
   private int minT = Integer.MAX_VALUE;
@@ -169,6 +172,17 @@ public class OIRReader extends FormatReader {
     return (short[][]) channels.get(lastChannel).lut;
   }
 
+  @Override
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return Math.min(2048, optimalTileHeight);
+  }
+
+  @Override
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return Math.min(2048, getSizeX());
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -182,77 +196,58 @@ public class OIRReader extends FormatReader {
     int[] zct = getZCTCoords(no);
     lastChannel = zct[1];
 
-    int first = 0;
-    int startIndex = -1;
-    int end = 0;
-    while (first < pixelUIDs.length) {
-      if (getZ(pixelUIDs[first]) - minZ == zct[0] &&
-        getT(pixelUIDs[first]) - minT == zct[2] &&
-        pixelUIDs[first].indexOf(channels.get(zct[1] % channels.size()).id) > 0)
-      {
-        if (startIndex < 0) {
-          startIndex = first;
-        }
-        end = first;
-      }
-      first++;
-    }
+    // Gets all the PixelBlock potentially contained within c, z and t
+    PixelBlock[] blocks = cztToPixelBlocks.get(new CZTKey(zct[1], zct[0], zct[2]));
 
-    if (startIndex < 0) {
+    if ((blocks == null) || (blocks.length == 0)) {
       LOGGER.warn("No pixel blocks for plane #{}", no);
       Arrays.fill(buf, getFillColor());
       return buf;
     }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int bufferOffset = bpp * ((y * getSizeX()) + x);
-    int rowLen = bpp * w;
-    int imageWidth = bpp * getSizeX();
-    int bufferEnd = bpp * (((y + h) * getSizeX()) + x + w);
-    int bufferPointer = 0;
+    int nBytesPerLineInBuf = w * bpp;            // number of bytes for one line within the exported buffer
+    int nBytesPerLineInBlock = getSizeX() * bpp; // number of bytes for one line within a PixelBlock
 
-    RandomAccessInputStream s = null;
-    String openFile = null;
-    try {
-      for (int i=startIndex; i<=end; i++) {
-        PixelBlock block = pixelBlocks.get(pixelUIDs[i]);
+    // Iterators: y position
+    int yOffsetInBuffer = 0;                     // current y offset within the exported buffer
 
-        if (bufferPointer + block.length < bufferOffset ||
-          bufferPointer >= bufferEnd)
-        {
-          bufferPointer += block.length;
-          continue;
-        }
-
-        byte[] pixels = null;
-        if (s == null || !block.file.equals(openFile)) {
-          if (s != null) {
-            s.close();
-          }
-          s = new RandomAccessInputStream(block.file, BUFFER_SIZE);
-          openFile = block.file;
-        }
-        pixels = readPixelBlock(s, block.offset);
-        if (pixels != null) {
-          int blockY = bufferPointer / imageWidth;
-          int blockH = pixels.length / imageWidth;
-
-          for (int yy=blockY; yy<blockY+blockH; yy++) {
-            if (yy < y || yy >= y + h) {
-              continue;
-            }
-            int blockOffset = (yy - blockY) * imageWidth + x * bpp;
-            int bufOffset = (yy - y) * rowLen;
-            System.arraycopy(pixels, blockOffset, buf, bufOffset, rowLen);
-          }
-        }
-        bufferPointer += block.length;
+    for (PixelBlock block : blocks) { // This list is sorted along y
+      if (block == null) {
+        LOGGER.warn("Block not found.");
+        continue;
       }
-    }
-    finally {
-      if (s != null) {
-        s.close();
-      }
+      // Skips blocks positioned fully outside [y, y+h[
+      if (block.yEnd<y) continue;  // The pixel block is completely above the requested region - skip it
+      if (block.yStart>y+h) break; // The pixel block is completely below the requested region - skip all remaining blocks
+
+      // At this point of the code we know for sure that this PixelBlock overlaps with the requested region,
+      // We need to copy lines from this PixelBlock to the buffer, cropping properly the PixelBlock
+      // and taking into account the x and y offset
+
+      // Skips the first lines of the block if necessary - the result will be non-zero only for the first PixelBlock
+      // that lies within the buffer region + skips the bytes according to the x offset
+      int blockOffset =
+              ((y+yOffsetInBuffer)-block.yStart)*nBytesPerLineInBlock // y Offset
+              + (x * bpp); // x offset
+
+      // Number of lines to be copied within the PixelBlock
+      // The stop condition happens either:
+      // - if we reach the end of the bytes to be read within the requested region
+      // - or if we reach the end of the current PixelBlock
+      int nLines = Math.min(h-yOffsetInBuffer, block.yEnd-(y+yOffsetInBuffer));
+
+      // Perform the copy
+      copyPixelBlock(block, buf,
+              yOffsetInBuffer * nBytesPerLineInBuf,              // Current position within the exported buffer
+              blockOffset,  // Current position within the PixelBlock, taking into account the x offset
+              nBytesPerLineInBuf,     // number of bytes within a line of the exported buffer
+              nBytesPerLineInBlock,   // number of bytes within a line of a PixelBlock
+              nLines
+      );
+
+      // Updates new position within the exported buffer
+      yOffsetInBuffer+=nLines;                // nLines filled
     }
 
     return buf;
@@ -274,7 +269,8 @@ public class OIRReader extends FormatReader {
       acquisitionDate = null;
       defaultXMLSkip = 36;
       blocksPerPlane = 0;
-      pixelUIDs = null;
+      cztToPixelBlocks.clear();
+      optimalTileHeight = 0;
       baseName = null;
       lastChannel = -1;
       minZ = Integer.MAX_VALUE;
@@ -412,51 +408,53 @@ public class OIRReader extends FormatReader {
       }
     }
 
-    pixelUIDs = pixelBlocks.keySet().toArray(new String[pixelBlocks.size()]);
-    Arrays.sort(pixelUIDs, new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        int lastUnderscore1 = s1.lastIndexOf("_");
-        int lastUnderscore2 = s2.lastIndexOf("_");
+    int maxNumberOfBlocks = -1;
 
-        Integer block1 = Integer.parseInt(s1.substring(lastUnderscore1 + 1));
-        Integer block2 = Integer.parseInt(s2.substring(lastUnderscore2 + 1));
+    // Get max number of blocks
+    for (String uid: pixelBlocks.keySet()) {
+      int b = getBlock(uid);
+      if (b>=maxNumberOfBlocks) maxNumberOfBlocks = b+1;
+    }
 
-        int underscore1 = s1.lastIndexOf("_", lastUnderscore1 - 1);
-        int underscore2 = s2.lastIndexOf("_", lastUnderscore2 - 1);
+    for (String uid: pixelBlocks.keySet()) {
+      int z = getZ(uid)-minZ;
+      int t = getT(uid)-minT;
+      int c = getC(uid) + getL(uid); // Channel index or lambda index (We suppose there's no multichannel + lambda);
+      int b = getBlock(uid);
 
-        String prefix1 = s1.substring(0, underscore1);
-        String prefix2 = s2.substring(0, underscore2);
+      CZTKey key = new CZTKey(c,z,t);
+      if (!cztToPixelBlocks.containsKey(key)) cztToPixelBlocks.put(key, new PixelBlock[maxNumberOfBlocks]);
+      PixelBlock pb = pixelBlocks.get(uid);
+      cztToPixelBlocks.get(key)[b] = pb;
+    }
 
-        String channel1 = s1.substring(underscore1 + 1, lastUnderscore1);
-        String channel2 = s2.substring(underscore2 + 1, lastUnderscore2);
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int bytesPerLine = m.sizeX*bpp;
+    optimalTileHeight = 32;
 
-        if (!prefix1.equals(prefix2)) {
-          return s1.compareTo(s2);
-        }
-
-        if (!channel1.equals(channel2)) {
-          Integer index1 = -1;
-          Integer index2 = -2;
-          for (int i=0; i<channels.size(); i++) {
-            if (channels.get(i).id.equals(channel1)) {
-              index1 = i;
-            }
-            if (channels.get(i).id.equals(channel2)) {
-              index2 = i;
-            }
+    // Let's compute the coordinates of the pixel blocks in y
+    // We also make the optimal tile height match the max size of a block in Y
+    for (PixelBlock[] blocks : cztToPixelBlocks.values()) {
+      int yStart = 0;
+      for (PixelBlock block: blocks) {
+        if (block != null) {
+          block.yStart = yStart;
+          if ((block.length % bytesPerLine)!=0) {
+            LOGGER.error("A pixel block contains a partial line.");
           }
-          return index1.compareTo(index2);
+          int nLines = block.length/bytesPerLine;
+          if (nLines > optimalTileHeight) {
+            optimalTileHeight = nLines;
+          }
+          yStart+=block.length/bytesPerLine;
+          block.yEnd = yStart; // start of the next block = end (excluded) of the previous block
         }
-
-        return block1.compareTo(block2);
       }
-    });
+    }
 
-    if (LOGGER.isTraceEnabled()) {
-      for (int i=0; i<pixelUIDs.length; i++) {
-        LOGGER.trace("pixel UID #{} = {}", i, pixelUIDs[i]);
-      }
+    // Make sure that an optimal tile does not go beyond 2 Gbytes -> that probably shouldn't happen
+    if ((long)optimalTileHeight*(long)m.sizeX*(long)bpp > Integer.MAX_VALUE) {
+      optimalTileHeight = Integer.MAX_VALUE / (bpp  * m.sizeX) - 1;
     }
 
     // populate original metadata
@@ -1466,34 +1464,48 @@ public class OIRReader extends FormatReader {
     return true;
   }
 
-  private byte[] readPixelBlock(RandomAccessInputStream s, long offset) throws IOException {
-    s.order(true);
-    s.seek(offset);
+  private void copyPixelBlock(PixelBlock block,
+                              byte[] buf, int offsetBuf, int offsetBlock,
+                              int nBytesPerLinesBuf, int nBytesPerLineBlock, int nLines) throws IOException {
 
-    int checkLength = s.readInt();
-    int check = s.readInt();
-    if (check != 3) {
+    try (RandomAccessInputStream s = new RandomAccessInputStream(block.file, BUFFER_SIZE)) {
+
+      long offset = block.offset;
+      s.order(true);
       s.seek(offset);
-      return null;
+
+      int checkLength = s.readInt();
+      int check = s.readInt();
+      if (check != 3) {
+        s.seek(offset);
+        return;
+      }
+
+      s.skipBytes(8); // currently unknown
+
+      int uidLength = s.readInt();
+      String uid = s.readString(uidLength);
+      LOGGER.debug("reading pixel block with uid = {}", uid);
+      if (checkLength != uidLength + 12) {
+        s.seek(offset);
+        return;
+      }
+
+      int pixelBytes = s.readInt();
+      s.skipBytes(4); // currently unknown
+      s.skipBytes(offsetBlock);
+
+      if (nBytesPerLineBlock==nBytesPerLinesBuf) {
+        // Full line copy, no skip needed
+        s.read(buf, offsetBuf, nBytesPerLineBlock*nLines);
+      } else {
+        for (int i = 0; i < nLines; i++) {
+          s.read(buf, offsetBuf, nBytesPerLinesBuf);
+          s.skipBytes(nBytesPerLineBlock-nBytesPerLinesBuf);
+          offsetBuf += nBytesPerLinesBuf;
+        }
+      }
     }
-
-    s.skipBytes(8); // currently unknown
-
-    int uidLength = s.readInt();
-    String uid = s.readString(uidLength);
-    LOGGER.debug("reading pixel block with uid = {}", uid);
-    if (checkLength != uidLength + 12) {
-      s.seek(offset);
-      return null;
-    }
-
-    int pixelBytes = s.readInt();
-
-    s.skipBytes(4); // currently unknown
-
-    byte[] pixels = new byte[pixelBytes];
-    s.readFully(pixels);
-    return pixels;
   }
 
   private int getZ(String uid) {
@@ -1514,12 +1526,30 @@ public class OIRReader extends FormatReader {
     return Integer.parseInt(tSubString.substring(0, tSubString.indexOf("_"))) - 1;
   }
 
+  private int getC(String uid) {
+    String toParse = uid.substring(0,uid.lastIndexOf("_"));
+    String channelSignature = toParse.substring(toParse.lastIndexOf("_")+1);
+    for (int iCh = 0; iCh<channels.size(); iCh++) {     // Not ideal
+      if (channels.get(iCh).id.equals(channelSignature)) return iCh;
+    }
+    LOGGER.error("Unrecognized channel signature "+channelSignature);
+    return -1; // Unrecognized signature
+  }
+
   private int getBlock(String uid) {
     int index = uid.lastIndexOf("_");
     if (index < 0) {
       return 0;
     }
     return Integer.parseInt(uid.substring(index + 1));
+  }
+
+  private int getL(String uid) {
+    // for example l001z001t001_0_1_93e4632f-0342-4d98-bdc1-4ce305b92525_46
+    // Assumes l is always first is the uid...
+    if (!uid.startsWith("l")) return 0;
+    // ... and has 3 digits
+    return Integer.parseInt(uid.substring(1, 4)) - 1;
   }
 
   private boolean isCurrentFile(String file) {
@@ -1570,6 +1600,42 @@ public class OIRReader extends FormatReader {
     public String file;
     public long offset;
     public int length;
+    public int yStart;
+    public int yEnd;
+  }
+
+  /**
+   * This is a class that wraps three numbers c,z,t and an object
+   * can be used as a key in a hashmap.
+   * <p>
+   * It's used to create a Map from CZTKey to PixelBlocks
+   */
+  private static class CZTKey {
+    public final int c,z,t;
+    public final int hashCode;
+    public CZTKey(int c, int z, int t) {
+      this.c = c;
+      this.z = z;
+      this.t = t;
+      hashCode = Objects.hash(c,z,t);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      CZTKey that = (CZTKey) o;
+      return (that.z == this.z)&&(that.c == this.c)&&(that.t == this.t);
+    }
+    @Override
+    public int hashCode() {
+      return hashCode;
+    }
+
+    @Override
+    public String toString() {
+      return "C:"+c+"; Z:"+z+"; T:"+t;
+    }
   }
 
 }
