@@ -1144,31 +1144,31 @@ public class ImageInfo {
         newArgs[idx] = scanner.nextLine();
         System.out.println("====% " + newArgs[idx]);
         try {
-        	 new ImageInfo().testRead(newArgs);
+          new ImageInfo().testRead(newArgs);
         }
         catch (FormatException e) {
-        	 LOGGER.error("Caught FormatException. " + e.getMessage());
-        	 exitCode = 1;
-        	 continue;
+          LOGGER.error("Caught FormatException. " + e.getMessage());
+          exitCode = 1;
+          continue;
         }
         catch (IOException e) {
-        	 LOGGER.error("Caught IOException. " + e.getMessage());
-        	 exitCode = 1;
-        	 continue;
+          LOGGER.error("Caught IOException. " + e.getMessage());
+          exitCode = 1;
+          continue;
         }
         catch (ServiceException e) {
-        	 LOGGER.error("Caught ServiceException. " + e.getMessage());
-        	 exitCode = 1;
-        	 continue;
+          LOGGER.error("Caught ServiceException. " + e.getMessage());
+          exitCode = 1;
+          continue;
         }
       }
       scanner.close();
     }
     else {
       if (!new ImageInfo().testRead(args)) System.exit(1);
-   }
+    }
 
-   System.exit(exitCode);
+    System.exit(exitCode);
   }
 }
 
