@@ -988,7 +988,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
           opticalSequence.children.add(illuminationTypeCodes);
 
           DicomTag wavelength = new DicomTag(ILLUMINATION_WAVELENGTH, FL);
-          Length wave = r.getChannelEmissionWavelength(pyramid, c);
+          Length wave = fixUnits(r.getChannelEmissionWavelength(pyramid, c));
           wavelength.value = new float[] {wave == null ? 1f : wave.value(UNITS.NM).floatValue()};
           opticalSequence.children.add(wavelength);
 
@@ -1019,7 +1019,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
         DicomTag sliceThickness = new DicomTag(SLICE_THICKNESS, DS);
         DicomTag sliceSpace = new DicomTag(SLICE_SPACING, DS);
-        Length physicalZ = r.getPixelsPhysicalSizeZ(pyramid);
+        Length physicalZ = fixUnits(r.getPixelsPhysicalSizeZ(pyramid));
         if (physicalZ != null) {
           sliceThickness.value = padString(String.valueOf(physicalZ.value(UNITS.MM)));
         }
@@ -1032,8 +1032,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         pixelMeasuresSequence.children.add(sliceSpace);
 
         DicomTag pixelSpacing = new DicomTag(PIXEL_SPACING, DS);
-        Length physicalX = r.getPixelsPhysicalSizeX(pyramid);
-        Length physicalY = r.getPixelsPhysicalSizeY(pyramid);
+        Length physicalX = fixUnits(r.getPixelsPhysicalSizeX(pyramid));
+        Length physicalY = fixUnits(r.getPixelsPhysicalSizeY(pyramid));
         String px = physicalX == null ? "1" : String.valueOf(physicalX.value(UNITS.MM));
         String py = physicalY == null ? "1" : String.valueOf(physicalY.value(UNITS.MM));
         pixelSpacing.value = padString(px + "\\" + py);
@@ -2074,6 +2074,18 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     s[0] = (short) ((v >> 16) & 0xffff);
     s[1] = (short) (v & 0xffff);
     return s;
+  }
+
+  /**
+   * Check if the unit for the given Length is "pixel"
+   * or "referenceframe". These two units cannot be assigned to
+   * proper physical units (e.g. mm), so need to be handled specially.
+   */
+  private Length fixUnits(Length size) {
+    if (size == null || size.unit() == UNITS.PIXEL || size.unit() == UNITS.REFERENCEFRAME) {
+      return null;
+    }
+    return size;
   }
 
   private TiffRational getPhysicalSize(Length size) {
