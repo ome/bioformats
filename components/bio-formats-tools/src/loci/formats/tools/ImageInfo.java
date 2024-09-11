@@ -77,7 +77,6 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
-import loci.formats.UnknownFormatException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1133,6 +1132,7 @@ public class ImageInfo {
   public static void main(String[] args) throws Exception {
     DebugTools.enableLogging("INFO");
 
+    int exitCode = 0;
     List<String> argsList = Arrays.asList(args);
     int idx = argsList.indexOf("-");
 
@@ -1144,11 +1144,22 @@ public class ImageInfo {
         newArgs[idx] = scanner.nextLine();
         System.out.println("====% " + newArgs[idx]);
         try {
-        	new ImageInfo().testRead(newArgs);
+        	 new ImageInfo().testRead(newArgs);
         }
-        catch (UnknownFormatException e) {
-			LOGGER.warn("Unknown file format: " + newArgs[idx]);
-        	continue;
+        catch (FormatException e) {
+        	 LOGGER.error("Caught FormatException. " + e.getMessage());
+        	 exitCode = 1;
+        	 continue;
+        }
+        catch (IOException e) {
+        	 LOGGER.error("Caught IOException. " + e.getMessage());
+        	 exitCode = 1;
+        	 continue;
+        }
+        catch (ServiceException e) {
+        	 LOGGER.error("Caught ServiceException. " + e.getMessage());
+        	 exitCode = 1;
+        	 continue;
         }
       }
       scanner.close();
@@ -1156,7 +1167,8 @@ public class ImageInfo {
     else {
       if (!new ImageInfo().testRead(args)) System.exit(1);
    }
-  }
 
+   System.exit(exitCode);
+  }
 }
 
