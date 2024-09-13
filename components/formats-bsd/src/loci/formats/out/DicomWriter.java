@@ -2082,7 +2082,12 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
    * proper physical units (e.g. mm), so need to be handled specially.
    */
   private Length fixUnits(Length size) {
-    if (size == null || size.unit() == UNITS.PIXEL || size.unit() == UNITS.REFERENCEFRAME) {
+    if (size == null) {
+      return null;
+    }
+    if (size.unit() == UNITS.PIXEL || size.unit() == UNITS.REFERENCEFRAME) {
+      LOGGER.warn("Found physical length '{}' in relative units '{}'; this value will be lost",
+        size.value(), size.unit());
       return null;
     }
     return size;
