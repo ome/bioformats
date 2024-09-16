@@ -223,7 +223,11 @@ public class CV7000Reader extends FormatReader {
       reversePlaneLookup = null;
       extraFiles = null;
       acquiredWells.clear();
-      allFiles.clear();
+      if (allFiles != null) {
+          allFiles.clear();
+      } else {
+          allFiles = new ArrayList<String>();
+      }
     }
   }
 
