@@ -68,6 +68,8 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 import loci.formats.dicom.DicomAttribute;
 import loci.formats.dicom.DicomFileInfo;
@@ -130,6 +132,8 @@ public class DicomReader extends SubResolutionFormatReader {
 
   private List<DicomTag> tags;
 
+  private transient String currentTileFile = null;
+  private transient RandomAccessInputStream currentTileStream = null;
   private Set<Integer> privateContentHighWords = new HashSet<Integer>();
 
   // -- Constructor --
@@ -374,12 +378,17 @@ public class DicomReader extends SubResolutionFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    StopWatch watch = stopWatch();
+
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
     Region currentRegion = new Region(x, y, w, h);
 
     List<DicomTile> tiles = getTileList(no, currentRegion, false);
+    watch.stop("openBytes setup, w=" + w + ", h=" + h);
+    watch.start();
     for (DicomTile tile : tiles) {
+      StopWatch tileWatch = stopWatch();
       byte[] tileBuf = new byte[tile.region.width * tile.region.height * pixel];
       Region intersection = tile.region.intersection(currentRegion);
       getTile(tile, tileBuf, intersection.x - tile.region.x, intersection.y - tile.region.y,
@@ -390,9 +399,13 @@ public class DicomReader extends SubResolutionFormatReader {
         int destIndex = pixel * ((intersection.y - y + row) * w + (intersection.x - x));
         System.arraycopy(tileBuf, srcIndex, buf, destIndex, intersection.width * pixel);
       }
+
+      tileWatch.stop("copy tile");
     }
+    watch.stop("scanned all tiles");
 
     if (inverted) {
+      watch.start();
       // pixels are stored such that white -> 0; invert the values so that
       // white -> 255 (or 65535)
       if (bpp == 1) {
@@ -411,6 +424,7 @@ public class DicomReader extends SubResolutionFormatReader {
           DataTools.unpackBytes(maxPixelValue - s, buf, i, 2, little);
         }
       }
+      watch.stop("inverted pixel values");
     }
 
     // NB: do *not* apply the rescale function
@@ -452,6 +466,11 @@ public class DicomReader extends SubResolutionFormatReader {
       concatenationNumber = null;
       edf = false;
       tags = null;
+      currentTileFile = null;
+      if (currentTileStream != null) {
+        currentTileStream.close();
+      }
+      currentTileStream = null;
       privateContentHighWords.clear();
     }
   }
@@ -462,6 +481,9 @@ public class DicomReader extends SubResolutionFormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    StopWatch watch = stopWatch();
+
     if (in != null) {
       in.close();
     }
@@ -469,8 +491,14 @@ public class DicomReader extends SubResolutionFormatReader {
     in.order(true);
     CoreMetadata m = core.get(0, 0);
 
+    watch.stop("open selected file");
+
     // look for companion files
+    watch.start();
     attachCompanionFiles();
+    watch.stop("companion file scan");
+
+    watch.start();
 
     m.littleEndian = true;
     long location = 0;
@@ -517,7 +545,9 @@ public class DicomReader extends SubResolutionFormatReader {
     int opticalChannels = 0;
 
     List<Integer> opticalPathIDs = new ArrayList<Integer>();
+    watch.stop("header check and variable init");
 
+    watch.start();
     while (decodingTags) {
       if (in.getFilePointer() + 4 >= in.length()) {
         break;
@@ -767,9 +797,11 @@ public class DicomReader extends SubResolutionFormatReader {
         decodingTags = false;
       }
     }
+    watch.stop("tag decoding");
     if (imagesPerFile == 0) imagesPerFile = 1;
 
     if (new Location(currentId).getName().equals("DICOMDIR")) {
+      watch.start();
       String parent = new Location(currentId).getAbsoluteFile().getParent();
       Integer[] fileKeys = fileList.keySet().toArray(new Integer[0]);
       Arrays.sort(fileKeys);
@@ -790,8 +822,10 @@ public class DicomReader extends SubResolutionFormatReader {
       tilePositions = new HashMap<Integer, List<DicomTile>>();
       zOffsets = new HashMap<Integer, List<Double>>();
       core.clear();
+      watch.stop("DICOMDIR parsing");
     }
     else {
+      watch.start();
       if (m.sizeZ == 0) {
         m.sizeZ = 1;
       }
@@ -872,7 +906,10 @@ public class DicomReader extends SubResolutionFormatReader {
       LOGGER.info("Calculating image offsets");
 
       calculatePixelsOffsets(baseOffset);
+
+      watch.stop("tile and dimension calculation");
     }
+    watch.start();
     makeFileList();
 
     LOGGER.info("Populating metadata");
@@ -881,6 +918,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
+    watch.stop("assembled file list");
 
     // at this point, we have a list of all files to be grouped together
     // and have parsed tags from the current file
@@ -889,6 +927,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
     if (seriesCount > 1) {
       for (int i=0; i<seriesCount; i++) {
+        StopWatch seriesWatch = stopWatch();
         List<String> currentFileList = fileList.get(keys[i]);
         DicomFileInfo fileInfo = createFileInfo(currentFileList.get(0));
         zOffsets.put(i, fileInfo.zOffsets);
@@ -912,17 +951,22 @@ public class DicomReader extends SubResolutionFormatReader {
         fileInfo.positionZ = z;
         metadataInfo.add(fileInfo);
         tilePositions.put(i, positions);
+        seriesWatch.stop("populated series #" + i);
       }
     }
     else {
       List<String> allFiles = fileList.get(keys[0]);
       List<DicomFileInfo> infos = new ArrayList<DicomFileInfo>();
 
+      StopWatch singleSeriesWatch = stopWatch();
+
       // parse tags for each file
       for (String file : allFiles) {
         DicomFileInfo info = createFileInfo(file);
         infos.add(info);
       }
+      singleSeriesWatch.stop("created " + infos.size() + " file infos");
+      singleSeriesWatch.start();
 
       if (infos.size() > 1) {
         infos.sort(null);
@@ -1016,7 +1060,10 @@ public class DicomReader extends SubResolutionFormatReader {
         metadataInfo.add(infos.get(0));
         zOffsets.put(0, infos.get(0).zOffsets);
       }
+      singleSeriesWatch.stop("updated metadata from file infos");
     }
+
+    watch.start();
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
@@ -1086,6 +1133,7 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
     setSeries(0);
+    watch.stop("populated MetadataStore");
   }
 
   // -- Helper methods --
@@ -1093,6 +1141,7 @@ public class DicomReader extends SubResolutionFormatReader {
   // TODO: target for refactoring, this can possibly be combined with the
   // tag parsing loop that calls this
   private void addInfo(DicomTag info) throws IOException {
+    StopWatch infoWatch = stopWatch();
     CoreMetadata m = core.get(0, 0);
     m.littleEndian = in.isLittleEndian();
 
@@ -1237,6 +1286,7 @@ public class DicomReader extends SubResolutionFormatReader {
         addOriginalMetadata(key, info);
       }
     }
+    infoWatch.stop("addInfo attribute = " + info.attribute);
   }
 
   /**
@@ -1285,6 +1335,7 @@ public class DicomReader extends SubResolutionFormatReader {
    * Build a list of files that belong with the current file.
    */
   private void makeFileList() throws FormatException, IOException {
+    StopWatch fileScanWatch = stopWatch();
     LOGGER.info("Building file list");
 
     if (fileList == null && originalInstance != null && originalDate != null &&
@@ -1317,11 +1368,13 @@ public class DicomReader extends SubResolutionFormatReader {
           }
         }
       }
+      fileScanWatch.stop("finished file scanning");
     }
     else if (fileList == null || !isGroupFiles()) {
       fileList = new HashMap<Integer, List<String>>();
       fileList.put(0, new ArrayList<String>());
       fileList.get(0).add(new Location(currentId).getAbsolutePath());
+      fileScanWatch.stop("single file, no scanning needed");
     }
   }
 
@@ -1335,6 +1388,7 @@ public class DicomReader extends SubResolutionFormatReader {
   {
     String[] files = dir.list(true);
     if (files == null) return;
+    StopWatch directoryWatch = stopWatch();
     Arrays.sort(files);
     for (String f : files) {
       String file = new Location(dir, f).getAbsolutePath();
@@ -1343,6 +1397,7 @@ public class DicomReader extends SubResolutionFormatReader {
         addFileToList(file, checkSeries);
       }
     }
+    directoryWatch.stop("scanned directory " + dir);
   }
 
   /**
@@ -1351,6 +1406,8 @@ public class DicomReader extends SubResolutionFormatReader {
   private void addFileToList(String file, boolean checkSeries)
     throws FormatException, IOException
   {
+    StopWatch addFileWatch = stopWatch();
+
     int currentX = 0, currentY = 0;
     int fileSeries = -1;
     String thisSpecimen = null;
@@ -1430,6 +1487,9 @@ public class DicomReader extends SubResolutionFormatReader {
             stream.seek(tag.getEndPointer());
         }
       }
+    }
+    finally {
+      addFileWatch.stop("checked tags from " + file);
     }
 
     LOGGER.debug("file = {}", file);
@@ -1576,6 +1636,18 @@ public class DicomReader extends SubResolutionFormatReader {
     }
   }
 
+  private RandomAccessInputStream getStream(String path) throws IOException {
+    if (path.equals(currentTileFile)) {
+      return currentTileStream;
+    }
+    if (currentTileStream != null) {
+      currentTileStream.close();
+    }
+    currentTileFile = path;
+    currentTileStream = new RandomAccessInputStream(path);
+    return currentTileStream;
+  }
+
   /**
    * Get a Codec that can be used to decompress the given tile.
     */
@@ -1635,6 +1707,12 @@ public class DicomReader extends SubResolutionFormatReader {
         if (firstTileOnly) {
           break;
         }
+
+        // if the requested region is entirely contained within the decoded region,
+        // stop looking for tiles to read
+        if (encloses(tile.region, boundingBox)) {
+          break;
+        }
       }
     }
     return tileList;
@@ -1649,153 +1727,163 @@ public class DicomReader extends SubResolutionFormatReader {
     int ec = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int bytes = tile.region.width * tile.region.height * bpp * ec;
-    try (RandomAccessInputStream stream = new RandomAccessInputStream(tile.file)) {
-      if (tile.fileOffset >= stream.length()) {
-        LOGGER.error("attempted to read beyond end of file ({}, {})", tile.fileOffset, tile.file);
-        return;
-      }
-      LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
-      stream.seek(tile.fileOffset);
 
-      Codec codec = getTileCodec(tile);
-      CodecOptions options = getTileCodecOptions(tile);
+    RandomAccessInputStream stream = getStream(tile.file);
+    if (tile.fileOffset >= stream.length()) {
+      LOGGER.error("attempted to read beyond end of file ({}, {})", tile.fileOffset, tile.file);
+      return;
+    }
+    LOGGER.debug("reading from offset = {}, file = {}", tile.fileOffset, tile.file);
+    stream.seek(tile.fileOffset);
 
-      if (tile.isRLE) {
-        // plane is compressed using run-length encoding
-        for (int c=0; c<ec; c++) {
-          byte[] t = null;
+    Codec codec = getTileCodec(tile);
+    CodecOptions options = getTileCodecOptions(tile);
 
-          if (bpp > 1) {
-            int plane = bytes / (bpp * ec);
-            byte[][] tmp = new byte[bpp][];
-            long start = stream.getFilePointer();
-            for (int i=0; i<bpp; i++) {
-              // one or more extra 0 bytes can be inserted between
-              // the planes, but there isn't a good way to know in advance
-              // only way to know is to see if decompressing produces the
-              // correct number of bytes
+    if (tile.isRLE) {
+      // plane is compressed using run-length encoding
+      for (int c=0; c<ec; c++) {
+        StopWatch packbitsChannelWatch = stopWatch();
+        byte[] t = null;
+
+        if (bpp > 1) {
+          int plane = bytes / (bpp * ec);
+          byte[][] tmp = new byte[bpp][];
+          long start = stream.getFilePointer();
+          for (int i=0; i<bpp; i++) {
+            // one or more extra 0 bytes can be inserted between
+            // the planes, but there isn't a good way to know in advance
+            // only way to know is to see if decompressing produces the
+            // correct number of bytes
+            tmp[i] = codec.decompress(stream, options);
+            if (i > 0 && tmp[i].length > options.maxBytes) {
+              stream.seek(start);
               tmp[i] = codec.decompress(stream, options);
-              if (i > 0 && tmp[i].length > options.maxBytes) {
-                stream.seek(start);
-                tmp[i] = codec.decompress(stream, options);
-              }
-              if (!tile.last || i < bpp - 1) {
-                start = stream.getFilePointer();
-                while (stream.read() == 0);
-                long end = stream.getFilePointer();
-                stream.seek(end - 1);
-              }
             }
-            t = new byte[bytes / ec];
-            for (int i=0; i<plane; i++) {
-              for (int j=0; j<bpp; j++) {
-                int byteIndex = isLittleEndian() ? bpp - j - 1 : j;
-                if (i < tmp[byteIndex].length) {
-                  t[i * bpp + j] = tmp[byteIndex][i];
-                }
-              }
-            }
-          }
-          else {
-            t = codec.decompress(stream, options);
-            if (t.length < (bytes / ec)) {
-              byte[] tmp = t;
-              t = new byte[bytes / ec];
-              System.arraycopy(tmp, 0, t, 0, tmp.length);
-            }
-            if (!tile.last || c < ec - 1) {
+            if (!tile.last || i < bpp - 1) {
+              start = stream.getFilePointer();
               while (stream.read() == 0);
-              stream.seek(stream.getFilePointer() - 1);
+              long end = stream.getFilePointer();
+              stream.seek(end - 1);
             }
           }
-
-          int rowLen = w * bpp;
-          int srcRowLen = tile.region.width * bpp;
-
-          for (int row=0; row<h; row++) {
-            int src = (row + y) * srcRowLen + x * bpp;
-            int dest = (h * c + row) * rowLen;
-            int len = (int) Math.min(rowLen, t.length - src - 1);
-            if (len < 0) break;
-            System.arraycopy(t, src, buf, dest, len);
+          t = new byte[bytes / ec];
+          for (int i=0; i<plane; i++) {
+            for (int j=0; j<bpp; j++) {
+              int byteIndex = isLittleEndian() ? bpp - j - 1 : j;
+              if (i < tmp[byteIndex].length) {
+                t[i * bpp + j] = tmp[byteIndex][i];
+              }
+            }
           }
         }
-      }
-      else if (tile.isJPEG || tile.isJP2K) {
-        // plane is compressed using JPEG or JPEG-2000
-        byte[] b = new byte[(int) (tile.endOffset - stream.getFilePointer())];
-        stream.read(b);
-        if (b.length < 8) {
-          return;
-        }
-
-        if (b[2] != (byte) 0xff) {
-          byte[] tmp = new byte[b.length + 1];
-          tmp[0] = b[0];
-          tmp[1] = b[1];
-          tmp[2] = (byte) 0xff;
-          System.arraycopy(b, 2, tmp, 3, b.length - 2);
-          b = tmp;
-        }
-
-        int pt = b.length - 2;
-        while (pt >= 0 && (b[pt] != (byte) 0xff || b[pt + 1] != (byte) 0xd9)) {
-          pt--;
-        }
-        if (pt < 0) {
-          byte[] tmp = b;
-          b = new byte[tmp.length + 2];
-          System.arraycopy(tmp, 0, b, 0, tmp.length);
-          b[b.length - 2] = (byte) 0xff;
-          b[b.length - 1] = (byte) 0xd9;
-        }
-        else if (pt < b.length - 2) {
-          byte[] tmp = b;
-          b = new byte[pt + 2];
-          System.arraycopy(tmp, 0, b, 0, b.length);
-        }
-
-        try {
-          b = codec.decompress(b, options);
-        }
-        catch (NullPointerException e) {
-          LOGGER.debug("Could not read empty or invalid tile", e);
-          return;
+        else {
+          t = codec.decompress(stream, options);
+          if (t.length < (bytes / ec)) {
+            byte[] tmp = t;
+            t = new byte[bytes / ec];
+            System.arraycopy(tmp, 0, t, 0, tmp.length);
+          }
+          if (!tile.last || c < ec - 1) {
+            while (stream.read() == 0);
+            stream.seek(stream.getFilePointer() - 1);
+          }
         }
 
         int rowLen = w * bpp;
         int srcRowLen = tile.region.width * bpp;
 
-        if (isInterleaved()) {
-          rowLen *= ec;
-          srcRowLen *= ec;
-          for (int row=0; row<h; row++) {
-            System.arraycopy(b, (row + y) * srcRowLen + x * bpp * ec,
-              buf, row * rowLen, rowLen);
-          }
+        for (int row=0; row<h; row++) {
+          int src = (row + y) * srcRowLen + x * bpp;
+          int dest = (h * c + row) * rowLen;
+          int len = (int) Math.min(rowLen, t.length - src - 1);
+          if (len < 0) break;
+          System.arraycopy(t, src, buf, dest, len);
         }
-        else {
-          int srcPlane = originalY * srcRowLen;
-          for (int c=0; c<ec; c++) {
-            for (int row=0; row<h; row++) {
-              System.arraycopy(b, c * srcPlane + (row + y) * srcRowLen + x * bpp,
-                buf, h * rowLen * c + row * rowLen, rowLen);
-            }
-          }
-        }
+        packbitsChannelWatch.stop("decoded packbits channel #" + c);
       }
-      else if (tile.isDeflate) {
-        // TODO
-        throw new UnsupportedCompressionException(
-          "Deflate data is not supported.");
+    }
+    else if (tile.isJPEG || tile.isJP2K) {
+      // plane is compressed using JPEG or JPEG-2000
+      byte[] b = new byte[(int) (tile.endOffset - stream.getFilePointer())];
+      stream.read(b);
+      if (b.length < 8) {
+        return;
+      }
+      StopWatch jpegWatch = stopWatch();
+
+      if (b[2] != (byte) 0xff) {
+        byte[] tmp = new byte[b.length + 1];
+        tmp[0] = b[0];
+        tmp[1] = b[1];
+        tmp[2] = (byte) 0xff;
+        System.arraycopy(b, 2, tmp, 3, b.length - 2);
+        b = tmp;
+      }
+
+      int pt = b.length - 2;
+      while (pt >= 0 && (b[pt] != (byte) 0xff || b[pt + 1] != (byte) 0xd9)) {
+        pt--;
+      }
+      if (pt < 0) {
+        byte[] tmp = b;
+        b = new byte[tmp.length + 2];
+        System.arraycopy(tmp, 0, b, 0, tmp.length);
+        b[b.length - 2] = (byte) 0xff;
+        b[b.length - 1] = (byte) 0xd9;
+      }
+      else if (pt < b.length - 2) {
+        byte[] tmp = b;
+        b = new byte[pt + 2];
+        System.arraycopy(tmp, 0, b, 0, b.length);
+      }
+
+      try {
+        b = codec.decompress(b, options);
+      }
+      catch (NullPointerException e) {
+        LOGGER.debug("Could not read empty or invalid tile", e);
+        return;
+      }
+      finally {
+        jpegWatch.stop("decompressed (jpeg = " + tile.isJPEG + ")");
+      }
+      jpegWatch.start();
+
+      int rowLen = w * bpp;
+      int srcRowLen = tile.region.width * bpp;
+
+      if (isInterleaved()) {
+        rowLen *= ec;
+        srcRowLen *= ec;
+        for (int row=0; row<h; row++) {
+          System.arraycopy(b, (row + y) * srcRowLen + x * bpp * ec,
+            buf, row * rowLen, rowLen);
+        }
       }
       else {
-        // plane is not compressed
-
-        int width = tile.region.width;
-        int height = tile.region.height;
-        readPlane(stream, x, y, w, h, 0, width, height, buf);
+        int srcPlane = originalY * srcRowLen;
+        for (int c=0; c<ec; c++) {
+          for (int row=0; row<h; row++) {
+            System.arraycopy(b, c * srcPlane + (row + y) * srcRowLen + x * bpp,
+              buf, h * rowLen * c + row * rowLen, rowLen);
+          }
+        }
       }
+      jpegWatch.stop("repacked tile (jpeg = " + tile.isJPEG + ")");
+    }
+    else if (tile.isDeflate) {
+      // TODO
+      throw new UnsupportedCompressionException(
+        "Deflate data is not supported.");
+    }
+    else {
+      StopWatch rawWatch = stopWatch();
+      // plane is not compressed
+
+      int width = tile.region.width;
+      int height = tile.region.height;
+        readPlane(stream, x, y, w, h, 0, width, height, buf);
+        rawWatch.stop("read raw tile");
     }
   }
 
@@ -1855,7 +1943,10 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
 
+    List<DicomTile> currentTilePositions = tilePositions.get(getCoreIndex());
+
     long offset = baseOffset;
+    int bufferSize = 4096;
     for (int i=0; i<imagesPerFile; i++) {
       if (isRLE) {
         if (i == 0) in.seek(baseOffset);
@@ -1891,7 +1982,7 @@ public class DicomReader extends SubResolutionFormatReader {
         in.seek(offset);
         byte secondCheck = isJPEG ? (byte) 0xd8 : (byte) 0x4f;
 
-        byte[] buf = new byte[(int) Math.min(8192, in.length() - in.getFilePointer())];
+        byte[] buf = new byte[(int) Math.min(bufferSize, in.length() - in.getFilePointer())];
         int n = in.read(buf);
         boolean found = false;
         boolean endFound = false;
@@ -1905,6 +1996,7 @@ public class DicomReader extends SubResolutionFormatReader {
                   found = true;
                   offset = in.getFilePointer() + q - n;
                 }
+                bufferSize = (int) Math.max(bufferSize, in.getFilePointer() - offset - (bufferSize - q));
                 break;
               }
             }
@@ -1922,18 +2014,19 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       else offset = baseOffset + (long) plane*i;
 
-      tilePositions.get(getCoreIndex()).get(i).fileOffset = offset;
-      tilePositions.get(getCoreIndex()).get(i).last = i == imagesPerFile - 1;
+      DicomTile currentTile = currentTilePositions.get(i);
+      currentTile.fileOffset = offset;
+      currentTile.last = i == imagesPerFile - 1;
       if (i > 0) {
-        tilePositions.get(getCoreIndex()).get(i - 1).endOffset = tilePositions.get(getCoreIndex()).get(i).fileOffset;
+        currentTilePositions.get(i - 1).endOffset = currentTile.fileOffset;
       }
       if (i == imagesPerFile - 1) {
-        tilePositions.get(getCoreIndex()).get(i).endOffset = in.length();
+        currentTile.endOffset = in.length();
       }
       if (!zOffsets.containsKey(getCoreIndex())) {
         zOffsets.put(getCoreIndex(), new ArrayList<Double>());
       }
-      Double z = tilePositions.get(getCoreIndex()).get(i).zOffset;
+      Double z = currentTile.zOffset;
       if (!zOffsets.get(getCoreIndex()).contains(z)) {
         zOffsets.get(getCoreIndex()).add(z);
       }
@@ -1968,6 +2061,10 @@ public class DicomReader extends SubResolutionFormatReader {
       return info;
     }
     return new DicomFileInfo(new Location(file).getAbsolutePath());
+  }
+
+  private boolean encloses(Region a, Region b) {
+    return a.intersection(b).equals(b);
   }
 
   private void updateCoreMetadata(CoreMetadata ms) {
@@ -2072,6 +2169,10 @@ public class DicomReader extends SubResolutionFormatReader {
    */
   public List<DicomTag> getTags() {
     return tags;
+  }
+
+  protected Slf4JStopWatch stopWatch() {
+    return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
   }
 
 }

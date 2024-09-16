@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -77,6 +78,9 @@ import loci.formats.tiff.TiffSaver;
 import ome.xml.model.enums.DimensionOrder;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 import static loci.formats.dicom.DicomAttribute.*;
 import static loci.formats.dicom.DicomVR.*;
@@ -146,6 +150,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
   public void setExtraMetadata(String tagSource) {
     FormatTools.assertId(currentId, false, 1);
 
+    StopWatch metadataWatch = stopWatch();
+
     // get the provider (parser) from the source name
     // uses the file extension, this might need improvement
 
@@ -166,6 +172,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         LOGGER.error("Could not parse extra metadata: " + tagSource, e);
       }
     }
+    metadataWatch.stop("parsed extra metadata from " + tagSource);
   }
 
   /**
@@ -196,22 +203,30 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
   @Override
   public void setSeries(int s) throws FormatException {
     super.setSeries(s);
+    StopWatch seriesWatch = stopWatch();
     try {
       openFile(series, resolution);
     }
     catch (IOException e) {
       LOGGER.error("Could not open file for series #" + s, e);
     }
+    finally {
+      seriesWatch.stop("setSeries(" + s + ")");
+    }
   }
 
   @Override
   public void setResolution(int r) {
     super.setResolution(r);
+    StopWatch resolutionWatch = stopWatch();
     try {
       openFile(series, resolution);
     }
     catch (IOException e) {
       LOGGER.error("Could not open file for series #" + series + ", resolution #" + r, e);
+    }
+    finally {
+      resolutionWatch.stop("setResolution(" + r + ")");
     }
   }
 
@@ -236,6 +251,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       series, resolution, no, x, y);
 
     MetadataRetrieve r = getMetadataRetrieve();
+
+    StopWatch precompressedWatch = stopWatch();
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
@@ -309,6 +326,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       out.writeBytes(padString(String.valueOf(
           tileCountX * tileCountY * sizeZ * r.getChannelCount(series))));
     }
+    precompressedWatch.stop("precompressed tile setup");
+
+    precompressedWatch.start();
 
     out.seek(out.length());
     long start = out.getFilePointer();
@@ -333,6 +353,10 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if (pad) {
       out.writeByte(0);
     }
+
+    precompressedWatch.stop("wrote precompressed tile");
+
+    precompressedWatch.start();
 
     // update the IFD to include this tile
     int xTiles = (int) Math.ceil((double) getSizeX() / tileWidth[resolutionIndex]);
@@ -374,6 +398,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       end.elementLength = 0;
       writeTag(end);
     }
+    precompressedWatch.stop("updated IFD");
   }
 
   /**
@@ -397,6 +422,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       throw new FormatException("Tile too small, expected " + thisTileWidth + "x" + thisTileHeight +
         ". Setting the tile size to " + getSizeX() + "x" + getSizeY() + " or smaller may work.");
     }
+    StopWatch tileWatch = stopWatch();
     checkPixelCount(false);
 
     boolean first = x == 0 && y == 0;
@@ -467,10 +493,14 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         }
       }
     }
+    tileWatch.stop("setup tile writing");
+
+    tileWatch.start();
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
       r.getPixelsType(series).toString()));
+    int samplesPerPixel = getSamplesPerPixel();
 
     out.seek(out.length());
     long start = out.getFilePointer();
@@ -483,9 +513,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if ((x + w == getSizeX() && w < thisTileWidth) ||
       (y + h == getSizeY() && h < thisTileHeight))
     {
-      if (interleaved || getSamplesPerPixel() == 1) {
-        int srcRowLen = w * bytesPerPixel * getSamplesPerPixel();
-        int destRowLen = thisTileWidth * bytesPerPixel * getSamplesPerPixel();
+      if (interleaved || samplesPerPixel == 1) {
+        int srcRowLen = w * bytesPerPixel * samplesPerPixel;
+        int destRowLen = thisTileWidth * bytesPerPixel * samplesPerPixel;
         paddedBuf = new byte[thisTileHeight * destRowLen];
 
         for (int row=0; row<h; row++) {
@@ -495,9 +525,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       else {
         int srcRowLen = w * bytesPerPixel;
         int destRowLen = thisTileWidth * bytesPerPixel;
-        paddedBuf = new byte[thisTileHeight * destRowLen * getSamplesPerPixel()];
+        paddedBuf = new byte[thisTileHeight * destRowLen * samplesPerPixel];
 
-        for (int c=0; c<getSamplesPerPixel(); c++) {
+        for (int c=0; c<samplesPerPixel; c++) {
           for (int row=0; row<h; row++) {
             int src = srcRowLen * ((c * h) + row);
             int dest = destRowLen * ((c * thisTileHeight) + row);
@@ -511,18 +541,24 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     }
     if (!isInterleaved()) {
       byte[] interleavedBuf = new byte[paddedBuf.length];
-      for (int c=0; c<getSamplesPerPixel(); c++) {
-        for (int px=0; px<thisTilePixels; px++) {
+      for (int c=0; c<samplesPerPixel; c++) {
+        int channelIndex = c * bytesPerPixel;
+        int splitChannelIndex = thisTilePixels * channelIndex;
+        for (int px=0, pixelIndex=0; px<thisTilePixels; px++, pixelIndex+=bytesPerPixel) {
+          int interleavedPixelIndex = pixelIndex * samplesPerPixel;
           for (int b=0; b<bytesPerPixel; b++) {
-            interleavedBuf[px * getSamplesPerPixel() * bytesPerPixel + c * bytesPerPixel + b] = paddedBuf[c * thisTilePixels * bytesPerPixel + px * bytesPerPixel + b];
+            interleavedBuf[interleavedPixelIndex + channelIndex + b] = paddedBuf[splitChannelIndex + pixelIndex + b];
           }
         }
       }
 
       paddedBuf = interleavedBuf;
     }
+    tileWatch.stop("repacked tile for compression");
 
     // now we actually compress and write the pixel data
+
+    tileWatch.start();
 
     // we need to know the tile index to write save the tile offset
     // in the IFD
@@ -575,7 +611,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       CodecOptions options = new CodecOptions(getCodecOptions());
       options.width = tileWidth[resolutionIndex];
       options.height = tileHeight[resolutionIndex];
-      options.channels = getSamplesPerPixel();
+      options.channels = samplesPerPixel;
       options.bitsPerSample = bytesPerPixel * 8;
       options.littleEndian = out.isLittleEndian();
       options.interleaved = true;
@@ -617,7 +653,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         writeTag(end);
       }
     }
-
+    tileWatch.stop("compressed and wrote tile");
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -648,6 +684,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       }
       out.close();
     }
+
+    StopWatch initWatch = stopWatch();
 
     checkPixelCount(true);
 
@@ -690,6 +728,9 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     String seriesInstanceUID = uids.getUID();
     String studyInstanceUID = uids.getUID();
 
+    initWatch.stop("setup data structures");
+    initWatch.start();
+
     for (int pyramid=0; pyramid<r.getImageCount(); pyramid++) {
       series = pyramid;
       int resolutionCount = 1;
@@ -697,6 +738,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         resolutionCount = ((IPyramidStore) r).getResolutionCount(pyramid);
       }
       for (int res=0; res<resolutionCount; res++) {
+        StopWatch resolutionWatch = stopWatch();
         instanceUIDValue = uids.getUID();
 
         resolution = res;
@@ -1363,15 +1405,18 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
             ifds[resolutionIndex][plane] = ifd;
           }
         }
+        resolutionWatch.stop("wrote metadata for series=" + pyramid + ", resolution=" + res);
       }
     }
     setSeries(0);
+    initWatch.stop("finished initialization");
   }
 
   /* @see loci.formats.FormatWriter#close() */
   @Override
   public void close() throws IOException {
     if (writeDualPersonality()) {
+      StopWatch ifdWatch = stopWatch();
       // write IFDs to the end of each file
 
       MetadataRetrieve r = getMetadataRetrieve();
@@ -1409,6 +1454,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
           out.writeInt((int) length);
         }
       }
+      ifdWatch.stop("wrote final IFDs");
     }
 
     super.close();
@@ -1509,39 +1555,44 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
   }
 
   private void writeTag(DicomTag tag) throws IOException {
+    writeTag(tag, out);
+  }
+
+  private void writeTag(DicomTag tag, RandomAccessOutputStream output) throws IOException {
+    StopWatch tagWatch = stopWatch();
     int tagCode = tag.attribute == null ? tag.tag : tag.attribute.getTag();
 
-    out.writeShort((short) ((tagCode & 0xffff0000) >> 16));
-    out.writeShort((short) (tagCode & 0xffff));
+    output.writeShort((short) ((tagCode & 0xffff0000) >> 16));
+    output.writeShort((short) (tagCode & 0xffff));
 
     if (tag.vr == IMPLICIT) {
-      out.writeInt(getStoredLength(tag));
+      output.writeInt(getStoredLength(tag));
     }
     else {
-      boolean order = out.isLittleEndian();
-      out.order(false);
-      out.writeShort(tag.vr.getCode());
-      out.order(order);
+      boolean order = output.isLittleEndian();
+      output.order(false);
+      output.writeShort(tag.vr.getCode());
+      output.order(order);
 
       if (tag.vr == OB || tag.vr == OW || tag.vr == SQ ||
         tag.vr == UN || tag.vr == UT || tag.vr == UC)
       {
-        out.writeShort((short) 0);
-        out.writeInt(getStoredLength(tag));
+        output.writeShort((short) 0);
+        output.writeInt(getStoredLength(tag));
       }
       else {
-        out.writeShort((short) getStoredLength(tag));
+        output.writeShort((short) getStoredLength(tag));
       }
 
       int resolutionIndex = getIndex(series, resolution);
       if (tag.attribute == TRANSFER_SYNTAX_UID) {
-        transferSyntaxPointer[resolutionIndex] = out.getFilePointer();
+        transferSyntaxPointer[resolutionIndex] = output.getFilePointer();
       }
       else if (tag.attribute == LOSSY_IMAGE_COMPRESSION_METHOD) {
-        compressionMethodPointer[resolutionIndex] = out.getFilePointer();
+        compressionMethodPointer[resolutionIndex] = output.getFilePointer();
       }
       else if (tag.attribute == FILE_META_INFO_GROUP_LENGTH) {
-        fileMetaLengthPointer = out.getFilePointer();
+        fileMetaLengthPointer = output.getFilePointer();
       }
       else if (tag.attribute == ROWS) {
         tileHeightPointer[resolutionIndex] = out.getFilePointer();
@@ -1556,7 +1607,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       // sequences with no items still need to write a SequenceDelimitationItem below
       if (tag.children.size() == 0 && tag.value == null && tag.vr != SQ) {
         if (tag.attribute != PIXEL_DATA) {
-          out.skipBytes(tag.elementLength);
+          output.skipBytes(tag.elementLength);
         }
         return;
       }
@@ -1607,27 +1658,27 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         }
         switch (tag.attribute) {
           case OPTICAL_PATH_ID:
-            planeOffsets[resolutionIndex][currentPlane].cOffset = out.getFilePointer();
+            planeOffsets[resolutionIndex][currentPlane].cOffset = output.getFilePointer();
             break;
           case ROW_POSITION_IN_MATRIX:
-            planeOffsets[resolutionIndex][currentPlane].yOffset = out.getFilePointer();
+            planeOffsets[resolutionIndex][currentPlane].yOffset = output.getFilePointer();
             break;
           case COLUMN_POSITION_IN_MATRIX:
-            planeOffsets[resolutionIndex][currentPlane].xOffset = out.getFilePointer();
+            planeOffsets[resolutionIndex][currentPlane].xOffset = output.getFilePointer();
             break;
           case DIMENSION_INDEX_VALUES:
-            planeOffsets[resolutionIndex][currentPlane].dimensionIndex = out.getFilePointer();
+            planeOffsets[resolutionIndex][currentPlane].dimensionIndex = output.getFilePointer();
             break;
           case X_OFFSET_IN_SLIDE:
-            planeOffsets[resolutionIndex][currentPlane].xOffsetReal = out.getFilePointer();
+            planeOffsets[resolutionIndex][currentPlane].xOffsetReal = output.getFilePointer();
             planeOffsets[resolutionIndex][currentPlane].xOffsetSize = tag.elementLength;
             break;
           case Y_OFFSET_IN_SLIDE:
-            planeOffsets[resolutionIndex][currentPlane].yOffsetReal = out.getFilePointer();
+            planeOffsets[resolutionIndex][currentPlane].yOffsetReal = output.getFilePointer();
             planeOffsets[resolutionIndex][currentPlane].yOffsetSize = tag.elementLength;
             break;
           case Z_OFFSET_IN_SLIDE:
-            planeOffsets[resolutionIndex][currentPlane].zOffset = out.getFilePointer();
+            planeOffsets[resolutionIndex][currentPlane].zOffset = output.getFilePointer();
             planeOffsets[resolutionIndex][currentPlane].zOffsetSize = tag.elementLength;
             break;
         }
@@ -1650,58 +1701,59 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         case UI:
         case UR:
         case UT:
-          out.writeBytes(tag.value.toString());
+          output.writeBytes(tag.value.toString());
           break;
         case AT:
           for (short s : (short[]) tag.value) {
-            out.writeShort(s);
+            output.writeShort(s);
           }
           break;
         case FL:
           for (float f : (float[]) tag.value) {
-            out.writeFloat(f);
+            output.writeFloat(f);
           }
           break;
         case FD:
           for (double d : (double[]) tag.value) {
-            out.writeDouble(d);
+            output.writeDouble(d);
           }
           break;
         case OB:
-          out.write((byte[]) tag.value);
+          output.write((byte[]) tag.value);
           break;
         case SL:
           for (int v : (int[]) tag.value) {
-            out.writeInt(v);
+            output.writeInt(v);
           }
           break;
         case SS:
           for (short s : (short[]) tag.value) {
-            out.writeShort(s);
+            output.writeShort(s);
           }
           break;
         case SV:
           for (long v : (long[]) tag.value) {
-            out.writeLong(v);
+            output.writeLong(v);
           }
           break;
         case UL:
           for (long v : (long[]) tag.value) {
-            out.writeInt((int) (v & 0xffffffff));
+            output.writeInt((int) (v & 0xffffffff));
           }
           break;
         case US:
           for (short s : (short[]) tag.value) {
-            out.writeShort(s);
+            output.writeShort(s);
           }
           break;
         case IMPLICIT:
-          out.write((byte[]) tag.value);
+          output.write((byte[]) tag.value);
           break;
         default:
           throw new IllegalArgumentException(String.valueOf(tag.vr.getCode()));
       }
     }
+    tagWatch.stop("wrote single tag: " + tag);
   }
 
   /**
@@ -1796,6 +1848,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
       // filename for this series/resolution
       return;
     }
+    StopWatch openWatch = stopWatch();
     if (out != null) {
       out.close();
     }
@@ -1817,6 +1870,7 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if (out.length() == 0) {
       writeHeader();
     }
+    openWatch.stop("opened " + filename);
   }
 
   /**
@@ -1824,79 +1878,89 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
    * See http://dicom.nema.org/medical/dicom/current/output/html/part10.html#sect_7.1
    */
   private void writeHeader() throws IOException {
+    StopWatch headerWatch = stopWatch();
+    ByteArrayHandle buffer = new ByteArrayHandle();
+    RandomAccessOutputStream headerBuffer = new RandomAccessOutputStream(buffer);
     boolean littleEndian = out.isLittleEndian();
+    headerBuffer.order(littleEndian);
     if (writeDualPersonality()) {
       // write a TIFF header in the preamble
       if (littleEndian) {
-        out.writeByte(TiffConstants.LITTLE);
-        out.writeByte(TiffConstants.LITTLE);
+        headerBuffer.writeByte(TiffConstants.LITTLE);
+        headerBuffer.writeByte(TiffConstants.LITTLE);
       }
       else {
-        out.writeByte(TiffConstants.BIG);
-        out.writeByte(TiffConstants.BIG);
+        headerBuffer.writeByte(TiffConstants.BIG);
+        headerBuffer.writeByte(TiffConstants.BIG);
       }
       if (bigTiff) {
-        out.writeShort(TiffConstants.BIG_TIFF_MAGIC_NUMBER);
-        out.writeShort(8); // number of bytes in an offset
-        out.writeShort(0); // reserved
+        headerBuffer.writeShort(TiffConstants.BIG_TIFF_MAGIC_NUMBER);
+        headerBuffer.writeShort(8); // number of bytes in an offset
+        headerBuffer.writeShort(0); // reserved
 
-        nextIFDPointer[getIndex(series, resolution)] = out.getFilePointer();
-        out.writeLong(-1); // placeholder to first IFD
+        nextIFDPointer[getIndex(series, resolution)] = headerBuffer.getFilePointer();
+        headerBuffer.writeLong(-1); // placeholder to first IFD
       }
       else {
-        out.writeShort(TiffConstants.MAGIC_NUMBER);
-        nextIFDPointer[getIndex(series, resolution)] = out.getFilePointer();
-        out.writeInt(-1); // placeholder to first IFD
+        headerBuffer.writeShort(TiffConstants.MAGIC_NUMBER);
+        nextIFDPointer[getIndex(series, resolution)] = headerBuffer.getFilePointer();
+        headerBuffer.writeInt(-1); // placeholder to first IFD
       }
     }
     else {
       byte[] preamble = new byte[128];
-      out.write(preamble);
+      headerBuffer.write(preamble);
     }
 
     // seek to end of preamble, then write DICOM header
-    out.seek(128);
-    out.order(true);
-    out.writeBytes("DICM");
+    headerBuffer.seek(128);
+    headerBuffer.order(true);
+    headerBuffer.writeBytes("DICM");
 
     DicomTag fileMetaLength = new DicomTag(FILE_META_INFO_GROUP_LENGTH, UL);
     // placeholder value, overwritten at the end of this method
     fileMetaLength.value = new long[] {0};
-    writeTag(fileMetaLength);
+    writeTag(fileMetaLength, headerBuffer);
 
     DicomTag fileMetaVersion = new DicomTag(FILE_META_INFO_VERSION, OB);
     fileMetaVersion.value = new byte[] {0, 1};
-    writeTag(fileMetaVersion);
+    writeTag(fileMetaVersion, headerBuffer);
 
     DicomTag mediaStorageClassUID = new DicomTag(MEDIA_SOP_CLASS_UID, UI);
     mediaStorageClassUID.value = padUID(SOP_CLASS_UID_VALUE);
-    writeTag(mediaStorageClassUID);
+    writeTag(mediaStorageClassUID, headerBuffer);
 
     DicomTag mediaStorageInstanceUID = new DicomTag(MEDIA_SOP_INSTANCE_UID, UI);
     mediaStorageInstanceUID.value = padUID(instanceUIDValue);
-    writeTag(mediaStorageInstanceUID);
+    writeTag(mediaStorageInstanceUID, headerBuffer);
 
     // placeholder, will be overwritten on the first call to saveBytes
     DicomTag transferSyntaxUID = new DicomTag(TRANSFER_SYNTAX_UID, UI);
     transferSyntaxUID.elementLength = 22;
-    writeTag(transferSyntaxUID);
+    writeTag(transferSyntaxUID, headerBuffer);
 
     DicomTag implementationClassUID = new DicomTag(IMPLEMENTATION_UID, UI);
     implementationClassUID.value = padUID(implementationUID);
-    writeTag(implementationClassUID);
+    writeTag(implementationClassUID, headerBuffer);
 
     DicomTag implementationVersionName = new DicomTag(IMPLEMENTATION_VERSION, SH);
     implementationVersionName.value = padString(FormatTools.VERSION);
-    writeTag(implementationVersionName);
+    writeTag(implementationVersionName, headerBuffer);
+
+    int bufferBytes = (int) headerBuffer.getFilePointer();
+    out.order(headerBuffer.isLittleEndian());
+    headerBuffer.close();
+    out.write(buffer.getBytes(), 0, bufferBytes);
 
     // count all bytes after the file meta length value
     int fileMetaBytes = (int) (out.getFilePointer() - fileMetaLengthPointer - 4);
     out.seek(fileMetaLengthPointer);
     out.writeInt(fileMetaBytes);
     fileMetaLengthPointer = 0;
-    out.skipBytes(fileMetaBytes);
 
+    out.skipBytes(fileMetaBytes);
     out.order(littleEndian);
+    headerWatch.stop("wrote header for series = " + series + ", resolution = " + resolution);
   }
 
   private String getFilename(int pyramid, int res) {
@@ -2148,6 +2212,10 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if (validPixelCount == null) {
       validPixelCount = true;
     }
+  }
+
+  protected Slf4JStopWatch stopWatch() {
+    return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
   }
 
   class PlaneOffset {
