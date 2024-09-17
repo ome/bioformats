@@ -1146,18 +1146,8 @@ public class ImageInfo {
         try {
           new ImageInfo().testRead(newArgs);
         }
-        catch (FormatException e) {
-          LOGGER.error("Caught FormatException. " + e.getMessage());
-          exitCode = 1;
-          continue;
-        }
-        catch (IOException e) {
-          LOGGER.error("Caught IOException. " + e.getMessage());
-          exitCode = 1;
-          continue;
-        }
-        catch (ServiceException e) {
-          LOGGER.error("Caught ServiceException. " + e.getMessage());
+        catch (Exception e) {
+	  LOGGER.error("Caught " + e.getClass().getSimpleName(), e);
           exitCode = 1;
           continue;
         }
