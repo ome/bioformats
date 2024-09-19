@@ -1132,6 +1132,7 @@ public class ImageInfo {
   public static void main(String[] args) throws Exception {
     DebugTools.enableLogging("INFO");
 
+    int exitCode = 0;
     List<String> argsList = Arrays.asList(args);
     int idx = argsList.indexOf("-");
 
@@ -1141,15 +1142,23 @@ public class ImageInfo {
 
       while (scanner.hasNext()) {
         newArgs[idx] = scanner.nextLine();
-	System.out.println("====% " + newArgs[idx]);
-        if (!new ImageInfo().testRead(newArgs)) System.exit(1);
+        System.out.println("====% " + newArgs[idx]);
+        try {
+          new ImageInfo().testRead(newArgs);
+        }
+        catch (Exception e) {
+	  LOGGER.error("Caught " + e.getClass().getSimpleName(), e);
+          exitCode = 1;
+          continue;
+        }
       }
       scanner.close();
     }
     else {
       if (!new ImageInfo().testRead(args)) System.exit(1);
-   }
-  }
+    }
 
+    System.exit(exitCode);
+  }
 }
 
