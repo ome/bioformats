@@ -420,6 +420,9 @@ public class PerkinElmerReader extends FormatReader {
 
     LOGGER.info("Finding image files");
 
+    addUsedFile(workingDirPath, htmFile);
+    if (htmFile != null) htmFile = allFiles.get(allFiles.size() - 1);
+
     List<Integer> foundExts = new ArrayList<Integer>();
     for (PixelsFile f : files) {
       if (!foundExts.contains(f.extIndex)) {
@@ -457,8 +460,6 @@ public class PerkinElmerReader extends FormatReader {
     if (csvFile != null) csvFile = allFiles.get(allFiles.size() - 1);
     addUsedFile(workingDirPath, zpoFile);
     if (zpoFile != null) zpoFile = allFiles.get(allFiles.size() - 1);
-    addUsedFile(workingDirPath, htmFile);
-    if (htmFile != null) htmFile = allFiles.get(allFiles.size() - 1);
 
     if (timFile != null) parseTimFile(timFile);
     if (csvFile != null) parseCSVFile(csvFile);

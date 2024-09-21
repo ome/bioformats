@@ -692,6 +692,7 @@ public class CellSensReader extends FormatReader {
     String name = file.getName();
     name = name.substring(0, name.lastIndexOf("."));
 
+    files.add(file.getAbsolutePath());
     Location pixelsDir = new Location(dir, "_" + name + "_");
     String[] stackDirs = pixelsDir.list(true);
     if (stackDirs != null) {
@@ -712,7 +713,6 @@ public class CellSensReader extends FormatReader {
         }
       }
     }
-    files.add(file.getAbsolutePath());
     usedFiles = files.toArray(new String[files.size()]);
 
     if (expectETS && files.size() == 1) {
@@ -770,7 +770,7 @@ public class CellSensReader extends FormatReader {
 
       if (s < files.size() - 1) {
         setCoreIndex(index);
-        String ff = files.get(s);
+        String ff = files.get(s + 1);
         /**
          * If there are more frame_*.ets files than there are metadata 'pyramids'
          * defined in the .vsi, then we have orphaned frame files.  In this case
@@ -787,8 +787,8 @@ public class CellSensReader extends FormatReader {
              */
              if (!validFrameFile) {
                 core.remove(core.size()-1);
-                extraFiles.add(files.get(s));
-                files.remove(s);
+                extraFiles.add(files.get(s + 1));
+                files.remove(s + 1);
                 usedFiles = files.toArray(new String[files.size()]);
                 s--;
                 seriesCount--;
