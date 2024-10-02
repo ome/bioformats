@@ -350,10 +350,16 @@ public class OperettaReader extends FormatReader {
           LOGGER.trace("Found folder {}", folder);
           if (!checkSuffix(folder, "tiff"))
           {
-            String metadataFile = new Location(path, folder).getAbsolutePath();
-            if (!metadataFile.equals(currentFile.getAbsolutePath())) {
-              metadataFiles.add(metadataFile);
-              LOGGER.trace("Adding metadata file {}", metadataFile);
+            Location metadataLocation = new Location(path, folder);
+            if (!metadataLocation.isDirectory()) {
+              String metadataFile = metadataLocation.getAbsolutePath();
+              if (!metadataFile.equals(currentFile.getAbsolutePath())) {
+                metadataFiles.add(metadataFile);
+                LOGGER.trace("Adding metadata file {}", metadataFile);
+              }
+            }
+            else {
+              LOGGER.debug("Skipping metadata folder {}", metadataLocation);
             }
           }
         }
