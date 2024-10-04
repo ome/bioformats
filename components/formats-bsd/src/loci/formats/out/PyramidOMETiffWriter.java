@@ -131,7 +131,6 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
       }
 
       int mainIFDIndex = 0;
-      int currentFullResolution = 0;
       for (int i=0; i<r.getImageCount(); i++) {
         setSeries(i);
         int resCount = resCounts[i];
@@ -159,7 +158,6 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
           }
 
           mainIFDIndex++;
-          currentFullResolution++;
         }
         mainIFDIndex += (planeCounts[i] * (resCount - 1));
       }
