@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model;
 
 /**
  * This class represents image dimensions extracted from LMS image xmls.
@@ -37,8 +37,9 @@ public class Dimension {
   public int size;
   public long bytesInc;
   public String unit = null;
-  private Double length = 0d;
-  private Double offByOneLength = 0d;
+  private Double lengthPerUnit = 0d;
+  private Double offByOneLengthPerPixel = 0d;
+  public Double origin;
   public boolean oldPhysicalSize = false;
   public int frameIndex = 0;
 
@@ -72,13 +73,19 @@ public class Dimension {
 
   // -- Constructors --
 
-  public Dimension(DimensionKey key, int size, long bytesInc, String unit, Double length, boolean oldPhysicalSize) {
+  public Dimension(DimensionKey key, int size, long bytesInc, String unit, Double length, Double origin, boolean oldPhysicalSize) {
     this.key = key;
     this.size = size;
     this.bytesInc = bytesInc;
     this.unit = unit;
     this.oldPhysicalSize = oldPhysicalSize;
-    setLength(length);
+
+    if (key == DimensionKey.X || key == DimensionKey.Y){
+      setPixelLength(length);
+    } else {
+      this.lengthPerUnit = length / size;
+    }
+    this.origin = origin;
   }
 
   private Dimension() {
@@ -93,30 +100,30 @@ public class Dimension {
   }
 
   // -- Methods --
-  public void setLength(Double length) {
-    this.length = length;
-    offByOneLength = 0d;
-    if (size > 1) {
-      offByOneLength = this.length / size;
-      this.length /= (size - 1); // length per pixel
-    } else {
-      this.length = 0d;
-    }
+  public void setPixelLength(Double length) {
+    lengthPerUnit = length;
 
-    if (unit.equals("Ks")) {
-      this.length /= 1000;
-      offByOneLength /= 1000;
-    } else if (unit.equals("m")) {
-      this.length *= METER_MULTIPLY;
-      offByOneLength *= METER_MULTIPLY;
+    if (size > 1) {
+      lengthPerUnit /= (size - 1);
+      offByOneLengthPerPixel = lengthPerUnit / size;
+    } else {
+      lengthPerUnit = 0d;
+      offByOneLengthPerPixel = 0d;
     }
+    
+    this.lengthPerUnit *= METER_MULTIPLY;
+    offByOneLengthPerPixel *= METER_MULTIPLY;
   }
 
-  public Double getLength() {
+  /**
+   * Returns the physical distance between two neighboring steps in a dimension (e.g. pixels, slices, points in time, etc.)
+   * @return
+   */
+  public Double getPhysicalStepSize() {
     if (key == DimensionKey.X || key == DimensionKey.Y) {
-      return oldPhysicalSize ? offByOneLength : length;
+      return oldPhysicalSize ? offByOneLengthPerPixel : lengthPerUnit;
     } else {
-      return length;
+      return lengthPerUnit;
     }
   }
 }

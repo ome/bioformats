@@ -23,42 +23,24 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
-import org.w3c.dom.Node;
+import java.util.ArrayList;
+import java.util.List;
+
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Filter;
 
 /**
- * This class loads and represents a Leica Microsystems XML document that has been extracted from a LOF file
+ * Data structure for confocal acquisition settings of an image extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class LofXmlDocument extends LMSImageXmlDocument {
-  private String name;
-
-  public LofXmlDocument(String xml, String name) {
-    super(xml);
-    this.name = name;
-  }
-
-  @Override
-  public Node getImageNode() {
-    Node child = GetChildWithName(doc.getDocumentElement(), "Image");
-    if (child != null) return child;
-    child = GetChildWithName(doc.getDocumentElement(), "Element");
-    if (child != null){
-      Node elementChild = GetChildWithName(child, "Image");
-      if (elementChild != null) return elementChild;
-      elementChild = GetChildWithName(child, "Data");
-      if (elementChild != null){
-        Node dataChild = GetChildWithName(elementChild, "Image");
-        if (dataChild != null) return dataChild;
-      }
-    }
-    return null;
-  }
-
-  @Override
-  public String getImageName(){
-    return name;
-  }
+public class ConfocalAcquisitionSettings {
+  public List<Detector> detectors = new ArrayList<>();
+  public List<Laser> lasers = new ArrayList<>();
+  public List<Filter> filters = new ArrayList<>();
+  public List<ConfocalChannelSetting> channelSettings = new ArrayList<>();
+  public double readOutRate;
+  public double zoom;
+  public double pinholeSize;
 }

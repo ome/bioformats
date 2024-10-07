@@ -36,6 +36,8 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.in.MetadataOptions;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LMSImageXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LMSXmlDocument;
 import loci.formats.in.DynamicMetadataOptions;
 
 /**
@@ -52,12 +54,12 @@ public abstract class LMSFileReader extends FormatReader {
 
   // -- Fields --
   public static Logger log;
-  public MetadataTempBuffer metaTemp;
   public LMSXmlDocument associatedXmlDoc; //an optional LMS xml file that references the file(s) that are read by this reader
+  public List<SingleImageTranslator> metadataTranslators = new ArrayList<SingleImageTranslator>();
 
   /** file format in which actual image bytes are stored */
   public enum ImageFormat {
-    LOF, TIF, BMP, JPEG, PNG, UNKNOWN
+    LOF, TIF, BMP, JPEG, PNG, LIF, UNKNOWN
   }
 
   // -- Constructor --
@@ -74,7 +76,7 @@ public abstract class LMSFileReader extends FormatReader {
     super.close(fileOnly);
 
     if (!fileOnly){
-      metaTemp = null;
+      metadataTranslators = new ArrayList<SingleImageTranslator>();
     }
   }
 
@@ -122,14 +124,8 @@ public abstract class LMSFileReader extends FormatReader {
    * @throws IOException
    */
   public void translateMetadata(List<LMSImageXmlDocument> docs) throws FormatException, IOException {
-    int len = docs.size();
-    metaTemp = new MetadataTempBuffer(len);
-
-    LMSMetadataExtractor extractor = new LMSMetadataExtractor(this);
-    extractor.translateMetadata(docs);
-
-    MetadataStoreInitializer initializer = new MetadataStoreInitializer(this);
-    initializer.initMetadataStore();
+    LMSMetadataTranslator translator = new LMSMetadataTranslator(this);
+    translator.translateMetadata(docs);
   }
 
   public void translateMetadata(LMSImageXmlDocument doc) throws FormatException, IOException{
@@ -157,5 +153,16 @@ public abstract class LMSFileReader extends FormatReader {
       }
     }
     return false;
+  }
+  
+  protected int getTileIndex(int coreIndex) {
+    int count = 0;
+    for (int tile = 0; tile < metadataTranslators.size(); tile++) {
+      if (coreIndex < count + metadataTranslators.get(tile).dimensionStore.tileCount) {
+        return tile;
+      }
+      count += metadataTranslators.get(tile).dimensionStore.tileCount;
+    }
+    return -1;
   }
 }

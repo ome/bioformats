@@ -23,50 +23,33 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.extract;
 
-import java.util.List;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import loci.formats.in.LeicaMicrosystemsMetadata.helpers.LMSMainXmlNodes;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.ImageDetails;
 
 /**
- * This class represents a Leica Microsystems XLEF xml document,
- * a project file which references xlifs and optionally xlcfs
+ * Helper class for extracting image details from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public class XlefDocument extends LMSCollectionXmlDocument {
-
-  // -- Constructor --
-  public XlefDocument(String filepath) {
-    super(filepath, null);
-    initChildren();
-  }
-
-  // -- Getters --
-
+public class ImageSettingsExtractor {
+  
   /**
-   * Returns number of images which are referenced by xlifs
-   * 
-   * @return image number
+   * Extracts image details from LMS XML
    */
-  public int getImageCount() {
-    List<XlifDocument> xlifs = getXlifs();
-
-    int imgCount = 0;
-    for (LMSXmlDocument xlif : xlifs) {
-      imgCount += ((XlifDocument)xlif).getImagePaths().size();
+  public static void extractImageDetails(LMSMainXmlNodes xmlNodes, ImageDetails imageDetails){
+    NodeList attachmentNodes = Extractor.getDescendantNodesWithName(xmlNodes.imageNode, "User-Comment");
+    if (attachmentNodes != null){
+      for (int i = 0; i < attachmentNodes.getLength(); i++) {
+        Node attachment = attachmentNodes.item(i);
+        imageDetails.userComments.add(attachment.getTextContent());
+        if (i == 0)
+        imageDetails.description = attachment.getTextContent();
+      }
     }
-    return imgCount;
-  }
-
-  // -- Methods --
-
-  public void printReferences() {
-    List<XlifDocument> xlifs = getXlifs();
-    LOGGER.info("-------- XLEF INFO: " + xlifs.size() + " images found -------- ");
-    for (XlifDocument xlif : xlifs) {
-      xlif.printXlifInfo();
-    }
-    LOGGER.info("-------------------------------------------");
   }
 }

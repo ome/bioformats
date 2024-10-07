@@ -35,6 +35,9 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.in.LeicaMicrosystemsMetadata.*;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.Channel;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.LofXmlDocument;
+import loci.formats.in.LeicaMicrosystemsMetadata.xml.XlifDocument;
 
 /**
  * LOFReader is the file format reader for Leica Microsystems' LOF files.
@@ -55,7 +58,7 @@ public class LOFReader extends LMSFileReader {
 
   /** Offsets to memory blocks, paired with their corresponding description. */
   private List<Long> offsets;
-  private int lastChannel = 0;
+  private int lastChannelLutColorIndex = 0;
   private long endPointer;
   
   public enum MetadataSource {
@@ -152,12 +155,20 @@ public class LOFReader extends LMSFileReader {
         lofXml += stream.readChar();
       }
     LofXmlDocument doc = new LofXmlDocument(lofXml, "");
-    if (doc.getImageNode() != null) {
-      return true;
-    } else {
+    
+    if (!doc.isValid()){
+      LOGGER.error("LOF file cannot be opened due to invalid XML. "+
+      "Please try opening the corresponding XLEF file instead, or try "+
+      "opening and re-saving this image with a current LASX version.");
+      return false;
+    }
+
+    if (doc.getImageNode() == null){
       LOGGER.info("This LOF does not contain image data, it cannot be opened directly.");
       return false;
     }
+    
+    return true;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -167,42 +178,36 @@ public class LOFReader extends LMSFileReader {
     if (getPixelType() != FormatTools.UINT8 || !isIndexed())
       return null;
 
-    if (lastChannel < 0 || lastChannel >= 9) {
+    if (lastChannelLutColorIndex < Channel.RED || lastChannelLutColorIndex > Channel.GREY) {
       return null;
     }
 
     byte[][] lut = new byte[3][256];
     for (int i = 0; i < 256; i++) {
-      switch (lastChannel) {
-        case 0:
-          // red
+      switch (lastChannelLutColorIndex) {
+        case Channel.RED:
           lut[0][i] = (byte) (i & 0xff);
           break;
-        case 1:
-          // green
+        case Channel.GREEN:
           lut[1][i] = (byte) (i & 0xff);
           break;
-        case 2:
-          // blue
+        case Channel.BLUE:
           lut[2][i] = (byte) (i & 0xff);
           break;
-        case 3:
-          // cyan
+        case Channel.CYAN:
           lut[1][i] = (byte) (i & 0xff);
           lut[2][i] = (byte) (i & 0xff);
           break;
-        case 4:
-          // magenta
+        case Channel.MAGENTA:
           lut[0][i] = (byte) (i & 0xff);
           lut[2][i] = (byte) (i & 0xff);
           break;
-        case 5:
-          // yellow
+        case Channel.YELLOW:
           lut[0][i] = (byte) (i & 0xff);
           lut[1][i] = (byte) (i & 0xff);
           break;
+        case Channel.GREY:
         default:
-          // gray
           lut[0][i] = (byte) (i & 0xff);
           lut[1][i] = (byte) (i & 0xff);
           lut[2][i] = (byte) (i & 0xff);
@@ -218,42 +223,36 @@ public class LOFReader extends LMSFileReader {
     if (getPixelType() != FormatTools.UINT16 || !isIndexed())
       return null;
 
-    if (lastChannel < 0 || lastChannel >= 9) {
+    if (lastChannelLutColorIndex < Channel.RED || lastChannelLutColorIndex > Channel.GREY) {
       return null;
     }
 
     short[][] lut = new short[3][65536];
     for (int i = 0; i < 65536; i++) {
-      switch (lastChannel) {
-        case 0:
-          // red
+      switch (lastChannelLutColorIndex) {
+        case Channel.RED:
           lut[0][i] = (short) (i & 0xffff);
           break;
-        case 1:
-          // green
+        case Channel.GREEN:
           lut[1][i] = (short) (i & 0xffff);
           break;
-        case 2:
-          // blue
+        case Channel.BLUE:
           lut[2][i] = (short) (i & 0xffff);
           break;
-        case 3:
-          // cyan
+        case Channel.CYAN:
           lut[1][i] = (short) (i & 0xffff);
           lut[2][i] = (short) (i & 0xffff);
           break;
-        case 4:
-          // magenta
+        case Channel.MAGENTA:
           lut[0][i] = (short) (i & 0xffff);
           lut[2][i] = (short) (i & 0xffff);
           break;
-        case 5:
-          // yellow
+        case Channel.YELLOW:
           lut[0][i] = (short) (i & 0xffff);
           lut[1][i] = (short) (i & 0xffff);
           break;
+        case Channel.GREY:
         default:
-          // gray
           lut[0][i] = (short) (i & 0xffff);
           lut[1][i] = (short) (i & 0xffff);
           lut[2][i] = (short) (i & 0xffff);
@@ -271,7 +270,7 @@ public class LOFReader extends LMSFileReader {
 
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
-      lastChannel = metaTemp.channelPrios[getTileIndex(series)][pos[1]];
+      lastChannelLutColorIndex = metadataTranslators.get(getTileIndex(series)).dimensionStore.channels.get(pos[1]).lutColorIndex;
     }
 
     int tileIndex = getTileIndex(series);
@@ -317,7 +316,7 @@ public class LOFReader extends LMSFileReader {
     }
 
     // rearrange if color planes are stored in BGR order
-    if (getRGBChannelCount() == 3 && metaTemp.inverseRgb[0]) {
+    if (getRGBChannelCount() == 3 && metadataTranslators.get(tileIndex).dimensionStore.inverseRgb) {
       ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
 
@@ -339,7 +338,7 @@ public class LOFReader extends LMSFileReader {
     super.close(fileOnly);
     if (!fileOnly) {
       offsets = null;
-      lastChannel = 0;
+      lastChannelLutColorIndex = 0;
       endPointer = 0;
     }
   }
@@ -474,11 +473,11 @@ public class LOFReader extends LMSFileReader {
     int index = getTileIndex(series);
     long posInFile;
 
-    int numberOfTiles = metaTemp.tileCount[index];
+    int numberOfTiles = metadataTranslators.get(index).dimensionStore.tileCount;
     if (numberOfTiles > 1) {
       // LAS AF treats tiles just like any other dimension, while we do not.
       // Hence we need to take the tiles into account for a frame's position.
-      long bytesIncPerTile = metaTemp.tileBytesInc[index];
+      long bytesIncPerTile = metadataTranslators.get(index).dimensionStore.tileBytesInc;
       long framesPerTile = bytesIncPerTile / planeSize;
 
       if (framesPerTile > Integer.MAX_VALUE) {
@@ -490,7 +489,7 @@ public class LOFReader extends LMSFileReader {
 
       int tile = series;
       for (int i = 0; i < index; i++) {
-        tile -= metaTemp.tileCount[i];
+        tile -= metadataTranslators.get(i).dimensionStore.tileCount;
       }
 
       posInFile = dataOffset;
@@ -503,17 +502,6 @@ public class LOFReader extends LMSFileReader {
 
     // seek instead of skipBytes to prevent dangerous int cast
     in.seek(posInFile);
-  }
-
-  private int getTileIndex(int coreIndex) {
-    int count = 0;
-    for (int tile = 0; tile < metaTemp.tileCount.length; tile++) {
-      if (coreIndex < count + metaTemp.tileCount[tile]) {
-        return tile;
-      }
-      count += metaTemp.tileCount[tile];
-    }
-    return -1;
   }
 
   /**

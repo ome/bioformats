@@ -23,32 +23,21 @@
  * #L%
  */
 
-package loci.formats.in.LeicaMicrosystemsMetadata;
+package loci.formats.in.LeicaMicrosystemsMetadata.model.confocal;
 
-import org.w3c.dom.Node;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser.LmsLightSourceQualifier;
+import loci.formats.in.LeicaMicrosystemsMetadata.model.confocal.Laser.LmsLightSourceType;
 
 /**
- * This class loads and represents a Leica Microsystems image XML document that contains image metadata
+ * Data structure for laser settings information extracted from LMS XML
  * 
  * @author Constanze Wendlandt constanze.wendlandt at leica-microsystems.com
  */
-public abstract class LMSImageXmlDocument extends LMSXmlDocument {
-  public LMSImageXmlDocument(String xml) {
-    super(xml);
-  }
+public class LaserSetting {
+  public Laser laser;
+  public double intensity;
+  public double wavelength;
 
-  public LMSImageXmlDocument(String filepath, LMSCollectionXmlDocument parent){
-    super(filepath, parent);
-  }
-
-
-  /**
-   * Returns the image node of the xml document which contains image metadata
-   */
-  public abstract Node getImageNode();
-
-  /**
-   * Returns the name of the image (it might be contained in the XML or otherwise e.g. in the file name)
-   */
-  public abstract String getImageName();
+  public LmsLightSourceQualifier lightSourceQualifier;
+  public LmsLightSourceType lightSourceType;
 }
