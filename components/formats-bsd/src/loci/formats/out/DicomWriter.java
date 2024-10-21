@@ -146,8 +146,14 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
   // -- IExtraMetadataWriter API methods --
 
+  /**
+   * Add a tag provider.
+   *
+   * tagSource is expected to be either an ITagProvider,
+   * or a String file name that can be read by DicomJSONProvider.
+   */
   @Override
-  public void setExtraMetadata(String tagSource) {
+  public void setExtraMetadata(Object tagSource) {
     FormatTools.assertId(currentId, false, 1);
 
     StopWatch metadataWatch = stopWatch();
@@ -157,20 +163,23 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
 
     if (tagSource != null) {
       ITagProvider provider = null;
-      if (checkSuffix(tagSource, "json")) {
+      if (tagSource instanceof ITagProvider) {
+        provider = (ITagProvider) tagSource;
+      }
+      else if (tagSource instanceof String && checkSuffix((String) tagSource, "json")) {
         provider = new DicomJSONProvider();
+        try {
+          provider.readTagSource((String) tagSource);
+        }
+        catch (IOException e) {
+          LOGGER.error("Could not parse extra metadata: " + tagSource, e);
+        }
       }
       else {
         throw new IllegalArgumentException("Unknown tag format: " + tagSource);
       }
 
-      try {
-        provider.readTagSource(tagSource);
-        tagProviders.add(provider);
-      }
-      catch (IOException e) {
-        LOGGER.error("Could not parse extra metadata: " + tagSource, e);
-      }
+      tagProviders.add(provider);
     }
     metadataWatch.stop("parsed extra metadata from " + tagSource);
   }
