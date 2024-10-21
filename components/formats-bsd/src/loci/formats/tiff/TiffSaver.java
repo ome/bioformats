@@ -1176,15 +1176,13 @@ public class TiffSaver implements Closeable {
     // return to original position
     out.seek(stripStartPos);
 
+    ByteArrayOutputStream stripBuffer = new ByteArrayOutputStream();
     long stripOffset = 0;
     for (int i=0; i<strips.length; i++) {
-      out.seek(stripStartPos + stripOffset);
-      stripOffset += strips[i].length;
       int index = interleaved ? i : (i / nChannels) * nChannels;
       int c = interleaved ? 0 : i % nChannels;
       int thisOffset = firstOffset + index + (c * tileCount);
-      offsets[thisOffset] = out.getFilePointer();
-//      byteCounts.set(thisOffset, new Long(strips[i].length));
+      offsets[thisOffset] = stripStartPos + stripOffset;
       byteCounts[thisOffset] = strips[i].length;
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(String.format(
@@ -1193,8 +1191,12 @@ public class TiffSaver implements Closeable {
             thisOffset + 1, totalTiles, byteCounts[thisOffset],
             offsets[thisOffset]));
       }
-      out.write(strips[i]);
+      stripBuffer.write(strips[i]);
+      stripOffset += strips[i].length;
     }
+    stripBuffer.writeTo(out);
+    stripBuffer.close();
+    stripBuffer = null;
     if (isTiled) {
       ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, byteCounts);
       ifd.putIFDValue(IFD.TILE_OFFSETS, offsets);
