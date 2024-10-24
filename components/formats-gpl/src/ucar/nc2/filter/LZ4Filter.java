@@ -3,10 +3,6 @@ package ucar.nc2.filter;
 import ucar.nc2.filter.FilterProvider;
 import ucar.nc2.filter.Filter;
 
-// import io.airlift.compress.v3.lz4.Lz4NativeDecompressor;
-// import io.airlift.compress.v3.lz4.Lz4JavaCompressor;
-// import io.airlift.compress.v3.Decompressor;
-// import io.airlift.compress.v3.Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 
