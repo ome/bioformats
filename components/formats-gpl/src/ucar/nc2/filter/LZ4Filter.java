@@ -42,8 +42,8 @@ public class LZ4Filter extends Filter {
   public byte[] decode(byte[] dataIn) throws IOException {
     ByteBuffer byteBuffer = ByteBuffer.wrap(dataIn);
 
-		long totalDecompressedSize = byteBuffer.getLong();
-		int decompressedBlockSize = byteBuffer.getInt();
+    long totalDecompressedSize = byteBuffer.getLong();
+    int decompressedBlockSize = byteBuffer.getInt();
     int compressedBlockSize = byteBuffer.getInt();
 
     byte[] decompressedBlock = new byte[Math.toIntExact(totalDecompressedSize)];
