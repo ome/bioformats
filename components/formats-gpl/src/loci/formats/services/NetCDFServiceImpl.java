@@ -45,12 +45,15 @@ import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.NetcdfFiles;
 import ucar.nc2.Variable;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoSerializable;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Utility class for working with NetCDF/HDF files.  Uses reflection to
@@ -247,7 +250,7 @@ public class NetCDFServiceImpl extends AbstractService
         if (!groupName.endsWith("/")) variableName = "/" + variableName;
         variableList.add(variableName);
       }
-      groups = group.getGroups();
+      groups = (List<Group>) group.getGroups();
       parseAttributesAndVariables(groups);
     }
   }
@@ -307,7 +310,7 @@ public class NetCDFServiceImpl extends AbstractService
     };
     System.setOut(throwaway);
     throwaway.close();
-    netCDFFile = NetcdfFile.open(currentId);
+    netCDFFile = NetcdfFiles.open(currentId);
     System.setOut(outStream);
     root = netCDFFile.getRootGroup();
   }

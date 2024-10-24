@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Hashtable;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -70,6 +71,15 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
   private List<String> gain, pinhole, channelName, microscopyMode;
   private List<double[]> colors;
   private int lastChannel = 0;
+
+  // caching parameters
+  private long maxBufferSize = 1024 * 1024 * 1024;
+  private Object[] buffer = null;
+  private int[] blockSizeZPerResolution;
+  private int lastMinZ = 0;
+  private int lastMaxZ = 0;
+  private int lastRes = 0;
+  private int lastT = 0;
 
   // -- Constructor --
 
@@ -223,6 +233,10 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
       pixelSizeX = pixelSizeY = pixelSizeZ = 0;
       minX = minY = minZ = maxX = maxY = maxZ = 0;
 
+      lastRes = lastT = lastMinZ = lastMaxZ = 0;
+      buffer = null;
+      blockSizeZPerResolution = null;
+      
       if (netcdf != null) netcdf.close();
       netcdf = null;
 
@@ -300,6 +314,16 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
     ms0.thumbnail = false;
     ms0.dimensionOrder = "XYZCT";
 
+    // read block sizes for caching
+    blockSizeZPerResolution = new int[seriesCount];
+    for (int res = 0; res < seriesCount; res++) {
+      String datasetPath = "DataSet/ResolutionLevel_" + res + "/TimePoint_0/Channel_0/Data";
+      Hashtable<String, Object> table = netcdf.getVariableAttributes(datasetPath);
+      String chunkSizesString = (String) table.get("_ChunkSizes");
+      String[] sizes = chunkSizesString.split(" ");
+      blockSizeZPerResolution[res] = Integer.parseInt(sizes[0]);
+    }
+    
     // determine pixel type - this isn't stored in the metadata, so we need
     // to check the pixels themselves
 
@@ -434,8 +458,7 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
     throws FormatException
   {
     int[] zct = getZCTCoords(no);
-    String path = "/DataSet/ResolutionLevel_" + getCoreIndex() + "/TimePoint_" +
-      zct[2] + "/Channel_" + zct[1] + "/Data";
+    int resolutionIndex = getCoreIndex();
     Object image = null;
 
     // the width and height cannot be 1, because then netCDF will give us a
@@ -467,14 +490,92 @@ public class ImarisHDFReader extends SubResolutionFormatReader {
       x = (getSizeX() / 2) - 1;
     }
 
-    int[] dimensions = new int[] {1, height, width};
-    int[] indices = new int[] {zct[0], y, x};
-    try {
-      image = netcdf.getArray(path, indices, dimensions);
+    // cache dataset blocks to avoid multiple reads.
+    // use caching for 3D datasets and only if the size of the required buffer is < maxBufferSize
+    if (getSizeZ() > 1 && getSizeX() * getSizeY() * blockSizeZPerResolution[resolutionIndex] * getSizeC() * FormatTools.getBytesPerPixel(getPixelType()) < maxBufferSize) {
+      // update buffer if needed
+      if (zct[0] < lastMinZ || zct[0] > lastMaxZ || zct[2] != lastT || resolutionIndex != lastRes || buffer == null) {
+        buffer = new Object[getSizeC()];
+        if (resolutionIndex != lastRes) {
+          lastRes = resolutionIndex;
+          lastT = zct[2];
+        }
+        if (zct[2] != lastT) {
+          lastT = zct[2];
+        }
+
+        int blockNumber = zct[0] / blockSizeZPerResolution[resolutionIndex];
+        int[] dims = new int[] {blockSizeZPerResolution[resolutionIndex], getSizeY(), getSizeX()};
+        int[] idcs = new int[] {blockNumber * blockSizeZPerResolution[resolutionIndex], 0, 0};
+        try {
+          String path;
+          for (int ch = 0; ch < getSizeC(); ch++) {
+            path = "/DataSet/ResolutionLevel_" + resolutionIndex + "/TimePoint_" + zct[2] + "/Channel_" + ch + "/Data";
+            buffer[ch] = netcdf.getArray(path, idcs, dims);
+          }
+        }
+        catch (ServiceException e) {
+          throw new FormatException(e);
+        }
+
+        lastMinZ = blockNumber * blockSizeZPerResolution[resolutionIndex];
+        lastMaxZ = lastMinZ + blockSizeZPerResolution[resolutionIndex] - 1;
+      }
+
+      // read from buffer
+      if (buffer[zct[1]] instanceof byte[][][]) {
+        byte[][][] byteBuffer = (byte[][][]) buffer[zct[1]];
+        byte[][] slice = new byte[height][width];
+        for (int i = y; i < y + height; i++) {
+          for (int j = x; j < x + width; j++) {
+            slice[i - y][j - x] = byteBuffer[zct[0] - lastMinZ][i][j];
+          }
+        }
+        image = (Object) slice;
+      }
+      else if (buffer[zct[1]] instanceof short[][][]) {
+        short[][][] shortBuffer = (short[][][]) buffer[zct[1]];
+        short[][] slice = new short[height][width];
+        for (int i = y; i < y + height; i++) {
+          for (int j = x; j < x + width; j++) {
+            slice[i - y][j - x] = shortBuffer[zct[0] - lastMinZ][i][j];
+          }
+        }
+        image = (Object) slice;
+      }
+      else if (buffer[zct[1]] instanceof int[][][]) {
+        int[][][] intBuffer = (int[][][]) buffer[zct[1]];
+        int[][] slice = new int[height][width];
+        for (int i = y; i < y + height; i++) {
+          for (int j = x; j < x + width; j++) {
+            slice[i - y][j - x] = intBuffer[zct[0] - lastMinZ][i][j];
+          }
+        }
+        image = (Object) slice;
+      }
+      else if (buffer[zct[1]] instanceof float[][][]) {
+        float[][][] floatBuffer = (float[][][]) buffer[zct[1]];
+        float[][] slice = new float[height][width];
+        for (int i = y; i < y + height; i++) {
+          for (int j = x; j < x + width; j++) {
+            slice[i - y][j - x] = floatBuffer[zct[0] - lastMinZ][i][j];
+          }
+        }
+        image = (Object) slice;
+      }
     }
-    catch (ServiceException e) {
-      throw new FormatException(e);
+    else {
+      int[] dimensions = new int[] {1, height, width};
+      int[] indices = new int[] {zct[0], y, x};
+      try {
+        String path = "/DataSet/ResolutionLevel_" + resolutionIndex + "/TimePoint_" + zct[2] + "/Channel_" + zct[1] + "/Data";
+        image = netcdf.getArray(path, indices, dimensions);
+      }
+      catch (ServiceException e) {
+        throw new FormatException(e);
+      }
     }
+    
     return image;
   }
 
