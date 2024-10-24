@@ -26,6 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -46,7 +49,6 @@ public class SIFReader extends FormatReader {
   // -- Constants --
 
   private static final String MAGIC_STRING = "Andor Technology";
-  private static final int FOOTER_SIZE = 8;
 
   // -- Fields --
 
@@ -79,7 +81,7 @@ public class SIFReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(pixelOffset + no * FormatTools.getPlaneSize(this));
+    in.seek(pixelOffset + (long)no * (long)FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
     return buf;
   }
@@ -102,56 +104,71 @@ public class SIFReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     CoreMetadata m = core.get(0);
 
-    double[] timestamp = null;
+    String line;
+    String[] tokens;
 
-    int lineNumber = 1;
-    String line = in.readLine();
-    int endLine = -1;
-    while (endLine < 0 || lineNumber < endLine) {
-      lineNumber++;
+    // Magic line
+    addGlobalMetaList("Line", in.readLine());
+    addGlobalMetaList("Line", in.readLine());
 
-      if (line.startsWith("Pixel number")) {
-        String[] tokens = line.split(" ");
-        if (tokens.length > 2) {
-          m.sizeC = Integer.parseInt(tokens[2]);
-          m.sizeX = Integer.parseInt(tokens[3]);
-          m.sizeY = Integer.parseInt(tokens[4]);
-          m.sizeZ = Integer.parseInt(tokens[5]);
-          m.sizeT = Integer.parseInt(tokens[6]);
-          m.imageCount = getSizeZ() * getSizeT() * getSizeC();
-          timestamp = new double[getImageCount()];
-          endLine = lineNumber;
-        }
-      }
-      else if (lineNumber < endLine) {
-        int index = lineNumber - (endLine - getImageCount()) - 1;
-        if (index >= 0) {
-          try {
-            timestamp[index] = Double.parseDouble(line.trim());
-          }
-          catch (NumberFormatException e) {
-            LOGGER.debug("Could not parse timestamp #" + index, e);
-          }
-        }
-      }
-      else {
-        addGlobalMetaList("Line", line.trim());
-      }
+    // Parse SIF version
+    addGlobalMetaList("Line", line = in.readLine());
+    tokens = line.split(" ");
+    int sifVersion = Integer.parseInt(tokens[0]);
+
+    // Read header contents until "Pixel number" line with enough tokens to contain size information
+    while (!(line = in.readLine()).startsWith("Pixel number")
+            || (tokens = line.split(" ")).length < 3) {
+      addGlobalMetaList("Line", line.trim());
+    }
+
+    // Read channels, Z sections, and image count from this line
+    // X and Y from this line are not accurate for cropped images
+    m.sizeC = Integer.parseInt(tokens[2]);
+    m.sizeZ = Integer.parseInt(tokens[5]);
+    m.sizeT = Integer.parseInt(tokens[6]);
+    m.imageCount = getSizeZ() * getSizeT() * getSizeC();
+
+    // Subsequent lines contain updated information for each subimage
+    for (int i = 0; i < getSizeZ(); i++) {
       line = in.readLine();
+      tokens = line.split(" ");
 
-      if (endLine > 0 && endLine == lineNumber) {
-        String[] tokens = line.split(" ");
-        int x1 = Integer.parseInt(tokens[1]);
-        int y1 = Integer.parseInt(tokens[2]);
-        int x2 = Integer.parseInt(tokens[3]);
-        int y2 = Integer.parseInt(tokens[4]);
-        int x3 = Integer.parseInt(tokens[5]);
-        int y3 = Integer.parseInt(tokens[6]);
-        m.sizeX = (int) (Math.abs(x1 - x2) + x3);
-        m.sizeY = (int) (Math.abs(y1 - y2) + y3);
-        pixelOffset = in.length() - FOOTER_SIZE -
-          (getImageCount() * getSizeX() * getSizeY() * 4);
+      int x1 = Integer.parseInt(tokens[1]);
+      int y1 = Integer.parseInt(tokens[2]);
+      int x2 = Integer.parseInt(tokens[3]);
+      int y2 = Integer.parseInt(tokens[4]);
+      int x3 = Integer.parseInt(tokens[5]);
+      int y3 = Integer.parseInt(tokens[6]);
+      m.sizeX = Math.abs(x1 - x2) + x3;
+      m.sizeY = Math.abs(y1 - y2) + y3;
+    }
+
+    // Parse timestamps for each frame
+    double[] timestamp = new double[getImageCount()];
+    String[] lines = readFixedWidthTable(getImageCount());
+    for (int i = 0; i < lines.length; i++) {
+      timestamp[i] = Double.parseDouble(lines[i].trim());
+    }
+
+    pixelOffset = in.getFilePointer();
+
+    // Some SIF versions contain an additional flag and data block following timestamps.
+    // If present, the pixelOffset must be adjusted to after this data.
+    // TODO: Is there any way to parse this segment while guaranteeing that we aren't reading image data?
+    //  I.e., is it possible that the first two bytes of image data are 0x300A ("0\n")?
+    byte flag = in.readByte();
+    byte flagTerminator = in.readByte();
+
+    if (flag == '1' && flagTerminator == '\n') {
+      if (sifVersion == 65567) {
+        // SIF Version 65567 contains an additional table for all frames
+        readFixedWidthTable(getImageCount());
+
+        pixelOffset = in.getFilePointer();
       }
+    } else if (flag == '0' && flagTerminator == '\n') {
+      pixelOffset = in.getFilePointer();
     }
 
     m.pixelType = FormatTools.FLOAT;
@@ -164,9 +181,31 @@ public class SIFReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneDeltaT(new Time(timestamp[i], UNITS.SECOND), 0, i);
+        store.setPlaneDeltaT(new Time(timestamp[i], UNITS.MICROSECOND), 0, i);
       }
     }
+  }
+
+  private String[] readFixedWidthTable(int rows) throws IOException {
+    // Read a line of the fixed-width table to know total size
+    String line = in.readLine();
+    int lineSize = line.length();
+
+    // Read the entire table
+    ByteBuffer buffer = ByteBuffer.allocate(lineSize * (rows - 1));
+    in.read(buffer);
+    ((Buffer)buffer).rewind();
+
+    String[] lines = new String[rows];
+    lines[0] = line;
+
+    byte[] lineChars = new byte[lineSize];
+    for (int i = 1; i < rows; i++) {
+      buffer.get(lineChars);
+      lines[i] = new String(lineChars, StandardCharsets.ISO_8859_1);
+    }
+
+    return lines;
   }
 
 }
