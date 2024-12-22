@@ -25,6 +25,9 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,9 +44,9 @@ public class ZippedDeepZoomImageReader {
     public static final String DZI_FILE = "dzc_output.xml";
     public static final String DZI_FILES = "dzc_output_files";
 
-    private final ZipFile dziFile;
+    private final FileSystem dziFile;
     private final File filesFolder;
-    private final String separator;
+    //private final String separator;
     private final int tileSize;
     private final int overlap;
     private final String format;
@@ -53,16 +56,16 @@ public class ZippedDeepZoomImageReader {
     private final float pixelpermicron;
     private final ImageTypeSpecifier rawImageType;
 
-    public ZippedDeepZoomImageReader(ZipFile dziFile) throws IOException {
+    public ZippedDeepZoomImageReader(FileSystem dziFile) throws IOException {
         this(dziFile, null);
     }
 
-    public ZippedDeepZoomImageReader(ZipFile dziFile, File tileExample) throws IOException {
+    public ZippedDeepZoomImageReader(FileSystem dziFile, File tileExample) throws IOException {
         this.dziFile = dziFile;
         this.filesFolder = new File(DZI_FILES);
 
-        ZipEntry entry = dziFile.getEntry(DZI_FILE);
-        InputStream is = dziFile.getInputStream(entry);
+        Path entry = dziFile.getPath(DZI_FILE);
+        InputStream is = Files.newInputStream(entry);
         ZippedDziFile df = new ZippedDziFile(is);
 
         tileSize = df.getTileSize();
@@ -76,15 +79,8 @@ public class ZippedDeepZoomImageReader {
         }
         try {
             String s = tileExample.getPath();
-            // handle .vmic files with / and \ separator
-            if ((entry = dziFile.getEntry(s)) == null) {
-                s = s.replace("\\", "/");
-                entry = dziFile.getEntry(s);
-                separator = "/";
-            }
-            else separator = "\\";
-
-            is = dziFile.getInputStream(entry);
+            entry = dziFile.getPath(s);
+            is = Files.newInputStream(entry);
             ImageInputStream iis = ImageIO.createImageInputStream(is);
             ImageReader reader = getImageReader(iis);
             reader.setInput(iis);
@@ -98,9 +94,9 @@ public class ZippedDeepZoomImageReader {
         pixelpermicron = df.getPixelPerMicron();
     }
 
-    public ZipFile getDziFile() {
+    /*public ZipFile getDziFile() {
         return dziFile;
-    }
+    }*/
 
     public File getFilesFolder() {
         return filesFolder;
@@ -329,13 +325,12 @@ public class ZippedDeepZoomImageReader {
             int column, int row) throws IOException {
         File levelFolder = new File(filesFolder, Integer.toString(level));
         File tile = new File(levelFolder, column + "_" + row + "." + format);
+
         String s = tile.getPath();
-        if (separator != System.getProperty("file.separator"))
-            s = s.replace(System.getProperty("file.separator"), separator);
-        ZipEntry entry = dziFile.getEntry(s);
-        // missing enrty if sparse scan
-        if (entry != null) {
-            InputStream is = dziFile.getInputStream(entry);
+        Path entry = dziFile.getPath(s);
+
+        if (Files.exists(entry)) {
+            InputStream is = Files.newInputStream(entry);
             try (ImageInputStream iis = ImageIO.createImageInputStream(is)) {
                 ImageReader reader = getImageReader(iis);
                 reader.setInput(iis);
@@ -361,7 +356,7 @@ public class ZippedDeepZoomImageReader {
         return maxLevel + (int) Math.ceil(Math.log(zoom) / Math.log(2));
     }
 
-    private double getZoomOfLevel(int level) {
+    public double getZoomOfLevel(int level) {
         return Math.pow(2, level - maxLevel);
     }
 

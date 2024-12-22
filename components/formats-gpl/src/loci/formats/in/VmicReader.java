@@ -29,6 +29,9 @@ package loci.formats.in;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -44,13 +47,14 @@ import ome.units.quantity.Length;
  * @author Kai Wiechen kai.wiechen at pathologie-worms.de
  */
 
-public class VmicReader extends FormatReader {
+public class VmicReader extends SubResolutionFormatReader {
   // TODO handle older .vmic files with INNER_CONTAINER = "Image"
   private static final String INNER_CONTAINER = "Image.vmici";
   private static File innerZipFile;
   private transient ZippedDeepZoomImageReader reader;
-  private static ZipFile innerZipContainer;
-  private static String prevId, prevInnerZip;
+  private static FileSystem inner_zip;
+  private static int resolutionLevels;
+  private static int currentSeries;
 
   // -- Constructor --
 
@@ -98,7 +102,7 @@ public class VmicReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     Rectangle rect = new Rectangle(x, y, w, h);
-    BufferedImage image = reader.getRegion(rect, 1.0);
+    BufferedImage image = reader.readRegionOfLevel(rect, reader.getMaxLevel()); //currentSeries); // getRegion(rect, 1.0);
 
     byte[] t = AWTImageTools.getBytes(image, false);
     System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
@@ -110,71 +114,92 @@ public class VmicReader extends FormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-
-//    if (innerZipFile != null && innerZipContainer != null) {
-//      innerZipContainer.close();
-//      innerZipFile.delete();
-//      innerZipContainer = null;
-//      innerZipFile = null;
-//    }
   }
 
-  // -- Internal FormatReader API methods --
+  /* @see IFormatReader#getResolutionCount() */
+  /*@Override
+  public int getResolutionCount() {
+    FormatTools.assertId(currentId, true, 1);
+    System.out.println("getResolutionCount");
+    return resolutionLevels;
+  }
+*/
+  /* @see IFormatReader#setResolution(int) */
+ /* @Override
+  public void setResolution(int no) {
+    if (no < 0 || no >= getResolutionCount()) {
+      throw new IllegalArgumentException("Invalid resolution: " + no);
+    }
+    if (!hasFlattenedResolutions()) {
+      System.out.println("setResolution");
+      resolution = resolutionLevels - no;
+    }
+  }*/
+
+  /*@Override
+  public void setSeries(int series) {
+    super.setSeries(series);
+    currentSeries = resolutionLevels - series;
+  }*/
+
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
+  public int getOptimalTileWidth() {
+    return reader.getTileSize();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
+  public int getOptimalTileHeight() {
+    return reader.getTileSize();
+  }// -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    innerZipFile = File.createTempFile("Image", ".vmici");
-    innerZipFile.deleteOnExit();
+    Path outer_zip = Path.of(id);
 
-    try (ZipFile outerZipFile = new ZipFile(id)) {
-      ZipEntry innerZipEntry = outerZipFile.getEntry(INNER_CONTAINER);
+    try (FileSystem fs = FileSystems.newFileSystem(outer_zip)) {
+      Path jar = fs.getPath(INNER_CONTAINER);
+      inner_zip = FileSystems.newFileSystem(jar);
 
-      try (InputStream innerZip = outerZipFile.getInputStream(innerZipEntry)) {
-        OutputStream out = new FileOutputStream(innerZipFile);
-        byte[] buffer = new byte[8192];
-        int len;
-        while ((len = innerZip.read(buffer)) > 0) {
-          out.write(buffer, 0, len);
-        }
-        out.close();
-      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
 
-   /* if (prevId == null) {
-      prevId = id;
-      prevInnerZip = innerZipFile.getName();
-    }
+    reader = new ZippedDeepZoomImageReader(inner_zip);
 
-    if (! id.equals(prevId)) {
-      File f = new File(prevInnerZip);
-      f.delete();
-      prevId = id;
-      prevInnerZip = innerZipFile.getName();
+    CoreMetadata m0 = core.get(0, 0);
+
+    m0.interleaved = false;
+    m0.littleEndian = false;
+
+    m0.sizeX = reader.getWidth();
+    m0.sizeY = reader.getHeight();
+    m0.sizeZ = 1;
+    m0.sizeT = 1;
+    m0.sizeC = 3;
+    m0.rgb = getSizeC() > 1;
+    m0.imageCount = 1;
+    m0.pixelType = FormatTools.UINT8;
+    m0.dimensionOrder = "XYCZT";
+    m0.metadataComplete = true;
+    m0.indexed = false;
+    //m0.resolutionCount = reader.getMaxLevel();
+
+    /*resolutionLevels = m0.resolutionCount;
+    for (int i = resolutionLevels - 1; i >= 0; i--) {
+      CoreMetadata ms = new CoreMetadata(this, 0);
+      core.add(0, ms);
+      ms.sizeX = (int) Math.round(reader.getWidth() * reader.getZoomOfLevel(i));
+      ms.sizeY = (int) Math.round(reader.getHeight() * reader.getZoomOfLevel(i));
+      ms.sizeT = m0.sizeT;
+      ms.imageCount = m0.imageCount;
+      ms.thumbnail = true;
+      ms.resolutionCount = 1;
     }*/
-
-    innerZipContainer = new ZipFile(innerZipFile);
-    reader = new ZippedDeepZoomImageReader(innerZipContainer);
-
-    CoreMetadata m = core.get(0);
-
-    m.interleaved = false;
-    m.littleEndian = false;
-
-    m.sizeX = reader.getWidth();
-    m.sizeY = reader.getHeight();
-    m.sizeZ = 1;
-    m.sizeT = 1;
-    m.sizeC = 3;
-    m.rgb = getSizeC() > 1;
-    m.imageCount = 1;
-    m.pixelType = FormatTools.UINT8;
-    m.dimensionOrder = "XYCZT";
-    m.metadataComplete = true;
-    m.indexed = false;
-    //m.resolutionCount = reader.getMaxLevel();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
