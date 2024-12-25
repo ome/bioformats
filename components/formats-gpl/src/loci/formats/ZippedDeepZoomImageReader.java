@@ -360,13 +360,13 @@ public class ZippedDeepZoomImageReader {
         return Math.pow(2, level - maxLevel);
     }
 
-    private List<File> getFilesOfLevel(int level) {
+    public List<File> getFilesOfLevel(int level) {
         int widthOfLevel = 1;
         int heightOfLevel = 1;
 
         if (level != 0) {
-            widthOfLevel = Math.min(2 * level, width);
-            heightOfLevel = Math.min(2 * level, height);
+            widthOfLevel = (int) Math.round(width * getZoomOfLevel(level)); //Math.min(2 * level, width);
+            heightOfLevel = (int) Math.round(height * getZoomOfLevel(level)); //Math.min(2 * level, height);
         }
 
         int numColumns = (int) Math.ceil(widthOfLevel / (float) tileSize);

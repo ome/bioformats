@@ -32,6 +32,7 @@ import java.io.*;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -48,13 +49,10 @@ import ome.units.quantity.Length;
  */
 
 public class VmicReader extends SubResolutionFormatReader {
-  // TODO handle older .vmic files with INNER_CONTAINER = "Image"
   private static final String INNER_CONTAINER = "Image.vmici";
-  private static File innerZipFile;
   private transient ZippedDeepZoomImageReader reader;
-  private static FileSystem inner_zip;
+  private static FileSystem inner_zipfs;
   private static int resolutionLevels;
-  private static int currentSeries;
 
   // -- Constructor --
 
@@ -102,7 +100,7 @@ public class VmicReader extends SubResolutionFormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     Rectangle rect = new Rectangle(x, y, w, h);
-    BufferedImage image = reader.readRegionOfLevel(rect, reader.getMaxLevel() - resolution); //.getMaxLevel()); //currentSeries); // getRegion(rect, 1.0);
+    BufferedImage image = reader.readRegionOfLevel(rect, reader.getMaxLevel() - resolution);
 
     byte[] t = AWTImageTools.getBytes(image, false);
     System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
@@ -120,7 +118,7 @@ public class VmicReader extends SubResolutionFormatReader {
   @Override
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
-    System.out.println("getResolutionCount " + resolutionLevels);
+    //System.out.println("getResolutionCount " + resolutionLevels);
     return resolutionLevels;
   }
 
@@ -131,16 +129,10 @@ public class VmicReader extends SubResolutionFormatReader {
       throw new IllegalArgumentException("Invalid resolution: " + no);
     }
     if (!hasFlattenedResolutions()) {
-      System.out.println("setResolution" +  no);
+      //System.out.println("setResolution" +  no);
       resolution = no;
     }
   }
-
-  /*@Override
-  public void setSeries(int series) {
-    super.setSeries(series);
-    currentSeries = resolutionLevels - series;
-  }*/
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   @Override
@@ -162,20 +154,19 @@ public class VmicReader extends SubResolutionFormatReader {
     Path outer_zip = Path.of(id);
 
     try (FileSystem fs = FileSystems.newFileSystem(outer_zip)) {
-      Path jar = fs.getPath(INNER_CONTAINER);
-      inner_zip = FileSystems.newFileSystem(jar);
+      Path inner_zip_path = fs.getPath(INNER_CONTAINER);
+      inner_zipfs = FileSystems.newFileSystem(inner_zip_path);
 
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    reader = new ZippedDeepZoomImageReader(inner_zip);
+    reader = new ZippedDeepZoomImageReader(inner_zipfs);
 
     CoreMetadata m0 = core.get(0, 0);
 
     m0.interleaved = false;
     m0.littleEndian = false;
-
     m0.sizeX = reader.getWidth();
     m0.sizeY = reader.getHeight();
     m0.sizeZ = 1;
@@ -187,23 +178,30 @@ public class VmicReader extends SubResolutionFormatReader {
     m0.dimensionOrder = "XYCZT";
     m0.metadataComplete = true;
     m0.indexed = false;
-    //m0.resolutionCount = reader.getMaxLevel();
+
     int maxResolutionLevels = reader.getMaxLevel() - 1;
+
     resolutionLevels = 0;
-    //resolutionLevels = reader.getMaxLevel() - 1;
-    //resolutionLevels = m0.resolutionCount;
-    // TODO only use resolutions x / 2 && y / 2
-    for (int i = maxResolutionLevels; i >= maxResolutionLevels - 4; i--) {
-      resolutionLevels += 1;
+
+    // add subresolutions from deepzoom pyramid
+    for (int i = maxResolutionLevels; i >= 0; i--) { //axResolutionLevels - 4
       CoreMetadata ms = new CoreMetadata(this, 0);
       core.add(0, ms);
       ms.sizeX = (int) Math.round(reader.getWidth() * reader.getZoomOfLevel(i));
       ms.sizeY = (int) Math.round(reader.getHeight() * reader.getZoomOfLevel(i));
-      System.out.printf("%d  %d x %d\n", resolutionLevels, ms.sizeY, ms.sizeY);
+      //System.out.printf("%d  %d x %d\n", resolutionLevels, ms.sizeX, ms.sizeY);
       ms.sizeT = m0.sizeT;
       ms.imageCount = m0.imageCount;
       ms.thumbnail = true;
       ms.resolutionCount = 1;
+
+      resolutionLevels += 1;
+
+      List<File> list_of_files = reader.getFilesOfLevel(i);
+      if (list_of_files.size() == 1) {
+        //System.out.println("lowest level " + i);
+        break;
+      }
     }
 
     MetadataStore store = makeFilterMetadata();
