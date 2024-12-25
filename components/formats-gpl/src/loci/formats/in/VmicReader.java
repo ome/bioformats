@@ -102,7 +102,7 @@ public class VmicReader extends SubResolutionFormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     Rectangle rect = new Rectangle(x, y, w, h);
-    BufferedImage image = reader.readRegionOfLevel(rect, reader.getMaxLevel()); //currentSeries); // getRegion(rect, 1.0);
+    BufferedImage image = reader.readRegionOfLevel(rect, reader.getMaxLevel() - resolution); //.getMaxLevel()); //currentSeries); // getRegion(rect, 1.0);
 
     byte[] t = AWTImageTools.getBytes(image, false);
     System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
@@ -117,24 +117,24 @@ public class VmicReader extends SubResolutionFormatReader {
   }
 
   /* @see IFormatReader#getResolutionCount() */
-  /*@Override
+  @Override
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
-    System.out.println("getResolutionCount");
+    System.out.println("getResolutionCount " + resolutionLevels);
     return resolutionLevels;
   }
-*/
+
   /* @see IFormatReader#setResolution(int) */
- /* @Override
+  @Override
   public void setResolution(int no) {
     if (no < 0 || no >= getResolutionCount()) {
       throw new IllegalArgumentException("Invalid resolution: " + no);
     }
     if (!hasFlattenedResolutions()) {
-      System.out.println("setResolution");
-      resolution = resolutionLevels - no;
+      System.out.println("setResolution" +  no);
+      resolution = no;
     }
-  }*/
+  }
 
   /*@Override
   public void setSeries(int series) {
@@ -188,18 +188,23 @@ public class VmicReader extends SubResolutionFormatReader {
     m0.metadataComplete = true;
     m0.indexed = false;
     //m0.resolutionCount = reader.getMaxLevel();
-
-    /*resolutionLevels = m0.resolutionCount;
-    for (int i = resolutionLevels - 1; i >= 0; i--) {
+    int maxResolutionLevels = reader.getMaxLevel() - 1;
+    resolutionLevels = 0;
+    //resolutionLevels = reader.getMaxLevel() - 1;
+    //resolutionLevels = m0.resolutionCount;
+    // TODO only use resolutions x / 2 && y / 2
+    for (int i = maxResolutionLevels; i >= maxResolutionLevels - 4; i--) {
+      resolutionLevels += 1;
       CoreMetadata ms = new CoreMetadata(this, 0);
       core.add(0, ms);
       ms.sizeX = (int) Math.round(reader.getWidth() * reader.getZoomOfLevel(i));
       ms.sizeY = (int) Math.round(reader.getHeight() * reader.getZoomOfLevel(i));
+      System.out.printf("%d  %d x %d\n", resolutionLevels, ms.sizeY, ms.sizeY);
       ms.sizeT = m0.sizeT;
       ms.imageCount = m0.imageCount;
       ms.thumbnail = true;
       ms.resolutionCount = 1;
-    }*/
+    }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
@@ -207,5 +212,5 @@ public class VmicReader extends SubResolutionFormatReader {
     Length pixelsize = FormatTools.createLength((double) (1 / reader.getPixelPerMicron()), UNITS.MICROMETER);
     store.setPixelsPhysicalSizeX(pixelsize, 0);
     store.setPixelsPhysicalSizeY(pixelsize, 0);
-  }
+ }
 }
