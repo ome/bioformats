@@ -129,7 +129,7 @@ public class VmicReader extends SubResolutionFormatReader {
       throw new IllegalArgumentException("Invalid resolution: " + no);
     }
     if (!hasFlattenedResolutions()) {
-      //System.out.println("setResolution" +  no);
+      //System.out.println("setResolution " +  no);
       resolution = no;
     }
   }
@@ -144,11 +144,14 @@ public class VmicReader extends SubResolutionFormatReader {
   @Override
   public int getOptimalTileHeight() {
     return reader.getTileSize();
-  }// -- Internal FormatReader API methods --
+  }
+
+  // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   public void initFile(String id) throws FormatException, IOException {
+    setFlattenedResolutions(false);
     super.initFile(id);
 
     Path outer_zip = Path.of(id);
@@ -189,17 +192,14 @@ public class VmicReader extends SubResolutionFormatReader {
       core.add(0, ms);
       ms.sizeX = (int) Math.round(reader.getWidth() * reader.getZoomOfLevel(i));
       ms.sizeY = (int) Math.round(reader.getHeight() * reader.getZoomOfLevel(i));
-      //System.out.printf("%d  %d x %d\n", resolutionLevels, ms.sizeX, ms.sizeY);
       ms.sizeT = m0.sizeT;
       ms.imageCount = m0.imageCount;
       ms.thumbnail = true;
       ms.resolutionCount = 1;
-
       resolutionLevels += 1;
 
       List<File> list_of_files = reader.getFilesOfLevel(i);
       if (list_of_files.size() == 1) {
-        //System.out.println("lowest level " + i);
         break;
       }
     }

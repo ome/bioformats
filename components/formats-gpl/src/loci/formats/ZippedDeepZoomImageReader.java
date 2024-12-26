@@ -31,8 +31,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 //import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -44,7 +42,7 @@ public class ZippedDeepZoomImageReader {
     public static final String DZI_FILE = "dzc_output.xml";
     public static final String DZI_FILES = "dzc_output_files";
 
-    private final FileSystem dziFile;
+    private final FileSystem zipfs;
     private final File filesFolder;
     //private final String separator;
     private final int tileSize;
@@ -60,11 +58,11 @@ public class ZippedDeepZoomImageReader {
         this(dziFile, null);
     }
 
-    public ZippedDeepZoomImageReader(FileSystem dziFile, File tileExample) throws IOException {
-        this.dziFile = dziFile;
+    public ZippedDeepZoomImageReader(FileSystem zipfs, File tileExample) throws IOException {
+        this.zipfs = zipfs;
         this.filesFolder = new File(DZI_FILES);
 
-        Path entry = dziFile.getPath(DZI_FILE);
+        Path entry = zipfs.getPath(DZI_FILE);
         InputStream is = Files.newInputStream(entry);
         ZippedDziFile df = new ZippedDziFile(is);
 
@@ -79,7 +77,7 @@ public class ZippedDeepZoomImageReader {
         }
         try {
             String s = tileExample.getPath();
-            entry = dziFile.getPath(s);
+            entry = zipfs.getPath(s);
             is = Files.newInputStream(entry);
             ImageInputStream iis = ImageIO.createImageInputStream(is);
             ImageReader reader = getImageReader(iis);
@@ -327,7 +325,7 @@ public class ZippedDeepZoomImageReader {
         File tile = new File(levelFolder, column + "_" + row + "." + format);
 
         String s = tile.getPath();
-        Path entry = dziFile.getPath(s);
+        Path entry = zipfs.getPath(s);
 
         if (Files.exists(entry)) {
             InputStream is = Files.newInputStream(entry);
