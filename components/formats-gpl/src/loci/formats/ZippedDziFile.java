@@ -42,11 +42,11 @@ public class ZippedDziFile {
         this.pixelpermicron = pixelpermicron;
     }
 
-    public ZippedDziFile(InputStream dziFile) throws IOException {
+    public ZippedDziFile(InputStream dzi_is) throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = factory.newDocumentBuilder();
-            Document doc = db.parse(dziFile);
+            Document doc = db.parse(dzi_is);
             Element imageNode = doc.getDocumentElement();
             if (!"Image".equals(imageNode.getNodeName())) {
                 throw new IOException("Unsupported dzi file.");
@@ -71,6 +71,9 @@ public class ZippedDziFile {
             }
             width = Integer.parseInt(w);
             height = Integer.parseInt(h);
+
+            dzi_is.close();
+
         } catch (ParserConfigurationException | SAXException ex) {
             throw new IOException(ex);
         }

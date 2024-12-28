@@ -98,7 +98,7 @@ public class VmicReader extends SubResolutionFormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
+    //System.out.printf("openbytes reader levels: %d  usable levels: %d  internal resolution: %d  dzi plane: %d\n", reader.getMaxLevel(), resolutionLevels, resolution, reader.getMaxLevel() - resolution);
     Rectangle rect = new Rectangle(x, y, w, h);
     BufferedImage image = reader.readRegionOfLevel(rect, reader.getMaxLevel() - resolution);
 
@@ -118,7 +118,6 @@ public class VmicReader extends SubResolutionFormatReader {
   @Override
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
-    //System.out.println("getResolutionCount " + resolutionLevels);
     return resolutionLevels;
   }
 
@@ -128,8 +127,8 @@ public class VmicReader extends SubResolutionFormatReader {
     if (no < 0 || no >= getResolutionCount()) {
       throw new IllegalArgumentException("Invalid resolution: " + no);
     }
+
     if (!hasFlattenedResolutions()) {
-      //System.out.println("setResolution " +  no);
       resolution = no;
     }
   }
@@ -187,7 +186,7 @@ public class VmicReader extends SubResolutionFormatReader {
     resolutionLevels = 0;
 
     // add subresolutions from deepzoom pyramid
-    for (int i = maxResolutionLevels; i >= 0; i--) { //axResolutionLevels - 4
+    for (int i = maxResolutionLevels; i >= 0; i--) {
       CoreMetadata ms = new CoreMetadata(this, 0);
       core.add(0, ms);
       ms.sizeX = (int) Math.round(reader.getWidth() * reader.getZoomOfLevel(i));
@@ -210,5 +209,5 @@ public class VmicReader extends SubResolutionFormatReader {
     Length pixelsize = FormatTools.createLength((double) (1 / reader.getPixelPerMicron()), UNITS.MICROMETER);
     store.setPixelsPhysicalSizeX(pixelsize, 0);
     store.setPixelsPhysicalSizeY(pixelsize, 0);
- }
+  }
 }

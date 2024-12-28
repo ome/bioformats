@@ -44,7 +44,6 @@ public class ZippedDeepZoomImageReader {
 
     private final FileSystem zipfs;
     private final File filesFolder;
-    //private final String separator;
     private final int tileSize;
     private final int overlap;
     private final String format;
