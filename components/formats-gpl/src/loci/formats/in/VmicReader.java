@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import loci.common.Location;
 import loci.formats.*;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
@@ -50,9 +51,9 @@ import ome.units.quantity.Length;
 
 public class VmicReader extends SubResolutionFormatReader {
   private static final String INNER_CONTAINER = "Image.vmici";
-  private transient ZippedDeepZoomImageReader reader;
-  private static FileSystem inner_zipfs;
-  private static int resolutionLevels;
+  private ZippedDeepZoomImageReader reader;
+  private FileSystem inner_zipfs;
+  private int resolutionLevels;
 
   // -- Constructor --
 
@@ -98,7 +99,7 @@ public class VmicReader extends SubResolutionFormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    //System.out.printf("openbytes reader levels: %d  usable levels: %d  internal resolution: %d  dzi plane: %d\n", reader.getMaxLevel(), resolutionLevels, resolution, reader.getMaxLevel() - resolution);
+
     Rectangle rect = new Rectangle(x, y, w, h);
     BufferedImage image = reader.readRegionOfLevel(rect, reader.getMaxLevel() - resolution);
 
@@ -112,6 +113,7 @@ public class VmicReader extends SubResolutionFormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
+    resolutionLevels = 0;
   }
 
   /* @see IFormatReader#getResolutionCount() */
@@ -153,7 +155,7 @@ public class VmicReader extends SubResolutionFormatReader {
     setFlattenedResolutions(false);
     super.initFile(id);
 
-    Path outer_zip = Path.of(id);
+    Path outer_zip = Path.of(Location.getMappedId(id));
 
     try (FileSystem fs = FileSystems.newFileSystem(outer_zip)) {
       Path inner_zip_path = fs.getPath(INNER_CONTAINER);
@@ -183,7 +185,7 @@ public class VmicReader extends SubResolutionFormatReader {
 
     int maxResolutionLevels = reader.getMaxLevel() - 1;
 
-    resolutionLevels = 0;
+    resolutionLevels = 1;
 
     // add subresolutions from deepzoom pyramid
     for (int i = maxResolutionLevels; i >= 0; i--) {
