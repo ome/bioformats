@@ -53,7 +53,6 @@ public class VmicReader extends SubResolutionFormatReader {
   private static final String INNER_CONTAINER = "Image.vmici";
   private ZippedDeepZoomImageReader reader;
   private FileSystem inner_zipfs;
-  private int resolutionLevels;
 
   // -- Constructor --
 
@@ -113,14 +112,17 @@ public class VmicReader extends SubResolutionFormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    resolutionLevels = 0;
+    if (reader != null) {
+      inner_zipfs = null;
+      reader = null;
+    }
   }
 
   /* @see IFormatReader#getResolutionCount() */
   @Override
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
-    return resolutionLevels;
+    return core.get(0, 0).resolutionCount;
   }
 
   /* @see IFormatReader#setResolution(int) */
@@ -147,7 +149,17 @@ public class VmicReader extends SubResolutionFormatReader {
     return reader.getTileSize();
   }
 
-  // -- Internal FormatReader API methods --
+  /* @see loci.formats.FormatReader#getThumbSizeX() */
+  @Override
+  public int getThumbSizeX() {
+    return core.get(0, 0).thumbSizeX;
+  }
+
+  /* @see loci.formats.FormatReader#getThumbSizeY() */
+  @Override
+  public int getThumbSizeY() {
+    return core.get(0, 0).thumbSizeY;
+  }
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
@@ -185,7 +197,7 @@ public class VmicReader extends SubResolutionFormatReader {
 
     int maxResolutionLevels = reader.getMaxLevel() - 1;
 
-    resolutionLevels = 1;
+    m0.resolutionCount = 1;
 
     // add subresolutions from deepzoom pyramid
     for (int i = maxResolutionLevels; i >= 0; i--) {
@@ -197,10 +209,13 @@ public class VmicReader extends SubResolutionFormatReader {
       ms.imageCount = m0.imageCount;
       ms.thumbnail = true;
       ms.resolutionCount = 1;
-      resolutionLevels += 1;
+
+      m0.resolutionCount += 1;
 
       List<File> list_of_files = reader.getFilesOfLevel(i);
       if (list_of_files.size() == 1) {
+        m0.thumbSizeX = ms.sizeX;;
+        m0.thumbSizeY = ms.sizeY;
         break;
       }
     }
