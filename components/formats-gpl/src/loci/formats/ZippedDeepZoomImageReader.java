@@ -50,7 +50,6 @@ public class ZippedDeepZoomImageReader {
     private final int width;
     private final int height;
     private final int maxLevel;
-    private final float pixelpermicron;
     private final ImageTypeSpecifier rawImageType;
 
     public ZippedDeepZoomImageReader(FileSystem dziFile) throws IOException {
@@ -88,7 +87,6 @@ public class ZippedDeepZoomImageReader {
 
         int maxDim = Math.max(width, height);
         maxLevel = (int) Math.ceil(Math.log(maxDim) / Math.log(2));
-        pixelpermicron = df.getPixelPerMicron();
     }
 
     /*public ZipFile getDziFile() {
@@ -123,10 +121,6 @@ public class ZippedDeepZoomImageReader {
 
     public int getMaxLevel() {
         return maxLevel;
-    }
-
-    public float getPixelPerMicron() {
-        return pixelpermicron;
     }
 
     //@Override

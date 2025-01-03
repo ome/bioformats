@@ -31,7 +31,6 @@ public class ZippedDziFile {
     private final String format;
     private final int width;
     private final int height;
-    private final float pixelpermicron;
 
     public ZippedDziFile(int tileSize, int overlap, String format, int width, int height, float pixelpermicron) {
         this.tileSize = tileSize;
@@ -39,7 +38,6 @@ public class ZippedDziFile {
         this.format = format;
         this.width = width;
         this.height = height;
-        this.pixelpermicron = pixelpermicron;
     }
 
     public ZippedDziFile(InputStream dzi_is) throws IOException {
@@ -55,7 +53,6 @@ public class ZippedDziFile {
             tileSize = Integer.parseInt(imageNode.getAttribute("TileSize"));
             overlap = Integer.parseInt(imageNode.getAttribute("Overlap"));
             format = imageNode.getAttribute("Format");
-            pixelpermicron = Float.parseFloat(imageNode.getAttribute("PixelPerMicron"));
 
             NodeList childNodes = imageNode.getChildNodes();
             int length = childNodes.getLength();
@@ -103,8 +100,6 @@ public class ZippedDziFile {
         int maxDim = Math.max(width, height);
         return (int) Math.ceil(Math.log(maxDim) / Math.log(2));
     }
-
-    public float getPixelPerMicron() { return pixelpermicron; }
 
 //    commented out for .vmic reader function
 //

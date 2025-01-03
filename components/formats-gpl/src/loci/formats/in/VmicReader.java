@@ -31,7 +31,9 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -42,6 +44,12 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Reader for PreciPoint .vmic WSI files
@@ -51,6 +59,7 @@ import ome.units.quantity.Length;
 
 public class VmicReader extends SubResolutionFormatReader {
   private static final String INNER_CONTAINER = "Image.vmici";
+  private static final String EXTENDED_METADATA = "VMCF/config.osc";
   private ZippedDeepZoomImageReader reader;
   private FileSystem inner_zipfs;
 
@@ -62,8 +71,6 @@ public class VmicReader extends SubResolutionFormatReader {
     suffixNecessary = true;
     suffixSufficient = true;
   }
-
-  // -- IFormatReader API methods --
 
   /* (non-Javadoc)
    * @see loci.formats.FormatReader#isThisType(java.lang.String, boolean)
@@ -220,11 +227,64 @@ public class VmicReader extends SubResolutionFormatReader {
       }
     }
 
+    initExtendedMetadata();
+  }
+
+  private void initExtendedMetadata() throws IOException {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    Length pixelsize = FormatTools.createLength((double) (1 / reader.getPixelPerMicron()), UNITS.MICROMETER);
-    store.setPixelsPhysicalSizeX(pixelsize, 0);
-    store.setPixelsPhysicalSizeY(pixelsize, 0);
+    HashMap<String, String> metaDataMap = new HashMap<>();
+    metaDataMap.put("ObjectScanConfig:ShortName", null);
+    metaDataMap.put("ObjectScanConfig:Magnification", null);
+    metaDataMap.put("ObjectScanConfig:PixelPerMicron", null);
+
+    try {
+      Path entry = inner_zipfs.getPath(EXTENDED_METADATA);
+      InputStream is = Files.newInputStream(entry);
+
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = factory.newDocumentBuilder();
+      Document doc = db.parse(is);
+      Element imageNode = doc.getDocumentElement();
+      if (!"ObjectScanConfig:ObjectScanConfig".equals(imageNode.getNodeName())) {
+        throw new IOException("Unsupported config.osc file.");
+      }
+
+      NodeList outerChildNodes = imageNode.getChildNodes();
+      int outerLength = outerChildNodes.getLength();
+
+      for (int i = 0; i < outerLength; i++) {
+        Node outerNode = outerChildNodes.item(i);
+        if ("ObjectScanConfig:Objective".equals(outerNode.getNodeName()) || "ObjectScanConfig:CombinedOpticalConfig".equals(outerNode.getNodeName())) {
+          NodeList innerChildNodes = outerNode.getChildNodes();
+          int innerLength = innerChildNodes.getLength();
+
+          for (int j = 0; j < innerLength; j++) {
+            Node innerNode = innerChildNodes.item(j);
+
+            if (metaDataMap.containsKey(innerNode.getNodeName())) {
+              metaDataMap.put(innerNode.getNodeName(), innerNode.getTextContent());
+            }
+          }
+        }
+      }
+
+      Length pixelsize = FormatTools.createLength(1 / Double.parseDouble(metaDataMap.get("ObjectScanConfig:PixelPerMicron")), UNITS.MICROMETER);
+      store.setPixelsPhysicalSizeX(pixelsize, 0);
+      store.setPixelsPhysicalSizeY(pixelsize, 0);
+      // IDs must not contain white spaces ??
+      store.setInstrumentID("PreciPoint", 0);
+      store.setObjectiveSettingsID(metaDataMap.get("ObjectScanConfig:ShortName"), 0);
+      store.setObjectiveID(metaDataMap.get("ObjectScanConfig:ShortName"), 0, 0);
+      store.setObjectiveNominalMagnification(Double.parseDouble(metaDataMap.get("ObjectScanConfig:Magnification")), 0, 0);
+
+      is.close();
+
+    } catch (IOException | ParserConfigurationException e) {
+        throw new IOException(e);
+    } catch (SAXException e) {
+        throw new RuntimeException(e);
+    }
   }
 }
