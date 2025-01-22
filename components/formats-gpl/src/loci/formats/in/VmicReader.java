@@ -235,9 +235,9 @@ public class VmicReader extends SubResolutionFormatReader {
     MetadataTools.populatePixels(store, this);
 
     HashMap<String, String> metaDataMap = new HashMap<>();
-    metaDataMap.put("ObjectScanConfig:ShortName", null);
-    metaDataMap.put("ObjectScanConfig:Magnification", null);
-    metaDataMap.put("ObjectScanConfig:PixelPerMicron", null);
+    metaDataMap.put("ShortName", null);
+    metaDataMap.put("Magnification", null);
+    metaDataMap.put("PixelPerMicron", null);
 
     try {
       Path entry = inner_zipfs.getPath(EXTENDED_METADATA);
@@ -247,7 +247,7 @@ public class VmicReader extends SubResolutionFormatReader {
       DocumentBuilder db = factory.newDocumentBuilder();
       Document doc = db.parse(is);
       Element imageNode = doc.getDocumentElement();
-      if (!"ObjectScanConfig:ObjectScanConfig".equals(imageNode.getNodeName())) {
+      if (! imageNode.getNodeName().contains("ObjectScanConfig")) {
         throw new IOException("Unsupported config.osc file.");
       }
 
@@ -256,28 +256,29 @@ public class VmicReader extends SubResolutionFormatReader {
 
       for (int i = 0; i < outerLength; i++) {
         Node outerNode = outerChildNodes.item(i);
-        if ("ObjectScanConfig:Objective".equals(outerNode.getNodeName()) || "ObjectScanConfig:CombinedOpticalConfig".equals(outerNode.getNodeName())) {
+        if (outerNode.getNodeName().contains("Objective") || outerNode.getNodeName().contains("CombinedOpticalConfig")) {
           NodeList innerChildNodes = outerNode.getChildNodes();
           int innerLength = innerChildNodes.getLength();
 
           for (int j = 0; j < innerLength; j++) {
             Node innerNode = innerChildNodes.item(j);
 
-            if (metaDataMap.containsKey(innerNode.getNodeName())) {
-              metaDataMap.put(innerNode.getNodeName(), innerNode.getTextContent());
+            String nn = innerNode.getNodeName().replace("ObjectScanConfig:", "");
+            if (metaDataMap.containsKey(nn)) {
+              metaDataMap.put(nn, innerNode.getTextContent());
             }
           }
         }
       }
 
-      Length pixelsize = FormatTools.createLength(1 / Double.parseDouble(metaDataMap.get("ObjectScanConfig:PixelPerMicron")), UNITS.MICROMETER);
+      Length pixelsize = FormatTools.createLength(1 / Double.parseDouble(metaDataMap.get("PixelPerMicron")), UNITS.MICROMETER);
       store.setPixelsPhysicalSizeX(pixelsize, 0);
       store.setPixelsPhysicalSizeY(pixelsize, 0);
       // IDs must not contain white spaces ??
       store.setInstrumentID("PreciPoint", 0);
-      store.setObjectiveSettingsID(metaDataMap.get("ObjectScanConfig:ShortName"), 0);
-      store.setObjectiveID(metaDataMap.get("ObjectScanConfig:ShortName"), 0, 0);
-      store.setObjectiveNominalMagnification(Double.parseDouble(metaDataMap.get("ObjectScanConfig:Magnification")), 0, 0);
+      store.setObjectiveSettingsID(metaDataMap.get("ShortName"), 0);
+      store.setObjectiveID(metaDataMap.get("ShortName"), 0, 0);
+      store.setObjectiveNominalMagnification(Double.parseDouble(metaDataMap.get("Magnification")), 0, 0);
 
       is.close();
 
