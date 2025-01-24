@@ -9,7 +9,7 @@
  * any other characteristic. We would appreciate acknowledgement if the
  * software is used.
  */
-package loci.formats;
+package loci.formats.vmicreader_pyramidio;
 
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;

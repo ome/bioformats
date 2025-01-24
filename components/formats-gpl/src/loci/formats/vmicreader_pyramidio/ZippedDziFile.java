@@ -9,7 +9,7 @@
  * any other characteristic. We would appreciate acknowledgement if the
  * software is used.
  */
-package loci.formats;
+package loci.formats.vmicreader_pyramidio;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;

@@ -42,6 +42,7 @@ import loci.common.Location;
 import loci.formats.*;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.vmicreader_pyramidio.ZippedDeepZoomImageReader;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 import org.w3c.dom.*;
