@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -92,6 +93,7 @@ public class OIRReader extends FormatReader {
 
   private transient Double zStart;
   private transient Double zStep;
+  private transient Double tStart;
   private transient Double tStep;
   private transient HashMap<Integer, Double> timestampAdjustments = new HashMap<Integer, Double>();
 
@@ -277,6 +279,7 @@ public class OIRReader extends FormatReader {
       minT = Integer.MAX_VALUE;
       zStart = null;
       zStep = null;
+      tStart = null;
       tStep = null;
     }
   }
@@ -603,6 +606,9 @@ public class OIRReader extends FormatReader {
       for (int i=0; i<getImageCount(); i++) {
         int t = getZCTCoords(i)[2];
         double deltaT = t * tStep;
+        if (tStart != null) {
+          deltaT += tStart;
+        }
         for (Integer frame : timestampAdjustments.keySet()) {
           if (t >= frame) {
             deltaT += (timestampAdjustments.get(frame) - tStep);
@@ -1189,7 +1195,11 @@ public class OIRReader extends FormatReader {
               Element speed = getFirstChild(getFirstChild(scanner, "lsmimage:param"), "lsmparam:speed");
               speed = getFirstChild(speed, "commonparam:speedInformation");
               Element seriesInterval = getFirstChild(speed, "commonparam:seriesInterval");
-              if (seriesInterval != null) {
+
+              // prefer setting tStep from the TIMELAPSE axis,
+              // but fall back to this if needed
+              if (seriesInterval != null && tStep == null) {
+                // units are expected to be milliseconds
                 tStep = DataTools.parseDouble(seriesInterval.getTextContent());
               }
             }
@@ -1358,6 +1368,12 @@ public class OIRReader extends FormatReader {
       else if (name.equals("TIMELAPSE")) {
         if (m.sizeT <= 1) {
           m.sizeT = Integer.parseInt(size.getTextContent());
+          // units are expected to be seconds, multiply to get milliseconds
+          tStart = DataTools.parseDouble(start.getTextContent()) * 1000;
+          double stepValue = DataTools.parseDouble(step.getTextContent());
+          if (stepValue > Constants.EPSILON) {
+            tStep = stepValue * 1000;
+          }
         }
       }
       else if (name.equals("LAMBDA")) {

@@ -108,6 +108,7 @@ loci.formats.in.MicroCTReader         # vff
 loci.formats.in.LOFReader	            # lof
 loci.formats.in.XLEFReader            # xlef
 loci.formats.in.OlympusTileReader     # omp2info
+loci.formats.in.DCIMGReader           # dcimg
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par

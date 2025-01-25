@@ -142,17 +142,14 @@ public class FujiReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
+    if (!checkSuffix(id, "inf")) {
+      initFile(id.substring(0, id.lastIndexOf(".")) + ".inf");
+      return;
+    }
+
     super.initFile(id);
-
-    if (checkSuffix(id, "inf")) {
-      infFile = new Location(id).getAbsolutePath();
-      pixelsFile = infFile.substring(0, infFile.lastIndexOf(".")) + ".img";
-    }
-    else {
-      pixelsFile = new Location(id).getAbsolutePath();
-      infFile = pixelsFile.substring(0, pixelsFile.lastIndexOf(".")) + ".inf";
-    }
-
+    infFile = new Location(id).getAbsolutePath();
+    pixelsFile = infFile.substring(0, infFile.lastIndexOf(".")) + ".img";
     String[] lines = DataTools.readFile(infFile).split("\r{0,1}\n");
 
     int bits = Integer.parseInt(lines[5]);

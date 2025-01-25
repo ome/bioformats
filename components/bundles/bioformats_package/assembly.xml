@@ -36,4 +36,9 @@
       <useProjectArtifact>false</useProjectArtifact>
     </dependencySet>
   </dependencySets>
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>metaInf-services</handlerName>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
 </assembly>

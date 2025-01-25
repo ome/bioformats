@@ -220,6 +220,30 @@ your FindBugs installation's lib directory. E.g.:
       <path refid="runtime.classpath"/>
     </unzip>
 
+    <!-- Merge ucar.nc2.filter.FilterProvider files -->
+    <pathconvert property="runtimePaths.string" refid="runtime.classpath" pathsep="${line.separator}"/>
+    <echo file="${build.dir}/unzip/runtimePaths.txt">${runtimePaths.string}</echo>
+    <loadfile property="cdmcorePath" srcFile="${build.dir}/unzip/runtimePaths.txt">
+      <filterchain>
+        <linecontains>
+          <contains value="cdm-core"/>
+        </linecontains>
+        <striplinebreaks/>
+      </filterchain>
+    </loadfile>
+    <loadfile property="formatsgplPath" srcFile="${build.dir}/unzip/runtimePaths.txt">
+      <filterchain>
+        <linecontains>
+          <contains value="formats-gpl"/>
+        </linecontains>
+        <striplinebreaks/>
+      </filterchain>
+    </loadfile>
+    <concat destfile="${build.dir}/unzip/META-INF/services/ucar.nc2.filter.FilterProvider" fixlastline="yes">
+      <zipentry zipfile="${cdmcorePath}" name="META-INF/services/ucar.nc2.filter.FilterProvider"/>
+      <zipentry zipfile="${formatsgplPath}" name="META-INF/services/ucar.nc2.filter.FilterProvider"/>
+    </concat>
+
     <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
       <zipfileset dir="${build.dir}/unzip"/>
       <manifest>

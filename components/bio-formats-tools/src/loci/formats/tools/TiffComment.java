@@ -40,6 +40,7 @@ import java.util.ArrayList;
 
 import loci.common.Constants;
 import loci.common.DataTools;
+import loci.common.DebugTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
@@ -55,7 +56,7 @@ public class TiffComment {
     if (args.length == 0) {
       System.out.println("Usage:");
       System.out.println(
-        "tiffcomment [-set comment] [-edit] file1 [file2 ...]");
+        "tiffcomment [-version] [-debug] [-trace] [-no-upgrade] [-set comment] [-edit] file1 [file2 ...]");
       System.out.println();
 
       System.out.println("This tool requires an ImageDescription tag to be " +
@@ -70,10 +71,14 @@ public class TiffComment {
       System.out.println("  * '-', to enter the comment using stdin.  " +
         "Entering a blank line will");
       System.out.println("    terminate reading from stdin.");
+      System.out.println();
+      System.out.println("Additional options:");
+      System.out.println("    -version: print the library version and exit");
+      System.out.println(" -no-upgrade: do not perform the upgrade check");
+      System.out.println("      -debug: enable DEBUG-level logging");
+      System.out.println("      -trace: enable TRACE-level logging");
       return;
     }
-
-    CommandLineTools.runUpgradeCheck(args);
 
     // parse flags
     boolean edit = false;
@@ -106,8 +111,22 @@ public class TiffComment {
           }
         }
       }
-      else System.out.println("Warning: unknown flag: " + args[i]);
+      else if (args[i].equals(CommandLineTools.VERSION)) {
+        CommandLineTools.printVersion();
+        return;
+      }
+      else if (args[i].equals("-debug")) {
+        DebugTools.setRootLevel("DEBUG");
+      }
+      else if (args[i].equals("-trace")) {
+        DebugTools.setRootLevel("TRACE");
+      }
+      else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
+        System.out.println("Warning: unknown flag: " + args[i]);
+      }
     }
+
+    CommandLineTools.runUpgradeCheck(args);
 
     // process files
     for (String file : files) {

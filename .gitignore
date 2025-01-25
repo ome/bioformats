@@ -20,3 +20,4 @@ tools/*.jar
 *.iml
 .*.swp
 *.clean
+.vscode

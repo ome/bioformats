@@ -1869,9 +1869,7 @@ public class FormatReaderTest {
       if (!(reader.getFormat().equals("Bio-Rad PIC")) &&
           !(reader.getFormat().equals("Metamorph STK")) &&
           !(reader.getFormat().equals("Evotec Flex")) &&
-          !(reader.getFormat().equals("CellSens VSI")) &&
           !(reader.getFormat().equals("PerkinElmer")) &&
-          !(reader.getFormat().equals("Fuji LAS 3000")) &&
           !(reader.getFormat().equals("Micro-Manager")) &&
           !(reader.getFormat().equals("BDV")) &&
           !(reader.getFormat().equals("Zeiss AxioVision TIFF")) &&
