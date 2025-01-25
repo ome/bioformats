@@ -9,7 +9,7 @@
  * any other characteristic. We would appreciate acknowledgement if the
  * software is used.
  */
-package loci.formats.vmicreader_pyramidio;
+package loci.formats.pyramidio;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -20,11 +20,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 
 /**
- * DZI file reader and writer
+ * DZI file reader
  *
- * @author Antoine Vandecreme 
+ * @author Antoine Vandecreme
+ *
+ * reused and adapted for PreciPoint .vmic WSI files reader
+ *
  */
-public class ZippedDziFile {
+public class DziFile {
 
     private final int tileSize;
     private final int overlap;
@@ -32,7 +35,7 @@ public class ZippedDziFile {
     private final int width;
     private final int height;
 
-    public ZippedDziFile(int tileSize, int overlap, String format, int width, int height, float pixelpermicron) {
+    public DziFile(int tileSize, int overlap, String format, int width, int height) {
         this.tileSize = tileSize;
         this.overlap = overlap;
         this.format = format;
@@ -40,7 +43,7 @@ public class ZippedDziFile {
         this.height = height;
     }
 
-    public ZippedDziFile(InputStream dzi_is) throws IOException {
+    public DziFile(InputStream dzi_is) throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = factory.newDocumentBuilder();
@@ -100,39 +103,4 @@ public class ZippedDziFile {
         int maxDim = Math.max(width, height);
         return (int) Math.ceil(Math.log(maxDim) / Math.log(2));
     }
-
-//    commented out for .vmic reader function
-//
-//    public void write(File file) throws FileNotFoundException, IOException {
-//        try (OutputStreamWriter osw = new OutputStreamWriter(
-//                new FileOutputStream(file))) {
-//            osw.write(toXml());
-//        }
-//    }
-//
-//    public void write(String name, FilesArchiver archiver) throws IOException {
-//        archiver.appendFile(name, new FilesArchiver.FileAppender<Void>() {
-//            @Override
-//            public Void append(OutputStream outputStream) throws IOException {
-//                try (Writer out = new OutputStreamWriter(outputStream,
-//                        Charset.forName("UTF-8"))) {
-//                    out.write(toXml());
-//                }
-//                return null;
-//            }
-//        });
-//    }
-//
-//    private String toXml() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-//        sb.append("<Image TileSize=\"").append(tileSize).
-//                append("\" Overlap=\"").append(overlap).append("\" Format=\"").
-//                append(format).append(
-//                        "\" xmlns=\"http://schemas.microsoft.com/deepzoom/2009\">\n");
-//        sb.append("<Size Width=\"").append(width).append("\" Height=\"")
-//                .append(height).append("\" />\n");
-//        sb.append("</Image>\n");
-//        return sb.toString();
-//    }
 }

@@ -9,10 +9,8 @@
  * any other characteristic. We would appreciate acknowledgement if the
  * software is used.
  */
-package loci.formats.vmicreader_pyramidio;
+package loci.formats.pyramidio;
 
-//import BufferedImageHelper;
-//import ImageResizingHelper;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -31,14 +29,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-//import org.apache.commons.io.FilenameUtils;
 
 /**
  * DZI pyramid reader. Thread safe.
  *
  * @author Antoine Vandecreme
+ *
+ * reused and adapted for PreciPoint .vmic WSI files reader
+ *
  */
-public class ZippedDeepZoomImageReader {
+public class DeepZoomImageReader {
     public static final String DZI_FILE = "dzc_output.xml";
     public static final String DZI_FILES = "dzc_output_files";
 
@@ -52,17 +52,17 @@ public class ZippedDeepZoomImageReader {
     private final int maxLevel;
     private final ImageTypeSpecifier rawImageType;
 
-    public ZippedDeepZoomImageReader(FileSystem dziFile) throws IOException {
+    public DeepZoomImageReader(FileSystem dziFile) throws IOException {
         this(dziFile, null);
     }
 
-    public ZippedDeepZoomImageReader(FileSystem zipfs, File tileExample) throws IOException {
+    public DeepZoomImageReader(FileSystem zipfs, File tileExample) throws IOException {
         this.zipfs = zipfs;
         this.filesFolder = new File(DZI_FILES);
 
         Path entry = zipfs.getPath(DZI_FILE);
         InputStream is = Files.newInputStream(entry);
-        ZippedDziFile df = new ZippedDziFile(is);
+        DziFile df = new DziFile(is);
 
         tileSize = df.getTileSize();
         overlap = df.getOverlap();
@@ -89,9 +89,6 @@ public class ZippedDeepZoomImageReader {
         maxLevel = (int) Math.ceil(Math.log(maxDim) / Math.log(2));
     }
 
-    /*public ZipFile getDziFile() {
-        return dziFile;
-    }*/
 
     public File getFilesFolder() {
         return filesFolder;

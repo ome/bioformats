@@ -42,7 +42,7 @@ import loci.common.Location;
 import loci.formats.*;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
-import loci.formats.vmicreader_pyramidio.ZippedDeepZoomImageReader;
+import loci.formats.pyramidio.DeepZoomImageReader;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 import org.w3c.dom.*;
@@ -61,7 +61,7 @@ import javax.xml.parsers.ParserConfigurationException;
 public class VmicReader extends SubResolutionFormatReader {
   private static final String INNER_CONTAINER = "Image.vmici";
   private static final String EXTENDED_METADATA = "VMCF/config.osc";
-  private ZippedDeepZoomImageReader reader;
+  private DeepZoomImageReader reader;
   private FileSystem inner_zipfs;
 
   // -- Constructor --
@@ -83,7 +83,7 @@ public class VmicReader extends SubResolutionFormatReader {
       try (ZipFile outerZipFile = new ZipFile(name)) {
         ZipEntry innerZipEntry = outerZipFile.getEntry(INNER_CONTAINER);
         try (InputStream innerZip = outerZipFile.getInputStream(innerZipEntry)) {
-          // check inner zip file magic number 50 4B
+          // check inner zip file magic numbers 0x50 0x4B
           byte[] bytes = new byte[2];
           innerZip.read(bytes, 0, 2);
           if( bytes[0] == 0x50 && bytes[1] == 0x4B) return true;
@@ -185,7 +185,7 @@ public class VmicReader extends SubResolutionFormatReader {
       throw new RuntimeException(e);
     }
 
-    reader = new ZippedDeepZoomImageReader(inner_zipfs);
+    reader = new DeepZoomImageReader(inner_zipfs);
 
     CoreMetadata m0 = core.get(0, 0);
 
@@ -207,7 +207,7 @@ public class VmicReader extends SubResolutionFormatReader {
 
     m0.resolutionCount = 1;
 
-    // add subresolutions from deepzoom pyramid
+    // deepzoom pyramid subresolutions
     for (int i = maxResolutionLevels; i >= 0; i--) {
       CoreMetadata ms = new CoreMetadata(this, 0);
       core.add(0, ms);
