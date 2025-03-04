@@ -318,7 +318,7 @@ public class IPWReader extends FormatReader {
       m.sizeZ = getImageCount();
     }
 
-    if (isRGB()) m.sizeC *= 3;
+    if (isRGB()) m.sizeC *= 3.0;
 
     int bitsPerSample = firstIFD.getBitsPerSample()[0];
     m.pixelType = firstIFD.getPixelType();
