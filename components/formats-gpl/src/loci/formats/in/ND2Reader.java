@@ -295,7 +295,7 @@ public class ND2Reader extends SubResolutionFormatReader {
 
         if (split) {
           pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
-            bpp, false, true);
+            bpp, true, true);
         }
         System.arraycopy(pix, 0, buf, 0, pix.length);
       }
@@ -334,9 +334,8 @@ public class ND2Reader extends SubResolutionFormatReader {
           LOGGER.warn("data line not fully read" + r + " of " + destLength);
         }
         byte[] p2 = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
-                bpp, false, true);
+                bpp, true, true);
         System.arraycopy(p2, 0, buf, row*p2.length, p2.length);
-        
       }
 
     }
@@ -2628,7 +2627,7 @@ public class ND2Reader extends SubResolutionFormatReader {
   {
     if (split) {
       pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(), bpp,
-        false, true);
+        true, true);
     }
     RandomAccessInputStream s = new RandomAccessInputStream(pix);
     readPlane(s, x, y, w, h, scanlinePad, buf);
