@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.List;
 import static java.lang.Integer.max;
+import java.lang.Math;
 
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.nodes.MappingNode;
@@ -1669,7 +1670,7 @@ public class SlideBook7Reader  extends FormatReader {
         
         public float GetInterplaneSpacing()
         {
-            return mChannelRecordList.get(0).mExposureRecord.mInterplaneSpacing;
+            return Math.abs(mChannelRecordList.get(0).mExposureRecord.mInterplaneSpacing);
         }
 
         public int GetExposureTime(int inChannel)
