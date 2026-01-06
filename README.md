@@ -2,6 +2,7 @@
 
 [![Actions Status](https://github.com/ome/bioformats/workflows/Ant/badge.svg)](https://github.com/ome/bioformats/actions)
 [![Actions Status](https://github.com/ome/bioformats/workflows/Maven/badge.svg)](https://github.com/ome/bioformats/actions)
+[![Actions Status](https://github.com/ome/bioformats/workflows/Report/badge.svg)](https://github.com/ome/bioformats/actions)
 
 Bio-Formats is a standalone Java library for reading and writing life sciences
 image file formats. It is capable of parsing both pixels and metadata for a

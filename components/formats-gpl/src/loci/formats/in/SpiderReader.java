@@ -246,7 +246,7 @@ public class SpiderReader extends FormatReader {
 
     m.imageCount = (int) Math.max(nSlice, 1);
     if (maxim > 0) {
-      m.imageCount *= maxim;
+      m.imageCount = (int) (maxim * m.imageCount);
     }
     m.sizeZ = getImageCount();
     m.sizeC = 1;

@@ -46,6 +46,8 @@ public class POIServiceImpl extends AbstractService implements POIService {
 
   private static final int MAX_BLOCK_SIZE = 4096;
 
+  public static final int POI_MAGIC_BYTES = 0xd0cf11e0;
+
   // -- Fields --
 
   private POIFSFileSystem fileSystem;

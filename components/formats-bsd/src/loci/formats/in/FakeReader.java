@@ -32,9 +32,16 @@
 
 package loci.formats.in;
 
+import static ome.xml.model.Channel.getEmissionWavelengthUnitXsdDefault;
+import static ome.xml.model.Channel.getExcitationWavelengthUnitXsdDefault;
 import static ome.xml.model.Pixels.getPhysicalSizeXUnitXsdDefault;
 import static ome.xml.model.Pixels.getPhysicalSizeYUnitXsdDefault;
 import static ome.xml.model.Pixels.getPhysicalSizeZUnitXsdDefault;
+
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +69,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.ResourceNamer;
+import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -150,6 +158,10 @@ public class FakeReader extends FormatReader {
   /* physical sizes */
   private Length physicalSizeX, physicalSizeY, physicalSizeZ;
 
+  /* channel wavelengths */
+  private transient ArrayList<Length> excitationWavelengths = new ArrayList<Length>();
+  private transient ArrayList<Length> emissionWavelengths = new ArrayList<Length>();
+
   /* annotation counts per file */
   private int annBool = 0;
   private int annComment = 0;
@@ -217,6 +229,7 @@ public class FakeReader extends FormatReader {
   // Misc. debugging
   private int sleepOpenBytes = 0;
   private int sleepInitFile = 0;
+  private boolean labelPlanes = false;
 
   static void sleep(String msg, int ms) {
     if (ms <= 0) return; // EARLY EXIT
@@ -412,6 +425,70 @@ public class FakeReader extends FormatReader {
       }
     }
 
+    // if requested, add human-readable dimension and index data to the image
+    if (labelPlanes) {
+      final BufferedImage plane = AWTImageTools.openImage(buf, this, w, h);
+      final Graphics2D g = plane.createGraphics();
+
+      // build list of text lines from planar information
+      final ArrayList<TextLine> lines = new ArrayList<TextLine>();
+      final Font font = g.getFont();
+      lines.add(new TextLine(new Location(getCurrentFile()).getName(),
+        font.deriveFont(16f), 5, -5));
+      lines.add(new TextLine("Core index " + getCoreIndex(),
+        font.deriveFont(16f), 5, 5));
+      lines.add(new TextLine(getSizeX() + " x " + getSizeY(),
+        font.deriveFont(Font.ITALIC, 16f), 20, 10));
+      lines.add(new TextLine(getDimensionOrder(),
+        font.deriveFont(Font.ITALIC, 14f), 30, 5));
+      int space = 5;
+      if (getSizeZ() > 1) {
+        lines.add(new TextLine(
+          "Focal plane = " + (zIndex + 1) + "/" + getSizeZ(), font, 20, space));
+        space = 2;
+      }
+      if (getSizeC() > 1) {
+        lines.add(new TextLine("Channel = " + (cIndex + 1) + "/" + getSizeC(),
+          font, 20, space));
+        space = 2;
+      }
+      if (getSizeT() > 1) {
+        lines.add(new TextLine("Time point = " + (tIndex + 1) + "/" + getSizeT(),
+          font, 20, space));
+        space = 2;
+      }
+
+      // draw text lines to image
+      g.setColor(java.awt.Color.white);
+      int yoff = BOX_SIZE; // start drawing below special pixels
+      for (TextLine text : lines) {
+        g.setFont(text.font);
+        final Rectangle2D r =
+          g.getFont().getStringBounds(text.line, g.getFontRenderContext());
+        yoff += (int) r.getHeight() + text.ypad;
+        g.drawString(text.line, text.xoff, yoff);
+      }
+      g.dispose();
+
+      // unpack pixel bytes from BufferedImage
+      byte[][] pixelBytes = AWTImageTools.getPixelBytes(plane, little);
+      if (interleaved) {
+        for (int i=0; i<pixelBytes[0].length; i+=bpp) {
+          for (int j=0; j<pixelBytes.length; j++) {
+            System.arraycopy(pixelBytes[j], i, buf,
+              i * pixelBytes.length + j * bpp, bpp);
+          }
+        }
+      }
+      else {
+        for (int i=0; i<pixelBytes.length; i++) {
+          System.arraycopy(pixelBytes[i], 0, buf,
+            i * pixelBytes[0].length, pixelBytes[i].length);
+        }
+      }
+      pixelBytes = null;
+    }
+
     return buf;
   }
 
@@ -509,6 +586,9 @@ public class FakeReader extends FormatReader {
     plateCols = 0;
     fields = 0;
     plateAcqs = 0;
+    labelPlanes = false;
+    excitationWavelengths.clear();
+    emissionWavelengths.clear();
     super.close(fileOnly);
   }
 
@@ -607,6 +687,7 @@ public class FakeReader extends FormatReader {
     boolean metadataComplete = true;
     boolean thumbnail = false;
     boolean withMicrobeam = false;
+    boolean withInstrument = false;
 
     int seriesCount = 1;
     int resolutionCount = 1;
@@ -716,6 +797,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("fields")) fields = intValue;
       else if (key.equals("plateAcqs")) plateAcqs = intValue;
       else if (key.equals("withMicrobeam")) withMicrobeam = boolValue;
+      else if (key.equals("withInstrument")) withInstrument = boolValue;
       else if (key.equals("annLong")) annLong = intValue;
       else if (key.equals("annDouble")) annDouble = intValue;
       else if (key.equals("annMap")) annMap = intValue;
@@ -755,10 +837,26 @@ public class FakeReader extends FormatReader {
           color.add(null);
         }
         color.set(index, parseColor(value));
+      } else if (key.startsWith("emission_")) {
+        int index = Integer.parseInt(key.substring(key.indexOf('_') + 1));
+        while (index >= emissionWavelengths.size()) {
+          emissionWavelengths.add(null);
+        }
+        emissionWavelengths.set(index, parseWavelength(
+          value, getEmissionWavelengthUnitXsdDefault()));
+      } else if (key.startsWith("excitation_")) {
+        int index = Integer.parseInt(key.substring(key.indexOf('_') + 1));
+        while (index >= excitationWavelengths.size()) {
+          excitationWavelengths.add(null);
+        }
+        excitationWavelengths.set(index, parseWavelength(
+          value, getExcitationWavelengthUnitXsdDefault()));
       } else if (key.equals("sleepOpenBytes")) {
         sleepOpenBytes = intValue;
       } else if (key.equals("sleepInitFile")) {
         sleepInitFile = intValue;
+      } else if (key.equals("labelPlanes")) {
+        labelPlanes = boolValue;
       }
     }
 
@@ -834,6 +932,8 @@ public class FakeReader extends FormatReader {
         populateSPW(store, screens, plates, plateRows, plateCols, fields, plateAcqs, withMicrobeam);
       if (imageCount > 0) seriesCount = imageCount;
       else hasSPW = false; // failed to generate SPW metadata
+    } else if (withInstrument) {
+      populateInstrument(store);
     }
 
     // populate core metadata
@@ -878,7 +978,11 @@ public class FakeReader extends FormatReader {
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
     fillPhysicalSizes(store);
+    fillChannelWavelengths(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
+      if (hasSPW || withInstrument) {
+        fillInstrumentRefs(store);
+      }
       if (currentImageIndex < seriesTables.size()) {
         parseSeriesTable(seriesTables.get(currentImageIndex), store, currentImageIndex);
       }
@@ -958,6 +1062,19 @@ public class FakeReader extends FormatReader {
       }
     }
     setSeries(oldSeries);
+  }
+
+  private void fillChannelWavelengths(MetadataStore store) {
+    for (int s=0; s<getSeriesCount(); s++) {
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        if (c < emissionWavelengths.size() && emissionWavelengths.get(c) != null) {
+          store.setChannelEmissionWavelength(emissionWavelengths.get(c), s, c);
+        }
+        if (c < excitationWavelengths.size() && excitationWavelengths.get(c) != null) {
+          store.setChannelExcitationWavelength(excitationWavelengths.get(c), s, c);
+        }
+      }
+    }
   }
 
   private void fillAcquisitionDate(MetadataStore store, String date, int imageIndex) {
@@ -1075,6 +1192,35 @@ public class FakeReader extends FormatReader {
       annotationXmlCount++;
       annotationCount++;
       annotationRefCount++;
+    }
+  }
+
+  private void fillInstrumentRefs(MetadataStore store) {
+    for (int s=0; s<getSeriesCount(); s++) {
+      String detectorID = getOmeXmlMetadata().getDetectorID(0, 0);
+      String dichroicID = getOmeXmlMetadata().getDichroicID(0, 0);
+      String emissionFilterID = getOmeXmlMetadata().getFilterID​(0, 0);
+      String excitationFilterID = getOmeXmlMetadata().getFilterID​(0, 1);
+      String filterSetID = getOmeXmlMetadata().getFilterSetID​(0, 0);
+      String instrumentID = getOmeXmlMetadata().getInstrumentID​(0);
+      String[] lightSourcesID = {
+        getOmeXmlMetadata().getLaserID(0, 0),
+        getOmeXmlMetadata().getArcID(0, 1),
+        getOmeXmlMetadata().getFilamentID(0, 2),
+        getOmeXmlMetadata().getLightEmittingDiodeID(0, 3),
+        getOmeXmlMetadata().getLaserID(0, 4)
+      };
+      String objectiveID = getOmeXmlMetadata().getObjectiveID​(0, 0);
+      store.setImageInstrumentRef(instrumentID, s);
+      store.setObjectiveSettingsID(objectiveID, s);
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        store.setChannelFilterSetRef​(filterSetID, s, c);
+        store.setChannelLightSourceSettingsID​(lightSourcesID[c % 5], s, c);
+        store.setDetectorSettingsID(detectorID, s, c);
+        store.setLightPathDichroicRef​(dichroicID, s, c);
+        store.setLightPathEmissionFilterRef(emissionFilterID, s, c, 0);
+        store.setLightPathExcitationFilterRef​(excitationFilterID, s, c, 0);
+      }
     }
   }
 
@@ -1216,6 +1362,18 @@ public class FakeReader extends FormatReader {
     for (int c=0; c<getEffectiveSizeC(); c++) {
       String channelName = table.get("ChannelName_" + c);
       store.setChannelName(channelName, newSeries, c);
+      String emissionWavelength = table.get("ChannelEmissionWavelength_" + c);
+      if (emissionWavelength != null) {
+        store.setChannelEmissionWavelength(
+          parseWavelength(emissionWavelength, getEmissionWavelengthUnitXsdDefault()),
+          newSeries, c);
+      }
+      String excitationWavelength = table.get("ChannelExcitationWavelength_" + c);
+      if (excitationWavelength != null) {
+        store.setChannelExcitationWavelength(
+          parseWavelength(excitationWavelength, getExcitationWavelengthUnitXsdDefault()),
+          newSeries, c);
+      }
     }
 
     for (int i=0; i<getImageCount(); i++) {
@@ -1376,6 +1534,15 @@ public class FakeReader extends FormatReader {
     return ome.sizeOfImageList();
   }
 
+  private void populateInstrument(MetadataStore store)
+  {
+    final XMLMockObjects xml = new XMLMockObjects();
+    OME ome = xml.getRoot();
+    ome.addInstrument(xml.createInstrument(true));
+    getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
+    getOmeXmlService().convertMetadata(omeXmlMetadata, store);
+  }
+
   /** Creates a mapping between indices and color values. */
   private void createIndexMap(int num) {
     int sizeC = core.get(0).sizeC;
@@ -1482,6 +1649,38 @@ public class FakeReader extends FormatReader {
       return null;
     }
     return physicalSize;
+  }
+
+  private Length parseWavelength(String s, String defaultUnit) {
+    Length wavelength = FormatTools.parseLength(s, defaultUnit);
+    if (wavelength == null) {
+      throw new RuntimeException("Invalid wavelength: " + s);
+    }
+    if (!FormatTools.isPositiveValue(wavelength.value().doubleValue())) {
+      LOGGER.warn("Invalid wavelength value: {}", wavelength.value());
+      return null;
+    }
+    return wavelength;
+  }
+
+
+  // -- Helper classes --
+
+  private static class TextLine {
+
+    final String line;
+    final Font font;
+    final int xoff;
+    final int ypad;
+
+    TextLine(final String line, final Font font, final int xoff, final int ypad)
+    {
+      this.line = line;
+      this.font = font;
+      this.xoff = xoff;
+      this.ypad = ypad;
+    }
+
   }
 
 }

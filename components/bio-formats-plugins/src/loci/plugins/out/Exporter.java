@@ -302,6 +302,9 @@ public class Exporter {
             outfile = new File(dir, name).getAbsolutePath();
             if (outfile == null) return;
         }
+        else {
+          f = new File(outfile);
+        }
 
         if (windowless) {
             if (splitZ == null) splitZ = Boolean.FALSE;
@@ -683,6 +686,7 @@ public class Exporter {
             if (outputFiles.length > 1) {
                 for (int i = 0; i < outputFiles.length; i++) {
                     if (new File(outputFiles[i]).exists()) {
+                        IJ.error(outputFiles[i] + " already exists");
                         in = true;
                         break;
                     }
@@ -700,6 +704,10 @@ public class Exporter {
                 for (int i = 0; i < outputFiles.length; i++) {
                     new File(outputFiles[i]).delete();
                 }
+            }
+            else if (in) {
+              IJ.error("Some files already exist; delete them and try again.");
+              return;
             }
             //We are now ready to write the image
             if (f != null) f.delete(); //delete the file.

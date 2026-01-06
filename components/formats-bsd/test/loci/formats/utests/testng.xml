@@ -78,6 +78,18 @@
         <class name="loci.formats.utests.WrapperTest"/>
       </classes>
     </test>
+    <test name="ChannelMergerTest">
+       <groups/>
+      <classes>
+        <class name="loci.formats.utests.ChannelMergerTest"/>
+      </classes>
+    </test>
+    <test name="ChannelSeparatorTest">
+       <groups/>
+      <classes>
+        <class name="loci.formats.utests.ChannelSeparatorTest"/>
+      </classes>
+    </test>
     <test name="DimensionSwapper">
     	<groups/>
     	<classes>

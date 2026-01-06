@@ -152,7 +152,7 @@ public class BioRadGelReader extends FormatReader {
     in.seek(START_OFFSET);
 
     boolean codeFound = false;
-    int skip = 0;
+    long skip = 0;
     long baseFP = 0;
 
     while (!codeFound) {

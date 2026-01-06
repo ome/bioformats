@@ -1242,6 +1242,8 @@ public class FV1000Reader extends FormatReader {
         Length font = FormatTools.getFontSize(fontSize);
 
         lineWidth = Integer.parseInt(table.get("LINEWIDTH"));
+        Length l = new Length((double) lineWidth, UNITS.PIXEL);
+
         name = table.get("NAME");
         angle = Integer.parseInt(table.get("ANGLE"));
         xc = table.get("X").split(",");
@@ -1282,7 +1284,6 @@ public class FV1000Reader extends FormatReader {
             if (font != null) {
               store.setPointFontSize(font, nextROI, shape);
             }
-            Length l = new Length((double) lineWidth, UNITS.PIXEL);
             store.setPointStrokeWidth(l, nextROI, shape);
 
             store.setPointX(DataTools.parseDouble(xc[0]), nextROI, shape);
@@ -1290,19 +1291,19 @@ public class FV1000Reader extends FormatReader {
           }
           else if (shapeType == GRID || shapeType == RECTANGLE) {
             if (shapeType == RECTANGLE) divide = 1;
-            width /= divide;
-            height /= divide;
+            double dividedWidth = (double) width / divide;
+            double dividedHeight = (double) height / divide;
             for (int row=0; row<divide; row++) {
               for (int col=0; col<divide; col++) {
-                double realX = x + col * width;
-                double realY = y + row * height;
+                double realX = x + col * dividedWidth;
+                double realY = y + row * dividedHeight;
 
                 shapeID = MetadataTools.createLSID("Shape", nextROI, shape);
                 store.setRectangleID(shapeID, nextROI, shape);
                 store.setRectangleX(realX, nextROI, shape);
                 store.setRectangleY(realY, nextROI, shape);
-                store.setRectangleWidth((double) width, nextROI, shape);
-                store.setRectangleHeight((double) height, nextROI, shape);
+                store.setRectangleWidth(dividedWidth, nextROI, shape);
+                store.setRectangleHeight(dividedHeight, nextROI, shape);
 
                 store.setRectangleTheZ(
                   new NonNegativeInteger(zIndex), nextROI, shape);
@@ -1311,11 +1312,7 @@ public class FV1000Reader extends FormatReader {
                 if (font != null) {
                   store.setRectangleFontSize(font, nextROI, shape);
                 }
-                Length l = new Length((double) lineWidth, UNITS.PIXEL);
                 store.setRectangleStrokeWidth(l, nextROI, shape);
-
-                double centerX = realX + (width / 2);
-                double centerY = realY + (height / 2);
 
                 store.setRectangleTransform(
                   getRotationTransform(angle), nextROI, shape);
@@ -1336,17 +1333,12 @@ public class FV1000Reader extends FormatReader {
             if (font != null) {
               store.setLineFontSize(font, nextROI, shape);
             }
-            Length l = new Length((double) lineWidth, UNITS.PIXEL);
             store.setLineStrokeWidth(l, nextROI, shape);
-
-            int centerX = x + (width / 2);
-            int centerY = y + (height / 2);
-
             store.setLineTransform(getRotationTransform(angle), nextROI, shape);
           }
           else if (shapeType == CIRCLE || shapeType == ELLIPSE) {
-            double rx = width / 2;
-            double ry = shapeType == CIRCLE ? rx : height / 2;
+            double rx = width / 2.0;
+            double ry = shapeType == CIRCLE ? rx : height / 2.0;
             store.setEllipseID(shapeID, nextROI, shape);
             store.setEllipseX(x + rx, nextROI, shape);
             store.setEllipseY(y + ry, nextROI, shape);
@@ -1360,7 +1352,6 @@ public class FV1000Reader extends FormatReader {
             if (font != null) {
               store.setEllipseFontSize(font, nextROI, shape);
             }
-            Length l = new Length((double) lineWidth, UNITS.PIXEL);
             store.setEllipseStrokeWidth(l, nextROI, shape);
             store.setEllipseTransform(
               getRotationTransform(angle), nextROI, shape);
@@ -1387,7 +1378,6 @@ public class FV1000Reader extends FormatReader {
               if (font != null) {
                 store.setPolylineFontSize(font, nextROI, shape);
               }
-              Length l = new Length((double) lineWidth, UNITS.PIXEL);
               store.setPolylineStrokeWidth(l, nextROI, shape);
             }
             else {
@@ -1402,7 +1392,6 @@ public class FV1000Reader extends FormatReader {
               if (font != null) {
                 store.setPolygonFontSize(font, nextROI, shape);
               }
-              Length l = new Length((double) lineWidth, UNITS.PIXEL);
               store.setPolygonStrokeWidth(l, nextROI, shape);
             }
           }

@@ -55,6 +55,7 @@ public class ARFReader extends FormatReader {
   public ARFReader() {
     super("ARF", "arf");
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --

@@ -230,7 +230,6 @@ public class ImageInfo {
         else if (args[i].equals("-omexml-only")) {
           omexmlOnly = true;
           omexml = true;
-          DebugTools.setRootLevel("OFF");
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-ascii")) ascii = true;
@@ -296,6 +295,13 @@ public class ImageInfo {
           return false;
         }
       }
+    }
+
+    // if the -omexml-only flag was used, only print OME-XML, no other logging
+    // the log level is set at the end of argument parsing, so that unknown
+    // any unknown arguments are still logged correctly
+    if (omexmlOnly) {
+      DebugTools.setRootLevel("OFF");
     }
     return true;
   }

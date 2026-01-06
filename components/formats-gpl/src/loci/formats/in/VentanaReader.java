@@ -48,6 +48,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.OnDemandLongArray;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
@@ -87,6 +88,9 @@ public class VentanaReader extends BaseTiffReader {
 
   // primary metadata, not present on subresolution images
   private static final int XML_TAG = 700;
+
+  // ImageDepth tag, indicates number of Z sections
+  private static final int Z_TAG = 32997;
 
   // Photoshop image resources, see
   // https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577413_pgfId-1039502
@@ -183,7 +187,7 @@ public class VentanaReader extends BaseTiffReader {
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    lastPlane = getIFDIndex(getCoreIndex(), 0);
+    lastPlane = getIFDIndex(getCoreIndex());
     return super.get8BitLookupTable();
   }
 
@@ -191,7 +195,7 @@ public class VentanaReader extends BaseTiffReader {
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    lastPlane = getIFDIndex(getCoreIndex(), 0);
+    lastPlane = getIFDIndex(getCoreIndex());
     return super.get16BitLookupTable();
   }
 
@@ -207,7 +211,11 @@ public class VentanaReader extends BaseTiffReader {
       initTiffParser();
     }
     Arrays.fill(buf, getFillColor());
-    IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
+    IFD ifd = ifds.get(getIFDIndex(getCoreIndex()));
+
+    if (getSizeZ() > 1) {
+      ifd = splitIFD(ifd, no);
+    }
 
     if (splitTiles()) {
       TIFFTile tile = tiles[getCoreIndex()];
@@ -395,7 +403,7 @@ public class VentanaReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = getIFDIndex(getCoreIndex(), 0);
+      int ifd = getIFDIndex(getCoreIndex());
       return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
@@ -409,7 +417,7 @@ public class VentanaReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = getIFDIndex(getCoreIndex(), 0);
+      int ifd = getIFDIndex(getCoreIndex());
       return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
@@ -447,7 +455,7 @@ public class VentanaReader extends BaseTiffReader {
     int resolutionCount = 0;
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
-      int index = getIFDIndex(i, 0);
+      int index = getIFDIndex(i);
       tiffParser.fillInIFD(ifds.get(index));
 
       String comment = ifds.get(index).getComment();
@@ -490,12 +498,14 @@ public class VentanaReader extends BaseTiffReader {
       for (int r=0; r<core.size(s); r++) {
         CoreMetadata ms = core.get(s, r);
         ms.resolutionCount = core.size(s);
-        ms.sizeZ = 1;
         ms.sizeT = 1;
+
+        int ifdIndex = getIFDIndex(core.flattenedIndex(s, r));
+        IFD ifd = ifds.get(ifdIndex);
+
+        ms.sizeZ = ifd.getIFDIntValue(Z_TAG, 1);
         ms.imageCount = ms.sizeZ * ms.sizeT;
 
-        int ifdIndex = getIFDIndex(core.flattenedIndex(s, r), 0);
-        IFD ifd = ifds.get(ifdIndex);
         PhotoInterp p = ifd.getPhotometricInterpretation();
         int samples = ifd.getSamplesPerPixel();
         ms.rgb = samples > 1 || p == PhotoInterp.RGB;
@@ -573,6 +583,7 @@ public class VentanaReader extends BaseTiffReader {
       // then average the UP values and apply to all tiles
 
       HashMap<Integer, Integer> columnYAdjust = new HashMap<Integer, Integer>();
+      HashMap<Integer, Integer> columnXAdjust = new HashMap<Integer, Integer>();
       double rightSum = 0.0;
       double upSum = 0.0;
       int rightCount = 0;
@@ -594,11 +605,10 @@ public class VentanaReader extends BaseTiffReader {
           upCount++;
         }
         else if (overlap.direction.equals("LEFT")) {
-          rightSum += overlap.x;
-          rightCount++;
+          int tileColumn = getTileColumn(overlap.a, area.tileRows, area.tileColumns);
+          columnXAdjust.put(tileColumn, overlap.x);
           if (overlap.y <= 0) {
-            columnYAdjust.put(getTileColumn(
-              overlap.a, area.tileRows, area.tileColumns), overlap.y);
+            columnYAdjust.put(tileColumn, overlap.y);
           }
         }
         else {
@@ -645,9 +655,16 @@ public class VentanaReader extends BaseTiffReader {
       }
 
       for (int row=0; row<area.tileRows; row++) {
+        int leftColAdjust = 0;
         for (int col=0; col<area.tileColumns; col++) {
           int index = (tileRow + row) * tileCols + (tileCol + col);
           tiles[index].realX -= (rightSum * col);
+
+          tiles[index].realX -= leftColAdjust;
+          if (columnXAdjust.containsKey(col)) {
+            leftColAdjust += columnXAdjust.get(col);
+          }
+
           tiles[index].realY -= (upSum * row);
           if (columnYAdjust.containsKey(col)) {
             tiles[index].realY += columnYAdjust.get(col);
@@ -812,23 +829,75 @@ public class VentanaReader extends BaseTiffReader {
   }
 
   /**
+   * Note that all planes for a particular resolution or extra image
+   * are packed into a single IFD, so the IFD index does not depend
+   * upon the plane (e.g. Z section) needed.
+   *
    * @param coreIndex the series or resolution for which to find an IFD
-   * @param no the plane index for which to find an IFD
    * @return the index into {@link #ifds} for the given series and plane
    */
-  private int getIFDIndex(int coreIndex, int no) {
+  private int getIFDIndex(int coreIndex) {
     // natural IFD ordering:
     //  - overview/label image
     //  - mask image
     //  - resolutions from largest to smallest XY size
     if (splitTiles() && coreIndex > 0 && resolutions > 0) {
-      return getIFDIndex(0, no);
+      return getIFDIndex(0);
     }
-    int extra = ifds.size() - (resolutions * core.get(0, 0).imageCount);
+    int extra = ifds.size() - resolutions;
     if (coreIndex < ifds.size() - extra) {
-      return extra + (coreIndex * core.get(0, 0).imageCount) + no;
+      return extra + coreIndex;
     }
     return coreIndex - (ifds.size() - extra);
+  }
+
+  /**
+   * Take the real IFD on disk and reshape it into something that represents
+   * only the given plane. This should preserve all tags except Z_TAG,
+   * and crop the tile byte count and offset arrays to match only the tiles
+   * for the given plane. This is necessary because the tile count in the
+   * real IFD is X * Y * Z.
+   */
+  private IFD splitIFD(IFD ifd, int no) throws FormatException, IOException {
+    IFD newIFD = new IFD();
+    for (Integer tag : ifd.keySet()) {
+      if (tag == IFD.TILE_BYTE_COUNTS || tag == IFD.TILE_OFFSETS) {
+        long[] array = null;
+        Object tagValue = ifd.get(tag);
+        if (tagValue instanceof OnDemandLongArray) {
+          OnDemandLongArray fileArray = (OnDemandLongArray) tagValue;
+          if (fileArray.getStream() == null) {
+            fileArray.setStream(in);
+          }
+          array = fileArray.toArray();
+        }
+        else {
+          array = ifd.getIFDLongArray(tag);
+        }
+        // first plane in array is the middle of the stack
+        // next (n-1)/2 are the "near" planes
+        // remaining (n-1)/2 are the "far" planes
+        // reorder here to present in order from far to near
+        int realIndex = no;
+        int middlePlane = (getSizeZ() - 1) / 2;
+        if (realIndex > middlePlane) {
+          realIndex = getSizeZ() - (no - middlePlane);
+        }
+        else {
+          realIndex = middlePlane - no;
+        }
+        LOGGER.debug("reading plane #{} by copying offsets for #{}", no, realIndex);
+
+        int valuesPerPlane = array.length / getSizeZ();
+        long[] newArray = new long[valuesPerPlane];
+        System.arraycopy(array, realIndex * valuesPerPlane, newArray, 0, valuesPerPlane);
+        newIFD.put(tag, newArray);
+      }
+      else if (tag != Z_TAG) {
+        newIFD.put(tag, ifd.get(tag));
+      }
+    }
+    return newIFD;
   }
 
   private void parseXML(String xml) throws IOException {

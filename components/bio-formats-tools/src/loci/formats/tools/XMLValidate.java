@@ -45,6 +45,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.in.TiffReader;
 import loci.formats.tiff.TiffParser;
+import loci.formats.services.OMEXMLServiceImpl;
 
 /**
  * Attempts to validate the given XML files.
@@ -64,7 +65,7 @@ public class XMLValidate {
     } finally {
       in.close();
     }
-    return XMLTools.validateXML(sb.toString(), label);
+    return XMLTools.validateXML(sb.toString(), label, OMEXMLServiceImpl.SCHEMA_CLASSPATH_READER);
   }
 
   @Deprecated

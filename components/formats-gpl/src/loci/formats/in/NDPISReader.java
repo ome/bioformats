@@ -210,12 +210,14 @@ public class NDPISReader extends FormatReader {
       }
 
       String channelName = ifd.getIFDStringValue(TAG_CHANNEL);
-      Float wavelength = (Float) ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
+      Object waveTag = ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
+      Double wavelength = null;
 
       store.setChannelName(channelName, 0, c);
-      if (wavelength != null) {
-        store.setChannelEmissionWavelength(FormatTools.getEmissionWavelength(
-          (Double) wavelength.doubleValue()), 0, c);
+      if (waveTag != null && waveTag instanceof Number) {
+        wavelength = ((Number) waveTag).doubleValue();
+        store.setChannelEmissionWavelength(
+          FormatTools.getEmissionWavelength(wavelength), 0, c);
       }
 
       bandUsed[c] = 0;

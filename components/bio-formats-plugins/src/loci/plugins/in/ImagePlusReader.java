@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.Region;
@@ -213,6 +214,38 @@ public class ImagePlusReader implements StatusReporter {
     }
 
     return stack;
+  }
+
+  public static int[] getSubC(Modulo moduloC, int sizeC) {
+    if (moduloC.length() > 1) {
+      // ordering of lengths and types in subC and subCTypes matters
+      // use the step size of the modulo to determine correct ordering
+      if (Math.abs(moduloC.step - 1) < Constants.EPSILON) {
+        return new int[] {moduloC.length(), sizeC / moduloC.length()};
+      }
+      else {
+        return new int[] {sizeC / moduloC.length(), moduloC.length()};
+      }
+    }
+    return new int[] {sizeC};
+  }
+
+  public static String[] getSubCTypes(Modulo moduloC) {
+    if (moduloC.length() > 1) {
+      String parentType = moduloC.parentType;
+      if (parentType == null) {
+        parentType = FormatTools.CHANNEL;
+      }
+      // ordering of lengths and types in subC and subCTypes matters
+      // use the step size of the modulo to determine correct ordering
+      if (Math.abs(moduloC.step - 1) < Constants.EPSILON) {
+        return new String[] {moduloC.type, parentType};
+      }
+      else {
+        return new String[] {parentType, moduloC.type};
+      }
+    }
+    return new String[] {FormatTools.CHANNEL};
   }
 
   // -- Helper methods - image reading --
@@ -575,13 +608,8 @@ public class ImagePlusReader implements StatusReporter {
       int[] subC;
       String[] subCTypes;
       Modulo moduloC = r.getModuloC();
-      if (moduloC.length() > 1) {
-        subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
-        subCTypes = new String[] {moduloC.parentType, moduloC.type};
-      } else {
-        subC = new int[] {r.getSizeC()};
-        subCTypes = new String[] {FormatTools.CHANNEL};
-      }
+      subC = getSubC(moduloC, r.getSizeC());
+      subCTypes = getSubCTypes(moduloC);
       int[] subCPos = FormatTools.rasterToPosition(subC, coordinates[1]);
       StringBuffer channelString = new StringBuffer();
       for (int i=0; i<subC.length; i++) {

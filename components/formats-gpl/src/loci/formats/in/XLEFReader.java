@@ -341,7 +341,7 @@ public class XLEFReader extends LMSFileReader {
 
     int inPtr = 0;
     int outPtr = 0;
-    double factor = Math.pow(2, outRes - 8);
+    int factor = (int) Math.pow(2, outRes - 8);
     while (inPtr < in.length && outPtr < out.length) {
       int val = in[inPtr++];
       val *= factor;

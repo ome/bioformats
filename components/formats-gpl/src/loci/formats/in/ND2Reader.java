@@ -25,6 +25,7 @@
 
 package loci.formats.in;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -310,27 +311,38 @@ public class ND2Reader extends SubResolutionFormatReader {
       pix = null;
     }
     else if (split) {
-      // one padding pixel per row total, instead of one padding pixel
-      // per channel per row
-      int rowLength = getSizeX() * pixel + scanlinePad * bpp;
+      //pad to 4 byte boundaries.
+      long rowLength = getSizeX() * (long)pixel;
+      long mod = rowLength%4;
+      long pad = mod == 0 ? mod : 4 - mod;
+      long scanline = rowLength + pad;
+
       int destLength = w * pixel;
 
-      long skip = (long) rowLength * y;
-      in.seek(in.getFilePointer() + skip);
-      byte[] pix = new byte[destLength * h];
+
+      long base = in.getFilePointer();
+
+      byte[] pix = new byte[destLength];
+
       long pre = (long) x * pixel;
-      long post = (long) pixel * (getSizeX() - w - x) + (scanlinePad * bpp);
+
+      //scanlines
       for (int row=0; row<h; row++) {
-        in.seek(in.getFilePointer() + pre);
-        in.read(pix, row * destLength, destLength);
-        in.seek(in.getFilePointer() + post);
+        in.seek(base + (row + y)*scanline + pre);
+        long r = in.read(pix, 0, destLength);
+        if(r != destLength){
+          LOGGER.warn("data line not fully read" + r + " of " + destLength);
+        }
+        byte[] p2 = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
+                bpp, false, true);
+        System.arraycopy(p2, 0, buf, row*p2.length, p2.length);
+        
       }
 
-      pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
-        bpp, false, true);
-      System.arraycopy(pix, 0, buf, 0, pix.length);
     }
     else {
+      //The scanline pad is set at 4 byte boundaries described by the pixel size in bytes.
+      scanlinePad = ((bpp * getSizeX())%4) / bpp;
       // plane is not compressed
       readPlane(in, x, y, w, h, scanlinePad, buf);
     }
@@ -1119,7 +1131,7 @@ public class ND2Reader extends SubResolutionFormatReader {
           in.skipBytes(skip);
         }
       }
-      
+
       if(currentCountSetted && imageMetadataLVOrder.length() > 0 && 
           (imageOffsets.size() == 0 || timeCount * zCount * XYCount == imageOffsets.size())) {
         setDimensions(timeCount, zCount, XYCount);
@@ -1591,19 +1603,6 @@ public class ND2Reader extends SubResolutionFormatReader {
         for (int i=0; i<imageOffsets.size(); i++) {
           addGlobalMetaList("PFS Status", in.readInt());
         }
-      }
-
-      if (core.size() == 1 && ((uniqueX == getSizeT() &&
-        uniqueY == getSizeT()) || uniqueZ == getSizeT()))
-      {
-        int count = getSizeT();
-        core.get(0, 0).imageCount /= count;
-        core.get(0, 0).sizeT = 1;
-
-        for (int i=1; i<count; i++) {
-          core.add(core.get(0, 0));
-        }
-        numSeries = core.size();
       }
 
       // reset the series count if we're confident that the image count
@@ -2125,6 +2124,7 @@ public class ND2Reader extends SubResolutionFormatReader {
             value = resultString.toString();
 
             if (name.startsWith("TextInfoItem")) {
+              addGlobalMeta(name, value);
               textInfos.add((String) value);
             }
             break;
@@ -2803,6 +2803,7 @@ public class ND2Reader extends SubResolutionFormatReader {
       int tSize = ms0.sizeT;
       int c = ms0.sizeC;
       String order = ms0.dimensionOrder;
+      int type = ms0.pixelType;
       core = new CoreMetadataList();
       for (int i=0; i<numSeries; i++) {
         CoreMetadata ms = new CoreMetadata();
@@ -2813,6 +2814,7 @@ public class ND2Reader extends SubResolutionFormatReader {
         ms.sizeC = c == 0 ? 1 : c;
         ms.sizeT = tSize == 0 ? 1 : tSize;
         ms.dimensionOrder = order;
+        ms.pixelType = type;
       }
       ms0 = core.get(0, 0);
     }
@@ -2837,5 +2839,4 @@ public class ND2Reader extends SubResolutionFormatReader {
     in = new RandomAccessInputStream(file);
     offsets = newOffsets;
   }
-
 }

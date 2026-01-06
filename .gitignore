@@ -21,3 +21,4 @@ tools/*.jar
 .*.swp
 *.clean
 .vscode
+components/formats-gpl/src/loci/formats/in/SlideBook6Reader.java

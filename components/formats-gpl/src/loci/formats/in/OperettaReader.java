@@ -79,6 +79,8 @@ public class OperettaReader extends FormatReader {
   private MinimalTiffReader reader;
   private ArrayList<String> metadataFiles = new ArrayList<String>();
 
+  private transient Location imagesDir;
+
   // -- Constructor --
 
   /** Constructs a new Operetta reader. */
@@ -211,6 +213,7 @@ public class OperettaReader extends FormatReader {
       reader = null;
       planes = null;
       metadataFiles.clear();
+      imagesDir = null;
     }
   }
 
@@ -1005,7 +1008,34 @@ public class OperettaReader extends FormatReader {
             else {
               Location parent =
                 new Location(currentId).getAbsoluteFile().getParentFile();
-              activePlane.filename = new Location(parent, value).getAbsolutePath();
+              Location planeFile = new Location(parent, value);
+              if (planeFile.exists()) {
+                activePlane.filename = planeFile.getAbsolutePath();
+              }
+              else {
+                // "Images" or "images" directory may be missing from path
+                if (!parent.getName().equalsIgnoreCase("images") &&
+                  !value.toLowerCase().startsWith("images"))
+                {
+                  // only get the images directory once per initialization
+                  // to minimize impact on initialization time
+                  if (imagesDir == null) {
+                    String[] parentList = parent.list(true);
+                    for (String s : parentList) {
+                      if (s.equalsIgnoreCase("images")) {
+                        imagesDir = new Location(parent, s);
+                        break;
+                      }
+                    }
+                    if (imagesDir == null) {
+                      LOGGER.warn("Cannot locate image directory in {}", parent);
+                    }
+                  }
+                  if (imagesDir != null) {
+                    activePlane.filename = new Location(imagesDir, value).getAbsolutePath();
+                  }
+                }
+              }
             }
           }
         }

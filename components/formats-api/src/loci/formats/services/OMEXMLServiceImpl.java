@@ -165,7 +165,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   /**
    * Finds OME-XML schema definitions in specifications.jar.
    */
-  private static final XMLTools.SchemaReader SCHEMA_CLASSPATH_READER =
+  public static final XMLTools.SchemaReader SCHEMA_CLASSPATH_READER =
       new XMLTools.SchemaReader() {
         @Override
         public InputStream getSchemaAsStream(String url) {

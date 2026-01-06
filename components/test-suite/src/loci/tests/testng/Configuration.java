@@ -43,6 +43,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
+import loci.formats.Modulo;
 import loci.formats.ReaderWrapper;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
@@ -132,6 +133,19 @@ public class Configuration {
   private static final String WELL_SAMPLE_POSITION_X_UNIT = "WellSamplePositionXUnit";
   private static final String WELL_SAMPLE_POSITION_Y = "WellSamplePositionY";
   private static final String WELL_SAMPLE_POSITION_Y_UNIT = "WellSamplePositionYUnit";
+
+  private static final String MODULO_Z_START = "ModuloZStart";
+  private static final String MODULO_Z_STEP = "ModuloZStep";
+  private static final String MODULO_Z_END = "ModuloZEnd";
+  private static final String MODULO_Z_TYPE = "ModuloZType";
+  private static final String MODULO_C_START = "ModuloCStart";
+  private static final String MODULO_C_STEP = "ModuloCStep";
+  private static final String MODULO_C_END = "ModuloCEnd";
+  private static final String MODULO_C_TYPE = "ModuloCType";
+  private static final String MODULO_T_START = "ModuloTStart";
+  private static final String MODULO_T_STEP = "ModuloTStep";
+  private static final String MODULO_T_END = "ModuloTEnd";
+  private static final String MODULO_T_TYPE = "ModuloTType";
 
   // -- Fields --
 
@@ -468,6 +482,63 @@ public class Configuration {
     return getPhysicalSize(WELL_SAMPLE_POSITION_Y, WELL_SAMPLE_POSITION_Y_UNIT);
   }
 
+  public Double getModuloZStart() {
+    String start = currentTable.get(MODULO_Z_START);
+    return start == null ? null : Double.parseDouble(start);
+  }
+
+  public Double getModuloZStep() {
+    String step = currentTable.get(MODULO_Z_STEP);
+    return step == null ? null : Double.parseDouble(step);
+  }
+
+  public Double getModuloZEnd() {
+    String end = currentTable.get(MODULO_Z_END);
+    return end == null ? null : Double.parseDouble(end);
+  }
+
+  public String getModuloZType() {
+    return currentTable.get(MODULO_Z_TYPE);
+  }
+
+  public Double getModuloCStart() {
+    String start = currentTable.get(MODULO_C_START);
+    return start == null ? null : Double.parseDouble(start);
+  }
+
+  public Double getModuloCStep() {
+    String step = currentTable.get(MODULO_C_STEP);
+    return step == null ? null : Double.parseDouble(step);
+  }
+
+  public Double getModuloCEnd() {
+    String end = currentTable.get(MODULO_C_END);
+    return end == null ? null : Double.parseDouble(end);
+  }
+
+  public String getModuloCType() {
+    return currentTable.get(MODULO_C_TYPE);
+  }
+
+  public Double getModuloTStart() {
+    String start = currentTable.get(MODULO_T_START);
+    return start == null ? null : Double.parseDouble(start);
+  }
+
+  public Double getModuloTStep() {
+    String step = currentTable.get(MODULO_T_STEP);
+    return step == null ? null : Double.parseDouble(step);
+  }
+
+  public Double getModuloTEnd() {
+    String end = currentTable.get(MODULO_T_END);
+    return end == null ? null : Double.parseDouble(end);
+  }
+
+  public String getModuloTType() {
+    return currentTable.get(MODULO_T_TYPE);
+  }
+
   public void setSeries(int series) throws IndexOutOfBoundsException {
     setSeries(series, true);
   }
@@ -631,6 +702,28 @@ public class Configuration {
         seriesTable.put(CHANNEL_COUNT,
           String.valueOf(retrieve.getChannelCount(index)));
 
+        Modulo moduloZ = reader.getModuloZ();
+        if (moduloZ.length() > 1) {
+          seriesTable.put(MODULO_Z_START, String.valueOf(moduloZ.start));
+          seriesTable.put(MODULO_Z_STEP, String.valueOf(moduloZ.step));
+          seriesTable.put(MODULO_Z_END, String.valueOf(moduloZ.end));
+          seriesTable.put(MODULO_Z_TYPE, moduloZ.type);
+        }
+        Modulo moduloC = reader.getModuloC();
+        if (moduloC.length() > 1) {
+          seriesTable.put(MODULO_C_START, String.valueOf(moduloC.start));
+          seriesTable.put(MODULO_C_STEP, String.valueOf(moduloC.step));
+          seriesTable.put(MODULO_C_END, String.valueOf(moduloC.end));
+          seriesTable.put(MODULO_C_TYPE, moduloC.type);
+        }
+        Modulo moduloT = reader.getModuloT();
+        if (moduloT.length() > 1) {
+          seriesTable.put(MODULO_T_START, String.valueOf(moduloT.start));
+          seriesTable.put(MODULO_T_STEP, String.valueOf(moduloT.step));
+          seriesTable.put(MODULO_T_END, String.valueOf(moduloT.end));
+          seriesTable.put(MODULO_T_TYPE, moduloT.type);
+        }
+
         if (canOpenImages(reader)) {
           try {
             byte[] plane = reader.openBytes(0);
@@ -657,8 +750,10 @@ public class Configuration {
         String flattenedName = retrieve.getImageName(index);
         seriesTable.put(NAME, flattenedName);
         String unflattenedName = unflattenedRetrieve.getImageName(series);
-        if ((flattenedName == null && unflattenedName != null) || !flattenedName.equals(unflattenedName)) {
-          seriesTable.put(UNFLATTENED_NAME, unflattenedName);
+        if (unflattenedName != null) {
+          if ((flattenedName == null) || !flattenedName.equals(unflattenedName)) {
+            seriesTable.put(UNFLATTENED_NAME, unflattenedName);
+          }
         }
         seriesTable.put(DESCRIPTION, retrieve.getImageDescription(index));
 

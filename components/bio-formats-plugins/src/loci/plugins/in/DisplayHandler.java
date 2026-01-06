@@ -147,16 +147,9 @@ public class DisplayHandler implements StatusListener {
   public void displayDataBrowser(ImagePlus imp) {
     IFormatReader r = process.getReader();
 
-    int[] subC;
-    String[] subCTypes;
     Modulo moduloC = r.getModuloC();
-    if (moduloC.length() > 1) {
-      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
-      subCTypes = new String[] {moduloC.parentType, moduloC.type};
-    } else {
-      subC = new int[] {r.getSizeC()};
-      subCTypes = new String[] {FormatTools.CHANNEL};
-    }
+    int[] subC = ImagePlusReader.getSubC(moduloC, r.getSizeC());
+    String[] subCTypes = ImagePlusReader.getSubCTypes(moduloC);
 
     new DataBrowser(imp, null, subCTypes, subC, xmlWindow);
   }

@@ -471,11 +471,11 @@ public class LiFlimReader extends FormatReader {
     	ms.bitsPerPixel = 12;
     }
     ms.moduloZ.type = FormatTools.FREQUENCY;
-    ms.moduloZ.step = ms.sizeZ / sizeF;
+    ms.moduloZ.step = (double) ms.sizeZ / sizeF;
     ms.moduloZ.start = 0;
     ms.moduloZ.end = ms.sizeZ - 1;
     ms.moduloT.type = FormatTools.PHASE;
-    ms.moduloT.step = ms.sizeT / sizeP;
+    ms.moduloT.step = (double) ms.sizeT / sizeP;
     ms.moduloT.start = 0;
     ms.moduloT.end = ms.sizeT - 1;
 
@@ -496,11 +496,11 @@ public class LiFlimReader extends FormatReader {
       ms.falseColor = false;
       
       ms.moduloZ.type = FormatTools.FREQUENCY;
-      ms.moduloZ.step = ms.sizeZ / f;
+      ms.moduloZ.step = (double) ms.sizeZ / f;
       ms.moduloZ.start = 0;
       ms.moduloZ.end = ms.sizeZ - 1;
       ms.moduloT.type = FormatTools.PHASE;
-      ms.moduloT.step = ms.sizeT / p;
+      ms.moduloT.step = (double) ms.sizeT / p;
       ms.moduloT.start = 0;
       ms.moduloT.end = ms.sizeT - 1;
       core.add(ms);

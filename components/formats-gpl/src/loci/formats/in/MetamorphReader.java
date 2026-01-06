@@ -81,7 +81,7 @@ import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -119,6 +119,8 @@ public class MetamorphReader extends BaseTiffReader {
   // NDInfoFile Version Strings
   private static final String NDINFOFILE_VER1 = "Version 1.0";
   private static final String NDINFOFILE_VER2 = "Version 2.0";
+
+  private static final String ND_ENCODING = "windows-1252";
 
   // -- Fields --
 
@@ -460,8 +462,28 @@ public class MetamorphReader extends BaseTiffReader {
             if (charCount > matchingChars || (charCount == matchingChars &&
               f.charAt(charCount) == '.'))
             {
-              ndfile = new Location(parent, f).getAbsoluteFile();
               matchingChars = charCount;
+              // sometimes the .tif or .stk will have a similar name to an
+              // .nd file, but will have trailing characters that do not match
+              // the expected format for a dataset with an .nd file
+              // e.g. abc_overview.tif, abc.nd, abc_w1.stk, abc_w2.stk
+              // in the same directory
+              // if the name format is unexpected, don't pick up the .nd file,
+              // just treat this as a single-file dataset
+              String extra = stkName.substring(charCount).toLowerCase();
+              boolean valid = true;
+              for (int i=0; i<extra.length()-1; i++) {
+                if (extra.charAt(i) == '_') {
+                  char checkChar = extra.charAt(i + 1);
+                  if (checkChar != 'w' && checkChar != 't' && checkChar != 's') {
+                    valid = false;
+                    break;
+                  }
+                }
+              }
+              if (valid) {
+                ndfile = new Location(parent, f).getAbsoluteFile();
+              }
             }
           }
         }
@@ -484,7 +506,7 @@ public class MetamorphReader extends BaseTiffReader {
       boolean useWaveNames = true;
 
       ndFilename = ndfile.getAbsolutePath();
-      String[] lines = DataTools.readFile(ndFilename).split("\n");
+      String[] lines = DataTools.readFile(ndFilename, ND_ENCODING).split("\n");
 
       boolean globalDoZ = true;
       boolean doTimelapse = false;
@@ -770,6 +792,9 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
 
+    Length[][] perSeriesStageX = null;
+    Length[][] perSeriesStageY = null;
+
     if (stks == null) {
       stkReaders = new MetamorphReader[1][1];
       stkReaders[0][0] = new MetamorphReader();
@@ -777,14 +802,28 @@ public class MetamorphReader extends BaseTiffReader {
     }
     else {
       stkReaders = new MetamorphReader[stks.length][];
+      perSeriesStageX = new Length[stks.length][];
+      perSeriesStageY = new Length[stks.length][];
       for (int i=0; i<stks.length; i++) {
         stkReaders[i] = new MetamorphReader[stks[i].length];
         for (int j=0; j<stkReaders[i].length; j++) {
           stkReaders[i][j] = new MetamorphReader();
           stkReaders[i][j].setCanLookForND(false);
+
           if (j > 0) {
             stkReaders[i][j].setMetadataOptions(
               new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+          }
+          else if (stks[i][j] != null) {
+            try {
+              LOGGER.debug("reading positions from {}", stks[i][j]);
+              stkReaders[i][j].setId(stks[i][j]);
+              perSeriesStageX[i] = stkReaders[i][j].getStageX();
+              perSeriesStageY[i] = stkReaders[i][j].getStageY();
+            }
+            finally {
+              stkReaders[i][j].close();
+            }
           }
         }
       }
@@ -831,7 +870,9 @@ public class MetamorphReader extends BaseTiffReader {
       } else {
         rows = Collections.max(rowMap.values()) + 1;
         cols = Collections.max(colMap.values()) + 1;
-        if (rows > 0 && cols > 0) {
+        if (rows > 0 && cols > 0 &&
+          core.size() != uniqueWells.size())
+        {
           CoreMetadata c = core.get(0, 0);
           core.clear();
           c.sizeZ = 1;
@@ -1209,13 +1250,34 @@ public class MetamorphReader extends BaseTiffReader {
           store.setPlaneExposureTime(new Time(expTime, UNITS.SECOND), i, p);
         }
 
-        if (stageX != null && p < stageX.length) {
+        if (perSeriesStageX != null && i < perSeriesStageX.length &&
+          perSeriesStageX[i] != null && perSeriesStageX[i].length > 0)
+        {
+          if (p < perSeriesStageX[i].length) {
+            store.setPlanePositionX(perSeriesStageX[i][p], i, p);
+          }
+          else {
+            store.setPlanePositionX(perSeriesStageX[i][0], i, p);
+          }
+        }
+        else if (stageX != null && p < stageX.length) {
           store.setPlanePositionX(stageX[p], i, p);
         }
         else if (positionX != null) {
           store.setPlanePositionX(positionX, i, p);
         }
-        if (stageY != null && p < stageY.length) {
+
+        if (perSeriesStageY != null && i < perSeriesStageY.length &&
+          perSeriesStageY[i] != null && perSeriesStageY[i].length > 0)
+        {
+          if (p < perSeriesStageY[i].length) {
+            store.setPlanePositionY(perSeriesStageY[i][p], i, p);
+          }
+          else {
+            store.setPlanePositionY(perSeriesStageY[i][0], i, p);
+          }
+        }
+        else if (stageY != null && p < stageY.length) {
           store.setPlanePositionY(stageY[p], i, p);
         }
         else if (positionY != null) {
@@ -1747,6 +1809,14 @@ public class MetamorphReader extends BaseTiffReader {
     if (validZ) zStart = tempZ;
   }
 
+  protected Length[] getStageX() {
+    return stageX;
+  }
+
+  protected Length[] getStageY() {
+    return stageY;
+  }
+
   private void readStagePositions() throws IOException {
     stageX = new Length[mmPlanes];
     stageY = new Length[mmPlanes];
@@ -2046,8 +2116,20 @@ public class MetamorphReader extends BaseTiffReader {
     return intFormat(day, 2) + "/" + intFormat(month, 2) + "/" + year;
   }
 
-  /** Converts a time value in milliseconds into a human-readable string. */
+  /**
+   * Converts a time value in milliseconds into a human-readable string.
+   * Note that the date and time are handled separately, so this method
+   * is only concerned with the time of day. The time of day in milliseconds
+   * is stored as a 32-bit int in Metamorph files, but is expected to be
+   * a positive integer less than the number of milliseconds in one day.
+   *
+   * @param millis milliseconds elapsed in the relevant day
+   * @see decodeDate(int)
+   */
   public static String decodeTime(int millis) {
+    if (millis < 0 || millis > 1000 * 60 * 60 * 24) {
+      LOGGER.warn("Unexpected milliseconds when parsing relative time: {}", millis);
+    }
     DateTime tm = new DateTime(millis, DateTimeZone.UTC);
     String hours = intFormat(tm.getHourOfDay(), 2);
     String minutes = intFormat(tm.getMinuteOfHour(), 2);
@@ -2265,7 +2347,7 @@ public class MetamorphReader extends BaseTiffReader {
    */
   private String getNDVersionSuffix(Location ndfile) throws IOException {
     ndFilename = ndfile.getAbsolutePath();
-    String[] lines = DataTools.readFile(ndFilename).split("\n");
+    String[] lines = DataTools.readFile(ndFilename, ND_ENCODING).split("\n");
     boolean globalDoZ = true;
     String version = NDINFOFILE_VER1;
     StringBuilder currentValue = new StringBuilder();

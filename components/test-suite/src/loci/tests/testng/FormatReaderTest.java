@@ -53,6 +53,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Memoizer;
+import loci.formats.Modulo;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -760,6 +761,28 @@ public class FormatReaderTest {
       if (reader.getSizeZ() != config.getSizeZ()) {
         result(testName, false, "Series " + i + " (expected " + config.getSizeZ() + ", actual " + reader.getSizeZ() + ")");
       }
+
+      Modulo moduloZ = reader.getModuloZ();
+      int moduloLength = moduloZ.length();
+      String type = config.getModuloZType();
+      Double start = config.getModuloZStart();
+      Double step = config.getModuloZStep();
+      Double end = config.getModuloZEnd();
+      if (!isEqual(type, moduloZ.type) && moduloLength > 1) {
+        result(testName, false, "Series " + i + " (expected modulo type " + type + ", actual " + moduloZ.type + ")");
+      }
+      // start/stop/step values are 0/0/1 by default unless
+      // the reader set something else, which means a length of 1
+      // if corresponding config values are null, that's OK even though not strictly equal
+      if (!isAlmostEqual(start, moduloZ.start) && (moduloLength > 1 || start != null)) {
+        result(testName, false, "Series " + i + " (expected modulo start " + start + ", actual " + moduloZ.start + ")");
+      }
+      if (!isAlmostEqual(step, moduloZ.step) && (moduloLength > 1 || step != null)) {
+        result(testName, false, "Series " + i + " (expected modulo step " + step + ", actual " + moduloZ.step + ")");
+      }
+      if (!isAlmostEqual(end, moduloZ.end) && (moduloLength > 1 || end != null)) {
+        result(testName, false, "Series " + i + " (expected modulo end " + end + ", actual " + moduloZ.end + ")");
+      }
     }
     result(testName, true);
   }
@@ -777,6 +800,28 @@ public class FormatReaderTest {
       if (reader.getSizeC() != config.getSizeC()) {
         result(testName, false, "Series " + i + " (expected " + config.getSizeC() + ", actual " + reader.getSizeC() + ")");
       }
+
+      Modulo moduloC = reader.getModuloC();
+      int moduloLength = moduloC.length();
+      String type = config.getModuloCType();
+      Double start = config.getModuloCStart();
+      Double step = config.getModuloCStep();
+      Double end = config.getModuloCEnd();
+      if (!isEqual(type, moduloC.type) && moduloLength > 1) {
+        result(testName, false, "Series " + i + " (expected modulo type " + type + ", actual " + moduloC.type + ")");
+      }
+      // start/stop/step values are 0/0/1 by default unless
+      // the reader set something else, which means a length of 1
+      // if corresponding config values are null, that's OK even though not strictly equal
+      if (!isAlmostEqual(start, moduloC.start) && (moduloLength > 1 || start != null)) {
+        result(testName, false, "Series " + i + " (expected modulo start " + start + ", actual " + moduloC.start + ")");
+      }
+      if (!isAlmostEqual(step, moduloC.step) && (moduloLength > 1 || step != null)) {
+        result(testName, false, "Series " + i + " (expected modulo step " + step + ", actual " + moduloC.step + ")");
+      }
+      if (!isAlmostEqual(end, moduloC.end) && (moduloLength > 1 || end != null)) {
+        result(testName, false, "Series " + i + " (expected modulo end " + end + ", actual " + moduloC.end + ")");
+      }
     }
     result(testName, true);
   }
@@ -793,6 +838,28 @@ public class FormatReaderTest {
 
       if (reader.getSizeT() != config.getSizeT()) {
         result(testName, false, "Series " + i + " (expected " + config.getSizeT() + ", actual " + reader.getSizeT() + ")");
+      }
+
+      Modulo moduloT = reader.getModuloT();
+      int moduloLength = moduloT.length();
+      String type = config.getModuloTType();
+      Double start = config.getModuloTStart();
+      Double step = config.getModuloTStep();
+      Double end = config.getModuloTEnd();
+      if (!isEqual(type, moduloT.type) && moduloLength > 1) {
+        result(testName, false, "Series " + i + " (expected modulo type " + type + ", actual " + moduloT.type + ")");
+      }
+      // start/stop/step values are 0/0/1 by default unless
+      // the reader set something else, which means a length of 1
+      // if corresponding config values are null, that's OK even though not strictly equal
+      if (!isAlmostEqual(start, moduloT.start) && (moduloLength > 1 || start != null)) {
+        result(testName, false, "Series " + i + " (expected modulo start " + start + ", actual " + moduloT.start + ")");
+      }
+      if (!isAlmostEqual(step, moduloT.step) && (moduloLength > 1 || step != null)) {
+        result(testName, false, "Series " + i + " (expected modulo step " + step + ", actual " + moduloT.step + ")");
+      }
+      if (!isAlmostEqual(end, moduloT.end) && (moduloLength > 1 || end != null)) {
+        result(testName, false, "Series " + i + " (expected modulo end " + end + ", actual " + moduloT.end + ")");
       }
     }
     result(testName, true);
@@ -972,6 +1039,19 @@ public class FormatReaderTest {
     }
   }
 
+  private boolean isAlmostEqual(Double d1, Double d2) {
+    if (d1 == null && d2 == null) {
+      return true;
+    }
+    else if (d1 == null || d2 == null) {
+      return false;
+    }
+    else if (d1.isNaN() && d2.isNaN()) {
+      return true;
+    }
+    return Math.abs(d1 - d2) <= Constants.EPSILON;
+  }
+
   private boolean isAlmostEqual(Quantity q1, Quantity q2) {
     if (q1 == null && q2 == null) {
       return true;
@@ -979,12 +1059,8 @@ public class FormatReaderTest {
       return false;
     } else if (q1.unit() != q2.unit()) {
       return false;
-    } else if (Math.abs(q1.value().doubleValue() - q2.value().doubleValue()) > Constants.EPSILON) {
-
-      return false;
-    } else {
-      return true;
     }
+    return isAlmostEqual(q1.value().doubleValue(), q2.value().doubleValue());
   }
 
   @Test(groups = {"all", "fast", "automated"})
@@ -1087,10 +1163,12 @@ public class FormatReaderTest {
         }
         catch (NullPointerException e) { }
 
-        if (!(expectedLightSource == null && realLightSource == null) &&
-          !expectedLightSource.equals(realLightSource))
-        {
-          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedLightSource + ", actual " + realLightSource + ")");
+        if (expectedLightSource != null || realLightSource != null) {
+          if ((expectedLightSource != null && !expectedLightSource.equals(realLightSource)) ||
+            (realLightSource != null && !realLightSource.equals(expectedLightSource)))
+          {
+            result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedLightSource + ", actual " + realLightSource + ")");
+          }
         }
       }
     }
@@ -1873,7 +1951,6 @@ public class FormatReaderTest {
           !(reader.getFormat().equals("Micro-Manager")) &&
           !(reader.getFormat().equals("BDV")) &&
           !(reader.getFormat().equals("Zeiss AxioVision TIFF")) &&
-          !(reader.getFormat().equals("Olympus ScanR")) &&
           !base[0].equals(file)) {
           success = false;
           msg = "Used files list does not start with getCurrentFile";
@@ -1906,6 +1983,13 @@ public class FormatReaderTest {
 
           // Options files
           if (base[i].toLowerCase().endsWith(".bfoptions"))
+          {
+            continue;
+          }
+
+          // only .jdce file in MD JDCE data can be used
+          if (reader.getFormat().equals("Molecular Devices JDCE") &&
+            !base[i].toLowerCase().endsWith(".jdce"))
           {
             continue;
           }
@@ -2046,6 +2130,13 @@ public class FormatReaderTest {
           // Cellomics datasets cannot be reliably detected with the .mdb file
           if (reader.getFormat().equals("Cellomics C01") &&
             base[i].toLowerCase().endsWith(".mdb"))
+          {
+            continue;
+          }
+
+          // TissueFAXS can only be detected with .aqproj file
+          if (reader.getFormat().equals("TissueFAXS") &&
+            !base[i].toLowerCase().endsWith(".aqproj"))
           {
             continue;
           }
@@ -2863,6 +2954,13 @@ public class FormatReaderTest {
               continue;
             }
 
+            // TissueFAXS data can only be detected with .aqproj
+            if (!result && readers[j] instanceof TissueFAXSReader &&
+              !used[i].toLowerCase().endsWith(".aqproj"))
+            {
+              continue;
+            }
+
             // Tecan data can only be detected with the .db file
             if (!result && readers[j] instanceof TecanReader &&
               !used[i].toLowerCase().endsWith(".db"))
@@ -2894,6 +2992,18 @@ public class FormatReaderTest {
             if (!result && r instanceof CellSensReader &&
               ((!used[i].endsWith(".vsi") && !used[i].endsWith(".ets")) ||
               (used[i].endsWith(".ets") && !used[i].startsWith("frame"))))
+            {
+              continue;
+            }
+
+            // .jdce data can only be detected from .jdce file
+            if (!result && r instanceof JDCEReader &&
+              !used[i].endsWith(".jdce"))
+            {
+              continue;
+            }
+            if (result && r instanceof JDCEReader &&
+              readers[j] instanceof MetamorphTiffReader)
             {
               continue;
             }

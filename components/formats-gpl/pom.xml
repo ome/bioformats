@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>8.1.0-SNAPSHOT</version>
+    <version>8.4.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -377,7 +377,7 @@
     </repository>
     <repository>
       <id>unidata.releases</id>
-      <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+      <url>https://artifacts.unidata.ucar.edu/repository/unidata-releases/</url>
       <snapshots><enabled>false</enabled></snapshots>
     </repository>
     <repository>
@@ -386,9 +386,9 @@
       <url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
     </repository>
     <repository>
-      <id>imagej.public</id>
-      <name>ImageJ Maven repositrory</name>
-      <url>https://maven.imagej.net/content/groups/public</url>
+      <id>scijava</id>
+      <name>SciJava</name>
+      <url>https://maven.scijava.org/content/groups/public/</url>
     </repository>
   </repositories>
 </project>

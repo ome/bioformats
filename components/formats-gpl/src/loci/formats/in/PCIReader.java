@@ -415,7 +415,16 @@ public class PCIReader extends FormatReader {
       TiffParser tp = new TiffParser(s);
       // don't correct the image width if it's stored as a TIFF
       if (!tp.isValidHeader() && s.length() > expectedPlaneSize) {
-        m.sizeX += (s.length() - expectedPlaneSize) / (m.sizeY * bpp * m.sizeC);
+        long extraBytesInFile = s.length() - expectedPlaneSize;
+        long extraPixelsPerRow = extraBytesInFile / (m.sizeY * bpp * m.sizeC);
+
+        // this would be very unexpected, but checking here so that
+        // casting extraPixelsPerRow to int or adding to m.sizeX cannot overflow
+        if (extraPixelsPerRow >= Integer.MAX_VALUE - m.sizeX) {
+          throw new FormatException("Stream length (" + s.length() +
+            ") inconsistent with plane size in bytes (" + expectedPlaneSize + ")");
+        }
+        m.sizeX += (int) extraPixelsPerRow;
       }
     }
 

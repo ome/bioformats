@@ -44,6 +44,7 @@ import loci.formats.cache.Cache;
 import loci.formats.cache.CacheException;
 import loci.formats.cache.CacheStrategy;
 import loci.formats.cache.CrosshairStrategy;
+import loci.plugins.in.ImagePlusReader;
 import loci.plugins.util.RecordedImageProcessor.MethodEntry;
 
 /**
@@ -109,13 +110,8 @@ public class BFVirtualStack extends VirtualStack {
     this.series = r.getSeries();
 
     // set up cache
-    int[] subC;
     Modulo moduloC = r.getModuloC();
-    if (moduloC.length() > 1) {
-      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
-    } else {
-      subC = new int[] {r.getSizeC()};
-    }
+    int[] subC = ImagePlusReader.getSubC(moduloC, r.getSizeC());
     if (merge) subC = new int[] {new ChannelMerger(r).getEffectiveSizeC()};
     len = new int[subC.length + 2];
     System.arraycopy(subC, 0, len, 0, subC.length);

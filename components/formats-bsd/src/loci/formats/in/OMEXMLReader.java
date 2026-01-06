@@ -348,7 +348,7 @@ public class OMEXMLReader extends FormatReader {
     @Override
     public void characters(char[] ch, int start, int length) {
       if (!inPixels || currentQName.indexOf("BinData") < 0) {
-        xmlBuffer.append(new String(ch, start, length));
+        xmlBuffer.append(XMLTools.escapeXML(new String(ch, start, length)));
       }
     }
 

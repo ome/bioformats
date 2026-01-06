@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>8.1.0-SNAPSHOT</version>
+  <version>8.4.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -34,30 +34,30 @@
          When possible, we advise using the relevant groupId and version
          properties for your dependencies rather than hardcoding them. -->
 
-    <release.version>8.1.0-SNAPSHOT</release.version>
+    <release.version>8.4.0-SNAPSHOT</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2017</year>
     <project.rootdir>${basedir}</project.rootdir>
     <imagej1.version>1.54c</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
-    <logback.version>1.3.15</logback.version>
-    <ome-stubs.version>6.0.2</ome-stubs.version>
+    <logback.version>1.3.16</logback.version>
+    <ome-stubs.version>6.0.3</ome-stubs.version>
     <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
-    <ome-metakit.version>5.3.8</ome-metakit.version>
+    <ome-metakit.version>5.3.10</ome-metakit.version>
     <metakit.version>${ome-metakit.version}</metakit.version>
     <slf4j.version>2.0.9</slf4j.version>
     <kryo.version>5.4.0</kryo.version>
     <testng.version>6.8</testng.version>
-    <ome-common.version>6.0.25</ome-common.version>
+    <ome-common.version>6.1.1</ome-common.version>
     <ome-model.group>org.openmicroscopy</ome-model.group>
-    <ome-model.version>6.4.0</ome-model.version>
-    <ome-poi.version>5.3.9</ome-poi.version>
-    <ome-mdbtools.version>5.3.3</ome-mdbtools.version>
-    <ome-jai.version>0.1.4</ome-jai.version>
-    <ome-codecs.version>1.1.0</ome-codecs.version>
+    <ome-model.version>6.5.1</ome-model.version>
+    <ome-poi.version>5.3.11</ome-poi.version>
+    <ome-mdbtools.version>5.3.4</ome-mdbtools.version>
+    <ome-jai.version>0.1.5</ome-jai.version>
+    <ome-codecs.version>1.1.2</ome-codecs.version>
     <jxrlib.version>0.2.4</jxrlib.version>
     <xalan.version>2.7.3</xalan.version>
-    <sqlite.version>3.28.0</sqlite.version>
+    <sqlite.version>3.49.1.0</sqlite.version>
 
     <!-- Maven plugin versions -->
     <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
@@ -210,11 +210,12 @@
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
+          <version>3.14.0</version>
           <!-- Require the Java 8 platform. -->
           <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
+            <source>8</source>
+            <target>8</target>
+            <release>8</release>
           </configuration>
         </plugin>
 
@@ -412,42 +413,24 @@
 
   <organization>
     <name>Open Microscopy Environment</name>
-    <url>http://www.openmicroscopy.org/</url>
+    <url>https://www.openmicroscopy.org/</url>
   </organization>
 
+  <scm>
+    <connection>scm:git:https://github.com/ome/bioformats</connection>
+    <developerConnection>scm:git:git@github.com:ome/bioformats</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/ome/bioformats</url>
+  </scm>
   <issueManagement>
-    <system>Trac</system>
-    <url>https://trac.openmicroscopy.org/ome</url>
+    <system>GitHub</system>
+    <url>https://github.com/ome/bioformats/issues</url>
   </issueManagement>
-
   <ciManagement>
-    <system>Jenkins</system>
-    <url>https://ci.openmicroscopy.org/</url>
+    <system>GitHub</system>
+    <url>https://github.com/ome/bioformats/actions</url>
   </ciManagement>
 
-  <mailingLists>
-    <mailingList>
-      <name>OME-users</name>
-      <subscribe>http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/</subscribe>
-      <unsubscribe>http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/</unsubscribe>
-      <post>ome-users@lists.openmicroscopy.org.uk</post>
-      <archive>http://lists.openmicroscopy.org.uk/pipermail/ome-users/</archive>
-    </mailingList>
-    <mailingList>
-      <name>OME-devel</name>
-      <subscribe>http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-devel/</subscribe>
-      <unsubscribe>http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-devel/</unsubscribe>
-      <post>ome-devel@lists.openmicroscopy.org.uk</post>
-      <archive>http://lists.openmicroscopy.org.uk/pipermail/ome-devel/</archive>
-    </mailingList>
-  </mailingLists>
-
-  <scm>
-    <connection>scm:git:https://github.com/openmicroscopy/bioformats</connection>
-    <developerConnection>scm:git:git@github.com:openmicroscopy/bioformats</developerConnection>
-    <tag>HEAD</tag>
-    <url>http://github.com/openmicroscopy/bioformats</url>
-  </scm>
 
   <!-- NB: for parent project -->
   <repositories>
@@ -455,6 +438,11 @@
       <id>central</id>
       <name>Central Repository</name>
       <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>scijava</id>
+      <name>SciJava</name>
+      <url>https://maven.scijava.org/content/groups/public/</url>
     </repository>
     <repository>
       <id>ome</id>

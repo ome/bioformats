@@ -912,6 +912,7 @@ public class CellSensReader extends FormatReader {
       if (pyramid != null) {
         int nextPlane = 0;
         int effectiveSizeC = core.get(i).rgb ? 1 : core.get(i).sizeC;
+        int[] tzc = new int[] {core.get(i).sizeT, core.get(i).sizeZ, core.get(i).sizeC};
         for (int c=0; c<effectiveSizeC; c++) {
           store.setDetectorSettingsID(
             MetadataTools.createLSID("Detector", 0, nextPyramid - 1), ii, c);
@@ -971,6 +972,17 @@ public class CellSensReader extends FormatReader {
                   UNITS.MICROMETER), ii, nextPlane);
               }
               store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pyramid.zIncrement), ii);
+
+              // calculate index into timestamp list using TZC order
+              // that matches the plane iteration order here, and seems to work
+              // on the limited data we have that is fully 5D
+              // this approach may need to be re-evaluated for new data though
+              int reorderedPlane = FormatTools.positionToRaster(tzc, new int[] {t, z, c});
+              if (reorderedPlane < pyramid.tValues.size()) {
+                store.setPlaneDeltaT(
+                  FormatTools.createTime(pyramid.tValues.get(reorderedPlane),
+                  UNITS.MILLISECOND), ii, nextPlane);
+              }
             }
           }
         }
@@ -1960,6 +1972,9 @@ public class CellSensReader extends FormatReader {
                 else if (tagPrefix.equals("Z value")) {
                   pyramid.zValues.add(DataTools.parseDouble(value));
                 }
+                else if (tagPrefix.equals("Timestamp ")) {
+                  pyramid.tValues.add(DataTools.parseDouble(value));
+                }
               }
             }
             catch (NumberFormatException e) {
@@ -2082,6 +2097,8 @@ public class CellSensReader extends FormatReader {
         return "Channel Wavelength ";
       case WORKING_DISTANCE:
         return "Objective Working Distance ";
+      case TIME_VALUE:
+        return "Timestamp ";
     }
     LOGGER.debug("Unhandled volume {}", tag);
     return "";
@@ -2668,6 +2685,9 @@ public class CellSensReader extends FormatReader {
     public transient Double zStart;
     public transient Double zIncrement;
     public transient ArrayList<Double> zValues = new ArrayList<Double>();
+
+    public transient ArrayList<Double> tValues = new ArrayList<Double>();
+
     public boolean   HasAssociatedEtsFile = false;
   }
 

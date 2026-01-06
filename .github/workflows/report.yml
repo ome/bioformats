@@ -1,0 +1,31 @@
+# Check the build status of the Bio-Formats test repository job
+---
+name: Report
+
+on:
+  schedule:
+    - cron: '0 7-9 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the output of the daily job
+        shell: bash
+        run: |
+          now=$( date '+%F' )
+          year=$(date '+%Y')
+          wget https://bf-testing-results.s3.amazonaws.com/$year/$now/build-status.log
+          # Check that the same number of jobs completed
+          start=$(grep -c "Batch .* started" ./build-status.log)
+          end=$(grep -c "Batch .* finished" ./build-status.log)
+          if [ "$start" != "$end" ]; then
+              echo "$start batches started but $end finished"
+              exit 1
+          fi 
+          output=$(grep "Tests failed in" ./build-status.log || true)
+          if [ -n "$output" ]; then
+            echo "Found failures in the build status"
+            exit 1
+          fi

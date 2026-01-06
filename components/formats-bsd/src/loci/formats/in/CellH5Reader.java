@@ -82,8 +82,6 @@ public class CellH5Reader extends FormatReader {
       public String well;
       public String site;
 
-      protected String pathToImageData;
-      protected String pathToSegmentationData;
       protected String pathToPosition;
 
       CellH5Coordinate(String plate, String well, String site) {
@@ -95,20 +93,24 @@ public class CellH5Reader extends FormatReader {
                              this.plate + CellH5Constants.WELL + this.well +
                              CellH5Constants.SITE + this.site + "/";
 
-          this.pathToImageData = pathToPosition + CellH5Constants.IMAGE_PATH;
-          this.pathToSegmentationData = pathToPosition + CellH5Constants.SEGMENTATION_PATH;
-
-          LOGGER.trace(pathToImageData);
+          LOGGER.trace(getPathToImageData());
       }
 
       public String toString() {
           return String.format("%s %s_%s", plate, well, site);
       }
+
+      public String getPathToImageData() {
+        return pathToPosition + CellH5Constants.IMAGE_PATH;
+      }
+
+      public String getPathToSegmentationData() {
+        return pathToPosition + CellH5Constants.SEGMENTATION_PATH;
+      }
   }
 
   // -- Fields --
 
-  private int seriesCount;
   private transient JHDFService jhdf;
 
   private MetadataStore store;
@@ -125,9 +127,7 @@ public class CellH5Reader extends FormatReader {
                               {0, 128, 256}, {128, 0, 128}, {255, 128, 0},
                               {64, 128, 0}, {0, 64, 128}, {128, 0, 64}};
 
-  private HDF5CompoundDataMap[] times = null;
   private HDF5CompoundDataMap[] classes = null;
-  private HDF5CompoundDataMap[] bbox = null;
 
   // -- Constructor --
 
@@ -278,7 +278,6 @@ public class CellH5Reader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      seriesCount = 0;
       CellH5PositionList.clear();
       CellH5PathsToImageData.clear();
       cellObjectNames.clear();
@@ -287,6 +286,8 @@ public class CellH5Reader extends FormatReader {
       }
       jhdf = null;
       lastChannel = 0;
+      store = null;
+      classes = null;
     }
   }
 
@@ -304,7 +305,7 @@ public class CellH5Reader extends FormatReader {
     // The ImageJ RoiManager can not distinguish ROIs from different
     // Series. This is why they only will be loaded if the CellH5 contains two
     // image / series assuming that the first is the image and 2nd the labels
-    if (seriesCount <= 2 &&
+    if (getSeriesCount() <= 2 &&
       getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
     {
         parseROIs(0);
@@ -386,7 +387,6 @@ public class CellH5Reader extends FormatReader {
   }
 
   private void parseStructure() throws FormatException {
-    seriesCount = 0;
     core.clear();
     // read experiment structure and collect coordinates
 
@@ -415,13 +415,14 @@ public class CellH5Reader extends FormatReader {
     
 
     for (CellH5Coordinate coord : CellH5PositionList) {
-      if (jhdf.exists(coord.pathToImageData)) {
+      String imageData = coord.getPathToImageData();
+      if (jhdf.exists(imageData)) {
         CoreMetadata m = new CoreMetadata();
         core.add(m);
-        setSeries(seriesCount);
+        setSeries(getSeriesCount() - 1);
 
-        LOGGER.debug(coord.pathToImageData);
-        int[] ctzyx = jhdf.getShape(coord.pathToImageData);
+        LOGGER.debug(imageData);
+        int[] ctzyx = jhdf.getShape(imageData);
         m.sizeC = ctzyx[0];
         m.sizeT = ctzyx[1];
         m.sizeZ = ctzyx[2];
@@ -438,7 +439,7 @@ public class CellH5Reader extends FormatReader {
         m.littleEndian = true;
         m.interleaved = false;
         m.indexed = true;
-        int bpp = jhdf.getElementSize(coord.pathToImageData);
+        int bpp = jhdf.getElementSize(imageData);
         if (bpp==1) {
             m.pixelType = FormatTools.UINT8;
         }
@@ -457,19 +458,19 @@ public class CellH5Reader extends FormatReader {
         seriesPlate.add(coord.plate);
         seriesWell.add(coord.well);
         seriesSite.add(coord.site);
-        CellH5PathsToImageData.add(coord.pathToImageData);
-        seriesCount++;
+        CellH5PathsToImageData.add(imageData);
       }
     }
 
     for (CellH5Coordinate coord : CellH5PositionList) {
-      if (jhdf.exists(coord.pathToSegmentationData)) {
+      String segData = coord.getPathToSegmentationData();
+      if (jhdf.exists(segData)) {
         CoreMetadata m = new CoreMetadata();
         core.add(m);
-        setSeries(seriesCount);
+        setSeries(getSeriesCount() - 1);
 
-        LOGGER.debug(coord.pathToSegmentationData);
-        int[] ctzyx = jhdf.getShape(coord.pathToSegmentationData);
+        LOGGER.debug(segData);
+        int[] ctzyx = jhdf.getShape(segData);
         m.sizeC = ctzyx[0];
         m.sizeT = ctzyx[1];
         m.sizeZ = ctzyx[2];
@@ -486,7 +487,7 @@ public class CellH5Reader extends FormatReader {
         m.littleEndian = true;
         m.interleaved = false;
         m.indexed = true;
-        int bpp = jhdf.getElementSize(coord.pathToSegmentationData);
+        int bpp = jhdf.getElementSize(segData);
         if (bpp==1) {
             m.pixelType = FormatTools.UINT8;
         }
@@ -506,12 +507,11 @@ public class CellH5Reader extends FormatReader {
         seriesPlate.add(coord.plate);
         seriesWell.add(coord.well);
         seriesSite.add(coord.site);
-        CellH5PathsToImageData.add(coord.pathToSegmentationData);
-        seriesCount++;
+        CellH5PathsToImageData.add(segData);
       }
     }
 
-    if (seriesCount == 0) {
+    if (getSeriesCount() == 0) {
       throw new FormatException("No image data found...");
     }
 
@@ -627,8 +627,8 @@ public class CellH5Reader extends FormatReader {
       }
 
       if (jhdf.exists(pathToBoundingBox)) {
-        bbox = jhdf.readCompoundArrayDataMap(pathToBoundingBox);
-        times = jhdf.readCompoundArrayDataMap(
+        HDF5CompoundDataMap[] bbox = jhdf.readCompoundArrayDataMap(pathToBoundingBox);
+        HDF5CompoundDataMap[] times = jhdf.readCompoundArrayDataMap(
           coord.pathToPosition + CellH5Constants.OBJECT + cellObjectName);
         int roiChannel = getChannelIndexOfCellObjectName(cellObjectName);
         int roiZSlice = 0;

@@ -58,7 +58,7 @@ import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.TiffParser;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -381,17 +381,44 @@ public class ImageConverterTest {
     };
     assertConversion(args);
 
-    try (TiffParser parser = new TiffParser(outFile.getAbsolutePath())) {
-      String comment = parser.getComment();
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getChannelCount(0), 1);
+  }
 
-      final OMEXMLService service =
-        new ServiceFactory().getInstance(OMEXMLService.class);
-      IMetadata meta = service.createOMEXMLMetadata(comment);
-      assertEquals(meta.getChannelCount(0), 1);
-    }
-    catch (Exception e) {
-      throw new FormatException(e);
-    }
+  @Test
+  public void testConvertResolutionsSingleChannel() throws FormatException, IOException {
+    outFile = getOutFile("multires-single-plane.ome.tiff");
+    String[] args = {
+      "pyramid&sizeC=2&resolutions=2&resolutionScale=2.fake",
+      "-noflat", "-channel", "0", outFile.getAbsolutePath()
+    };
+    resolutionCount = 2;
+    assertConversion(args);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
+    assertEquals(meta.getChannelCount(0), 1);
+    assertEquals(meta.getPixelsSizeC(0).getValue().intValue(), 1);
+    assertEquals(meta.getPixelsSizeZ(0).getValue().intValue(), 1);
+    assertEquals(meta.getPixelsSizeT(0).getValue().intValue(), 1);
+  }
+
+  @Test
+  public void testConvertResolutionsSingleZ() throws FormatException, IOException {
+    outFile = getOutFile("multires-single-z.ome.tiff");
+    String[] args = {
+      "pyramid&sizeC=3&sizeZ=4&resolutions=2&resolutionScale=2.fake",
+      "-noflat", "-z", "1", outFile.getAbsolutePath()
+    };
+    resolutionCount = 2;
+    assertConversion(args);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
+    assertEquals(meta.getChannelCount(0), 3);
+    assertEquals(meta.getPixelsSizeC(0).getValue().intValue(), 3);
+    assertEquals(meta.getPixelsSizeZ(0).getValue().intValue(), 1);
+    assertEquals(meta.getPixelsSizeT(0).getValue().intValue(), 1);
   }
 
   private Path getTempSubdir() throws IOException {
@@ -402,5 +429,20 @@ public class ImageConverterTest {
 
   private File getOutFile(String name) throws IOException {
     return getTempSubdir().resolve(name).toFile();
+  }
+
+  private IMetadata getOMEXMLMetadata(File out) throws FormatException {
+    IMetadata meta = null;
+    try (TiffParser parser = new TiffParser(outFile.getAbsolutePath())) {
+      String comment = parser.getComment();
+
+      final OMEXMLService service =
+        new ServiceFactory().getInstance(OMEXMLService.class);
+      meta = service.createOMEXMLMetadata(comment);
+    }
+    catch (Exception e) {
+      throw new FormatException(e);
+    }
+    return meta;
   }
 }

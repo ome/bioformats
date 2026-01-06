@@ -123,15 +123,22 @@ public class DCIMGReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int zp = no / getSizeT();
-    int tp = no % getSizeT();
+    int[] zct = getZCTCoords(no);
+    int zp = zct[0];
+    // int cp = zct[1];  
+    int tp = zct[2];
 
+  
     try (RandomAccessInputStream stream = new RandomAccessInputStream(uniqueFiles[zp])) {
       stream.order(IS_LITTLE);
 
       // DCIMG is stored column major
       int byteFactor = FormatTools.getBytesPerPixel(getPixelType());
-      stream.seek(headerSize + dataOffset + tp*bytesPerImage + byteFactor*y*getSizeX());
+      if (version >= DCIMG_VERSION_1) {
+        stream.seek(headerSize + dataOffset + tp*(bytesPerImage+frameFooterSize) + byteFactor*y*getSizeX());
+      } else {
+        stream.seek(headerSize + dataOffset + tp*bytesPerImage + byteFactor*y*getSizeX());
+      }
       for (int row=h-1; row>=0; row--) {
         if (fourPixelCorrectionInFooter && (row == fourPixelCorrectionLine) && (x < 4)) {
 

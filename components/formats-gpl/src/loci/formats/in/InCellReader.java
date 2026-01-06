@@ -67,6 +67,9 @@ public class InCellReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String DUPLICATE_PLANES_KEY = "incell.duplicate_missing_planes";
+  public static final boolean DUPLICATE_PLANES_DEFAULT = true;
+
   public static final String INCELL_MAGIC_STRING = "IN Cell Analyzer";
   public static final String CYTELL_MAGIC_STRING = "Cytell";
 
@@ -112,6 +115,8 @@ public class InCellReader extends FormatReader {
   private List<String> exFilters = new ArrayList<String>();
   private List<String> emFilters = new ArrayList<String>();
 
+  private transient boolean variableZ = false;
+
   // -- Constructor --
 
   /** Constructs a new InCell 1000/2000 reader. */
@@ -123,6 +128,17 @@ public class InCellReader extends FormatReader {
     hasCompanionFiles = true;
     datasetDescription = "One .xdce file with at least one .tif/.tiff or " +
       ".im file";
+  }
+
+  // -- InCellReader API methods --
+
+  public boolean duplicatePlanes() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       DUPLICATE_PLANES_KEY, DUPLICATE_PLANES_DEFAULT);
+    }
+    return DUPLICATE_PLANES_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -189,9 +205,18 @@ public class InCellReader extends FormatReader {
       getSeries() % channelsPerTimepoint.size() : coordinates[2];
     int image = getIndex(coordinates[0], coordinates[1], 0);
 
-    if (imageFiles[well][field][timepoint][image] == null) return buf;
+    if (imageFiles[well][field][timepoint][image] == null) {
+      // unless otherwise configured, copy the first Z section
+      // to any other planes in the Z stack that are missing
+      if (duplicatePlanes() && coordinates[0] > 0) {
+        return openBytes(getIndex(0, coordinates[1], coordinates[2]), buf, x, y, w, h);
+      }
+      return buf;
+    }
     String filename = imageFiles[well][field][timepoint][image].filename;
-    if (filename == null || !(new Location(filename).exists())) return buf;
+    if (filename == null || !(new Location(filename).exists())) {
+      return buf;
+    }
 
     if (imageFiles[well][field][timepoint][image].isTiff) {
       try {
@@ -280,6 +305,7 @@ public class InCellReader extends FormatReader {
       refractive = null;
       emFilters.clear();
       exFilters.clear();
+      variableZ = false;
     }
   }
 
@@ -326,6 +352,14 @@ public class InCellReader extends FormatReader {
   }
 
   // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(DUPLICATE_PLANES_KEY);
+    return optionsList;
+  }
 
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
@@ -464,7 +498,18 @@ public class InCellReader extends FormatReader {
       }
       int expectedSeries = totalImages / (getSizeZ() * getSizeC() * getSizeT());
       if (expectedSeries > 0) {
-        seriesCount = (int) Math.min(seriesCount, expectedSeries);
+        if (variableZ) {
+          // we know that different channels may have different Z sizes,
+          // so don't try to recalculate the series count based on
+          // SizeZ * SizeC
+          LOGGER.warn("Using series count {} but plane count indicates {}",
+            seriesCount, expectedSeries);
+        }
+        else {
+          // we expect all channels to have the same Z size,
+          // so recalculate the series count based on the expected number of planes
+          seriesCount = (int) Math.min(seriesCount, expectedSeries);
+        }
       }
     }
     else seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
@@ -822,7 +867,7 @@ public class InCellReader extends FormatReader {
           }
         }
       }
-      else if (qName.equals("TimePoint")) {
+      else if (qName.equals("TimePoint") && doT) {
         channelsPerTimepoint.add(nChannels);
         nChannels = 0;
       }
@@ -908,8 +953,19 @@ public class InCellReader extends FormatReader {
         String fusion = attributes.getValue("fusion_wave");
         if (fusion.equals("false")) ms0.sizeC++;
         String mode = attributes.getValue("imaging_mode");
+
+        // different wavelengths (channels) may have different imaging modes
+        // we want to allow a Z stack if one or more "3-D" imaging modes
+        // are encountered, even if some are variations on "2-D"
         if (mode != null) {
-          doZ = mode.equals("3-D");
+          boolean is3D = mode.equals("3-D");
+          // record if there were different imaging modes found
+          if (!variableZ && is3D != doZ && ms0.sizeC > 1) {
+            variableZ = true;
+          }
+          if (ms0.sizeC == 1 || !doZ) {
+            doZ = is3D;
+          }
         }
       }
       else if (qName.equals("AcqWave")) {

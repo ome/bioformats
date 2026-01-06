@@ -467,14 +467,18 @@ public class OMETiffReader extends SubResolutionFormatReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return ((OMETiffCoreMetadata) getCurrentCore()).tileWidth;
+    // tile width might be 0 if an Image was defined with no linked IFDs
+    int tw = ((OMETiffCoreMetadata) getCurrentCore()).tileWidth;
+    return tw > 0 ? tw : super.getOptimalTileWidth();
   }
 
   /* @see loci.formats.SubResolutionFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return ((OMETiffCoreMetadata) getCurrentCore()).tileHeight;
+    // tile height might be 0 if an Image was defined with no linked IFDs
+    int th = ((OMETiffCoreMetadata) getCurrentCore()).tileHeight;
+    return th > 0 ? th : super.getOptimalTileHeight();
   }
 
   // -- Internal FormatReader API methods --
@@ -1106,8 +1110,16 @@ public class OMETiffReader extends SubResolutionFormatReader {
           if (info[s][0].id != null && failOnMissingTIFF()) {
             throw new FormatException("Invalid file (may be corrupted): " + info[s][0].id);
           }
-          LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
-          info[s][0].id = currentId;
+          // warning if the id is null (usually no linked data in Image)
+          // isn't helpful, and potentially confusing
+          if (info[s][0].id != null) {
+            LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
+          }
+          // only reset the id if the current file is a TIFF,
+          // not just a companion OME-XML
+          if (info[s][0].reader.isThisType(currentId)) {
+            info[s][0].id = currentId;
+          }
           info[s][0].exists = false;
           if (info[s][0].ifd < 0) {
             info[s][0].ifd = 0;

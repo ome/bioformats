@@ -109,6 +109,9 @@ loci.formats.in.LOFReader	            # lof
 loci.formats.in.XLEFReader            # xlef
 loci.formats.in.OlympusTileReader     # omp2info
 loci.formats.in.DCIMGReader           # dcimg
+loci.formats.in.JDCEReader            # jdce
+loci.formats.in.TissueFAXSReader      # aqproj, tfcyto
+loci.formats.in.ZeissXRMReader        # txm, txrm
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par

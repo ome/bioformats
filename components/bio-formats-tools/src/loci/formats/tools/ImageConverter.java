@@ -801,14 +801,17 @@ public final class ImageConverter {
         int count = 0;
         for (int i=startPlane; i<endPlane; i++) {
           int[] coords = reader.getZCTCoords(i);
+          String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
 
           if ((zSection >= 0 && coords[0] != zSection) || (channel >= 0 &&
             coords[1] != channel) || (timepoint >= 0 && coords[2] != timepoint))
           {
+            if (i == endPlane - 1) {
+              nextOutputIndex.remove(outputName);
+            }
             continue;
           }
 
-          String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
           String tileName = FormatTools.getTileFilename(0, 0, 0, outputName);
 
           if (outputName.equals(tileName)) {

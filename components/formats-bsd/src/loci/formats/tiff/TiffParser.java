@@ -98,6 +98,8 @@ public class TiffParser implements Closeable {
 
   private boolean canClose = false;
 
+  private String tagEncoding = null;
+
   // -- Constructors --
 
   /** Constructs a new TIFF parser from the given file name. */
@@ -172,6 +174,14 @@ public class TiffParser implements Closeable {
   /** Sets whether or not YCbCr color correction is allowed. */
   public void setYCbCrCorrection(boolean correctionAllowed) {
     ycbcrCorrection = correctionAllowed;
+  }
+
+  /**
+   * Sets the encoding to use for tags with ASCII values.
+   * Defaults to UTF-8 if unset.
+   */
+  public void setEncoding(String encoding) {
+    tagEncoding = encoding;
   }
 
   /** Gets the stream from which TIFF data is being parsed. */
@@ -578,14 +588,15 @@ public class TiffParser implements Closeable {
       String[] strings = nullCount == 1 ? null : new String[nullCount];
       String s = null;
       int c = 0, ndx = -1;
+      String encoding = tagEncoding == null ? Constants.ENCODING : tagEncoding;
       for (int j=0; j<count; j++) {
         if (ascii[j] == 0) {
-          s = new String(ascii, ndx + 1, j - ndx - 1, Constants.ENCODING);
+          s = new String(ascii, ndx + 1, j - ndx - 1, encoding);
           ndx = j;
         }
         else if (j == count - 1) {
           // handle non-null-terminated strings
-          s = new String(ascii, ndx + 1, j - ndx, Constants.ENCODING);
+          s = new String(ascii, ndx + 1, j - ndx, encoding);
         }
         else s = null;
         if (strings != null && s != null) strings[c++] = s;
@@ -1062,7 +1073,12 @@ public class TiffParser implements Closeable {
       return buf;
     }
 
-    long nrows = numTileRows;
+    // very unlikely, but checking here so that the tile row count
+    // can be cast to int without worrying about overflowing
+    if (numTileRows > Integer.MAX_VALUE) {
+      throw new FormatException(numTileRows + " rows of tiles not supported");
+    }
+    int nrows = (int) numTileRows;
     if (planarConfig == 2) numTileRows *= samplesPerPixel;
 
     Region imageBounds = new Region(x, y, (int) width, (int) height);
@@ -1145,7 +1161,9 @@ public class TiffParser implements Closeable {
           int src = (int) (q * tileSize) + realX + realY;
           int dest = (int) (q * planeSize) + pixel * (tileX - x) +
             outputRowLen * (tileY - y);
-          if (planarConfig == 2) dest += (planeSize * (row / nrows));
+          if (planarConfig == 2) {
+            dest += (planeSize * (row / nrows));
+          }
 
           // copying the tile directly will only work if there is no overlap
           // and only one tile needs to be read

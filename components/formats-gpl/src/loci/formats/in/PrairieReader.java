@@ -65,6 +65,7 @@ import org.xml.sax.SAXException;
  *
  * @author Curtis Rueden
  * @author Melissa Linkert
+ * @author Michael Fox
  */
 public class PrairieReader extends FormatReader {
 
@@ -292,7 +293,7 @@ public class PrairieReader extends FormatReader {
     }
 
     tiff.setId(getPath(file));
-    return tiff.openBytes(0, buf, x, y, w, h);
+    return tiff.openBytes(file.getPage(), buf, x, y, w, h);
   }
 
   @Override

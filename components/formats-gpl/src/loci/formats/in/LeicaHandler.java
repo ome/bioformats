@@ -96,7 +96,6 @@ public class LeicaHandler extends BaseHandler {
 
   private int nextChannel = 0;
   private Double zoom, pinhole;
-  private List<Integer> detectorIndices;
   private int nextFilter = 0;
   private int nextROI = 0;
   private ROI roi;
@@ -132,7 +131,6 @@ public class LeicaHandler extends BaseHandler {
     lutNames = new Vector<String>();
     this.store = store;
     core = new ArrayList<CoreMetadata>();
-    detectorIndices = new ArrayList<Integer>();
     xPos = new ArrayList<Length>();
     yPos = new ArrayList<Length>();
     zPos = new ArrayList<Length>();
@@ -233,14 +231,6 @@ public class LeicaHandler extends BaseHandler {
           }
         }
 
-        for (int c=0; c<nChannels; c++) {
-          int index = c < detectorIndices.size() ?
-            detectorIndices.get(c).intValue() : detectorIndices.size() - 1;
-          if (index < 0 || index >= nChannels || index >= 0) break;
-          String id = MetadataTools.createLSID("Detector", numDatasets, index);
-          store.setDetectorSettingsID(id, numDatasets, c);
-        }
-
         String[] keys = channels.keySet().toArray(new String[0]);
         Arrays.sort(keys);
         for (int c=0; c<keys.length; c++) {
@@ -256,7 +246,6 @@ public class LeicaHandler extends BaseHandler {
       xPos.clear();
       yPos.clear();
       zPos.clear();
-      detectorIndices.clear();
     }
     else if (qName.equals("Element") && level != MetadataLevel.MINIMUM) {
       multiBands.clear();
@@ -265,12 +254,6 @@ public class LeicaHandler extends BaseHandler {
       if (numDatasets >= 0) {
         int nChannels = core.get(numDatasets).rgb ? 1 : numChannels;
 
-        for (int c=0; c<detectorIndices.size(); c++) {
-          int index = detectorIndices.get(c).intValue();
-          if (c >= nChannels || index >= nChannels || index >= 0) break;
-          String id = MetadataTools.createLSID("Detector", numDatasets, index);
-          store.setDetectorSettingsID(id, numDatasets, index);
-        }
         if (pinhole != null) {
           for (int c=0; c<nChannels; c++) {
             store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROMETER), numDatasets, c);

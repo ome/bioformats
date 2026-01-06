@@ -342,7 +342,6 @@ public class OIRReader extends FormatReader {
     m.sizeZ = 1;
     m.sizeC = 1;
     m.sizeT = 1;
-    m.indexed = true;
     m.falseColor = true;
 
     try (RandomAccessInputStream s = new RandomAccessInputStream(currentId, BUFFER_SIZE)) {
@@ -352,6 +351,14 @@ public class OIRReader extends FormatReader {
     for (String file : extraFiles) {
       try (RandomAccessInputStream s = new RandomAccessInputStream(file, BUFFER_SIZE)) {
         readPixelsFile(file, s);
+      }
+    }
+
+    m.indexed = false;
+    for (Channel channel : channels) {
+      if (channel.lut != null) {
+        m.indexed = true;
+        break;
       }
     }
 
@@ -424,6 +431,8 @@ public class OIRReader extends FormatReader {
       int t = getT(uid)-minT;
       int c = getC(uid) + getL(uid); // Channel index or lambda index (We suppose there's no multichannel + lambda);
       int b = getBlock(uid);
+      LOGGER.debug("{} => Z = {}, C = {}, T= {}, b = {}",
+        uid, z, c,  t, b);
 
       CZTKey key = new CZTKey(c,z,t);
       if (!cztToPixelBlocks.containsKey(key)) cztToPixelBlocks.put(key, new PixelBlock[maxNumberOfBlocks]);
@@ -587,6 +596,7 @@ public class OIRReader extends FormatReader {
       for (int d=0; d<detectors.size(); d++) {
         if (detectors.get(d).channelId.equals(ch.id)) {
           store.setDetectorSettingsID(MetadataTools.createLSID("Detector", 0, d), 0, c);
+          break;
         }
       }
 
@@ -658,7 +668,7 @@ public class OIRReader extends FormatReader {
     readXMLBlock(file, s);
 
     while (s.getFilePointer() < s.length() - 16) {
-      s.findString("<?xml");
+      findNextXMLBlock(s);
       s.seek(s.getFilePointer() - 9);
       int length = s.readInt();
       if (length <= 0 || length + s.getFilePointer() > s.length()) {
@@ -681,6 +691,12 @@ public class OIRReader extends FormatReader {
         while (skipPixelBlock(file, s, true));
       }
     }
+  }
+
+  private void findNextXMLBlock(RandomAccessInputStream s) throws IOException {
+    s.setEncoding("ascii");
+    s.findString("<?xml");
+    s.setEncoding(Constants.ENCODING);
   }
 
   private void readXMLBlock(String file, RandomAccessInputStream s) throws FormatException, IOException {
@@ -766,10 +782,10 @@ public class OIRReader extends FormatReader {
 
     if (root != null) {
       String name = root.getNodeName();
-      if ("lsmimage:imageProperties".equals(name)) {
+      if (name != null && name.endsWith("image:imageProperties")) {
         parseImageProperties(root);
       }
-      else if ("lsmframe:frameProperties".equals(name)) {
+      else if (name != null && name.endsWith("frame:frameProperties")) {
         parseFrameProperties(root);
       }
       else if ("lut:LUT".equals(name)) {
@@ -797,14 +813,16 @@ public class OIRReader extends FormatReader {
       String lutContent = data.getTextContent();
       for (int i=0; i<channels.size(); i++) {
         if (channels.get(i).lut == null && channels.get(i).id.equals(uid)) {
-          if (getPixelType() == FormatTools.UINT8) {
-            channels.get(i).lut = new byte[3][lutContent.length() / 8];
+          int entries = lutContent.length() / 8;
+          if (getPixelType() == FormatTools.UINT8 && entries == 256) {
+            channels.get(i).lut = new byte[3][entries];
           }
-          else if (getPixelType() == FormatTools.UINT16) {
-            channels.get(i).lut = new short[3][lutContent.length() / 8];
+          else if (getPixelType() == FormatTools.UINT16 && entries == 65536) {
+            channels.get(i).lut = new short[3][entries];
           }
           else {
-            LOGGER.warn("Skipping LUTs for pixel type {}", getPixelType());
+            LOGGER.warn("Skipping LUTs for pixel type {} with {} entries",
+              getPixelType(), entries);
             return;
           }
 
@@ -841,6 +859,12 @@ public class OIRReader extends FormatReader {
       Element height = getFirstChild(imageDefinition, "base:height");
       Element depth = getFirstChild(imageDefinition, "base:depth");
       Element bitCount = getFirstChild(imageDefinition, "base:bitCounts");
+      Element colorType = getFirstChild(imageDefinition, "base:colorType");
+
+      boolean rgb = false;
+      if (colorType != null) {
+        rgb = colorType.getTextContent().trim().equalsIgnoreCase("RGB");
+      }
 
       if (width != null) {
         m.sizeX = Integer.parseInt(width.getTextContent());
@@ -850,10 +874,16 @@ public class OIRReader extends FormatReader {
       }
       if (depth != null) {
         int bytes = Integer.parseInt(depth.getTextContent());
+        if (rgb) {
+          bytes /= 3;
+        }
         m.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, false);
       }
       if (bitCount != null) {
         m.bitsPerPixel = Integer.parseInt(bitCount.getTextContent());
+        if (rgb) {
+          m.bitsPerPixel /= 3;
+        }
       }
     }
 
@@ -955,13 +985,25 @@ public class OIRReader extends FormatReader {
         if (imageDefinition != null) {
           Element depth = getFirstChild(imageDefinition, "commonphase:depth");
           Element bitCount = getFirstChild(imageDefinition, "commonphase:bitCounts");
+          Element colorType = getFirstChild(imageDefinition, "commonphase:colorType");
+
+          boolean rgb = false;
+          if (colorType != null) {
+            rgb = colorType.getTextContent().trim().equalsIgnoreCase("RGB");
+          }
 
           if (depth != null) {
             int bytes = Integer.parseInt(depth.getTextContent());
+            if (rgb) {
+              bytes /= 3;
+            }
             m.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, false);
           }
           if (bitCount != null) {
             m.bitsPerPixel = Integer.parseInt(bitCount.getTextContent());
+            if (rgb) {
+              m.bitsPerPixel /= 3;
+            }
           }
         }
 
@@ -1005,14 +1047,32 @@ public class OIRReader extends FormatReader {
           }
         }
 
-        while (index > channels.size()) {
-          channels.add(null);
-        }
-        if (index == channels.size()) {
-          channels.add(c);
+        // RGB data will store a single commonphase:channel,
+        // with 3 commonphase:elementChannel nodes
+        // the commonphase:elementChannel id attributes are what
+        // is used to reference the actual pixel data
+        NodeList elementChannels = channelNode.getElementsByTagName("commonphase:elementChannel");
+        if (elementChannels.getLength() > 0) {
+          for (int ec=0; ec<elementChannels.getLength(); ec++) {
+            Element component = (Element) elementChannels.item(ec);
+            Channel componentChannel = new Channel(c);
+
+            componentChannel.id = component.getAttribute("id");
+            int componentIndex = Integer.parseInt(component.getAttribute("order")) - 1;
+
+            Element componentName = getFirstChild(component, "commonphase:name");
+            if (componentName != null) {
+              componentChannel.name += " - " + componentName.getTextContent();
+            }
+
+            // respect the order attribute of both the parent channel
+            // and this component, which should allow for multiple RGB channels
+            int totalIndex = index * 3 + componentIndex;
+            insertChannel(totalIndex, componentChannel);
+          }
         }
         else {
-          channels.set(index, c);
+          insertChannel(index, c);
         }
       }
     }
@@ -1230,47 +1290,66 @@ public class OIRReader extends FormatReader {
 
       NodeList channelLinkages = acquisition.getElementsByTagName("commonphase:channel");
 
-      // check if each existing channel has at least one pixel block associated
-      // if not, clear and re-populate the channel list
-      for (int c=0; c<channels.size(); c++) {
-        String id = channels.get(c).id;
-        boolean hasUID = false;
-        for (String uid : pixelBlocks.keySet()) {
-          if (uid.indexOf(id) >= 0) {
-            hasUID = true;
-            break;
+      if (pixelBlocks.size() > 0) {
+        // check if each existing channel has at least one pixel block associated
+        // if not, clear and re-populate the channel list
+        for (int c=0; c<channels.size(); c++) {
+          String id = channels.get(c).id;
+          boolean hasUID = false;
+          for (String uid : pixelBlocks.keySet()) {
+            if (uid.indexOf(id) >= 0) {
+              hasUID = true;
+              break;
+            }
+          }
+          if (!hasUID) {
+            channels.remove(c);
+            c--;
           }
         }
-        if (!hasUID) {
-          channels.remove(c);
-          c--;
-        }
-      }
 
-      boolean appendChannels = channels.size() == 0;
-      if (channelLinkages != null && channelLinkages.getLength() > 0) {
-        for (int i=0; i<channelLinkages.getLength(); i++) {
-          Element channel = (Element) channelLinkages.item(i);
-          parseChannel(channel, appendChannels);
+        boolean appendChannels = channels.size() == 0;
+        if (channelLinkages != null && channelLinkages.getLength() > 0) {
+          for (int i=0; i<channelLinkages.getLength(); i++) {
+            Element channel = (Element) channelLinkages.item(i);
+            parseChannel(channel, appendChannels);
+          }
         }
-      }
-      else {
-        // so far seems to only be needed for the oldest (software version 1.2.x) files
-        channelLinkages = acquisition.getElementsByTagName("lsmimage:channel");
-        for (int i=0; i<channelLinkages.getLength(); i++) {
-          Element channel = (Element) channelLinkages.item(i);
-          parseChannel(channel, appendChannels);
+        else {
+          // so far seems to only be needed for the oldest (software version 1.2.x) files
+          channelLinkages = acquisition.getElementsByTagName("lsmimage:channel");
+          for (int i=0; i<channelLinkages.getLength(); i++) {
+            Element channel = (Element) channelLinkages.item(i);
+            parseChannel(channel, appendChannels);
+          }
         }
-      }
 
-      // calls to parseChannel may have reset the channels list
-      // so there may be null elements that need to be removed
-      for (int i=0; i<channels.size(); i++) {
-        if (channels.get(i) == null) {
-          channels.remove(i);
-          i--;
+        // calls to parseChannel may have reset the channels list
+        // so there may be null elements that need to be removed
+        for (int i=0; i<channels.size(); i++) {
+          if (channels.get(i) == null) {
+            channels.remove(i);
+            i--;
+          }
         }
       }
+    }
+  }
+
+  /**
+   * Insert the given Channel into the list of channels,
+   * at the given index. If the index is greater than the
+   * current list length, then the list will be expanded accordingly.
+   */
+  private void insertChannel(int index, Channel c) {
+    while (index > channels.size()) {
+      channels.add(null);
+    }
+    if (index == channels.size()) {
+      channels.add(c);
+    }
+    else {
+      channels.set(index, c);
     }
   }
 
@@ -1334,15 +1413,7 @@ public class OIRReader extends FormatReader {
           }
         }
 
-        while (index > channels.size()) {
-          channels.add(null);
-        }
-        if (index == channels.size()) {
-          channels.add(c);
-        }
-        else {
-          channels.set(index, c);
-        }
+        insertChannel(index, c);
       }
     }
   }
@@ -1584,6 +1655,20 @@ public class OIRReader extends FormatReader {
     public Length pinhole;
     public Length excitation;
     public Length emission;
+
+    public Channel() {
+    }
+
+    public Channel(Channel copy) {
+      this.id = copy.id;
+      this.name = copy.name;
+      this.laserIndex = copy.laserIndex;
+      this.lut = copy.lut;
+      this.color = copy.color;
+      this.pinhole = copy.pinhole;
+      this.excitation = copy.excitation;
+      this.emission = copy.emission;
+    }
   }
 
   class Laser {
