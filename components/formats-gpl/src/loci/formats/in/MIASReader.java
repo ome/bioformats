@@ -910,6 +910,7 @@ public class MIASReader extends FormatReader {
 
           int[] position = getPositionFromFile(file);
           int well = position[0];
+          int roiRefIndex = 0;
 
           if (name.endsWith("detail.txt")) {
             String data = DataTools.readFile(file);
@@ -925,7 +926,8 @@ public class MIASReader extends FormatReader {
 
             for (int j=start+1; j<lines.length; j++) {
               populateROI(columnNames, lines[j].split("\t"), well,
-                nextROI++, position[1], position[2], store);
+                nextROI++, position[1], position[2], store, roiRefIndex);
+              roiRefIndex++;
             }
           }
           else if (name.endsWith("AllModesOverlay.tif")) {
@@ -942,11 +944,15 @@ public class MIASReader extends FormatReader {
               store.setChannelColor(colors[position[3]], s, position[3]);
             }
             if (position[3] == 0) {
-              nextROI += parseMasks(store, well, nextROI, file);
+              int nOverlays = parseMasks(store, well, nextROI, file, roiRefIndex);
+              nextROI += nOverlays;
+              roiRefIndex += nOverlays;
             }
           }
           else if (name.endsWith("overlay.tif")) {
-            nextROI += parseMasks(store, well, nextROI, file);
+            int nOverlays = parseMasks(store, well, nextROI, file, roiRefIndex);
+            nextROI += nOverlays;
+            roiRefIndex += nOverlays;
           }
         }
       }
@@ -1029,24 +1035,24 @@ public class MIASReader extends FormatReader {
   }
 
   private void populateROI(List<String> columns, String[] data, int series,
-    int roi, int time, int z, MetadataStore store)
+    int roiIndex, int time, int z, MetadataStore store, int roiRefIndex)
   {
-    String roiID = MetadataTools.createLSID("ROI", roi, 0);
-    store.setROIID(roiID, roi);
-    store.setImageROIRef(roiID, series, roi);
+    String roiID = MetadataTools.createLSID("ROI", roiIndex, 0);
+    store.setROIID(roiID, roiIndex);
+    store.setImageROIRef(roiID, series, roiRefIndex);
 
-    store.setEllipseID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
-    store.setEllipseTheT(new NonNegativeInteger(time), roi, 0);
-    store.setEllipseTheZ(new NonNegativeInteger(z), roi, 0);
-    store.setEllipseX(DataTools.parseDouble(data[columns.indexOf("Col")]), roi, 0);
-    store.setEllipseY(DataTools.parseDouble(data[columns.indexOf("Row")]), roi, 0);
-    store.setEllipseText(data[columns.indexOf("Label")], roi, 0);
+    store.setEllipseID(MetadataTools.createLSID("Shape", roiIndex, 0), roiIndex, 0);
+    store.setEllipseTheT(new NonNegativeInteger(time), roiIndex, 0);
+    store.setEllipseTheZ(new NonNegativeInteger(z), roiIndex, 0);
+    store.setEllipseX(DataTools.parseDouble(data[columns.indexOf("Col")]), roiIndex, 0);
+    store.setEllipseY(DataTools.parseDouble(data[columns.indexOf("Row")]), roiIndex, 0);
+    store.setEllipseText(data[columns.indexOf("Label")], roiIndex, 0);
 
     double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
     double radius = diam / 2;
 
-    store.setEllipseRadiusX(radius, roi, 0);
-    store.setEllipseRadiusY(radius, roi, 0);
+    store.setEllipseRadiusX(radius, roiIndex, 0);
+    store.setEllipseRadiusY(radius, roiIndex, 0);
 
     // NB: other attributes are "Nucleus Area", "Cell Type", and
     // "Mean Nucleus Intens."
@@ -1164,7 +1170,7 @@ public class MIASReader extends FormatReader {
     int roi = 0;
     parseMasks = true;
     for (AnalysisFile roiFile : roiFiles) {
-      roi += parseMasks(overlayStore, roiFile.well, roi, roiFile.filename);
+      roi += parseMasks(overlayStore, roiFile.well, roi, roiFile.filename, 0);
     }
     parseMasks = originalMaskParsing;
   }
@@ -1174,33 +1180,33 @@ public class MIASReader extends FormatReader {
    * MetadataStore.
    * @return the number of masks parsed
    */
-  private int parseMasks(MetadataStore store, int series, int roi,
-    String overlayTiff) throws FormatException, IOException
+  private int parseMasks(MetadataStore store, int series, int roiIndex,
+    String overlayTiff, int roiRefIndex) throws FormatException, IOException
   {
     if (!parseMasks || series >= getSeriesCount()) return 0;
     int nOverlays = 0;
     for (int i=0; i<3; i++) {
-      String roiId = MetadataTools.createLSID("ROI", series, roi + nOverlays);
+      String roiId = MetadataTools.createLSID("ROI", series, roiIndex + nOverlays);
       String maskId =
-        MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
+        MetadataTools.createLSID("Mask", series, roiIndex + nOverlays, 0);
       overlayFiles.put(maskId, overlayTiff);
       overlayPlanes.put(maskId, i);
 
-      boolean validMask = populateMaskPixels(series, roi + nOverlays, 0, store);
+      boolean validMask = populateMaskPixels(series, roiIndex + nOverlays, 0, store);
       if (validMask) {
-        store.setROIID(roiId, roi + nOverlays);
+        store.setROIID(roiId, roiIndex + nOverlays);
 
-        String maskID = MetadataTools.createLSID("Shape", roi + nOverlays, 0);
-        store.setMaskID(maskID, roi + nOverlays, 0);
-        store.setMaskX(0d, roi + nOverlays, 0);
-        store.setMaskY(0d, roi + nOverlays, 0);
-        store.setMaskWidth((double) getSizeX(), roi + nOverlays, 0);
-        store.setMaskHeight((double) getSizeY(), roi + nOverlays, 0);
+        String maskID = MetadataTools.createLSID("Shape", roiIndex + nOverlays, 0);
+        store.setMaskID(maskID, roiIndex + nOverlays, 0);
+        store.setMaskX(0d, roiIndex + nOverlays, 0);
+        store.setMaskY(0d, roiIndex + nOverlays, 0);
+        store.setMaskWidth((double) getSizeX(), roiIndex + nOverlays, 0);
+        store.setMaskHeight((double) getSizeY(), roiIndex + nOverlays, 0);
 
         int color = 0xff000000 | (0xff << (8 * (2 - i)));
-        store.setMaskStrokeColor(new Color(color), roi + nOverlays, 0);
-        store.setMaskFillColor(new Color(color), roi + nOverlays, 0);
-        store.setImageROIRef(roiId, series, roi + nOverlays);
+        store.setMaskStrokeColor(new Color(color), roiIndex + nOverlays, 0);
+        store.setMaskFillColor(new Color(color), roiIndex + nOverlays, 0);
+        store.setImageROIRef(roiId, series, roiRefIndex + nOverlays);
         nOverlays++;
       }
     }
