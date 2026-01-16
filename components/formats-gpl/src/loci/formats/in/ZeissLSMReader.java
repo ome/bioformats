@@ -1614,6 +1614,7 @@ public class ZeissLSMReader extends FormatReader {
 
       String roiID = MetadataTools.createLSID("ROI", i);
       String shapeID = MetadataTools.createLSID("Shape", i, 0);
+      int roiRefIndex = i - totalROIs;
 
       Length fontSize = FormatTools.getFontSize(fontHeight);
       Length line = new Length(lineWidth, UNITS.PIXEL);
@@ -1632,7 +1633,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setLabelFontSize(fontSize, i, 0);
           }
           store.setLabelStrokeWidth(line, i, 0);
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         case LINE:
@@ -1652,7 +1653,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setLineFontSize(fontSize, i, 0);
           }
           store.setLineStrokeWidth(line, i, 0);
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         case SCALE_BAR:
@@ -1685,7 +1686,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setRectangleFontSize(fontSize, i, 0);
           }
           store.setRectangleStrokeWidth(line, i, 0);
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         case ELLIPSE:
@@ -1745,7 +1746,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setEllipseFontSize(fontSize, i, 0);
           }
           store.setEllipseStrokeWidth(line, i, 0);
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         case CIRCLE:
@@ -1768,7 +1769,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setEllipseFontSize(fontSize, i, 0);
           }
           store.setEllipseStrokeWidth(line, i, 0);
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         case CIRCLE_3POINT:
@@ -1808,7 +1809,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setEllipseFontSize(fontSize, i, 0);
           }
           store.setEllipseStrokeWidth(line, i, 0);
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         case ANGLE:
@@ -1835,7 +1836,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setPolylineFontSize(fontSize, i, 0);
           }
           store.setPolylineStrokeWidth(line, i, 0);
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         case CLOSED_POLYLINE:
@@ -1875,7 +1876,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setPolygonStrokeWidth(line, i, 0);
             store.setPolygonID(shapeID, i, 0);
           }
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         case CLOSED_BEZIER:
@@ -1915,7 +1916,7 @@ public class ZeissLSMReader extends FormatReader {
             }
             store.setPolygonStrokeWidth(line, i, 0);
           }
-          store.setImageROIRef(roiID, series, i);
+          store.setImageROIRef(roiID, series, roiRefIndex);
 
           break;
         default:
