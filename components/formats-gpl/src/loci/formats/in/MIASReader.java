@@ -903,6 +903,7 @@ public class MIASReader extends FormatReader {
         Color[] colors = new Color[getSizeC()];
 
         int nextROI = 0;
+        int roiRefIndex = 0;
         for (AnalysisFile af : analysisFiles) {
           String file = af.filename;
           String name = new Location(file).getName();
@@ -910,7 +911,6 @@ public class MIASReader extends FormatReader {
 
           int[] position = getPositionFromFile(file);
           int well = position[0];
-          int roiRefIndex = 0;
 
           if (name.endsWith("detail.txt")) {
             String data = DataTools.readFile(file);
