@@ -187,6 +187,7 @@ public class ZeissLSMReader extends FormatReader {
   private double originX, originY, originZ;
 
   private int totalROIs = 0;
+  private transient int roiRefIndex;
 
   private int prevPlane = -1;
   private int prevChannel = 0;
@@ -973,6 +974,7 @@ public class ZeissLSMReader extends FormatReader {
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS)
       {
+        roiRefIndex = 0;
         for (int i=0; i<overlayOffsets.length; i++) {
           parseOverlays(series, overlayOffsets[i], overlayKeys[i], store);
         }
@@ -1614,7 +1616,7 @@ public class ZeissLSMReader extends FormatReader {
 
       String roiID = MetadataTools.createLSID("ROI", i);
       String shapeID = MetadataTools.createLSID("Shape", i, 0);
-      int roiRefIndex = i - totalROIs;
+      roiRefIndex++;
 
       Length fontSize = FormatTools.getFontSize(fontHeight);
       Length line = new Length(lineWidth, UNITS.PIXEL);
