@@ -946,9 +946,11 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {
-    if (in != null) in.close();
-    if (!fileOnly) {
+    if (in != null) {
+      in.close();
       in = null;
+    }
+    if (!fileOnly) {
       currentId = null;
       resolution = 0;
       core = null;
