@@ -179,7 +179,7 @@ public class ImageReader implements IFormatReader {
 
    // NB: Check that we can generate a valid handle for the ID;
    // e.g., for files, this will throw an exception if the file is missing.
-   if (!fake && !omero) {
+   if (!fake && !omero && !Location.getIdMap().containsKey(id)) {
      Location.checkValidId(id);
      if (new Location(id).length() == 0) {
        LOGGER.error("File has length 0 and may be corrupt");
