@@ -568,12 +568,8 @@ public class CV7000Reader extends FormatReader {
 
           setSeries(nextImage);
 
-          // find the first valid plane to set WellSample positions
-          int no = 0;
-          Plane p = lookupPlane(nextImage, no);
-          while (p == null && no < getImageCount()) {
-            p = lookupPlane(nextImage, no++);
-          }
+          // find the first plane with pixels to set WellSample positions
+          Plane p = lookupFirstBackedPlane(nextImage);
           if (p != null) {
             store.setWellSamplePositionX(
               FormatTools.createLength(p.xpos, UNITS.REFERENCEFRAME),
@@ -629,6 +625,7 @@ public class CV7000Reader extends FormatReader {
       for (int i=0; i<getSeriesCount(); i++) {
         setSeries(i);
         if (channels != null) {
+          boolean physicalSizeSet = false;
           for (int c=0; c<getSizeC(); c++) {
             Plane p = lookupRepresentativePlane(i, c);
             if (p == null) {
@@ -641,9 +638,10 @@ public class CV7000Reader extends FormatReader {
               continue;
             }
 
-            if (c == 0) {
+            if (!physicalSizeSet) {
               store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(channel.xSize), i);
               store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(channel.ySize), i);
+              physicalSizeSet = true;
             }
 
             int objective = -1;
@@ -750,6 +748,16 @@ public class CV7000Reader extends FormatReader {
       }
     }
     return ambiguousRawChannel ? null : rawChannel;
+  }
+
+  private Plane lookupFirstBackedPlane(int series) {
+    for (int no=0; no<reversePlaneLookup[series].length; no++) {
+      Plane p = lookupPlane(series, no);
+      if (p != null && p.file != null) {
+        return p;
+      }
+    }
+    return null;
   }
 
   private Plane lookupRepresentativePlane(int series, int channel) {
