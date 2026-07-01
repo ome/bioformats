@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,7 +72,7 @@ public class CV7000Reader extends FormatReader {
   // -- Constants --
 
   public static final String DUPLICATE_PLANES_KEY = "cv7000.duplicate_missing_planes";
-  public static final boolean DUPLICATE_PLANES_DEFAULT = true;
+  public static final boolean DUPLICATE_PLANES_DEFAULT = false;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CV7000Reader.class);
 
@@ -91,7 +92,6 @@ public class CV7000Reader extends FormatReader {
   private int[][] reversePlaneLookup;
   private ArrayList<LightSource> lightSources;
   private ArrayList<Channel> channels;
-  private int fields;
   private String startTime, endTime;
   private ArrayList<String> extraFiles;
 
@@ -215,7 +215,6 @@ public class CV7000Reader extends FormatReader {
       wppPath = null;
       settingsPath = null;
       planeData = null;
-      fields = 0;
       lightSources = null;
       channels = null;
       startTime = null;
@@ -258,7 +257,10 @@ public class CV7000Reader extends FormatReader {
       if (dupPlane == no) {
         dupPlane = 0;
       }
-      return openBytes(dupPlane, buf, x, y, w, h);
+      Plane duplicate = lookupPlane(getSeries(), dupPlane);
+      if (duplicate != null && duplicate.file != null) {
+        return openBytes(dupPlane, buf, x, y, w, h);
+      }
     }
     return buf;
   }
@@ -345,32 +347,51 @@ public class CV7000Reader extends FormatReader {
     }
 
     String firstFile = null;
-    HashMap<Integer, MinMax> minMax = new HashMap<Integer, MinMax>();
+    HashMap<Field, MinMax> minMax = new HashMap<Field, MinMax>();
 
-    fields = 0;
-    HashSet<Integer> uniqueWells = new HashSet<Integer>();
+    ArrayList<Field> acquiredFields = new ArrayList<Field>();
+    HashSet<Field> acquiredFieldSet = new HashSet<Field>();
     HashSet<Integer> uniqueChannels = new HashSet<Integer>();
 
     for (Plane p : planeData) {
-      if (p != null) {
-        if (!isWellAcquired(p.field.row, p.field.column)) {
-          continue;
-        }
+      if (p != null && p.file != null) {
         if (!allFiles.contains(p.file)) {
           allFiles.add(p.file);
         }
-
-        p.channelIndex = getChannelIndex(p);
-
-        int wellIndex = p.field.row * plate.getPlateColumns() + p.field.column;
-        if (!minMax.containsKey(wellIndex)) {
-          minMax.put(wellIndex, new MinMax());
-        }
-        MinMax m = minMax.get(wellIndex);
-
-        if (p.file != null && firstFile == null) {
+        if (firstFile == null) {
           firstFile = p.file;
         }
+        if (acquiredFieldSet.add(p.field)) {
+          acquiredFields.add(p.field);
+        }
+      }
+    }
+
+    if (firstFile == null) {
+      throw new FormatException("No readable TIFF planes found in " + measurementPath);
+    }
+
+    Collections.sort(acquiredFields, new Comparator<Field>() {
+      @Override
+      public int compare(Field f1, Field f2) {
+        if (f1.row != f2.row) {
+          return f1.row - f2.row;
+        }
+        if (f1.column != f2.column) {
+          return f1.column - f2.column;
+        }
+        return f1.field - f2.field;
+      }
+    });
+
+    for (Plane p : planeData) {
+      if (p != null && acquiredFieldSet.contains(p.field)) {
+        p.channelIndex = getChannelIndex(p);
+
+        if (!minMax.containsKey(p.field)) {
+          minMax.put(p.field, new MinMax());
+        }
+        MinMax m = minMax.get(p.field);
 
         if (p.timepoint > m.maxT) {
           m.maxT = p.timepoint;
@@ -395,12 +416,6 @@ public class CV7000Reader extends FormatReader {
           m.minC = p.channelIndex;
         }
         uniqueChannels.add(p.channelIndex);
-
-        if (p.field.field >= fields) {
-          fields = p.field.field + 1;
-        }
-
-        uniqueWells.add(wellIndex);
       }
     }
 
@@ -411,21 +426,20 @@ public class CV7000Reader extends FormatReader {
 
     core.get(0).dimensionOrder = "XYCZT";
 
-    int realWells = uniqueWells.size();
-    Integer[] wells = uniqueWells.toArray(new Integer[realWells]);
-    Arrays.sort(wells);
-    reversePlaneLookup = new int[realWells * fields][];
+    reversePlaneLookup = new int[acquiredFields.size()][];
 
     Integer[] channelIndexes = uniqueChannels.toArray(new Integer[uniqueChannels.size()]);
     Arrays.sort(channelIndexes);
 
-    for (int i=0; i<realWells * fields; i++) {
+    HashMap<Field, Integer> fieldToSeries = new HashMap<Field, Integer>();
+    for (int i=0; i<acquiredFields.size(); i++) {
       if (i > 0) {
         core.add(new CoreMetadata(core.get(0)));
       }
 
-      int wellIndex = wells[i / fields];
-      MinMax m = minMax.get(wellIndex);
+      Field field = acquiredFields.get(i);
+      fieldToSeries.put(field, i);
+      MinMax m = minMax.get(field);
       core.get(i).sizeZ = (m.maxZ - m.minZ) + 1;
       core.get(i).sizeT = (m.maxT - m.minT) + 1;
       core.get(i).sizeC = reader.getSizeC() * uniqueChannels.size();
@@ -435,12 +449,19 @@ public class CV7000Reader extends FormatReader {
       Arrays.fill(reversePlaneLookup[i], -1);
     }
 
-    int[] seriesLengths = new int[] {fields, realWells};
     int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
 
     extraFiles = new ArrayList<String>();
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
+      if (p == null) {
+        continue;
+      }
+
+      Integer series = fieldToSeries.get(p.field);
+      if (series == null) {
+        continue;
+      }
 
       // reindex so that the plane's channel index is into
       // the list of unique acquired channels, not the list of all channels
@@ -448,15 +469,8 @@ public class CV7000Reader extends FormatReader {
       // this eliminates the need to correct for the minimum C index later on
       p.channelIndex = Arrays.binarySearch(channelIndexes, p.channelIndex);
 
-      Field f = p.field;
-      if (!isWellAcquired(f.row, f.column)) {
-        continue;
-      }
-      int wellNumber = f.row * plate.getPlateColumns() + f.column;
-      int wellIndex = Arrays.binarySearch(wells, wellNumber);
-      p.series = FormatTools.positionToRaster(seriesLengths,
-        new int[] {f.field, wellIndex});
-      MinMax m = minMax.get(wellNumber);
+      p.series = series.intValue();
+      MinMax m = minMax.get(p.field);
 
       planeLengths[0] = core.get(p.series).sizeC / reader.getSizeC();
       planeLengths[1] = core.get(p.series).sizeZ;
@@ -469,8 +483,14 @@ public class CV7000Reader extends FormatReader {
         reversePlaneLookup[p.series][p.no] = i;
       }
       else {
-        LOGGER.warn("Ignoring file {}", p.file);
-        extraFiles.add(p.file);
+        Plane existing = planeData.get(reversePlaneLookup[p.series][p.no]);
+        if ((existing == null || existing.file == null) && p.file != null) {
+          reversePlaneLookup[p.series][p.no] = i;
+        }
+        else if (p.file != null) {
+          LOGGER.warn("Ignoring file {}", p.file);
+          extraFiles.add(p.file);
+        }
       }
     }
 
@@ -489,7 +509,19 @@ public class CV7000Reader extends FormatReader {
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
 
-    PositiveInteger fieldCount = FormatTools.getMaxFieldCount(fields);
+    HashMap<Integer, Integer> wellFieldCounts = new HashMap<Integer, Integer>();
+    int maxFieldCount = 0;
+    for (Field field : acquiredFields) {
+      int wellIndex = field.row * plate.getPlateColumns() + field.column;
+      Integer count = wellFieldCounts.get(wellIndex);
+      count = count == null ? 1 : count + 1;
+      wellFieldCounts.put(wellIndex, count);
+      if (count > maxFieldCount) {
+        maxFieldCount = count;
+      }
+    }
+
+    PositiveInteger fieldCount = FormatTools.getMaxFieldCount(maxFieldCount);
     if (fieldCount != null) {
       store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
     }
@@ -514,18 +546,23 @@ public class CV7000Reader extends FormatReader {
           continue;
         }
 
-        for (int field=0; field<fields; field++) {
+        int wellSample = 0;
+        for (Field field : acquiredFields) {
+          if (field.row != row || field.column != col) {
+            continue;
+          }
+
           String wellSampleID =
-            MetadataTools.createLSID("WellSample", 0, nextWell, field);
-          store.setWellSampleID(wellSampleID, 0, nextWell, field);
+            MetadataTools.createLSID("WellSample", 0, nextWell, wellSample);
+          store.setWellSampleID(wellSampleID, 0, nextWell, wellSample);
           store.setWellSampleIndex(
-            new NonNegativeInteger(nextImage), 0, nextWell, field);
+            new NonNegativeInteger(nextImage), 0, nextWell, wellSample);
           String imageID = MetadataTools.createLSID("Image", nextImage);
           store.setImageID(imageID, nextImage);
-          store.setWellSampleImageRef(imageID, 0, nextWell, field);
+          store.setWellSampleImageRef(imageID, 0, nextWell, wellSample);
 
           String name = "Well " + FormatTools.getWellRowName(row) +
-            (col + 1) + ", Field " + (field + 1);
+            (col + 1) + ", Field " + (field.field + 1);
           store.setImageName(name, nextImage);
           store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
 
@@ -540,13 +577,14 @@ public class CV7000Reader extends FormatReader {
           if (p != null) {
             store.setWellSamplePositionX(
               FormatTools.createLength(p.xpos, UNITS.REFERENCEFRAME),
-              0, nextWell, field);
+              0, nextWell, wellSample);
             store.setWellSamplePositionY(
               FormatTools.createLength(p.ypos, UNITS.REFERENCEFRAME),
-              0, nextWell, field);
+              0, nextWell, wellSample);
           }
 
           nextImage++;
+          wellSample++;
         }
         nextWell++;
       }
