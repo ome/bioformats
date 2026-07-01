@@ -630,10 +630,10 @@ public class CV7000Reader extends FormatReader {
         setSeries(i);
         if (channels != null) {
           for (int c=0; c<getSizeC(); c++) {
-            Plane p = lookupPlane(i, c);
+            Plane p = lookupRepresentativePlane(i, c);
             if (p == null) {
               // There was likely an error during acquisition for this
-              // particular plane.  Skip it.
+              // particular channel.  Skip it.
               continue;
             }
             Channel channel = lookupChannel(p);
@@ -703,7 +703,7 @@ public class CV7000Reader extends FormatReader {
 
         for (int p=0; p<getImageCount(); p++) {
           Plane plane = lookupPlane(i, p);
-          if (plane == null) {
+          if (plane == null || plane.file == null) {
             continue;
           }
           store.setPlanePositionX(FormatTools.createLength(plane.xpos, UNITS.REFERENCEFRAME), i, p);
@@ -733,9 +733,30 @@ public class CV7000Reader extends FormatReader {
   }
 
   private Channel lookupChannel(Plane p) {
+    Channel rawChannel = null;
+    boolean ambiguousRawChannel = false;
     for (Channel ch : channels) {
-      if (ch.index == p.channel) {
+      if (ch.index == p.channel &&
+        ch.timelineIndex == p.timelineIndex &&
+        ch.actionIndex == p.actionIndex)
+      {
         return ch;
+      }
+      if (ch.index == p.channel) {
+        if (rawChannel != null) {
+          ambiguousRawChannel = true;
+        }
+        rawChannel = ch;
+      }
+    }
+    return ambiguousRawChannel ? null : rawChannel;
+  }
+
+  private Plane lookupRepresentativePlane(int series, int channel) {
+    for (int no=0; no<reversePlaneLookup[series].length; no++) {
+      Plane p = lookupPlane(series, no);
+      if (p != null && p.file != null && p.channelIndex == channel) {
+        return p;
       }
     }
     return null;
