@@ -625,6 +625,11 @@ public class CV7000Reader extends FormatReader {
       for (int i=0; i<getSeriesCount(); i++) {
         setSeries(i);
         if (channels != null) {
+          Length physicalSizeZ = getPhysicalSizeZ(i);
+          if (physicalSizeZ != null) {
+            store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
+          }
+
           boolean physicalSizeSet = false;
           for (int c=0; c<getSizeC(); c++) {
             Plane p = lookupRepresentativePlane(i, c);
@@ -728,6 +733,29 @@ public class CV7000Reader extends FormatReader {
       }
     }
     return index;
+  }
+
+  private Length getPhysicalSizeZ(int series) {
+    Double physicalSizeZ = null;
+    boolean foundChannel = false;
+    for (int c=0; c<getSizeC(); c++) {
+      Plane p = lookupRepresentativePlane(series, c);
+      if (p == null) {
+        continue;
+      }
+      Channel channel = lookupChannel(p);
+      if (channel == null || channel.physicalSizeZ == null) {
+        return null;
+      }
+      foundChannel = true;
+      if (physicalSizeZ == null) {
+        physicalSizeZ = channel.physicalSizeZ;
+      }
+      else if (Math.abs(physicalSizeZ - channel.physicalSizeZ) > 0.000001) {
+        return null;
+      }
+    }
+    return foundChannel ? FormatTools.getPhysicalSizeZ(physicalSizeZ) : null;
   }
 
   private Channel lookupChannel(Plane p) {
@@ -988,6 +1016,7 @@ public class CV7000Reader extends FormatReader {
     private int currentChannelIndex = -1;
     private int timelineIndex = -1;
     private int actionIndex = -1;
+    private Double currentPhysicalSizeZ;
 
     // -- DefaultHandler API methods --
 
@@ -1069,9 +1098,12 @@ public class CV7000Reader extends FormatReader {
       else if (qName.equals("bts:Timeline")) {
         timelineIndex++;
         actionIndex = -1;
+        currentPhysicalSizeZ = null;
       }
       else if (qName.startsWith("bts:ActionAcquire")) {
         actionIndex++;
+        currentPhysicalSizeZ = DataTools.parseDouble(
+          attributes.getValue("bts:SliceLength"));
       }
     }
 
@@ -1105,14 +1137,19 @@ public class CV7000Reader extends FormatReader {
           if (ch.timelineIndex == -1 && ch.actionIndex == -1) {
             ch.timelineIndex = timelineIndex;
             ch.actionIndex = actionIndex;
+            ch.physicalSizeZ = currentPhysicalSizeZ;
           }
           else {
             Channel duplicate = new Channel(ch);
             duplicate.timelineIndex = timelineIndex;
             duplicate.actionIndex = actionIndex;
+            duplicate.physicalSizeZ = currentPhysicalSizeZ;
             channels.add(duplicate);
           }
         }
+      }
+      else if (qName.startsWith("bts:ActionAcquire")) {
+        currentPhysicalSizeZ = null;
       }
     }
 
@@ -1158,6 +1195,7 @@ public class CV7000Reader extends FormatReader {
     public String objective;
     public Double magnification;
     public Double exposureTime;
+    public Double physicalSizeZ;
     public String binning;
     public Color color;
 
@@ -1178,6 +1216,7 @@ public class CV7000Reader extends FormatReader {
       objective = ch.objective;
       magnification = ch.magnification;
       exposureTime = ch.exposureTime;
+      physicalSizeZ = ch.physicalSizeZ;
       binning = ch.binning;
       color = ch.color;
       fluor = ch.fluor;
