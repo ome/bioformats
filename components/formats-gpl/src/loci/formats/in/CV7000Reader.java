@@ -851,6 +851,9 @@ public class CV7000Reader extends FormatReader {
     String detectorID = MetadataTools.createLSID(
       "Detector", 0, detectorIndexes.get(channel.cameraNumber));
     store.setDetectorSettingsID(detectorID, series, channelIndex);
+    if (channel.detectorGain != null) {
+      store.setDetectorSettingsGain(channel.detectorGain, series, channelIndex);
+    }
     String binning = getBinningValue(channel.binning);
     if (binning != null) {
       try {
@@ -1127,6 +1130,7 @@ public class CV7000Reader extends FormatReader {
       addYokogawaMeta(prefix, "Binning", c.binning);
       addYokogawaMeta(prefix, "AndorParameterID", c.andorParameterID);
       addYokogawaMeta(prefix, "AndorParameter", c.andorParameter);
+      addYokogawaMeta(prefix, "DetectorGain", c.detectorGain);
       addYokogawaMeta(prefix, "InputBitDepth", c.inputBitDepth);
       addYokogawaMeta(prefix, "InputLevel", c.inputLevel);
       addYokogawaMeta(prefix, "HorizontalPixels", c.horizontalPixels);
@@ -1292,20 +1296,20 @@ public class CV7000Reader extends FormatReader {
       if (trimmed.startsWith("BP") && trimmed.indexOf("/") > 2) {
         String center = trimmed.substring(2, trimmed.indexOf("/"));
         String width = trimmed.substring(trimmed.indexOf("/") + 1);
-        Double parsedCenter = DataTools.parseDouble(center);
-        Double parsedWidth = DataTools.parseDouble(width);
+        Double parsedCenter = parseYokogawaDouble(center);
+        Double parsedWidth = parseYokogawaDouble(width);
         if (parsedCenter != null && parsedWidth != null) {
           return DetectionFilter.bandPass(parsedCenter, parsedWidth);
         }
       }
       else if (trimmed.startsWith("LP") && trimmed.length() > 2) {
-        Double cutIn = DataTools.parseDouble(trimmed.substring(2));
+        Double cutIn = parseYokogawaDouble(trimmed.substring(2));
         if (cutIn != null) {
           return DetectionFilter.longPass(cutIn);
         }
       }
       else if (trimmed.startsWith("SP") && trimmed.length() > 2) {
-        Double cutOut = DataTools.parseDouble(trimmed.substring(2));
+        Double cutOut = parseYokogawaDouble(trimmed.substring(2));
         if (cutOut != null) {
           return DetectionFilter.shortPass(cutOut);
         }
@@ -1315,6 +1319,54 @@ public class CV7000Reader extends FormatReader {
       LOGGER.debug("Ignoring invalid CV7000 detection filter value {}", acquisition, e);
     }
     return null;
+  }
+  
+  /**
+   * Parse a Yokogawa floating-point value, which may use a comma as the decimal
+   * separator. This is not directly observed in the test data, but the existence
+   * of the "," character in the Yokogawa XML DTD reminds me of the locality of
+   * the Zeiss XML format, which does use commas in some locales. This is a defensive
+   * parsing measure to avoid potential issues with future data.
+   */
+  private Double parseYokogawaDouble(String value) {
+    if (value == null || value.trim().length() == 0) {
+      return null;
+    }
+    return DataTools.parseDouble(value.trim().replace(',', '.'));
+  }
+
+  private Double parseYokogawaGain(String value) {
+    if (value == null) {
+      return null;
+    }
+    String trimmed = value.trim();
+    if (!trimmed.regionMatches(true, 0, "gain", 0, 4)) {
+      return null;
+    }
+    int start = -1;
+    for (int i=4; i<trimmed.length(); i++) {
+      char ch = trimmed.charAt(i);
+      if (Character.isDigit(ch) || ch == '+' || ch == '-' ||
+        ch == '.' || ch == ',')
+      {
+        start = i;
+        break;
+      }
+    }
+    if (start < 0) {
+      return null;
+    }
+    int end = start + 1;
+    while (end < trimmed.length()) {
+      char ch = trimmed.charAt(end);
+      if (!(Character.isDigit(ch) || ch == '+' || ch == '-' ||
+        ch == '.' || ch == ',' || ch == 'e' || ch == 'E'))
+      {
+        break;
+      }
+      end++;
+    }
+    return parseYokogawaDouble(trimmed.substring(start, end));
   }
 
   private Integer parseInteger(String value) {
@@ -1602,9 +1654,9 @@ public class CV7000Reader extends FormatReader {
             currentField = p.field.field;
           }
 
-          p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
-          p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
-          p.zpos = DataTools.parseDouble(attributes.getValue("bts:Z"));
+          p.xpos = parseYokogawaDouble(attributes.getValue("bts:X"));
+          p.ypos = parseYokogawaDouble(attributes.getValue("bts:Y"));
+          p.zpos = parseYokogawaDouble(attributes.getValue("bts:Z"));
           p.timestamp = attributes.getValue("bts:Time");
           p.actionName = attributes.getValue("bts:Action");
           imageRecordCount++;
@@ -1664,8 +1716,8 @@ public class CV7000Reader extends FormatReader {
         c.index = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
         addYokogawaAttributes(
           "Yokogawa MRF Channel " + (c.index + 1) + " ", attributes);
-        c.xSize = DataTools.parseDouble(attributes.getValue("bts:HorizontalPixelDimension"));
-        c.ySize = DataTools.parseDouble(attributes.getValue("bts:VerticalPixelDimension"));
+        c.xSize = parseYokogawaDouble(attributes.getValue("bts:HorizontalPixelDimension"));
+        c.ySize = parseYokogawaDouble(attributes.getValue("bts:VerticalPixelDimension"));
         c.cameraNumber = Integer.parseInt(attributes.getValue("bts:CameraNumber"));
         c.inputBitDepth = parseInteger(attributes.getValue("bts:InputBitDepth"));
         c.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
@@ -1752,8 +1804,8 @@ public class CV7000Reader extends FormatReader {
         String wavelength = attributes.getValue("bts:WaveLength");
         String power = attributes.getValue("bts:Power");
 
-        l.wavelength = DataTools.parseDouble(wavelength);
-        l.power = DataTools.parseDouble(power);
+        l.wavelength = parseYokogawaDouble(wavelength);
+        l.power = parseYokogawaDouble(power);
 
         lightSources.add(l);
       }
@@ -1779,14 +1831,15 @@ public class CV7000Reader extends FormatReader {
             template.kind = attributes.getValue("bts:Kind");
             template.andorParameterID = attributes.getValue("bts:AndorParameterID");
             template.andorParameter = attributes.getValue("bts:AndorParameter");
+            template.detectorGain = parseYokogawaGain(template.andorParameter);
             template.cameraType = attributes.getValue("bts:CameraType");
             template.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
 
             String mag = attributes.getValue("bts:Magnification");
-            template.magnification = DataTools.parseDouble(mag);
+            template.magnification = parseYokogawaDouble(mag);
 
             String exposure = attributes.getValue("bts:ExposureTime");
-            template.exposureTime = DataTools.parseDouble(exposure);
+            template.exposureTime = parseYokogawaDouble(exposure);
 
             String color = attributes.getValue("bts:Color");
             if (color != null) {
@@ -1868,7 +1921,7 @@ public class CV7000Reader extends FormatReader {
         addYokogawaAttributes(
           "Yokogawa MES Timeline " + (timelineIndex + 1) +
           " Action " + (actionIndex + 1) + " ", attributes);
-        currentPhysicalSizeZ = DataTools.parseDouble(
+        currentPhysicalSizeZ = parseYokogawaDouble(
           attributes.getValue("bts:SliceLength"));
       }
     }
@@ -2074,6 +2127,7 @@ public class CV7000Reader extends FormatReader {
     public String cameraType;
     public String andorParameterID;
     public String andorParameter;
+    public Double detectorGain;
     public String objectiveID;
     public String objective;
     public String actionType;
@@ -2120,6 +2174,7 @@ public class CV7000Reader extends FormatReader {
       cameraType = ch.cameraType;
       andorParameterID = ch.andorParameterID;
       andorParameter = ch.andorParameter;
+      detectorGain = ch.detectorGain;
       objectiveID = ch.objectiveID;
       objective = ch.objective;
       actionType = ch.actionType;
@@ -2167,6 +2222,7 @@ public class CV7000Reader extends FormatReader {
       cameraType = ch.cameraType;
       andorParameterID = ch.andorParameterID;
       andorParameter = ch.andorParameter;
+      detectorGain = ch.detectorGain;
       inputLevel = ch.inputLevel;
       objectiveID = ch.objectiveID;
       objective = ch.objective;
@@ -2179,7 +2235,7 @@ public class CV7000Reader extends FormatReader {
 
     public boolean hasChannelSettings() {
       return objectiveID != null || objective != null || magnification != null ||
-        exposureTime != null || binning != null || color != null ||
+        exposureTime != null || detectorGain != null || binning != null || color != null ||
         acquisition != null || detectionFilter != null || fluor != null ||
         (lightSourceRefs != null && lightSourceRefs.size() > 0);
     }
