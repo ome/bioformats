@@ -701,7 +701,7 @@ public class CV7000Reader extends FormatReader {
 
         for (int p=0; p<getImageCount(); p++) {
           Plane plane = lookupPlane(i, p);
-          if (plane == null || plane.file == null) {
+          if (plane == null) {
             continue;
           }
           store.setPlanePositionX(FormatTools.createLength(plane.xpos, UNITS.REFERENCEFRAME), i, p);
@@ -761,13 +761,17 @@ public class CV7000Reader extends FormatReader {
   }
 
   private Plane lookupRepresentativePlane(int series, int channel) {
+    Plane metadataPlane = null;
     for (int no=0; no<reversePlaneLookup[series].length; no++) {
       Plane p = lookupPlane(series, no);
       if (p != null && p.file != null && p.channelIndex == channel) {
         return p;
       }
+      if (p != null && p.channelIndex == channel && metadataPlane == null) {
+        metadataPlane = p;
+      }
     }
-    return null;
+    return metadataPlane;
   }
 
   private String readSanitizedXML(String filename) throws IOException {
