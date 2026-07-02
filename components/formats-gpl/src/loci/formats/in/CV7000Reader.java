@@ -1296,20 +1296,20 @@ public class CV7000Reader extends FormatReader {
       if (trimmed.startsWith("BP") && trimmed.indexOf("/") > 2) {
         String center = trimmed.substring(2, trimmed.indexOf("/"));
         String width = trimmed.substring(trimmed.indexOf("/") + 1);
-        Double parsedCenter = parseYokogawaDouble(center);
-        Double parsedWidth = parseYokogawaDouble(width);
+        Double parsedCenter = DataTools.parseDouble(center);
+        Double parsedWidth = DataTools.parseDouble(width);
         if (parsedCenter != null && parsedWidth != null) {
           return DetectionFilter.bandPass(parsedCenter, parsedWidth);
         }
       }
       else if (trimmed.startsWith("LP") && trimmed.length() > 2) {
-        Double cutIn = parseYokogawaDouble(trimmed.substring(2));
+        Double cutIn = DataTools.parseDouble(trimmed.substring(2));
         if (cutIn != null) {
           return DetectionFilter.longPass(cutIn);
         }
       }
       else if (trimmed.startsWith("SP") && trimmed.length() > 2) {
-        Double cutOut = parseYokogawaDouble(trimmed.substring(2));
+        Double cutOut = DataTools.parseDouble(trimmed.substring(2));
         if (cutOut != null) {
           return DetectionFilter.shortPass(cutOut);
         }
@@ -1319,20 +1319,6 @@ public class CV7000Reader extends FormatReader {
       LOGGER.debug("Ignoring invalid CV7000 detection filter value {}", acquisition, e);
     }
     return null;
-  }
-  
-  /**
-   * Parse a Yokogawa floating-point value, which may use a comma as the decimal
-   * separator. This is not directly observed in the test data, but the existence
-   * of the "," character in the Yokogawa XML DTD reminds me of the locality of
-   * the Zeiss XML format, which does use commas in some locales. This is a defensive
-   * parsing measure to avoid potential issues with future data.
-   */
-  private Double parseYokogawaDouble(String value) {
-    if (value == null || value.trim().length() == 0) {
-      return null;
-    }
-    return DataTools.parseDouble(value.trim().replace(',', '.'));
   }
 
   private Double parseYokogawaGain(String value) {
@@ -1366,7 +1352,7 @@ public class CV7000Reader extends FormatReader {
       }
       end++;
     }
-    return parseYokogawaDouble(trimmed.substring(start, end));
+    return DataTools.parseDouble(trimmed.substring(start, end));
   }
 
   private Integer parseInteger(String value) {
@@ -1654,9 +1640,9 @@ public class CV7000Reader extends FormatReader {
             currentField = p.field.field;
           }
 
-          p.xpos = parseYokogawaDouble(attributes.getValue("bts:X"));
-          p.ypos = parseYokogawaDouble(attributes.getValue("bts:Y"));
-          p.zpos = parseYokogawaDouble(attributes.getValue("bts:Z"));
+          p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
+          p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
+          p.zpos = DataTools.parseDouble(attributes.getValue("bts:Z"));
           p.timestamp = attributes.getValue("bts:Time");
           p.actionName = attributes.getValue("bts:Action");
           imageRecordCount++;
@@ -1716,8 +1702,8 @@ public class CV7000Reader extends FormatReader {
         c.index = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
         addYokogawaAttributes(
           "Yokogawa MRF Channel " + (c.index + 1) + " ", attributes);
-        c.xSize = parseYokogawaDouble(attributes.getValue("bts:HorizontalPixelDimension"));
-        c.ySize = parseYokogawaDouble(attributes.getValue("bts:VerticalPixelDimension"));
+        c.xSize = DataTools.parseDouble(attributes.getValue("bts:HorizontalPixelDimension"));
+        c.ySize = DataTools.parseDouble(attributes.getValue("bts:VerticalPixelDimension"));
         c.cameraNumber = Integer.parseInt(attributes.getValue("bts:CameraNumber"));
         c.inputBitDepth = parseInteger(attributes.getValue("bts:InputBitDepth"));
         c.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
@@ -1804,8 +1790,8 @@ public class CV7000Reader extends FormatReader {
         String wavelength = attributes.getValue("bts:WaveLength");
         String power = attributes.getValue("bts:Power");
 
-        l.wavelength = parseYokogawaDouble(wavelength);
-        l.power = parseYokogawaDouble(power);
+        l.wavelength = DataTools.parseDouble(wavelength);
+        l.power = DataTools.parseDouble(power);
 
         lightSources.add(l);
       }
@@ -1836,10 +1822,10 @@ public class CV7000Reader extends FormatReader {
             template.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
 
             String mag = attributes.getValue("bts:Magnification");
-            template.magnification = parseYokogawaDouble(mag);
+            template.magnification = DataTools.parseDouble(mag);
 
             String exposure = attributes.getValue("bts:ExposureTime");
-            template.exposureTime = parseYokogawaDouble(exposure);
+            template.exposureTime = DataTools.parseDouble(exposure);
 
             String color = attributes.getValue("bts:Color");
             if (color != null) {
@@ -1921,7 +1907,7 @@ public class CV7000Reader extends FormatReader {
         addYokogawaAttributes(
           "Yokogawa MES Timeline " + (timelineIndex + 1) +
           " Action " + (actionIndex + 1) + " ", attributes);
-        currentPhysicalSizeZ = parseYokogawaDouble(
+        currentPhysicalSizeZ = DataTools.parseDouble(
           attributes.getValue("bts:SliceLength"));
       }
     }
