@@ -732,7 +732,7 @@ public class CV7000Reader extends FormatReader {
 
   private Channel lookupChannel(Plane p) {
     Channel rawChannel = null;
-    boolean ambiguousRawChannel = false;
+    Channel populatedRawChannel = null;
     for (Channel ch : channels) {
       if (ch.index == p.channel &&
         ch.timelineIndex == p.timelineIndex &&
@@ -741,13 +741,15 @@ public class CV7000Reader extends FormatReader {
         return ch;
       }
       if (ch.index == p.channel) {
-        if (rawChannel != null) {
-          ambiguousRawChannel = true;
+        if (rawChannel == null) {
+          rawChannel = ch;
         }
-        rawChannel = ch;
+        if (populatedRawChannel == null && ch.hasChannelSettings()) {
+          populatedRawChannel = ch;
+        }
       }
     }
-    return ambiguousRawChannel ? null : rawChannel;
+    return populatedRawChannel == null ? rawChannel : populatedRawChannel;
   }
 
   private Plane lookupFirstBackedPlane(int series) {
@@ -982,8 +984,8 @@ public class CV7000Reader extends FormatReader {
   }
 
   class MeasurementSettingsHandler extends BaseHandler {
-    private Channel currentChannel = null;
     private StringBuffer currentValue = new StringBuffer();
+    private int currentChannelIndex = -1;
     private int timelineIndex = -1;
     private int actionIndex = -1;
 
@@ -1014,21 +1016,24 @@ public class CV7000Reader extends FormatReader {
         lightSources.add(l);
       }
       else if (qName.equals("bts:Channel")) {
+        currentChannelIndex = -1;
         String ch = attributes.getValue("bts:Ch");
         if (ch != null) {
           int index = Integer.parseInt(ch) - 1;
           if (index >= 0 && index < channels.size()) {
-            currentChannel = channels.get(index);
+            currentChannelIndex = index;
 
-            currentChannel.objectiveID = attributes.getValue("bts:ObjectiveID");
-            currentChannel.objective = attributes.getValue("bts:Objective");
-            currentChannel.binning = attributes.getValue("bts:Binning");
+            Channel template = new Channel();
+            template.index = index;
+            template.objectiveID = attributes.getValue("bts:ObjectiveID");
+            template.objective = attributes.getValue("bts:Objective");
+            template.binning = attributes.getValue("bts:Binning");
 
             String mag = attributes.getValue("bts:Magnification");
-            currentChannel.magnification = DataTools.parseDouble(mag);
+            template.magnification = DataTools.parseDouble(mag);
 
             String exposure = attributes.getValue("bts:ExposureTime");
-            currentChannel.exposureTime = DataTools.parseDouble(exposure);
+            template.exposureTime = DataTools.parseDouble(exposure);
 
             String color = attributes.getValue("bts:Color");
             if (color != null) {
@@ -1043,7 +1048,7 @@ public class CV7000Reader extends FormatReader {
                 int red = colors[colors.length - 3];
                 int green = colors[colors.length - 2];
                 int blue = colors[colors.length - 1];
-                currentChannel.color = new Color(red, green, blue, alpha);
+                template.color = new Color(red, green, blue, alpha);
               }
             }
 
@@ -1052,11 +1057,12 @@ public class CV7000Reader extends FormatReader {
               if (acquisition.indexOf("/") > 0) {
                 acquisition = acquisition.replaceAll("BP", "");
                 String wave = acquisition.substring(0, acquisition.indexOf("/"));
-                currentChannel.excitation = DataTools.parseDouble(wave);
+                template.excitation = DataTools.parseDouble(wave);
               }
             }
 
-            currentChannel.fluor = attributes.getValue("bts:Fluorophore");
+            template.fluor = attributes.getValue("bts:Fluorophore");
+            applyChannelSettings(template);
           }
         }
       }
@@ -1073,7 +1079,7 @@ public class CV7000Reader extends FormatReader {
     public void endElement(String uri, String localName, String qName) {
       String value = currentValue.toString();
 
-      if (qName.equals("bts:LightSourceName") && currentChannel != null) {
+      if (qName.equals("bts:LightSourceName") && currentChannelIndex >= 0) {
         int index = -1;
         for (int i=0; i<lightSources.size(); i++) {
           if (lightSources.get(i).name.equals(value)) {
@@ -1081,8 +1087,11 @@ public class CV7000Reader extends FormatReader {
           }
         }
         if (index >= 0) {
-          currentChannel.lightSourceRefs.add(index);
+          addLightSourceRef(currentChannelIndex, index);
         }
+      }
+      else if (qName.equals("bts:Channel")) {
+        currentChannelIndex = -1;
       }
       else if (qName.equals("bts:Ch")) {
         int channelIndex = Integer.parseInt(value) - 1;
@@ -1103,6 +1112,24 @@ public class CV7000Reader extends FormatReader {
             duplicate.actionIndex = actionIndex;
             channels.add(duplicate);
           }
+        }
+      }
+    }
+
+    private void applyChannelSettings(Channel template) {
+      for (Channel ch : channels) {
+        if (ch.index == template.index) {
+          ch.copyChannelSettings(template);
+        }
+      }
+    }
+
+    private void addLightSourceRef(int rawChannelIndex, int lightSourceIndex) {
+      for (Channel ch : channels) {
+        if (ch.index == rawChannelIndex &&
+          !ch.lightSourceRefs.contains(lightSourceIndex))
+        {
+          ch.lightSourceRefs.add(lightSourceIndex);
         }
       }
     }
@@ -1145,7 +1172,7 @@ public class CV7000Reader extends FormatReader {
       ySize = ch.ySize;
       cameraNumber = ch.cameraNumber;
       correctionFile = ch.correctionFile;
-      lightSourceRefs = ch.lightSourceRefs;
+      lightSourceRefs = new ArrayList<Integer>(ch.lightSourceRefs);
       excitation = ch.excitation;
       objectiveID = ch.objectiveID;
       objective = ch.objective;
@@ -1154,6 +1181,24 @@ public class CV7000Reader extends FormatReader {
       binning = ch.binning;
       color = ch.color;
       fluor = ch.fluor;
+    }
+
+    public void copyChannelSettings(Channel ch) {
+      excitation = ch.excitation;
+      objectiveID = ch.objectiveID;
+      objective = ch.objective;
+      magnification = ch.magnification;
+      exposureTime = ch.exposureTime;
+      binning = ch.binning;
+      color = ch.color;
+      fluor = ch.fluor;
+    }
+
+    public boolean hasChannelSettings() {
+      return objectiveID != null || objective != null || magnification != null ||
+        exposureTime != null || binning != null || color != null ||
+        excitation != null || fluor != null ||
+        (lightSourceRefs != null && lightSourceRefs.size() > 0);
     }
 
     @Override
