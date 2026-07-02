@@ -79,6 +79,7 @@ public class CV7000Reader extends FormatReader {
   private static final String MEASUREMENT_FILE = "MeasurementData.mlf";
   private static final String MEASUREMENT_DETAIL = "MeasurementDetail.mrf";
   private static final String POST_PROCESS = "PostProcess.ppf";
+  private static final String BRIGHTFIELD = "Brightfield";
 
   // -- Fields --
 
@@ -593,37 +594,28 @@ public class CV7000Reader extends FormatReader {
       store.setPlateExternalIdentifier(plate.getPlateID(), 0);
 
       String instrument = null;
+      HashMap<Integer, Integer> lightSourceIndexes = new HashMap<Integer, Integer>();
+      HashMap<Integer, Integer> detectorIndexes = new HashMap<Integer, Integer>();
+      HashMap<FilterKey, Integer> filterIndexes = new HashMap<FilterKey, Integer>();
       List<String> usedObjectiveIDs = new ArrayList<String>();
-      if (lightSources.size() > 0) {
+      if ((lightSources != null && lightSources.size() > 0) ||
+        (channels != null && channels.size() > 0))
+      {
         instrument = MetadataTools.createLSID("Instrument", 0);
 
         store.setInstrumentID(instrument, 0);
-
-        int nextLightSource = 0;
-        for (LightSource l : lightSources) {
-          if ("Laser".equals(l.type)) {
-            String laserID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
-            store.setLaserID(laserID, 0, nextLightSource);
-            store.setLaserWavelength(
-              new Length(l.wavelength, UNITS.NANOMETER), 0, nextLightSource);
-            store.setLaserPower(new Power(l.power, UNITS.MILLIWATT), 0, nextLightSource);
-            nextLightSource++;
-          }
-        }
-
-        for (Channel c : channels) {
-          if (c.objectiveID != null && !usedObjectiveIDs.contains(c.objectiveID)) {
-            int index = usedObjectiveIDs.size();
-            String objectiveID = MetadataTools.createLSID("Objective", 0, index);
-            store.setObjectiveID(objectiveID, 0, index);
-            store.setObjectiveModel(c.objective, 0, index);
-            usedObjectiveIDs.add(c.objectiveID);
-          }
-        }
+        populateLightSources(store, lightSourceIndexes);
+        populateObjectives(store, usedObjectiveIDs);
+        populateDetectors(store, detectorIndexes);
+        populateFilters(store, filterIndexes);
+        addYokogawaOriginalMetadata();
       }
 
       for (int i=0; i<getSeriesCount(); i++) {
         setSeries(i);
+        if (instrument != null) {
+          store.setImageInstrumentRef(instrument, i);
+        }
         if (channels != null) {
           Length physicalSizeZ = getPhysicalSizeZ(i);
           if (physicalSizeZ != null) {
@@ -674,21 +666,44 @@ public class CV7000Reader extends FormatReader {
               store.setChannelFluor(channel.fluor, i, c);
             }
 
-            if (channel.excitation != null && channel.lightSourceRefs != null) {
-              int index = -1;
-              for (int ref=0; ref<channel.lightSourceRefs.size(); ref++) {
-                int lightSource = channel.lightSourceRefs.get(ref);
-                if ("Laser".equals(lightSources.get(lightSource).type) &&
-                  lightSources.get(lightSource).wavelength < channel.excitation)
-                {
-                  index = lightSource;
-                }
-              }
-              if (index >= 0) {
+            Integer lightSource = getLinkedLaser(channel);
+            if (lightSource != null && lightSourceIndexes.containsKey(lightSource)) {
+              LightSource source = lightSources.get(lightSource);
+              if (source.wavelength != null && source.wavelength > 0) {
+                int index = lightSourceIndexes.get(lightSource);
                 store.setChannelLightSourceSettingsID(
                   MetadataTools.createLSID("LightSource", 0, index), i, c);
                 store.setChannelExcitationWavelength(
-                  new Length(channel.excitation, UNITS.NANOMETER), i, c);
+                  new Length(source.wavelength, UNITS.NANOMETER), i, c);
+              }
+            }
+
+            if (!channel.isBrightfield() && channel.detectionFilter != null &&
+              channel.detectionFilter.center != null)
+            {
+              store.setChannelEmissionWavelength(
+                new Length(channel.detectionFilter.center, UNITS.NANOMETER), i, c);
+            }
+
+            FilterKey filter = new FilterKey(channel);
+            if (filterIndexes.containsKey(filter)) {
+              store.setLightPathEmissionFilterRef(
+                MetadataTools.createLSID("Filter", 0, filterIndexes.get(filter)), i, c, 0);
+            }
+
+            if (detectorIndexes.containsKey(channel.cameraNumber)) {
+              String detectorID = MetadataTools.createLSID(
+                "Detector", 0, detectorIndexes.get(channel.cameraNumber));
+              store.setDetectorSettingsID(detectorID, i, c);
+              String binning = getBinningValue(channel.binning);
+              if (binning != null) {
+                try {
+                  store.setDetectorSettingsBinning(
+                    MetadataTools.getBinning(binning), i, c);
+                }
+                catch (FormatException e) {
+                  LOGGER.debug("Ignoring invalid CV7000 binning value {}", binning, e);
+                }
               }
             }
 
@@ -716,6 +731,215 @@ public class CV7000Reader extends FormatReader {
       }
       setSeries(0);
     }
+  }
+
+  private void populateLightSources(MetadataStore store,
+    HashMap<Integer, Integer> lightSourceIndexes)
+  {
+    if (lightSources == null) {
+      return;
+    }
+    int nextLightSource = 0;
+    for (int i=0; i<lightSources.size(); i++) {
+      LightSource l = lightSources.get(i);
+      if ("Laser".equals(l.type)) {
+        String laserID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
+        store.setLaserID(laserID, 0, nextLightSource);
+        if (l.wavelength != null) {
+          store.setLaserWavelength(
+            new Length(l.wavelength, UNITS.NANOMETER), 0, nextLightSource);
+        }
+        if (l.power != null) {
+          store.setLaserPower(new Power(l.power, UNITS.MILLIWATT), 0, nextLightSource);
+        }
+        lightSourceIndexes.put(i, nextLightSource);
+        nextLightSource++;
+      }
+    }
+  }
+
+  private void populateObjectives(MetadataStore store, List<String> usedObjectiveIDs) {
+    if (channels == null) {
+      return;
+    }
+    for (Channel c : channels) {
+      if (c.objectiveID != null && !usedObjectiveIDs.contains(c.objectiveID)) {
+        int index = usedObjectiveIDs.size();
+        String objectiveID = MetadataTools.createLSID("Objective", 0, index);
+        store.setObjectiveID(objectiveID, 0, index);
+        store.setObjectiveModel(c.objective, 0, index);
+        usedObjectiveIDs.add(c.objectiveID);
+      }
+    }
+  }
+
+  private void populateDetectors(MetadataStore store,
+    HashMap<Integer, Integer> detectorIndexes)
+    throws FormatException
+  {
+    if (channels == null) {
+      return;
+    }
+    for (Channel c : channels) {
+      if (!detectorIndexes.containsKey(c.cameraNumber)) {
+        int detector = detectorIndexes.size();
+        detectorIndexes.put(c.cameraNumber, detector);
+        String detectorID = MetadataTools.createLSID("Detector", 0, detector);
+        store.setDetectorID(detectorID, 0, detector);
+        if (c.cameraType != null && c.cameraType.trim().length() > 0) {
+          store.setDetectorModel(c.cameraType, 0, detector);
+        }
+        store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, detector);
+      }
+    }
+  }
+
+  private void populateFilters(MetadataStore store,
+    HashMap<FilterKey, Integer> filterIndexes)
+    throws FormatException
+  {
+    if (channels == null) {
+      return;
+    }
+    for (Channel c : channels) {
+      FilterKey key = new FilterKey(c);
+      if (!key.isValid() || filterIndexes.containsKey(key)) {
+        continue;
+      }
+      int filter = filterIndexes.size();
+      filterIndexes.put(key, filter);
+      String filterID = MetadataTools.createLSID("Filter", 0, filter);
+      store.setFilterID(filterID, 0, filter);
+      store.setFilterModel(key.acquisition, 0, filter);
+      store.setFilterType(MetadataTools.getFilterType(key.detectionFilter.filterType), 0, filter);
+      if (key.detectionFilter != null) {
+        Length cutIn = key.detectionFilter.cutIn == null ?
+          null : FormatTools.getCutIn(key.detectionFilter.cutIn);
+        Length cutOut = key.detectionFilter.cutOut == null ?
+          null : FormatTools.getCutOut(key.detectionFilter.cutOut);
+        if (cutIn != null) {
+          store.setTransmittanceRangeCutIn(cutIn, 0, filter);
+        }
+        if (cutOut != null) {
+          store.setTransmittanceRangeCutOut(cutOut, 0, filter);
+        }
+      }
+    }
+  }
+
+  private void addYokogawaOriginalMetadata() {
+    if (lightSources != null) {
+      for (LightSource source : lightSources) {
+        String prefix = "Yokogawa LightSource " + source.name + " ";
+        addGlobalMeta(prefix + "Type", source.type);
+        addGlobalMeta(prefix + "WaveLength", source.wavelength);
+        addGlobalMeta(prefix + "Power", source.power);
+      }
+    }
+    if (channels == null) {
+      return;
+    }
+    HashSet<String> seen = new HashSet<String>();
+    for (Channel c : channels) {
+      String key = c.timelineIndex + ":" + c.actionIndex + ":" + c.index;
+      if (!seen.add(key)) {
+        continue;
+      }
+      String prefix = "Yokogawa Timeline " + (c.timelineIndex + 1) +
+        " Action " + (c.actionIndex + 1) + " Channel " + (c.index + 1) + " ";
+      addGlobalMeta(prefix + "Target", c.target);
+      addGlobalMeta(prefix + "Kind", c.kind);
+      addGlobalMeta(prefix + "MethodID", c.methodID);
+      addGlobalMeta(prefix + "Method", c.method);
+      addGlobalMeta(prefix + "FilterID", c.filterID);
+      addGlobalMeta(prefix + "Acquisition", c.acquisition);
+      if (c.detectionFilter != null) {
+        addGlobalMeta(prefix + "DetectionFilterType", c.detectionFilter.filterType);
+        addGlobalMeta(prefix + "DetectionFilterCenter", c.detectionFilter.center);
+        addGlobalMeta(prefix + "DetectionFilterWidth", c.detectionFilter.width);
+        addGlobalMeta(prefix + "DetectionFilterCutIn", c.detectionFilter.cutIn);
+        addGlobalMeta(prefix + "DetectionFilterCutOut", c.detectionFilter.cutOut);
+      }
+      addGlobalMeta(prefix + "CameraNumber", c.cameraNumber);
+      addGlobalMeta(prefix + "CameraType", c.cameraType);
+      addGlobalMeta(prefix + "Binning", c.binning);
+      addGlobalMeta(prefix + "AndorParameterID", c.andorParameterID);
+      addGlobalMeta(prefix + "AndorParameter", c.andorParameter);
+      addGlobalMeta(prefix + "InputBitDepth", c.inputBitDepth);
+      addGlobalMeta(prefix + "InputLevel", c.inputLevel);
+      addGlobalMeta(prefix + "HorizontalPixels", c.horizontalPixels);
+      addGlobalMeta(prefix + "VerticalPixels", c.verticalPixels);
+      addGlobalMeta(prefix + "FilterWheelPosition", c.filterWheelPosition);
+      addGlobalMeta(prefix + "FilterPosition", c.filterPosition);
+      addGlobalMeta(prefix + "ShadingCorrectionSource", c.correctionFile);
+    }
+  }
+
+  private Integer getLinkedLaser(Channel channel) {
+    if (channel == null || channel.isBrightfield() ||
+      channel.lightSourceRefs == null || lightSources == null)
+    {
+      return null;
+    }
+    for (Integer lightSource : channel.lightSourceRefs) {
+      if (lightSource != null && lightSource >= 0 && lightSource < lightSources.size() &&
+        "Laser".equals(lightSources.get(lightSource).type))
+      {
+        return lightSource;
+      }
+    }
+    return null;
+  }
+
+  private String getBinningValue(String binning) {
+    if (binning == null || binning.trim().length() == 0) {
+      return null;
+    }
+    if (binning.indexOf('x') >= 0 || binning.indexOf('X') >= 0) {
+      return binning;
+    }
+    return binning + "x" + binning;
+  }
+
+  private DetectionFilter parseDetectionFilter(String acquisition) {
+    if (acquisition == null) {
+      return null;
+    }
+    String trimmed = acquisition.trim();
+    try {
+      if (trimmed.startsWith("BP") && trimmed.indexOf("/") > 2) {
+        String center = trimmed.substring(2, trimmed.indexOf("/"));
+        String width = trimmed.substring(trimmed.indexOf("/") + 1);
+        Double parsedCenter = DataTools.parseDouble(center);
+        Double parsedWidth = DataTools.parseDouble(width);
+        if (parsedCenter != null && parsedWidth != null) {
+          return DetectionFilter.bandPass(parsedCenter, parsedWidth);
+        }
+      }
+      else if (trimmed.startsWith("LP") && trimmed.length() > 2) {
+        Double cutIn = DataTools.parseDouble(trimmed.substring(2));
+        if (cutIn != null) {
+          return DetectionFilter.longPass(cutIn);
+        }
+      }
+      else if (trimmed.startsWith("SP") && trimmed.length() > 2) {
+        Double cutOut = DataTools.parseDouble(trimmed.substring(2));
+        if (cutOut != null) {
+          return DetectionFilter.shortPass(cutOut);
+        }
+      }
+    }
+    catch (RuntimeException e) {
+      LOGGER.debug("Ignoring invalid CV7000 detection filter value {}", acquisition, e);
+    }
+    return null;
+  }
+
+  private Integer parseInteger(String value) {
+    if (value == null || value.trim().length() == 0) {
+      return null;
+    }
+    return Integer.valueOf(value);
   }
 
   private int getChannelIndex(Plane p) {
@@ -990,6 +1214,12 @@ public class CV7000Reader extends FormatReader {
         c.xSize = DataTools.parseDouble(attributes.getValue("bts:HorizontalPixelDimension"));
         c.ySize = DataTools.parseDouble(attributes.getValue("bts:VerticalPixelDimension"));
         c.cameraNumber = Integer.parseInt(attributes.getValue("bts:CameraNumber"));
+        c.inputBitDepth = parseInteger(attributes.getValue("bts:InputBitDepth"));
+        c.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
+        c.horizontalPixels = parseInteger(attributes.getValue("bts:HorizontalPixels"));
+        c.verticalPixels = parseInteger(attributes.getValue("bts:VerticalPixels"));
+        c.filterWheelPosition = parseInteger(attributes.getValue("bts:FilterWheelPosition"));
+        c.filterPosition = parseInteger(attributes.getValue("bts:FilterPosition"));
         c.correctionFile = attributes.getValue("bts:ShadingCorrectionSource");
         if (c.correctionFile != null && c.correctionFile.trim().length() == 0) {
           c.correctionFile = null;
@@ -1054,9 +1284,18 @@ public class CV7000Reader extends FormatReader {
 
             Channel template = new Channel();
             template.index = index;
+            template.target = attributes.getValue("bts:Target");
             template.objectiveID = attributes.getValue("bts:ObjectiveID");
             template.objective = attributes.getValue("bts:Objective");
             template.binning = attributes.getValue("bts:Binning");
+            template.methodID = attributes.getValue("bts:MethodID");
+            template.method = attributes.getValue("bts:Method");
+            template.filterID = attributes.getValue("bts:FilterID");
+            template.kind = attributes.getValue("bts:Kind");
+            template.andorParameterID = attributes.getValue("bts:AndorParameterID");
+            template.andorParameter = attributes.getValue("bts:AndorParameter");
+            template.cameraType = attributes.getValue("bts:CameraType");
+            template.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
 
             String mag = attributes.getValue("bts:Magnification");
             template.magnification = DataTools.parseDouble(mag);
@@ -1081,14 +1320,10 @@ public class CV7000Reader extends FormatReader {
               }
             }
 
-            String acquisition = attributes.getValue("bts:Acquisition");
-            if (acquisition != null) {
-              if (acquisition.indexOf("/") > 0) {
-                acquisition = acquisition.replaceAll("BP", "");
-                String wave = acquisition.substring(0, acquisition.indexOf("/"));
-                template.excitation = DataTools.parseDouble(wave);
-              }
-            }
+            template.acquisition = attributes.getValue("bts:Acquisition");
+            // Yokogawa Acquisition values such as BP676/29 identify detection
+            // filters.  Excitation comes from the LightSourceName link.
+            template.detectionFilter = parseDetectionFilter(template.acquisition);
 
             template.fluor = attributes.getValue("bts:Fluorophore");
             applyChannelSettings(template);
@@ -1180,6 +1415,89 @@ public class CV7000Reader extends FormatReader {
     public Double power;
   }
 
+  static class DetectionFilter {
+    public String filterType;
+    public Double center;
+    public Double width;
+    public Double cutIn;
+    public Double cutOut;
+
+    public static DetectionFilter bandPass(Double center, Double width) {
+      DetectionFilter filter = new DetectionFilter("BandPass");
+      filter.center = center;
+      filter.width = width;
+      filter.cutIn = center - (width / 2);
+      filter.cutOut = center + (width / 2);
+      return filter;
+    }
+
+    public static DetectionFilter longPass(Double cutIn) {
+      DetectionFilter filter = new DetectionFilter("LongPass");
+      filter.cutIn = cutIn;
+      return filter;
+    }
+
+    public static DetectionFilter shortPass(Double cutOut) {
+      DetectionFilter filter = new DetectionFilter("ShortPass");
+      filter.cutOut = cutOut;
+      return filter;
+    }
+
+    private DetectionFilter(String filterType) {
+      this.filterType = filterType;
+    }
+  }
+
+  class FilterKey {
+    public String filterID;
+    public String acquisition;
+    public Integer filterWheelPosition;
+    public Integer filterPosition;
+    public DetectionFilter detectionFilter;
+
+    public FilterKey(Channel ch) {
+      filterID = ch.filterID;
+      acquisition = ch.acquisition;
+      filterWheelPosition = ch.filterWheelPosition;
+      filterPosition = ch.filterPosition;
+      detectionFilter = ch.detectionFilter;
+    }
+
+    public boolean isValid() {
+      return acquisition != null && detectionFilter != null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof FilterKey)) {
+        return false;
+      }
+      FilterKey key = (FilterKey) o;
+      return same(filterID, key.filterID) &&
+        same(acquisition, key.acquisition) &&
+        same(filterWheelPosition, key.filterWheelPosition) &&
+        same(filterPosition, key.filterPosition);
+    }
+
+    @Override
+    public int hashCode() {
+      int code = 17;
+      code = 31 * code + hash(filterID);
+      code = 31 * code + hash(acquisition);
+      code = 31 * code + hash(filterWheelPosition);
+      code = 31 * code + hash(filterPosition);
+      return code;
+    }
+
+    private boolean same(Object a, Object b) {
+      return a == null ? b == null : a.equals(b);
+    }
+
+    private int hash(Object value) {
+      return value == null ? 0 : value.hashCode();
+    }
+  }
+
   class Channel {
     public int timelineIndex = -1;
     public int actionIndex = -1;
@@ -1187,10 +1505,25 @@ public class CV7000Reader extends FormatReader {
     public double xSize;
     public double ySize;
     public int cameraNumber;
+    public Integer inputBitDepth;
+    public Integer inputLevel;
+    public Integer horizontalPixels;
+    public Integer verticalPixels;
+    public Integer filterWheelPosition;
+    public Integer filterPosition;
     public String correctionFile;
     public List<Integer> lightSourceRefs = new ArrayList<Integer>();
-    public Double excitation;
 
+    public String target;
+    public String methodID;
+    public String method;
+    public String filterID;
+    public String acquisition;
+    public DetectionFilter detectionFilter;
+    public String kind;
+    public String cameraType;
+    public String andorParameterID;
+    public String andorParameter;
     public String objectiveID;
     public String objective;
     public Double magnification;
@@ -1209,9 +1542,24 @@ public class CV7000Reader extends FormatReader {
       xSize = ch.xSize;
       ySize = ch.ySize;
       cameraNumber = ch.cameraNumber;
+      inputBitDepth = ch.inputBitDepth;
+      inputLevel = ch.inputLevel;
+      horizontalPixels = ch.horizontalPixels;
+      verticalPixels = ch.verticalPixels;
+      filterWheelPosition = ch.filterWheelPosition;
+      filterPosition = ch.filterPosition;
       correctionFile = ch.correctionFile;
       lightSourceRefs = new ArrayList<Integer>(ch.lightSourceRefs);
-      excitation = ch.excitation;
+      target = ch.target;
+      methodID = ch.methodID;
+      method = ch.method;
+      filterID = ch.filterID;
+      acquisition = ch.acquisition;
+      detectionFilter = ch.detectionFilter;
+      kind = ch.kind;
+      cameraType = ch.cameraType;
+      andorParameterID = ch.andorParameterID;
+      andorParameter = ch.andorParameter;
       objectiveID = ch.objectiveID;
       objective = ch.objective;
       magnification = ch.magnification;
@@ -1223,7 +1571,17 @@ public class CV7000Reader extends FormatReader {
     }
 
     public void copyChannelSettings(Channel ch) {
-      excitation = ch.excitation;
+      target = ch.target;
+      methodID = ch.methodID;
+      method = ch.method;
+      filterID = ch.filterID;
+      acquisition = ch.acquisition;
+      detectionFilter = ch.detectionFilter;
+      kind = ch.kind;
+      cameraType = ch.cameraType;
+      andorParameterID = ch.andorParameterID;
+      andorParameter = ch.andorParameter;
+      inputLevel = ch.inputLevel;
       objectiveID = ch.objectiveID;
       objective = ch.objective;
       magnification = ch.magnification;
@@ -1236,8 +1594,13 @@ public class CV7000Reader extends FormatReader {
     public boolean hasChannelSettings() {
       return objectiveID != null || objective != null || magnification != null ||
         exposureTime != null || binning != null || color != null ||
-        excitation != null || fluor != null ||
+        acquisition != null || detectionFilter != null || fluor != null ||
         (lightSourceRefs != null && lightSourceRefs.size() > 0);
+    }
+
+    public boolean isBrightfield() {
+      return BRIGHTFIELD.equals(kind) ||
+        (method != null && BRIGHTFIELD.equalsIgnoreCase(method));
     }
 
     @Override
