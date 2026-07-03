@@ -26,12 +26,10 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -42,6 +40,7 @@ import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -55,8 +54,10 @@ import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
 import ome.units.quantity.Time;
+import ome.xml.model.MapPair;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -87,7 +88,11 @@ public class CV7000Reader extends FormatReader {
   private static final String OTF_CROSSTALK_PARAMETER = "OTF_crosstalk_parameter.xml";
   private static final String OTF_GEOMETRY_PARAMETER = "OTF_geometry_parameter.xml";
   private static final String BRIGHTFIELD = "Brightfield";
-  private static final int RAW_XML_CHUNK_SIZE = 7600;
+  private static final String RAW_SIDECAR_ANNOTATION_NAMESPACE =
+    "openmicroscopy.org/OriginalMetadata/Yokogawa/CV7000/RawSidecar";
+  private static final String YOKOGAWA_ANNOTATION_NAMESPACE =
+    "openmicroscopy.org/OriginalMetadata/Yokogawa/CV7000";
+  private static final String XML_MIME_TYPE = "application/xml";
 
   // -- Fields --
 
@@ -106,6 +111,8 @@ public class CV7000Reader extends FormatReader {
   private ArrayList<String> extraFiles;
   private MeasurementDataHandler measurementHandler;
   private CrosstalkParameters crosstalkParameters;
+  private LinkedHashMap<String, YokogawaAnnotationGroup> yokogawaAnnotationGroups =
+    new LinkedHashMap<String, YokogawaAnnotationGroup>();
 
   private transient Map<String, Boolean> acquiredWells = new HashMap<String, Boolean>();
 
@@ -247,6 +254,7 @@ public class CV7000Reader extends FormatReader {
       endTime = null;
       measurementHandler = null;
       crosstalkParameters = null;
+      yokogawaAnnotationGroups.clear();
       reversePlaneLookup = null;
       extraFiles = null;
       acquiredWells.clear();
@@ -307,6 +315,7 @@ public class CV7000Reader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    yokogawaAnnotationGroups.clear();
     DatasetPaths paths = getDatasetPaths(id);
     datasetPaths = paths;
     WPIHandler plate = parsePlate(paths.wpiPath);
@@ -644,7 +653,7 @@ public class CV7000Reader extends FormatReader {
       populateSeriesMetadata(store, indexes.instrument, indexes.lightSourceIndexes,
         indexes.detectorIndexes, indexes.filterIndexes, indexes.dichroicIndexes,
         indexes.usedObjectiveIDs, timings);
-      addYokogawaOriginalMetadata();
+      addYokogawaOriginalMetadata(store, indexes.instrument != null);
       setSeries(0);
     }
   }
@@ -1237,14 +1246,27 @@ public class CV7000Reader extends FormatReader {
     return new PercentFraction(Float.valueOf((float) fraction));
   }
 
-  private void addYokogawaOriginalMetadata() {
+  private void addYokogawaOriginalMetadata(MetadataStore store,
+    boolean hasInstrument)
+  {
+    int rawSidecarAnnotation = 0;
+    int plateAnnotationRef = 0;
     if (allFiles != null) {
       for (String file : allFiles) {
         Location location = file == null ? null : new Location(file);
         CV7000FileRole role = classifyCV7000File(location);
         if (file != null && isDatasetFile(role) && !isPixelFile(role)) {
           parseStructuredSidecarMetadata(file, role);
-          addRawSidecarMetadata(file, role);
+          addSidecarSummaryMetadata(file, role);
+          if (preserveRawSidecarAsFileAnnotation(role)) {
+            String annotationID = addRawSidecarFileAnnotation(
+              store, file, rawSidecarAnnotation);
+            if (annotationID != null) {
+              store.setPlateAnnotationRef(annotationID, 0, plateAnnotationRef);
+              rawSidecarAnnotation++;
+              plateAnnotationRef++;
+            }
+          }
           addYokogawaMetaList("Yokogawa Sidecar ", "File",
             location.getName());
         }
@@ -1261,6 +1283,7 @@ public class CV7000Reader extends FormatReader {
     }
     addCrosstalkOriginalMetadata();
     if (channels == null) {
+      emitYokogawaMapAnnotations(store, plateAnnotationRef, hasInstrument);
       return;
     }
     HashSet<String> seen = new HashSet<String>();
@@ -1311,6 +1334,7 @@ public class CV7000Reader extends FormatReader {
       addYokogawaMeta(prefix, "FilterPosition", c.filterPosition);
       addYokogawaMeta(prefix, "ShadingCorrectionSource", c.correctionFile);
     }
+    emitYokogawaMapAnnotations(store, plateAnnotationRef, hasInstrument);
   }
 
   private void addCrosstalkOriginalMetadata() {
@@ -1349,33 +1373,70 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private void addRawSidecarMetadata(String file, CV7000FileRole role) {
+  private void addSidecarSummaryMetadata(String file, CV7000FileRole role) {
     Location location = new Location(file);
     String name = location.getName();
-    if (name == null || !preserveRawXML(role)) {
+    if (name == null) {
       return;
     }
 
     try {
-      String xml = DataTools.readFile(file);
-      byte[] bytes = xml.getBytes(StandardCharsets.UTF_8);
-      String encoded = Base64.getEncoder().encodeToString(bytes);
-      int chunkCount = (encoded.length() + RAW_XML_CHUNK_SIZE - 1) / RAW_XML_CHUNK_SIZE;
-      String prefix = "Yokogawa Raw XML " + name + " ";
+      byte[] bytes = readSidecarBytes(file);
+      String prefix = "Yokogawa Sidecar " + name + " ";
 
-      addYokogawaMeta(prefix, "Encoding", "base64; charset=UTF-8");
+      addYokogawaMeta(prefix, "Role", role.name());
       addYokogawaMeta(prefix, "ByteLength", bytes.length);
       addYokogawaMeta(prefix, "SHA-256", sha256(bytes));
-      addYokogawaMeta(prefix, "ChunkCount", chunkCount);
-      for (int chunk=0; chunk<chunkCount; chunk++) {
-        int start = chunk * RAW_XML_CHUNK_SIZE;
-        int end = Math.min(start + RAW_XML_CHUNK_SIZE, encoded.length());
-        addYokogawaMeta(prefix, "Chunk " + zeroPad(chunk + 1, 4),
-          encoded.substring(start, end));
-      }
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not summarize CV7000 sidecar {}", file, e);
+    }
+  }
+
+  private String addRawSidecarFileAnnotation(MetadataStore store, String file,
+    int index)
+  {
+    Location location = new Location(file);
+    String name = location.getName();
+    if (name == null) {
+      return null;
+    }
+
+    try {
+      byte[] bytes = readSidecarBytes(file);
+      NonNegativeLong length = new NonNegativeLong(Long.valueOf(bytes.length));
+      String annotationID = "Annotation:CV7000RawSidecar:" + index;
+
+      store.setFileAnnotationID(annotationID, index);
+      store.setFileAnnotationNamespace(RAW_SIDECAR_ANNOTATION_NAMESPACE, index);
+      store.setFileAnnotationDescription(
+        "Yokogawa CV7000 raw sidecar " + name, index);
+      store.setBinaryFileFileName(name, index);
+      store.setBinaryFileMIMEType(XML_MIME_TYPE, index);
+      store.setBinaryFileSize(length, index);
+      store.setBinaryFileBinData(bytes, index);
+      store.setBinaryFileBinDataLength(length, index);
+      return annotationID;
     }
     catch (IOException e) {
       LOGGER.debug("Could not preserve raw CV7000 sidecar {}", file, e);
+    }
+    return null;
+  }
+
+  private byte[] readSidecarBytes(String file) throws IOException {
+    RandomAccessInputStream stream = new RandomAccessInputStream(file);
+    try {
+      long length = stream.length();
+      if (length > Integer.MAX_VALUE) {
+        throw new IOException("CV7000 sidecar too large to embed: " + file);
+      }
+      byte[] bytes = new byte[(int) length];
+      stream.readFully(bytes);
+      return bytes;
+    }
+    finally {
+      stream.close();
     }
   }
 
@@ -1436,7 +1497,7 @@ public class CV7000Reader extends FormatReader {
     return role != null && role != CV7000FileRole.UNKNOWN;
   }
 
-  private boolean preserveRawXML(CV7000FileRole role) {
+  private boolean preserveRawSidecarAsFileAnnotation(CV7000FileRole role) {
     if (role == null) {
       return false;
     }
@@ -1495,8 +1556,7 @@ public class CV7000Reader extends FormatReader {
     }
 
     try {
-      String xml = DataTools.readFile(measurementPath);
-      byte[] bytes = xml.getBytes(StandardCharsets.UTF_8);
+      byte[] bytes = readSidecarBytes(measurementPath);
       addYokogawaMeta("Yokogawa MLF ", "File", new Location(measurementPath).getName());
       addYokogawaMeta("Yokogawa MLF ", "Encoding", "UTF-8");
       addYokogawaMeta("Yokogawa MLF ", "ByteLength", bytes.length);
@@ -1539,20 +1599,166 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private String zeroPad(int value, int width) {
-    String s = String.valueOf(value);
-    while (s.length() < width) {
-      s = "0" + s;
+  private void emitYokogawaMapAnnotations(MetadataStore store,
+    int plateAnnotationRefStart, boolean hasInstrument)
+  {
+    AnnotationRefIndexes refs = new AnnotationRefIndexes();
+    refs.plate = plateAnnotationRefStart;
+
+    int mapAnnotationIndex = 0;
+    for (YokogawaAnnotationGroup group : yokogawaAnnotationGroups.values()) {
+      if (group.isEmpty()) {
+        continue;
+      }
+      String annotationID = "Annotation:CV7000:YokogawaMap:" + mapAnnotationIndex;
+      store.setMapAnnotationID(annotationID, mapAnnotationIndex);
+      store.setMapAnnotationNamespace(YOKOGAWA_ANNOTATION_NAMESPACE, mapAnnotationIndex);
+      store.setMapAnnotationDescription(group.scope, mapAnnotationIndex);
+      store.setMapAnnotationValue(group.toMapPairs(), mapAnnotationIndex);
+      linkYokogawaMapAnnotation(store, annotationID, group.scope, refs,
+        hasInstrument);
+      mapAnnotationIndex++;
     }
-    return s;
+  }
+
+  private void linkYokogawaMapAnnotation(MetadataStore store,
+    String annotationID, String scope, AnnotationRefIndexes refs,
+    boolean hasInstrument)
+  {
+    if (isInstrumentAnnotationScope(scope)) {
+      if (hasInstrument) {
+        store.setInstrumentAnnotationRef(annotationID, 0, refs.instrument++);
+      }
+      else {
+        store.setPlateAnnotationRef(annotationID, 0, refs.plate++);
+      }
+      return;
+    }
+
+    if (isImageOrChannelAnnotationScope(scope) &&
+      linkToMatchingSeriesAndChannels(store, annotationID, scope, refs))
+    {
+      return;
+    }
+
+    store.setPlateAnnotationRef(annotationID, 0, refs.plate++);
+  }
+
+  private boolean isInstrumentAnnotationScope(String scope) {
+    return scope != null && (scope.startsWith("Yokogawa MES LightSource ") ||
+      scope.startsWith("Yokogawa LightSource ") ||
+      scope.startsWith("Yokogawa OTF "));
+  }
+
+  private boolean isImageOrChannelAnnotationScope(String scope) {
+    return scope != null && (scope.startsWith("Yokogawa MES Timeline ") ||
+      scope.startsWith("Yokogawa MES Channel ") ||
+      scope.startsWith("Yokogawa Timeline "));
+  }
+
+  private boolean linkToMatchingSeriesAndChannels(MetadataStore store,
+    String annotationID, String scope, AnnotationRefIndexes refs)
+  {
+    Integer timeline = getIndexedScopeValue(scope, "Timeline");
+    Integer action = getIndexedScopeValue(scope, "Action");
+    Integer channel = getIndexedScopeValue(scope, "Channel");
+    boolean channelScoped = channel != null;
+    boolean actionScoped = action != null;
+
+    if (!channelScoped && !actionScoped) {
+      return false;
+    }
+
+    HashSet<Integer> linkedImages = new HashSet<Integer>();
+    HashSet<String> linkedChannels = new HashSet<String>();
+
+    for (int series=0; series<getSeriesCount(); series++) {
+      if (reversePlaneLookup == null || series >= reversePlaneLookup.length) {
+        continue;
+      }
+      for (int no=0; no<reversePlaneLookup[series].length; no++) {
+        Plane plane = lookupPlane(series, no);
+        if (!matchesScope(plane, timeline, action, channel)) {
+          continue;
+        }
+        if (linkedImages.add(Integer.valueOf(series))) {
+          store.setImageAnnotationRef(annotationID, series,
+            refs.nextImage(series));
+        }
+        if (channelScoped) {
+          String key = series + ":" + plane.channelIndex;
+          if (linkedChannels.add(key)) {
+            store.setChannelAnnotationRef(annotationID, series,
+              plane.channelIndex, refs.nextChannel(series, plane.channelIndex));
+          }
+        }
+      }
+    }
+
+    return linkedImages.size() > 0 || linkedChannels.size() > 0;
+  }
+
+  private boolean matchesScope(Plane plane, Integer timeline, Integer action,
+    Integer channel)
+  {
+    if (plane == null) {
+      return false;
+    }
+    if (timeline != null && plane.timelineIndex != timeline.intValue()) {
+      return false;
+    }
+    if (action != null && plane.actionIndex != action.intValue()) {
+      return false;
+    }
+    return channel == null || plane.channel == channel.intValue();
+  }
+
+  private Integer getIndexedScopeValue(String scope, String label) {
+    if (scope == null || label == null) {
+      return null;
+    }
+    String token = label + " ";
+    int start = scope.indexOf(token);
+    if (start < 0) {
+      return null;
+    }
+    start += token.length();
+    int end = start;
+    while (end < scope.length() && Character.isDigit(scope.charAt(end))) {
+      end++;
+    }
+    if (end == start) {
+      return null;
+    }
+    try {
+      return Integer.valueOf(Integer.parseInt(scope.substring(start, end)) - 1);
+    }
+    catch (NumberFormatException e) {
+      return null;
+    }
   }
 
   private void addYokogawaMeta(String prefix, String name, Object value) {
-    addGlobalMeta(prefix + name, value);
+    YokogawaAnnotationGroup group = getYokogawaAnnotationGroup(prefix);
+    group.put(name, value);
   }
 
   private void addYokogawaMetaList(String prefix, String name, Object value) {
-    addGlobalMetaList(prefix + name, value);
+    YokogawaAnnotationGroup group = getYokogawaAnnotationGroup(prefix);
+    group.putList(name, value);
+  }
+
+  private YokogawaAnnotationGroup getYokogawaAnnotationGroup(String prefix) {
+    String scope = clean(prefix);
+    if (scope == null) {
+      scope = "Yokogawa";
+    }
+    YokogawaAnnotationGroup group = yokogawaAnnotationGroups.get(scope);
+    if (group == null) {
+      group = new YokogawaAnnotationGroup(scope);
+      yokogawaAnnotationGroups.put(scope, group);
+    }
+    return group;
   }
 
   private void addYokogawaAttributes(String prefix, Attributes attributes) {
@@ -1858,6 +2064,90 @@ public class CV7000Reader extends FormatReader {
     public List<String> usedObjectiveIDs = new ArrayList<String>();
   }
 
+  class AnnotationRefIndexes {
+    public int plate;
+    public int instrument;
+    private HashMap<Integer, Integer> imageRefs =
+      new HashMap<Integer, Integer>();
+    private HashMap<String, Integer> channelRefs =
+      new HashMap<String, Integer>();
+
+    public int nextImage(int series) {
+      Integer key = Integer.valueOf(series);
+      Integer next = imageRefs.get(key);
+      int value = next == null ? 0 : next.intValue();
+      imageRefs.put(key, Integer.valueOf(value + 1));
+      return value;
+    }
+
+    public int nextChannel(int series, int channel) {
+      String key = series + ":" + channel;
+      Integer next = channelRefs.get(key);
+      int value = next == null ? 0 : next.intValue();
+      channelRefs.put(key, Integer.valueOf(value + 1));
+      return value;
+    }
+  }
+
+  class YokogawaAnnotationGroup {
+    public String scope;
+    private LinkedHashMap<String, String> values =
+      new LinkedHashMap<String, String>();
+    private HashMap<String, Integer> listIndexes =
+      new HashMap<String, Integer>();
+
+    public YokogawaAnnotationGroup(String scope) {
+      this.scope = scope;
+    }
+
+    public boolean isEmpty() {
+      return values.isEmpty();
+    }
+
+    public void put(String name, Object value) {
+      String key = clean(name);
+      String text = cleanValue(value);
+      if (key == null || text == null) {
+        return;
+      }
+      if (values.containsKey(key)) {
+        putList(key, text);
+      }
+      else {
+        values.put(key, text);
+      }
+    }
+
+    public void putList(String name, Object value) {
+      String key = clean(name);
+      String text = cleanValue(value);
+      if (key == null || text == null) {
+        return;
+      }
+      Integer next = listIndexes.get(key);
+      int index = next == null ? 1 : next.intValue() + 1;
+      listIndexes.put(key, Integer.valueOf(index));
+      values.put(key + "[" + index + "]", text);
+    }
+
+    public List<MapPair> toMapPairs() {
+      List<MapPair> pairs = new ArrayList<MapPair>();
+      pairs.add(new MapPair("Source", scope));
+      for (Map.Entry<String, String> entry : values.entrySet()) {
+        pairs.add(new MapPair(entry.getKey(), entry.getValue()));
+      }
+      return pairs;
+    }
+
+    private String cleanValue(Object value) {
+      if (value == null) {
+        return null;
+      }
+      String text = String.valueOf(value);
+      return text.trim().length() == 0 ? null : text;
+    }
+  }
+
   class SeriesTiming {
     public Long startMillis;
     public String startTimestamp;
@@ -1895,6 +2185,7 @@ public class CV7000Reader extends FormatReader {
       Attributes attributes)
     {
       if (qName.equals("bts:WellPlate")) {
+        addYokogawaAttributes("Yokogawa WPI WellPlate ", attributes);
         name = attributes.getValue("bts:Name");
         plateID = attributes.getValue("bts:ProductID");
         plateRows = Integer.parseInt(attributes.getValue("bts:Rows"));
@@ -2064,8 +2355,9 @@ public class CV7000Reader extends FormatReader {
         settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
 
         String system = attributes.getValue("bts:TargetSystem");
-        addGlobalMeta("Acquisition system", system);
-        if (!system.toLowerCase().startsWith("cv7000")) {
+        addYokogawaMeta(
+          "Yokogawa MRF MeasurementDetail ", "AcquisitionSystem", system);
+        if (system != null && !system.toLowerCase().startsWith("cv7000")) {
           LOGGER.warn("Found data from {}; this is not well-supported", system);
         }
       }
