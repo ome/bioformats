@@ -102,7 +102,9 @@ public class CV7000Reader extends FormatReader {
   private String detailPath;
   private String measurementPath;
   private String settingsPath;
-  private DatasetPaths datasetPaths;
+  private CV7000RawModel rawModel = new CV7000RawModel();
+  private CV7000SeriesLayout seriesLayout;
+  private CV7000DatasetPaths datasetPaths;
   private ArrayList<Plane> planeData;
   private int[][] reversePlaneLookup;
   private ArrayList<LightSource> lightSources;
@@ -111,10 +113,7 @@ public class CV7000Reader extends FormatReader {
   private ArrayList<String> extraFiles;
   private MeasurementDataHandler measurementHandler;
   private CrosstalkParameters crosstalkParameters;
-  private LinkedHashMap<String, YokogawaAnnotationGroup> yokogawaAnnotationGroups =
-    new LinkedHashMap<String, YokogawaAnnotationGroup>();
-
-  private transient Map<String, Boolean> acquiredWells = new HashMap<String, Boolean>();
+  private YokogawaParsing parsing = new YokogawaParsing();
 
   // -- Constructor --
 
@@ -254,10 +253,10 @@ public class CV7000Reader extends FormatReader {
       endTime = null;
       measurementHandler = null;
       crosstalkParameters = null;
-      yokogawaAnnotationGroups.clear();
       reversePlaneLookup = null;
       extraFiles = null;
-      acquiredWells.clear();
+      seriesLayout = null;
+      rawModel = new CV7000RawModel();
       if (allFiles != null) {
           allFiles.clear();
       } else {
@@ -315,25 +314,29 @@ public class CV7000Reader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    yokogawaAnnotationGroups.clear();
-    DatasetPaths paths = getDatasetPaths(id);
+    rawModel = new CV7000RawModel();
+    seriesLayout = null;
+    CV7000DatasetPaths paths = getDatasetPaths(id);
     datasetPaths = paths;
     WPIHandler plate = parsePlate(paths.wpiPath);
+    rawModel.paths = paths;
+    rawModel.plate = plate;
 
     parseMeasurementData(paths);
     parseOptionalSidecars(paths);
     normalizeChannels(paths.parent);
     collectDatasetFiles(paths.parent);
 
-    SeriesLayout layout = buildSeriesLayout();
+    CV7000SeriesLayout layout = buildSeriesLayout();
+    seriesLayout = layout;
     initializeCoreMetadata(layout);
     populateReversePlaneLookup(layout);
-    populateMetadataStore(plate, layout);
+    new CV7000MetadataPopulator().populate(plate, layout);
     setSeries(0);
   }
 
-  private DatasetPaths getDatasetPaths(String id) {
-    DatasetPaths paths = new DatasetPaths();
+  private CV7000DatasetPaths getDatasetPaths(String id) {
+    CV7000DatasetPaths paths = new CV7000DatasetPaths();
     Location wpi = new Location(id).getAbsoluteFile();
     paths.wpiPath = wpi.getAbsolutePath();
     paths.parent = wpi.getParentFile();
@@ -362,12 +365,13 @@ public class CV7000Reader extends FormatReader {
         isDatasetFile(classifyCV7000File(file)))
       {
         allFiles.add(file.getAbsolutePath());
+        rawModel.addFile(file.getAbsolutePath());
       }
     }
   }
 
   /** Parse the required plane manifest and resolve readable TIFF plane paths. */
-  private void parseMeasurementData(DatasetPaths paths)
+  private void parseMeasurementData(CV7000DatasetPaths paths)
     throws FormatException, IOException
   {
     if (!paths.measurementData.exists()) {
@@ -375,13 +379,16 @@ public class CV7000Reader extends FormatReader {
     }
 
     measurementPath = paths.measurementData.getAbsolutePath();
+    rawModel.measurementPath = measurementPath;
     measurementHandler = new MeasurementDataHandler(paths.parent.getAbsolutePath());
     XMLTools.parseXML(readSanitizedXML(measurementPath), measurementHandler);
     planeData = measurementHandler.getPlanes();
+    rawModel.measurementHandler = measurementHandler;
+    rawModel.planes = planeData;
   }
 
   /** Parse optional XML sidecars that enrich channel, instrument, and raw metadata. */
-  private void parseOptionalSidecars(DatasetPaths paths) throws IOException {
+  private void parseOptionalSidecars(CV7000DatasetPaths paths) throws IOException {
     parseMeasurementDetail(paths);
     parseWellPlateProduct();
     parseMeasurementSettings();
@@ -389,21 +396,25 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** MeasurementDetail links the acquisition settings sidecars and seeds channels. */
-  private void parseMeasurementDetail(DatasetPaths paths) throws IOException {
+  private void parseMeasurementDetail(CV7000DatasetPaths paths) throws IOException {
     if (!paths.measurementDetail.exists()) {
       LOGGER.warn("Missing " + MEASUREMENT_DETAIL + " file");
       return;
     }
 
     channels = new ArrayList<Channel>();
+    rawModel.channels = channels;
     detailPath = paths.measurementDetail.getAbsolutePath();
+    rawModel.detailPath = detailPath;
     MeasurementDetailHandler detailHandler = new MeasurementDetailHandler();
     XMLTools.parseXML(readSanitizedXML(detailPath), detailHandler);
     if (wppPath != null) {
       wppPath = new Location(paths.parent, wppPath).getAbsolutePath();
+      rawModel.wppPath = wppPath;
     }
     if (settingsPath != null) {
       settingsPath = new Location(paths.parent, settingsPath).getAbsolutePath();
+      rawModel.settingsPath = settingsPath;
     }
   }
 
@@ -418,6 +429,7 @@ public class CV7000Reader extends FormatReader {
   private void parseMeasurementSettings() throws IOException {
     if (settingsPath != null && new Location(settingsPath).exists()) {
       lightSources = new ArrayList<LightSource>();
+      rawModel.lightSources = lightSources;
       MeasurementSettingsHandler settingsHandler = new MeasurementSettingsHandler();
       String xml = readSanitizedXML(settingsPath);
       if (xml.length() > 0) {
@@ -427,7 +439,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** OTF crosstalk stores exact emission filter bands and optional dichroics. */
-  private void parseOTFCrosstalk(DatasetPaths paths) {
+  private void parseOTFCrosstalk(CV7000DatasetPaths paths) {
     Location crosstalk = paths.otfCrosstalk;
     if (!crosstalk.exists()) {
       return;
@@ -437,9 +449,11 @@ public class CV7000Reader extends FormatReader {
       CrosstalkParameterHandler handler = new CrosstalkParameterHandler();
       XMLTools.parseXML(readSanitizedXML(crosstalk.getAbsolutePath()), handler);
       crosstalkParameters = handler.getParameters();
+      rawModel.crosstalkParameters = crosstalkParameters;
     }
     catch (Exception e) {
       crosstalkParameters = null;
+      rawModel.crosstalkParameters = null;
       LOGGER.warn("Could not parse CV7000 crosstalk sidecar {}", crosstalk.getAbsolutePath(), e);
     }
   }
@@ -450,6 +464,7 @@ public class CV7000Reader extends FormatReader {
       return;
     }
     sortChannelsByActionThenIndex();
+    rawModel.indexChannels();
     resolveCorrectionFiles(parent);
   }
 
@@ -479,8 +494,8 @@ public class CV7000Reader extends FormatReader {
    * Build the field/channel/time/z layout before touching Bio-Formats core
    * metadata.  This keeps Yokogawa indexing separate from reader indexing.
    */
-  private SeriesLayout buildSeriesLayout() throws FormatException {
-    SeriesLayout layout = new SeriesLayout();
+  private CV7000SeriesLayout buildSeriesLayout() throws FormatException {
+    CV7000SeriesLayout layout = new CV7000SeriesLayout();
     HashSet<Field> acquiredFieldSet = collectAcquiredFields(layout);
 
     if (layout.firstFile == null) {
@@ -488,6 +503,7 @@ public class CV7000Reader extends FormatReader {
     }
 
     sortAcquiredFields(layout.acquiredFields);
+    indexAcquiredFields(layout);
     collectPlaneExtents(layout, acquiredFieldSet);
     layout.channelIndexes = layout.uniqueChannels.toArray(
       new Integer[layout.uniqueChannels.size()]);
@@ -496,7 +512,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Only fields with at least one readable plane become Bio-Formats series. */
-  private HashSet<Field> collectAcquiredFields(SeriesLayout layout) {
+  private HashSet<Field> collectAcquiredFields(CV7000SeriesLayout layout) {
     HashSet<Field> acquiredFieldSet = new HashSet<Field>();
     for (Plane p : planeData) {
       if (p != null && p.file != null) {
@@ -530,8 +546,22 @@ public class CV7000Reader extends FormatReader {
     });
   }
 
+  /** Pre-index acquired wells and fields for plate metadata population. */
+  private void indexAcquiredFields(CV7000SeriesLayout layout) {
+    for (Field field : layout.acquiredFields) {
+      String key = getWellKey(field.row, field.column);
+      layout.acquiredWells.put(key, Boolean.TRUE);
+      ArrayList<Field> fields = layout.fieldsByWell.get(key);
+      if (fields == null) {
+        fields = new ArrayList<Field>();
+        layout.fieldsByWell.put(key, fields);
+      }
+      fields.add(field);
+    }
+  }
+
   /** Determine SizeZ/SizeT/channel coverage for every acquired field. */
-  private void collectPlaneExtents(SeriesLayout layout, HashSet<Field> acquiredFieldSet) {
+  private void collectPlaneExtents(CV7000SeriesLayout layout, HashSet<Field> acquiredFieldSet) {
     for (Plane p : planeData) {
       if (p != null && acquiredFieldSet.contains(p.field)) {
         p.channelIndex = getLogicalChannelIndex(p);
@@ -555,14 +585,15 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Initialize the Bio-Formats core metadata once the logical layout is known. */
-  private void initializeCoreMetadata(SeriesLayout layout) throws FormatException, IOException {
+  private void initializeCoreMetadata(CV7000SeriesLayout layout) throws FormatException, IOException {
     reader = new MinimalTiffReader();
     reader.setId(layout.firstFile);
     core.clear();
     core.add(new CoreMetadata(reader.getCoreMetadataList().get(0)));
 
     core.get(0).dimensionOrder = "XYCZT";
-    reversePlaneLookup = new int[layout.acquiredFields.size()][];
+    layout.reversePlaneLookup = new int[layout.acquiredFields.size()][];
+    reversePlaneLookup = layout.reversePlaneLookup;
 
     for (int i=0; i<layout.acquiredFields.size(); i++) {
       if (i > 0) {
@@ -583,7 +614,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Map each Yokogawa plane record to the reader's series and plane index. */
-  private void populateReversePlaneLookup(SeriesLayout layout) {
+  private void populateReversePlaneLookup(CV7000SeriesLayout layout) {
     int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
 
     extraFiles = new ArrayList<String>();
@@ -612,6 +643,7 @@ public class CV7000Reader extends FormatReader {
       p.no = FormatTools.positionToRaster(planeLengths,
         new int[] {p.channelIndex, p.z - m.minZ, p.timepoint - m.minT});
       assignPlaneLookup(i, p);
+      layout.indexPlane(p);
     }
   }
 
@@ -633,7 +665,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Populate OME metadata after core metadata and plane lookup are complete. */
-  private void populateMetadataStore(WPIHandler plate, SeriesLayout layout)
+  private void populateMetadataStore(WPIHandler plate, CV7000SeriesLayout layout)
     throws FormatException
   {
     SeriesTiming[] timings = buildSeriesTimings();
@@ -641,7 +673,7 @@ public class CV7000Reader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
-    populatePlateMetadata(store, plate, layout.acquiredFields, timings);
+    populatePlateMetadata(store, plate, layout, timings);
     setSeries(0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -653,7 +685,7 @@ public class CV7000Reader extends FormatReader {
       populateSeriesMetadata(store, indexes.instrument, indexes.lightSourceIndexes,
         indexes.detectorIndexes, indexes.filterIndexes, indexes.dichroicIndexes,
         indexes.usedObjectiveIDs, timings);
-      addYokogawaOriginalMetadata(store, indexes.instrument != null);
+      new CV7000OriginalMetadataPopulator().populate(store, indexes.instrument != null);
       setSeries(0);
     }
   }
@@ -679,7 +711,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   private void populatePlateMetadata(MetadataStore store, WPIHandler plate,
-    ArrayList<Field> acquiredFields, SeriesTiming[] timings)
+    CV7000SeriesLayout layout, SeriesTiming[] timings)
   {
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateName(plate.getPlateName(), 0);
@@ -697,7 +729,7 @@ public class CV7000Reader extends FormatReader {
 
     HashMap<Integer, Integer> wellFieldCounts = new HashMap<Integer, Integer>();
     int maxFieldCount = 0;
-    for (Field field : acquiredFields) {
+    for (Field field : layout.acquiredFields) {
       int wellIndex = field.row * plate.getPlateColumns() + field.column;
       Integer count = wellFieldCounts.get(wellIndex);
       count = count == null ? 1 : count + 1;
@@ -727,17 +759,14 @@ public class CV7000Reader extends FormatReader {
         store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
         store.setWellColumn(new NonNegativeInteger(col), 0, nextWell);
 
-        if (!isWellAcquired(row, col)) {
+        ArrayList<Field> wellFields = layout.fieldsByWell.get(getWellKey(row, col));
+        if (wellFields == null || wellFields.size() == 0) {
           nextWell++;
           continue;
         }
 
         int wellSample = 0;
-        for (Field field : acquiredFields) {
-          if (field.row != row || field.column != col) {
-            continue;
-          }
-
+        for (Field field : wellFields) {
           String wellSampleID =
             MetadataTools.createLSID("WellSample", 0, nextWell, wellSample);
           store.setWellSampleID(wellSampleID, 0, nextWell, wellSample);
@@ -904,11 +933,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   private String clean(String value) {
-    if (value == null) {
-      return null;
-    }
-    String trimmed = value.trim();
-    return trimmed.length() == 0 ? null : trimmed;
+    return parsing.clean(value);
   }
 
   private void populateChannelLightSourceSettings(MetadataStore store, int series,
@@ -1606,7 +1631,7 @@ public class CV7000Reader extends FormatReader {
     refs.plate = plateAnnotationRefStart;
 
     int mapAnnotationIndex = 0;
-    for (YokogawaAnnotationGroup group : yokogawaAnnotationGroups.values()) {
+    for (YokogawaAnnotationGroup group : rawModel.originalMetadata.groups.values()) {
       if (group.isEmpty()) {
         continue;
       }
@@ -1753,10 +1778,10 @@ public class CV7000Reader extends FormatReader {
     if (scope == null) {
       scope = "Yokogawa";
     }
-    YokogawaAnnotationGroup group = yokogawaAnnotationGroups.get(scope);
+    YokogawaAnnotationGroup group = rawModel.originalMetadata.groups.get(scope);
     if (group == null) {
       group = new YokogawaAnnotationGroup(scope);
-      yokogawaAnnotationGroups.put(scope, group);
+      rawModel.originalMetadata.groups.put(scope, group);
     }
     return group;
   }
@@ -1772,11 +1797,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   private String getYokogawaAttributeName(String qName) {
-    if (qName == null) {
-      return "";
-    }
-    int colon = qName.indexOf(":");
-    return colon < 0 ? qName : qName.substring(colon + 1);
+    return parsing.getYokogawaAttributeName(qName);
   }
 
   private Integer getLinkedLaser(Channel channel) {
@@ -1804,88 +1825,19 @@ public class CV7000Reader extends FormatReader {
   }
 
   private String getBinningValue(String binning) {
-    if (binning == null || binning.trim().length() == 0) {
-      return null;
-    }
-    if (binning.indexOf('x') >= 0 || binning.indexOf('X') >= 0) {
-      return binning;
-    }
-    return binning + "x" + binning;
+    return parsing.getBinningValue(binning);
   }
 
   private DetectionFilter parseDetectionFilter(String acquisition) {
-    if (acquisition == null) {
-      return null;
-    }
-    String trimmed = acquisition.trim();
-    try {
-      if (trimmed.startsWith("BP") && trimmed.indexOf("/") > 2) {
-        String center = trimmed.substring(2, trimmed.indexOf("/"));
-        String width = trimmed.substring(trimmed.indexOf("/") + 1);
-        Double parsedCenter = DataTools.parseDouble(center);
-        Double parsedWidth = DataTools.parseDouble(width);
-        if (parsedCenter != null && parsedWidth != null) {
-          return DetectionFilter.bandPass(parsedCenter, parsedWidth);
-        }
-      }
-      else if (trimmed.startsWith("LP") && trimmed.length() > 2) {
-        Double cutIn = DataTools.parseDouble(trimmed.substring(2));
-        if (cutIn != null) {
-          return DetectionFilter.longPass(cutIn);
-        }
-      }
-      else if (trimmed.startsWith("SP") && trimmed.length() > 2) {
-        Double cutOut = DataTools.parseDouble(trimmed.substring(2));
-        if (cutOut != null) {
-          return DetectionFilter.shortPass(cutOut);
-        }
-      }
-    }
-    catch (RuntimeException e) {
-      LOGGER.debug("Ignoring invalid CV7000 detection filter value {}", acquisition, e);
-    }
-    return null;
+    return parsing.parseDetectionFilter(acquisition);
   }
 
   private Double parseYokogawaGain(String value) {
-    if (value == null) {
-      return null;
-    }
-    String trimmed = value.trim();
-    if (!trimmed.regionMatches(true, 0, "gain", 0, 4)) {
-      return null;
-    }
-    int start = -1;
-    for (int i=4; i<trimmed.length(); i++) {
-      char ch = trimmed.charAt(i);
-      if (Character.isDigit(ch) || ch == '+' || ch == '-' ||
-        ch == '.' || ch == ',')
-      {
-        start = i;
-        break;
-      }
-    }
-    if (start < 0) {
-      return null;
-    }
-    int end = start + 1;
-    while (end < trimmed.length()) {
-      char ch = trimmed.charAt(end);
-      if (!(Character.isDigit(ch) || ch == '+' || ch == '-' ||
-        ch == '.' || ch == ',' || ch == 'e' || ch == 'E'))
-      {
-        break;
-      }
-      end++;
-    }
-    return DataTools.parseDouble(trimmed.substring(start, end));
+    return parsing.parseYokogawaGain(value);
   }
 
   private Integer parseInteger(String value) {
-    if (value == null || value.trim().length() == 0) {
-      return null;
-    }
-    return Integer.valueOf(value.trim());
+    return parsing.parseInteger(value);
   }
 
   private int getChannelIndex(Plane p) {
@@ -1931,6 +1883,11 @@ public class CV7000Reader extends FormatReader {
   }
 
   private Channel lookupChannel(Plane p) {
+    Channel matched = rawModel.getChannel(p.timelineIndex, p.actionIndex, p.channel);
+    if (matched != null) {
+      return matched;
+    }
+
     Channel rawChannel = null;
     Channel populatedRawChannel = null;
     for (Channel ch : channels) {
@@ -1963,6 +1920,13 @@ public class CV7000Reader extends FormatReader {
   }
 
   private Plane lookupRepresentativePlane(int series, int channel) {
+    if (seriesLayout != null) {
+      Plane indexed = seriesLayout.getRepresentativePlane(series, channel);
+      if (indexed != null) {
+        return indexed;
+      }
+    }
+
     Plane metadataPlane = null;
     for (int no=0; no<reversePlaneLookup[series].length; no++) {
       Plane p = lookupPlane(series, no);
@@ -1977,28 +1941,26 @@ public class CV7000Reader extends FormatReader {
   }
 
   private String readSanitizedXML(String filename) throws IOException {
-    String xml = DataTools.readFile(filename).trim();
-    if (xml.endsWith(">>")) {
-      xml = xml.substring(0, xml.length() - 1);
-    }
-    return xml;
+    return parsing.readSanitizedXML(filename);
   }
 
   private boolean isWellAcquired(int row, int col) {
-    String key = row + "-" + col;
-    if (acquiredWells.containsKey(key)) {
-      return acquiredWells.get(key);
+    String key = getWellKey(row, col);
+    if (seriesLayout != null && seriesLayout.acquiredWells.containsKey(key)) {
+      return seriesLayout.acquiredWells.get(key);
     }
     if (planeData != null) {
       for (Plane p : planeData) {
         if (p != null && p.file != null && p.field.row == row && p.field.column == col) {
-          acquiredWells.put(key, true);
           return true;
         }
       }
     }
-    acquiredWells.put(key, false);
     return false;
+  }
+
+  private String getWellKey(int row, int column) {
+    return row + "-" + column;
   }
 
   private Plane lookupPlane(int series, int no) {
@@ -2030,7 +1992,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Resolved dataset paths used during the parsing phase. */
-  class DatasetPaths {
+  class CV7000DatasetPaths {
     public Location parent;
     public String wpiPath;
     public Location measurementData;
@@ -2040,14 +2002,262 @@ public class CV7000Reader extends FormatReader {
     public Location otfGeometry;
   }
 
+  /** Parsed Yokogawa sidecars and reader-local provenance. */
+  class CV7000RawModel {
+    public CV7000DatasetPaths paths;
+    public WPIHandler plate;
+    public ArrayList<Plane> planes = new ArrayList<Plane>();
+    public ArrayList<LightSource> lightSources;
+    public ArrayList<Channel> channels;
+    public String startTime;
+    public String endTime;
+    public String wppPath;
+    public String detailPath;
+    public String measurementPath;
+    public String settingsPath;
+    public MeasurementDataHandler measurementHandler;
+    public CrosstalkParameters crosstalkParameters;
+    public ArrayList<String> allFiles = new ArrayList<String>();
+    public YokogawaOriginalMetadata originalMetadata =
+      new YokogawaOriginalMetadata();
+    private HashMap<ChannelKey, Channel> channelsByAcquisition =
+      new HashMap<ChannelKey, Channel>();
+    private HashMap<Integer, ArrayList<Channel>> channelsByRawIndex =
+      new HashMap<Integer, ArrayList<Channel>>();
+
+    public void addFile(String file) {
+      if (file != null && !allFiles.contains(file)) {
+        allFiles.add(file);
+      }
+    }
+
+    public void indexChannels() {
+      channelsByAcquisition.clear();
+      channelsByRawIndex.clear();
+      if (channels == null) {
+        return;
+      }
+      for (Channel channel : channels) {
+        ChannelKey key = new ChannelKey(
+          channel.timelineIndex, channel.actionIndex, channel.index);
+        if (!channelsByAcquisition.containsKey(key)) {
+          channelsByAcquisition.put(key, channel);
+        }
+        Integer rawIndex = Integer.valueOf(channel.index);
+        ArrayList<Channel> rawChannels = channelsByRawIndex.get(rawIndex);
+        if (rawChannels == null) {
+          rawChannels = new ArrayList<Channel>();
+          channelsByRawIndex.put(rawIndex, rawChannels);
+        }
+        rawChannels.add(channel);
+      }
+    }
+
+    public Channel getChannel(int timelineIndex, int actionIndex, int rawChannel) {
+      return channelsByAcquisition.get(
+        new ChannelKey(timelineIndex, actionIndex, rawChannel));
+    }
+  }
+
+  /** Grouped Yokogawa metadata pending OME MapAnnotation emission. */
+  class YokogawaOriginalMetadata {
+    public LinkedHashMap<String, YokogawaAnnotationGroup> groups =
+      new LinkedHashMap<String, YokogawaAnnotationGroup>();
+  }
+
   /** Intermediate layout data used to translate Yokogawa records into series. */
-  class SeriesLayout {
+  class CV7000SeriesLayout {
     public String firstFile;
     public ArrayList<Field> acquiredFields = new ArrayList<Field>();
     public HashMap<Field, MinMax> minMax = new HashMap<Field, MinMax>();
     public HashSet<Integer> uniqueChannels = new HashSet<Integer>();
     public Integer[] channelIndexes;
     public HashMap<Field, Integer> fieldToSeries = new HashMap<Field, Integer>();
+    public int[][] reversePlaneLookup;
+    public LinkedHashMap<String, ArrayList<Field>> fieldsByWell =
+      new LinkedHashMap<String, ArrayList<Field>>();
+    public HashMap<String, Boolean> acquiredWells =
+      new HashMap<String, Boolean>();
+    private HashMap<String, Plane> representativePlanes =
+      new HashMap<String, Plane>();
+
+    public void indexPlane(Plane plane) {
+      if (plane == null) {
+        return;
+      }
+      String key = getPlaneKey(plane.series, plane.channelIndex);
+      Plane existing = representativePlanes.get(key);
+      if (existing == null || (existing.file == null && plane.file != null)) {
+        representativePlanes.put(key, plane);
+      }
+    }
+
+    public Plane getRepresentativePlane(int series, int channel) {
+      return representativePlanes.get(getPlaneKey(series, channel));
+    }
+
+    private String getPlaneKey(int series, int channel) {
+      return series + ":" + channel;
+    }
+  }
+
+  /** Standard OME metadata population entrypoint. */
+  class CV7000MetadataPopulator {
+    public void populate(WPIHandler plate, CV7000SeriesLayout layout)
+      throws FormatException
+    {
+      populateMetadataStore(plate, layout);
+    }
+  }
+
+  /** Yokogawa-specific annotation and sidecar provenance entrypoint. */
+  class CV7000OriginalMetadataPopulator {
+    public void populate(MetadataStore store, boolean hasInstrument) {
+      addYokogawaOriginalMetadata(store, hasInstrument);
+    }
+  }
+
+  class ChannelKey {
+    public int timelineIndex;
+    public int actionIndex;
+    public int channelIndex;
+
+    public ChannelKey(int timelineIndex, int actionIndex, int channelIndex) {
+      this.timelineIndex = timelineIndex;
+      this.actionIndex = actionIndex;
+      this.channelIndex = channelIndex;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof ChannelKey)) {
+        return false;
+      }
+      ChannelKey key = (ChannelKey) o;
+      return timelineIndex == key.timelineIndex &&
+        actionIndex == key.actionIndex && channelIndex == key.channelIndex;
+    }
+
+    @Override
+    public int hashCode() {
+      int code = 17;
+      code = 31 * code + timelineIndex;
+      code = 31 * code + actionIndex;
+      code = 31 * code + channelIndex;
+      return code;
+    }
+  }
+
+  /** Shared Yokogawa parsing and normalization helpers. */
+  class YokogawaParsing {
+    public String readSanitizedXML(String filename) throws IOException {
+      String xml = DataTools.readFile(filename).trim();
+      if (xml.endsWith(">>")) {
+        xml = xml.substring(0, xml.length() - 1);
+      }
+      return xml;
+    }
+
+    public String clean(String value) {
+      if (value == null) {
+        return null;
+      }
+      String trimmed = value.trim();
+      return trimmed.length() == 0 ? null : trimmed;
+    }
+
+    public String getYokogawaAttributeName(String qName) {
+      if (qName == null) {
+        return "";
+      }
+      int colon = qName.indexOf(":");
+      return colon < 0 ? qName : qName.substring(colon + 1);
+    }
+
+    public Integer parseInteger(String value) {
+      if (value == null || value.trim().length() == 0) {
+        return null;
+      }
+      return Integer.valueOf(value.trim());
+    }
+
+    public Double parseYokogawaGain(String value) {
+      if (value == null) {
+        return null;
+      }
+      String trimmed = value.trim();
+      if (!trimmed.regionMatches(true, 0, "gain", 0, 4)) {
+        return null;
+      }
+      int start = -1;
+      for (int i=4; i<trimmed.length(); i++) {
+        char ch = trimmed.charAt(i);
+        if (Character.isDigit(ch) || ch == '+' || ch == '-' ||
+          ch == '.' || ch == ',')
+        {
+          start = i;
+          break;
+        }
+      }
+      if (start < 0) {
+        return null;
+      }
+      int end = start + 1;
+      while (end < trimmed.length()) {
+        char ch = trimmed.charAt(end);
+        if (!(Character.isDigit(ch) || ch == '+' || ch == '-' ||
+          ch == '.' || ch == ',' || ch == 'e' || ch == 'E'))
+        {
+          break;
+        }
+        end++;
+      }
+      return DataTools.parseDouble(trimmed.substring(start, end));
+    }
+
+    public DetectionFilter parseDetectionFilter(String acquisition) {
+      if (acquisition == null) {
+        return null;
+      }
+      String trimmed = acquisition.trim();
+      try {
+        if (trimmed.startsWith("BP") && trimmed.indexOf("/") > 2) {
+          String center = trimmed.substring(2, trimmed.indexOf("/"));
+          String width = trimmed.substring(trimmed.indexOf("/") + 1);
+          Double parsedCenter = DataTools.parseDouble(center);
+          Double parsedWidth = DataTools.parseDouble(width);
+          if (parsedCenter != null && parsedWidth != null) {
+            return DetectionFilter.bandPass(parsedCenter, parsedWidth);
+          }
+        }
+        else if (trimmed.startsWith("LP") && trimmed.length() > 2) {
+          Double cutIn = DataTools.parseDouble(trimmed.substring(2));
+          if (cutIn != null) {
+            return DetectionFilter.longPass(cutIn);
+          }
+        }
+        else if (trimmed.startsWith("SP") && trimmed.length() > 2) {
+          Double cutOut = DataTools.parseDouble(trimmed.substring(2));
+          if (cutOut != null) {
+            return DetectionFilter.shortPass(cutOut);
+          }
+        }
+      }
+      catch (RuntimeException e) {
+        LOGGER.debug("Ignoring invalid CV7000 detection filter value {}", acquisition, e);
+      }
+      return null;
+    }
+
+    public String getBinningValue(String binning) {
+      if (binning == null || binning.trim().length() == 0) {
+        return null;
+      }
+      if (binning.indexOf('x') >= 0 || binning.indexOf('X') >= 0) {
+        return binning;
+      }
+      return binning + "x" + binning;
+    }
   }
 
   /** OME instrument indexes shared by channel metadata population. */
@@ -2327,6 +2537,7 @@ public class CV7000Reader extends FormatReader {
         if (wppPath != null && wppPath.trim().length() == 0) {
           wppPath = null;
         }
+        rawModel.wppPath = wppPath;
       }
       else if (qName.equals("bts:MeasurementChannel")) {
         Channel c = new Channel();
@@ -2352,7 +2563,10 @@ public class CV7000Reader extends FormatReader {
         addYokogawaAttributes("Yokogawa MRF MeasurementDetail ", attributes);
         startTime = attributes.getValue("bts:BeginTime");
         endTime = attributes.getValue("bts:EndTime");
+        rawModel.startTime = startTime;
+        rawModel.endTime = endTime;
         settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
+        rawModel.settingsPath = settingsPath;
 
         String system = attributes.getValue("bts:TargetSystem");
         addYokogawaMeta(
