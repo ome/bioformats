@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,7 @@ import ome.units.quantity.Power;
 import ome.units.quantity.Time;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.xml.model.enums.AcquisitionMode;
@@ -94,6 +96,7 @@ public class CV7000Reader extends FormatReader {
   private String detailPath;
   private String measurementPath;
   private String settingsPath;
+  private DatasetPaths datasetPaths;
   private ArrayList<Plane> planeData;
   private int[][] reversePlaneLookup;
   private ArrayList<LightSource> lightSources;
@@ -101,6 +104,7 @@ public class CV7000Reader extends FormatReader {
   private String startTime, endTime;
   private ArrayList<String> extraFiles;
   private MeasurementDataHandler measurementHandler;
+  private CrosstalkParameters crosstalkParameters;
 
   private transient Map<String, Boolean> acquiredWells = new HashMap<String, Boolean>();
 
@@ -153,7 +157,9 @@ public class CV7000Reader extends FormatReader {
     ArrayList<String> files = new ArrayList<String>();
     files.add(new Location(currentId).getAbsolutePath());
     for (String file : allFiles) {
-      if (file != null && !files.contains(file) && (!noPixels || !isTiffFile(file))) {
+      if (file != null && !files.contains(file) &&
+        (!noPixels || !isPixelFile(classifyCV7000File(new Location(file)))))
+      {
         files.add(file);
       }
     }
@@ -197,9 +203,20 @@ public class CV7000Reader extends FormatReader {
         }
       }
     }
-    files.addAll(extraFiles);
+    if (extraFiles != null) {
+      for (String file : extraFiles) {
+        if (!noPixels ||
+          !isPixelFile(classifyCV7000File(new Location(file))))
+        {
+          files.add(file);
+        }
+      }
+    }
     for (String file : allFiles) {
-      if (file != null && !isTiffFile(file) && !(new Location(file).isDirectory())) {
+      Location location = file == null ? null : new Location(file);
+      if (location != null && !isPixelFile(classifyCV7000File(location)) &&
+        !location.isDirectory())
+      {
         files.add(file);
       }
     }
@@ -221,12 +238,14 @@ public class CV7000Reader extends FormatReader {
       detailPath = null;
       wppPath = null;
       settingsPath = null;
+      datasetPaths = null;
       planeData = null;
       lightSources = null;
       channels = null;
       startTime = null;
       endTime = null;
       measurementHandler = null;
+      crosstalkParameters = null;
       reversePlaneLookup = null;
       extraFiles = null;
       acquiredWells.clear();
@@ -288,6 +307,7 @@ public class CV7000Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     DatasetPaths paths = getDatasetPaths(id);
+    datasetPaths = paths;
     WPIHandler plate = parsePlate(paths.wpiPath);
 
     parseMeasurementData(paths);
@@ -309,6 +329,9 @@ public class CV7000Reader extends FormatReader {
     paths.parent = wpi.getParentFile();
     paths.measurementData = new Location(paths.parent, MEASUREMENT_FILE);
     paths.measurementDetail = new Location(paths.parent, MEASUREMENT_DETAIL);
+    paths.postProcess = new Location(paths.parent, POST_PROCESS);
+    paths.otfCrosstalk = new Location(paths.parent, OTF_CROSSTALK_PARAMETER);
+    paths.otfGeometry = new Location(paths.parent, OTF_GEOMETRY_PARAMETER);
     return paths;
   }
 
@@ -325,7 +348,9 @@ public class CV7000Reader extends FormatReader {
     Arrays.sort(listedFiles);
     for (int i=0; i<listedFiles.length; i++) {
       Location file = new Location(parent, listedFiles[i]);
-      if (!file.isDirectory() && file.canRead() && isCV7000DatasetFile(file)) {
+      if (!file.isDirectory() && file.canRead() &&
+        isDatasetFile(classifyCV7000File(file)))
+      {
         allFiles.add(file.getAbsolutePath());
       }
     }
@@ -350,6 +375,7 @@ public class CV7000Reader extends FormatReader {
     parseMeasurementDetail(paths);
     parseWellPlateProduct();
     parseMeasurementSettings();
+    parseOTFCrosstalk(paths);
   }
 
   /** MeasurementDetail links the acquisition settings sidecars and seeds channels. */
@@ -387,6 +413,24 @@ public class CV7000Reader extends FormatReader {
       if (xml.length() > 0) {
         XMLTools.parseXML(xml, settingsHandler);
       }
+    }
+  }
+
+  /** OTF crosstalk stores exact emission filter bands and optional dichroics. */
+  private void parseOTFCrosstalk(DatasetPaths paths) {
+    Location crosstalk = paths.otfCrosstalk;
+    if (!crosstalk.exists()) {
+      return;
+    }
+
+    try {
+      CrosstalkParameterHandler handler = new CrosstalkParameterHandler();
+      XMLTools.parseXML(readSanitizedXML(crosstalk.getAbsolutePath()), handler);
+      crosstalkParameters = handler.getParameters();
+    }
+    catch (Exception e) {
+      crosstalkParameters = null;
+      LOGGER.warn("Could not parse CV7000 crosstalk sidecar {}", crosstalk.getAbsolutePath(), e);
     }
   }
 
@@ -597,7 +641,9 @@ public class CV7000Reader extends FormatReader {
 
       InstrumentMetadataIndexes indexes = populateInstrumentMetadata(store);
       populateSeriesMetadata(store, indexes.instrument, indexes.lightSourceIndexes,
-        indexes.detectorIndexes, indexes.filterIndexes, indexes.usedObjectiveIDs, timings);
+        indexes.detectorIndexes, indexes.filterIndexes, indexes.dichroicIndexes,
+        indexes.usedObjectiveIDs, timings);
+      addYokogawaOriginalMetadata();
       setSeries(0);
     }
   }
@@ -616,8 +662,8 @@ public class CV7000Reader extends FormatReader {
       populateLightSources(store, indexes.lightSourceIndexes);
       populateObjectives(store, indexes.usedObjectiveIDs);
       populateDetectors(store, indexes.detectorIndexes);
+      populateDichroics(store, indexes.dichroicIndexes);
       populateFilters(store, indexes.filterIndexes);
-      addYokogawaOriginalMetadata();
     }
     return indexes;
   }
@@ -720,6 +766,7 @@ public class CV7000Reader extends FormatReader {
     HashMap<Integer, Integer> lightSourceIndexes,
     HashMap<Integer, Integer> detectorIndexes,
     HashMap<FilterKey, Integer> filterIndexes,
+    HashMap<String, Integer> dichroicIndexes,
     List<String> usedObjectiveIDs, SeriesTiming[] timings)
   {
     for (int i=0; i<getSeriesCount(); i++) {
@@ -728,7 +775,7 @@ public class CV7000Reader extends FormatReader {
         store.setImageInstrumentRef(instrument, i);
       }
       populateChannelMetadata(store, i, lightSourceIndexes, detectorIndexes,
-        filterIndexes, usedObjectiveIDs);
+        filterIndexes, dichroicIndexes, usedObjectiveIDs);
       populatePlaneMetadata(store, i, timings[i]);
     }
   }
@@ -737,6 +784,7 @@ public class CV7000Reader extends FormatReader {
     HashMap<Integer, Integer> lightSourceIndexes,
     HashMap<Integer, Integer> detectorIndexes,
     HashMap<FilterKey, Integer> filterIndexes,
+    HashMap<String, Integer> dichroicIndexes,
     List<String> usedObjectiveIDs)
   {
     if (channels == null) {
@@ -799,7 +847,7 @@ public class CV7000Reader extends FormatReader {
       }
 
       populateChannelLightSourceSettings(store, series, c, channel, lightSourceIndexes);
-      populateChannelFilterSettings(store, series, c, channel, filterIndexes);
+      populateChannelFilterSettings(store, series, c, channel, filterIndexes, dichroicIndexes);
       populateDetectorSettings(store, series, c, channel, detectorIndexes);
       populateExposureTime(store, series, c, channel);
     }
@@ -826,7 +874,8 @@ public class CV7000Reader extends FormatReader {
   }
 
   private void populateChannelFilterSettings(MetadataStore store, int series,
-    int channelIndex, Channel channel, HashMap<FilterKey, Integer> filterIndexes)
+    int channelIndex, Channel channel, HashMap<FilterKey, Integer> filterIndexes,
+    HashMap<String, Integer> dichroicIndexes)
   {
     if (!channel.isBrightfield() && channel.detectionFilter != null &&
       channel.detectionFilter.center != null)
@@ -840,6 +889,16 @@ public class CV7000Reader extends FormatReader {
       store.setLightPathEmissionFilterRef(
         MetadataTools.createLSID("Filter", 0, filterIndexes.get(filter)),
         series, channelIndex, 0);
+    }
+
+    CrosstalkFilter crosstalk = getCrosstalkFilter(channel);
+    if (crosstalk != null && crosstalk.dichroics.size() == 1 &&
+      dichroicIndexes.containsKey(crosstalk.dichroics.get(0).name))
+    {
+      store.setLightPathDichroicRef(
+        MetadataTools.createLSID(
+          "Dichroic", 0, dichroicIndexes.get(crosstalk.dichroics.get(0).name)),
+        series, channelIndex);
     }
   }
 
@@ -1039,6 +1098,29 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
+  private void populateDichroics(MetadataStore store,
+    HashMap<String, Integer> dichroicIndexes)
+  {
+    if (crosstalkParameters == null) {
+      return;
+    }
+
+    for (CrosstalkFilter filter : crosstalkParameters.filters.values()) {
+      for (CrosstalkDichroic dichroic : filter.dichroics) {
+        if (dichroic.name == null || dichroic.name.trim().length() == 0 ||
+          dichroicIndexes.containsKey(dichroic.name))
+        {
+          continue;
+        }
+        int index = dichroicIndexes.size();
+        dichroicIndexes.put(dichroic.name, index);
+        String dichroicID = MetadataTools.createLSID("Dichroic", 0, index);
+        store.setDichroicID(dichroicID, 0, index);
+        store.setDichroicModel(dichroic.name, 0, index);
+      }
+    }
+  }
+
   private void populateFilters(MetadataStore store,
     HashMap<FilterKey, Integer> filterIndexes)
     throws FormatException
@@ -1057,29 +1139,63 @@ public class CV7000Reader extends FormatReader {
       store.setFilterID(filterID, 0, filter);
       store.setFilterModel(key.acquisition, 0, filter);
       store.setFilterType(MetadataTools.getFilterType(key.detectionFilter.filterType), 0, filter);
+      CrosstalkFilter crosstalk = getCrosstalkFilter(c);
       if (key.detectionFilter != null) {
-        Length cutIn = key.detectionFilter.cutIn == null ?
-          null : FormatTools.getCutIn(key.detectionFilter.cutIn);
-        Length cutOut = key.detectionFilter.cutOut == null ?
-          null : FormatTools.getCutOut(key.detectionFilter.cutOut);
+        Length cutIn = getCrosstalkCutIn(crosstalk);
+        if (cutIn == null && key.detectionFilter.cutIn != null) {
+          cutIn = FormatTools.getCutIn(key.detectionFilter.cutIn);
+        }
+        Length cutOut = getCrosstalkCutOut(crosstalk);
+        if (cutOut == null && key.detectionFilter.cutOut != null) {
+          cutOut = FormatTools.getCutOut(key.detectionFilter.cutOut);
+        }
         if (cutIn != null) {
           store.setTransmittanceRangeCutIn(cutIn, 0, filter);
         }
         if (cutOut != null) {
           store.setTransmittanceRangeCutOut(cutOut, 0, filter);
         }
+        PercentFraction transmittance = getCrosstalkTransmittance(crosstalk);
+        if (transmittance != null) {
+          store.setTransmittanceRangeTransmittance(transmittance, 0, filter);
+        }
       }
     }
+  }
+
+  private Length getCrosstalkCutIn(CrosstalkFilter filter) {
+    return filter == null || filter.minWaveLength == null ?
+      null : FormatTools.getCutIn(filter.minWaveLength);
+  }
+
+  private Length getCrosstalkCutOut(CrosstalkFilter filter) {
+    return filter == null || filter.maxWaveLength == null ?
+      null : FormatTools.getCutOut(filter.maxWaveLength);
+  }
+
+  private PercentFraction getCrosstalkTransmittance(CrosstalkFilter filter) {
+    if (filter == null || filter.averageTransmittance == null) {
+      return null;
+    }
+    double fraction = filter.averageTransmittance / 100.0;
+    if (fraction < 0 || fraction > 1) {
+      LOGGER.debug("Ignoring invalid CV7000 OTF transmittance {}",
+        filter.averageTransmittance);
+      return null;
+    }
+    return new PercentFraction(Float.valueOf((float) fraction));
   }
 
   private void addYokogawaOriginalMetadata() {
     if (allFiles != null) {
       for (String file : allFiles) {
-        if (file != null && !isTiffFile(file)) {
-          addPostProcessOriginalMetadata(file);
-          addRawSidecarMetadata(file);
+        Location location = file == null ? null : new Location(file);
+        CV7000FileRole role = classifyCV7000File(location);
+        if (file != null && isDatasetFile(role) && !isPixelFile(role)) {
+          parseStructuredSidecarMetadata(file, role);
+          addRawSidecarMetadata(file, role);
           addYokogawaMetaList("Yokogawa Sidecar ", "File",
-            new Location(file).getName());
+            location.getName());
         }
       }
     }
@@ -1092,6 +1208,7 @@ public class CV7000Reader extends FormatReader {
         addYokogawaMeta(prefix, "Power", source.power);
       }
     }
+    addCrosstalkOriginalMetadata();
     if (channels == null) {
       return;
     }
@@ -1144,10 +1261,46 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private void addRawSidecarMetadata(String file) {
+  private void addCrosstalkOriginalMetadata() {
+    if (crosstalkParameters == null) {
+      return;
+    }
+
+    int filterIndex = 1;
+    for (CrosstalkFilter filter : crosstalkParameters.filters.values()) {
+      String prefix = "Yokogawa OTF Crosstalk EMFilter " + filterIndex + " ";
+      addYokogawaMeta(prefix, "FilterID", filter.filterID);
+      addYokogawaMeta(prefix, "CameraID", filter.cameraNumber);
+      addYokogawaMeta(prefix, "Acquisition", filter.acquisition);
+      addYokogawaMeta(prefix, "MinWaveLength", filter.minWaveLength);
+      addYokogawaMeta(prefix, "MaxWaveLength", filter.maxWaveLength);
+      addYokogawaMeta(prefix, "AverageTransmittance", filter.averageTransmittance);
+      for (int i=0; i<filter.dichroics.size(); i++) {
+        CrosstalkDichroic dichroic = filter.dichroics.get(i);
+        String dichroicPrefix = prefix + "ISDM " + (i + 1) + " ";
+        addYokogawaMeta(dichroicPrefix, "ID", dichroic.id);
+        addYokogawaMeta(dichroicPrefix, "Name", dichroic.name);
+        addYokogawaMeta(dichroicPrefix, "Reflection", dichroic.reflection);
+        addYokogawaMeta(
+          dichroicPrefix, "AverageTransmittance", dichroic.averageTransmittance);
+      }
+      filterIndex++;
+    }
+
+    for (CrosstalkFluorophore fluorophore : crosstalkParameters.fluorophores) {
+      String prefix = "Yokogawa OTF Crosstalk Fluorophore " +
+        fluorophore.name + " ";
+      for (CrosstalkFluorophoreIntensity intensity : fluorophore.intensities) {
+        addYokogawaMeta(prefix, "Filter " + intensity.filterID + " AverageIntensity",
+          intensity.averageIntensity);
+      }
+    }
+  }
+
+  private void addRawSidecarMetadata(String file, CV7000FileRole role) {
     Location location = new Location(file);
     String name = location.getName();
-    if (name == null || MEASUREMENT_FILE.equals(name) || !isRawXMLSidecar(location)) {
+    if (name == null || !preserveRawXML(role)) {
       return;
     }
 
@@ -1174,30 +1327,82 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private boolean isCV7000DatasetFile(Location file) {
+  private CV7000FileRole classifyCV7000File(Location file) {
+    if (file == null) {
+      return CV7000FileRole.UNKNOWN;
+    }
     String name = file.getName();
-    return name != null && (isTiffFile(name) || isKnownCV7000Sidecar(file));
+    if (name == null) {
+      return CV7000FileRole.UNKNOWN;
+    }
+    if (isTiffFile(name)) {
+      return CV7000FileRole.TIFF_PLANE;
+    }
+    if (isPath(file, currentId)) {
+      return CV7000FileRole.WPI;
+    }
+    if (isPath(file, measurementPath)) {
+      return CV7000FileRole.MEASUREMENT_DATA;
+    }
+    if (isPath(file, detailPath)) {
+      return CV7000FileRole.MEASUREMENT_DETAIL;
+    }
+    if (isPath(file, settingsPath)) {
+      return CV7000FileRole.MEASUREMENT_SETTINGS;
+    }
+    if (isPath(file, wppPath)) {
+      return CV7000FileRole.WELL_PLATE_PRODUCT;
+    }
+    if (datasetPaths != null) {
+      if (isPath(file, datasetPaths.wpiPath)) {
+        return CV7000FileRole.WPI;
+      }
+      if (isPath(file, datasetPaths.measurementData)) {
+        return CV7000FileRole.MEASUREMENT_DATA;
+      }
+      if (isPath(file, datasetPaths.measurementDetail)) {
+        return CV7000FileRole.MEASUREMENT_DETAIL;
+      }
+      if (isPath(file, datasetPaths.postProcess)) {
+        return CV7000FileRole.POST_PROCESS;
+      }
+      if (isPath(file, datasetPaths.otfCrosstalk)) {
+        return CV7000FileRole.OTF_CROSSTALK;
+      }
+      if (isPath(file, datasetPaths.otfGeometry)) {
+        return CV7000FileRole.OTF_GEOMETRY;
+      }
+    }
+    return CV7000FileRole.UNKNOWN;
   }
 
   private boolean isTiffFile(String name) {
     return name != null && checkSuffix(name, new String[] {"tif", "tiff"});
   }
 
-  private boolean isRawXMLSidecar(Location file) {
-    String name = file.getName();
-    return name != null && !MEASUREMENT_FILE.equals(name) &&
-      isKnownCV7000Sidecar(file);
+  private boolean isDatasetFile(CV7000FileRole role) {
+    return role != null && role != CV7000FileRole.UNKNOWN;
   }
 
-  private boolean isKnownCV7000Sidecar(Location file) {
-    String name = file.getName();
-    if (name == null) {
+  private boolean preserveRawXML(CV7000FileRole role) {
+    if (role == null) {
       return false;
     }
-    return isPath(file, currentId) || isPath(file, measurementPath) ||
-      isPath(file, detailPath) || isPath(file, settingsPath) ||
-      isPath(file, wppPath) || POST_PROCESS.equals(name) ||
-      OTF_CROSSTALK_PARAMETER.equals(name) || OTF_GEOMETRY_PARAMETER.equals(name);
+    switch (role) {
+      case WPI:
+      case MEASUREMENT_DETAIL:
+      case MEASUREMENT_SETTINGS:
+      case WELL_PLATE_PRODUCT:
+      case OTF_CROSSTALK:
+      case OTF_GEOMETRY:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  private boolean isPixelFile(CV7000FileRole role) {
+    return role == CV7000FileRole.TIFF_PLANE;
   }
 
   private boolean isPath(Location file, String path) {
@@ -1207,11 +1412,20 @@ public class CV7000Reader extends FormatReader {
     return file.getAbsolutePath().equals(new Location(path).getAbsolutePath());
   }
 
-  private void addPostProcessOriginalMetadata(String file) {
-    Location location = new Location(file);
-    if (!POST_PROCESS.equals(location.getName())) {
-      return;
+  private boolean isPath(Location file, Location path) {
+    if (path == null) {
+      return false;
     }
+    return file.getAbsolutePath().equals(path.getAbsolutePath());
+  }
+
+  private void parseStructuredSidecarMetadata(String file, CV7000FileRole role) {
+    if (role == CV7000FileRole.POST_PROCESS) {
+      addPostProcessOriginalMetadata(file);
+    }
+  }
+
+  private void addPostProcessOriginalMetadata(String file) {
     try {
       String xml = readSanitizedXML(file);
       if (xml.length() > 0) {
@@ -1323,6 +1537,14 @@ public class CV7000Reader extends FormatReader {
     return null;
   }
 
+  private CrosstalkFilter getCrosstalkFilter(Channel channel) {
+    if (channel == null || crosstalkParameters == null) {
+      return null;
+    }
+    return crosstalkParameters.filters.get(new CrosstalkFilterKey(
+      channel.filterID, Integer.valueOf(channel.cameraNumber), channel.acquisition));
+  }
+
   private String getBinningValue(String binning) {
     if (binning == null || binning.trim().length() == 0) {
       return null;
@@ -1405,7 +1627,7 @@ public class CV7000Reader extends FormatReader {
     if (value == null || value.trim().length() == 0) {
       return null;
     }
-    return Integer.valueOf(value);
+    return Integer.valueOf(value.trim());
   }
 
   private int getChannelIndex(Plane p) {
@@ -1536,12 +1758,28 @@ public class CV7000Reader extends FormatReader {
 
   // -- Helper classes --
 
+  private enum CV7000FileRole {
+    TIFF_PLANE,
+    WPI,
+    MEASUREMENT_DATA,
+    MEASUREMENT_DETAIL,
+    MEASUREMENT_SETTINGS,
+    WELL_PLATE_PRODUCT,
+    POST_PROCESS,
+    OTF_CROSSTALK,
+    OTF_GEOMETRY,
+    UNKNOWN
+  }
+
   /** Resolved dataset paths used during the parsing phase. */
   class DatasetPaths {
     public Location parent;
     public String wpiPath;
     public Location measurementData;
     public Location measurementDetail;
+    public Location postProcess;
+    public Location otfCrosstalk;
+    public Location otfGeometry;
   }
 
   /** Intermediate layout data used to translate Yokogawa records into series. */
@@ -1563,6 +1801,8 @@ public class CV7000Reader extends FormatReader {
       new HashMap<Integer, Integer>();
     public HashMap<FilterKey, Integer> filterIndexes =
       new HashMap<FilterKey, Integer>();
+    public HashMap<String, Integer> dichroicIndexes =
+      new HashMap<String, Integer>();
     public List<String> usedObjectiveIDs = new ArrayList<String>();
   }
 
@@ -2067,6 +2307,166 @@ public class CV7000Reader extends FormatReader {
 
   }
 
+  class CrosstalkParameterHandler extends BaseHandler {
+    private CrosstalkParameters parameters = new CrosstalkParameters();
+    private CrosstalkFilter currentFilter;
+    private CrosstalkFluorophore currentFluorophore;
+
+    public CrosstalkParameters getParameters() {
+      return parameters;
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      String name = getYokogawaAttributeName(qName);
+      if ("EMFilter".equals(name)) {
+        currentFilter = new CrosstalkFilter();
+        currentFilter.filterID = getAttribute(attributes, "FilterID");
+        currentFilter.cameraNumber = DataTools.parseInteger(
+          getAttribute(attributes, "CameraID"));
+        currentFilter.acquisition = getAttribute(attributes, "Acquisition");
+        currentFilter.averageTransmittance = DataTools.parseDouble(
+          getAttribute(attributes, "AverageTransmittance"));
+        currentFilter.minWaveLength = DataTools.parseDouble(
+          getAttribute(attributes, "MinWaveLength"));
+        currentFilter.maxWaveLength = DataTools.parseDouble(
+          getAttribute(attributes, "MaxWaveLength"));
+        parameters.addFilter(currentFilter);
+      }
+      else if ("ISDM".equals(name) && currentFilter != null) {
+        CrosstalkDichroic dichroic = new CrosstalkDichroic();
+        dichroic.id = getAttribute(attributes, "ID");
+        dichroic.name = getAttribute(attributes, "Name");
+        dichroic.reflection = getAttribute(attributes, "Reflection");
+        dichroic.averageTransmittance = DataTools.parseDouble(
+          getAttribute(attributes, "AverageTransmittance"));
+        currentFilter.dichroics.add(dichroic);
+      }
+      else if ("Fluorophore".equals(name)) {
+        currentFluorophore = new CrosstalkFluorophore();
+        currentFluorophore.name = getAttribute(attributes, "Name");
+        parameters.fluorophores.add(currentFluorophore);
+      }
+      else if ("FluorophoreIntensity".equals(name) && currentFluorophore != null) {
+        CrosstalkFluorophoreIntensity intensity =
+          new CrosstalkFluorophoreIntensity();
+        intensity.filterID = getAttribute(attributes, "FilterID");
+        intensity.averageIntensity = DataTools.parseDouble(
+          getAttribute(attributes, "AverageIntensity"));
+        currentFluorophore.intensities.add(intensity);
+      }
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) {
+      String name = getYokogawaAttributeName(qName);
+      if ("EMFilter".equals(name)) {
+        currentFilter = null;
+      }
+      else if ("Fluorophore".equals(name)) {
+        currentFluorophore = null;
+      }
+    }
+
+    private String getAttribute(Attributes attributes, String name) {
+      if (attributes == null || name == null) {
+        return null;
+      }
+      for (int i=0; i<attributes.getLength(); i++) {
+        if (name.equals(getYokogawaAttributeName(attributes.getQName(i)))) {
+          String value = attributes.getValue(i);
+          return value == null || value.trim().length() == 0 ? null : value;
+        }
+      }
+      return null;
+    }
+  }
+
+  class CrosstalkParameters {
+    public LinkedHashMap<CrosstalkFilterKey, CrosstalkFilter> filters =
+      new LinkedHashMap<CrosstalkFilterKey, CrosstalkFilter>();
+    public ArrayList<CrosstalkFluorophore> fluorophores =
+      new ArrayList<CrosstalkFluorophore>();
+
+    public void addFilter(CrosstalkFilter filter) {
+      filters.put(new CrosstalkFilterKey(
+        filter.filterID, filter.cameraNumber, filter.acquisition), filter);
+    }
+  }
+
+  class CrosstalkFilter {
+    public String filterID;
+    public Integer cameraNumber;
+    public String acquisition;
+    public Double averageTransmittance;
+    public Double minWaveLength;
+    public Double maxWaveLength;
+    public ArrayList<CrosstalkDichroic> dichroics =
+      new ArrayList<CrosstalkDichroic>();
+  }
+
+  class CrosstalkDichroic {
+    public String id;
+    public String name;
+    public String reflection;
+    public Double averageTransmittance;
+  }
+
+  class CrosstalkFluorophore {
+    public String name;
+    public ArrayList<CrosstalkFluorophoreIntensity> intensities =
+      new ArrayList<CrosstalkFluorophoreIntensity>();
+  }
+
+  class CrosstalkFluorophoreIntensity {
+    public String filterID;
+    public Double averageIntensity;
+  }
+
+  class CrosstalkFilterKey {
+    public String filterID;
+    public Integer cameraNumber;
+    public String acquisition;
+
+    public CrosstalkFilterKey(String filterID, Integer cameraNumber,
+      String acquisition)
+    {
+      this.filterID = filterID;
+      this.cameraNumber = cameraNumber;
+      this.acquisition = acquisition;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof CrosstalkFilterKey)) {
+        return false;
+      }
+      CrosstalkFilterKey key = (CrosstalkFilterKey) o;
+      return same(filterID, key.filterID) &&
+        same(cameraNumber, key.cameraNumber) &&
+        same(acquisition, key.acquisition);
+    }
+
+    @Override
+    public int hashCode() {
+      int code = 17;
+      code = 31 * code + hash(filterID);
+      code = 31 * code + hash(cameraNumber);
+      code = 31 * code + hash(acquisition);
+      return code;
+    }
+
+    private boolean same(Object a, Object b) {
+      return a == null ? b == null : a.equals(b);
+    }
+
+    private int hash(Object value) {
+      return value == null ? 0 : value.hashCode();
+    }
+  }
+
   class LightSource {
     public String name;
     public String type;
@@ -2110,6 +2510,7 @@ public class CV7000Reader extends FormatReader {
   class FilterKey {
     public String filterID;
     public String acquisition;
+    public int cameraNumber;
     public Integer filterWheelPosition;
     public Integer filterPosition;
     public DetectionFilter detectionFilter;
@@ -2117,6 +2518,7 @@ public class CV7000Reader extends FormatReader {
     public FilterKey(Channel ch) {
       filterID = ch.filterID;
       acquisition = ch.acquisition;
+      cameraNumber = ch.cameraNumber;
       filterWheelPosition = ch.filterWheelPosition;
       filterPosition = ch.filterPosition;
       detectionFilter = ch.detectionFilter;
@@ -2134,6 +2536,7 @@ public class CV7000Reader extends FormatReader {
       FilterKey key = (FilterKey) o;
       return same(filterID, key.filterID) &&
         same(acquisition, key.acquisition) &&
+        cameraNumber == key.cameraNumber &&
         same(filterWheelPosition, key.filterWheelPosition) &&
         same(filterPosition, key.filterPosition);
     }
@@ -2143,6 +2546,7 @@ public class CV7000Reader extends FormatReader {
       int code = 17;
       code = 31 * code + hash(filterID);
       code = 31 * code + hash(acquisition);
+      code = 31 * code + cameraNumber;
       code = 31 * code + hash(filterWheelPosition);
       code = 31 * code + hash(filterPosition);
       return code;
