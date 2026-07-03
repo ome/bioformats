@@ -1074,6 +1074,7 @@ public class CV7000Reader extends FormatReader {
     if (allFiles != null) {
       for (String file : allFiles) {
         if (file != null && !checkSuffix(file, "tif")) {
+          addPostProcessOriginalMetadata(file);
           addRawSidecarMetadata(file);
           addYokogawaMetaList("Yokogawa Sidecar ", "File",
             new Location(file).getName());
@@ -1174,7 +1175,23 @@ public class CV7000Reader extends FormatReader {
   private boolean isRawXMLSidecar(String file) {
     return checkSuffix(file, "wpi") || checkSuffix(file, "mrf") ||
       checkSuffix(file, "mes") || checkSuffix(file, "wpp") ||
-      checkSuffix(file, "xml");
+      checkSuffix(file, "ppf") || checkSuffix(file, "xml");
+  }
+
+  private void addPostProcessOriginalMetadata(String file) {
+    Location location = new Location(file);
+    if (!POST_PROCESS.equals(location.getName())) {
+      return;
+    }
+    try {
+      String xml = readSanitizedXML(file);
+      if (xml.length() > 0) {
+        XMLTools.parseXML(xml, new PostProcessHandler());
+      }
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not parse CV7000 post-processing sidecar {}", file, e);
+    }
   }
 
   private void addMeasurementDataOriginalMetadata() {
@@ -1388,7 +1405,9 @@ public class CV7000Reader extends FormatReader {
         continue;
       }
       Channel channel = lookupChannel(p);
-      if (channel == null || channel.physicalSizeZ == null) {
+      if (channel == null || channel.physicalSizeZ == null ||
+        channel.physicalSizeZ <= 0)
+      {
         return null;
       }
       foundChannel = true;
@@ -1741,6 +1760,28 @@ public class CV7000Reader extends FormatReader {
     {
       if (qName.equals("bts:WellPlateProduct")) {
         addYokogawaAttributes("Yokogawa WPP ", attributes);
+      }
+    }
+
+  }
+
+  class PostProcessHandler extends BaseHandler {
+    private int actionIndex = -1;
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      if (qName.equals("cvpp:PostProcess") || qName.equals("PostProcess")) {
+        addYokogawaAttributes("Yokogawa PPF PostProcess ", attributes);
+      }
+      else if (qName.equals("cvpp:PostProcessAction") ||
+        qName.equals("PostProcessAction"))
+      {
+        actionIndex++;
+        addYokogawaAttributes(
+          "Yokogawa PPF PostProcessAction " + (actionIndex + 1) + " ",
+          attributes);
       }
     }
 
