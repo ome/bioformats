@@ -62,6 +62,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
+import ome.xml.model.enums.NamingConvention;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -677,6 +678,8 @@ public class CV7000Reader extends FormatReader {
     store.setPlateExternalIdentifier(plate.getPlateID(), 0);
     store.setPlateRows(new PositiveInteger(plate.getPlateRows()), 0);
     store.setPlateColumns(new PositiveInteger(plate.getPlateColumns()), 0);
+    store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+    store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
     store.setPlateWellOriginX(FormatTools.createLength(0.0, UNITS.MICROMETER), 0);
     store.setPlateWellOriginY(FormatTools.createLength(0.0, UNITS.MICROMETER), 0);
 
@@ -739,8 +742,9 @@ public class CV7000Reader extends FormatReader {
             (col + 1) + ", Field " + (field.field + 1);
           store.setImageName(name, nextImage);
           if (timings[nextImage].startTimestamp != null) {
-            store.setImageAcquisitionDate(
-              new Timestamp(timings[nextImage].startTimestamp), nextImage);
+            Timestamp timepoint = new Timestamp(timings[nextImage].startTimestamp);
+            store.setImageAcquisitionDate(timepoint, nextImage);
+            store.setWellSampleTimepoint(timepoint, 0, nextWell, wellSample);
           }
           store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, nextImage);
 
@@ -836,8 +840,7 @@ public class CV7000Reader extends FormatReader {
         store.setObjectiveSettingsID(objectiveID, series);
       }
 
-      store.setChannelName("Action #" + (p.actionIndex + 1) +
-        ", Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, series, c);
+      store.setChannelName(getChannelDisplayName(channel, p), series, c);
 
       AcquisitionMode acquisitionMode = getYokogawaAcquisitionMode(channel);
       if (acquisitionMode != null) {
@@ -860,6 +863,43 @@ public class CV7000Reader extends FormatReader {
       populateDetectorSettings(store, series, c, channel, detectorIndexes);
       populateExposureTime(store, series, c, channel);
     }
+  }
+
+  private String getChannelDisplayName(Channel channel, Plane plane) {
+    String acquisition = clean(channel.acquisition);
+    if (channel.isBrightfield()) {
+      return acquisition == null ? BRIGHTFIELD : "BF / " + acquisition;
+    }
+
+    String target = clean(channel.target);
+    if (target != null && acquisition != null) {
+      return target + " / " + acquisition;
+    }
+    if (target != null) {
+      return target;
+    }
+    if (acquisition != null) {
+      return acquisition;
+    }
+    return getChannelProvenance(channel, plane);
+  }
+
+  private String getChannelProvenance(Channel channel) {
+    return getChannelProvenance(channel, null);
+  }
+
+  private String getChannelProvenance(Channel channel, Plane plane) {
+    int action = plane == null ? channel.actionIndex : plane.actionIndex;
+    return "Action #" + (action + 1) + ", Channel #" +
+      (channel.index + 1) + ", Camera #" + channel.cameraNumber;
+  }
+
+  private String clean(String value) {
+    if (value == null) {
+      return null;
+    }
+    String trimmed = value.trim();
+    return trimmed.length() == 0 ? null : trimmed;
   }
 
   private void populateChannelLightSourceSettings(MetadataStore store, int series,
@@ -1249,6 +1289,7 @@ public class CV7000Reader extends FormatReader {
       addYokogawaMeta(prefix, "ActionUseSoftFocus", c.actionUseSoftFocus);
       addYokogawaMeta(prefix, "FilterID", c.filterID);
       addYokogawaMeta(prefix, "Acquisition", c.acquisition);
+      addYokogawaMeta(prefix, "ChannelProvenance", getChannelProvenance(c));
       if (c.detectionFilter != null) {
         addYokogawaMeta(prefix, "DetectionFilterType", c.detectionFilter.filterType);
         addYokogawaMeta(prefix, "DetectionFilterCenter", c.detectionFilter.center);
