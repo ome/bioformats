@@ -677,6 +677,8 @@ public class CV7000Reader extends FormatReader {
     store.setPlateExternalIdentifier(plate.getPlateID(), 0);
     store.setPlateRows(new PositiveInteger(plate.getPlateRows()), 0);
     store.setPlateColumns(new PositiveInteger(plate.getPlateColumns()), 0);
+    store.setPlateWellOriginX(FormatTools.createLength(0.0, UNITS.MICROMETER), 0);
+    store.setPlateWellOriginY(FormatTools.createLength(0.0, UNITS.MICROMETER), 0);
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
@@ -746,11 +748,18 @@ public class CV7000Reader extends FormatReader {
 
           Plane p = lookupFirstBackedPlane(nextImage);
           if (p != null) {
+            // CV7000 sidecars mix coordinate systems. WPP plate dimensions and
+            // pitch are in millimeters, while MRF pixel sizes are in um/pixel.
+            // MLF X/Y ranges match field centers fitting inside the WPP well
+            // bottom when interpreted as micrometers around 0,0; they would be
+            // impossible as millimeters and do not shift by the 9000 um well
+            // pitch. Treat them as well-center-relative field offsets, not
+            // absolute stage positions.
             store.setWellSamplePositionX(
-              FormatTools.createLength(p.xpos, UNITS.REFERENCEFRAME),
+              FormatTools.createLength(p.xpos, UNITS.MICROMETER),
               0, nextWell, wellSample);
             store.setWellSamplePositionY(
-              FormatTools.createLength(p.ypos, UNITS.REFERENCEFRAME),
+              FormatTools.createLength(p.ypos, UNITS.MICROMETER),
               0, nextWell, wellSample);
           }
 
@@ -949,9 +958,11 @@ public class CV7000Reader extends FormatReader {
       if (plane == null) {
         continue;
       }
-      store.setPlanePositionX(FormatTools.createLength(plane.xpos, UNITS.REFERENCEFRAME), series, p);
-      store.setPlanePositionY(FormatTools.createLength(plane.ypos, UNITS.REFERENCEFRAME), series, p);
-      store.setPlanePositionZ(FormatTools.createLength(plane.zpos, UNITS.REFERENCEFRAME), series, p);
+      // MLF Z values match MES AFShiftBase + (ZIndex - 1) * SliceLength,
+      // where SliceLength is the physical Z spacing in micrometers. AFSearch
+      // indicates the reference is the autofocus/base surface, so this is an
+      // AF-relative stack coordinate, not a proven absolute stage Z.
+      store.setPlanePositionZ(FormatTools.createLength(plane.zpos, UNITS.MICROMETER), series, p);
       Double deltaT = getPlaneDeltaTSeconds(plane, timing.startMillis);
       if (deltaT != null) {
         store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), series, p);
