@@ -1150,9 +1150,10 @@ public class CV7000Reader extends FormatReader {
         String filamentID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
         store.setFilamentID(filamentID, 0, nextLightSource);
         store.setFilamentModel(getLightSourceModel(l), 0, nextLightSource);
-        // The CV7000 user manual identifies white-light illumination as a
-        // 100 W halogen lamp; MES fixtures expose only generic Type="Lamp".
-        store.setFilamentType(MetadataTools.getFilamentType("Halogen"),
+        // The CV7000 manual describes the white-light lamp as halogen, but
+        // installed hardware may differ and the sidecars expose only generic
+        // Type="Lamp", so keep the filament type as Other.
+        store.setFilamentType(MetadataTools.getFilamentType("Other"),
           0, nextLightSource);
         lightSourceIndexes.put(i, nextLightSource);
         nextLightSource++;
