@@ -958,11 +958,11 @@ public class CV7000Reader extends FormatReader {
       if (plane == null) {
         continue;
       }
-      // MLF Z values match MES AFShiftBase + (ZIndex - 1) * SliceLength,
-      // where SliceLength is the physical Z spacing in micrometers. AFSearch
-      // indicates the reference is the autofocus/base surface, so this is an
-      // AF-relative stack coordinate, not a proven absolute stage Z.
-      store.setPlanePositionZ(FormatTools.createLength(plane.zpos, UNITS.MICROMETER), series, p);
+      // MLF Z values match MES AFShiftBase + (ZIndex - 1) * SliceLength, but
+      // AFSearch indicates the reference is the autofocus/base surface. Keep
+      // per-plane Z as an AF-relative reference-frame coordinate; calibrated Z
+      // spacing is reported separately via Pixels.PhysicalSizeZ when available.
+      store.setPlanePositionZ(FormatTools.createLength(plane.zpos, UNITS.REFERENCEFRAME), series, p);
       Double deltaT = getPlaneDeltaTSeconds(plane, timing.startMillis);
       if (deltaT != null) {
         store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), series, p);
