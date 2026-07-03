@@ -81,6 +81,8 @@ public class CV7000Reader extends FormatReader {
   private static final String MEASUREMENT_FILE = "MeasurementData.mlf";
   private static final String MEASUREMENT_DETAIL = "MeasurementDetail.mrf";
   private static final String POST_PROCESS = "PostProcess.ppf";
+  private static final String OTF_CROSSTALK_PARAMETER = "OTF_crosstalk_parameter.xml";
+  private static final String OTF_GEOMETRY_PARAMETER = "OTF_geometry_parameter.xml";
   private static final String BRIGHTFIELD = "Brightfield";
   private static final int RAW_XML_CHUNK_SIZE = 7600;
 
@@ -151,7 +153,7 @@ public class CV7000Reader extends FormatReader {
     ArrayList<String> files = new ArrayList<String>();
     files.add(new Location(currentId).getAbsolutePath());
     for (String file : allFiles) {
-      if (file != null && !files.contains(file) && (!noPixels || !checkSuffix(file, "tif"))) {
+      if (file != null && !files.contains(file) && (!noPixels || !isTiffFile(file))) {
         files.add(file);
       }
     }
@@ -197,7 +199,7 @@ public class CV7000Reader extends FormatReader {
     }
     files.addAll(extraFiles);
     for (String file : allFiles) {
-      if (file != null && !checkSuffix(file, "tif") && !(new Location(file).isDirectory())) {
+      if (file != null && !isTiffFile(file) && !(new Location(file).isDirectory())) {
         files.add(file);
       }
     }
@@ -288,10 +290,10 @@ public class CV7000Reader extends FormatReader {
     DatasetPaths paths = getDatasetPaths(id);
     WPIHandler plate = parsePlate(paths.wpiPath);
 
-    collectDatasetFiles(paths.parent);
     parseMeasurementData(paths);
     parseOptionalSidecars(paths);
     normalizeChannels(paths.parent);
+    collectDatasetFiles(paths.parent);
 
     SeriesLayout layout = buildSeriesLayout();
     initializeCoreMetadata(layout);
@@ -323,7 +325,7 @@ public class CV7000Reader extends FormatReader {
     Arrays.sort(listedFiles);
     for (int i=0; i<listedFiles.length; i++) {
       Location file = new Location(parent, listedFiles[i]);
-      if (!file.isDirectory() && file.canRead()) {
+      if (!file.isDirectory() && file.canRead() && isCV7000DatasetFile(file)) {
         allFiles.add(file.getAbsolutePath());
       }
     }
@@ -1073,7 +1075,7 @@ public class CV7000Reader extends FormatReader {
   private void addYokogawaOriginalMetadata() {
     if (allFiles != null) {
       for (String file : allFiles) {
-        if (file != null && !checkSuffix(file, "tif")) {
+        if (file != null && !isTiffFile(file)) {
           addPostProcessOriginalMetadata(file);
           addRawSidecarMetadata(file);
           addYokogawaMetaList("Yokogawa Sidecar ", "File",
@@ -1145,7 +1147,7 @@ public class CV7000Reader extends FormatReader {
   private void addRawSidecarMetadata(String file) {
     Location location = new Location(file);
     String name = location.getName();
-    if (name == null || MEASUREMENT_FILE.equals(name) || !isRawXMLSidecar(file)) {
+    if (name == null || MEASUREMENT_FILE.equals(name) || !isRawXMLSidecar(location)) {
       return;
     }
 
@@ -1172,10 +1174,37 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private boolean isRawXMLSidecar(String file) {
-    return checkSuffix(file, "wpi") || checkSuffix(file, "mrf") ||
-      checkSuffix(file, "mes") || checkSuffix(file, "wpp") ||
-      checkSuffix(file, "ppf") || checkSuffix(file, "xml");
+  private boolean isCV7000DatasetFile(Location file) {
+    String name = file.getName();
+    return name != null && (isTiffFile(name) || isKnownCV7000Sidecar(file));
+  }
+
+  private boolean isTiffFile(String name) {
+    return name != null && checkSuffix(name, new String[] {"tif", "tiff"});
+  }
+
+  private boolean isRawXMLSidecar(Location file) {
+    String name = file.getName();
+    return name != null && !MEASUREMENT_FILE.equals(name) &&
+      isKnownCV7000Sidecar(file);
+  }
+
+  private boolean isKnownCV7000Sidecar(Location file) {
+    String name = file.getName();
+    if (name == null) {
+      return false;
+    }
+    return isPath(file, currentId) || isPath(file, measurementPath) ||
+      isPath(file, detailPath) || isPath(file, settingsPath) ||
+      isPath(file, wppPath) || POST_PROCESS.equals(name) ||
+      OTF_CROSSTALK_PARAMETER.equals(name) || OTF_GEOMETRY_PARAMETER.equals(name);
+  }
+
+  private boolean isPath(Location file, String path) {
+    if (path == null) {
+      return false;
+    }
+    return file.getAbsolutePath().equals(new Location(path).getAbsolutePath());
   }
 
   private void addPostProcessOriginalMetadata(String file) {
