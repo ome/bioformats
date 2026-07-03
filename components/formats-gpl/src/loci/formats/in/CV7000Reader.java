@@ -939,16 +939,17 @@ public class CV7000Reader extends FormatReader {
   private void populateChannelLightSourceSettings(MetadataStore store, int series,
     int channelIndex, Channel channel, HashMap<Integer, Integer> lightSourceIndexes)
   {
-    Integer lightSource = getLinkedLaser(channel);
+    Integer lightSource = getLinkedStandardLightSource(channel);
     if (lightSource == null || !lightSourceIndexes.containsKey(lightSource)) {
       return;
     }
 
     LightSource source = lightSources.get(lightSource);
-    if (source.wavelength != null && source.wavelength > 0) {
-      int index = lightSourceIndexes.get(lightSource);
-      store.setChannelLightSourceSettingsID(
-        MetadataTools.createLSID("LightSource", 0, index), series, channelIndex);
+    int index = lightSourceIndexes.get(lightSource);
+    store.setChannelLightSourceSettingsID(
+      MetadataTools.createLSID("LightSource", 0, index), series, channelIndex);
+
+    if (isLaser(source) && source.wavelength != null && source.wavelength > 0) {
       // Yokogawa BP labels are detection filters; excitation comes from the
       // linked laser light-source wavelength.
       store.setChannelExcitationWavelength(
@@ -1124,6 +1125,7 @@ public class CV7000Reader extends FormatReader {
 
   private void populateLightSources(MetadataStore store,
     HashMap<Integer, Integer> lightSourceIndexes)
+    throws FormatException
   {
     if (lightSources == null) {
       return;
@@ -1131,7 +1133,7 @@ public class CV7000Reader extends FormatReader {
     int nextLightSource = 0;
     for (int i=0; i<lightSources.size(); i++) {
       LightSource l = lightSources.get(i);
-      if ("Laser".equals(l.type)) {
+      if (isLaser(l)) {
         String laserID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
         store.setLaserID(laserID, 0, nextLightSource);
         if (l.wavelength != null) {
@@ -1144,7 +1146,34 @@ public class CV7000Reader extends FormatReader {
         lightSourceIndexes.put(i, nextLightSource);
         nextLightSource++;
       }
+      else if (isLamp(l)) {
+        String filamentID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
+        store.setFilamentID(filamentID, 0, nextLightSource);
+        store.setFilamentModel(getLightSourceModel(l), 0, nextLightSource);
+        // The CV7000 user manual identifies white-light illumination as a
+        // 100 W halogen lamp; MES fixtures expose only generic Type="Lamp".
+        store.setFilamentType(MetadataTools.getFilamentType("Halogen"),
+          0, nextLightSource);
+        lightSourceIndexes.put(i, nextLightSource);
+        nextLightSource++;
+      }
     }
+  }
+
+  private boolean isLaser(LightSource source) {
+    return source != null && "Laser".equalsIgnoreCase(source.type);
+  }
+
+  private boolean isLamp(LightSource source) {
+    return source != null && "Lamp".equalsIgnoreCase(source.type);
+  }
+
+  private String getLightSourceModel(LightSource source) {
+    String model = clean(source.name);
+    if (model == null) {
+      model = clean(source.type);
+    }
+    return model;
   }
 
   private void populateObjectives(MetadataStore store, List<String> usedObjectiveIDs) {
@@ -1175,11 +1204,24 @@ public class CV7000Reader extends FormatReader {
         detectorIndexes.put(c.cameraNumber, detector);
         String detectorID = MetadataTools.createLSID("Detector", 0, detector);
         store.setDetectorID(detectorID, 0, detector);
-        if (c.cameraType != null && c.cameraType.trim().length() > 0) {
-          store.setDetectorModel(c.cameraType, 0, detector);
-        }
+        populateDetectorCameraType(store, detector, c.cameraType);
         store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, detector);
       }
+    }
+  }
+
+  private void populateDetectorCameraType(MetadataStore store, int detector,
+    String cameraType)
+  {
+    String type = clean(cameraType);
+    if (type == null) {
+      return;
+    }
+    if ("Andor".equalsIgnoreCase(type)) {
+      store.setDetectorManufacturer("Andor", 0, detector);
+    }
+    else {
+      store.setDetectorModel(type, 0, detector);
     }
   }
 
@@ -1224,6 +1266,10 @@ public class CV7000Reader extends FormatReader {
       store.setFilterID(filterID, 0, filter);
       store.setFilterModel(key.acquisition, 0, filter);
       store.setFilterType(MetadataTools.getFilterType(key.detectionFilter.filterType), 0, filter);
+      String wheel = getYokogawaFilterWheelLabel(key);
+      if (wheel != null) {
+        store.setFilterFilterWheel(wheel, 0, filter);
+      }
       CrosstalkFilter crosstalk = getCrosstalkFilter(c);
       if (key.detectionFilter != null) {
         Length cutIn = getCrosstalkCutIn(crosstalk);
@@ -1246,6 +1292,15 @@ public class CV7000Reader extends FormatReader {
         }
       }
     }
+  }
+
+  private String getYokogawaFilterWheelLabel(FilterKey key) {
+    if (key == null || key.filterWheelPosition == null ||
+      key.filterWheelPosition <= 0)
+    {
+      return null;
+    }
+    return "Yokogawa wheel " + key.filterWheelPosition;
   }
 
   private Length getCrosstalkCutIn(CrosstalkFilter filter) {
@@ -1800,15 +1855,19 @@ public class CV7000Reader extends FormatReader {
     return parsing.getYokogawaAttributeName(qName);
   }
 
-  private Integer getLinkedLaser(Channel channel) {
-    if (channel == null || channel.isBrightfield() ||
+  private Integer getLinkedStandardLightSource(Channel channel) {
+    if (channel == null ||
       channel.lightSourceRefs == null || lightSources == null)
     {
       return null;
     }
     for (Integer lightSource : channel.lightSourceRefs) {
-      if (lightSource != null && lightSource >= 0 && lightSource < lightSources.size() &&
-        "Laser".equals(lightSources.get(lightSource).type))
+      if (lightSource == null || lightSource < 0 || lightSource >= lightSources.size()) {
+        continue;
+      }
+      LightSource source = lightSources.get(lightSource);
+      if ((!channel.isBrightfield() && isLaser(source)) ||
+        (channel.isBrightfield() && isLamp(source)))
       {
         return lightSource;
       }
