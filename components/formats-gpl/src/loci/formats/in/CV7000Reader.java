@@ -79,6 +79,8 @@ public class CV7000Reader extends FormatReader {
 
   public static final String DUPLICATE_PLANES_KEY = "cv7000.duplicate_missing_planes";
   public static final boolean DUPLICATE_PLANES_DEFAULT = false;
+  public static final String PRESERVE_RAW_SIDECARS_KEY = "cv7000.preserve_raw_sidecars";
+  public static final boolean PRESERVE_RAW_SIDECARS_DEFAULT = true;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CV7000Reader.class);
 
@@ -134,6 +136,15 @@ public class CV7000Reader extends FormatReader {
        DUPLICATE_PLANES_KEY, DUPLICATE_PLANES_DEFAULT);
     }
     return DUPLICATE_PLANES_DEFAULT;
+  }
+
+  public boolean preserveRawSidecars() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       PRESERVE_RAW_SIDECARS_KEY, PRESERVE_RAW_SIDECARS_DEFAULT);
+    }
+    return PRESERVE_RAW_SIDECARS_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -307,6 +318,7 @@ public class CV7000Reader extends FormatReader {
   protected ArrayList<String> getAvailableOptions() {
     ArrayList<String> optionsList = super.getAvailableOptions();
     optionsList.add(DUPLICATE_PLANES_KEY);
+    optionsList.add(PRESERVE_RAW_SIDECARS_KEY);
     return optionsList;
   }
 
@@ -999,7 +1011,7 @@ public class CV7000Reader extends FormatReader {
     if (channel.detectorGain != null) {
       store.setDetectorSettingsGain(channel.detectorGain, series, channelIndex);
     }
-    String binning = getBinningValue(channel.binning);
+    String binning = parsing.getBinningValue(channel.binning);
     if (binning != null) {
       try {
         store.setDetectorSettingsBinning(
@@ -1334,12 +1346,16 @@ public class CV7000Reader extends FormatReader {
     int plateAnnotationRef = 0;
     if (allFiles != null) {
       for (String file : allFiles) {
-        Location location = file == null ? null : new Location(file);
+        if (file == null) {
+          continue;
+        }
+        Location location = new Location(file);
+        String name = location.getName();
         CV7000FileRole role = classifyCV7000File(location);
-        if (file != null && isDatasetFile(role) && !isPixelFile(role)) {
+        if (isDatasetFile(role) && !isPixelFile(role)) {
           parseStructuredSidecarMetadata(file, role);
           addSidecarSummaryMetadata(file, role);
-          if (preserveRawSidecarAsFileAnnotation(role)) {
+          if (preserveRawSidecars() && preserveRawSidecarAsFileAnnotation(role)) {
             String annotationID = addRawSidecarFileAnnotation(
               store, file, rawSidecarAnnotation);
             if (annotationID != null) {
@@ -1348,8 +1364,9 @@ public class CV7000Reader extends FormatReader {
               plateAnnotationRef++;
             }
           }
-          addYokogawaMetaList("Yokogawa Sidecar ", "File",
-            location.getName());
+          if (name != null) {
+            addYokogawaMetaList("Yokogawa Sidecar ", "File", name);
+          }
         }
       }
     }
@@ -1884,18 +1901,6 @@ public class CV7000Reader extends FormatReader {
       channel.filterID, Integer.valueOf(channel.cameraNumber), channel.acquisition));
   }
 
-  private String getBinningValue(String binning) {
-    return parsing.getBinningValue(binning);
-  }
-
-  private DetectionFilter parseDetectionFilter(String acquisition) {
-    return parsing.parseDetectionFilter(acquisition);
-  }
-
-  private Double parseYokogawaGain(String value) {
-    return parsing.parseYokogawaGain(value);
-  }
-
   private Integer parseInteger(String value) {
     return parsing.parseInteger(value);
   }
@@ -2002,21 +2007,6 @@ public class CV7000Reader extends FormatReader {
 
   private String readSanitizedXML(String filename) throws IOException {
     return parsing.readSanitizedXML(filename);
-  }
-
-  private boolean isWellAcquired(int row, int col) {
-    String key = getWellKey(row, col);
-    if (seriesLayout != null && seriesLayout.acquiredWells.containsKey(key)) {
-      return seriesLayout.acquiredWells.get(key);
-    }
-    if (planeData != null) {
-      for (Plane p : planeData) {
-        if (p != null && p.file != null && p.field.row == row && p.field.column == col) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   private String getWellKey(int row, int column) {
@@ -2745,7 +2735,7 @@ public class CV7000Reader extends FormatReader {
             template.kind = attributes.getValue("bts:Kind");
             template.andorParameterID = attributes.getValue("bts:AndorParameterID");
             template.andorParameter = attributes.getValue("bts:AndorParameter");
-            template.detectorGain = parseYokogawaGain(template.andorParameter);
+            template.detectorGain = parsing.parseYokogawaGain(template.andorParameter);
             template.cameraType = attributes.getValue("bts:CameraType");
             template.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
 
@@ -2775,7 +2765,7 @@ public class CV7000Reader extends FormatReader {
             template.acquisition = attributes.getValue("bts:Acquisition");
             // Yokogawa Acquisition values such as BP676/29 identify detection
             // filters.  Excitation comes from the LightSourceName link.
-            template.detectionFilter = parseDetectionFilter(template.acquisition);
+            template.detectionFilter = parsing.parseDetectionFilter(template.acquisition);
 
             template.fluor = attributes.getValue("bts:Fluorophore");
             applyChannelSettings(template);
