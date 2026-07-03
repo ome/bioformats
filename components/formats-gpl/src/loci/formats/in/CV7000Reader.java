@@ -1218,7 +1218,11 @@ public class CV7000Reader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, detector);
         store.setDetectorID(detectorID, 0, detector);
         populateDetectorCameraType(store, detector, c.cameraType);
-        store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, detector);
+        // The CV7000 manual describes the detector as sCMOS. OME-XML has
+        // CMOS, but not literal sCMOS, in the Detector.Type enum. Manual
+        // sensor pitch and nominal sensor dimensions are hardware reference
+        // values, so do not emit them as image size or pixel calibration.
+        store.setDetectorType(MetadataTools.getDetectorType("CMOS"), 0, detector);
       }
     }
   }
