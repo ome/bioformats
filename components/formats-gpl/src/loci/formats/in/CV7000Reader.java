@@ -84,6 +84,9 @@ public class CV7000Reader extends FormatReader {
   public static final boolean DUPLICATE_PLANES_DEFAULT = false;
   public static final String PRESERVE_RAW_SIDECARS_KEY = "cv7000.preserve_raw_sidecars";
   public static final boolean PRESERVE_RAW_SIDECARS_DEFAULT = true;
+  public static final String INFER_OBJECTIVE_LENS_NA_KEY =
+    "cv7000.infer_objective_lens_na";
+  public static final boolean INFER_OBJECTIVE_LENS_NA_DEFAULT = false;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CV7000Reader.class);
   private static final CV7000ChannelMapper CHANNEL_MAPPER =
@@ -166,6 +169,15 @@ public class CV7000Reader extends FormatReader {
        PRESERVE_RAW_SIDECARS_KEY, PRESERVE_RAW_SIDECARS_DEFAULT);
     }
     return PRESERVE_RAW_SIDECARS_DEFAULT;
+  }
+
+  public boolean inferObjectiveLensNA() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       INFER_OBJECTIVE_LENS_NA_KEY, INFER_OBJECTIVE_LENS_NA_DEFAULT);
+    }
+    return INFER_OBJECTIVE_LENS_NA_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -345,6 +357,7 @@ public class CV7000Reader extends FormatReader {
     ArrayList<String> optionsList = super.getAvailableOptions();
     optionsList.add(DUPLICATE_PLANES_KEY);
     optionsList.add(PRESERVE_RAW_SIDECARS_KEY);
+    optionsList.add(INFER_OBJECTIVE_LENS_NA_KEY);
     return optionsList;
   }
 
@@ -1422,7 +1435,7 @@ public class CV7000Reader extends FormatReader {
     if (spec == null) {
       return;
     }
-    if (spec.lensNA != null) {
+    if (inferObjectiveLensNA() && spec.lensNA != null) {
       store.setObjectiveLensNA(spec.lensNA, 0, objectiveIndex);
     }
     if (spec.immersion != null) {
@@ -1781,7 +1794,9 @@ public class CV7000Reader extends FormatReader {
       CV7000ObjectiveSpec spec =
         getObjectiveSpec(objective.objective);
       if (spec != null) {
-        addYokogawaMeta(prefix, "MappedLensNA", spec.lensNA);
+        if (inferObjectiveLensNA()) {
+          addYokogawaMeta(prefix, "MappedLensNA", spec.lensNA);
+        }
         addYokogawaMeta(prefix, "MappedImmersion", spec.immersion);
       }
       objectiveIndex++;
