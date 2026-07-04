@@ -103,6 +103,7 @@ public class CV7000Reader extends FormatReader {
   private static final String YOKOGAWA_ANNOTATION_NAMESPACE =
     "openmicroscopy.org/OriginalMetadata/Yokogawa/CV7000";
   private static final String XML_MIME_TYPE = "application/xml";
+  private static final String CV7000_DIMENSION_ORDER = "XYZCT";
   // Manual objective table plus observed CV7000 objective labels in OTF geometry. These correctly resolve known objectives in local data and available data from public repositories.
   private static final KnownObjectiveSpec[] KNOWN_OBJECTIVES =
     new KnownObjectiveSpec[] {
@@ -329,9 +330,9 @@ public class CV7000Reader extends FormatReader {
       return reader.openBytes(0, buf, x, y, w, h);
     }
     else if (duplicatePlanes() && no > 0) {
-      int[] zct = getZCTCoords(no);
+      int[] zct = getLogicalZCTCoords(getSeries(), no);
       // pick the first plane in the same channel
-      int dupPlane = getIndex(0, zct[1], 0);
+      int dupPlane = getLogicalPlaneIndex(getSeries(), 0, zct[1], 0);
 
       // very unlikely to happen, but catching the case
       // where no is the first plane in the channel prevents
@@ -689,7 +690,7 @@ public class CV7000Reader extends FormatReader {
     core.clear();
     core.add(new CoreMetadata(reader.getCoreMetadataList().get(0)));
 
-    core.get(0).dimensionOrder = "XYCZT";
+    core.get(0).dimensionOrder = CV7000_DIMENSION_ORDER;
     layout.reversePlaneLookup = new int[layout.acquiredFields.size()][];
     reversePlaneLookup = layout.reversePlaneLookup;
 
@@ -712,9 +713,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Map each Yokogawa plane record to the reader's series and plane index. */
-  private void populateReversePlaneLookup(CV7000SeriesLayout layout) {
-    int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
-
+  private void populateReversePlaneLookup(CV7000SeriesLayout layout) throws FormatException {
     extraFiles = new ArrayList<String>();
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
@@ -730,16 +729,16 @@ public class CV7000Reader extends FormatReader {
       // Reindex from Yokogawa's channel/action numbering into the compact
       // channel list exposed by this reader for the current dataset.
       p.channelIndex = Arrays.binarySearch(layout.channelIndexes, p.channelIndex);
+      if (p.channelIndex < 0) {
+        throw new FormatException("Could not map CV7000 channel " +
+          (p.channel + 1) + " to a compact reader channel index");
+      }
 
       p.series = series.intValue();
       MinMax m = layout.minMax.get(p.field);
 
-      planeLengths[0] = core.get(p.series).sizeC / reader.getSizeC();
-      planeLengths[1] = core.get(p.series).sizeZ;
-      planeLengths[2] = core.get(p.series).sizeT;
-
-      p.no = FormatTools.positionToRaster(planeLengths,
-        new int[] {p.channelIndex, p.z - m.minZ, p.timepoint - m.minT});
+      p.no = getLogicalPlaneIndex(p.series, p.z - m.minZ, p.channelIndex,
+        p.timepoint - m.minT);
       assignPlaneLookup(i, p, layout);
       layout.indexPlane(p);
     }
@@ -1174,7 +1173,7 @@ public class CV7000Reader extends FormatReader {
     Time exposure = new Time(channel.exposureTime, UNITS.MILLISECOND);
     for (int z=0; z<getSizeZ(); z++) {
       for (int t=0; t<getSizeT(); t++) {
-        int plane = getIndex(z, channelIndex, t);
+        int plane = getLogicalPlaneIndex(series, z, channelIndex, t);
         store.setPlaneExposureTime(exposure, series, plane);
       }
     }
@@ -2391,8 +2390,8 @@ public class CV7000Reader extends FormatReader {
       return null;
     }
 
-    int[] zct = getZCTCoords(series, no);
-    int dupPlane = getIndex(series, 0, zct[1], 0);
+    int[] zct = getLogicalZCTCoords(series, no);
+    int dupPlane = getLogicalPlaneIndex(series, 0, zct[1], 0);
     if (dupPlane == no) {
       dupPlane = 0;
     }
@@ -2400,29 +2399,28 @@ public class CV7000Reader extends FormatReader {
     return duplicate != null && duplicate.file != null ? duplicate : null;
   }
 
-  private int[] getZCTCoords(int series, int no) {
-    int[] lengths = new int[] {
-      core.get(series).sizeC / reader.getSizeC(),
-      core.get(series).sizeZ,
-      core.get(series).sizeT
-    };
-    int[] czt = FormatTools.rasterToPosition(lengths, no);
-    return new int[] {czt[1], czt[0], czt[2]};
+  private int getLogicalChannelCount(int series) {
+    return core.get(series).sizeC / reader.getSizeC();
   }
 
-  private int getIndex(int series, int z, int c, int t) {
-    int[] lengths = new int[] {
-      core.get(series).sizeC / reader.getSizeC(),
-      core.get(series).sizeZ,
-      core.get(series).sizeT
-    };
-    return FormatTools.positionToRaster(lengths, new int[] {c, z, t});
+  private int[] getLogicalZCTCoords(int series, int no) {
+    CoreMetadata metadata = core.get(series);
+    return FormatTools.getZCTCoords(metadata.dimensionOrder,
+      metadata.sizeZ, getLogicalChannelCount(series), metadata.sizeT,
+      metadata.imageCount, no);
+  }
+
+  private int getLogicalPlaneIndex(int series, int z, int c, int t) {
+    CoreMetadata metadata = core.get(series);
+    return FormatTools.getIndex(metadata.dimensionOrder,
+      metadata.sizeZ, getLogicalChannelCount(series), metadata.sizeT,
+      metadata.imageCount, z, c, t);
   }
 
   private String formatPlaneProvenanceAnomaly(int series, int no, String status,
     String reason, Plane source, Plane anomalyPlane)
   {
-    int[] zct = getZCTCoords(series, no);
+    int[] zct = getLogicalZCTCoords(series, no);
     StringBuilder row = new StringBuilder();
     row.append("no=").append(no);
     row.append(";z=").append(zct[0]);
