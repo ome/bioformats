@@ -113,6 +113,8 @@ public class CV7000Reader extends FormatReader {
   private ArrayList<LightSource> lightSources;
   private ArrayList<Channel> channels;
   private String startTime, endTime;
+  private String measurementOperatorName;
+  private String targetSystem;
   private ArrayList<String> extraFiles;
   private MeasurementDataHandler measurementHandler;
   private CrosstalkParameters crosstalkParameters;
@@ -264,6 +266,8 @@ public class CV7000Reader extends FormatReader {
       channels = null;
       startTime = null;
       endTime = null;
+      measurementOperatorName = null;
+      targetSystem = null;
       measurementHandler = null;
       crosstalkParameters = null;
       reversePlaneLookup = null;
@@ -330,6 +334,8 @@ public class CV7000Reader extends FormatReader {
     super.initFile(id);
     rawModel = new CV7000RawModel();
     seriesLayout = null;
+    measurementOperatorName = null;
+    targetSystem = null;
     CV7000DatasetPaths paths = getDatasetPaths(id);
     datasetPaths = paths;
     WPIHandler plate = parsePlate(paths.wpiPath);
@@ -718,9 +724,10 @@ public class CV7000Reader extends FormatReader {
       store.setPlateExternalIdentifier(plate.getPlateID(), 0);
 
       InstrumentMetadataIndexes indexes = populateInstrumentMetadata(store);
+      String experimenter = populateExperimenterMetadata(store);
       populateSeriesMetadata(store, indexes.instrument, indexes.lightSourceIndexes,
         indexes.detectorIndexes, indexes.filterIndexes, indexes.dichroicIndexes,
-        indexes.usedObjectiveIDs, timings);
+        indexes.usedObjectiveIDs, experimenter, timings);
       new CV7000OriginalMetadataPopulator().populate(store, indexes.instrument != null);
       setSeries(0);
     }
@@ -734,11 +741,13 @@ public class CV7000Reader extends FormatReader {
     if ((lightSources != null && lightSources.size() > 0) ||
       (channels != null && channels.size() > 0) ||
       (otfGeometryParameters != null &&
-        otfGeometryParameters.objectivesByID.size() > 0))
+        otfGeometryParameters.objectivesByID.size() > 0) ||
+      targetSystem != null)
     {
       indexes.instrument = MetadataTools.createLSID("Instrument", 0);
 
       store.setInstrumentID(indexes.instrument, 0);
+      populateMicroscope(store);
       populateLightSources(store, indexes.lightSourceIndexes);
       populateObjectives(store, indexes.usedObjectiveIDs);
       populateDetectors(store, indexes.detectorIndexes);
@@ -746,6 +755,24 @@ public class CV7000Reader extends FormatReader {
       populateFilters(store, indexes.filterIndexes);
     }
     return indexes;
+  }
+
+  private void populateMicroscope(MetadataStore store) {
+    if (targetSystem == null) {
+      return;
+    }
+    store.setMicroscopeManufacturer("Yokogawa", 0);
+    store.setMicroscopeModel(targetSystem, 0);
+  }
+
+  private String populateExperimenterMetadata(MetadataStore store) {
+    if (measurementOperatorName == null) {
+      return null;
+    }
+    String experimenter = MetadataTools.createLSID("Experimenter", 0);
+    store.setExperimenterID(experimenter, 0);
+    store.setExperimenterUserName(measurementOperatorName, 0);
+    return experimenter;
   }
 
   private void populatePlateMetadata(MetadataStore store, WPIHandler plate,
@@ -856,12 +883,15 @@ public class CV7000Reader extends FormatReader {
     HashMap<Integer, Integer> detectorIndexes,
     HashMap<FilterKey, Integer> filterIndexes,
     HashMap<String, Integer> dichroicIndexes,
-    List<String> usedObjectiveIDs, SeriesTiming[] timings)
+    List<String> usedObjectiveIDs, String experimenter, SeriesTiming[] timings)
   {
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       if (instrument != null) {
         store.setImageInstrumentRef(instrument, i);
+      }
+      if (experimenter != null) {
+        store.setImageExperimenterRef(experimenter, i);
       }
       populateChannelMetadata(store, i, lightSourceIndexes, detectorIndexes,
         filterIndexes, dichroicIndexes, usedObjectiveIDs);
@@ -2900,12 +2930,16 @@ public class CV7000Reader extends FormatReader {
         rawModel.endTime = endTime;
         settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
         rawModel.settingsPath = settingsPath;
+        measurementOperatorName = clean(attributes.getValue("bts:OperatorName"));
 
         String system = attributes.getValue("bts:TargetSystem");
+        targetSystem = clean(system);
         addYokogawaMeta(
           "Yokogawa MRF MeasurementDetail ", "AcquisitionSystem", system);
-        if (system != null && !system.toLowerCase().startsWith("cv7000")) {
-          LOGGER.warn("Found data from {}; this is not well-supported", system);
+        if (targetSystem != null &&
+          !targetSystem.toLowerCase().startsWith("cv7000"))
+        {
+          LOGGER.warn("Found data from {}; this is not well-supported", targetSystem);
         }
       }
     }
