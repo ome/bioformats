@@ -63,6 +63,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
+import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.enums.NamingConvention;
 
 import org.slf4j.Logger;
@@ -115,6 +116,7 @@ public class CV7000Reader extends FormatReader {
   private ArrayList<String> extraFiles;
   private MeasurementDataHandler measurementHandler;
   private CrosstalkParameters crosstalkParameters;
+  private OTFGeometryParameters otfGeometryParameters;
   private YokogawaParsing parsing = new YokogawaParsing();
 
   // -- Constructor --
@@ -404,6 +406,7 @@ public class CV7000Reader extends FormatReader {
     parseMeasurementDetail(paths);
     parseWellPlateProduct();
     parseMeasurementSettings();
+    parseOTFGeometry(paths);
     parseOTFCrosstalk(paths);
   }
 
@@ -447,6 +450,27 @@ public class CV7000Reader extends FormatReader {
       if (xml.length() > 0) {
         XMLTools.parseXML(xml, settingsHandler);
       }
+    }
+  }
+
+  /** OTF geometry stores objective catalog entries and affine calibration rows. */
+  private void parseOTFGeometry(CV7000DatasetPaths paths) {
+    Location geometry = paths.otfGeometry;
+    if (!geometry.exists()) {
+      return;
+    }
+
+    try {
+      OTFGeometryHandler handler = new OTFGeometryHandler();
+      XMLTools.parseXML(readSanitizedXML(geometry.getAbsolutePath()), handler);
+      otfGeometryParameters = handler.getParameters();
+      rawModel.otfGeometryParameters = otfGeometryParameters;
+    }
+    catch (Exception e) {
+      otfGeometryParameters = null;
+      rawModel.otfGeometryParameters = null;
+      LOGGER.warn("Could not parse CV7000 OTF geometry sidecar {}",
+        geometry.getAbsolutePath(), e);
     }
   }
 
@@ -708,7 +732,9 @@ public class CV7000Reader extends FormatReader {
   {
     InstrumentMetadataIndexes indexes = new InstrumentMetadataIndexes();
     if ((lightSources != null && lightSources.size() > 0) ||
-      (channels != null && channels.size() > 0))
+      (channels != null && channels.size() > 0) ||
+      (otfGeometryParameters != null &&
+        otfGeometryParameters.objectivesByID.size() > 0))
     {
       indexes.instrument = MetadataTools.createLSID("Instrument", 0);
 
@@ -900,6 +926,10 @@ public class CV7000Reader extends FormatReader {
       if (contrastMethod != null) {
         store.setChannelContrastMethod(contrastMethod, series, c);
       }
+      IlluminationType illuminationType = getYokogawaIlluminationType(channel);
+      if (illuminationType != null) {
+        store.setChannelIlluminationType(illuminationType, series, c);
+      }
 
       if (channel.color != null) {
         store.setChannelColor(channel.color, series, c);
@@ -942,6 +972,12 @@ public class CV7000Reader extends FormatReader {
     int action = plane == null ? channel.actionIndex : plane.actionIndex;
     return "Action #" + (action + 1) + ", Channel #" +
       (channel.index + 1) + ", Camera #" + channel.cameraNumber;
+  }
+
+  private String getYokogawaChannelScope(Channel channel) {
+    return "Yokogawa Timeline " + (channel.timelineIndex + 1) +
+      " Action " + (channel.actionIndex + 1) +
+      " Channel " + (channel.index + 1) + " ";
   }
 
   private String clean(String value) {
@@ -1115,6 +1151,17 @@ public class CV7000Reader extends FormatReader {
     if (isConfocalFluorescence(channel)) {
       return AcquisitionMode.SPINNINGDISKCONFOCAL;
     }
+    if (channel.isBrightfield()) {
+      try {
+        return MetadataTools.getAcquisitionMode("BrightField");
+      }
+      catch (FormatException e) {
+        LOGGER.debug("Ignoring unsupported CV7000 acquisition mode BrightField", e);
+      }
+    }
+    if (isEpifluorescence(channel)) {
+      return AcquisitionMode.WIDEFIELD;
+    }
     return null;
   }
 
@@ -1122,15 +1169,53 @@ public class CV7000Reader extends FormatReader {
     return "ConfocalFluorescence".equals(channel.kind);
   }
 
+  private boolean isEpifluorescence(Channel channel) {
+    return channel != null && channel.method != null &&
+      channel.method.toLowerCase().startsWith("epifluorescence");
+  }
+
   private ContrastMethod getYokogawaContrastMethod(Channel channel) {
-    if (channel == null || !channel.isBrightfield()) {
+    if (channel == null) {
+      return null;
+    }
+    String method = null;
+    if (channel.isBrightfield()) {
+      method = BRIGHTFIELD;
+    }
+    else if (isConfocalFluorescence(channel) || isEpifluorescence(channel)) {
+      method = "Fluorescence";
+    }
+    if (method == null) {
       return null;
     }
     try {
-      return MetadataTools.getContrastMethod(BRIGHTFIELD);
+      return MetadataTools.getContrastMethod(method);
     }
     catch (FormatException e) {
-      LOGGER.debug("Ignoring unsupported CV7000 contrast method {}", BRIGHTFIELD, e);
+      LOGGER.debug("Ignoring unsupported CV7000 contrast method {}", method, e);
+    }
+    return null;
+  }
+
+  private IlluminationType getYokogawaIlluminationType(Channel channel) {
+    if (channel == null) {
+      return null;
+    }
+    String illumination = null;
+    if (channel.isBrightfield()) {
+      illumination = "Transmitted";
+    }
+    else if (isConfocalFluorescence(channel) || isEpifluorescence(channel)) {
+      illumination = "Epifluorescence";
+    }
+    if (illumination == null) {
+      return null;
+    }
+    try {
+      return MetadataTools.getIlluminationType(illumination);
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Ignoring unsupported CV7000 illumination type {}", illumination, e);
     }
     return null;
   }
@@ -1148,6 +1233,8 @@ public class CV7000Reader extends FormatReader {
       if (isLaser(l)) {
         String laserID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
         store.setLaserID(laserID, 0, nextLightSource);
+        store.setLaserModel(getLightSourceModel(l), 0, nextLightSource);
+        store.setLaserType(MetadataTools.getLaserType("Other"), 0, nextLightSource);
         if (l.wavelength != null) {
           store.setLaserWavelength(
             new Length(l.wavelength, UNITS.NANOMETER), 0, nextLightSource);
@@ -1167,6 +1254,10 @@ public class CV7000Reader extends FormatReader {
         // Type="Lamp", so keep the filament type as Other.
         store.setFilamentType(MetadataTools.getFilamentType("Other"),
           0, nextLightSource);
+        if (l.power != null) {
+          store.setFilamentPower(
+            new Power(l.power, UNITS.MILLIWATT), 0, nextLightSource);
+        }
         lightSourceIndexes.put(i, nextLightSource);
         nextLightSource++;
       }
@@ -1190,18 +1281,138 @@ public class CV7000Reader extends FormatReader {
   }
 
   private void populateObjectives(MetadataStore store, List<String> usedObjectiveIDs) {
-    if (channels == null) {
-      return;
-    }
-    for (Channel c : channels) {
-      if (c.objectiveID != null && !usedObjectiveIDs.contains(c.objectiveID)) {
-        int index = usedObjectiveIDs.size();
-        String objectiveID = MetadataTools.createLSID("Objective", 0, index);
-        store.setObjectiveID(objectiveID, 0, index);
-        store.setObjectiveModel(c.objective, 0, index);
-        usedObjectiveIDs.add(c.objectiveID);
+    if (channels != null) {
+      for (Channel c : channels) {
+        if (c.objectiveID != null && !usedObjectiveIDs.contains(c.objectiveID)) {
+          int index = usedObjectiveIDs.size();
+          String objectiveID = MetadataTools.createLSID("Objective", 0, index);
+          store.setObjectiveID(objectiveID, 0, index);
+          populateObjectiveModel(store, index, c.objectiveID, c.objective,
+            c.magnification);
+          usedObjectiveIDs.add(c.objectiveID);
+        }
       }
     }
+
+    if (otfGeometryParameters != null) {
+      for (OTFGeometryObjective objective :
+        otfGeometryParameters.objectivesByID.values())
+      {
+        if (objective.objectiveID != null &&
+          !usedObjectiveIDs.contains(objective.objectiveID))
+        {
+          int index = usedObjectiveIDs.size();
+          String objectiveID = MetadataTools.createLSID("Objective", 0, index);
+          store.setObjectiveID(objectiveID, 0, index);
+          populateObjectiveModel(store, index, objective.objectiveID,
+            objective.objective, objective.magnification);
+          usedObjectiveIDs.add(objective.objectiveID);
+        }
+      }
+    }
+  }
+
+  private void populateObjectiveModel(MetadataStore store, int objectiveIndex,
+    String objectiveID, String model, Double magnification)
+  {
+    if (model != null) {
+      store.setObjectiveModel(model, 0, objectiveIndex);
+    }
+    if (magnification != null) {
+      store.setObjectiveNominalMagnification(magnification, 0, objectiveIndex);
+    }
+    CV7000ObjectiveSpec spec = getObjectiveSpec(objectiveID, model);
+    if (spec == null) {
+      return;
+    }
+    if (spec.lensNA != null) {
+      store.setObjectiveLensNA(spec.lensNA, 0, objectiveIndex);
+    }
+    if (spec.immersion != null) {
+      try {
+        store.setObjectiveImmersion(
+          MetadataTools.getImmersion(spec.immersion), 0, objectiveIndex);
+      }
+      catch (FormatException e) {
+        LOGGER.debug("Ignoring unsupported CV7000 objective immersion {}",
+          spec.immersion, e);
+      }
+    }
+  }
+
+  private CV7000ObjectiveSpec getObjectiveSpec(String objectiveID, String model) {
+    // CV7000 objective NA and immersion values come from the user manual,
+    // section 14, "MS Code" / "Objective Lens".
+    ObjectiveModelTokens tokens = parseObjectiveModel(model);
+    if (isObjectiveMagnification(tokens, 4) ||
+      (tokens.magnification == null && "4000".equals(objectiveID)))
+    {
+      return new CV7000ObjectiveSpec(0.16, "Air");
+    }
+    if (isObjectiveMagnification(tokens, 10)) {
+      return new CV7000ObjectiveSpec(tokens.phase ? 0.30 : 0.40, "Air");
+    }
+    if (tokens.magnification == null && "10000".equals(objectiveID)) {
+      return new CV7000ObjectiveSpec(0.40, "Air");
+    }
+    if (isObjectiveMagnification(tokens, 20)) {
+      return new CV7000ObjectiveSpec(
+        tokens.phase || tokens.longWorkingDistance ? 0.45 : 0.75, "Air");
+    }
+    if (tokens.magnification == null && "20003".equals(objectiveID)) {
+      return new CV7000ObjectiveSpec(0.45, "Air");
+    }
+    if (tokens.magnification == null && "20000".equals(objectiveID)) {
+      return new CV7000ObjectiveSpec(0.75, "Air");
+    }
+    if (isObjectiveMagnification(tokens, 40) ||
+      (tokens.magnification == null && "40000".equals(objectiveID)))
+    {
+      return new CV7000ObjectiveSpec(0.95, "Air");
+    }
+    if (isObjectiveMagnification(tokens, 60) ||
+      (tokens.magnification == null && "60004".equals(objectiveID)))
+    {
+      return new CV7000ObjectiveSpec(1.2, "Water");
+    }
+    return null;
+  }
+
+  private ObjectiveModelTokens parseObjectiveModel(String model) {
+    String cleaned = clean(model);
+    ObjectiveModelTokens tokens = new ObjectiveModelTokens();
+    if (cleaned == null) {
+      return tokens;
+    }
+    String normalized = cleaned.toLowerCase().replace('\u00d7', 'x');
+    normalized = normalized.replaceAll("[^a-z0-9]+", " ").trim();
+    normalized = normalized.replaceAll("\\s+", " ");
+    String[] parts = normalized.split(" ");
+    for (String part : parts) {
+      if (part.endsWith("x") && part.length() > 1) {
+        tokens.magnification = parseInteger(part.substring(0, part.length() - 1));
+      }
+      if ("ph".equals(part) || "phase".equals(part)) {
+        tokens.phase = true;
+      }
+      if ("lwd".equals(part) || "long".equals(part)) {
+        tokens.longWorkingDistance = true;
+      }
+      if ("water".equals(part)) {
+        tokens.water = true;
+      }
+      if ("w".equals(part)) {
+        tokens.water = true;
+      }
+    }
+    return tokens;
+  }
+
+  private boolean isObjectiveMagnification(ObjectiveModelTokens tokens,
+    int magnification)
+  {
+    return tokens != null && tokens.magnification != null &&
+      tokens.magnification.intValue() == magnification;
   }
 
   private void populateDetectors(MetadataStore store,
@@ -1384,6 +1595,7 @@ public class CV7000Reader extends FormatReader {
       }
     }
     addCrosstalkOriginalMetadata();
+    addOTFGeometryOriginalMetadata();
     if (channels == null) {
       emitYokogawaMapAnnotations(store, plateAnnotationRef, hasInstrument);
       return;
@@ -1394,8 +1606,7 @@ public class CV7000Reader extends FormatReader {
       if (!seen.add(key)) {
         continue;
       }
-      String prefix = "Yokogawa Timeline " + (c.timelineIndex + 1) +
-        " Action " + (c.actionIndex + 1) + " Channel " + (c.index + 1) + " ";
+      String prefix = getYokogawaChannelScope(c);
       // Raw Yokogawa planning fields are kept even when a subset is promoted
       // to core OME fields; this makes enum/wavelength decisions auditable.
       addYokogawaMeta(prefix, "Target", c.target);
@@ -1473,6 +1684,85 @@ public class CV7000Reader extends FormatReader {
           intensity.averageIntensity);
       }
     }
+  }
+
+  private void addOTFGeometryOriginalMetadata() {
+    if (otfGeometryParameters == null) {
+      return;
+    }
+
+    addYokogawaMeta("Yokogawa OTF Geometry ", "Mode",
+      otfGeometryParameters.mode);
+
+    int objectiveIndex = 1;
+    for (OTFGeometryObjective objective :
+      otfGeometryParameters.objectivesByID.values())
+    {
+      String prefix = "Yokogawa OTF Geometry Objective " + objectiveIndex + " ";
+      addYokogawaMeta(prefix, "ObjectiveID", objective.objectiveID);
+      addYokogawaMeta(prefix, "Objective", objective.objective);
+      addYokogawaMeta(prefix, "Magnification", objective.magnification);
+      CV7000ObjectiveSpec spec =
+        getObjectiveSpec(objective.objectiveID, objective.objective);
+      if (spec != null) {
+        addYokogawaMeta(prefix, "MappedLensNA", spec.lensNA);
+        addYokogawaMeta(prefix, "MappedImmersion", spec.immersion);
+      }
+      objectiveIndex++;
+    }
+
+    int affineIndex = 1;
+    for (OTFGeometryAffine affine : otfGeometryParameters.affines) {
+      String prefix = "Yokogawa OTF Geometry Affine " + affineIndex + " ";
+      addOTFGeometryAffineMetadata(prefix, affine);
+
+      if (channels != null) {
+        for (Channel channel : channels) {
+          if (matchesAffine(channel, affine)) {
+            addOTFGeometryAffineMetadata(getYokogawaChannelScope(channel) +
+              "OTFGeometry ", affine);
+          }
+        }
+      }
+      affineIndex++;
+    }
+  }
+
+  private void addOTFGeometryAffineMetadata(String prefix,
+    OTFGeometryAffine affine)
+  {
+    addYokogawaMeta(prefix, "MethodID", affine.methodID);
+    addYokogawaMeta(prefix, "Method", affine.method);
+    addYokogawaMeta(prefix, "ObjectiveID", affine.objectiveID);
+    addYokogawaMeta(prefix, "Objective", affine.objective);
+    addYokogawaMeta(prefix, "Magnification", affine.magnification);
+    addYokogawaMeta(prefix, "FilterID", affine.filterID);
+    addYokogawaMeta(prefix, "Acquisition", affine.acquisition);
+    addYokogawaMeta(prefix, "Use", affine.use);
+    addYokogawaMeta(prefix, "UpdateTime", affine.updateTime);
+    addYokogawaMeta(prefix, "A", affine.a);
+    addYokogawaMeta(prefix, "B", affine.b);
+    addYokogawaMeta(prefix, "C", affine.c);
+    addYokogawaMeta(prefix, "D", affine.d);
+    addYokogawaMeta(prefix, "E", affine.e);
+    addYokogawaMeta(prefix, "F", affine.f);
+  }
+
+  private boolean matchesAffine(Channel channel, OTFGeometryAffine affine) {
+    if (channel == null || affine == null) {
+      return false;
+    }
+    return sameYokogawaValue(affine.methodID, channel.methodID) &&
+      sameYokogawaValue(affine.method, channel.method) &&
+      sameYokogawaValue(affine.objectiveID, channel.objectiveID) &&
+      sameYokogawaValue(affine.filterID, channel.filterID) &&
+      sameYokogawaValue(affine.acquisition, channel.acquisition);
+  }
+
+  private boolean sameYokogawaValue(String a, String b) {
+    String cleanA = clean(a);
+    String cleanB = clean(b);
+    return cleanA == null ? cleanB == null : cleanA.equals(cleanB);
   }
 
   private void addSidecarSummaryMetadata(String file, CV7000FileRole role) {
@@ -2071,6 +2361,7 @@ public class CV7000Reader extends FormatReader {
     public String settingsPath;
     public MeasurementDataHandler measurementHandler;
     public CrosstalkParameters crosstalkParameters;
+    public OTFGeometryParameters otfGeometryParameters;
     public ArrayList<String> allFiles = new ArrayList<String>();
     public YokogawaOriginalMetadata originalMetadata =
       new YokogawaOriginalMetadata();
@@ -2282,18 +2573,6 @@ public class CV7000Reader extends FormatReader {
           Double parsedWidth = DataTools.parseDouble(width);
           if (parsedCenter != null && parsedWidth != null) {
             return DetectionFilter.bandPass(parsedCenter, parsedWidth);
-          }
-        }
-        else if (trimmed.startsWith("LP") && trimmed.length() > 2) {
-          Double cutIn = DataTools.parseDouble(trimmed.substring(2));
-          if (cutIn != null) {
-            return DetectionFilter.longPass(cutIn);
-          }
-        }
-        else if (trimmed.startsWith("SP") && trimmed.length() > 2) {
-          Double cutOut = DataTools.parseDouble(trimmed.substring(2));
-          if (cutOut != null) {
-            return DetectionFilter.shortPass(cutOut);
           }
         }
       }
@@ -2996,6 +3275,115 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
+  class OTFGeometryHandler extends BaseHandler {
+    private OTFGeometryParameters parameters = new OTFGeometryParameters();
+
+    public OTFGeometryParameters getParameters() {
+      return parameters;
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      String name = getYokogawaAttributeName(qName);
+      if ("GeometryParameter".equals(name)) {
+        parameters.mode = getAttribute(attributes, "Mode");
+        return;
+      }
+      if (!"AffineParameter".equals(name)) {
+        return;
+      }
+
+      OTFGeometryAffine affine = new OTFGeometryAffine();
+      affine.methodID = getAttribute(attributes, "MethodID");
+      affine.method = getAttribute(attributes, "Method");
+      affine.objectiveID = getAttribute(attributes, "ObjectiveID");
+      affine.objective = getAttribute(attributes, "Objective");
+      affine.magnification = DataTools.parseDouble(
+        getAttribute(attributes, "Magnification"));
+      affine.filterID = getAttribute(attributes, "FilterID");
+      affine.acquisition = getAttribute(attributes, "Acquisition");
+      affine.use = getAttribute(attributes, "Use");
+      affine.updateTime = getAttribute(attributes, "UpdateTime");
+      affine.a = DataTools.parseDouble(getAttribute(attributes, "A"));
+      affine.b = DataTools.parseDouble(getAttribute(attributes, "B"));
+      affine.c = DataTools.parseDouble(getAttribute(attributes, "C"));
+      affine.d = DataTools.parseDouble(getAttribute(attributes, "D"));
+      affine.e = DataTools.parseDouble(getAttribute(attributes, "E"));
+      affine.f = DataTools.parseDouble(getAttribute(attributes, "F"));
+      parameters.addAffine(affine);
+    }
+
+    private String getAttribute(Attributes attributes, String name) {
+      if (attributes == null || name == null) {
+        return null;
+      }
+      for (int i=0; i<attributes.getLength(); i++) {
+        if (name.equals(getYokogawaAttributeName(attributes.getQName(i)))) {
+          String value = attributes.getValue(i);
+          return value == null || value.trim().length() == 0 ? null : value;
+        }
+      }
+      return null;
+    }
+  }
+
+  class OTFGeometryParameters {
+    public String mode;
+    public LinkedHashMap<String, OTFGeometryObjective> objectivesByID =
+      new LinkedHashMap<String, OTFGeometryObjective>();
+    public ArrayList<OTFGeometryAffine> affines =
+      new ArrayList<OTFGeometryAffine>();
+
+    public void addAffine(OTFGeometryAffine affine) {
+      affines.add(affine);
+      if (affine.objectiveID == null) {
+        return;
+      }
+      OTFGeometryObjective objective = objectivesByID.get(affine.objectiveID);
+      if (objective == null) {
+        objective = new OTFGeometryObjective();
+        objective.objectiveID = affine.objectiveID;
+        objective.objective = affine.objective;
+        objective.magnification = affine.magnification;
+        objectivesByID.put(objective.objectiveID, objective);
+      }
+      else {
+        if (objective.objective == null) {
+          objective.objective = affine.objective;
+        }
+        if (objective.magnification == null) {
+          objective.magnification = affine.magnification;
+        }
+      }
+    }
+  }
+
+  class OTFGeometryObjective {
+    public String objectiveID;
+    public String objective;
+    public Double magnification;
+  }
+
+  class OTFGeometryAffine {
+    public String methodID;
+    public String method;
+    public String objectiveID;
+    public String objective;
+    public Double magnification;
+    public String filterID;
+    public String acquisition;
+    public String use;
+    public String updateTime;
+    public Double a;
+    public Double b;
+    public Double c;
+    public Double d;
+    public Double e;
+    public Double f;
+  }
+
   class CrosstalkParameters {
     public LinkedHashMap<CrosstalkFilterKey, CrosstalkFilter> filters =
       new LinkedHashMap<CrosstalkFilterKey, CrosstalkFilter>();
@@ -3086,6 +3474,23 @@ public class CV7000Reader extends FormatReader {
     public Double power;
   }
 
+  class CV7000ObjectiveSpec {
+    public Double lensNA;
+    public String immersion;
+
+    public CV7000ObjectiveSpec(Double lensNA, String immersion) {
+      this.lensNA = lensNA;
+      this.immersion = immersion;
+    }
+  }
+
+  class ObjectiveModelTokens {
+    public Integer magnification;
+    public boolean phase;
+    public boolean longWorkingDistance;
+    public boolean water;
+  }
+
   static class DetectionFilter {
     public String filterType;
     public Double center;
@@ -3099,18 +3504,6 @@ public class CV7000Reader extends FormatReader {
       filter.width = width;
       filter.cutIn = center - (width / 2);
       filter.cutOut = center + (width / 2);
-      return filter;
-    }
-
-    public static DetectionFilter longPass(Double cutIn) {
-      DetectionFilter filter = new DetectionFilter("LongPass");
-      filter.cutIn = cutIn;
-      return filter;
-    }
-
-    public static DetectionFilter shortPass(Double cutOut) {
-      DetectionFilter filter = new DetectionFilter("ShortPass");
-      filter.cutOut = cutOut;
       return filter;
     }
 
