@@ -96,6 +96,19 @@ public class CV7000Reader extends FormatReader {
   private static final String YOKOGAWA_ANNOTATION_NAMESPACE =
     "openmicroscopy.org/OriginalMetadata/Yokogawa/CV7000";
   private static final String XML_MIME_TYPE = "application/xml";
+  // Manual objective table plus observed CV7000 objective labels in OTF geometry. These correctly resolve known objectives in local data and available data from public repositories.
+  private static final KnownObjectiveSpec[] KNOWN_OBJECTIVES =
+    new KnownObjectiveSpec[] {
+      new KnownObjectiveSpec(4, false, false, "Air", 0.16),
+      new KnownObjectiveSpec(10, false, false, "Air", 0.40),
+      new KnownObjectiveSpec(20, false, false, "Air", 0.75),
+      new KnownObjectiveSpec(40, false, false, "Air", 0.95),
+      new KnownObjectiveSpec(60, false, false, "Water", 1.2),
+      new KnownObjectiveSpec(20, false, true, "Air", 0.45),
+      new KnownObjectiveSpec(10, true, false, "Air", 0.30),
+      new KnownObjectiveSpec(20, true, false, "Air", 0.45),
+      new KnownObjectiveSpec(20, true, true, "Air", 0.45)
+    };
 
   // -- Fields --
 
@@ -339,8 +352,6 @@ public class CV7000Reader extends FormatReader {
     CV7000DatasetPaths paths = getDatasetPaths(id);
     datasetPaths = paths;
     WPIHandler plate = parsePlate(paths.wpiPath);
-    rawModel.paths = paths;
-    rawModel.plate = plate;
 
     parseMeasurementData(paths);
     parseOptionalSidecars(paths);
@@ -351,7 +362,7 @@ public class CV7000Reader extends FormatReader {
     seriesLayout = layout;
     initializeCoreMetadata(layout);
     populateReversePlaneLookup(layout);
-    new CV7000MetadataPopulator().populate(plate, layout);
+    populateMetadataStore(plate, layout);
     setSeries(0);
   }
 
@@ -385,7 +396,6 @@ public class CV7000Reader extends FormatReader {
         isDatasetFile(classifyCV7000File(file)))
       {
         allFiles.add(file.getAbsolutePath());
-        rawModel.addFile(file.getAbsolutePath());
       }
     }
   }
@@ -399,12 +409,9 @@ public class CV7000Reader extends FormatReader {
     }
 
     measurementPath = paths.measurementData.getAbsolutePath();
-    rawModel.measurementPath = measurementPath;
     measurementHandler = new MeasurementDataHandler(paths.parent.getAbsolutePath());
     XMLTools.parseXML(readSanitizedXML(measurementPath), measurementHandler);
     planeData = measurementHandler.getPlanes();
-    rawModel.measurementHandler = measurementHandler;
-    rawModel.planes = planeData;
   }
 
   /** Parse optional XML sidecars that enrich channel, instrument, and raw metadata. */
@@ -423,19 +430,22 @@ public class CV7000Reader extends FormatReader {
       return;
     }
 
-    channels = new ArrayList<Channel>();
-    rawModel.channels = channels;
     detailPath = paths.measurementDetail.getAbsolutePath();
-    rawModel.detailPath = detailPath;
     MeasurementDetailHandler detailHandler = new MeasurementDetailHandler();
     XMLTools.parseXML(readSanitizedXML(detailPath), detailHandler);
+    MeasurementDetailResult result = detailHandler.getResult();
+    channels = result.channels;
+    startTime = result.startTime;
+    endTime = result.endTime;
+    measurementOperatorName = result.measurementOperatorName;
+    targetSystem = result.targetSystem;
+    wppPath = result.wppPath;
+    settingsPath = result.settingsPath;
     if (wppPath != null) {
       wppPath = new Location(paths.parent, wppPath).getAbsolutePath();
-      rawModel.wppPath = wppPath;
     }
     if (settingsPath != null) {
       settingsPath = new Location(paths.parent, settingsPath).getAbsolutePath();
-      rawModel.settingsPath = settingsPath;
     }
   }
 
@@ -449,13 +459,14 @@ public class CV7000Reader extends FormatReader {
   /** Measurement settings attach light sources, actions, filters, and channel modes. */
   private void parseMeasurementSettings() throws IOException {
     if (settingsPath != null && new Location(settingsPath).exists()) {
-      lightSources = new ArrayList<LightSource>();
-      rawModel.lightSources = lightSources;
-      MeasurementSettingsHandler settingsHandler = new MeasurementSettingsHandler();
+      MeasurementSettingsHandler settingsHandler =
+        new MeasurementSettingsHandler(channels);
       String xml = readSanitizedXML(settingsPath);
       if (xml.length() > 0) {
         XMLTools.parseXML(xml, settingsHandler);
       }
+      MeasurementSettingsResult result = settingsHandler.getResult();
+      lightSources = result.lightSources;
     }
   }
 
@@ -470,11 +481,9 @@ public class CV7000Reader extends FormatReader {
       OTFGeometryHandler handler = new OTFGeometryHandler();
       XMLTools.parseXML(readSanitizedXML(geometry.getAbsolutePath()), handler);
       otfGeometryParameters = handler.getParameters();
-      rawModel.otfGeometryParameters = otfGeometryParameters;
     }
     catch (Exception e) {
       otfGeometryParameters = null;
-      rawModel.otfGeometryParameters = null;
       LOGGER.warn("Could not parse CV7000 OTF geometry sidecar {}",
         geometry.getAbsolutePath(), e);
     }
@@ -491,11 +500,9 @@ public class CV7000Reader extends FormatReader {
       CrosstalkParameterHandler handler = new CrosstalkParameterHandler();
       XMLTools.parseXML(readSanitizedXML(crosstalk.getAbsolutePath()), handler);
       crosstalkParameters = handler.getParameters();
-      rawModel.crosstalkParameters = crosstalkParameters;
     }
     catch (Exception e) {
       crosstalkParameters = null;
-      rawModel.crosstalkParameters = null;
       LOGGER.warn("Could not parse CV7000 crosstalk sidecar {}", crosstalk.getAbsolutePath(), e);
     }
   }
@@ -506,7 +513,7 @@ public class CV7000Reader extends FormatReader {
       return;
     }
     sortChannelsByActionThenIndex();
-    rawModel.indexChannels();
+    rawModel.indexChannels(channels);
     resolveCorrectionFiles(parent);
   }
 
@@ -702,17 +709,17 @@ public class CV7000Reader extends FormatReader {
       if ((existing == null || existing.file == null) && p.file != null) {
         reversePlaneLookup[p.series][p.no] = planeIndex;
         layout.duplicateCandidates.add(new DuplicatePlaneCandidate(
-          existing, existingIndex, p, "REPLACED_BY_TIFF"));
+          existing, p, "REPLACED_BY_TIFF"));
       }
       else if (p.file != null) {
         LOGGER.warn("Ignoring file {}", p.file);
         extraFiles.add(p.file);
         layout.duplicateCandidates.add(new DuplicatePlaneCandidate(
-          p, planeIndex, existing, "IGNORED_TIFF_DUPLICATE"));
+          p, existing, "IGNORED_TIFF_DUPLICATE"));
       }
       else {
         layout.duplicateCandidates.add(new DuplicatePlaneCandidate(
-          p, planeIndex, existing, "IGNORED_METADATA_ONLY_DUPLICATE"));
+          p, existing, "IGNORED_METADATA_ONLY_DUPLICATE"));
       }
     }
   }
@@ -739,7 +746,7 @@ public class CV7000Reader extends FormatReader {
       populateSeriesMetadata(store, indexes.instrument, indexes.lightSourceIndexes,
         indexes.detectorIndexes, indexes.filterIndexes, indexes.dichroicIndexes,
         indexes.usedObjectiveIDs, experimenter, timings);
-      new CV7000OriginalMetadataPopulator().populate(store, indexes.instrument != null);
+      addYokogawaOriginalMetadata(store, indexes.instrument != null);
       setSeries(0);
     }
   }
@@ -1359,10 +1366,15 @@ public class CV7000Reader extends FormatReader {
     if (model != null) {
       store.setObjectiveModel(model, 0, objectiveIndex);
     }
-    if (magnification != null) {
-      store.setObjectiveNominalMagnification(magnification, 0, objectiveIndex);
+    CV7000ObjectiveSpec spec = getObjectiveSpec(model);
+    Double nominalMagnification = magnification;
+    if (nominalMagnification == null && spec != null) {
+      nominalMagnification = spec.magnification;
     }
-    CV7000ObjectiveSpec spec = getObjectiveSpec(objectiveID, model);
+    if (nominalMagnification != null) {
+      store.setObjectiveNominalMagnification(
+        nominalMagnification, 0, objectiveIndex);
+    }
     if (spec == null) {
       return;
     }
@@ -1381,40 +1393,19 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private CV7000ObjectiveSpec getObjectiveSpec(String objectiveID, String model) {
-    // CV7000 objective NA and immersion values come from the user manual,
-    // section 14, "MS Code" / "Objective Lens".
+  private CV7000ObjectiveSpec getObjectiveSpec(String model) {
     ObjectiveModelTokens tokens = parseObjectiveModel(model);
-    if (isObjectiveMagnification(tokens, 4) ||
-      (tokens.magnification == null && "4000".equals(objectiveID)))
-    {
-      return new CV7000ObjectiveSpec(0.16, "Air");
+
+    for (KnownObjectiveSpec known : KNOWN_OBJECTIVES) {
+      if (known.matches(tokens)) {
+        return known.toObjectiveSpec();
+      }
     }
-    if (isObjectiveMagnification(tokens, 10)) {
-      return new CV7000ObjectiveSpec(tokens.phase ? 0.30 : 0.40, "Air");
-    }
-    if (tokens.magnification == null && "10000".equals(objectiveID)) {
-      return new CV7000ObjectiveSpec(0.40, "Air");
-    }
-    if (isObjectiveMagnification(tokens, 20)) {
-      return new CV7000ObjectiveSpec(
-        tokens.phase || tokens.longWorkingDistance ? 0.45 : 0.75, "Air");
-    }
-    if (tokens.magnification == null && "20003".equals(objectiveID)) {
-      return new CV7000ObjectiveSpec(0.45, "Air");
-    }
-    if (tokens.magnification == null && "20000".equals(objectiveID)) {
-      return new CV7000ObjectiveSpec(0.75, "Air");
-    }
-    if (isObjectiveMagnification(tokens, 40) ||
-      (tokens.magnification == null && "40000".equals(objectiveID)))
-    {
-      return new CV7000ObjectiveSpec(0.95, "Air");
-    }
-    if (isObjectiveMagnification(tokens, 60) ||
-      (tokens.magnification == null && "60004".equals(objectiveID)))
-    {
-      return new CV7000ObjectiveSpec(1.2, "Water");
+
+    if (tokens.magnification != null || tokens.immersion != null) {
+      Double magnification = tokens.magnification == null ?
+        null : Double.valueOf(tokens.magnification.doubleValue());
+      return new CV7000ObjectiveSpec(magnification, null, tokens.immersion);
     }
     return null;
   }
@@ -1429,31 +1420,26 @@ public class CV7000Reader extends FormatReader {
     normalized = normalized.replaceAll("[^a-z0-9]+", " ").trim();
     normalized = normalized.replaceAll("\\s+", " ");
     String[] parts = normalized.split(" ");
-    for (String part : parts) {
+    for (int i=0; i<parts.length; i++) {
+      String part = parts[i];
       if (part.endsWith("x") && part.length() > 1) {
         tokens.magnification = parseInteger(part.substring(0, part.length() - 1));
       }
       if ("ph".equals(part) || "phase".equals(part)) {
         tokens.phase = true;
       }
-      if ("lwd".equals(part) || "long".equals(part)) {
+      if ("lwd".equals(part) || "wd".equals(part) || "long".equals(part)) {
         tokens.longWorkingDistance = true;
       }
-      if ("water".equals(part)) {
-        tokens.water = true;
+      if ("w".equals(part) && i + 1 < parts.length && "d".equals(parts[i + 1])) {
+        tokens.longWorkingDistance = true;
+        i++;
       }
-      if ("w".equals(part)) {
-        tokens.water = true;
+      else if ("w".equals(part)) {
+        tokens.immersion = "Water";
       }
     }
     return tokens;
-  }
-
-  private boolean isObjectiveMagnification(ObjectiveModelTokens tokens,
-    int magnification)
-  {
-    return tokens != null && tokens.magnification != null &&
-      tokens.magnification.intValue() == magnification;
   }
 
   private void populateDetectors(MetadataStore store,
@@ -1745,7 +1731,7 @@ public class CV7000Reader extends FormatReader {
       addYokogawaMeta(prefix, "Objective", objective.objective);
       addYokogawaMeta(prefix, "Magnification", objective.magnification);
       CV7000ObjectiveSpec spec =
-        getObjectiveSpec(objective.objectiveID, objective.objective);
+        getObjectiveSpec(objective.objective);
       if (spec != null) {
         addYokogawaMeta(prefix, "MappedLensNA", spec.lensNA);
         addYokogawaMeta(prefix, "MappedImmersion", spec.immersion);
@@ -1815,12 +1801,12 @@ public class CV7000Reader extends FormatReader {
     }
 
     try {
-      byte[] bytes = readSidecarBytes(file);
+      SidecarSummary summary = summarizeSidecar(file);
       String prefix = "Yokogawa Sidecar " + name + " ";
 
       addYokogawaMeta(prefix, "Role", role.name());
-      addYokogawaMeta(prefix, "ByteLength", bytes.length);
-      addYokogawaMeta(prefix, "SHA-256", sha256(bytes));
+      addYokogawaMeta(prefix, "ByteLength", summary.byteLength);
+      addYokogawaMeta(prefix, "SHA-256", summary.sha256);
     }
     catch (IOException e) {
       LOGGER.debug("Could not summarize CV7000 sidecar {}", file, e);
@@ -1856,6 +1842,26 @@ public class CV7000Reader extends FormatReader {
       LOGGER.debug("Could not preserve raw CV7000 sidecar {}", file, e);
     }
     return null;
+  }
+
+  private SidecarSummary summarizeSidecar(String file) throws IOException {
+    RandomAccessInputStream stream = new RandomAccessInputStream(file);
+    try {
+      long length = stream.length();
+      MessageDigest digest = createSHA256Digest();
+      byte[] buffer = new byte[8192];
+      long remaining = length;
+      while (remaining > 0) {
+        int count = (int) Math.min(buffer.length, remaining);
+        stream.readFully(buffer, 0, count);
+        digest.update(buffer, 0, count);
+        remaining -= count;
+      }
+      return new SidecarSummary(length, toHex(digest.digest()));
+    }
+    finally {
+      stream.close();
+    }
   }
 
   private byte[] readSidecarBytes(String file) throws IOException {
@@ -1990,11 +1996,11 @@ public class CV7000Reader extends FormatReader {
     }
 
     try {
-      byte[] bytes = readSidecarBytes(measurementPath);
+      SidecarSummary summary = summarizeSidecar(measurementPath);
       addYokogawaMeta("Yokogawa MLF ", "File", new Location(measurementPath).getName());
       addYokogawaMeta("Yokogawa MLF ", "Encoding", "UTF-8");
-      addYokogawaMeta("Yokogawa MLF ", "ByteLength", bytes.length);
-      addYokogawaMeta("Yokogawa MLF ", "SHA-256", sha256(bytes));
+      addYokogawaMeta("Yokogawa MLF ", "ByteLength", summary.byteLength);
+      addYokogawaMeta("Yokogawa MLF ", "SHA-256", summary.sha256);
     }
     catch (IOException e) {
       LOGGER.debug("Could not summarize CV7000 measurement data {}", measurementPath, e);
@@ -2014,23 +2020,25 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private String sha256(byte[] bytes) {
+  private MessageDigest createSHA256Digest() {
     try {
-      MessageDigest digest = MessageDigest.getInstance("SHA-256");
-      byte[] hash = digest.digest(bytes);
-      StringBuilder hex = new StringBuilder(hash.length * 2);
-      for (byte b : hash) {
-        String value = Integer.toHexString(b & 0xff);
-        if (value.length() == 1) {
-          hex.append('0');
-        }
-        hex.append(value);
-      }
-      return hex.toString();
+      return MessageDigest.getInstance("SHA-256");
     }
     catch (NoSuchAlgorithmException e) {
       throw new RuntimeException("SHA-256 not available", e);
     }
+  }
+
+  private String toHex(byte[] bytes) {
+    StringBuilder hex = new StringBuilder(bytes.length * 2);
+    for (byte b : bytes) {
+      String value = Integer.toHexString(b & 0xff);
+      if (value.length() == 1) {
+        hex.append('0');
+      }
+      hex.append(value);
+    }
+    return hex.toString();
   }
 
   private void emitYokogawaMapAnnotations(MetadataStore store,
@@ -2581,7 +2589,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Resolved dataset paths used during the parsing phase. */
-  class CV7000DatasetPaths {
+  private static class CV7000DatasetPaths {
     public Location parent;
     public String wpiPath;
     public Location measurementData;
@@ -2592,38 +2600,14 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Parsed Yokogawa sidecars and reader-local provenance. */
-  class CV7000RawModel {
-    public CV7000DatasetPaths paths;
-    public WPIHandler plate;
-    public ArrayList<Plane> planes = new ArrayList<Plane>();
-    public ArrayList<LightSource> lightSources;
-    public ArrayList<Channel> channels;
-    public String startTime;
-    public String endTime;
-    public String wppPath;
-    public String detailPath;
-    public String measurementPath;
-    public String settingsPath;
-    public MeasurementDataHandler measurementHandler;
-    public CrosstalkParameters crosstalkParameters;
-    public OTFGeometryParameters otfGeometryParameters;
-    public ArrayList<String> allFiles = new ArrayList<String>();
+  private static class CV7000RawModel {
     public YokogawaOriginalMetadata originalMetadata =
       new YokogawaOriginalMetadata();
     private HashMap<ChannelKey, Channel> channelsByAcquisition =
       new HashMap<ChannelKey, Channel>();
-    private HashMap<Integer, ArrayList<Channel>> channelsByRawIndex =
-      new HashMap<Integer, ArrayList<Channel>>();
 
-    public void addFile(String file) {
-      if (file != null && !allFiles.contains(file)) {
-        allFiles.add(file);
-      }
-    }
-
-    public void indexChannels() {
+    public void indexChannels(ArrayList<Channel> channels) {
       channelsByAcquisition.clear();
-      channelsByRawIndex.clear();
       if (channels == null) {
         return;
       }
@@ -2633,13 +2617,6 @@ public class CV7000Reader extends FormatReader {
         if (!channelsByAcquisition.containsKey(key)) {
           channelsByAcquisition.put(key, channel);
         }
-        Integer rawIndex = Integer.valueOf(channel.index);
-        ArrayList<Channel> rawChannels = channelsByRawIndex.get(rawIndex);
-        if (rawChannels == null) {
-          rawChannels = new ArrayList<Channel>();
-          channelsByRawIndex.put(rawIndex, rawChannels);
-        }
-        rawChannels.add(channel);
       }
     }
 
@@ -2650,13 +2627,13 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Grouped Yokogawa metadata pending OME MapAnnotation emission. */
-  class YokogawaOriginalMetadata {
+  private static class YokogawaOriginalMetadata {
     public LinkedHashMap<String, YokogawaAnnotationGroup> groups =
       new LinkedHashMap<String, YokogawaAnnotationGroup>();
   }
 
   /** Intermediate layout data used to translate Yokogawa records into series. */
-  class CV7000SeriesLayout {
+  private static class CV7000SeriesLayout {
     public String firstFile;
     public ArrayList<Field> acquiredFields = new ArrayList<Field>();
     public HashMap<Field, MinMax> minMax = new HashMap<Field, MinMax>();
@@ -2700,23 +2677,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  /** Standard OME metadata population entrypoint. */
-  class CV7000MetadataPopulator {
-    public void populate(WPIHandler plate, CV7000SeriesLayout layout)
-      throws FormatException
-    {
-      populateMetadataStore(plate, layout);
-    }
-  }
-
-  /** Yokogawa-specific annotation and sidecar provenance entrypoint. */
-  class CV7000OriginalMetadataPopulator {
-    public void populate(MetadataStore store, boolean hasInstrument) {
-      addYokogawaOriginalMetadata(store, hasInstrument);
-    }
-  }
-
-  class ChannelKey {
+  private static class ChannelKey {
     public int timelineIndex;
     public int actionIndex;
     public int channelIndex;
@@ -2748,7 +2709,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Shared Yokogawa parsing and normalization helpers. */
-  class YokogawaParsing {
+  private static class YokogawaParsing {
     public String readSanitizedXML(String filename) throws IOException {
       String xml = DataTools.readFile(filename).trim();
       if (xml.endsWith(">>")) {
@@ -2848,7 +2809,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** OME instrument indexes shared by channel metadata population. */
-  class InstrumentMetadataIndexes {
+  private static class InstrumentMetadataIndexes {
     public String instrument;
     public HashMap<Integer, Integer> lightSourceIndexes =
       new HashMap<Integer, Integer>();
@@ -2861,7 +2822,7 @@ public class CV7000Reader extends FormatReader {
     public List<String> usedObjectiveIDs = new ArrayList<String>();
   }
 
-  class AnnotationRefIndexes {
+  private static class AnnotationRefIndexes {
     public int plate;
     public int instrument;
     private HashMap<Integer, Integer> imageRefs =
@@ -2886,7 +2847,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class PlaneProvenanceSummary {
+  private static class PlaneProvenanceSummary {
     public int planeCount;
     public int tiffBackedCount;
     public int filledCount;
@@ -2897,23 +2858,21 @@ public class CV7000Reader extends FormatReader {
     public ArrayList<String> anomalies = new ArrayList<String>();
   }
 
-  class DuplicatePlaneCandidate {
+  private static class DuplicatePlaneCandidate {
     public Plane candidate;
-    public int candidateIndex;
     public Plane selected;
     public String reason;
 
-    public DuplicatePlaneCandidate(Plane candidate, int candidateIndex,
-      Plane selected, String reason)
+    public DuplicatePlaneCandidate(Plane candidate, Plane selected,
+      String reason)
     {
       this.candidate = candidate;
-      this.candidateIndex = candidateIndex;
       this.selected = selected;
       this.reason = reason;
     }
   }
 
-  class YokogawaAnnotationGroup {
+  private static class YokogawaAnnotationGroup {
     public String scope;
     private LinkedHashMap<String, String> values =
       new LinkedHashMap<String, String>();
@@ -2929,7 +2888,7 @@ public class CV7000Reader extends FormatReader {
     }
 
     public void put(String name, Object value) {
-      String key = clean(name);
+      String key = cleanText(name);
       String text = cleanValue(value);
       if (key == null || text == null) {
         return;
@@ -2943,7 +2902,7 @@ public class CV7000Reader extends FormatReader {
     }
 
     public void putList(String name, Object value) {
-      String key = clean(name);
+      String key = cleanText(name);
       String text = cleanValue(value);
       if (key == null || text == null) {
         return;
@@ -2970,14 +2929,46 @@ public class CV7000Reader extends FormatReader {
       String text = String.valueOf(value);
       return text.trim().length() == 0 ? null : text;
     }
+
+    private String cleanText(String value) {
+      if (value == null) {
+        return null;
+      }
+      String trimmed = value.trim();
+      return trimmed.length() == 0 ? null : trimmed;
+    }
   }
 
-  class SeriesTiming {
+  private static class SeriesTiming {
     public Long startMillis;
     public String startTimestamp;
   }
 
-  class WPIHandler extends BaseHandler {
+  private static class SidecarSummary {
+    public long byteLength;
+    public String sha256;
+
+    public SidecarSummary(long byteLength, String sha256) {
+      this.byteLength = byteLength;
+      this.sha256 = sha256;
+    }
+  }
+
+  private static class MeasurementDetailResult {
+    public ArrayList<Channel> channels = new ArrayList<Channel>();
+    public String wppPath;
+    public String settingsPath;
+    public String startTime;
+    public String endTime;
+    public String measurementOperatorName;
+    public String targetSystem;
+  }
+
+  private static class MeasurementSettingsResult {
+    public ArrayList<LightSource> lightSources = new ArrayList<LightSource>();
+  }
+
+  private class WPIHandler extends BaseHandler {
     private int plateRows;
     private int plateColumns;
     private String name;
@@ -3019,7 +3010,7 @@ public class CV7000Reader extends FormatReader {
 
   }
 
-  class MeasurementDataHandler extends BaseHandler {
+  private class MeasurementDataHandler extends BaseHandler {
     private StringBuffer currentValue = new StringBuffer();
     private String btsType;
     private ArrayList<Plane> planes = new ArrayList<Plane>();
@@ -3029,8 +3020,6 @@ public class CV7000Reader extends FormatReader {
     private String lastTimestamp;
     private String firstAction;
     private String lastAction;
-
-    private int currentField = -1;
 
     public MeasurementDataHandler(String parentDir) {
       super();
@@ -3091,10 +3080,6 @@ public class CV7000Reader extends FormatReader {
           p.actionIndex = Integer.parseInt(attributes.getValue("bts:ActionIndex")) - 1;
           p.timelineIndex = Integer.parseInt(attributes.getValue("bts:TimelineIndex")) - 1;
 
-          if (p.field.field != currentField) {
-            currentField = p.field.field;
-          }
-
           p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
           p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
           p.zpos = DataTools.parseDouble(attributes.getValue("bts:Z"));
@@ -3137,7 +3122,12 @@ public class CV7000Reader extends FormatReader {
 
   }
 
-  class MeasurementDetailHandler extends BaseHandler {
+  private class MeasurementDetailHandler extends BaseHandler {
+    private MeasurementDetailResult result = new MeasurementDetailResult();
+
+    public MeasurementDetailResult getResult() {
+      return result;
+    }
 
     // -- DefaultHandler API methods --
 
@@ -3147,11 +3137,10 @@ public class CV7000Reader extends FormatReader {
     {
       if (qName.equals("bts:MeasurementSamplePlate")) {
         addYokogawaAttributes("Yokogawa MRF MeasurementSamplePlate ", attributes);
-        wppPath = attributes.getValue("bts:WellPlateProductFileName");
-        if (wppPath != null && wppPath.trim().length() == 0) {
-          wppPath = null;
+        result.wppPath = attributes.getValue("bts:WellPlateProductFileName");
+        if (result.wppPath != null && result.wppPath.trim().length() == 0) {
+          result.wppPath = null;
         }
-        rawModel.wppPath = wppPath;
       }
       else if (qName.equals("bts:MeasurementChannel")) {
         Channel c = new Channel();
@@ -3171,33 +3160,31 @@ public class CV7000Reader extends FormatReader {
         if (c.correctionFile != null && c.correctionFile.trim().length() == 0) {
           c.correctionFile = null;
         }
-        channels.add(c);
+        result.channels.add(c);
       }
       else if (qName.equals("bts:MeasurementDetail")) {
         addYokogawaAttributes("Yokogawa MRF MeasurementDetail ", attributes);
-        startTime = attributes.getValue("bts:BeginTime");
-        endTime = attributes.getValue("bts:EndTime");
-        rawModel.startTime = startTime;
-        rawModel.endTime = endTime;
-        settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
-        rawModel.settingsPath = settingsPath;
-        measurementOperatorName = clean(attributes.getValue("bts:OperatorName"));
+        result.startTime = attributes.getValue("bts:BeginTime");
+        result.endTime = attributes.getValue("bts:EndTime");
+        result.settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
+        result.measurementOperatorName = clean(attributes.getValue("bts:OperatorName"));
 
         String system = attributes.getValue("bts:TargetSystem");
-        targetSystem = clean(system);
+        result.targetSystem = clean(system);
         addYokogawaMeta(
           "Yokogawa MRF MeasurementDetail ", "AcquisitionSystem", system);
-        if (targetSystem != null &&
-          !targetSystem.toLowerCase().startsWith("cv7000"))
+        if (result.targetSystem != null &&
+          !result.targetSystem.toLowerCase().startsWith("cv7000"))
         {
-          LOGGER.warn("Found data from {}; this is not well-supported", targetSystem);
+          LOGGER.warn("Found data from {}; this is not well-supported",
+            result.targetSystem);
         }
       }
     }
 
   }
 
-  class WPPHandler extends BaseHandler {
+  private class WPPHandler extends BaseHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName,
@@ -3210,7 +3197,7 @@ public class CV7000Reader extends FormatReader {
 
   }
 
-  class PostProcessHandler extends BaseHandler {
+  private class PostProcessHandler extends BaseHandler {
     private int actionIndex = -1;
 
     @Override
@@ -3232,7 +3219,9 @@ public class CV7000Reader extends FormatReader {
 
   }
 
-  class MeasurementSettingsHandler extends BaseHandler {
+  private class MeasurementSettingsHandler extends BaseHandler {
+    private MeasurementSettingsResult result = new MeasurementSettingsResult();
+    private ArrayList<Channel> parsedChannels;
     private StringBuffer currentValue = new StringBuffer();
     private int currentChannelIndex = -1;
     private int timelineIndex = -1;
@@ -3250,6 +3239,14 @@ public class CV7000Reader extends FormatReader {
     private String currentActionBottomDistance;
     private String currentActionSliceLength;
     private String currentActionUseSoftFocus;
+
+    public MeasurementSettingsHandler(ArrayList<Channel> channels) {
+      parsedChannels = channels;
+    }
+
+    public MeasurementSettingsResult getResult() {
+      return result;
+    }
 
     // -- DefaultHandler API methods --
 
@@ -3279,14 +3276,14 @@ public class CV7000Reader extends FormatReader {
         l.wavelength = DataTools.parseDouble(wavelength);
         l.power = DataTools.parseDouble(power);
 
-        lightSources.add(l);
+        result.lightSources.add(l);
       }
       else if (qName.equals("bts:Channel")) {
         currentChannelIndex = -1;
         String ch = attributes.getValue("bts:Ch");
         if (ch != null) {
           int index = Integer.parseInt(ch) - 1;
-          if (index >= 0 && index < channels.size()) {
+          if (index >= 0 && index < parsedChannels.size()) {
             currentChannelIndex = index;
 
             Channel template = new Channel();
@@ -3407,8 +3404,8 @@ public class CV7000Reader extends FormatReader {
           "Yokogawa MES Channel " + (currentChannelIndex + 1) + " ",
           "LightSourceName", value);
         int index = -1;
-        for (int i=0; i<lightSources.size(); i++) {
-          if (lightSources.get(i).name.equals(value)) {
+        for (int i=0; i<result.lightSources.size(); i++) {
+          if (result.lightSources.get(i).name.equals(value)) {
             index = i;
           }
         }
@@ -3421,13 +3418,13 @@ public class CV7000Reader extends FormatReader {
       }
       else if (qName.equals("bts:Ch")) {
         int channelIndex = Integer.parseInt(value) - 1;
-        if (channelIndex >= 0 && channelIndex < channels.size()) {
+        if (channelIndex >= 0 && channelIndex < parsedChannels.size()) {
           // the same channel may be acquired multiple times
           // if this is the first time the channel is acquired, set the indexes
           // if this is the second (or more) time the channel is acquired,
           // duplicate the channel so that each action has its own copy with
           // the correct indexes
-          Channel ch = channels.get(channelIndex);
+          Channel ch = parsedChannels.get(channelIndex);
           if (ch.timelineIndex == -1 && ch.actionIndex == -1) {
             ch.timelineIndex = timelineIndex;
             ch.actionIndex = actionIndex;
@@ -3446,7 +3443,7 @@ public class CV7000Reader extends FormatReader {
               currentActionXOffset, currentActionYOffset, currentActionAFShiftBase,
               currentActionTopDistance, currentActionBottomDistance,
               currentActionSliceLength, currentActionUseSoftFocus);
-            channels.add(duplicate);
+            parsedChannels.add(duplicate);
           }
         }
       }
@@ -3464,7 +3461,7 @@ public class CV7000Reader extends FormatReader {
     }
 
     private void applyChannelSettings(Channel template) {
-      for (Channel ch : channels) {
+      for (Channel ch : parsedChannels) {
         if (ch.index == template.index) {
           ch.copyChannelSettings(template);
         }
@@ -3472,7 +3469,7 @@ public class CV7000Reader extends FormatReader {
     }
 
     private void addLightSourceRef(int rawChannelIndex, int lightSourceIndex) {
-      for (Channel ch : channels) {
+      for (Channel ch : parsedChannels) {
         if (ch.index == rawChannelIndex &&
           !ch.lightSourceRefs.contains(lightSourceIndex))
         {
@@ -3483,7 +3480,7 @@ public class CV7000Reader extends FormatReader {
 
   }
 
-  class CrosstalkParameterHandler extends BaseHandler {
+  private class CrosstalkParameterHandler extends BaseHandler {
     private CrosstalkParameters parameters = new CrosstalkParameters();
     private CrosstalkFilter currentFilter;
     private CrosstalkFluorophore currentFluorophore;
@@ -3560,7 +3557,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class OTFGeometryHandler extends BaseHandler {
+  private class OTFGeometryHandler extends BaseHandler {
     private OTFGeometryParameters parameters = new OTFGeometryParameters();
 
     public OTFGeometryParameters getParameters() {
@@ -3614,7 +3611,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class OTFGeometryParameters {
+  private static class OTFGeometryParameters {
     public String mode;
     public LinkedHashMap<String, OTFGeometryObjective> objectivesByID =
       new LinkedHashMap<String, OTFGeometryObjective>();
@@ -3645,13 +3642,13 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class OTFGeometryObjective {
+  private static class OTFGeometryObjective {
     public String objectiveID;
     public String objective;
     public Double magnification;
   }
 
-  class OTFGeometryAffine {
+  private static class OTFGeometryAffine {
     public String methodID;
     public String method;
     public String objectiveID;
@@ -3669,7 +3666,7 @@ public class CV7000Reader extends FormatReader {
     public Double f;
   }
 
-  class CrosstalkParameters {
+  private static class CrosstalkParameters {
     public LinkedHashMap<CrosstalkFilterKey, CrosstalkFilter> filters =
       new LinkedHashMap<CrosstalkFilterKey, CrosstalkFilter>();
     public ArrayList<CrosstalkFluorophore> fluorophores =
@@ -3681,7 +3678,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class CrosstalkFilter {
+  private static class CrosstalkFilter {
     public String filterID;
     public Integer cameraNumber;
     public String acquisition;
@@ -3692,25 +3689,25 @@ public class CV7000Reader extends FormatReader {
       new ArrayList<CrosstalkDichroic>();
   }
 
-  class CrosstalkDichroic {
+  private static class CrosstalkDichroic {
     public String id;
     public String name;
     public String reflection;
     public Double averageTransmittance;
   }
 
-  class CrosstalkFluorophore {
+  private static class CrosstalkFluorophore {
     public String name;
     public ArrayList<CrosstalkFluorophoreIntensity> intensities =
       new ArrayList<CrosstalkFluorophoreIntensity>();
   }
 
-  class CrosstalkFluorophoreIntensity {
+  private static class CrosstalkFluorophoreIntensity {
     public String filterID;
     public Double averageIntensity;
   }
 
-  class CrosstalkFilterKey {
+  private static class CrosstalkFilterKey {
     public String filterID;
     public Integer cameraNumber;
     public String acquisition;
@@ -3752,31 +3749,76 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class LightSource {
+  private static class LightSource {
     public String name;
     public String type;
     public Double wavelength;
     public Double power;
   }
 
-  class CV7000ObjectiveSpec {
+  private static class CV7000ObjectiveSpec {
+    public Double magnification;
     public Double lensNA;
     public String immersion;
 
-    public CV7000ObjectiveSpec(Double lensNA, String immersion) {
+    public CV7000ObjectiveSpec(Double magnification, Double lensNA,
+      String immersion)
+    {
+      this.magnification = magnification;
       this.lensNA = lensNA;
       this.immersion = immersion;
     }
   }
 
-  class ObjectiveModelTokens {
+  private static class ObjectiveModelTokens {
     public Integer magnification;
     public boolean phase;
     public boolean longWorkingDistance;
-    public boolean water;
+    public String immersion;
   }
 
-  static class DetectionFilter {
+  private static class KnownObjectiveSpec {
+    public int magnification;
+    public boolean phase;
+    public boolean longWorkingDistance;
+    public String immersion;
+    public Double lensNA;
+
+    public KnownObjectiveSpec(int magnification, boolean phase,
+      boolean longWorkingDistance, String immersion, Double lensNA)
+    {
+      this.magnification = magnification;
+      this.phase = phase;
+      this.longWorkingDistance = longWorkingDistance;
+      this.immersion = immersion;
+      this.lensNA = lensNA;
+    }
+
+    public boolean matches(ObjectiveModelTokens tokens) {
+      if (tokens.magnification == null ||
+        tokens.magnification.intValue() != magnification)
+      {
+        return false;
+      }
+
+      if (tokens.phase != phase ||
+        tokens.longWorkingDistance != longWorkingDistance)
+      {
+        return false;
+      }
+      if (tokens.immersion != null) {
+        return immersion.equals(tokens.immersion);
+      }
+      return !"Water".equals(immersion);
+    }
+
+    public CV7000ObjectiveSpec toObjectiveSpec() {
+      return new CV7000ObjectiveSpec(
+        Double.valueOf(magnification), lensNA, immersion);
+    }
+  }
+
+  private static class DetectionFilter {
     public String filterType;
     public Double center;
     public Double width;
@@ -3797,7 +3839,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class FilterKey {
+  private static class FilterKey {
     public String filterID;
     public String acquisition;
     public int cameraNumber;
@@ -3851,7 +3893,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class Channel {
+  private static class Channel {
     public int timelineIndex = -1;
     public int actionIndex = -1;
     public int index;
@@ -4001,7 +4043,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class Plane {
+  private static class Plane {
     public String file;
     public String timestamp;
     public String actionName;
@@ -4021,7 +4063,7 @@ public class CV7000Reader extends FormatReader {
     public int timelineIndex;
   }
 
-  class Field {
+  private static class Field {
     public int row;
     public int column;
     public int field;
@@ -4042,7 +4084,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  class MinMax {
+  private static class MinMax {
     public int minZ = Integer.MAX_VALUE;
     public int maxZ = 0;
     public int minT = Integer.MAX_VALUE;
