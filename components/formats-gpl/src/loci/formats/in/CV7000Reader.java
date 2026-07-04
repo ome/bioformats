@@ -3794,8 +3794,6 @@ public class CV7000Reader extends FormatReader {
   class MinMax {
     public int minZ = Integer.MAX_VALUE;
     public int maxZ = 0;
-    public int minC = Integer.MAX_VALUE;
-    public int maxC = 0;
     public int minT = Integer.MAX_VALUE;
     public int maxT = 0;
 
@@ -3811,15 +3809,6 @@ public class CV7000Reader extends FormatReader {
       }
       if (p.z < minZ) {
         minZ = p.z;
-      }
-
-      // Min and max channel indexes are not currently used, but keeping them
-      // complete makes future CV7000/8000 channel-layout work less fragile.
-      if (p.channelIndex > maxC) {
-        maxC = p.channelIndex;
-      }
-      if (p.channelIndex < minC) {
-        minC = p.channelIndex;
       }
     }
   }
