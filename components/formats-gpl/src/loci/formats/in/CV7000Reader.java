@@ -76,7 +76,9 @@ import org.xml.sax.Attributes;
  */
 public class CV7000Reader extends FormatReader {
 
-  // -- Constants --
+  // ###############
+  // ## Module 1: Constants, Options, And Reader State
+  // ###############
 
   public static final String DUPLICATE_PLANES_KEY = "cv7000.duplicate_missing_planes";
   public static final boolean DUPLICATE_PLANES_DEFAULT = false;
@@ -84,6 +86,8 @@ public class CV7000Reader extends FormatReader {
   public static final boolean PRESERVE_RAW_SIDECARS_DEFAULT = true;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CV7000Reader.class);
+  private static final CV7000ChannelMapper CHANNEL_MAPPER =
+    new CV7000ChannelMapper();
 
   private static final String MEASUREMENT_FILE = "MeasurementData.mlf";
   private static final String MEASUREMENT_DETAIL = "MeasurementDetail.mrf";
@@ -134,8 +138,6 @@ public class CV7000Reader extends FormatReader {
   private OTFGeometryParameters otfGeometryParameters;
   private YokogawaParsing parsing = new YokogawaParsing();
 
-  // -- Constructor --
-
   /** Constructs a new Yokogawa CV7000 reader. */
   public CV7000Reader() {
     super("Yokogawa CV7000", new String[] {"wpi"});
@@ -144,7 +146,9 @@ public class CV7000Reader extends FormatReader {
     datasetDescription = "Directory with XML files and one .tif/.tiff file per plane";
   }
 
-  // -- CV7000Reader API methods --
+  // ###############
+  // ## Module 2: Public Reader API And Pixel Access
+  // ###############
 
   public boolean duplicatePlanes() {
     MetadataOptions options = getMetadataOptions();
@@ -283,6 +287,7 @@ public class CV7000Reader extends FormatReader {
       targetSystem = null;
       measurementHandler = null;
       crosstalkParameters = null;
+      otfGeometryParameters = null;
       reversePlaneLookup = null;
       extraFiles = null;
       seriesLayout = null;
@@ -330,7 +335,9 @@ public class CV7000Reader extends FormatReader {
     return buf;
   }
 
-  // -- Internal FormatReader API methods --
+  // ###############
+  // ## Module 3: Dataset Path Resolution And Sidecar Parsing
+  // ###############
 
   /* @see loci.formats.FormatReader#getAvailableOptions() */
   @Override
@@ -345,10 +352,7 @@ public class CV7000Reader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    rawModel = new CV7000RawModel();
-    seriesLayout = null;
-    measurementOperatorName = null;
-    targetSystem = null;
+    resetParsedState();
     CV7000DatasetPaths paths = getDatasetPaths(id);
     datasetPaths = paths;
     WPIHandler plate = parsePlate(paths.wpiPath);
@@ -364,6 +368,30 @@ public class CV7000Reader extends FormatReader {
     populateReversePlaneLookup(layout);
     populateMetadataStore(plate, layout);
     setSeries(0);
+  }
+
+  /** Reset parsed CV7000 state before opening a dataset on a reused reader. */
+  private void resetParsedState() {
+    rawModel = new CV7000RawModel();
+    seriesLayout = null;
+    datasetPaths = null;
+    planeData = null;
+    reversePlaneLookup = null;
+    lightSources = null;
+    channels = null;
+    startTime = null;
+    endTime = null;
+    measurementOperatorName = null;
+    targetSystem = null;
+    extraFiles = null;
+    measurementHandler = null;
+    crosstalkParameters = null;
+    otfGeometryParameters = null;
+    wppPath = null;
+    detailPath = null;
+    measurementPath = null;
+    settingsPath = null;
+    allFiles.clear();
   }
 
   private CV7000DatasetPaths getDatasetPaths(String id) {
@@ -507,6 +535,10 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
+  // ###############
+  // ## Module 4: Channel Normalization And Channel Lookup
+  // ###############
+
   /** Normalize channel order and paths after all optional channel sources are parsed. */
   private void normalizeChannels(Location parent) {
     if (channels == null) {
@@ -538,6 +570,18 @@ public class CV7000Reader extends FormatReader {
       }
     }
   }
+
+  private int getLogicalChannelIndex(Plane p) {
+    return CHANNEL_MAPPER.getLogicalChannelIndex(channels, p);
+  }
+
+  private Channel lookupChannel(Plane p) {
+    return CHANNEL_MAPPER.lookupChannel(rawModel, channels, p);
+  }
+
+  // ###############
+  // ## Module 5: Series Layout And Plane Lookup Construction
+  // ###############
 
   /**
    * Build the field/channel/time/z layout before touching Bio-Formats core
@@ -623,14 +667,6 @@ public class CV7000Reader extends FormatReader {
         layout.uniqueChannels.add(p.channelIndex);
       }
     }
-  }
-
-  /** Use detailed action/channel mapping when present; fall back to raw channel IDs. */
-  private int getLogicalChannelIndex(Plane p) {
-    if (channels == null) {
-      return p.channel;
-    }
-    return getChannelIndex(p);
   }
 
   /** Initialize the Bio-Formats core metadata once the logical layout is known. */
@@ -724,6 +760,10 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
+  // ###############
+  // ## Module 6: OME Plate, Image, Pixels, And Plane Metadata
+  // ###############
+
   /** Populate OME metadata after core metadata and plane lookup are complete. */
   private void populateMetadataStore(WPIHandler plate, CV7000SeriesLayout layout)
     throws FormatException
@@ -774,6 +814,10 @@ public class CV7000Reader extends FormatReader {
     }
     return indexes;
   }
+
+  // ###############
+  // ## Module 7: OME Instrument, Channel, And Filter Metadata
+  // ###############
 
   private void populateMicroscope(MetadataStore store) {
     if (targetSystem == null) {
@@ -1581,6 +1625,10 @@ public class CV7000Reader extends FormatReader {
     return new PercentFraction(Float.valueOf((float) fraction));
   }
 
+  // ###############
+  // ## Module 8: Yokogawa Provenance And Raw Sidecar Annotations
+  // ###############
+
   private void addYokogawaOriginalMetadata(MetadataStore store,
     boolean hasInstrument)
   {
@@ -1928,6 +1976,10 @@ public class CV7000Reader extends FormatReader {
     }
     return CV7000FileRole.UNKNOWN;
   }
+
+  // ###############
+  // ## Module 9: File Classification, Utilities, And Plane Lookup Helpers
+  // ###############
 
   private boolean isTiffFile(String name) {
     return name != null && checkSuffix(name, new String[] {"tif", "tiff"});
@@ -2452,23 +2504,6 @@ public class CV7000Reader extends FormatReader {
     return parsing.parseInteger(value);
   }
 
-  private int getChannelIndex(Plane p) {
-    int index = -1;
-    for (int action=0; action<=p.actionIndex; action++) {
-      for (Channel ch : channels) {
-        if (ch.timelineIndex == p.timelineIndex &&
-          ch.actionIndex == action)
-        {
-          index++;
-          if (ch.index == p.channel && ch.actionIndex == p.actionIndex) {
-            return index;
-          }
-        }
-      }
-    }
-    return index;
-  }
-
   private Length getPhysicalSizeZ(int series) {
     Double physicalSizeZ = null;
     boolean foundChannel = false;
@@ -2492,33 +2527,6 @@ public class CV7000Reader extends FormatReader {
       }
     }
     return foundChannel ? FormatTools.getPhysicalSizeZ(physicalSizeZ) : null;
-  }
-
-  private Channel lookupChannel(Plane p) {
-    Channel matched = rawModel.getChannel(p.timelineIndex, p.actionIndex, p.channel);
-    if (matched != null) {
-      return matched;
-    }
-
-    Channel rawChannel = null;
-    Channel populatedRawChannel = null;
-    for (Channel ch : channels) {
-      if (ch.index == p.channel &&
-        ch.timelineIndex == p.timelineIndex &&
-        ch.actionIndex == p.actionIndex)
-      {
-        return ch;
-      }
-      if (ch.index == p.channel) {
-        if (rawChannel == null) {
-          rawChannel = ch;
-        }
-        if (populatedRawChannel == null && ch.hasChannelSettings()) {
-          populatedRawChannel = ch;
-        }
-      }
-    }
-    return populatedRawChannel == null ? rawChannel : populatedRawChannel;
   }
 
   private Plane lookupFirstBackedPlane(int series) {
@@ -2573,7 +2581,9 @@ public class CV7000Reader extends FormatReader {
     return p;
   }
 
-  // -- Helper classes --
+  // ###############
+  // ## Module 10: Data Model Classes
+  // ###############
 
   private enum CV7000FileRole {
     TIFF_PLANE,
@@ -2586,6 +2596,65 @@ public class CV7000Reader extends FormatReader {
     OTF_CROSSTALK,
     OTF_GEOMETRY,
     UNKNOWN
+  }
+
+  /** Centralizes Yokogawa action/channel matching and reader channel indexing. */
+  private static class CV7000ChannelMapper {
+    public int getLogicalChannelIndex(ArrayList<Channel> channels, Plane plane) {
+      if (channels == null) {
+        return plane.channel;
+      }
+      return getChannelIndex(channels, plane);
+    }
+
+    public int getChannelIndex(ArrayList<Channel> channels, Plane plane) {
+      int index = -1;
+      for (int action=0; action<=plane.actionIndex; action++) {
+        for (Channel channel : channels) {
+          if (channel.timelineIndex == plane.timelineIndex &&
+            channel.actionIndex == action)
+          {
+            index++;
+            if (channel.index == plane.channel &&
+              channel.actionIndex == plane.actionIndex)
+            {
+              return index;
+            }
+          }
+        }
+      }
+      return index;
+    }
+
+    public Channel lookupChannel(CV7000RawModel rawModel,
+      ArrayList<Channel> channels, Plane plane)
+    {
+      Channel matched = rawModel.getChannel(
+        plane.timelineIndex, plane.actionIndex, plane.channel);
+      if (matched != null) {
+        return matched;
+      }
+
+      Channel rawChannel = null;
+      Channel populatedRawChannel = null;
+      for (Channel channel : channels) {
+        if (channel.index == plane.channel &&
+          channel.timelineIndex == plane.timelineIndex &&
+          channel.actionIndex == plane.actionIndex)
+        {
+          return channel;
+        }
+        if (channel.index == plane.channel) {
+          if (rawChannel == null) {
+            rawChannel = channel;
+          }
+          if (populatedRawChannel == null && channel.hasChannelSettings()) {
+            populatedRawChannel = channel;
+          }
+        }
+      }
+      return populatedRawChannel == null ? rawChannel : populatedRawChannel;
+    }
   }
 
   /** Resolved dataset paths used during the parsing phase. */
@@ -2806,6 +2875,19 @@ public class CV7000Reader extends FormatReader {
       }
       return binning + "x" + binning;
     }
+
+    public String getAttribute(Attributes attributes, String name) {
+      if (attributes == null || name == null) {
+        return null;
+      }
+      for (int i=0; i<attributes.getLength(); i++) {
+        if (name.equals(getYokogawaAttributeName(attributes.getQName(i)))) {
+          String value = attributes.getValue(i);
+          return clean(value);
+        }
+      }
+      return null;
+    }
   }
 
   /** OME instrument indexes shared by channel metadata population. */
@@ -2967,6 +3049,10 @@ public class CV7000Reader extends FormatReader {
   private static class MeasurementSettingsResult {
     public ArrayList<LightSource> lightSources = new ArrayList<LightSource>();
   }
+
+  // ###############
+  // ## Module 11: SAX Sidecar Handlers
+  // ###############
 
   private class WPIHandler extends BaseHandler {
     private int plateRows;
@@ -3265,94 +3351,16 @@ public class CV7000Reader extends FormatReader {
         addYokogawaAttributes("Yokogawa MES MeasurementSetting ", attributes);
       }
       else if (qName.equals("bts:LightSource")) {
-        LightSource l = new LightSource();
-        l.name = attributes.getValue("bts:Name");
-        l.type = attributes.getValue("bts:Type");
-        addYokogawaAttributes("Yokogawa MES LightSource " + l.name + " ", attributes);
-
-        String wavelength = attributes.getValue("bts:WaveLength");
-        String power = attributes.getValue("bts:Power");
-
-        l.wavelength = DataTools.parseDouble(wavelength);
-        l.power = DataTools.parseDouble(power);
-
-        result.lightSources.add(l);
+        parseLightSource(attributes);
       }
       else if (qName.equals("bts:Channel")) {
-        currentChannelIndex = -1;
-        String ch = attributes.getValue("bts:Ch");
-        if (ch != null) {
-          int index = Integer.parseInt(ch) - 1;
-          if (index >= 0 && index < parsedChannels.size()) {
-            currentChannelIndex = index;
-
-            Channel template = new Channel();
-            template.index = index;
-            template.target = attributes.getValue("bts:Target");
-            addYokogawaAttributes(
-              "Yokogawa MES Channel " + (template.index + 1) + " ", attributes);
-            template.objectiveID = attributes.getValue("bts:ObjectiveID");
-            template.objective = attributes.getValue("bts:Objective");
-            template.binning = attributes.getValue("bts:Binning");
-            template.methodID = attributes.getValue("bts:MethodID");
-            template.method = attributes.getValue("bts:Method");
-            template.filterID = attributes.getValue("bts:FilterID");
-            template.kind = attributes.getValue("bts:Kind");
-            template.andorParameterID = attributes.getValue("bts:AndorParameterID");
-            template.andorParameter = attributes.getValue("bts:AndorParameter");
-            template.detectorGain = parsing.parseYokogawaGain(template.andorParameter);
-            template.cameraType = attributes.getValue("bts:CameraType");
-            template.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
-
-            String mag = attributes.getValue("bts:Magnification");
-            template.magnification = DataTools.parseDouble(mag);
-
-            String exposure = attributes.getValue("bts:ExposureTime");
-            template.exposureTime = DataTools.parseDouble(exposure);
-
-            String color = attributes.getValue("bts:Color");
-            if (color != null) {
-              color = color.replaceAll("#", "");
-              // ignore unless at least R, G, B are defined
-              if (color.length() >= 6) {
-                int[] colors = new int[color.length() / 2];
-                for (int i=0; i<color.length(); i+=2) {
-                  colors[i / 2] = Integer.parseInt(color.substring(i, i + 2), 16);
-                }
-                int alpha = colors.length == 4 ? colors[0] : 255;
-                int red = colors[colors.length - 3];
-                int green = colors[colors.length - 2];
-                int blue = colors[colors.length - 1];
-                template.color = new Color(red, green, blue, alpha);
-              }
-            }
-
-            template.acquisition = attributes.getValue("bts:Acquisition");
-            // Yokogawa Acquisition values such as BP676/29 identify detection
-            // filters.  Excitation comes from the LightSourceName link.
-            template.detectionFilter = parsing.parseDetectionFilter(template.acquisition);
-
-            template.fluor = attributes.getValue("bts:Fluorophore");
-            applyChannelSettings(template);
-          }
-        }
+        parseChannelTemplate(attributes);
       }
       else if (qName.equals("bts:Timeline")) {
-        timelineIndex++;
-        actionIndex = -1;
-        targetWellIndex = -1;
-        pointIndex = -1;
-        currentPhysicalSizeZ = null;
-        actionRunMode = null;
-        actionAFSearch = null;
-        addYokogawaAttributes(
-          "Yokogawa MES Timeline " + (timelineIndex + 1) + " ", attributes);
+        startTimeline(attributes);
       }
       else if (qName.equals("bts:TargetWell")) {
-        targetWellIndex++;
-        addYokogawaAttributes(
-          "Yokogawa MES Timeline " + (timelineIndex + 1) +
-          " TargetWell " + (targetWellIndex + 1) + " ", attributes);
+        startTargetWell(attributes);
       }
       else if (qName.equals("bts:PointSequence")) {
         addYokogawaAttributes(
@@ -3371,27 +3379,10 @@ public class CV7000Reader extends FormatReader {
           " Point " + (pointIndex + 1) + " ", attributes);
       }
       else if (qName.equals("bts:ActionList")) {
-        actionRunMode = attributes.getValue("bts:RunMode");
-        actionAFSearch = attributes.getValue("bts:AFSearch");
-        addYokogawaAttributes(
-          "Yokogawa MES Timeline " + (timelineIndex + 1) +
-          " ActionList ", attributes);
+        startActionList(attributes);
       }
       else if (qName.startsWith("bts:ActionAcquire")) {
-        actionIndex++;
-        currentActionType = getYokogawaAttributeName(qName);
-        currentActionXOffset = attributes.getValue("bts:XOffset");
-        currentActionYOffset = attributes.getValue("bts:YOffset");
-        currentActionAFShiftBase = attributes.getValue("bts:AFShiftBase");
-        currentActionTopDistance = attributes.getValue("bts:TopDistance");
-        currentActionBottomDistance = attributes.getValue("bts:BottomDistance");
-        currentActionSliceLength = attributes.getValue("bts:SliceLength");
-        currentActionUseSoftFocus = attributes.getValue("bts:UseSoftFocus");
-        addYokogawaAttributes(
-          "Yokogawa MES Timeline " + (timelineIndex + 1) +
-          " Action " + (actionIndex + 1) + " ", attributes);
-        currentPhysicalSizeZ = DataTools.parseDouble(
-          attributes.getValue("bts:SliceLength"));
+        startActionAcquire(qName, attributes);
       }
     }
 
@@ -3417,47 +3408,183 @@ public class CV7000Reader extends FormatReader {
         currentChannelIndex = -1;
       }
       else if (qName.equals("bts:Ch")) {
-        int channelIndex = Integer.parseInt(value) - 1;
-        if (channelIndex >= 0 && channelIndex < parsedChannels.size()) {
-          // the same channel may be acquired multiple times
-          // if this is the first time the channel is acquired, set the indexes
-          // if this is the second (or more) time the channel is acquired,
-          // duplicate the channel so that each action has its own copy with
-          // the correct indexes
-          Channel ch = parsedChannels.get(channelIndex);
-          if (ch.timelineIndex == -1 && ch.actionIndex == -1) {
-            ch.timelineIndex = timelineIndex;
-            ch.actionIndex = actionIndex;
-            ch.physicalSizeZ = currentPhysicalSizeZ;
-            ch.copyActionSettings(actionRunMode, actionAFSearch, currentActionType,
-              currentActionXOffset, currentActionYOffset, currentActionAFShiftBase,
-              currentActionTopDistance, currentActionBottomDistance,
-              currentActionSliceLength, currentActionUseSoftFocus);
-          }
-          else {
-            Channel duplicate = new Channel(ch);
-            duplicate.timelineIndex = timelineIndex;
-            duplicate.actionIndex = actionIndex;
-            duplicate.physicalSizeZ = currentPhysicalSizeZ;
-            duplicate.copyActionSettings(actionRunMode, actionAFSearch, currentActionType,
-              currentActionXOffset, currentActionYOffset, currentActionAFShiftBase,
-              currentActionTopDistance, currentActionBottomDistance,
-              currentActionSliceLength, currentActionUseSoftFocus);
-            parsedChannels.add(duplicate);
-          }
-        }
+        assignActionChannel(value);
       }
       else if (qName.startsWith("bts:ActionAcquire")) {
-        currentPhysicalSizeZ = null;
-        currentActionType = null;
-        currentActionXOffset = null;
-        currentActionYOffset = null;
-        currentActionAFShiftBase = null;
-        currentActionTopDistance = null;
-        currentActionBottomDistance = null;
-        currentActionSliceLength = null;
-        currentActionUseSoftFocus = null;
+        clearActionAcquireState();
       }
+    }
+
+    private void parseLightSource(Attributes attributes) {
+      LightSource lightSource = new LightSource();
+      lightSource.name = attributes.getValue("bts:Name");
+      lightSource.type = attributes.getValue("bts:Type");
+      addYokogawaAttributes(
+        "Yokogawa MES LightSource " + lightSource.name + " ", attributes);
+
+      String wavelength = attributes.getValue("bts:WaveLength");
+      String power = attributes.getValue("bts:Power");
+
+      lightSource.wavelength = DataTools.parseDouble(wavelength);
+      lightSource.power = DataTools.parseDouble(power);
+
+      result.lightSources.add(lightSource);
+    }
+
+    private void parseChannelTemplate(Attributes attributes) {
+      currentChannelIndex = -1;
+      String ch = attributes.getValue("bts:Ch");
+      if (ch == null) {
+        return;
+      }
+
+      int index = Integer.parseInt(ch) - 1;
+      if (index < 0 || index >= parsedChannels.size()) {
+        return;
+      }
+
+      currentChannelIndex = index;
+
+      Channel template = new Channel();
+      template.index = index;
+      template.target = attributes.getValue("bts:Target");
+      addYokogawaAttributes(
+        "Yokogawa MES Channel " + (template.index + 1) + " ", attributes);
+      template.objectiveID = attributes.getValue("bts:ObjectiveID");
+      template.objective = attributes.getValue("bts:Objective");
+      template.binning = attributes.getValue("bts:Binning");
+      template.methodID = attributes.getValue("bts:MethodID");
+      template.method = attributes.getValue("bts:Method");
+      template.filterID = attributes.getValue("bts:FilterID");
+      template.kind = attributes.getValue("bts:Kind");
+      template.andorParameterID = attributes.getValue("bts:AndorParameterID");
+      template.andorParameter = attributes.getValue("bts:AndorParameter");
+      template.detectorGain = parsing.parseYokogawaGain(template.andorParameter);
+      template.cameraType = attributes.getValue("bts:CameraType");
+      template.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
+
+      String mag = attributes.getValue("bts:Magnification");
+      template.magnification = DataTools.parseDouble(mag);
+
+      String exposure = attributes.getValue("bts:ExposureTime");
+      template.exposureTime = DataTools.parseDouble(exposure);
+
+      populateChannelColor(template, attributes.getValue("bts:Color"));
+
+      template.acquisition = attributes.getValue("bts:Acquisition");
+      // Yokogawa Acquisition values such as BP676/29 identify detection
+      // filters.  Excitation comes from the LightSourceName link.
+      template.detectionFilter = parsing.parseDetectionFilter(template.acquisition);
+
+      template.fluor = attributes.getValue("bts:Fluorophore");
+      applyChannelSettings(template);
+    }
+
+    private void populateChannelColor(Channel template, String color) {
+      if (color == null) {
+        return;
+      }
+
+      color = color.replaceAll("#", "");
+      // ignore unless at least R, G, B are defined
+      if (color.length() < 6) {
+        return;
+      }
+
+      int[] colors = new int[color.length() / 2];
+      for (int i=0; i<color.length(); i+=2) {
+        colors[i / 2] = Integer.parseInt(color.substring(i, i + 2), 16);
+      }
+      int alpha = colors.length == 4 ? colors[0] : 255;
+      int red = colors[colors.length - 3];
+      int green = colors[colors.length - 2];
+      int blue = colors[colors.length - 1];
+      template.color = new Color(red, green, blue, alpha);
+    }
+
+    private void startTimeline(Attributes attributes) {
+      timelineIndex++;
+      actionIndex = -1;
+      targetWellIndex = -1;
+      pointIndex = -1;
+      currentPhysicalSizeZ = null;
+      actionRunMode = null;
+      actionAFSearch = null;
+      addYokogawaAttributes(
+        "Yokogawa MES Timeline " + (timelineIndex + 1) + " ", attributes);
+    }
+
+    private void startTargetWell(Attributes attributes) {
+      targetWellIndex++;
+      addYokogawaAttributes(
+        "Yokogawa MES Timeline " + (timelineIndex + 1) +
+        " TargetWell " + (targetWellIndex + 1) + " ", attributes);
+    }
+
+    private void startActionList(Attributes attributes) {
+      actionRunMode = attributes.getValue("bts:RunMode");
+      actionAFSearch = attributes.getValue("bts:AFSearch");
+      addYokogawaAttributes(
+        "Yokogawa MES Timeline " + (timelineIndex + 1) +
+        " ActionList ", attributes);
+    }
+
+    private void startActionAcquire(String qName, Attributes attributes) {
+      actionIndex++;
+      currentActionType = getYokogawaAttributeName(qName);
+      currentActionXOffset = attributes.getValue("bts:XOffset");
+      currentActionYOffset = attributes.getValue("bts:YOffset");
+      currentActionAFShiftBase = attributes.getValue("bts:AFShiftBase");
+      currentActionTopDistance = attributes.getValue("bts:TopDistance");
+      currentActionBottomDistance = attributes.getValue("bts:BottomDistance");
+      currentActionSliceLength = attributes.getValue("bts:SliceLength");
+      currentActionUseSoftFocus = attributes.getValue("bts:UseSoftFocus");
+      addYokogawaAttributes(
+        "Yokogawa MES Timeline " + (timelineIndex + 1) +
+        " Action " + (actionIndex + 1) + " ", attributes);
+      currentPhysicalSizeZ = DataTools.parseDouble(
+        attributes.getValue("bts:SliceLength"));
+    }
+
+    private void assignActionChannel(String value) {
+      int channelIndex = Integer.parseInt(value) - 1;
+      if (channelIndex < 0 || channelIndex >= parsedChannels.size()) {
+        return;
+      }
+
+      // The same channel may be acquired multiple times. First occurrence
+      // receives the action indexes; later occurrences get action-specific copies.
+      Channel channel = parsedChannels.get(channelIndex);
+      if (channel.timelineIndex == -1 && channel.actionIndex == -1) {
+        assignActionSettings(channel);
+      }
+      else {
+        Channel duplicate = new Channel(channel);
+        assignActionSettings(duplicate);
+        parsedChannels.add(duplicate);
+      }
+    }
+
+    private void assignActionSettings(Channel channel) {
+      channel.timelineIndex = timelineIndex;
+      channel.actionIndex = actionIndex;
+      channel.physicalSizeZ = currentPhysicalSizeZ;
+      channel.copyActionSettings(actionRunMode, actionAFSearch, currentActionType,
+        currentActionXOffset, currentActionYOffset, currentActionAFShiftBase,
+        currentActionTopDistance, currentActionBottomDistance,
+        currentActionSliceLength, currentActionUseSoftFocus);
+    }
+
+    private void clearActionAcquireState() {
+      currentPhysicalSizeZ = null;
+      currentActionType = null;
+      currentActionXOffset = null;
+      currentActionYOffset = null;
+      currentActionAFShiftBase = null;
+      currentActionTopDistance = null;
+      currentActionBottomDistance = null;
+      currentActionSliceLength = null;
+      currentActionUseSoftFocus = null;
     }
 
     private void applyChannelSettings(Channel template) {
@@ -3496,38 +3623,38 @@ public class CV7000Reader extends FormatReader {
       String name = getYokogawaAttributeName(qName);
       if ("EMFilter".equals(name)) {
         currentFilter = new CrosstalkFilter();
-        currentFilter.filterID = getAttribute(attributes, "FilterID");
+        currentFilter.filterID = parsing.getAttribute(attributes, "FilterID");
         currentFilter.cameraNumber = DataTools.parseInteger(
-          getAttribute(attributes, "CameraID"));
-        currentFilter.acquisition = getAttribute(attributes, "Acquisition");
+          parsing.getAttribute(attributes, "CameraID"));
+        currentFilter.acquisition = parsing.getAttribute(attributes, "Acquisition");
         currentFilter.averageTransmittance = DataTools.parseDouble(
-          getAttribute(attributes, "AverageTransmittance"));
+          parsing.getAttribute(attributes, "AverageTransmittance"));
         currentFilter.minWaveLength = DataTools.parseDouble(
-          getAttribute(attributes, "MinWaveLength"));
+          parsing.getAttribute(attributes, "MinWaveLength"));
         currentFilter.maxWaveLength = DataTools.parseDouble(
-          getAttribute(attributes, "MaxWaveLength"));
+          parsing.getAttribute(attributes, "MaxWaveLength"));
         parameters.addFilter(currentFilter);
       }
       else if ("ISDM".equals(name) && currentFilter != null) {
         CrosstalkDichroic dichroic = new CrosstalkDichroic();
-        dichroic.id = getAttribute(attributes, "ID");
-        dichroic.name = getAttribute(attributes, "Name");
-        dichroic.reflection = getAttribute(attributes, "Reflection");
+        dichroic.id = parsing.getAttribute(attributes, "ID");
+        dichroic.name = parsing.getAttribute(attributes, "Name");
+        dichroic.reflection = parsing.getAttribute(attributes, "Reflection");
         dichroic.averageTransmittance = DataTools.parseDouble(
-          getAttribute(attributes, "AverageTransmittance"));
+          parsing.getAttribute(attributes, "AverageTransmittance"));
         currentFilter.dichroics.add(dichroic);
       }
       else if ("Fluorophore".equals(name)) {
         currentFluorophore = new CrosstalkFluorophore();
-        currentFluorophore.name = getAttribute(attributes, "Name");
+        currentFluorophore.name = parsing.getAttribute(attributes, "Name");
         parameters.fluorophores.add(currentFluorophore);
       }
       else if ("FluorophoreIntensity".equals(name) && currentFluorophore != null) {
         CrosstalkFluorophoreIntensity intensity =
           new CrosstalkFluorophoreIntensity();
-        intensity.filterID = getAttribute(attributes, "FilterID");
+        intensity.filterID = parsing.getAttribute(attributes, "FilterID");
         intensity.averageIntensity = DataTools.parseDouble(
-          getAttribute(attributes, "AverageIntensity"));
+          parsing.getAttribute(attributes, "AverageIntensity"));
         currentFluorophore.intensities.add(intensity);
       }
     }
@@ -3543,18 +3670,6 @@ public class CV7000Reader extends FormatReader {
       }
     }
 
-    private String getAttribute(Attributes attributes, String name) {
-      if (attributes == null || name == null) {
-        return null;
-      }
-      for (int i=0; i<attributes.getLength(); i++) {
-        if (name.equals(getYokogawaAttributeName(attributes.getQName(i)))) {
-          String value = attributes.getValue(i);
-          return value == null || value.trim().length() == 0 ? null : value;
-        }
-      }
-      return null;
-    }
   }
 
   private class OTFGeometryHandler extends BaseHandler {
@@ -3570,7 +3685,7 @@ public class CV7000Reader extends FormatReader {
     {
       String name = getYokogawaAttributeName(qName);
       if ("GeometryParameter".equals(name)) {
-        parameters.mode = getAttribute(attributes, "Mode");
+        parameters.mode = parsing.getAttribute(attributes, "Mode");
         return;
       }
       if (!"AffineParameter".equals(name)) {
@@ -3578,38 +3693,29 @@ public class CV7000Reader extends FormatReader {
       }
 
       OTFGeometryAffine affine = new OTFGeometryAffine();
-      affine.methodID = getAttribute(attributes, "MethodID");
-      affine.method = getAttribute(attributes, "Method");
-      affine.objectiveID = getAttribute(attributes, "ObjectiveID");
-      affine.objective = getAttribute(attributes, "Objective");
+      affine.methodID = parsing.getAttribute(attributes, "MethodID");
+      affine.method = parsing.getAttribute(attributes, "Method");
+      affine.objectiveID = parsing.getAttribute(attributes, "ObjectiveID");
+      affine.objective = parsing.getAttribute(attributes, "Objective");
       affine.magnification = DataTools.parseDouble(
-        getAttribute(attributes, "Magnification"));
-      affine.filterID = getAttribute(attributes, "FilterID");
-      affine.acquisition = getAttribute(attributes, "Acquisition");
-      affine.use = getAttribute(attributes, "Use");
-      affine.updateTime = getAttribute(attributes, "UpdateTime");
-      affine.a = DataTools.parseDouble(getAttribute(attributes, "A"));
-      affine.b = DataTools.parseDouble(getAttribute(attributes, "B"));
-      affine.c = DataTools.parseDouble(getAttribute(attributes, "C"));
-      affine.d = DataTools.parseDouble(getAttribute(attributes, "D"));
-      affine.e = DataTools.parseDouble(getAttribute(attributes, "E"));
-      affine.f = DataTools.parseDouble(getAttribute(attributes, "F"));
+        parsing.getAttribute(attributes, "Magnification"));
+      affine.filterID = parsing.getAttribute(attributes, "FilterID");
+      affine.acquisition = parsing.getAttribute(attributes, "Acquisition");
+      affine.use = parsing.getAttribute(attributes, "Use");
+      affine.updateTime = parsing.getAttribute(attributes, "UpdateTime");
+      affine.a = DataTools.parseDouble(parsing.getAttribute(attributes, "A"));
+      affine.b = DataTools.parseDouble(parsing.getAttribute(attributes, "B"));
+      affine.c = DataTools.parseDouble(parsing.getAttribute(attributes, "C"));
+      affine.d = DataTools.parseDouble(parsing.getAttribute(attributes, "D"));
+      affine.e = DataTools.parseDouble(parsing.getAttribute(attributes, "E"));
+      affine.f = DataTools.parseDouble(parsing.getAttribute(attributes, "F"));
       parameters.addAffine(affine);
     }
-
-    private String getAttribute(Attributes attributes, String name) {
-      if (attributes == null || name == null) {
-        return null;
-      }
-      for (int i=0; i<attributes.getLength(); i++) {
-        if (name.equals(getYokogawaAttributeName(attributes.getQName(i)))) {
-          String value = attributes.getValue(i);
-          return value == null || value.trim().length() == 0 ? null : value;
-        }
-      }
-      return null;
-    }
   }
+
+  // ###############
+  // ## Module 12: OTF, Crosstalk, Objective, Channel, And Plane Models
+  // ###############
 
   private static class OTFGeometryParameters {
     public String mode;
