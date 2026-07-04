@@ -684,24 +684,35 @@ public class CV7000Reader extends FormatReader {
 
       p.no = FormatTools.positionToRaster(planeLengths,
         new int[] {p.channelIndex, p.z - m.minZ, p.timepoint - m.minT});
-      assignPlaneLookup(i, p);
+      assignPlaneLookup(i, p, layout);
       layout.indexPlane(p);
     }
   }
 
   /** Prefer a real plane over metadata-only duplicate records for each position. */
-  private void assignPlaneLookup(int planeIndex, Plane p) {
+  private void assignPlaneLookup(int planeIndex, Plane p,
+    CV7000SeriesLayout layout)
+  {
     if (reversePlaneLookup[p.series][p.no] < 0) {
       reversePlaneLookup[p.series][p.no] = planeIndex;
     }
     else {
-      Plane existing = planeData.get(reversePlaneLookup[p.series][p.no]);
+      int existingIndex = reversePlaneLookup[p.series][p.no];
+      Plane existing = planeData.get(existingIndex);
       if ((existing == null || existing.file == null) && p.file != null) {
         reversePlaneLookup[p.series][p.no] = planeIndex;
+        layout.duplicateCandidates.add(new DuplicatePlaneCandidate(
+          existing, existingIndex, p, "REPLACED_BY_TIFF"));
       }
       else if (p.file != null) {
         LOGGER.warn("Ignoring file {}", p.file);
         extraFiles.add(p.file);
+        layout.duplicateCandidates.add(new DuplicatePlaneCandidate(
+          p, planeIndex, existing, "IGNORED_TIFF_DUPLICATE"));
+      }
+      else {
+        layout.duplicateCandidates.add(new DuplicatePlaneCandidate(
+          p, planeIndex, existing, "IGNORED_METADATA_ONLY_DUPLICATE"));
       }
     }
   }
@@ -1626,6 +1637,7 @@ public class CV7000Reader extends FormatReader {
     }
     addCrosstalkOriginalMetadata();
     addOTFGeometryOriginalMetadata();
+    addPlaneProvenanceOriginalMetadata();
     if (channels == null) {
       emitYokogawaMapAnnotations(store, plateAnnotationRef, hasInstrument);
       return;
@@ -2057,6 +2069,12 @@ public class CV7000Reader extends FormatReader {
       return;
     }
 
+    if (isPlaneProvenanceAnnotationScope(scope) &&
+      linkPlaneProvenanceAnnotation(store, annotationID, scope, refs))
+    {
+      return;
+    }
+
     if (isImageOrChannelAnnotationScope(scope) &&
       linkToMatchingSeriesAndChannels(store, annotationID, scope, refs))
     {
@@ -2076,6 +2094,21 @@ public class CV7000Reader extends FormatReader {
     return scope != null && (scope.startsWith("Yokogawa MES Timeline ") ||
       scope.startsWith("Yokogawa MES Channel ") ||
       scope.startsWith("Yokogawa Timeline "));
+  }
+
+  private boolean isPlaneProvenanceAnnotationScope(String scope) {
+    return scope != null && scope.startsWith("Yokogawa Plane Provenance Image ");
+  }
+
+  private boolean linkPlaneProvenanceAnnotation(MetadataStore store,
+    String annotationID, String scope, AnnotationRefIndexes refs)
+  {
+    Integer image = getIndexedScopeValue(scope, "Image");
+    if (image == null || image < 0 || image >= getSeriesCount()) {
+      return false;
+    }
+    store.setImageAnnotationRef(annotationID, image, refs.nextImage(image));
+    return true;
   }
 
   private boolean linkToMatchingSeriesAndChannels(MetadataStore store,
@@ -2168,6 +2201,188 @@ public class CV7000Reader extends FormatReader {
   private void addYokogawaMetaList(String prefix, String name, Object value) {
     YokogawaAnnotationGroup group = getYokogawaAnnotationGroup(prefix);
     group.putList(name, value);
+  }
+
+  private void addPlaneProvenanceOriginalMetadata() {
+    if (seriesLayout == null || reversePlaneLookup == null) {
+      return;
+    }
+
+    HashMap<Integer, ArrayList<DuplicatePlaneCandidate>> duplicateCandidates =
+      getDuplicateCandidatesBySeries();
+    for (int series=0; series<reversePlaneLookup.length; series++) {
+      String prefix = "Yokogawa Plane Provenance Image " + (series + 1) + " ";
+      PlaneProvenanceSummary summary = buildPlaneProvenanceSummary(
+        series, duplicateCandidates.get(Integer.valueOf(series)));
+      Field field = seriesLayout.getField(series);
+
+      addYokogawaMeta(prefix, "SeriesIndex", series);
+      addYokogawaMeta(prefix, "ImageIndex", series);
+      if (field != null) {
+        addYokogawaMeta(prefix, "Well", getWellName(field));
+        addYokogawaMeta(prefix, "FieldIndex", field.field + 1);
+      }
+      addYokogawaMeta(prefix, "PlaneCount", summary.planeCount);
+      addYokogawaMeta(prefix, "TiffBackedCount", summary.tiffBackedCount);
+      addYokogawaMeta(prefix, "FilledCount", summary.filledCount);
+      addYokogawaMeta(prefix, "DuplicatedCount", summary.duplicatedCount);
+      addYokogawaMeta(prefix, "MetadataOnlyCount", summary.metadataOnlyCount);
+      addYokogawaMeta(prefix, "NoMLFRecordCount", summary.noMLFRecordCount);
+      addYokogawaMeta(prefix, "DuplicateCandidateCount",
+        summary.duplicateCandidateCount);
+      for (String anomaly : summary.anomalies) {
+        addYokogawaMetaList(prefix, "Anomaly", anomaly);
+      }
+    }
+  }
+
+  private HashMap<Integer, ArrayList<DuplicatePlaneCandidate>>
+    getDuplicateCandidatesBySeries()
+  {
+    HashMap<Integer, ArrayList<DuplicatePlaneCandidate>> bySeries =
+      new HashMap<Integer, ArrayList<DuplicatePlaneCandidate>>();
+    if (seriesLayout == null || seriesLayout.duplicateCandidates == null) {
+      return bySeries;
+    }
+
+    for (DuplicatePlaneCandidate candidate : seriesLayout.duplicateCandidates) {
+      if (candidate == null || candidate.candidate == null) {
+        continue;
+      }
+      Integer series = Integer.valueOf(candidate.candidate.series);
+      ArrayList<DuplicatePlaneCandidate> candidates = bySeries.get(series);
+      if (candidates == null) {
+        candidates = new ArrayList<DuplicatePlaneCandidate>();
+        bySeries.put(series, candidates);
+      }
+      candidates.add(candidate);
+    }
+    return bySeries;
+  }
+
+  private PlaneProvenanceSummary buildPlaneProvenanceSummary(int series,
+    ArrayList<DuplicatePlaneCandidate> duplicateCandidates)
+  {
+    PlaneProvenanceSummary summary = new PlaneProvenanceSummary();
+    int planeCount = reversePlaneLookup[series].length;
+    summary.planeCount = planeCount;
+
+    for (int no=0; no<planeCount; no++) {
+      Plane plane = lookupPlane(series, no);
+      if (plane != null && plane.file != null) {
+        summary.tiffBackedCount++;
+        continue;
+      }
+
+      String reason;
+      if (plane == null) {
+        reason = "NO_MLF_RECORD";
+        summary.noMLFRecordCount++;
+      }
+      else {
+        reason = "MLF_METADATA_ONLY";
+        summary.metadataOnlyCount++;
+      }
+
+      Plane duplicate = getDuplicatePlane(series, no);
+      if (duplicate != null) {
+        summary.duplicatedCount++;
+        summary.anomalies.add(formatPlaneProvenanceAnomaly(
+          series, no, "DUPLICATED", reason, duplicate, null));
+      }
+      else {
+        summary.filledCount++;
+        summary.anomalies.add(formatPlaneProvenanceAnomaly(
+          series, no, "FILL", reason, null, null));
+      }
+    }
+
+    if (duplicateCandidates != null) {
+      summary.duplicateCandidateCount = duplicateCandidates.size();
+      for (DuplicatePlaneCandidate candidate : duplicateCandidates) {
+        if (candidate == null || candidate.candidate == null) {
+          continue;
+        }
+        summary.anomalies.add(formatPlaneProvenanceAnomaly(
+          series, candidate.candidate.no, "DUPLICATE_CANDIDATE_IGNORED",
+          candidate.reason, candidate.selected, candidate.candidate));
+      }
+    }
+    return summary;
+  }
+
+  private Plane getDuplicatePlane(int series, int no) {
+    if (!duplicatePlanes() || no <= 0) {
+      return null;
+    }
+
+    int[] zct = getZCTCoords(series, no);
+    int dupPlane = getIndex(series, 0, zct[1], 0);
+    if (dupPlane == no) {
+      dupPlane = 0;
+    }
+    Plane duplicate = lookupPlane(series, dupPlane);
+    return duplicate != null && duplicate.file != null ? duplicate : null;
+  }
+
+  private int[] getZCTCoords(int series, int no) {
+    int[] lengths = new int[] {
+      core.get(series).sizeC / reader.getSizeC(),
+      core.get(series).sizeZ,
+      core.get(series).sizeT
+    };
+    int[] czt = FormatTools.rasterToPosition(lengths, no);
+    return new int[] {czt[1], czt[0], czt[2]};
+  }
+
+  private int getIndex(int series, int z, int c, int t) {
+    int[] lengths = new int[] {
+      core.get(series).sizeC / reader.getSizeC(),
+      core.get(series).sizeZ,
+      core.get(series).sizeT
+    };
+    return FormatTools.positionToRaster(lengths, new int[] {c, z, t});
+  }
+
+  private String formatPlaneProvenanceAnomaly(int series, int no, String status,
+    String reason, Plane source, Plane anomalyPlane)
+  {
+    int[] zct = getZCTCoords(series, no);
+    StringBuilder row = new StringBuilder();
+    row.append("no=").append(no);
+    row.append(";z=").append(zct[0]);
+    row.append(";c=").append(zct[1]);
+    row.append(";t=").append(zct[2]);
+    row.append(";status=").append(status);
+    row.append(";reason=").append(reason);
+    if (source != null) {
+      row.append(";sourceNo=").append(source.no);
+      if (source.file != null) {
+        row.append(";file=").append(new Location(source.file).getName());
+      }
+    }
+    else if (anomalyPlane != null && anomalyPlane.file != null) {
+      row.append(";file=").append(new Location(anomalyPlane.file).getName());
+    }
+    return row.toString();
+  }
+
+  private String getWellName(Field field) {
+    if (field == null) {
+      return null;
+    }
+    return getRowName(field.row) + String.format("%02d", field.column + 1);
+  }
+
+  private String getRowName(int row) {
+    StringBuilder name = new StringBuilder();
+    int value = row;
+    do {
+      name.insert(0, (char) ('A' + (value % 26)));
+      value = (value / 26) - 1;
+    }
+    while (value >= 0);
+    return name.toString();
   }
 
   private YokogawaAnnotationGroup getYokogawaAnnotationGroup(String prefix) {
@@ -2453,6 +2668,8 @@ public class CV7000Reader extends FormatReader {
       new LinkedHashMap<String, ArrayList<Field>>();
     public HashMap<String, Boolean> acquiredWells =
       new HashMap<String, Boolean>();
+    public ArrayList<DuplicatePlaneCandidate> duplicateCandidates =
+      new ArrayList<DuplicatePlaneCandidate>();
     private HashMap<String, Plane> representativePlanes =
       new HashMap<String, Plane>();
 
@@ -2469,6 +2686,13 @@ public class CV7000Reader extends FormatReader {
 
     public Plane getRepresentativePlane(int series, int channel) {
       return representativePlanes.get(getPlaneKey(series, channel));
+    }
+
+    public Field getField(int series) {
+      if (series < 0 || series >= acquiredFields.size()) {
+        return null;
+      }
+      return acquiredFields.get(series);
     }
 
     private String getPlaneKey(int series, int channel) {
@@ -2659,6 +2883,33 @@ public class CV7000Reader extends FormatReader {
       int value = next == null ? 0 : next.intValue();
       channelRefs.put(key, Integer.valueOf(value + 1));
       return value;
+    }
+  }
+
+  class PlaneProvenanceSummary {
+    public int planeCount;
+    public int tiffBackedCount;
+    public int filledCount;
+    public int duplicatedCount;
+    public int metadataOnlyCount;
+    public int noMLFRecordCount;
+    public int duplicateCandidateCount;
+    public ArrayList<String> anomalies = new ArrayList<String>();
+  }
+
+  class DuplicatePlaneCandidate {
+    public Plane candidate;
+    public int candidateIndex;
+    public Plane selected;
+    public String reason;
+
+    public DuplicatePlaneCandidate(Plane candidate, int candidateIndex,
+      Plane selected, String reason)
+    {
+      this.candidate = candidate;
+      this.candidateIndex = candidateIndex;
+      this.selected = selected;
+      this.reason = reason;
     }
   }
 
