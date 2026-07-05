@@ -104,6 +104,7 @@ public class CV7000Reader extends FormatReader {
     "openmicroscopy.org/OriginalMetadata/Yokogawa/CV7000";
   private static final String XML_MIME_TYPE = "application/xml";
   private static final String CV7000_DIMENSION_ORDER = "XYZCT";
+  private static final int CHANNEL_NOT_FOUND = -1;
   // Manual objective table plus observed CV7000 objective labels in OTF geometry. These correctly resolve known objectives in local data and available data from public repositories.
   private static final KnownObjectiveSpec[] KNOWN_OBJECTIVES =
     new KnownObjectiveSpec[] {
@@ -585,8 +586,8 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private int getLogicalChannelIndex(Plane p) {
-    return CHANNEL_MAPPER.getLogicalChannelIndex(channels, p);
+  private int getLogicalChannelIndex(Plane p, CV7000ChannelMappingMode mode) {
+    return CHANNEL_MAPPER.getLogicalChannelIndex(channels, p, mode);
   }
 
   private Channel lookupChannel(Plane p) {
@@ -609,6 +610,7 @@ public class CV7000Reader extends FormatReader {
       throw new FormatException("No readable TIFF planes found in " + measurementPath);
     }
 
+    determineChannelMappingMode(layout, acquiredFieldSet);
     sortAcquiredFields(layout.acquiredFields);
     indexAcquiredFields(layout);
     collectPlaneExtents(layout, acquiredFieldSet);
@@ -635,6 +637,60 @@ public class CV7000Reader extends FormatReader {
       }
     }
     return acquiredFieldSet;
+  }
+
+  /** Choose action-aware channel indexing only when all acquired planes map. */
+  private void determineChannelMappingMode(CV7000SeriesLayout layout,
+    HashSet<Field> acquiredFieldSet)
+  {
+    if (channels == null || channels.size() == 0) {
+      setRawMLFChannelMapping(layout, "NO_CHANNEL_SIDECAR_METADATA");
+      return;
+    }
+    if (!hasActionChannelMapping()) {
+      setRawMLFChannelMapping(layout, "NO_ACTION_CHANNEL_MAPPING");
+      LOGGER.warn("Falling back to raw CV7000 MLF channel indexes; " +
+        "channel sidecar metadata has no action/channel assignments");
+      return;
+    }
+
+    for (Plane p : planeData) {
+      if (p == null || !acquiredFieldSet.contains(p.field)) {
+        continue;
+      }
+      int channel = CHANNEL_MAPPER.getActionMappedChannelIndex(channels, p);
+      if (channel == CHANNEL_NOT_FOUND) {
+        setRawMLFChannelMapping(layout, "INCOMPLETE_ACTION_CHANNEL_MAPPING");
+        LOGGER.warn("Falling back to raw CV7000 MLF channel indexes; " +
+          "no exact action/channel metadata for timeline {}, action {}, channel {}",
+          p.timelineIndex + 1, p.actionIndex + 1, p.channel + 1);
+        return;
+      }
+    }
+
+    layout.channelMappingMode = CV7000ChannelMappingMode.ACTION_MAPPED;
+  }
+
+  /** MES action parsing assigns non-negative action and timeline indexes. */
+  private boolean hasActionChannelMapping() {
+    if (channels == null) {
+      return false;
+    }
+    for (Channel channel : channels) {
+      if (channel != null && channel.timelineIndex >= 0 &&
+        channel.actionIndex >= 0)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** Record raw-channel fallback for later provenance annotation emission. */
+  private void setRawMLFChannelMapping(CV7000SeriesLayout layout, String reason) {
+    layout.channelMappingMode = CV7000ChannelMappingMode.RAW_MLF;
+    addYokogawaMeta("Yokogawa Channel Mapping ", "Mode", layout.channelMappingMode);
+    addYokogawaMeta("Yokogawa Channel Mapping ", "FallbackReason", reason);
   }
 
   /** Series order follows plate row, plate column, then Yokogawa field index. */
@@ -671,7 +727,7 @@ public class CV7000Reader extends FormatReader {
   private void collectPlaneExtents(CV7000SeriesLayout layout, HashSet<Field> acquiredFieldSet) {
     for (Plane p : planeData) {
       if (p != null && acquiredFieldSet.contains(p.field)) {
-        p.channelIndex = getLogicalChannelIndex(p);
+        p.channelIndex = getLogicalChannelIndex(p, layout.channelMappingMode);
 
         if (!layout.minMax.containsKey(p.field)) {
           layout.minMax.put(p.field, new MinMax());
@@ -2611,16 +2667,23 @@ public class CV7000Reader extends FormatReader {
     UNKNOWN
   }
 
+  private enum CV7000ChannelMappingMode {
+    ACTION_MAPPED,
+    RAW_MLF
+  }
+
   /** Centralizes Yokogawa action/channel matching and reader channel indexing. */
   private static class CV7000ChannelMapper {
-    public int getLogicalChannelIndex(ArrayList<Channel> channels, Plane plane) {
-      if (channels == null) {
+    public int getLogicalChannelIndex(ArrayList<Channel> channels, Plane plane,
+      CV7000ChannelMappingMode mode)
+    {
+      if (mode == CV7000ChannelMappingMode.RAW_MLF || channels == null) {
         return plane.channel;
       }
-      return getChannelIndex(channels, plane);
+      return getActionMappedChannelIndex(channels, plane);
     }
 
-    public int getChannelIndex(ArrayList<Channel> channels, Plane plane) {
+    public int getActionMappedChannelIndex(ArrayList<Channel> channels, Plane plane) {
       int index = -1;
       for (int action=0; action<=plane.actionIndex; action++) {
         for (Channel channel : channels) {
@@ -2636,7 +2699,7 @@ public class CV7000Reader extends FormatReader {
           }
         }
       }
-      return index;
+      return CHANNEL_NOT_FOUND;
     }
 
     public Channel lookupChannel(CV7000RawModel rawModel,
@@ -2723,6 +2786,8 @@ public class CV7000Reader extends FormatReader {
     public Integer[] channelIndexes;
     public HashMap<Field, Integer> fieldToSeries = new HashMap<Field, Integer>();
     public int[][] reversePlaneLookup;
+    public CV7000ChannelMappingMode channelMappingMode =
+      CV7000ChannelMappingMode.ACTION_MAPPED;
     public LinkedHashMap<String, ArrayList<Field>> fieldsByWell =
       new LinkedHashMap<String, ArrayList<Field>>();
     public HashMap<String, Boolean> acquiredWells =
