@@ -1447,8 +1447,7 @@ public class CV7000Reader extends FormatReader {
           int index = usedObjectiveIDs.size();
           String objectiveID = MetadataTools.createLSID("Objective", 0, index);
           store.setObjectiveID(objectiveID, 0, index);
-          populateObjectiveModel(store, index, c.objectiveID, c.objective,
-            c.magnification);
+          populateObjectiveModel(store, index, c.objective, c.magnification);
           usedObjectiveIDs.add(c.objectiveID);
         }
       }
@@ -1464,8 +1463,8 @@ public class CV7000Reader extends FormatReader {
           int index = usedObjectiveIDs.size();
           String objectiveID = MetadataTools.createLSID("Objective", 0, index);
           store.setObjectiveID(objectiveID, 0, index);
-          populateObjectiveModel(store, index, objective.objectiveID,
-            objective.objective, objective.magnification);
+          populateObjectiveModel(store, index, objective.objective,
+            objective.magnification);
           usedObjectiveIDs.add(objective.objectiveID);
         }
       }
@@ -1473,7 +1472,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   private void populateObjectiveModel(MetadataStore store, int objectiveIndex,
-    String objectiveID, String model, Double magnification)
+    String model, Double magnification)
   {
     if (model != null) {
       store.setObjectiveModel(model, 0, objectiveIndex);
