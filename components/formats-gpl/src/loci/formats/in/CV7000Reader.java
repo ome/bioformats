@@ -52,7 +52,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
-import ome.units.quantity.Power;
 import ome.units.quantity.Time;
 import ome.xml.model.MapPair;
 import ome.xml.model.primitives.Color;
@@ -1157,6 +1156,12 @@ public class CV7000Reader extends FormatReader {
     store.setChannelLightSourceSettingsID(
       MetadataTools.createLSID("LightSource", 0, index), series, channelIndex);
 
+    PercentFraction attenuation = getLightSourceAttenuation(source);
+    if (attenuation != null) {
+      store.setChannelLightSourceSettingsAttenuation(
+        attenuation, series, channelIndex);
+    }
+
     if (isLaser(source) && source.wavelength != null && source.wavelength > 0) {
       // Yokogawa BP labels are detection filters; excitation comes from the
       // linked laser light-source wavelength.
@@ -1394,13 +1399,11 @@ public class CV7000Reader extends FormatReader {
         String laserID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
         store.setLaserID(laserID, 0, nextLightSource);
         store.setLaserModel(getLightSourceModel(l), 0, nextLightSource);
-        store.setLaserType(MetadataTools.getLaserType("Other"), 0, nextLightSource);
+        // The Yokogawa CV7000 user manual identifies the lasers as solid-state.
+        store.setLaserType(MetadataTools.getLaserType("SolidState"), 0, nextLightSource);
         if (l.wavelength != null) {
           store.setLaserWavelength(
             new Length(l.wavelength, UNITS.NANOMETER), 0, nextLightSource);
-        }
-        if (l.power != null) {
-          store.setLaserPower(new Power(l.power, UNITS.MILLIWATT), 0, nextLightSource);
         }
         lightSourceIndexes.put(i, nextLightSource);
         nextLightSource++;
@@ -1414,10 +1417,6 @@ public class CV7000Reader extends FormatReader {
         // Type="Lamp", so keep the filament type as Other.
         store.setFilamentType(MetadataTools.getFilamentType("Other"),
           0, nextLightSource);
-        if (l.power != null) {
-          store.setFilamentPower(
-            new Power(l.power, UNITS.MILLIWATT), 0, nextLightSource);
-        }
         lightSourceIndexes.put(i, nextLightSource);
         nextLightSource++;
       }
@@ -1430,6 +1429,29 @@ public class CV7000Reader extends FormatReader {
 
   private boolean isLamp(LightSource source) {
     return source != null && "Lamp".equalsIgnoreCase(source.type);
+  }
+
+  private PercentFraction getLightSourceAttenuation(LightSource source) {
+    if (source == null || source.attenuation == null) {
+      return null;
+    }
+
+    double attenuation = source.attenuation;
+    if (Double.isNaN(attenuation) || Double.isInfinite(attenuation) ||
+      attenuation < 0 || attenuation > 100)
+    {
+      LOGGER.warn("Could not store CV7000 light source '{}' attenuation value '{}' " +
+        "in LightSourceSettings.Attenuation", source.name, source.attenuation);
+      return null;
+    }
+
+    // Yokogawa bts:Power is not a physical power measurement. Values in real
+    // sidecars are commonly 0..100, so treat them as percent-like attenuation
+    // only when they can be represented in OME's 0..1 PercentFraction.
+    if (attenuation > 1) {
+      attenuation /= 100.0;
+    }
+    return new PercentFraction((float) attenuation);
   }
 
   private String getLightSourceModel(LightSource source) {
@@ -1733,7 +1755,7 @@ public class CV7000Reader extends FormatReader {
         String prefix = "Yokogawa LightSource " + source.name + " ";
         addYokogawaMeta(prefix, "Type", source.type);
         addYokogawaMeta(prefix, "WaveLength", source.wavelength);
-        addYokogawaMeta(prefix, "Power", source.power);
+        addYokogawaMeta(prefix, "Power", source.attenuation);
       }
     }
     addCrosstalkOriginalMetadata();
@@ -3503,7 +3525,7 @@ public class CV7000Reader extends FormatReader {
       String power = attributes.getValue("bts:Power");
 
       lightSource.wavelength = DataTools.parseDouble(wavelength);
-      lightSource.power = DataTools.parseDouble(power);
+      lightSource.attenuation = DataTools.parseDouble(power);
 
       result.lightSources.add(lightSource);
     }
@@ -3936,7 +3958,7 @@ public class CV7000Reader extends FormatReader {
     public String name;
     public String type;
     public Double wavelength;
-    public Double power;
+    public Double attenuation;
   }
 
   private static class CV7000ObjectiveSpec {
