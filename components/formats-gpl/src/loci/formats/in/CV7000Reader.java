@@ -1999,6 +1999,7 @@ public class CV7000Reader extends FormatReader {
       store.setBinaryFileMIMEType(XML_MIME_TYPE, index);
       store.setBinaryFileSize(length, index);
       store.setBinaryFileBinData(bytes, index);
+      store.setBinaryFileBinDataBigEndian(Boolean.FALSE, index);
       store.setBinaryFileBinDataLength(length, index);
       return annotationID;
     }
