@@ -26,6 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -248,10 +251,10 @@ public class CV7000Reader extends FormatReader {
     }
     if (!noPixels && channels != null) {
       for (Channel c : channels) {
-        if (c != null && c.correctionFile != null &&
-          new Location(c.correctionFile).exists())
+        if (c != null && c.resolvedCorrectionFile != null &&
+          new Location(c.resolvedCorrectionFile).exists())
         {
-          files.add(c.correctionFile);
+          files.add(c.resolvedCorrectionFile);
         }
       }
     }
@@ -580,8 +583,30 @@ public class CV7000Reader extends FormatReader {
   private void resolveCorrectionFiles(Location parent) {
     for (Channel ch : channels) {
       if (ch.correctionFile != null) {
-        ch.correctionFile = new Location(parent, ch.correctionFile).getAbsolutePath();
+        String resolved =
+          new Location(parent, ch.correctionFile).getAbsolutePath();
+        ch.resolvedCorrectionFile = resolved;
+        ch.correctionFile = getRelativePath(parent, resolved);
       }
+    }
+  }
+
+  /**
+   * Return a path relative to the WPI directory,
+   * preserving the input on failure.
+   */
+  private String getRelativePath(Location parent, String path) {
+    try {
+      Path parentPath =
+        Paths.get(parent.getAbsolutePath()).toAbsolutePath().normalize();
+      Path filePath = Paths.get(path).toAbsolutePath().normalize();
+      return parentPath.relativize(filePath).toString();
+    }
+    catch (InvalidPathException e) {
+      return path;
+    }
+    catch (IllegalArgumentException e) {
+      return path;
     }
   }
 
@@ -4112,6 +4137,7 @@ public class CV7000Reader extends FormatReader {
     public Integer filterWheelPosition;
     public Integer filterPosition;
     public String correctionFile;
+    public String resolvedCorrectionFile;
     public List<Integer> lightSourceRefs = new ArrayList<Integer>();
 
     public String target;
@@ -4160,6 +4186,7 @@ public class CV7000Reader extends FormatReader {
       filterWheelPosition = ch.filterWheelPosition;
       filterPosition = ch.filterPosition;
       correctionFile = ch.correctionFile;
+      resolvedCorrectionFile = ch.resolvedCorrectionFile;
       lightSourceRefs = new ArrayList<Integer>(ch.lightSourceRefs);
       target = ch.target;
       methodID = ch.methodID;
