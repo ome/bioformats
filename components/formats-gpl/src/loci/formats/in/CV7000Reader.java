@@ -140,7 +140,7 @@ public class CV7000Reader extends FormatReader {
   private String measurementOperatorName;
   private String targetSystem;
   private ArrayList<String> extraFiles;
-  private MeasurementDataHandler measurementHandler;
+  private MeasurementDataSummary measurementDataSummary;
   private CrosstalkParameters crosstalkParameters;
   private OTFGeometryParameters otfGeometryParameters;
   private YokogawaParsing parsing = new YokogawaParsing();
@@ -301,7 +301,7 @@ public class CV7000Reader extends FormatReader {
       endTime = null;
       measurementOperatorName = null;
       targetSystem = null;
-      measurementHandler = null;
+      measurementDataSummary = null;
       crosstalkParameters = null;
       otfGeometryParameters = null;
       reversePlaneLookup = null;
@@ -376,8 +376,8 @@ public class CV7000Reader extends FormatReader {
 
     parseMeasurementData(paths);
     parseOptionalSidecars(paths);
-    normalizeChannels(paths.parent);
-    collectDatasetFiles(paths.parent);
+    normalizeChannels(paths.parentPath);
+    collectDatasetFiles(paths.parentPath);
 
     CV7000SeriesLayout layout = buildSeriesLayout();
     seriesLayout = layout;
@@ -401,7 +401,7 @@ public class CV7000Reader extends FormatReader {
     measurementOperatorName = null;
     targetSystem = null;
     extraFiles = null;
-    measurementHandler = null;
+    measurementDataSummary = null;
     crosstalkParameters = null;
     otfGeometryParameters = null;
     wppPath = null;
@@ -415,12 +415,17 @@ public class CV7000Reader extends FormatReader {
     CV7000DatasetPaths paths = new CV7000DatasetPaths();
     Location wpi = new Location(id).getAbsoluteFile();
     paths.wpiPath = wpi.getAbsolutePath();
-    paths.parent = wpi.getParentFile();
-    paths.measurementData = new Location(paths.parent, MEASUREMENT_FILE);
-    paths.measurementDetail = new Location(paths.parent, MEASUREMENT_DETAIL);
-    paths.postProcess = new Location(paths.parent, POST_PROCESS);
-    paths.otfCrosstalk = new Location(paths.parent, OTF_CROSSTALK_PARAMETER);
-    paths.otfGeometry = new Location(paths.parent, OTF_GEOMETRY_PARAMETER);
+    paths.parentPath = wpi.getParentFile().getAbsolutePath();
+    paths.measurementDataPath =
+      new Location(paths.parentPath, MEASUREMENT_FILE).getAbsolutePath();
+    paths.measurementDetailPath =
+      new Location(paths.parentPath, MEASUREMENT_DETAIL).getAbsolutePath();
+    paths.postProcessPath =
+      new Location(paths.parentPath, POST_PROCESS).getAbsolutePath();
+    paths.otfCrosstalkPath =
+      new Location(paths.parentPath, OTF_CROSSTALK_PARAMETER).getAbsolutePath();
+    paths.otfGeometryPath =
+      new Location(paths.parentPath, OTF_GEOMETRY_PARAMETER).getAbsolutePath();
     return paths;
   }
 
@@ -432,7 +437,8 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Keep a dataset-level inventory for getUsedFiles and original metadata. */
-  private void collectDatasetFiles(Location parent) {
+  private void collectDatasetFiles(String parentPath) {
+    Location parent = new Location(parentPath);
     String[] listedFiles = parent.list(true);
     Arrays.sort(listedFiles);
     for (int i=0; i<listedFiles.length; i++) {
@@ -449,14 +455,16 @@ public class CV7000Reader extends FormatReader {
   private void parseMeasurementData(CV7000DatasetPaths paths)
     throws FormatException, IOException
   {
-    if (!paths.measurementData.exists()) {
+    if (!new Location(paths.measurementDataPath).exists()) {
       throw new FormatException("Missing " + MEASUREMENT_FILE + " file");
     }
 
-    measurementPath = paths.measurementData.getAbsolutePath();
-    measurementHandler = new MeasurementDataHandler(paths.parent.getAbsolutePath());
+    measurementPath = paths.measurementDataPath;
+    MeasurementDataHandler measurementHandler =
+      new MeasurementDataHandler(paths.parentPath);
     XMLTools.parseXML(readSanitizedXML(measurementPath), measurementHandler);
     planeData = measurementHandler.getPlanes();
+    measurementDataSummary = measurementHandler.getSummary();
   }
 
   /** Parse optional XML sidecars that enrich channel, instrument, and raw metadata. */
@@ -470,12 +478,12 @@ public class CV7000Reader extends FormatReader {
 
   /** MeasurementDetail links the acquisition settings sidecars and seeds channels. */
   private void parseMeasurementDetail(CV7000DatasetPaths paths) throws IOException {
-    if (!paths.measurementDetail.exists()) {
+    if (!new Location(paths.measurementDetailPath).exists()) {
       LOGGER.warn("Missing " + MEASUREMENT_DETAIL + " file");
       return;
     }
 
-    detailPath = paths.measurementDetail.getAbsolutePath();
+    detailPath = paths.measurementDetailPath;
     MeasurementDetailHandler detailHandler = new MeasurementDetailHandler();
     XMLTools.parseXML(readSanitizedXML(detailPath), detailHandler);
     MeasurementDetailResult result = detailHandler.getResult();
@@ -487,10 +495,10 @@ public class CV7000Reader extends FormatReader {
     wppPath = result.wppPath;
     settingsPath = result.settingsPath;
     if (wppPath != null) {
-      wppPath = new Location(paths.parent, wppPath).getAbsolutePath();
+      wppPath = new Location(paths.parentPath, wppPath).getAbsolutePath();
     }
     if (settingsPath != null) {
-      settingsPath = new Location(paths.parent, settingsPath).getAbsolutePath();
+      settingsPath = new Location(paths.parentPath, settingsPath).getAbsolutePath();
     }
   }
 
@@ -517,38 +525,38 @@ public class CV7000Reader extends FormatReader {
 
   /** OTF geometry stores objective catalog entries and affine calibration rows. */
   private void parseOTFGeometry(CV7000DatasetPaths paths) {
-    Location geometry = paths.otfGeometry;
-    if (!geometry.exists()) {
+    String geometry = paths.otfGeometryPath;
+    if (!new Location(geometry).exists()) {
       return;
     }
 
     try {
       OTFGeometryHandler handler = new OTFGeometryHandler();
-      XMLTools.parseXML(readSanitizedXML(geometry.getAbsolutePath()), handler);
+      XMLTools.parseXML(readSanitizedXML(geometry), handler);
       otfGeometryParameters = handler.getParameters();
     }
     catch (Exception e) {
       otfGeometryParameters = null;
       LOGGER.warn("Could not parse CV7000 OTF geometry sidecar {}",
-        geometry.getAbsolutePath(), e);
+        geometry, e);
     }
   }
 
   /** OTF crosstalk stores exact emission filter bands and optional dichroics. */
   private void parseOTFCrosstalk(CV7000DatasetPaths paths) {
-    Location crosstalk = paths.otfCrosstalk;
-    if (!crosstalk.exists()) {
+    String crosstalk = paths.otfCrosstalkPath;
+    if (!new Location(crosstalk).exists()) {
       return;
     }
 
     try {
       CrosstalkParameterHandler handler = new CrosstalkParameterHandler();
-      XMLTools.parseXML(readSanitizedXML(crosstalk.getAbsolutePath()), handler);
+      XMLTools.parseXML(readSanitizedXML(crosstalk), handler);
       crosstalkParameters = handler.getParameters();
     }
     catch (Exception e) {
       crosstalkParameters = null;
-      LOGGER.warn("Could not parse CV7000 crosstalk sidecar {}", crosstalk.getAbsolutePath(), e);
+      LOGGER.warn("Could not parse CV7000 crosstalk sidecar {}", crosstalk, e);
     }
   }
 
@@ -557,13 +565,13 @@ public class CV7000Reader extends FormatReader {
   // ###############
 
   /** Normalize channel order and paths after all optional channel sources are parsed. */
-  private void normalizeChannels(Location parent) {
+  private void normalizeChannels(String parentPath) {
     if (channels == null) {
       return;
     }
     sortChannelsByActionThenIndex();
     rawModel.indexChannels(channels);
-    resolveCorrectionFiles(parent);
+    resolveCorrectionFiles(parentPath);
   }
 
   /** Yokogawa logical channels are ordered by action first, then channel index. */
@@ -580,13 +588,13 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Shading correction paths are relative to the dataset directory in the XML. */
-  private void resolveCorrectionFiles(Location parent) {
+  private void resolveCorrectionFiles(String parentPath) {
     for (Channel ch : channels) {
       if (ch.correctionFile != null) {
         String resolved =
-          new Location(parent, ch.correctionFile).getAbsolutePath();
+          new Location(parentPath, ch.correctionFile).getAbsolutePath();
         ch.resolvedCorrectionFile = resolved;
-        ch.correctionFile = getRelativePath(parent, resolved);
+        ch.correctionFile = getRelativePath(parentPath, resolved);
       }
     }
   }
@@ -595,10 +603,10 @@ public class CV7000Reader extends FormatReader {
    * Return a path relative to the WPI directory,
    * preserving the input on failure.
    */
-  private String getRelativePath(Location parent, String path) {
+  private String getRelativePath(String parent, String path) {
     try {
       Path parentPath =
-        Paths.get(parent.getAbsolutePath()).toAbsolutePath().normalize();
+        Paths.get(parent).toAbsolutePath().normalize();
       Path filePath = Paths.get(path).toAbsolutePath().normalize();
       return parentPath.relativize(filePath).toString();
     }
@@ -2075,19 +2083,19 @@ public class CV7000Reader extends FormatReader {
       if (isPath(file, datasetPaths.wpiPath)) {
         return CV7000FileRole.WPI;
       }
-      if (isPath(file, datasetPaths.measurementData)) {
+      if (isPath(file, datasetPaths.measurementDataPath)) {
         return CV7000FileRole.MEASUREMENT_DATA;
       }
-      if (isPath(file, datasetPaths.measurementDetail)) {
+      if (isPath(file, datasetPaths.measurementDetailPath)) {
         return CV7000FileRole.MEASUREMENT_DETAIL;
       }
-      if (isPath(file, datasetPaths.postProcess)) {
+      if (isPath(file, datasetPaths.postProcessPath)) {
         return CV7000FileRole.POST_PROCESS;
       }
-      if (isPath(file, datasetPaths.otfCrosstalk)) {
+      if (isPath(file, datasetPaths.otfCrosstalkPath)) {
         return CV7000FileRole.OTF_CROSSTALK;
       }
-      if (isPath(file, datasetPaths.otfGeometry)) {
+      if (isPath(file, datasetPaths.otfGeometryPath)) {
         return CV7000FileRole.OTF_GEOMETRY;
       }
     }
@@ -2134,13 +2142,6 @@ public class CV7000Reader extends FormatReader {
     return file.getAbsolutePath().equals(new Location(path).getAbsolutePath());
   }
 
-  private boolean isPath(Location file, Location path) {
-    if (path == null) {
-      return false;
-    }
-    return file.getAbsolutePath().equals(path.getAbsolutePath());
-  }
-
   private void parseStructuredSidecarMetadata(String file, CV7000FileRole role) {
     if (role == CV7000FileRole.POST_PROCESS) {
       addPostProcessOriginalMetadata(file);
@@ -2175,17 +2176,17 @@ public class CV7000Reader extends FormatReader {
       LOGGER.debug("Could not summarize CV7000 measurement data {}", measurementPath, e);
     }
 
-    if (measurementHandler != null) {
+    if (measurementDataSummary != null) {
       addYokogawaMeta("Yokogawa MLF ", "IMGRecordCount",
-        measurementHandler.getImageRecordCount());
+        measurementDataSummary.imageRecordCount);
       addYokogawaMeta("Yokogawa MLF ", "FirstPlaneTime",
-        measurementHandler.getFirstTimestamp());
+        measurementDataSummary.firstTimestamp);
       addYokogawaMeta("Yokogawa MLF ", "LastPlaneTime",
-        measurementHandler.getLastTimestamp());
+        measurementDataSummary.lastTimestamp);
       addYokogawaMeta("Yokogawa MLF ", "FirstPlaneAction",
-        measurementHandler.getFirstAction());
+        measurementDataSummary.firstAction);
       addYokogawaMeta("Yokogawa MLF ", "LastPlaneAction",
-        measurementHandler.getLastAction());
+        measurementDataSummary.lastAction);
     }
   }
 
@@ -2714,7 +2715,7 @@ public class CV7000Reader extends FormatReader {
     UNKNOWN
   }
 
-  private enum CV7000ChannelMappingMode {
+  public enum CV7000ChannelMappingMode {
     ACTION_MAPPED,
     RAW_MLF
   }
@@ -2781,21 +2782,21 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Resolved dataset paths used during the parsing phase. */
-  private static class CV7000DatasetPaths {
-    public Location parent;
+  public static class CV7000DatasetPaths {
+    public String parentPath;
     public String wpiPath;
-    public Location measurementData;
-    public Location measurementDetail;
-    public Location postProcess;
-    public Location otfCrosstalk;
-    public Location otfGeometry;
+    public String measurementDataPath;
+    public String measurementDetailPath;
+    public String postProcessPath;
+    public String otfCrosstalkPath;
+    public String otfGeometryPath;
   }
 
   /** Parsed Yokogawa sidecars and reader-local provenance. */
-  private static class CV7000RawModel {
+  public static class CV7000RawModel {
     public YokogawaOriginalMetadata originalMetadata =
       new YokogawaOriginalMetadata();
-    private HashMap<ChannelKey, Channel> channelsByAcquisition =
+    public HashMap<ChannelKey, Channel> channelsByAcquisition =
       new HashMap<ChannelKey, Channel>();
 
     public void indexChannels(ArrayList<Channel> channels) {
@@ -2819,13 +2820,13 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Grouped Yokogawa metadata pending OME MapAnnotation emission. */
-  private static class YokogawaOriginalMetadata {
+  public static class YokogawaOriginalMetadata {
     public LinkedHashMap<String, YokogawaAnnotationGroup> groups =
       new LinkedHashMap<String, YokogawaAnnotationGroup>();
   }
 
   /** Intermediate layout data used to translate Yokogawa records into series. */
-  private static class CV7000SeriesLayout {
+  public static class CV7000SeriesLayout {
     public String firstFile;
     public ArrayList<Field> acquiredFields = new ArrayList<Field>();
     public HashMap<Field, MinMax> minMax = new HashMap<Field, MinMax>();
@@ -2841,7 +2842,7 @@ public class CV7000Reader extends FormatReader {
       new HashMap<String, Boolean>();
     public ArrayList<DuplicatePlaneCandidate> duplicateCandidates =
       new ArrayList<DuplicatePlaneCandidate>();
-    private HashMap<String, Plane> representativePlanes =
+    public HashMap<String, Plane> representativePlanes =
       new HashMap<String, Plane>();
 
     public void indexPlane(Plane plane) {
@@ -2871,10 +2872,13 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class ChannelKey {
+  public static class ChannelKey {
     public int timelineIndex;
     public int actionIndex;
     public int channelIndex;
+
+    public ChannelKey() {
+    }
 
     public ChannelKey(int timelineIndex, int actionIndex, int channelIndex) {
       this.timelineIndex = timelineIndex;
@@ -2903,7 +2907,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   /** Shared Yokogawa parsing and normalization helpers. */
-  private static class YokogawaParsing {
+  public static class YokogawaParsing {
     public String readSanitizedXML(String filename) throws IOException {
       String xml = DataTools.readFile(filename).trim();
       if (xml.endsWith(">>")) {
@@ -3065,10 +3069,13 @@ public class CV7000Reader extends FormatReader {
     public ArrayList<String> anomalies = new ArrayList<String>();
   }
 
-  private static class DuplicatePlaneCandidate {
+  public static class DuplicatePlaneCandidate {
     public Plane candidate;
     public Plane selected;
     public String reason;
+
+    public DuplicatePlaneCandidate() {
+    }
 
     public DuplicatePlaneCandidate(Plane candidate, Plane selected,
       String reason)
@@ -3079,12 +3086,15 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class YokogawaAnnotationGroup {
+  public static class YokogawaAnnotationGroup {
     public String scope;
-    private LinkedHashMap<String, String> values =
+    public LinkedHashMap<String, String> values =
       new LinkedHashMap<String, String>();
-    private HashMap<String, Integer> listIndexes =
+    public HashMap<String, Integer> listIndexes =
       new HashMap<String, Integer>();
+
+    public YokogawaAnnotationGroup() {
+    }
 
     public YokogawaAnnotationGroup(String scope) {
       this.scope = scope;
@@ -3175,6 +3185,14 @@ public class CV7000Reader extends FormatReader {
     public ArrayList<LightSource> lightSources = new ArrayList<LightSource>();
   }
 
+  public static class MeasurementDataSummary {
+    public int imageRecordCount;
+    public String firstTimestamp;
+    public String lastTimestamp;
+    public String firstAction;
+    public String lastAction;
+  }
+
   // ###############
   // ## Module 11: SAX Sidecar Handlers
   // ###############
@@ -3239,6 +3257,16 @@ public class CV7000Reader extends FormatReader {
 
     public ArrayList<Plane> getPlanes() {
       return planes;
+    }
+
+    public MeasurementDataSummary getSummary() {
+      MeasurementDataSummary summary = new MeasurementDataSummary();
+      summary.imageRecordCount = imageRecordCount;
+      summary.firstTimestamp = firstTimestamp;
+      summary.lastTimestamp = lastTimestamp;
+      summary.firstAction = firstAction;
+      summary.lastAction = lastAction;
+      return summary;
     }
 
     public int getImageRecordCount() {
@@ -3842,7 +3870,7 @@ public class CV7000Reader extends FormatReader {
   // ## Module 12: OTF, Crosstalk, Objective, Channel, And Plane Models
   // ###############
 
-  private static class OTFGeometryParameters {
+  public static class OTFGeometryParameters {
     public String mode;
     public LinkedHashMap<String, OTFGeometryObjective> objectivesByID =
       new LinkedHashMap<String, OTFGeometryObjective>();
@@ -3873,13 +3901,13 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class OTFGeometryObjective {
+  public static class OTFGeometryObjective {
     public String objectiveID;
     public String objective;
     public Double magnification;
   }
 
-  private static class OTFGeometryAffine {
+  public static class OTFGeometryAffine {
     public String methodID;
     public String method;
     public String objectiveID;
@@ -3897,7 +3925,7 @@ public class CV7000Reader extends FormatReader {
     public Double f;
   }
 
-  private static class CrosstalkParameters {
+  public static class CrosstalkParameters {
     public LinkedHashMap<CrosstalkFilterKey, CrosstalkFilter> filters =
       new LinkedHashMap<CrosstalkFilterKey, CrosstalkFilter>();
     public ArrayList<CrosstalkFluorophore> fluorophores =
@@ -3909,7 +3937,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class CrosstalkFilter {
+  public static class CrosstalkFilter {
     public String filterID;
     public Integer cameraNumber;
     public String acquisition;
@@ -3920,28 +3948,31 @@ public class CV7000Reader extends FormatReader {
       new ArrayList<CrosstalkDichroic>();
   }
 
-  private static class CrosstalkDichroic {
+  public static class CrosstalkDichroic {
     public String id;
     public String name;
     public String reflection;
     public Double averageTransmittance;
   }
 
-  private static class CrosstalkFluorophore {
+  public static class CrosstalkFluorophore {
     public String name;
     public ArrayList<CrosstalkFluorophoreIntensity> intensities =
       new ArrayList<CrosstalkFluorophoreIntensity>();
   }
 
-  private static class CrosstalkFluorophoreIntensity {
+  public static class CrosstalkFluorophoreIntensity {
     public String filterID;
     public Double averageIntensity;
   }
 
-  private static class CrosstalkFilterKey {
+  public static class CrosstalkFilterKey {
     public String filterID;
     public Integer cameraNumber;
     public String acquisition;
+
+    public CrosstalkFilterKey() {
+    }
 
     public CrosstalkFilterKey(String filterID, Integer cameraNumber,
       String acquisition)
@@ -3980,7 +4011,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class LightSource {
+  public static class LightSource {
     public String name;
     public String type;
     public Double wavelength;
@@ -4049,7 +4080,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class DetectionFilter {
+  public static class DetectionFilter {
     public String filterType;
     public Double center;
     public Double width;
@@ -4065,7 +4096,10 @@ public class CV7000Reader extends FormatReader {
       return filter;
     }
 
-    private DetectionFilter(String filterType) {
+    public DetectionFilter() {
+    }
+
+    public DetectionFilter(String filterType) {
       this.filterType = filterType;
     }
   }
@@ -4124,7 +4158,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class Channel {
+  public static class Channel {
     public int timelineIndex = -1;
     public int actionIndex = -1;
     public int index;
@@ -4276,7 +4310,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class Plane {
+  public static class Plane {
     public String file;
     public String timestamp;
     public String actionName;
@@ -4296,7 +4330,7 @@ public class CV7000Reader extends FormatReader {
     public int timelineIndex;
   }
 
-  private static class Field {
+  public static class Field {
     public int row;
     public int column;
     public int field;
@@ -4317,7 +4351,7 @@ public class CV7000Reader extends FormatReader {
     }
   }
 
-  private static class MinMax {
+  public static class MinMax {
     public int minZ = Integer.MAX_VALUE;
     public int maxZ = 0;
     public int minT = Integer.MAX_VALUE;
