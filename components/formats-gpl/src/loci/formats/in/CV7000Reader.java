@@ -671,6 +671,8 @@ public class CV7000Reader extends FormatReader {
   {
     if (channels == null || channels.size() == 0) {
       setRawMLFChannelMapping(layout, "NO_CHANNEL_SIDECAR_METADATA");
+      LOGGER.warn("Falling back to raw CV7000 MLF channel indexes; " +
+        "no channel sidecar metadata is available");
       return;
     }
     if (!hasActionChannelMapping()) {
@@ -2969,10 +2971,17 @@ public class CV7000Reader extends FormatReader {
     public Channel lookupChannel(CV7000RawModel rawModel,
       ArrayList<Channel> channels, Plane plane)
     {
+      if (plane == null) {
+        return null;
+      }
       Channel matched = rawModel.getChannel(
         plane.timelineIndex, plane.actionIndex, plane.channel);
       if (matched != null) {
         return matched;
+      }
+
+      if (channels == null) {
+        return null;
       }
 
       Channel rawChannel = null;
@@ -2993,7 +3002,15 @@ public class CV7000Reader extends FormatReader {
           }
         }
       }
-      return populatedRawChannel == null ? rawChannel : populatedRawChannel;
+      Channel fallback =
+        populatedRawChannel == null ? rawChannel : populatedRawChannel;
+      if (fallback != null && rawModel.markRawChannelFallback(plane)) {
+        LOGGER.warn("Falling back to CV7000 raw channel metadata for " +
+          "timeline {}, action {}, raw channel {}; no exact acquisition " +
+          "metadata is available", plane.timelineIndex + 1,
+          plane.actionIndex + 1, plane.channel + 1);
+      }
+      return fallback;
     }
   }
 
@@ -3014,9 +3031,12 @@ public class CV7000Reader extends FormatReader {
       new YokogawaOriginalMetadata();
     public HashMap<ChannelKey, Channel> channelsByAcquisition =
       new HashMap<ChannelKey, Channel>();
+    private HashSet<ChannelKey> warnedRawChannelFallbacks =
+      new HashSet<ChannelKey>();
 
     public void indexChannels(ArrayList<Channel> channels) {
       channelsByAcquisition.clear();
+      warnedRawChannelFallbacks.clear();
       if (channels == null) {
         return;
       }
@@ -3032,6 +3052,11 @@ public class CV7000Reader extends FormatReader {
     public Channel getChannel(int timelineIndex, int actionIndex, int rawChannel) {
       return channelsByAcquisition.get(
         new ChannelKey(timelineIndex, actionIndex, rawChannel));
+    }
+
+    private boolean markRawChannelFallback(Plane plane) {
+      return warnedRawChannelFallbacks.add(new ChannelKey(
+        plane.timelineIndex, plane.actionIndex, plane.channel));
     }
   }
 
