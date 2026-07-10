@@ -878,7 +878,6 @@ public class CV7000Reader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPlateName(plate.getPlateName(), 0);
-      store.setPlateDescription(plate.getPlateDescription(), 0);
       store.setPlateExternalIdentifier(plate.getPlateID(), 0);
 
       InstrumentMetadataIndexes indexes = populateInstrumentMetadata(store);
@@ -942,7 +941,6 @@ public class CV7000Reader extends FormatReader {
   {
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateName(plate.getPlateName(), 0);
-    store.setPlateDescription(plate.getPlateDescription(), 0);
     store.setPlateExternalIdentifier(plate.getPlateID(), 0);
     store.setPlateRows(new PositiveInteger(plate.getPlateRows()), 0);
     store.setPlateColumns(new PositiveInteger(plate.getPlateColumns()), 0);
@@ -3202,7 +3200,6 @@ public class CV7000Reader extends FormatReader {
     private int plateColumns;
     private String name;
     private String plateID;
-    private String description;
 
     public int getPlateRows() {
       return plateRows;
@@ -3218,10 +3215,6 @@ public class CV7000Reader extends FormatReader {
 
     public String getPlateID() {
       return plateID;
-    }
-
-    public String getPlateDescription() {
-      return description;
     }
 
     @Override
@@ -3267,26 +3260,6 @@ public class CV7000Reader extends FormatReader {
       summary.firstAction = firstAction;
       summary.lastAction = lastAction;
       return summary;
-    }
-
-    public int getImageRecordCount() {
-      return imageRecordCount;
-    }
-
-    public String getFirstTimestamp() {
-      return firstTimestamp;
-    }
-
-    public String getLastTimestamp() {
-      return lastTimestamp;
-    }
-
-    public String getFirstAction() {
-      return firstAction;
-    }
-
-    public String getLastAction() {
-      return lastAction;
     }
 
     // -- DefaultHandler API methods --
