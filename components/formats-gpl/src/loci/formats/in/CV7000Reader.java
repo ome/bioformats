@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -123,7 +124,7 @@ public class CV7000Reader extends FormatReader {
 
   // -- Fields --
 
-  private List<String> allFiles = new ArrayList<String>();
+  private LinkedHashSet<String> allFiles = new LinkedHashSet<String>();
   private MinimalTiffReader reader;
   private String wppPath;
   private String detailPath;
@@ -209,10 +210,10 @@ public class CV7000Reader extends FormatReader {
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
-    ArrayList<String> files = new ArrayList<String>();
+    LinkedHashSet<String> files = new LinkedHashSet<String>();
     files.add(new Location(currentId).getAbsolutePath());
     for (String file : allFiles) {
-      if (file != null && !files.contains(file) &&
+      if (file != null &&
         (!noPixels || !isPixelFile(classifyCV7000File(new Location(file)))))
       {
         files.add(file);
@@ -311,7 +312,7 @@ public class CV7000Reader extends FormatReader {
       if (allFiles != null) {
           allFiles.clear();
       } else {
-          allFiles = new ArrayList<String>();
+          allFiles = new LinkedHashSet<String>();
       }
     }
   }
@@ -332,20 +333,11 @@ public class CV7000Reader extends FormatReader {
       reader.setId(p.file);
       return reader.openBytes(0, buf, x, y, w, h);
     }
-    else if (duplicatePlanes() && no > 0) {
-      int[] zct = getLogicalZCTCoords(getSeries(), no);
-      // pick the first plane in the same channel
-      int dupPlane = getLogicalPlaneIndex(getSeries(), 0, zct[1], 0);
-
-      // very unlikely to happen, but catching the case
-      // where no is the first plane in the channel prevents
-      // a potential infinite loop
-      if (dupPlane == no) {
-        dupPlane = 0;
-      }
-      Plane duplicate = lookupPlane(getSeries(), dupPlane);
+    else if (duplicatePlanes()) {
+      Plane duplicate = getDuplicatePlane(getSeries(), no);
       if (duplicate != null && duplicate.file != null) {
-        return openBytes(dupPlane, buf, x, y, w, h);
+        reader.setId(duplicate.file);
+        return reader.openBytes(0, buf, x, y, w, h);
       }
     }
     return buf;
@@ -520,6 +512,7 @@ public class CV7000Reader extends FormatReader {
       }
       MeasurementSettingsResult result = settingsHandler.getResult();
       lightSources = result.lightSources;
+      channels = result.channels;
     }
   }
 
@@ -645,10 +638,12 @@ public class CV7000Reader extends FormatReader {
     determineChannelMappingMode(layout, acquiredFieldSet);
     sortAcquiredFields(layout.acquiredFields);
     indexAcquiredFields(layout);
+    assignLogicalChannelSlots(layout, acquiredFieldSet);
     collectPlaneExtents(layout, acquiredFieldSet);
-    layout.channelIndexes = layout.uniqueChannels.toArray(
-      new Integer[layout.uniqueChannels.size()]);
-    Arrays.sort(layout.channelIndexes);
+    layout.channelIndexes = new Integer[layout.channelSlots.size()];
+    for (int i=0; i<layout.channelIndexes.length; i++) {
+      layout.channelIndexes[i] = Integer.valueOf(i);
+    }
     return layout;
   }
 
@@ -657,9 +652,7 @@ public class CV7000Reader extends FormatReader {
     HashSet<Field> acquiredFieldSet = new HashSet<Field>();
     for (Plane p : planeData) {
       if (p != null && p.file != null) {
-        if (!allFiles.contains(p.file)) {
-          allFiles.add(p.file);
-        }
+        allFiles.add(p.file);
         if (layout.firstFile == null) {
           layout.firstFile = p.file;
         }
@@ -759,16 +752,122 @@ public class CV7000Reader extends FormatReader {
   private void collectPlaneExtents(CV7000SeriesLayout layout, HashSet<Field> acquiredFieldSet) {
     for (Plane p : planeData) {
       if (p != null && acquiredFieldSet.contains(p.field)) {
-        p.channelIndex = getLogicalChannelIndex(p, layout.channelMappingMode);
-
         if (!layout.minMax.containsKey(p.field)) {
           layout.minMax.put(p.field, new MinMax());
         }
         MinMax m = layout.minMax.get(p.field);
         m.update(p);
-        layout.uniqueChannels.add(p.channelIndex);
       }
     }
+  }
+
+  /** Assign stable channel slots and qualify only real cross-timeline collisions. */
+  private void assignLogicalChannelSlots(CV7000SeriesLayout layout,
+    HashSet<Field> acquiredFieldSet)
+  {
+    HashMap<String, HashSet<Integer>> timelinesByCoordinate =
+      new HashMap<String, HashSet<Integer>>();
+
+    for (Plane p : planeData) {
+      if (p == null || !acquiredFieldSet.contains(p.field)) {
+        continue;
+      }
+      ChannelSlotKey base = createBaseChannelSlot(p, layout.channelMappingMode);
+      String coordinate = getChannelCollisionCoordinate(p, base);
+      HashSet<Integer> timelines = timelinesByCoordinate.get(coordinate);
+      if (timelines == null) {
+        timelines = new HashSet<Integer>();
+        timelinesByCoordinate.put(coordinate, timelines);
+      }
+      timelines.add(Integer.valueOf(p.timelineIndex));
+    }
+
+    HashSet<String> qualifiedAcquisitions = new HashSet<String>();
+    for (Plane p : planeData) {
+      if (p == null || !acquiredFieldSet.contains(p.field)) {
+        continue;
+      }
+      ChannelSlotKey base = createBaseChannelSlot(p, layout.channelMappingMode);
+      HashSet<Integer> timelines = timelinesByCoordinate.get(
+        getChannelCollisionCoordinate(p, base));
+      if (timelines != null && timelines.size() > 1 &&
+        p.timelineIndex != Collections.min(timelines).intValue())
+      {
+        qualifiedAcquisitions.add(
+          base.identity() + "|timeline=" + p.timelineIndex);
+      }
+    }
+
+    HashSet<ChannelSlotKey> primarySlots = new HashSet<ChannelSlotKey>();
+    HashSet<ChannelSlotKey> qualifiedSlots = new HashSet<ChannelSlotKey>();
+    for (Plane p : planeData) {
+      if (p == null || !acquiredFieldSet.contains(p.field)) {
+        continue;
+      }
+      ChannelSlotKey base = createBaseChannelSlot(p, layout.channelMappingMode);
+      ChannelSlotKey slot = base;
+      if (qualifiedAcquisitions.contains(
+        base.identity() + "|timeline=" + p.timelineIndex))
+      {
+        slot = new ChannelSlotKey(base);
+        slot.timelineIndex = p.timelineIndex;
+        slot.timelineQualified = true;
+        qualifiedSlots.add(slot);
+      }
+      else {
+        primarySlots.add(slot);
+      }
+      p.channelSlot = slot;
+    }
+
+    ArrayList<ChannelSlotKey> primary =
+      new ArrayList<ChannelSlotKey>(primarySlots);
+    Collections.sort(primary);
+    layout.channelSlots.addAll(primary);
+
+    ArrayList<ChannelSlotKey> overflow =
+      new ArrayList<ChannelSlotKey>(qualifiedSlots);
+    Collections.sort(overflow, new Comparator<ChannelSlotKey>() {
+      @Override
+      public int compare(ChannelSlotKey a, ChannelSlotKey b) {
+        int timeline = Integer.compare(a.timelineIndex, b.timelineIndex);
+        return timeline == 0 ? a.compareBase(b) : timeline;
+      }
+    });
+    layout.channelSlots.addAll(overflow);
+    for (ChannelSlotKey slot : overflow) {
+      addYokogawaMetaList("Yokogawa Channel Mapping ",
+        "TimelineQualifiedSlot", slot.toString());
+    }
+
+    for (int i=0; i<layout.channelSlots.size(); i++) {
+      layout.channelSlotIndexes.put(layout.channelSlots.get(i), Integer.valueOf(i));
+    }
+    for (Plane p : planeData) {
+      if (p != null && p.channelSlot != null) {
+        p.channelIndex = layout.channelSlotIndexes.get(p.channelSlot).intValue();
+      }
+    }
+  }
+
+  private ChannelSlotKey createBaseChannelSlot(Plane plane,
+    CV7000ChannelMappingMode mode)
+  {
+    ChannelSlotKey key = new ChannelSlotKey();
+    key.mappingMode = mode;
+    key.actionIndex = plane.actionIndex;
+    key.rawChannel = plane.channel;
+    key.mappedIndex = mode == CV7000ChannelMappingMode.ACTION_MAPPED ?
+      getLogicalChannelIndex(plane, mode) : -1;
+    return key;
+  }
+
+  private String getChannelCollisionCoordinate(Plane plane,
+    ChannelSlotKey base)
+  {
+    return plane.field.row + ":" + plane.field.column + ":" +
+      plane.field.field + ":" + plane.z + ":" + plane.timepoint + "|" +
+      base.identity();
   }
 
   /** Initialize the Bio-Formats core metadata once the logical layout is known. */
@@ -812,14 +911,6 @@ public class CV7000Reader extends FormatReader {
       Integer series = layout.fieldToSeries.get(p.field);
       if (series == null) {
         continue;
-      }
-
-      // Reindex from Yokogawa's channel/action numbering into the compact
-      // channel list exposed by this reader for the current dataset.
-      p.channelIndex = Arrays.binarySearch(layout.channelIndexes, p.channelIndex);
-      if (p.channelIndex < 0) {
-        throw new FormatException("Could not map CV7000 channel " +
-          (p.channel + 1) + " to a compact reader channel index");
       }
 
       p.series = series.intValue();
@@ -1084,6 +1175,10 @@ public class CV7000Reader extends FormatReader {
       }
       Channel channel = lookupChannel(p);
       if (channel == null) {
+        continue;
+      }
+      if (channel.metadataAmbiguous) {
+        store.setChannelName(getChannelProvenance(channel, p), series, c);
         continue;
       }
 
@@ -1496,6 +1591,9 @@ public class CV7000Reader extends FormatReader {
   private void populateObjectives(MetadataStore store, List<String> usedObjectiveIDs) {
     if (channels != null) {
       for (Channel c : channels) {
+        if (c.metadataAmbiguous) {
+          continue;
+        }
         if (c.objectiveID != null && !usedObjectiveIDs.contains(c.objectiveID)) {
           int index = usedObjectiveIDs.size();
           String objectiveID = MetadataTools.createLSID("Objective", 0, index);
@@ -1614,6 +1712,9 @@ public class CV7000Reader extends FormatReader {
       return;
     }
     for (Channel c : channels) {
+      if (c.metadataAmbiguous) {
+        continue;
+      }
       if (!detectorIndexes.containsKey(c.cameraNumber)) {
         int detector = detectorIndexes.size();
         detectorIndexes.put(c.cameraNumber, detector);
@@ -1675,6 +1776,9 @@ public class CV7000Reader extends FormatReader {
       return;
     }
     for (Channel c : channels) {
+      if (c.metadataAmbiguous) {
+        continue;
+      }
       FilterKey key = new FilterKey(c);
       if (!key.isValid() || filterIndexes.containsKey(key)) {
         continue;
@@ -2488,17 +2592,52 @@ public class CV7000Reader extends FormatReader {
   }
 
   private Plane getDuplicatePlane(int series, int no) {
-    if (!duplicatePlanes() || no <= 0) {
+    if (!duplicatePlanes()) {
       return null;
     }
 
     int[] zct = getLogicalZCTCoords(series, no);
-    int dupPlane = getLogicalPlaneIndex(series, 0, zct[1], 0);
-    if (dupPlane == no) {
-      dupPlane = 0;
+    return findFirstBackedPlaneInChannel(
+      planeData, reversePlaneLookup[series], series, zct[1], no);
+  }
+
+  /** Select the lowest-index backed plane from one logical channel. */
+  static Plane findFirstBackedPlaneInChannel(ArrayList<Plane> planes,
+    int[] lookup, int series, int channel, int excludedPlane)
+  {
+    if (planes == null || lookup == null) {
+      return null;
     }
-    Plane duplicate = lookupPlane(series, dupPlane);
-    return duplicate != null && duplicate.file != null ? duplicate : null;
+    for (int no=0; no<lookup.length; no++) {
+      if (no == excludedPlane) {
+        continue;
+      }
+      int index = lookup[no];
+      if (index < 0 || index >= planes.size()) {
+        continue;
+      }
+      Plane plane = planes.get(index);
+      if (plane != null && plane.series == series && plane.no == no &&
+        plane.channelIndex == channel && plane.file != null)
+      {
+        return plane;
+      }
+    }
+    return null;
+  }
+
+  /** Match repeated raw-channel metadata by occurrence, reusing a sole row. */
+  static Channel selectChannelDefinition(List<Channel> definitions,
+    int occurrence)
+  {
+    if (definitions == null || definitions.size() == 0) {
+      return null;
+    }
+    if (definitions.size() == 1) {
+      return definitions.get(0);
+    }
+    return occurrence >= 0 && occurrence < definitions.size() ?
+      definitions.get(occurrence) : null;
   }
 
   private int getLogicalChannelCount(int series) {
@@ -2828,8 +2967,11 @@ public class CV7000Reader extends FormatReader {
     public String firstFile;
     public ArrayList<Field> acquiredFields = new ArrayList<Field>();
     public HashMap<Field, MinMax> minMax = new HashMap<Field, MinMax>();
-    public HashSet<Integer> uniqueChannels = new HashSet<Integer>();
     public Integer[] channelIndexes;
+    public ArrayList<ChannelSlotKey> channelSlots =
+      new ArrayList<ChannelSlotKey>();
+    public HashMap<ChannelSlotKey, Integer> channelSlotIndexes =
+      new HashMap<ChannelSlotKey, Integer>();
     public HashMap<Field, Integer> fieldToSeries = new HashMap<Field, Integer>();
     public int[][] reversePlaneLookup;
     public CV7000ChannelMappingMode channelMappingMode =
@@ -2867,6 +3009,88 @@ public class CV7000Reader extends FormatReader {
 
     private String getPlaneKey(int series, int channel) {
       return series + ":" + channel;
+    }
+  }
+
+  /** Logical channel identity, with an optional timeline collision qualifier. */
+  public static class ChannelSlotKey implements Comparable<ChannelSlotKey> {
+    public CV7000ChannelMappingMode mappingMode;
+    public int mappedIndex = -1;
+    public int actionIndex = -1;
+    public int rawChannel = -1;
+    public int timelineIndex = -1;
+    public boolean timelineQualified;
+
+    public ChannelSlotKey() {
+    }
+
+    public ChannelSlotKey(ChannelSlotKey key) {
+      mappingMode = key.mappingMode;
+      mappedIndex = key.mappedIndex;
+      actionIndex = key.actionIndex;
+      rawChannel = key.rawChannel;
+      timelineIndex = key.timelineIndex;
+      timelineQualified = key.timelineQualified;
+    }
+
+    public String identity() {
+      if (mappingMode == CV7000ChannelMappingMode.ACTION_MAPPED) {
+        return "mapped=" + mappedIndex;
+      }
+      return "action=" + actionIndex + ":raw=" + rawChannel;
+    }
+
+    public int compareBase(ChannelSlotKey other) {
+      if (mappingMode == CV7000ChannelMappingMode.ACTION_MAPPED &&
+        other.mappingMode == CV7000ChannelMappingMode.ACTION_MAPPED)
+      {
+        return Integer.compare(mappedIndex, other.mappedIndex);
+      }
+      int action = Integer.compare(actionIndex, other.actionIndex);
+      return action == 0 ? Integer.compare(rawChannel, other.rawChannel) : action;
+    }
+
+    @Override
+    public int compareTo(ChannelSlotKey other) {
+      return compareBase(other);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof ChannelSlotKey)) {
+        return false;
+      }
+      ChannelSlotKey key = (ChannelSlotKey) o;
+      if (mappingMode != key.mappingMode ||
+        timelineQualified != key.timelineQualified ||
+        timelineIndex != key.timelineIndex)
+      {
+        return false;
+      }
+      if (mappingMode == CV7000ChannelMappingMode.ACTION_MAPPED) {
+        return mappedIndex == key.mappedIndex;
+      }
+      return actionIndex == key.actionIndex && rawChannel == key.rawChannel;
+    }
+
+    @Override
+    public int hashCode() {
+      int code = mappingMode == null ? 0 : mappingMode.hashCode();
+      if (mappingMode == CV7000ChannelMappingMode.ACTION_MAPPED) {
+        code = 31 * code + mappedIndex;
+      }
+      else {
+        code = 31 * code + actionIndex;
+        code = 31 * code + rawChannel;
+      }
+      code = 31 * code + timelineIndex;
+      return 31 * code + (timelineQualified ? 1 : 0);
+    }
+
+    @Override
+    public String toString() {
+      String value = identity();
+      return timelineQualified ? value + ":timeline=" + timelineIndex : value;
     }
   }
 
@@ -3181,6 +3405,7 @@ public class CV7000Reader extends FormatReader {
 
   private static class MeasurementSettingsResult {
     public ArrayList<LightSource> lightSources = new ArrayList<LightSource>();
+    public ArrayList<Channel> channels = new ArrayList<Channel>();
   }
 
   public static class MeasurementDataSummary {
@@ -3434,8 +3659,17 @@ public class CV7000Reader extends FormatReader {
   private class MeasurementSettingsHandler extends BaseHandler {
     private MeasurementSettingsResult result = new MeasurementSettingsResult();
     private ArrayList<Channel> parsedChannels;
+    private HashMap<Integer, ArrayList<Channel>> baseChannelsByRaw =
+      new HashMap<Integer, ArrayList<Channel>>();
+    private ArrayList<Channel> resolvedChannels = new ArrayList<Channel>();
+    private HashSet<String> usedDefinitions = new HashSet<String>();
+    private HashMap<Integer, Integer> actionOccurrencesByRaw =
+      new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> templateOccurrencesByRaw =
+      new HashMap<Integer, Integer>();
     private StringBuffer currentValue = new StringBuffer();
     private int currentChannelIndex = -1;
+    private int currentDefinitionOccurrence = -1;
     private int timelineIndex = -1;
     private int actionIndex = -1;
     private int targetWellIndex = -1;
@@ -3454,9 +3688,31 @@ public class CV7000Reader extends FormatReader {
 
     public MeasurementSettingsHandler(ArrayList<Channel> channels) {
       parsedChannels = channels;
+      for (Channel channel : parsedChannels) {
+        Integer raw = Integer.valueOf(channel.index);
+        ArrayList<Channel> definitions = baseChannelsByRaw.get(raw);
+        if (definitions == null) {
+          definitions = new ArrayList<Channel>();
+          baseChannelsByRaw.put(raw, definitions);
+        }
+        channel.definitionOccurrence = definitions.size();
+        definitions.add(channel);
+      }
     }
 
     public MeasurementSettingsResult getResult() {
+      result.channels.clear();
+      if (resolvedChannels.size() == 0) {
+        result.channels.addAll(parsedChannels);
+        return result;
+      }
+      result.channels.addAll(resolvedChannels);
+      for (Channel channel : parsedChannels) {
+        String key = getDefinitionKey(channel.index, channel.definitionOccurrence);
+        if (!usedDefinitions.contains(key)) {
+          result.channels.add(channel);
+        }
+      }
       return result;
     }
 
@@ -3522,16 +3778,20 @@ public class CV7000Reader extends FormatReader {
           "LightSourceName", value);
         int index = -1;
         for (int i=0; i<result.lightSources.size(); i++) {
-          if (result.lightSources.get(i).name.equals(value)) {
+          if (result.lightSources.get(i).name != null &&
+            result.lightSources.get(i).name.equals(value))
+          {
             index = i;
           }
         }
         if (index >= 0) {
-          addLightSourceRef(currentChannelIndex, index);
+          addLightSourceRef(
+            currentChannelIndex, currentDefinitionOccurrence, index);
         }
       }
       else if (qName.equals("bts:Channel")) {
         currentChannelIndex = -1;
+        currentDefinitionOccurrence = -1;
       }
       else if (qName.equals("bts:Ch")) {
         assignActionChannel(value);
@@ -3559,17 +3819,20 @@ public class CV7000Reader extends FormatReader {
 
     private void parseChannelTemplate(Attributes attributes) {
       currentChannelIndex = -1;
+      currentDefinitionOccurrence = -1;
       String ch = attributes.getValue("bts:Ch");
       if (ch == null) {
         return;
       }
 
       int index = Integer.parseInt(ch) - 1;
-      if (index < 0 || index >= parsedChannels.size()) {
+      if (index < 0) {
         return;
       }
 
       currentChannelIndex = index;
+      currentDefinitionOccurrence = nextOccurrence(
+        templateOccurrencesByRaw, index);
 
       Channel template = new Channel();
       template.index = index;
@@ -3603,7 +3866,7 @@ public class CV7000Reader extends FormatReader {
       template.detectionFilter = parsing.parseDetectionFilter(template.acquisition);
 
       template.fluor = attributes.getValue("bts:Fluorophore");
-      applyChannelSettings(template);
+      applyChannelSettings(template, currentDefinitionOccurrence);
     }
 
     private void populateChannelColor(Channel template, String color) {
@@ -3636,6 +3899,7 @@ public class CV7000Reader extends FormatReader {
       currentPhysicalSizeZ = null;
       actionRunMode = null;
       actionAFSearch = null;
+      actionOccurrencesByRaw.clear();
       addYokogawaAttributes(
         "Yokogawa MES Timeline " + (timelineIndex + 1) + " ", attributes);
     }
@@ -3674,21 +3938,29 @@ public class CV7000Reader extends FormatReader {
 
     private void assignActionChannel(String value) {
       int channelIndex = Integer.parseInt(value) - 1;
-      if (channelIndex < 0 || channelIndex >= parsedChannels.size()) {
+      if (channelIndex < 0) {
         return;
       }
-
-      // The same channel may be acquired multiple times. First occurrence
-      // receives the action indexes; later occurrences get action-specific copies.
-      Channel channel = parsedChannels.get(channelIndex);
-      if (channel.timelineIndex == -1 && channel.actionIndex == -1) {
-        assignActionSettings(channel);
+      int occurrence = nextOccurrence(actionOccurrencesByRaw, channelIndex);
+      Channel definition = getChannelDefinition(channelIndex, occurrence);
+      Channel channel;
+      if (definition == null) {
+        channel = new Channel();
+        channel.index = channelIndex;
+        channel.definitionOccurrence = -1;
+        channel.metadataAmbiguous = true;
+        LOGGER.warn("No unambiguous CV7000 MRF channel definition for " +
+          "timeline {}, action {}, raw channel {}, occurrence {}",
+          timelineIndex + 1, actionIndex + 1, channelIndex + 1, occurrence + 1);
       }
       else {
-        Channel duplicate = new Channel(channel);
-        assignActionSettings(duplicate);
-        parsedChannels.add(duplicate);
+        channel = new Channel(definition);
+        channel.definitionOccurrence = definition.definitionOccurrence;
+        usedDefinitions.add(getDefinitionKey(
+          channelIndex, definition.definitionOccurrence));
       }
+      assignActionSettings(channel);
+      resolvedChannels.add(channel);
     }
 
     private void assignActionSettings(Channel channel) {
@@ -3713,22 +3985,66 @@ public class CV7000Reader extends FormatReader {
       currentActionUseSoftFocus = null;
     }
 
-    private void applyChannelSettings(Channel template) {
-      for (Channel ch : parsedChannels) {
-        if (ch.index == template.index) {
-          ch.copyChannelSettings(template);
+    private void applyChannelSettings(Channel template, int occurrence) {
+      Channel definition = getChannelDefinition(template.index, occurrence);
+      if (definition != null) {
+        definition.copyChannelSettings(template);
+      }
+      else {
+        LOGGER.warn("No unambiguous CV7000 MRF channel definition for " +
+          "MES channel template {}, occurrence {}",
+          template.index + 1, occurrence + 1);
+        return;
+      }
+      int resolvedOccurrence = definition.definitionOccurrence;
+      for (Channel channel : resolvedChannels) {
+        if (channel.index == template.index &&
+          channel.definitionOccurrence == resolvedOccurrence)
+        {
+          channel.copyChannelSettings(template);
         }
       }
     }
 
-    private void addLightSourceRef(int rawChannelIndex, int lightSourceIndex) {
+    private void addLightSourceRef(int rawChannelIndex, int definitionOccurrence,
+      int lightSourceIndex)
+    {
       for (Channel ch : parsedChannels) {
         if (ch.index == rawChannelIndex &&
+          ch.definitionOccurrence == definitionOccurrence &&
           !ch.lightSourceRefs.contains(lightSourceIndex))
         {
           ch.lightSourceRefs.add(lightSourceIndex);
         }
       }
+      for (Channel ch : resolvedChannels) {
+        if (ch.index == rawChannelIndex &&
+          ch.definitionOccurrence == definitionOccurrence &&
+          !ch.lightSourceRefs.contains(lightSourceIndex))
+        {
+          ch.lightSourceRefs.add(lightSourceIndex);
+        }
+      }
+    }
+
+    private int nextOccurrence(HashMap<Integer, Integer> occurrences,
+      int rawChannel)
+    {
+      Integer raw = Integer.valueOf(rawChannel);
+      Integer next = occurrences.get(raw);
+      int occurrence = next == null ? 0 : next.intValue();
+      occurrences.put(raw, Integer.valueOf(occurrence + 1));
+      return occurrence;
+    }
+
+    private Channel getChannelDefinition(int rawChannel, int occurrence) {
+      ArrayList<Channel> definitions =
+        baseChannelsByRaw.get(Integer.valueOf(rawChannel));
+      return selectChannelDefinition(definitions, occurrence);
+    }
+
+    private String getDefinitionKey(int rawChannel, int occurrence) {
+      return rawChannel + ":" + occurrence;
     }
 
   }
@@ -4135,6 +4451,8 @@ public class CV7000Reader extends FormatReader {
     public int timelineIndex = -1;
     public int actionIndex = -1;
     public int index;
+    public int definitionOccurrence;
+    public boolean metadataAmbiguous;
     public double xSize;
     public double ySize;
     public int cameraNumber;
@@ -4184,6 +4502,8 @@ public class CV7000Reader extends FormatReader {
 
     public Channel(Channel ch) {
       index = ch.index;
+      definitionOccurrence = ch.definitionOccurrence;
+      metadataAmbiguous = ch.metadataAmbiguous;
       xSize = ch.xSize;
       ySize = ch.ySize;
       cameraNumber = ch.cameraNumber;
@@ -4294,6 +4614,7 @@ public class CV7000Reader extends FormatReader {
     public int channel;
     // this is the calculated index from 0 to getSizeC() - 1
     public int channelIndex;
+    public ChannelSlotKey channelSlot;
     public double xpos;
     public double ypos;
     public double zpos;
