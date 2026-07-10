@@ -375,6 +375,7 @@ public class CV7000Reader extends FormatReader {
     seriesLayout = layout;
     initializeCoreMetadata(layout);
     populateReversePlaneLookup(layout);
+    applyInputBitDepths();
     populateMetadataStore(plate, layout);
     setSeries(0);
   }
@@ -947,6 +948,84 @@ public class CV7000Reader extends FormatReader {
       else {
         layout.duplicateCandidates.add(new DuplicatePlaneCandidate(
           p, existing, "IGNORED_METADATA_ONLY_DUPLICATE"));
+      }
+    }
+  }
+
+  /** Prefer consistent Yokogawa significant-bit metadata over TIFF defaults. */
+  private void applyInputBitDepths() {
+    for (int series=0; series<core.size(); series++) {
+      CoreMetadata metadata = core.get(series);
+      int tiffBits = metadata.bitsPerPixel;
+      int storageBits = FormatTools.getBytesPerPixel(metadata.pixelType) * 8;
+      LinkedHashSet<Integer> inputBitDepths = new LinkedHashSet<Integer>();
+      String fallbackReason = null;
+      boolean representedChannelFound = false;
+
+      for (int channelIndex=0; channelIndex<metadata.sizeC; channelIndex++) {
+        Plane plane = lookupRepresentativePlane(series, channelIndex);
+        if (plane == null) {
+          continue;
+        }
+        representedChannelFound = true;
+
+        Channel channel = lookupChannel(plane);
+        if (channel == null) {
+          if (fallbackReason == null) {
+            fallbackReason = "no matching channel metadata for logical channel " +
+              channelIndex;
+          }
+          continue;
+        }
+        if (channel.metadataAmbiguous) {
+          if (fallbackReason == null) {
+            fallbackReason = "ambiguous channel metadata for logical channel " +
+              channelIndex;
+          }
+          continue;
+        }
+
+        Integer inputBitDepth = channel.inputBitDepth;
+        if (inputBitDepth == null) {
+          if (fallbackReason == null) {
+            fallbackReason = "missing InputBitDepth for logical channel " +
+              channelIndex;
+          }
+        }
+        else if (inputBitDepth.intValue() <= 0) {
+          if (fallbackReason == null) {
+            fallbackReason = "invalid InputBitDepth " + inputBitDepth +
+              " for logical channel " + channelIndex;
+          }
+        }
+        else if (inputBitDepth.intValue() > storageBits) {
+          if (fallbackReason == null) {
+            fallbackReason = "InputBitDepth " + inputBitDepth +
+              " exceeds the " + storageBits + "-bit storage width for logical channel " +
+              channelIndex;
+          }
+        }
+        else {
+          inputBitDepths.add(inputBitDepth);
+        }
+      }
+
+      if (!representedChannelFound) {
+        fallbackReason = "no represented channels have Yokogawa metadata";
+      }
+      else if (fallbackReason == null && inputBitDepths.size() > 1) {
+        fallbackReason = "conflicting InputBitDepth values " + inputBitDepths;
+      }
+      else if (fallbackReason == null && inputBitDepths.isEmpty()) {
+        fallbackReason = "no usable InputBitDepth values";
+      }
+
+      if (fallbackReason == null) {
+        metadata.bitsPerPixel = inputBitDepths.iterator().next().intValue();
+      }
+      else {
+        LOGGER.warn("Falling back to TIFF-derived bit depth {} for CV7000 " +
+          "series {}: {}", tiffBits, series, fallbackReason);
       }
     }
   }
