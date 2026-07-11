@@ -92,6 +92,9 @@ public class CV7000Reader extends FormatReader {
   public static final String COMPRESS_RAW_SIDECARS_KEY =
     "cv7000.compress_raw_sidecars";
   public static final boolean COMPRESS_RAW_SIDECARS_DEFAULT = true;
+  public static final String MAX_PROVENANCE_RECORDS_KEY =
+    "cv7000.max_provenance_records";
+  public static final int MAX_PROVENANCE_RECORDS_DEFAULT = 500;
   public static final String INFER_OBJECTIVE_LENS_NA_KEY =
     "cv7000.infer_objective_lens_na";
   public static final boolean INFER_OBJECTIVE_LENS_NA_DEFAULT = false;
@@ -188,6 +191,27 @@ public class CV7000Reader extends FormatReader {
        COMPRESS_RAW_SIDECARS_KEY, COMPRESS_RAW_SIDECARS_DEFAULT);
     }
     return COMPRESS_RAW_SIDECARS_DEFAULT;
+  }
+
+  public int maxProvenanceRecords() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      try {
+        Integer value = ((DynamicMetadataOptions) options).getInteger(
+          MAX_PROVENANCE_RECORDS_KEY, MAX_PROVENANCE_RECORDS_DEFAULT);
+        if (value != null && value.intValue() >= 0) {
+          return value.intValue();
+        }
+      }
+      catch (RuntimeException e) {
+        LOGGER.warn("Invalid {} value; using default {}",
+          MAX_PROVENANCE_RECORDS_KEY, MAX_PROVENANCE_RECORDS_DEFAULT);
+        return MAX_PROVENANCE_RECORDS_DEFAULT;
+      }
+      LOGGER.warn("Negative {} value; using default {}",
+        MAX_PROVENANCE_RECORDS_KEY, MAX_PROVENANCE_RECORDS_DEFAULT);
+    }
+    return MAX_PROVENANCE_RECORDS_DEFAULT;
   }
 
   public boolean inferObjectiveLensNA() {
@@ -368,6 +392,7 @@ public class CV7000Reader extends FormatReader {
     optionsList.add(DUPLICATE_PLANES_KEY);
     optionsList.add(PRESERVE_RAW_SIDECARS_KEY);
     optionsList.add(COMPRESS_RAW_SIDECARS_KEY);
+    optionsList.add(MAX_PROVENANCE_RECORDS_KEY);
     optionsList.add(INFER_OBJECTIVE_LENS_NA_KEY);
     return optionsList;
   }
@@ -487,7 +512,8 @@ public class CV7000Reader extends FormatReader {
   /** MeasurementDetail links the acquisition settings sidecars and seeds channels. */
   private void parseMeasurementDetail(CV7000DatasetPaths paths) throws IOException {
     if (!new Location(paths.measurementDetailPath).exists()) {
-      LOGGER.warn("Missing " + MEASUREMENT_DETAIL + " file");
+      LOGGER.warn("Missing CV7000 measurement detail sidecar {}",
+        paths.measurementDetailPath);
       return;
     }
 
@@ -512,24 +538,39 @@ public class CV7000Reader extends FormatReader {
 
   /** WPP is optional plate-product metadata; missing files preserve legacy behavior. */
   private void parseWellPlateProduct() throws IOException {
-    if (wppPath != null && new Location(wppPath).exists()) {
-      XMLTools.parseXML(readSanitizedXML(wppPath), new WPPHandler());
+    if (wppPath == null) {
+      return;
     }
+    if (!new Location(wppPath).exists()) {
+      LOGGER.warn("Missing referenced CV7000 well plate product sidecar {}",
+        wppPath);
+      return;
+    }
+    XMLTools.parseXML(readSanitizedXML(wppPath), new WPPHandler());
   }
 
   /** Measurement settings attach light sources, actions, filters, and channel modes. */
   private void parseMeasurementSettings() throws IOException {
-    if (settingsPath != null && new Location(settingsPath).exists()) {
-      MeasurementSettingsHandler settingsHandler =
-        new MeasurementSettingsHandler(channels);
-      String xml = readSanitizedXML(settingsPath);
-      if (xml.length() > 0) {
-        XMLTools.parseXML(xml, settingsHandler);
-      }
-      MeasurementSettingsResult result = settingsHandler.getResult();
-      lightSources = result.lightSources;
-      channels = result.channels;
+    if (settingsPath == null) {
+      return;
     }
+    if (!new Location(settingsPath).exists()) {
+      LOGGER.warn("Missing referenced CV7000 measurement settings sidecar {}",
+        settingsPath);
+      return;
+    }
+    MeasurementSettingsHandler settingsHandler =
+      new MeasurementSettingsHandler(channels);
+    String xml = readSanitizedXML(settingsPath);
+    if (xml.length() == 0) {
+      LOGGER.warn("Referenced CV7000 measurement settings sidecar is empty: {}",
+        settingsPath);
+      return;
+    }
+    XMLTools.parseXML(xml, settingsHandler);
+    MeasurementSettingsResult result = settingsHandler.getResult();
+    lightSources = result.lightSources;
+    channels = result.channels;
   }
 
   /** OTF geometry stores objective catalog entries and affine calibration rows. */
@@ -1781,7 +1822,8 @@ public class CV7000Reader extends FormatReader {
     for (int i=0; i<parts.length; i++) {
       String part = parts[i];
       if (part.endsWith("x") && part.length() > 1) {
-        tokens.magnification = parseInteger(part.substring(0, part.length() - 1));
+        tokens.magnification = parsing.parseInteger(
+          part.substring(0, part.length() - 1));
       }
       if ("ph".equals(part) || "phase".equals(part)) {
         tokens.phase = true;
@@ -2366,8 +2408,191 @@ public class CV7000Reader extends FormatReader {
       }
     }
     catch (IOException e) {
-      LOGGER.debug("Could not parse CV7000 post-processing sidecar {}", file, e);
+      LOGGER.warn("Could not parse CV7000 post-processing sidecar {}", file, e);
     }
+  }
+
+  private void emitPostProcessMetadata(PostProcessResult result,
+    int unknownElementCount)
+  {
+    String rootPrefix = "Yokogawa PPF PostProcess ";
+    addSanitizedPPFAttributes(rootPrefix, result.root);
+    addYokogawaMeta(rootPrefix, "ActionCount", result.actions.size());
+    addYokogawaMeta(rootPrefix, "LogCount", result.logs.size());
+    addYokogawaMeta(rootPrefix, "UnknownElementCount", unknownElementCount);
+    Long begin = parseTimestampMillis(result.root.get("BeginTime"));
+    Long end = parseTimestampMillis(result.root.get("EndTime"));
+    if (begin != null && end != null) {
+      addYokogawaMeta(rootPrefix, "DurationSeconds", (end - begin) / 1000.0);
+    }
+
+    LinkedHashMap<String, Integer> actionTypes =
+      new LinkedHashMap<String, Integer>();
+    LinkedHashMap<String, Integer> actionStatuses =
+      new LinkedHashMap<String, Integer>();
+    for (int i=0; i<result.actions.size(); i++) {
+      PostProcessAction action = result.actions.get(i);
+      incrementCount(actionTypes, action.type);
+      incrementCount(actionStatuses, clean(action.attributes.get("Status")));
+      String prefix = "Yokogawa PPF Action " + (i + 1) + " ";
+      addYokogawaMeta(prefix, "ActionType", action.type);
+      addSanitizedPPFAttributes(prefix, action.attributes);
+    }
+    for (Map.Entry<String, Integer> entry : actionTypes.entrySet()) {
+      addYokogawaMeta("Yokogawa PPF Action Summary ",
+        "Type " + entry.getKey(), entry.getValue());
+    }
+    for (Map.Entry<String, Integer> entry : actionStatuses.entrySet()) {
+      addYokogawaMeta("Yokogawa PPF Action Summary ",
+        "Status " + entry.getKey(), entry.getValue());
+    }
+
+    LinkedHashMap<String, Integer> levels = new LinkedHashMap<String, Integer>();
+    LinkedHashMap<String, Integer> titles = new LinkedHashMap<String, Integer>();
+    ArrayList<PostProcessLog> nonRoutine = new ArrayList<PostProcessLog>();
+    PostProcessLog firstRoutine = null;
+    PostProcessLog lastRoutine = null;
+    int warningCount = 0;
+    int errorCount = 0;
+    int fatalCount = 0;
+    for (PostProcessLog log : result.logs) {
+      String level = clean(log.level);
+      incrementCount(levels, level == null ? "Missing" : level);
+      if (level != null && level.equalsIgnoreCase("Warning")) {
+        warningCount++;
+      }
+      else if (level != null && level.equalsIgnoreCase("Error")) {
+        errorCount++;
+      }
+      else if (level != null && level.equalsIgnoreCase("Fatal")) {
+        fatalCount++;
+      }
+      if (clean(log.title) != null) {
+        incrementCount(titles, clean(log.title));
+      }
+      if (isRoutinePPFLog(log)) {
+        if (firstRoutine == null) {
+          firstRoutine = log;
+        }
+        lastRoutine = log;
+      }
+      else {
+        nonRoutine.add(log);
+      }
+    }
+    String logPrefix = "Yokogawa PPF Log Summary ";
+    addYokogawaMeta(logPrefix, "TotalCount", result.logs.size());
+    addYokogawaMeta(logPrefix, "NonRoutineCount", nonRoutine.size());
+    addYokogawaMeta(logPrefix, "WarningCount", warningCount);
+    addYokogawaMeta(logPrefix, "ErrorCount", errorCount);
+    addYokogawaMeta(logPrefix, "FatalCount", fatalCount);
+    if (!result.logs.isEmpty()) {
+      addYokogawaMeta(logPrefix, "FirstTime", result.logs.get(0).timestamp);
+      addYokogawaMeta(logPrefix, "LastTime",
+        result.logs.get(result.logs.size() - 1).timestamp);
+    }
+    for (Map.Entry<String, Integer> entry : levels.entrySet()) {
+      addYokogawaMeta(logPrefix, "Level " + entry.getKey(), entry.getValue());
+    }
+    for (Map.Entry<String, Integer> entry : titles.entrySet()) {
+      addYokogawaMeta(logPrefix, "Title " + entry.getKey(), entry.getValue());
+    }
+
+    ArrayList<PostProcessLog> selected = selectPPFLogs(
+      nonRoutine, firstRoutine, lastRoutine, maxProvenanceRecords());
+    addYokogawaMeta(logPrefix, "EligibleDetailCount", result.logs.size());
+    addYokogawaMeta(logPrefix, "EmittedDetailCount", selected.size());
+    addYokogawaMeta(logPrefix, "OmittedDetailCount",
+      result.logs.size() - selected.size());
+    addYokogawaMeta(logPrefix, "DetailTruncated",
+      selected.size() < result.logs.size());
+    addYokogawaMeta(rootPrefix, "EmittedLogDetailCount", selected.size());
+    addYokogawaMeta(rootPrefix, "OmittedLogDetailCount",
+      result.logs.size() - selected.size());
+    for (int i=0; i<selected.size(); i++) {
+      PostProcessLog log = selected.get(i);
+      String prefix = "Yokogawa PPF Log " + (i + 1) + " ";
+      addYokogawaMeta(prefix, "DocumentIndex", log.documentIndex);
+      addYokogawaMeta(prefix, "Time", log.timestamp);
+      addYokogawaMeta(prefix, "Level", log.level);
+      addYokogawaMeta(prefix, "Title", log.title);
+      addYokogawaMeta(prefix, "Message", sanitizePPFText(log.message));
+    }
+  }
+
+  private ArrayList<PostProcessLog> selectPPFLogs(
+    ArrayList<PostProcessLog> nonRoutine, PostProcessLog firstRoutine,
+    PostProcessLog lastRoutine, int limit)
+  {
+    ArrayList<PostProcessLog> selected = new ArrayList<PostProcessLog>();
+    for (PostProcessLog log : nonRoutine) {
+      if (selected.size() >= limit) {
+        return selected;
+      }
+      selected.add(log);
+    }
+    if (selected.size() < limit && firstRoutine != null) {
+      selected.add(firstRoutine);
+    }
+    if (selected.size() < limit && lastRoutine != null &&
+      lastRoutine != firstRoutine)
+    {
+      selected.add(lastRoutine);
+    }
+    return selected;
+  }
+
+  private boolean isRoutinePPFLog(PostProcessLog log) {
+    String level = log == null ? null : clean(log.level);
+    return level != null && (level.equalsIgnoreCase("Information") ||
+      level.equalsIgnoreCase("Info") || level.equalsIgnoreCase("Debug") ||
+      level.equalsIgnoreCase("Trace"));
+  }
+
+  private void addSanitizedPPFAttributes(String prefix,
+    LinkedHashMap<String, String> attributes)
+  {
+    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+      String name = entry.getKey();
+      String value = entry.getValue();
+      if (name.endsWith("Path")) {
+        if (name.equals("ParameterPath")) {
+          name = "ParameterFile";
+        }
+        else {
+          name = name.substring(0, name.length() - 4) + "Name";
+        }
+        value = getPortableFileName(value);
+      }
+      else if (name.equals("LastErrorMessage")) {
+        value = sanitizePPFText(value);
+      }
+      addYokogawaMeta(prefix, name, value);
+    }
+  }
+
+  private String sanitizePPFText(String value) {
+    String text = clean(value);
+    if (text != null && (text.indexOf('\\') >= 0 || text.indexOf('/') >= 0)) {
+      return getPortableFileName(text);
+    }
+    return text;
+  }
+
+  private String getPortableFileName(String path) {
+    String value = clean(path);
+    if (value == null) {
+      return null;
+    }
+    while (value.endsWith("/") || value.endsWith("\\")) {
+      value = value.substring(0, value.length() - 1);
+    }
+    int slash = Math.max(value.lastIndexOf('/'), value.lastIndexOf('\\'));
+    return slash < 0 ? value : value.substring(slash + 1);
+  }
+
+  private String firstNonNull(String first, String second) {
+    return first == null ? second : first;
   }
 
   private void addMeasurementDataOriginalMetadata() {
@@ -2377,26 +2602,98 @@ public class CV7000Reader extends FormatReader {
 
     try {
       SidecarSummary summary = summarizeSidecar(measurementPath);
-      addYokogawaMeta("Yokogawa MLF ", "File", new Location(measurementPath).getName());
-      addYokogawaMeta("Yokogawa MLF ", "Encoding", "UTF-8");
-      addYokogawaMeta("Yokogawa MLF ", "ByteLength", summary.byteLength);
-      addYokogawaMeta("Yokogawa MLF ", "SHA-256", summary.sha256);
+      String prefix = "Yokogawa MLF MeasurementData ";
+      addYokogawaMeta(prefix, "File", new Location(measurementPath).getName());
+      addYokogawaMeta(prefix, "Encoding", "UTF-8");
+      addYokogawaMeta(prefix, "ByteLength", summary.byteLength);
+      addYokogawaMeta(prefix, "SHA-256", summary.sha256);
     }
     catch (IOException e) {
       LOGGER.debug("Could not summarize CV7000 measurement data {}", measurementPath, e);
     }
 
     if (measurementDataSummary != null) {
-      addYokogawaMeta("Yokogawa MLF ", "IMGRecordCount",
+      String prefix = "Yokogawa MLF MeasurementData ";
+      addYokogawaMeta(prefix, "Version", measurementDataSummary.version);
+      addYokogawaMeta(prefix, "TotalRecordCount",
+        measurementDataSummary.totalRecordCount);
+      addYokogawaMeta(prefix, "IMGRecordCount",
         measurementDataSummary.imageRecordCount);
-      addYokogawaMeta("Yokogawa MLF ", "FirstPlaneTime",
+      addYokogawaMeta(prefix, "ERRRecordCount",
+        measurementDataSummary.errorRecordCount);
+      addYokogawaMeta(prefix, "UnknownRecordCount",
+        getUnknownMLFRecordCount(measurementDataSummary));
+      addYokogawaMeta(prefix, "MissingTypeCount",
+        measurementDataSummary.missingTypeCount);
+      addYokogawaMeta(prefix, "FirstPlaneTime",
         measurementDataSummary.firstTimestamp);
-      addYokogawaMeta("Yokogawa MLF ", "LastPlaneTime",
+      addYokogawaMeta(prefix, "LastPlaneTime",
         measurementDataSummary.lastTimestamp);
-      addYokogawaMeta("Yokogawa MLF ", "FirstPlaneAction",
+      addYokogawaMeta(prefix, "FirstPlaneAction",
         measurementDataSummary.firstAction);
-      addYokogawaMeta("Yokogawa MLF ", "LastPlaneAction",
+      addYokogawaMeta(prefix, "LastPlaneAction",
         measurementDataSummary.lastAction);
+      addYokogawaMeta(prefix, "FirstErrorTime",
+        measurementDataSummary.firstErrorTimestamp);
+      addYokogawaMeta(prefix, "LastErrorTime",
+        measurementDataSummary.lastErrorTimestamp);
+      addMLFProvenanceMetadata(measurementDataSummary, prefix);
+    }
+  }
+
+  private int getUnknownMLFRecordCount(MeasurementDataSummary summary) {
+    return summary.totalRecordCount - summary.imageRecordCount -
+      summary.errorRecordCount - summary.missingTypeCount;
+  }
+
+  private void addMLFProvenanceMetadata(MeasurementDataSummary summary,
+    String measurementPrefix)
+  {
+    for (Map.Entry<String, Integer> entry : summary.recordTypeCounts.entrySet()) {
+      addYokogawaMeta("Yokogawa MLF Record Types ", entry.getKey() + "Count",
+        entry.getValue());
+    }
+    for (Map.Entry<String, Integer> entry : summary.errorClassCounts.entrySet()) {
+      addYokogawaMeta("Yokogawa MLF Error Summary ",
+        "Class " + entry.getKey(), entry.getValue());
+    }
+    for (Map.Entry<String, Integer> entry : summary.errorWellCounts.entrySet()) {
+      addYokogawaMeta("Yokogawa MLF Error Summary ",
+        "Well " + entry.getKey(), entry.getValue());
+    }
+    for (Map.Entry<String, Integer> entry :
+      summary.errorWellFieldCounts.entrySet())
+    {
+      addYokogawaMeta("Yokogawa MLF Error Summary ", entry.getKey(),
+        entry.getValue());
+    }
+
+    int eligible = summary.nonImageRecords.size();
+    int emitted = Math.min(eligible, maxProvenanceRecords());
+    addYokogawaMeta(measurementPrefix, "EligibleDetailCount", eligible);
+    addYokogawaMeta(measurementPrefix, "EmittedDetailCount", emitted);
+    addYokogawaMeta(measurementPrefix, "OmittedDetailCount", eligible - emitted);
+    addYokogawaMeta(measurementPrefix, "DetailTruncated", emitted < eligible);
+    for (int i=0; i<emitted; i++) {
+      MeasurementRecord record = summary.nonImageRecords.get(i);
+      String scope = "Yokogawa MLF Record " + (i + 1);
+      addYokogawaMeta(scope, "Type", record.type);
+      addYokogawaMeta(scope, "ErrorClass", record.errorClass);
+      addYokogawaMeta(scope, "Time", record.timestamp);
+      addYokogawaMeta(scope, "Well", getRecordWell(record));
+      addYokogawaMeta(scope, "Row", record.row);
+      addYokogawaMeta(scope, "Column", record.column);
+      addYokogawaMeta(scope, "FieldIndex", record.field);
+      addYokogawaMeta(scope, "TimePoint", record.timepoint);
+      addYokogawaMeta(scope, "TimelineIndex", record.timelineIndex);
+      addYokogawaMeta(scope, "ActionIndex", record.actionIndex);
+      addYokogawaMeta(scope, "Channel", record.channel);
+      addYokogawaMeta(scope, "ZIndex", record.zIndex);
+      addYokogawaMeta(scope, "X", record.x);
+      addYokogawaMeta(scope, "Y", record.y);
+      addYokogawaMeta(scope, "Z", record.z);
+      addYokogawaMeta(scope, "Action", record.action);
+      addYokogawaMeta(scope, "Message", record.message);
     }
   }
 
@@ -2457,6 +2754,12 @@ public class CV7000Reader extends FormatReader {
       return;
     }
 
+    if (scope != null && scope.startsWith("Yokogawa MLF Record ") &&
+      linkMLFRecordAnnotation(store, annotationID, scope, refs))
+    {
+      return;
+    }
+
     if (isPlaneProvenanceAnnotationScope(scope) &&
       linkPlaneProvenanceAnnotation(store, annotationID, scope, refs))
     {
@@ -2470,6 +2773,36 @@ public class CV7000Reader extends FormatReader {
     }
 
     store.setPlateAnnotationRef(annotationID, 0, refs.plate++);
+  }
+
+  private boolean linkMLFRecordAnnotation(MetadataStore store,
+    String annotationID, String scope, AnnotationRefIndexes refs)
+  {
+    Integer index = getIndexedScopeValue(scope, "Record");
+    if (index == null || measurementDataSummary == null ||
+      index.intValue() < 0 ||
+      index.intValue() >= measurementDataSummary.nonImageRecords.size())
+    {
+      return false;
+    }
+    MeasurementRecord record =
+      measurementDataSummary.nonImageRecords.get(index.intValue());
+    if (record.row == null || record.column == null || record.field == null ||
+      seriesLayout == null)
+    {
+      return false;
+    }
+    Field field = new Field();
+    field.row = record.row.intValue() - 1;
+    field.column = record.column.intValue() - 1;
+    field.field = record.field.intValue() - 1;
+    Integer series = seriesLayout.fieldToSeries.get(field);
+    if (series == null) {
+      return false;
+    }
+    store.setImageAnnotationRef(annotationID, series.intValue(),
+      refs.nextImage(series.intValue()));
+    return true;
   }
 
   private boolean isInstrumentAnnotationScope(String scope) {
@@ -2825,13 +3158,10 @@ public class CV7000Reader extends FormatReader {
       return;
     }
     for (int i=0; i<attributes.getLength(); i++) {
-      addYokogawaMeta(prefix, getYokogawaAttributeName(attributes.getQName(i)),
+      addYokogawaMeta(prefix,
+        parsing.getYokogawaAttributeName(attributes.getQName(i)),
         attributes.getValue(i));
     }
-  }
-
-  private String getYokogawaAttributeName(String qName) {
-    return parsing.getYokogawaAttributeName(qName);
   }
 
   private Integer getLinkedStandardLightSource(Channel channel) {
@@ -2862,8 +3192,30 @@ public class CV7000Reader extends FormatReader {
       channel.filterID, Integer.valueOf(channel.cameraNumber), channel.acquisition));
   }
 
-  private Integer parseInteger(String value) {
-    return parsing.parseInteger(value);
+  private <K> void incrementCount(LinkedHashMap<K, Integer> counts, K key) {
+    if (counts == null || key == null) {
+      return;
+    }
+    Integer count = counts.get(key);
+    counts.put(key, Integer.valueOf(count == null ? 1 : count.intValue() + 1));
+  }
+
+  private String getErrorClass(MeasurementRecord record) {
+    String message = record == null ? null : clean(record.message);
+    if (message != null && message.regionMatches(true, 0, "AF Error", 0, 8)) {
+      return "AF Error";
+    }
+    return "Other";
+  }
+
+  private String getRecordWell(MeasurementRecord record) {
+    if (record == null || record.row == null || record.column == null ||
+      record.row.intValue() <= 0 || record.column.intValue() <= 0)
+    {
+      return null;
+    }
+    return getRowName(record.row.intValue() - 1) +
+      String.format("%02d", record.column.intValue());
   }
 
   private Length getPhysicalSizeZ(int series) {
@@ -3285,11 +3637,32 @@ public class CV7000Reader extends FormatReader {
       return colon < 0 ? qName : qName.substring(colon + 1);
     }
 
+    public boolean isElement(String qName, String name) {
+      return name != null && name.equals(getYokogawaAttributeName(qName));
+    }
+
+    public boolean elementStartsWith(String qName, String prefix) {
+      return prefix != null &&
+        getYokogawaAttributeName(qName).startsWith(prefix);
+    }
+
     public Integer parseInteger(String value) {
       if (value == null || value.trim().length() == 0) {
         return null;
       }
       return Integer.valueOf(value.trim());
+    }
+
+    public int parseRequiredInteger(String value) {
+      Integer parsed = parseInteger(value);
+      if (parsed == null) {
+        throw new NumberFormatException("Missing required integer value");
+      }
+      return parsed.intValue();
+    }
+
+    public Double parseDouble(String value) {
+      return DataTools.parseDouble(value == null ? null : value.trim());
     }
 
     public Double parseYokogawaGain(String value) {
@@ -3323,7 +3696,7 @@ public class CV7000Reader extends FormatReader {
         }
         end++;
       }
-      return DataTools.parseDouble(trimmed.substring(start, end));
+      return parseDouble(trimmed.substring(start, end));
     }
 
     public DetectionFilter parseDetectionFilter(String acquisition) {
@@ -3335,8 +3708,8 @@ public class CV7000Reader extends FormatReader {
         if (trimmed.startsWith("BP") && trimmed.indexOf("/") > 2) {
           String center = trimmed.substring(2, trimmed.indexOf("/"));
           String width = trimmed.substring(trimmed.indexOf("/") + 1);
-          Double parsedCenter = DataTools.parseDouble(center);
-          Double parsedWidth = DataTools.parseDouble(width);
+          Double parsedCenter = parseDouble(center);
+          Double parsedWidth = parseDouble(width);
           if (parsedCenter != null && parsedWidth != null) {
             return DetectionFilter.bandPass(parsedCenter, parsedWidth);
           }
@@ -3358,17 +3731,32 @@ public class CV7000Reader extends FormatReader {
       return binning + "x" + binning;
     }
 
-    public String getAttribute(Attributes attributes, String name) {
+    public String getRawAttribute(Attributes attributes, String name) {
       if (attributes == null || name == null) {
         return null;
       }
       for (int i=0; i<attributes.getLength(); i++) {
         if (name.equals(getYokogawaAttributeName(attributes.getQName(i)))) {
-          String value = attributes.getValue(i);
-          return clean(value);
+          return attributes.getValue(i);
         }
       }
       return null;
+    }
+
+    public String getAttribute(Attributes attributes, String name) {
+      return clean(getRawAttribute(attributes, name));
+    }
+
+    public void copyAttributes(Attributes attributes,
+      Map<String, String> values)
+    {
+      if (attributes == null || values == null) {
+        return;
+      }
+      for (int i=0; i<attributes.getLength(); i++) {
+        values.put(getYokogawaAttributeName(attributes.getQName(i)),
+          attributes.getValue(i));
+      }
     }
   }
 
@@ -3540,11 +3928,70 @@ public class CV7000Reader extends FormatReader {
   }
 
   public static class MeasurementDataSummary {
+    public String version;
+    public int totalRecordCount;
     public int imageRecordCount;
+    public int errorRecordCount;
+    public int missingTypeCount;
+    public LinkedHashMap<String, Integer> recordTypeCounts =
+      new LinkedHashMap<String, Integer>();
+    public LinkedHashMap<String, Integer> errorClassCounts =
+      new LinkedHashMap<String, Integer>();
+    public LinkedHashMap<String, Integer> errorWellCounts =
+      new LinkedHashMap<String, Integer>();
+    public LinkedHashMap<String, Integer> errorWellFieldCounts =
+      new LinkedHashMap<String, Integer>();
+    public ArrayList<MeasurementRecord> nonImageRecords =
+      new ArrayList<MeasurementRecord>();
     public String firstTimestamp;
     public String lastTimestamp;
     public String firstAction;
     public String lastAction;
+    public String firstErrorTimestamp;
+    public String lastErrorTimestamp;
+  }
+
+  public static class MeasurementRecord {
+    public String type;
+    public String timestamp;
+    public String action;
+    public String message;
+    public String errorClass;
+    public Integer row;
+    public Integer column;
+    public Integer field;
+    public Integer timepoint;
+    public Integer timelineIndex;
+    public Integer actionIndex;
+    public Integer channel;
+    public Integer zIndex;
+    public Double x;
+    public Double y;
+    public Double z;
+  }
+
+  private static class PostProcessResult {
+    public LinkedHashMap<String, String> root =
+      new LinkedHashMap<String, String>();
+    public ArrayList<PostProcessAction> actions =
+      new ArrayList<PostProcessAction>();
+    public ArrayList<PostProcessLog> logs = new ArrayList<PostProcessLog>();
+  }
+
+  private static class PostProcessAction {
+    public String type;
+    public LinkedHashMap<String, String> attributes =
+      new LinkedHashMap<String, String>();
+  }
+
+  private static class PostProcessLog {
+    public int documentIndex;
+    public String timestamp;
+    public String level;
+    public String title;
+    public String message;
+    public LinkedHashMap<String, String> attributes =
+      new LinkedHashMap<String, String>();
   }
 
   // ###############
@@ -3577,12 +4024,14 @@ public class CV7000Reader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      if (qName.equals("bts:WellPlate")) {
+      if (parsing.isElement(qName, "WellPlate")) {
         addYokogawaAttributes("Yokogawa WPI WellPlate ", attributes);
-        name = attributes.getValue("bts:Name");
-        plateID = attributes.getValue("bts:ProductID");
-        plateRows = Integer.parseInt(attributes.getValue("bts:Rows"));
-        plateColumns = Integer.parseInt(attributes.getValue("bts:Columns"));
+        name = parsing.getRawAttribute(attributes, "Name");
+        plateID = parsing.getRawAttribute(attributes, "ProductID");
+        plateRows = parsing.parseRequiredInteger(
+          parsing.getRawAttribute(attributes, "Rows"));
+        plateColumns = parsing.parseRequiredInteger(
+          parsing.getRawAttribute(attributes, "Columns"));
       }
     }
 
@@ -3591,13 +4040,10 @@ public class CV7000Reader extends FormatReader {
   private class MeasurementDataHandler extends BaseHandler {
     private StringBuffer currentValue = new StringBuffer();
     private String btsType;
+    private MeasurementRecord currentRecord;
     private ArrayList<Plane> planes = new ArrayList<Plane>();
     private String parentDir;
-    private int imageRecordCount;
-    private String firstTimestamp;
-    private String lastTimestamp;
-    private String firstAction;
-    private String lastAction;
+    private MeasurementDataSummary summary = new MeasurementDataSummary();
 
     public MeasurementDataHandler(String parentDir) {
       super();
@@ -3609,12 +4055,6 @@ public class CV7000Reader extends FormatReader {
     }
 
     public MeasurementDataSummary getSummary() {
-      MeasurementDataSummary summary = new MeasurementDataSummary();
-      summary.imageRecordCount = imageRecordCount;
-      summary.firstTimestamp = firstTimestamp;
-      summary.lastTimestamp = lastTimestamp;
-      summary.firstAction = firstAction;
-      summary.lastAction = lastAction;
       return summary;
     }
 
@@ -3633,34 +4073,68 @@ public class CV7000Reader extends FormatReader {
       currentValue.setLength(0);
 
       try {
-        btsType = attributes.getValue("bts:Type");
-        if (qName.equals("bts:MeasurementRecord") && btsType.equals("IMG")) {
+        String element = parsing.getYokogawaAttributeName(qName);
+        if (parsing.isElement(qName, "MeasurementData")) {
+          summary.version = parsing.getAttribute(attributes, "Version");
+          return;
+        }
+        if (!element.equals("MeasurementRecord")) {
+          return;
+        }
+        btsType = parsing.getAttribute(attributes, "Type");
+        summary.totalRecordCount++;
+        if (btsType == null) {
+          summary.missingTypeCount++;
+          incrementCount(summary.recordTypeCounts, "Missing");
+          currentRecord = parseNonImageRecord(attributes, null);
+          return;
+        }
+        incrementCount(summary.recordTypeCounts, btsType);
+        if (btsType.equals("IMG")) {
           // When the instrument is recording an acquisition error the "type"
           // will be "ERR" so we can skip those.
           Plane p = new Plane();
           p.field = new Field();
-          p.field.row = Integer.parseInt(attributes.getValue("bts:Row")) - 1;
-          p.field.column = Integer.parseInt(attributes.getValue("bts:Column")) - 1;
-          p.timepoint = Integer.parseInt(attributes.getValue("bts:TimePoint")) - 1;
-          p.field.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
-          p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
-          p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
-          p.actionIndex = Integer.parseInt(attributes.getValue("bts:ActionIndex")) - 1;
-          p.timelineIndex = Integer.parseInt(attributes.getValue("bts:TimelineIndex")) - 1;
+          p.field.row = parsing.parseRequiredInteger(
+            parsing.getRawAttribute(attributes, "Row")) - 1;
+          p.field.column = parsing.parseRequiredInteger(
+            parsing.getRawAttribute(attributes, "Column")) - 1;
+          p.timepoint = parsing.parseRequiredInteger(
+            parsing.getRawAttribute(attributes, "TimePoint")) - 1;
+          p.field.field = parsing.parseRequiredInteger(
+            parsing.getRawAttribute(attributes, "FieldIndex")) - 1;
+          p.z = parsing.parseRequiredInteger(
+            parsing.getRawAttribute(attributes, "ZIndex")) - 1;
+          p.channel = parsing.parseRequiredInteger(
+            parsing.getRawAttribute(attributes, "Ch")) - 1;
+          p.actionIndex = parsing.parseRequiredInteger(
+            parsing.getRawAttribute(attributes, "ActionIndex")) - 1;
+          p.timelineIndex = parsing.parseRequiredInteger(
+            parsing.getRawAttribute(attributes, "TimelineIndex")) - 1;
 
-          p.xpos = DataTools.parseDouble(attributes.getValue("bts:X"));
-          p.ypos = DataTools.parseDouble(attributes.getValue("bts:Y"));
-          p.zpos = DataTools.parseDouble(attributes.getValue("bts:Z"));
-          p.timestamp = attributes.getValue("bts:Time");
-          p.actionName = attributes.getValue("bts:Action");
-          imageRecordCount++;
-          if (firstTimestamp == null) {
-            firstTimestamp = p.timestamp;
-            firstAction = p.actionName;
+          p.xpos = parsing.parseDouble(parsing.getRawAttribute(attributes, "X"));
+          p.ypos = parsing.parseDouble(parsing.getRawAttribute(attributes, "Y"));
+          p.zpos = parsing.parseDouble(parsing.getRawAttribute(attributes, "Z"));
+          p.timestamp = parsing.getRawAttribute(attributes, "Time");
+          p.actionName = parsing.getRawAttribute(attributes, "Action");
+          summary.imageRecordCount++;
+          if (summary.firstTimestamp == null) {
+            summary.firstTimestamp = p.timestamp;
+            summary.firstAction = p.actionName;
           }
-          lastTimestamp = p.timestamp;
-          lastAction = p.actionName;
+          summary.lastTimestamp = p.timestamp;
+          summary.lastAction = p.actionName;
           planes.add(p);
+        }
+        else {
+          currentRecord = parseNonImageRecord(attributes, btsType);
+          if (btsType.equals("ERR")) {
+            summary.errorRecordCount++;
+            if (summary.firstErrorTimestamp == null) {
+              summary.firstErrorTimestamp = currentRecord.timestamp;
+            }
+            summary.lastErrorTimestamp = currentRecord.timestamp;
+          }
         }
       }
       catch (RuntimeException e) {
@@ -3670,7 +4144,8 @@ public class CV7000Reader extends FormatReader {
             attributeMap.put(
                 attributes.getQName(i), attributes.getValue(i));
           }
-          LOGGER.error("Error parsing attributes: {}", attributeMap, e);
+          LOGGER.error("Could not parse CV7000 {} MeasurementRecord " +
+            "attributes: {}", MEASUREMENT_FILE, attributeMap, e);
         }
         throw e;
       }
@@ -3679,12 +4154,80 @@ public class CV7000Reader extends FormatReader {
     @Override
     public void endElement(String uri, String localName, String qName) {
       String value = currentValue.toString();
-      if (qName.equals("bts:MeasurementRecord") && btsType.equals("IMG") &&
+      if (!parsing.isElement(qName, "MeasurementRecord")) {
+        return;
+      }
+      if ("IMG".equals(btsType) &&
         value.trim().length() > 0) {
         Location imgFile = new Location(parentDir, value);
         if (imgFile.exists()) {
           planes.get(planes.size() - 1).file = imgFile.getAbsolutePath();
         }
+      }
+      else if (currentRecord != null) {
+        currentRecord.message = clean(value);
+        currentRecord.errorClass = getErrorClass(currentRecord);
+        summary.nonImageRecords.add(currentRecord);
+        if ("ERR".equals(currentRecord.type)) {
+          incrementCount(summary.errorClassCounts, currentRecord.errorClass);
+          String well = getRecordWell(currentRecord);
+          if (well != null) {
+            incrementCount(summary.errorWellCounts, well);
+            if (currentRecord.field != null) {
+              incrementCount(summary.errorWellFieldCounts,
+                well + "/Field " + currentRecord.field);
+            }
+          }
+        }
+      }
+      currentRecord = null;
+      btsType = null;
+    }
+
+    private MeasurementRecord parseNonImageRecord(Attributes attributes,
+      String type)
+    {
+      MeasurementRecord record = new MeasurementRecord();
+      record.type = type == null ? "Missing" : type;
+      record.timestamp = parsing.getAttribute(attributes, "Time");
+      record.action = parsing.getAttribute(attributes, "Action");
+      record.row = parseOptionalOneBasedInteger(attributes, "Row");
+      record.column = parseOptionalOneBasedInteger(attributes, "Column");
+      record.field = parseOptionalOneBasedInteger(attributes, "FieldIndex");
+      record.timepoint = parseOptionalOneBasedInteger(attributes, "TimePoint");
+      record.timelineIndex = parseOptionalOneBasedInteger(attributes, "TimelineIndex");
+      record.actionIndex = parseOptionalOneBasedInteger(attributes, "ActionIndex");
+      record.channel = parseOptionalOneBasedInteger(attributes, "Ch");
+      record.zIndex = parseOptionalOneBasedInteger(attributes, "ZIndex");
+      record.x = parseOptionalDouble(attributes, "X");
+      record.y = parseOptionalDouble(attributes, "Y");
+      record.z = parseOptionalDouble(attributes, "Z");
+      return record;
+    }
+
+    private Integer parseOptionalOneBasedInteger(Attributes attributes,
+      String name)
+    {
+      try {
+        Integer value = parsing.parseInteger(
+          parsing.getAttribute(attributes, name));
+        return value;
+      }
+      catch (RuntimeException e) {
+        LOGGER.debug("Ignoring invalid CV7000 MLF {} value {}", name,
+          parsing.getAttribute(attributes, name));
+        return null;
+      }
+    }
+
+    private Double parseOptionalDouble(Attributes attributes, String name) {
+      try {
+        return parsing.parseDouble(parsing.getAttribute(attributes, name));
+      }
+      catch (RuntimeException e) {
+        LOGGER.debug("Ignoring invalid CV7000 MLF {} value {}", name,
+          parsing.getAttribute(attributes, name));
+        return null;
       }
     }
 
@@ -3703,41 +4246,55 @@ public class CV7000Reader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      if (qName.equals("bts:MeasurementSamplePlate")) {
+      if (parsing.isElement(qName, "MeasurementSamplePlate")) {
         addYokogawaAttributes("Yokogawa MRF MeasurementSamplePlate ", attributes);
-        result.wppPath = attributes.getValue("bts:WellPlateProductFileName");
+        result.wppPath = parsing.getRawAttribute(
+          attributes, "WellPlateProductFileName");
         if (result.wppPath != null && result.wppPath.trim().length() == 0) {
           result.wppPath = null;
         }
       }
-      else if (qName.equals("bts:MeasurementChannel")) {
+      else if (parsing.isElement(qName, "MeasurementChannel")) {
         Channel c = new Channel();
-        c.index = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
+        c.index = parsing.parseRequiredInteger(
+          parsing.getRawAttribute(attributes, "Ch")) - 1;
         addYokogawaAttributes(
           "Yokogawa MRF Channel " + (c.index + 1) + " ", attributes);
-        c.xSize = DataTools.parseDouble(attributes.getValue("bts:HorizontalPixelDimension"));
-        c.ySize = DataTools.parseDouble(attributes.getValue("bts:VerticalPixelDimension"));
-        c.cameraNumber = Integer.parseInt(attributes.getValue("bts:CameraNumber"));
-        c.inputBitDepth = parseInteger(attributes.getValue("bts:InputBitDepth"));
-        c.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
-        c.horizontalPixels = parseInteger(attributes.getValue("bts:HorizontalPixels"));
-        c.verticalPixels = parseInteger(attributes.getValue("bts:VerticalPixels"));
-        c.filterWheelPosition = parseInteger(attributes.getValue("bts:FilterWheelPosition"));
-        c.filterPosition = parseInteger(attributes.getValue("bts:FilterPosition"));
-        c.correctionFile = attributes.getValue("bts:ShadingCorrectionSource");
+        c.xSize = parsing.parseDouble(parsing.getRawAttribute(
+          attributes, "HorizontalPixelDimension"));
+        c.ySize = parsing.parseDouble(parsing.getRawAttribute(
+          attributes, "VerticalPixelDimension"));
+        c.cameraNumber = parsing.parseRequiredInteger(
+          parsing.getRawAttribute(attributes, "CameraNumber"));
+        c.inputBitDepth = parsing.parseInteger(
+          parsing.getRawAttribute(attributes, "InputBitDepth"));
+        c.inputLevel = parsing.parseInteger(
+          parsing.getRawAttribute(attributes, "InputLevel"));
+        c.horizontalPixels = parsing.parseInteger(
+          parsing.getRawAttribute(attributes, "HorizontalPixels"));
+        c.verticalPixels = parsing.parseInteger(
+          parsing.getRawAttribute(attributes, "VerticalPixels"));
+        c.filterWheelPosition = parsing.parseInteger(
+          parsing.getRawAttribute(attributes, "FilterWheelPosition"));
+        c.filterPosition = parsing.parseInteger(
+          parsing.getRawAttribute(attributes, "FilterPosition"));
+        c.correctionFile = parsing.getRawAttribute(
+          attributes, "ShadingCorrectionSource");
         if (c.correctionFile != null && c.correctionFile.trim().length() == 0) {
           c.correctionFile = null;
         }
         result.channels.add(c);
       }
-      else if (qName.equals("bts:MeasurementDetail")) {
+      else if (parsing.isElement(qName, "MeasurementDetail")) {
         addYokogawaAttributes("Yokogawa MRF MeasurementDetail ", attributes);
-        result.startTime = attributes.getValue("bts:BeginTime");
-        result.endTime = attributes.getValue("bts:EndTime");
-        result.settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
-        result.measurementOperatorName = clean(attributes.getValue("bts:OperatorName"));
+        result.startTime = parsing.getRawAttribute(attributes, "BeginTime");
+        result.endTime = parsing.getRawAttribute(attributes, "EndTime");
+        result.settingsPath = parsing.getRawAttribute(
+          attributes, "MeasurementSettingFileName");
+        result.measurementOperatorName = parsing.getAttribute(
+          attributes, "OperatorName");
 
-        String system = attributes.getValue("bts:TargetSystem");
+        String system = parsing.getRawAttribute(attributes, "TargetSystem");
         result.targetSystem = clean(system);
         addYokogawaMeta(
           "Yokogawa MRF MeasurementDetail ", "AcquisitionSystem", system);
@@ -3758,7 +4315,7 @@ public class CV7000Reader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      if (qName.equals("bts:WellPlateProduct")) {
+      if (parsing.isElement(qName, "WellPlateProduct")) {
         addYokogawaAttributes("Yokogawa WPP ", attributes);
       }
     }
@@ -3766,23 +4323,66 @@ public class CV7000Reader extends FormatReader {
   }
 
   private class PostProcessHandler extends BaseHandler {
-    private int actionIndex = -1;
+    private PostProcessResult result = new PostProcessResult();
+    private StringBuffer currentValue = new StringBuffer();
+    private PostProcessLog currentLog;
+    private int unknownElementCount;
+
+    @Override
+    public void characters(char[] ch, int start, int length) {
+      currentValue.append(ch, start, length);
+    }
 
     @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      if (qName.equals("cvpp:PostProcess") || qName.equals("PostProcess")) {
-        addYokogawaAttributes("Yokogawa PPF PostProcess ", attributes);
+      currentValue.setLength(0);
+      String element = parsing.getYokogawaAttributeName(qName);
+      if (element.equals("PostProcess")) {
+        parsing.copyAttributes(attributes, result.root);
       }
-      else if (qName.equals("cvpp:PostProcessAction") ||
-        qName.equals("PostProcessAction"))
+      else if (element.endsWith("Action") && !element.endsWith("ActionList")) {
+        PostProcessAction action = new PostProcessAction();
+        action.type = element;
+        parsing.copyAttributes(attributes, action.attributes);
+        result.actions.add(action);
+      }
+      else if (element.equals("PostProcessLog")) {
+        currentLog = new PostProcessLog();
+        currentLog.documentIndex = result.logs.size() + 1;
+        parsing.copyAttributes(attributes, currentLog.attributes);
+        currentLog.timestamp = firstNonNull(
+          currentLog.attributes.get("DateTime"),
+          currentLog.attributes.get("Time"));
+        currentLog.level = currentLog.attributes.get("Level");
+        currentLog.title = currentLog.attributes.get("Title");
+        currentLog.message = currentLog.attributes.get("Message");
+      }
+      else if (!element.equals("PostProcessActionList") &&
+        !element.equals("PostProcessLogList"))
       {
-        actionIndex++;
-        addYokogawaAttributes(
-          "Yokogawa PPF PostProcessAction " + (actionIndex + 1) + " ",
-          attributes);
+        unknownElementCount++;
       }
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) {
+      if (parsing.isElement(qName, "PostProcessLog") &&
+        currentLog != null)
+      {
+        String text = clean(currentValue.toString());
+        if (currentLog.message == null) {
+          currentLog.message = text;
+        }
+        result.logs.add(currentLog);
+        currentLog = null;
+      }
+    }
+
+    @Override
+    public void endDocument() {
+      emitPostProcessMetadata(result, unknownElementCount);
     }
 
   }
@@ -3860,41 +4460,41 @@ public class CV7000Reader extends FormatReader {
       Attributes attributes)
     {
       currentValue.setLength(0);
-      if (qName.equals("bts:MeasurementSetting")) {
+      if (parsing.isElement(qName, "MeasurementSetting")) {
         addYokogawaAttributes("Yokogawa MES MeasurementSetting ", attributes);
       }
-      else if (qName.equals("bts:LightSource")) {
+      else if (parsing.isElement(qName, "LightSource")) {
         parseLightSource(attributes);
       }
-      else if (qName.equals("bts:Channel")) {
+      else if (parsing.isElement(qName, "Channel")) {
         parseChannelTemplate(attributes);
       }
-      else if (qName.equals("bts:Timeline")) {
+      else if (parsing.isElement(qName, "Timeline")) {
         startTimeline(attributes);
       }
-      else if (qName.equals("bts:TargetWell")) {
+      else if (parsing.isElement(qName, "TargetWell")) {
         startTargetWell(attributes);
       }
-      else if (qName.equals("bts:PointSequence")) {
+      else if (parsing.isElement(qName, "PointSequence")) {
         addYokogawaAttributes(
           "Yokogawa MES Timeline " + (timelineIndex + 1) +
           " PointSequence ", attributes);
       }
-      else if (qName.equals("bts:FixedPosition")) {
+      else if (parsing.isElement(qName, "FixedPosition")) {
         addYokogawaAttributes(
           "Yokogawa MES Timeline " + (timelineIndex + 1) +
           " FixedPosition ", attributes);
       }
-      else if (qName.equals("bts:Point")) {
+      else if (parsing.isElement(qName, "Point")) {
         pointIndex++;
         addYokogawaAttributes(
           "Yokogawa MES Timeline " + (timelineIndex + 1) +
           " Point " + (pointIndex + 1) + " ", attributes);
       }
-      else if (qName.equals("bts:ActionList")) {
+      else if (parsing.isElement(qName, "ActionList")) {
         startActionList(attributes);
       }
-      else if (qName.startsWith("bts:ActionAcquire")) {
+      else if (parsing.elementStartsWith(qName, "ActionAcquire")) {
         startActionAcquire(qName, attributes);
       }
     }
@@ -3903,7 +4503,9 @@ public class CV7000Reader extends FormatReader {
     public void endElement(String uri, String localName, String qName) {
       String value = currentValue.toString();
 
-      if (qName.equals("bts:LightSourceName") && currentChannelIndex >= 0) {
+      if (parsing.isElement(qName, "LightSourceName") &&
+        currentChannelIndex >= 0)
+      {
         addYokogawaMeta(
           "Yokogawa MES Channel " + (currentChannelIndex + 1) + " ",
           "LightSourceName", value);
@@ -3920,30 +4522,30 @@ public class CV7000Reader extends FormatReader {
             currentChannelIndex, currentDefinitionOccurrence, index);
         }
       }
-      else if (qName.equals("bts:Channel")) {
+      else if (parsing.isElement(qName, "Channel")) {
         currentChannelIndex = -1;
         currentDefinitionOccurrence = -1;
       }
-      else if (qName.equals("bts:Ch")) {
+      else if (parsing.isElement(qName, "Ch")) {
         assignActionChannel(value);
       }
-      else if (qName.startsWith("bts:ActionAcquire")) {
+      else if (parsing.elementStartsWith(qName, "ActionAcquire")) {
         clearActionAcquireState();
       }
     }
 
     private void parseLightSource(Attributes attributes) {
       LightSource lightSource = new LightSource();
-      lightSource.name = attributes.getValue("bts:Name");
-      lightSource.type = attributes.getValue("bts:Type");
+      lightSource.name = parsing.getRawAttribute(attributes, "Name");
+      lightSource.type = parsing.getRawAttribute(attributes, "Type");
       addYokogawaAttributes(
         "Yokogawa MES LightSource " + lightSource.name + " ", attributes);
 
-      String wavelength = attributes.getValue("bts:WaveLength");
-      String power = attributes.getValue("bts:Power");
+      String wavelength = parsing.getRawAttribute(attributes, "WaveLength");
+      String power = parsing.getRawAttribute(attributes, "Power");
 
-      lightSource.wavelength = DataTools.parseDouble(wavelength);
-      lightSource.attenuation = DataTools.parseDouble(power);
+      lightSource.wavelength = parsing.parseDouble(wavelength);
+      lightSource.attenuation = parsing.parseDouble(power);
 
       result.lightSources.add(lightSource);
     }
@@ -3951,12 +4553,12 @@ public class CV7000Reader extends FormatReader {
     private void parseChannelTemplate(Attributes attributes) {
       currentChannelIndex = -1;
       currentDefinitionOccurrence = -1;
-      String ch = attributes.getValue("bts:Ch");
+      String ch = parsing.getRawAttribute(attributes, "Ch");
       if (ch == null) {
         return;
       }
 
-      int index = Integer.parseInt(ch) - 1;
+      int index = parsing.parseRequiredInteger(ch) - 1;
       if (index < 0) {
         return;
       }
@@ -3967,36 +4569,39 @@ public class CV7000Reader extends FormatReader {
 
       Channel template = new Channel();
       template.index = index;
-      template.target = attributes.getValue("bts:Target");
+      template.target = parsing.getRawAttribute(attributes, "Target");
       addYokogawaAttributes(
         "Yokogawa MES Channel " + (template.index + 1) + " ", attributes);
-      template.objectiveID = attributes.getValue("bts:ObjectiveID");
-      template.objective = attributes.getValue("bts:Objective");
-      template.binning = attributes.getValue("bts:Binning");
-      template.methodID = attributes.getValue("bts:MethodID");
-      template.method = attributes.getValue("bts:Method");
-      template.filterID = attributes.getValue("bts:FilterID");
-      template.kind = attributes.getValue("bts:Kind");
-      template.andorParameterID = attributes.getValue("bts:AndorParameterID");
-      template.andorParameter = attributes.getValue("bts:AndorParameter");
+      template.objectiveID = parsing.getRawAttribute(attributes, "ObjectiveID");
+      template.objective = parsing.getRawAttribute(attributes, "Objective");
+      template.binning = parsing.getRawAttribute(attributes, "Binning");
+      template.methodID = parsing.getRawAttribute(attributes, "MethodID");
+      template.method = parsing.getRawAttribute(attributes, "Method");
+      template.filterID = parsing.getRawAttribute(attributes, "FilterID");
+      template.kind = parsing.getRawAttribute(attributes, "Kind");
+      template.andorParameterID = parsing.getRawAttribute(
+        attributes, "AndorParameterID");
+      template.andorParameter = parsing.getRawAttribute(
+        attributes, "AndorParameter");
       template.detectorGain = parsing.parseYokogawaGain(template.andorParameter);
-      template.cameraType = attributes.getValue("bts:CameraType");
-      template.inputLevel = parseInteger(attributes.getValue("bts:InputLevel"));
+      template.cameraType = parsing.getRawAttribute(attributes, "CameraType");
+      template.inputLevel = parsing.parseInteger(
+        parsing.getRawAttribute(attributes, "InputLevel"));
 
-      String mag = attributes.getValue("bts:Magnification");
-      template.magnification = DataTools.parseDouble(mag);
+      String mag = parsing.getRawAttribute(attributes, "Magnification");
+      template.magnification = parsing.parseDouble(mag);
 
-      String exposure = attributes.getValue("bts:ExposureTime");
-      template.exposureTime = DataTools.parseDouble(exposure);
+      String exposure = parsing.getRawAttribute(attributes, "ExposureTime");
+      template.exposureTime = parsing.parseDouble(exposure);
 
-      populateChannelColor(template, attributes.getValue("bts:Color"));
+      populateChannelColor(template, parsing.getRawAttribute(attributes, "Color"));
 
-      template.acquisition = attributes.getValue("bts:Acquisition");
+      template.acquisition = parsing.getRawAttribute(attributes, "Acquisition");
       // Yokogawa Acquisition values such as BP676/29 identify detection
       // filters.  Excitation comes from the LightSourceName link.
       template.detectionFilter = parsing.parseDetectionFilter(template.acquisition);
 
-      template.fluor = attributes.getValue("bts:Fluorophore");
+      template.fluor = parsing.getRawAttribute(attributes, "Fluorophore");
       applyChannelSettings(template, currentDefinitionOccurrence);
     }
 
@@ -4043,8 +4648,8 @@ public class CV7000Reader extends FormatReader {
     }
 
     private void startActionList(Attributes attributes) {
-      actionRunMode = attributes.getValue("bts:RunMode");
-      actionAFSearch = attributes.getValue("bts:AFSearch");
+      actionRunMode = parsing.getRawAttribute(attributes, "RunMode");
+      actionAFSearch = parsing.getRawAttribute(attributes, "AFSearch");
       addYokogawaAttributes(
         "Yokogawa MES Timeline " + (timelineIndex + 1) +
         " ActionList ", attributes);
@@ -4052,23 +4657,27 @@ public class CV7000Reader extends FormatReader {
 
     private void startActionAcquire(String qName, Attributes attributes) {
       actionIndex++;
-      currentActionType = getYokogawaAttributeName(qName);
-      currentActionXOffset = attributes.getValue("bts:XOffset");
-      currentActionYOffset = attributes.getValue("bts:YOffset");
-      currentActionAFShiftBase = attributes.getValue("bts:AFShiftBase");
-      currentActionTopDistance = attributes.getValue("bts:TopDistance");
-      currentActionBottomDistance = attributes.getValue("bts:BottomDistance");
-      currentActionSliceLength = attributes.getValue("bts:SliceLength");
-      currentActionUseSoftFocus = attributes.getValue("bts:UseSoftFocus");
+      currentActionType = parsing.getYokogawaAttributeName(qName);
+      currentActionXOffset = parsing.getRawAttribute(attributes, "XOffset");
+      currentActionYOffset = parsing.getRawAttribute(attributes, "YOffset");
+      currentActionAFShiftBase = parsing.getRawAttribute(
+        attributes, "AFShiftBase");
+      currentActionTopDistance = parsing.getRawAttribute(
+        attributes, "TopDistance");
+      currentActionBottomDistance = parsing.getRawAttribute(
+        attributes, "BottomDistance");
+      currentActionSliceLength = parsing.getRawAttribute(
+        attributes, "SliceLength");
+      currentActionUseSoftFocus = parsing.getRawAttribute(
+        attributes, "UseSoftFocus");
       addYokogawaAttributes(
         "Yokogawa MES Timeline " + (timelineIndex + 1) +
         " Action " + (actionIndex + 1) + " ", attributes);
-      currentPhysicalSizeZ = DataTools.parseDouble(
-        attributes.getValue("bts:SliceLength"));
+      currentPhysicalSizeZ = parsing.parseDouble(currentActionSliceLength);
     }
 
     private void assignActionChannel(String value) {
-      int channelIndex = Integer.parseInt(value) - 1;
+      int channelIndex = parsing.parseRequiredInteger(value) - 1;
       if (channelIndex < 0) {
         return;
       }
@@ -4193,18 +4802,18 @@ public class CV7000Reader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      String name = getYokogawaAttributeName(qName);
+      String name = parsing.getYokogawaAttributeName(qName);
       if ("EMFilter".equals(name)) {
         currentFilter = new CrosstalkFilter();
         currentFilter.filterID = parsing.getAttribute(attributes, "FilterID");
-        currentFilter.cameraNumber = DataTools.parseInteger(
+        currentFilter.cameraNumber = parsing.parseInteger(
           parsing.getAttribute(attributes, "CameraID"));
         currentFilter.acquisition = parsing.getAttribute(attributes, "Acquisition");
-        currentFilter.averageTransmittance = DataTools.parseDouble(
+        currentFilter.averageTransmittance = parsing.parseDouble(
           parsing.getAttribute(attributes, "AverageTransmittance"));
-        currentFilter.minWaveLength = DataTools.parseDouble(
+        currentFilter.minWaveLength = parsing.parseDouble(
           parsing.getAttribute(attributes, "MinWaveLength"));
-        currentFilter.maxWaveLength = DataTools.parseDouble(
+        currentFilter.maxWaveLength = parsing.parseDouble(
           parsing.getAttribute(attributes, "MaxWaveLength"));
         parameters.addFilter(currentFilter);
       }
@@ -4213,7 +4822,7 @@ public class CV7000Reader extends FormatReader {
         dichroic.id = parsing.getAttribute(attributes, "ID");
         dichroic.name = parsing.getAttribute(attributes, "Name");
         dichroic.reflection = parsing.getAttribute(attributes, "Reflection");
-        dichroic.averageTransmittance = DataTools.parseDouble(
+        dichroic.averageTransmittance = parsing.parseDouble(
           parsing.getAttribute(attributes, "AverageTransmittance"));
         currentFilter.dichroics.add(dichroic);
       }
@@ -4226,7 +4835,7 @@ public class CV7000Reader extends FormatReader {
         CrosstalkFluorophoreIntensity intensity =
           new CrosstalkFluorophoreIntensity();
         intensity.filterID = parsing.getAttribute(attributes, "FilterID");
-        intensity.averageIntensity = DataTools.parseDouble(
+        intensity.averageIntensity = parsing.parseDouble(
           parsing.getAttribute(attributes, "AverageIntensity"));
         currentFluorophore.intensities.add(intensity);
       }
@@ -4234,7 +4843,7 @@ public class CV7000Reader extends FormatReader {
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-      String name = getYokogawaAttributeName(qName);
+      String name = parsing.getYokogawaAttributeName(qName);
       if ("EMFilter".equals(name)) {
         currentFilter = null;
       }
@@ -4256,7 +4865,7 @@ public class CV7000Reader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      String name = getYokogawaAttributeName(qName);
+      String name = parsing.getYokogawaAttributeName(qName);
       if ("GeometryParameter".equals(name)) {
         parameters.mode = parsing.getAttribute(attributes, "Mode");
         return;
@@ -4270,18 +4879,18 @@ public class CV7000Reader extends FormatReader {
       affine.method = parsing.getAttribute(attributes, "Method");
       affine.objectiveID = parsing.getAttribute(attributes, "ObjectiveID");
       affine.objective = parsing.getAttribute(attributes, "Objective");
-      affine.magnification = DataTools.parseDouble(
+      affine.magnification = parsing.parseDouble(
         parsing.getAttribute(attributes, "Magnification"));
       affine.filterID = parsing.getAttribute(attributes, "FilterID");
       affine.acquisition = parsing.getAttribute(attributes, "Acquisition");
       affine.use = parsing.getAttribute(attributes, "Use");
       affine.updateTime = parsing.getAttribute(attributes, "UpdateTime");
-      affine.a = DataTools.parseDouble(parsing.getAttribute(attributes, "A"));
-      affine.b = DataTools.parseDouble(parsing.getAttribute(attributes, "B"));
-      affine.c = DataTools.parseDouble(parsing.getAttribute(attributes, "C"));
-      affine.d = DataTools.parseDouble(parsing.getAttribute(attributes, "D"));
-      affine.e = DataTools.parseDouble(parsing.getAttribute(attributes, "E"));
-      affine.f = DataTools.parseDouble(parsing.getAttribute(attributes, "F"));
+      affine.a = parsing.parseDouble(parsing.getAttribute(attributes, "A"));
+      affine.b = parsing.parseDouble(parsing.getAttribute(attributes, "B"));
+      affine.c = parsing.parseDouble(parsing.getAttribute(attributes, "C"));
+      affine.d = parsing.parseDouble(parsing.getAttribute(attributes, "D"));
+      affine.e = parsing.parseDouble(parsing.getAttribute(attributes, "E"));
+      affine.f = parsing.parseDouble(parsing.getAttribute(attributes, "F"));
       parameters.addAffine(affine);
     }
   }
