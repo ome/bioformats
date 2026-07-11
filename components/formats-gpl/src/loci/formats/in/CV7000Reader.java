@@ -133,6 +133,8 @@ public class CV7000Reader extends FormatReader {
   // -- Fields --
 
   private LinkedHashSet<String> allFiles = new LinkedHashSet<String>();
+  private LinkedHashSet<String> planeFiles = new LinkedHashSet<String>();
+  private LinkedHashSet<String> correctionFiles = new LinkedHashSet<String>();
   private MinimalTiffReader reader;
   private String wppPath;
   private String detailPath;
@@ -352,6 +354,8 @@ public class CV7000Reader extends FormatReader {
       } else {
           allFiles = new LinkedHashSet<String>();
       }
+      planeFiles.clear();
+      correctionFiles.clear();
     }
   }
 
@@ -442,6 +446,8 @@ public class CV7000Reader extends FormatReader {
     measurementPath = null;
     settingsPath = null;
     allFiles.clear();
+    planeFiles.clear();
+    correctionFiles.clear();
   }
 
   private CV7000DatasetPaths getDatasetPaths(String id) {
@@ -645,6 +651,12 @@ public class CV7000Reader extends FormatReader {
           new Location(parentPath, ch.correctionFile).getAbsolutePath();
         ch.resolvedCorrectionFile = resolved;
         ch.correctionFile = getRelativePath(parentPath, resolved);
+        Location correction = new Location(resolved);
+        if (correction.exists() && correction.canRead() &&
+          !correction.isDirectory() && isTiffFile(correction.getName()))
+        {
+          correctionFiles.add(correction.getAbsolutePath());
+        }
       }
     }
   }
@@ -2311,9 +2323,6 @@ public class CV7000Reader extends FormatReader {
     if (name == null) {
       return CV7000FileRole.UNKNOWN;
     }
-    if (isTiffFile(name)) {
-      return CV7000FileRole.TIFF_PLANE;
-    }
     if (isPath(file, currentId)) {
       return CV7000FileRole.WPI;
     }
@@ -2348,6 +2357,12 @@ public class CV7000Reader extends FormatReader {
       if (isPath(file, datasetPaths.otfGeometryPath)) {
         return CV7000FileRole.OTF_GEOMETRY;
       }
+    }
+    if (planeFiles.contains(file.getAbsolutePath())) {
+      return CV7000FileRole.TIFF_PLANE;
+    }
+    if (correctionFiles.contains(file.getAbsolutePath())) {
+      return CV7000FileRole.SHADING_CORRECTION;
     }
     return CV7000FileRole.UNKNOWN;
   }
@@ -2384,7 +2399,8 @@ public class CV7000Reader extends FormatReader {
   }
 
   private boolean isPixelFile(CV7000FileRole role) {
-    return role == CV7000FileRole.TIFF_PLANE;
+    return role == CV7000FileRole.TIFF_PLANE ||
+      role == CV7000FileRole.SHADING_CORRECTION;
   }
 
   private boolean isPath(Location file, String path) {
@@ -3301,6 +3317,7 @@ public class CV7000Reader extends FormatReader {
 
   private enum CV7000FileRole {
     TIFF_PLANE,
+    SHADING_CORRECTION,
     WPI,
     MEASUREMENT_DATA,
     MEASUREMENT_DETAIL,
@@ -4160,8 +4177,12 @@ public class CV7000Reader extends FormatReader {
       if ("IMG".equals(btsType) &&
         value.trim().length() > 0) {
         Location imgFile = new Location(parentDir, value);
-        if (imgFile.exists()) {
-          planes.get(planes.size() - 1).file = imgFile.getAbsolutePath();
+        if (imgFile.exists() && imgFile.canRead() && !imgFile.isDirectory() &&
+          isTiffFile(imgFile.getName()))
+        {
+          String path = imgFile.getAbsolutePath();
+          planes.get(planes.size() - 1).file = path;
+          planeFiles.add(path);
         }
       }
       else if (currentRecord != null) {
