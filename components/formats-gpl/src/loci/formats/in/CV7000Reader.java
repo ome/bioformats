@@ -52,6 +52,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
 import ome.units.UNITS;
@@ -65,6 +66,7 @@ import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.xml.model.enums.AcquisitionMode;
+import ome.xml.model.enums.Compression;
 import ome.xml.model.enums.ContrastMethod;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.enums.NamingConvention;
@@ -87,6 +89,9 @@ public class CV7000Reader extends FormatReader {
   public static final boolean DUPLICATE_PLANES_DEFAULT = false;
   public static final String PRESERVE_RAW_SIDECARS_KEY = "cv7000.preserve_raw_sidecars";
   public static final boolean PRESERVE_RAW_SIDECARS_DEFAULT = true;
+  public static final String COMPRESS_RAW_SIDECARS_KEY =
+    "cv7000.compress_raw_sidecars";
+  public static final boolean COMPRESS_RAW_SIDECARS_DEFAULT = true;
   public static final String INFER_OBJECTIVE_LENS_NA_KEY =
     "cv7000.infer_objective_lens_na";
   public static final boolean INFER_OBJECTIVE_LENS_NA_DEFAULT = false;
@@ -174,6 +179,15 @@ public class CV7000Reader extends FormatReader {
        PRESERVE_RAW_SIDECARS_KEY, PRESERVE_RAW_SIDECARS_DEFAULT);
     }
     return PRESERVE_RAW_SIDECARS_DEFAULT;
+  }
+
+  public boolean compressRawSidecars() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       COMPRESS_RAW_SIDECARS_KEY, COMPRESS_RAW_SIDECARS_DEFAULT);
+    }
+    return COMPRESS_RAW_SIDECARS_DEFAULT;
   }
 
   public boolean inferObjectiveLensNA() {
@@ -353,6 +367,7 @@ public class CV7000Reader extends FormatReader {
     ArrayList<String> optionsList = super.getAvailableOptions();
     optionsList.add(DUPLICATE_PLANES_KEY);
     optionsList.add(PRESERVE_RAW_SIDECARS_KEY);
+    optionsList.add(COMPRESS_RAW_SIDECARS_KEY);
     optionsList.add(INFER_OBJECTIVE_LENS_NA_KEY);
     return optionsList;
   }
@@ -1935,7 +1950,7 @@ public class CV7000Reader extends FormatReader {
   // ###############
 
   private void addYokogawaOriginalMetadata(MetadataStore store,
-    boolean hasInstrument)
+    boolean hasInstrument) throws FormatException
   {
     int rawSidecarAnnotation = 0;
     int plateAnnotationRef = 0;
@@ -2169,7 +2184,7 @@ public class CV7000Reader extends FormatReader {
   }
 
   private String addRawSidecarFileAnnotation(MetadataStore store, String file,
-    int index)
+    int index) throws FormatException
   {
     Location location = new Location(file);
     String name = location.getName();
@@ -2180,6 +2195,13 @@ public class CV7000Reader extends FormatReader {
     try {
       byte[] bytes = readSidecarBytes(file);
       NonNegativeLong length = new NonNegativeLong(Long.valueOf(bytes.length));
+      byte[] payload = bytes;
+      Compression compression = Compression.NONE;
+      if (compressRawSidecars()) {
+        payload = new ZlibCodec().compress(bytes, null);
+        compression = Compression.ZLIB;
+      }
+      long encodedLength = 4L * ((payload.length + 2L) / 3L);
       String annotationID = "Annotation:CV7000RawSidecar:" + index;
 
       store.setFileAnnotationID(annotationID, index);
@@ -2189,9 +2211,12 @@ public class CV7000Reader extends FormatReader {
       store.setBinaryFileFileName(name, index);
       store.setBinaryFileMIMEType(XML_MIME_TYPE, index);
       store.setBinaryFileSize(length, index);
-      store.setBinaryFileBinData(bytes, index);
+      store.setBinaryFileBinData(payload, index);
+      store.setBinaryFileBinDataCompression(compression, index);
+      // XML sidecars are opaque byte streams, so host byte order is irrelevant.
       store.setBinaryFileBinDataBigEndian(Boolean.FALSE, index);
-      store.setBinaryFileBinDataLength(length, index);
+      store.setBinaryFileBinDataLength(
+        new NonNegativeLong(Long.valueOf(encodedLength)), index);
       return annotationID;
     }
     catch (IOException e) {
