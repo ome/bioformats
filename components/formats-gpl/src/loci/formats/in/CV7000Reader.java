@@ -2328,9 +2328,11 @@ public class CV7000Reader extends FormatReader {
     }
     switch (role) {
       case WPI:
+      case MEASUREMENT_DATA:
       case MEASUREMENT_DETAIL:
       case MEASUREMENT_SETTINGS:
       case WELL_PLATE_PRODUCT:
+      case POST_PROCESS:
       case OTF_CROSSTALK:
       case OTF_GEOMETRY:
         return true;
