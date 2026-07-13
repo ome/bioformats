@@ -652,13 +652,72 @@ public class CV7000Reader extends FormatReader {
         ch.resolvedCorrectionFile = resolved;
         ch.correctionFile = getRelativePath(parentPath, resolved);
         Location correction = new Location(resolved);
-        if (correction.exists() && correction.canRead() &&
-          !correction.isDirectory() && isTiffFile(correction.getName()))
-        {
+        if (!correction.exists()) {
+          Location fallback = findCorrectionFile(correction);
+          if (fallback != null) {
+            correction = fallback;
+            ch.resolvedCorrectionFile = correction.getAbsolutePath();
+            ch.correctionFile =
+              getRelativePath(parentPath, ch.resolvedCorrectionFile);
+          }
+        }
+        if (isReadableTiff(correction)) {
           correctionFiles.add(correction.getAbsolutePath());
         }
       }
     }
+  }
+
+  /** Find one TIFF whose stem contains the missing metadata filename stem. */
+  private Location findCorrectionFile(Location expected) {
+    Location directory = expected.getParentFile();
+    if (directory == null || !directory.isDirectory() ||
+      !directory.canRead())
+    {
+      return null;
+    }
+
+    String expectedStem = getFilenameStem(expected.getName());
+    if (expectedStem.length() == 0) {
+      return null;
+    }
+
+    String[] listedFiles = directory.list(true);
+    if (listedFiles == null) {
+      return null;
+    }
+    Arrays.sort(listedFiles);
+    ArrayList<Location> matches = new ArrayList<Location>();
+    for (String listedFile : listedFiles) {
+      Location candidate = new Location(directory, listedFile);
+      if (isReadableTiff(candidate) &&
+        getFilenameStem(candidate.getName()).contains(expectedStem))
+      {
+        matches.add(candidate);
+      }
+    }
+
+    if (matches.size() == 1) {
+      return matches.get(0);
+    }
+    if (matches.size() > 1) {
+      LOGGER.warn("Ambiguous CV7000 shading correction source {}: {}",
+        expected.getAbsolutePath(), matches);
+    }
+    return null;
+  }
+
+  private boolean isReadableTiff(Location file) {
+    return file.exists() && file.canRead() && !file.isDirectory() &&
+      isTiffFile(file.getName());
+  }
+
+  private String getFilenameStem(String name) {
+    if (name == null) {
+      return "";
+    }
+    int dot = name.lastIndexOf('.');
+    return dot < 0 ? name : name.substring(0, dot);
   }
 
   /**
