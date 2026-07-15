@@ -65,4 +65,9 @@
         <class name="loci.formats.utests.XMLAnnotationTest"/>
       </classes>
     </test>
+    <test name="VmicReaderTest">
+      <classes>
+        <class name="loci.formats.utests.in.VmicReaderTest"/>
+      </classes>
+    </test>
 </suite>
