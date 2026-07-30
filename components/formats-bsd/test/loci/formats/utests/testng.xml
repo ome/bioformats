@@ -181,6 +181,12 @@
         <class name="loci.formats.utests.ConversionTest"/>
       </classes>
     </test>
+    <test name="WriterDiscoveryTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.WriterDiscoveryTest"/>
+      </classes>
+    </test>
     <test name="CompressDecompressTest">
       <groups/>
       <classes>

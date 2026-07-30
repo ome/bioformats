@@ -65,4 +65,16 @@
         <class name="loci.formats.utests.XMLAnnotationTest"/>
       </classes>
     </test>
+    <test name="NDPI JPEG assembler">
+      <groups/>
+      <classes>
+        <class name="loci.formats.out.NDPIJPEGAssemblyTest"/>
+      </classes>
+    </test>
+    <test name="NDPI writer">
+      <groups/>
+      <classes>
+        <class name="loci.formats.out.NDPIWriterTest"/>
+      </classes>
+    </test>
 </suite>
