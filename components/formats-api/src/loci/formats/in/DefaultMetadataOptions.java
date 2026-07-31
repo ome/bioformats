@@ -80,4 +80,23 @@ public class DefaultMetadataOptions implements MetadataOptions {
     validate = validateMetadata;
   }
 
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    DefaultMetadataOptions options = (DefaultMetadataOptions) other;
+    return metadataLevel == options.metadataLevel &&
+      validate == options.validate;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = metadataLevel == null ? 0 : metadataLevel.hashCode();
+    return 31 * result + (validate ? 1 : 0);
+  }
+
 }

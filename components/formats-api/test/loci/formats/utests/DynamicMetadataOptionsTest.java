@@ -371,6 +371,19 @@ public class DynamicMetadataOptionsTest {
     assertFalse(opt.isValidate());
   }
 
+  @Test
+  public void testEqualityIncludesDynamicProperties() {
+    DynamicMetadataOptions other = new DynamicMetadataOptions();
+    assertEquals(opt, other);
+    assertEquals(opt.hashCode(), other.hashCode());
+
+    opt.set("reader.option", "first");
+    assertFalse(opt.equals(other));
+    other.set("reader.option", "first");
+    assertEquals(opt, other);
+    assertEquals(opt.hashCode(), other.hashCode());
+  }
+
   @Test(dataProvider = "optionFiles")
   public void testGetMetadataOptionsFile(String source, String target) {
     source = source.replace('/', File.separatorChar);
