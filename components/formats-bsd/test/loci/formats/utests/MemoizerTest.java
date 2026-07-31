@@ -322,4 +322,29 @@ public class MemoizerTest {
     changed.close();
   }
 
+  @Test
+  public void testChangedCompanionFileInvalidatesMemo() throws Exception {
+    File companion = new File(id + ".ini");
+    Files.write(companion.toPath(),
+      "sizeX=20\n".getBytes(StandardCharsets.UTF_8));
+
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    Memoizer unchanged = new Memoizer(new FakeReader(), 0);
+    unchanged.setId(id);
+    assertTrue(unchanged.isLoadedFromMemo());
+    unchanged.close();
+
+    Files.write(companion.toPath(),
+      "sizeX=200\n".getBytes(StandardCharsets.UTF_8));
+    Memoizer changed = new Memoizer(new FakeReader(), 0);
+    changed.setId(id);
+    assertFalse(changed.isLoadedFromMemo());
+    assertEquals(changed.getSizeX(), 200);
+    changed.close();
+  }
+
 }
