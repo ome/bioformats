@@ -46,6 +46,8 @@ import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -925,6 +927,15 @@ public class Memoizer extends ReaderWrapper {
       } catch (ClassNotFoundException e) {
         LOGGER.warn("unknown reader type: {}", e);
         return null;
+      }
+
+      MetadataOptions options = reader.getMetadataOptions();
+      if (options instanceof DynamicMetadataOptions) {
+        String optionsFile = DynamicMetadataOptions.getMetadataOptionsFile(
+          realFile.getAbsolutePath());
+        if (optionsFile != null) {
+          ((DynamicMetadataOptions) options).loadOptions(optionsFile);
+        }
       }
 
       boolean equal = false;

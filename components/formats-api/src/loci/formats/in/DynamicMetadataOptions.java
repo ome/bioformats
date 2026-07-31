@@ -105,6 +105,23 @@ public class DynamicMetadataOptions implements MetadataOptions {
     setBoolean(READER_VALIDATE_KEY, validateMetadata);
   }
 
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    DynamicMetadataOptions options = (DynamicMetadataOptions) other;
+    return props.equals(options.props);
+  }
+
+  @Override
+  public int hashCode() {
+    return props.hashCode();
+  }
+
   // -- key/value options --
 
   /**
@@ -489,7 +506,30 @@ public class DynamicMetadataOptions implements MetadataOptions {
     return new File(val);
   }
   
-  public void loadOptions(String optionsFile, ArrayList<String> availableOptionKeys) throws IOException, FormatException {
+  /**
+   * Load options without checking them against a reader's supported keys.
+   *
+   * @param optionsFile path to the options file
+   * @throws IOException if the file cannot be read
+   * @throws FormatException if the options file is invalid
+   */
+  public void loadOptions(String optionsFile) throws IOException,
+    FormatException
+  {
+    loadOptions(optionsFile, null);
+  }
+
+  /**
+   * Load options and warn about keys that are not advertised by the reader.
+   *
+   * @param optionsFile path to the options file
+   * @param availableOptionKeys keys advertised by the reader
+   * @throws IOException if the file cannot be read
+   * @throws FormatException if the options file is invalid
+   */
+  public void loadOptions(String optionsFile,
+    ArrayList<String> availableOptionKeys) throws IOException, FormatException
+  {
     if (!new Location(optionsFile).exists()) {
       LOGGER.trace("Options file doesn't exist: {}", optionsFile);
       // TODO: potentially create option
@@ -504,7 +544,8 @@ public class DynamicMetadataOptions implements MetadataOptions {
     IniList list = parser.parseINI(new File(optionsFile));
     for (IniTable attrs: list) {
       for (String key: attrs.keySet()) {
-        if (!key.equals(IniTable.HEADER_KEY) &&
+        if (availableOptionKeys != null &&
+            !key.equals(IniTable.HEADER_KEY) &&
             !availableOptionKeys.contains(key)) {
           LOGGER.warn("Metadata Option Key is not supported in this reader " + key);
         }

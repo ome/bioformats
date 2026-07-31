@@ -38,9 +38,11 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertNull;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import loci.formats.Memoizer;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.FakeReader;
 
 import org.testng.annotations.AfterMethod;
@@ -272,6 +274,52 @@ public class MemoizerTest {
     assertFalse(memoFile.exists());
     reader.close();
     checkMemo(memoizer, id);
+  }
+
+  @Test
+  public void testChangedDynamicOptionsInvalidateMemo() throws Exception {
+    DynamicMetadataOptions firstOptions = new DynamicMetadataOptions();
+    firstOptions.set("reader.option", "first");
+    reader.setMetadataOptions(firstOptions);
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    FakeReader secondReader = new FakeReader();
+    DynamicMetadataOptions secondOptions = new DynamicMetadataOptions();
+    secondOptions.set("reader.option", "second");
+    secondReader.setMetadataOptions(secondOptions);
+    Memoizer second = new Memoizer(secondReader, 0);
+    second.setId(id);
+    assertFalse(second.isLoadedFromMemo());
+    second.close();
+  }
+
+  @Test
+  public void testOptionsFileParticipatesInMemoCompatibility()
+    throws Exception
+  {
+    File optionsFile = new File(id + ".bfoptions");
+    Files.write(optionsFile.toPath(),
+      "[options]\nmetadata.level=MINIMUM\n".getBytes(StandardCharsets.UTF_8));
+
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    Memoizer unchanged = new Memoizer(new FakeReader(), 0);
+    unchanged.setId(id);
+    assertTrue(unchanged.isLoadedFromMemo());
+    unchanged.close();
+
+    Files.write(optionsFile.toPath(),
+      "[options]\nmetadata.level=ALL\n".getBytes(StandardCharsets.UTF_8));
+    Memoizer changed = new Memoizer(new FakeReader(), 0);
+    changed.setId(id);
+    assertFalse(changed.isLoadedFromMemo());
+    changed.close();
   }
 
 }

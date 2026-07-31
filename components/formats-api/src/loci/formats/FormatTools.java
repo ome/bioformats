@@ -1267,9 +1267,7 @@ public final class FormatTools {
       return false;
     }
 
-    if (!a.getMetadataOptions().getMetadataLevel().equals(
-      b.getMetadataOptions().getMetadataLevel()))
-    {
+    if (!a.getMetadataOptions().equals(b.getMetadataOptions())) {
       return false;
     }
 

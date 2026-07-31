@@ -76,4 +76,17 @@ public class DefaultMetadataOptionsTest {
     assertFalse(opt.isValidate());
   }
 
+  @Test
+  public void testEqualityIncludesValidation() {
+    MetadataOptions other = new DefaultMetadataOptions();
+    assertEquals(opt, other);
+    assertEquals(opt.hashCode(), other.hashCode());
+
+    opt.setValidate(true);
+    assertFalse(opt.equals(other));
+    other.setValidate(true);
+    assertEquals(opt, other);
+    assertEquals(opt.hashCode(), other.hashCode());
+  }
+
 }
