@@ -38,6 +38,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -51,6 +52,20 @@ import org.testng.annotations.Test;
 
 
 public class MemoizerTest {
+
+  private static class FailingInstallMemoizer extends Memoizer {
+
+    FailingInstallMemoizer(FakeReader reader) {
+      super(reader, 0);
+    }
+
+    @Override
+    protected void installMemo(File source, File destination)
+      throws IOException
+    {
+      throw new IOException("expected installation failure");
+    }
+  }
 
   private static final String TEST_FILE =
     "test&pixelType=int8&sizeX=20&sizeY=20&sizeC=1&sizeZ=1&sizeT=1.fake";
@@ -345,6 +360,16 @@ public class MemoizerTest {
     assertFalse(changed.isLoadedFromMemo());
     assertEquals(changed.getSizeX(), 200);
     changed.close();
+  }
+
+  @Test
+  public void testInstallFailureIsNotReportedAsSaved() throws Exception {
+    Memoizer memoizer = new FailingInstallMemoizer(reader);
+    File memoFile = memoizer.getMemoFile(id);
+    memoizer.setId(id);
+    assertFalse(memoizer.isSavedToMemo());
+    assertFalse(memoFile.exists());
+    memoizer.close();
   }
 
 }

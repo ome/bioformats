@@ -39,8 +39,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ArrayIndexOutOfBoundsException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 
 import loci.common.Constants;
@@ -1119,16 +1122,17 @@ public class Memoizer extends ReaderWrapper {
         LOGGER.error("output close failed", t);
       }
 
-      // Rename temporary file if successful.
-      // Any failures will have to be ignored.
-      // Note: renaming the tempfile with open
-      // resources can lead to segfaults
+      // Install the temporary file if serialization succeeded.
+      // Note: moving the tempfile with open resources can lead to segfaults.
       if (rv) {
-        if (!tempFile.renameTo(memoFile)) {
-          LOGGER.error("temp file rename returned false: {}", tempFile);
-        } else {
+        try {
+          installMemo(tempFile, memoFile);
           LOGGER.debug("saved memo file: {} ({} bytes)",
             memoFile, memoFile.length());
+        }
+        catch (IOException | SecurityException e) {
+          LOGGER.error("failed to install memo file: {}", memoFile, e);
+          rv = false;
         }
       }
 
@@ -1180,6 +1184,26 @@ public class Memoizer extends ReaderWrapper {
       }
     }
     return true;
+  }
+
+  /**
+   * Move a completed temporary memo into its final location.
+   *
+   * @param source completed temporary memo
+   * @param destination final memo path
+   * @throws IOException if the memo cannot be installed
+   */
+  protected void installMemo(File source, File destination)
+    throws IOException
+  {
+    try {
+      Files.move(source.toPath(), destination.toPath(),
+        StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+    }
+    catch (AtomicMoveNotSupportedException e) {
+      Files.move(source.toPath(), destination.toPath(),
+        StandardCopyOption.REPLACE_EXISTING);
+    }
   }
 
   /**
