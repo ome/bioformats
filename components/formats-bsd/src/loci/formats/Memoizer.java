@@ -38,6 +38,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ArrayIndexOutOfBoundsException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -100,6 +104,10 @@ public class Memoizer extends ReaderWrapper {
 
     String loadRevision() throws IOException;
 
+    default FileFingerprint[] loadFileFingerprints() throws IOException {
+      return FileFingerprint.decode(loadRevision());
+    }
+
     IFormatReader loadReader() throws IOException, ClassNotFoundException;
 
     void loadStop() throws IOException;
@@ -112,11 +120,85 @@ public class Memoizer extends ReaderWrapper {
 
     void saveRevision(String revision) throws IOException;
 
+    default void saveFileFingerprints(FileFingerprint[] fingerprints)
+      throws IOException
+    {
+      saveRevision(FileFingerprint.encode(fingerprints));
+    }
+
     void saveReader(IFormatReader reader) throws IOException;
 
     void saveStop() throws IOException;
 
     void close();
+  }
+
+  /** File state recorded when a memo is created. */
+  public static final class FileFingerprint {
+
+    private final String path;
+    private final boolean relative;
+    private final boolean exists;
+    private final long length;
+    private final long lastModified;
+
+    private FileFingerprint(String path, boolean relative, boolean exists,
+      long length, long lastModified)
+    {
+      this.path = path;
+      this.relative = relative;
+      this.exists = exists;
+      this.length = length;
+      this.lastModified = lastModified;
+    }
+
+    private static String encode(FileFingerprint[] fingerprints) {
+      StringBuilder manifest = new StringBuilder();
+      Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
+      for (FileFingerprint fingerprint : fingerprints) {
+        String encodedPath = encoder.encodeToString(
+          fingerprint.path.getBytes(StandardCharsets.UTF_8));
+        manifest.append(fingerprint.relative ? '1' : '0');
+        manifest.append('\t');
+        manifest.append(fingerprint.exists ? '1' : '0');
+        manifest.append('\t');
+        manifest.append(fingerprint.length);
+        manifest.append('\t');
+        manifest.append(fingerprint.lastModified);
+        manifest.append('\t');
+        manifest.append(encodedPath);
+        manifest.append('\n');
+      }
+      return manifest.toString();
+    }
+
+    private static FileFingerprint[] decode(String manifest)
+      throws IOException
+    {
+      if (manifest.isEmpty()) {
+        return new FileFingerprint[0];
+      }
+      String[] lines = manifest.split("\\n");
+      FileFingerprint[] fingerprints = new FileFingerprint[lines.length];
+      Base64.Decoder decoder = Base64.getUrlDecoder();
+      try {
+        for (int i = 0; i < lines.length; i++) {
+          String[] fields = lines[i].split("\\t", -1);
+          if (fields.length != 5) {
+            throw new IOException("Invalid file fingerprint manifest");
+          }
+          String path = new String(decoder.decode(fields[4]),
+            StandardCharsets.UTF_8);
+          fingerprints[i] = new FileFingerprint(path,
+            "1".equals(fields[0]), "1".equals(fields[1]),
+            Long.parseLong(fields[2]), Long.parseLong(fields[3]));
+        }
+      }
+      catch (IllegalArgumentException e) {
+        throw new IOException("Invalid file fingerprint manifest", e);
+      }
+      return fingerprints;
+    }
   }
 
   public static class KryoDeser implements Deser {
@@ -341,7 +423,7 @@ public class Memoizer extends ReaderWrapper {
    * cached items. This should happen when the order and type of objects stored
    * in the memo file changes.
    */
-  public static final Integer VERSION = 4;
+  public static final Integer VERSION = 5;
 
   /**
    * Default value for {@link #minimumElapsed} if none is provided in the
@@ -916,10 +998,14 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // RELEASE VERSION NUMBER
-       if (versionMismatch()) {
+      if (versionMismatch()) {
          // Logging done in versionMismatch
          return null;
        }
+
+      if (!fileFingerprintsMatch(ser.loadFileFingerprints())) {
+        return null;
+      }
 
       // CLASS & COPY
       try {
@@ -1012,6 +1098,7 @@ public class Memoizer extends ReaderWrapper {
       // Save to temporary location.
       ser.saveVersion(VERSION);
       ser.saveReleaseVersion(FormatTools.VERSION);
+      ser.saveFileFingerprints(createFileFingerprints());
       ser.saveReader(reader);
       ser.saveStop();
       LOGGER.debug("saved to temp file: {}", tempFile);
@@ -1048,6 +1135,51 @@ public class Memoizer extends ReaderWrapper {
       deleteQuietly(tempFile);
     }
     return rv;
+  }
+
+  private FileFingerprint[] createFileFingerprints() {
+    String[] usedFiles = reader.getUsedFiles();
+    FileFingerprint[] fingerprints = new FileFingerprint[usedFiles.length];
+    Location primaryParent = realFile.getAbsoluteFile().getParentFile();
+    Path primaryParentPath = primaryParent == null ? null :
+      Paths.get(primaryParent.getAbsolutePath()).normalize();
+
+    for (int i = 0; i < usedFiles.length; i++) {
+      Location usedFile = new Location(usedFiles[i]).getAbsoluteFile();
+      String path = usedFile.getAbsolutePath();
+      boolean relative = false;
+      if (primaryParentPath != null) {
+        try {
+          path = primaryParentPath.relativize(
+            Paths.get(path).normalize()).toString();
+          relative = true;
+        }
+        catch (IllegalArgumentException e) {
+          LOGGER.debug("Cannot make used file relative to primary file: {}",
+            path);
+        }
+      }
+      fingerprints[i] = new FileFingerprint(path, relative,
+        usedFile.exists(), usedFile.length(), usedFile.lastModified());
+    }
+    return fingerprints;
+  }
+
+  private boolean fileFingerprintsMatch(FileFingerprint[] fingerprints) {
+    Location primaryParent = realFile.getAbsoluteFile().getParentFile();
+    for (FileFingerprint fingerprint : fingerprints) {
+      Location usedFile = fingerprint.relative && primaryParent != null ?
+        new Location(primaryParent, fingerprint.path) :
+        new Location(fingerprint.path);
+      if (usedFile.exists() != fingerprint.exists ||
+        usedFile.length() != fingerprint.length ||
+        usedFile.lastModified() != fingerprint.lastModified)
+      {
+        LOGGER.debug("used file changed since memo creation: {}", usedFile);
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
