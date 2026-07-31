@@ -40,6 +40,8 @@ import java.util.Hashtable;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -138,5 +140,23 @@ public class OMEXMLServiceTest {
     final String xml = service.getOMEXML(metadata);
 
     assertTrue(xml.contains(expectedText));
+  }
+
+  @Test
+  public void testConvertMetadataPreservesMetadataOnly()
+    throws ServiceException
+  {
+    OMEXMLMetadata source = service.createOMEXMLMetadata();
+    MetadataTools.populateMetadata(source, 0, "source", false, "XYZCT",
+      FormatTools.getPixelTypeString(FormatTools.UINT8),
+      1, 1, 1, 1, 1, 1);
+    service.addMetadataOnly(source, 0);
+
+    OMEXMLMetadata destination = service.createOMEXMLMetadata();
+    service.convertMetadata(source, destination);
+
+    String xml = service.getOMEXML(destination);
+    assertTrue(xml.contains("<MetadataOnly/>"));
+    assertTrue(service.validateOMEXML(xml));
   }
 }

@@ -40,8 +40,11 @@ import static org.testng.Assert.assertNull;
 import java.io.File;
 import java.nio.file.Files;
 
+import loci.common.services.ServiceFactory;
 import loci.formats.Memoizer;
 import loci.formats.in.FakeReader;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -272,6 +275,26 @@ public class MemoizerTest {
     assertFalse(memoFile.exists());
     reader.close();
     checkMemo(memoizer, id);
+  }
+
+  @Test
+  public void testMetadataOnlyPreservedOnSaveAndLoad() throws Exception {
+    OMEXMLService service = new ServiceFactory().getInstance(
+      OMEXMLService.class);
+    Memoizer memoizer = new Memoizer(reader, 0);
+
+    OMEXMLMetadata saveMetadata = service.createOMEXMLMetadata();
+    memoizer.setMetadataStore(saveMetadata);
+    memoizer.setId(id);
+    assertTrue(service.validateOMEXML(service.getOMEXML(saveMetadata)));
+    memoizer.close();
+
+    OMEXMLMetadata loadMetadata = service.createOMEXMLMetadata();
+    memoizer.setMetadataStore(loadMetadata);
+    memoizer.setId(id);
+    assertTrue(memoizer.isLoadedFromMemo());
+    assertTrue(service.validateOMEXML(service.getOMEXML(loadMetadata)));
+    memoizer.close();
   }
 
 }

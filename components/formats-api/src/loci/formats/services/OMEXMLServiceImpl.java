@@ -921,6 +921,30 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   @Override
   public void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
     MetadataConverter.convertMetadata(src, dest);
+
+    // MetadataOnly is an empty marker element and is therefore not exposed by
+    // the generated MetadataRetrieve/MetadataStore interfaces.  Preserve it
+    // when both endpoints expose the underlying OME model.
+    if (src instanceof OMEXMLMetadata && dest instanceof OMEXMLMetadata) {
+      OMEXMLMetadata source = (OMEXMLMetadata) src;
+      OMEXMLMetadata destination = (OMEXMLMetadata) dest;
+      source.resolveReferences();
+      OMEXMLMetadataRoot sourceRoot =
+        (OMEXMLMetadataRoot) source.getRoot();
+      OMEXMLMetadataRoot destinationRoot =
+        (OMEXMLMetadataRoot) destination.getRoot();
+      int imageCount = Math.min(sourceRoot.sizeOfImageList(),
+        destinationRoot.sizeOfImageList());
+      for (int image = 0; image < imageCount; image++) {
+        Pixels sourcePixels = sourceRoot.getImage(image).getPixels();
+        Pixels destinationPixels = destinationRoot.getImage(image).getPixels();
+        if (sourcePixels != null && destinationPixels != null &&
+          sourcePixels.getMetadataOnly() != null)
+        {
+          destinationPixels.setMetadataOnly(new MetadataOnly());
+        }
+      }
+    }
   }
 
   /** @see OMEXMLService#removeBinData(OMEXMLMetadata) */
