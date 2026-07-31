@@ -67,6 +67,13 @@ public class MemoizerTest {
     }
   }
 
+  private static class CachePathMemoizer extends Memoizer {
+
+    String cachePath(String path) {
+      return getCachePath(path);
+    }
+  }
+
   private static final String TEST_FILE =
     "test&pixelType=int8&sizeX=20&sizeY=20&sizeC=1&sizeZ=1&sizeT=1.fake";
   private static final String TMP_PREFIX = MemoizerTest.class.getName() + ".";
@@ -370,6 +377,30 @@ public class MemoizerTest {
     assertFalse(memoizer.isSavedToMemo());
     assertFalse(memoFile.exists());
     memoizer.close();
+  }
+
+  @Test
+  public void testWindowsDriveIsPartOfCachePath() {
+    CachePathMemoizer memoizer = new CachePathMemoizer();
+    String driveC = memoizer.cachePath("C:\\somedir\\foo.nd2");
+    String driveD = memoizer.cachePath("D:\\somedir\\foo.nd2");
+
+    assertEquals(driveC,
+      new File("C" + File.separator + "somedir", "foo.nd2").getPath());
+    assertEquals(driveD,
+      new File("D" + File.separator + "somedir", "foo.nd2").getPath());
+    assertFalse(driveC.equals(driveD));
+  }
+
+  @Test
+  public void testUncShareIsPartOfCachePath() {
+    CachePathMemoizer memoizer = new CachePathMemoizer();
+    String first = memoizer.cachePath("\\\\server\\first\\foo.nd2");
+    String second = memoizer.cachePath("\\\\server\\second\\foo.nd2");
+
+    assertTrue(first.startsWith("UNC" + File.separator));
+    assertTrue(second.startsWith("UNC" + File.separator));
+    assertFalse(first.equals(second));
   }
 
 }
