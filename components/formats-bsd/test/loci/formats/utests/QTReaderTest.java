@@ -33,11 +33,13 @@
 package loci.formats.utests;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Base64;
 
+import loci.formats.Memoizer;
 import loci.formats.in.QTReader;
 
 import org.testng.annotations.AfterMethod;
@@ -66,6 +68,7 @@ public class QTReaderTest {
 
   private File testDirectory;
   private File movie;
+  private File memoDirectory;
 
   @BeforeMethod
   public void setUp() throws Exception {
@@ -73,6 +76,8 @@ public class QTReaderTest {
       QTReaderTest.class.getName()).toFile();
     movie = new File(testDirectory, "delta.mov");
     Files.write(movie.toPath(), Base64.getDecoder().decode(QTRLE_MOVIE));
+    memoDirectory = new File(testDirectory, "memo");
+    assertTrue(memoDirectory.mkdir());
   }
 
   @AfterMethod
@@ -89,6 +94,31 @@ public class QTReaderTest {
       for (int plane = 1; plane < direct.getImageCount(); plane++) {
         assertEquals(direct.openBytes(plane), expected);
       }
+    }
+  }
+
+  @Test
+  public void testMemoizedRandomAccessToDeltaFrames() throws Exception {
+    byte[][] expected;
+    try (QTReader direct = new QTReader()) {
+      direct.setId(movie.getAbsolutePath());
+      expected = new byte[direct.getImageCount()][];
+      for (int plane = 0; plane < expected.length; plane++) {
+        expected[plane] = direct.openBytes(plane);
+      }
+    }
+
+    Memoizer seed = new Memoizer(new QTReader(), 0, memoDirectory);
+    seed.setId(movie.getAbsolutePath());
+    assertTrue(seed.isSavedToMemo());
+    seed.close();
+
+    for (int plane = 0; plane < expected.length; plane++) {
+      Memoizer memoized = new Memoizer(new QTReader(), 0, memoDirectory);
+      memoized.setId(movie.getAbsolutePath());
+      assertTrue(memoized.isLoadedFromMemo());
+      assertEquals(memoized.openBytes(plane), expected[plane]);
+      memoized.close();
     }
   }
 

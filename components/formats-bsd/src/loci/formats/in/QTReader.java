@@ -94,7 +94,7 @@ public class QTReader extends FormatReader {
   private byte[] prevPixels;
 
   /** Previous plane number. */
-  private int prevPlane;
+  private int prevPlane = -1;
 
   /** Flag indicating whether we can safely use prevPixels. */
   private boolean canUsePrevious;
@@ -174,6 +174,8 @@ public class QTReader extends FormatReader {
 
     String code = codec;
     if (no >= getImageCount() - altPlanes) code = altCodec;
+
+    preparePreviousFrame(no, code);
 
     int offset = offsets.get(no).intValue();
     int nextOffset = (int) pixelBytes;
@@ -285,7 +287,8 @@ public class QTReader extends FormatReader {
       prevPixels = null;
       codec = altCodec = null;
       pixelOffset = pixelBytes = bitsPerPixel = rawSize = 0;
-      prevPlane = altPlanes = 0;
+      prevPlane = -1;
+      altPlanes = 0;
       canUsePrevious = false;
       scale = 0;
       chunkSizes = null;
@@ -408,6 +411,26 @@ public class QTReader extends FormatReader {
   }
 
   // -- Helper methods --
+
+  /**
+   * Rebuild the frame needed to decode a randomly accessed QTRLE delta frame.
+   */
+  private void preparePreviousFrame(int no, String code)
+    throws FormatException, IOException
+  {
+    if (no == 0 || !"rle ".equals(code) || code.equals(altCodec) ||
+      prevPlane == no || (prevPixels != null && prevPlane == no - 1))
+    {
+      return;
+    }
+
+    prevPixels = null;
+    prevPlane = -1;
+    canUsePrevious = false;
+    for (int plane = 0; plane < no; plane++) {
+      openBytes(plane);
+    }
+  }
 
   /** Parse all of the atoms in the file. */
   private void parse(int depth, long offset, long length)
