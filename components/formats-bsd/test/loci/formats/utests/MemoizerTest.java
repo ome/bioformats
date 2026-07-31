@@ -38,6 +38,8 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import loci.formats.Memoizer;
@@ -49,6 +51,20 @@ import org.testng.annotations.Test;
 
 
 public class MemoizerTest {
+
+  private static class FailingInstallMemoizer extends Memoizer {
+
+    FailingInstallMemoizer(FakeReader reader) {
+      super(reader, 0);
+    }
+
+    @Override
+    protected void installMemo(File source, File destination)
+      throws IOException
+    {
+      throw new IOException("expected installation failure");
+    }
+  }
 
   private static final String TEST_FILE =
     "test&pixelType=int8&sizeX=20&sizeY=20&sizeC=1&sizeZ=1&sizeT=1.fake";
@@ -272,6 +288,107 @@ public class MemoizerTest {
     assertFalse(memoFile.exists());
     reader.close();
     checkMemo(memoizer, id);
+  }
+
+  @Test
+  public void testMetadataOnlyPreservedOnSaveAndLoad() throws Exception {
+    OMEXMLService service = new ServiceFactory().getInstance(
+      OMEXMLService.class);
+    Memoizer memoizer = new Memoizer(reader, 0);
+
+    OMEXMLMetadata saveMetadata = service.createOMEXMLMetadata();
+    memoizer.setMetadataStore(saveMetadata);
+    memoizer.setId(id);
+    assertTrue(service.validateOMEXML(service.getOMEXML(saveMetadata)));
+    memoizer.close();
+
+    OMEXMLMetadata loadMetadata = service.createOMEXMLMetadata();
+    memoizer.setMetadataStore(loadMetadata);
+    memoizer.setId(id);
+    assertTrue(memoizer.isLoadedFromMemo());
+    assertTrue(service.validateOMEXML(service.getOMEXML(loadMetadata)));
+    memoizer.close();
+  }
+
+  @Test
+  public void testChangedDynamicOptionsInvalidateMemo() throws Exception {
+    DynamicMetadataOptions firstOptions = new DynamicMetadataOptions();
+    firstOptions.set("reader.option", "first");
+    reader.setMetadataOptions(firstOptions);
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    FakeReader secondReader = new FakeReader();
+    DynamicMetadataOptions secondOptions = new DynamicMetadataOptions();
+    secondOptions.set("reader.option", "second");
+    secondReader.setMetadataOptions(secondOptions);
+    Memoizer second = new Memoizer(secondReader, 0);
+    second.setId(id);
+    assertFalse(second.isLoadedFromMemo());
+    second.close();
+  }
+
+  @Test
+  public void testOptionsFileParticipatesInMemoCompatibility()
+    throws Exception
+  {
+    File optionsFile = new File(id + ".bfoptions");
+    Files.write(optionsFile.toPath(),
+      "[options]\nmetadata.level=MINIMUM\n".getBytes(StandardCharsets.UTF_8));
+
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    Memoizer unchanged = new Memoizer(new FakeReader(), 0);
+    unchanged.setId(id);
+    assertTrue(unchanged.isLoadedFromMemo());
+    unchanged.close();
+
+    Files.write(optionsFile.toPath(),
+      "[options]\nmetadata.level=ALL\n".getBytes(StandardCharsets.UTF_8));
+    Memoizer changed = new Memoizer(new FakeReader(), 0);
+    changed.setId(id);
+    assertFalse(changed.isLoadedFromMemo());
+    changed.close();
+  }
+
+  @Test
+  public void testChangedCompanionFileInvalidatesMemo() throws Exception {
+    File companion = new File(id + ".ini");
+    Files.write(companion.toPath(),
+      "sizeX=20\n".getBytes(StandardCharsets.UTF_8));
+
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    Memoizer unchanged = new Memoizer(new FakeReader(), 0);
+    unchanged.setId(id);
+    assertTrue(unchanged.isLoadedFromMemo());
+    unchanged.close();
+
+    Files.write(companion.toPath(),
+      "sizeX=200\n".getBytes(StandardCharsets.UTF_8));
+    Memoizer changed = new Memoizer(new FakeReader(), 0);
+    changed.setId(id);
+    assertFalse(changed.isLoadedFromMemo());
+    assertEquals(changed.getSizeX(), 200);
+    changed.close();
+  }
+
+  @Test
+  public void testInstallFailureIsNotReportedAsSaved() throws Exception {
+    Memoizer memoizer = new FailingInstallMemoizer(reader);
+    File memoFile = memoizer.getMemoFile(id);
+    memoizer.setId(id);
+    assertFalse(memoizer.isSavedToMemo());
+    assertFalse(memoFile.exists());
+    memoizer.close();
   }
 
 }

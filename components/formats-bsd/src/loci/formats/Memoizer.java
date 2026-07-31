@@ -38,6 +38,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ArrayIndexOutOfBoundsException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -1021,22 +1028,88 @@ public class Memoizer extends ReaderWrapper {
         LOGGER.error("output close failed", t);
       }
 
-      // Rename temporary file if successful.
-      // Any failures will have to be ignored.
-      // Note: renaming the tempfile with open
-      // resources can lead to segfaults
+      // Install the temporary file if serialization succeeded.
+      // Note: moving the tempfile with open resources can lead to segfaults.
       if (rv) {
-        if (!tempFile.renameTo(memoFile)) {
-          LOGGER.error("temp file rename returned false: {}", tempFile);
-        } else {
+        try {
+          installMemo(tempFile, memoFile);
           LOGGER.debug("saved memo file: {} ({} bytes)",
             memoFile, memoFile.length());
+        }
+        catch (IOException | SecurityException e) {
+          LOGGER.error("failed to install memo file: {}", memoFile, e);
+          rv = false;
         }
       }
 
       deleteQuietly(tempFile);
     }
     return rv;
+  }
+
+  /**
+   * Move a completed temporary memo into its final location.
+   *
+   * @param source completed temporary memo
+   * @param destination final memo path
+   * @throws IOException if the memo cannot be installed
+   */
+  protected void installMemo(File source, File destination)
+    throws IOException
+  {
+    try {
+      Files.move(source.toPath(), destination.toPath(),
+        StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+    }
+    catch (AtomicMoveNotSupportedException e) {
+      Files.move(source.toPath(), destination.toPath(),
+        StandardCopyOption.REPLACE_EXISTING);
+    }
+  }
+
+  private FileFingerprint[] createFileFingerprints() {
+    String[] usedFiles = reader.getUsedFiles();
+    FileFingerprint[] fingerprints = new FileFingerprint[usedFiles.length];
+    Location primaryParent = realFile.getAbsoluteFile().getParentFile();
+    Path primaryParentPath = primaryParent == null ? null :
+      Paths.get(primaryParent.getAbsolutePath()).normalize();
+
+    for (int i = 0; i < usedFiles.length; i++) {
+      Location usedFile = new Location(usedFiles[i]).getAbsoluteFile();
+      String path = usedFile.getAbsolutePath();
+      boolean relative = false;
+      if (primaryParentPath != null) {
+        try {
+          path = primaryParentPath.relativize(
+            Paths.get(path).normalize()).toString();
+          relative = true;
+        }
+        catch (IllegalArgumentException e) {
+          LOGGER.debug("Cannot make used file relative to primary file: {}",
+            path);
+        }
+      }
+      fingerprints[i] = new FileFingerprint(path, relative,
+        usedFile.exists(), usedFile.length(), usedFile.lastModified());
+    }
+    return fingerprints;
+  }
+
+  private boolean fileFingerprintsMatch(FileFingerprint[] fingerprints) {
+    Location primaryParent = realFile.getAbsoluteFile().getParentFile();
+    for (FileFingerprint fingerprint : fingerprints) {
+      Location usedFile = fingerprint.relative && primaryParent != null ?
+        new Location(primaryParent, fingerprint.path) :
+        new Location(fingerprint.path);
+      if (usedFile.exists() != fingerprint.exists ||
+        usedFile.length() != fingerprint.length ||
+        usedFile.lastModified() != fingerprint.lastModified)
+      {
+        LOGGER.debug("used file changed since memo creation: {}", usedFile);
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
