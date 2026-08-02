@@ -35,6 +35,13 @@ package loci.formats.in;
 
 /**
  * Holds metadata-related options.
+ *
+ * Memoized readers compare metadata options using {@link #equals(Object)}.
+ * Implementations that use value semantics should therefore override both
+ * {@code equals} and {@link #hashCode()} and include every option that can
+ * affect reader initialization. Implementations that retain identity equality
+ * are safe to use, but will cause memoized readers to be reinitialized rather
+ * than loaded from a memo file.
  */
 public interface MetadataOptions {
 

@@ -41,10 +41,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
 
 import loci.formats.Memoizer;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.FakeReader;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -52,6 +55,57 @@ import org.testng.annotations.Test;
 
 
 public class MemoizerTest {
+
+  public static class IdentityMetadataOptions implements MetadataOptions {
+
+    private MetadataLevel level = MetadataLevel.ALL;
+    private boolean validate;
+
+    @Override
+    public void setMetadataLevel(MetadataLevel metadataLevel) {
+      level = metadataLevel;
+    }
+
+    @Override
+    public MetadataLevel getMetadataLevel() {
+      return level;
+    }
+
+    @Override
+    public void setValidate(boolean validateMetadata) {
+      validate = validateMetadata;
+    }
+
+    @Override
+    public boolean isValidate() {
+      return validate;
+    }
+  }
+
+  public static final class ValueMetadataOptions
+    extends IdentityMetadataOptions
+  {
+
+    @Override
+    public boolean equals(Object other) {
+      if (this == other) {
+        return true;
+      }
+      if (other == null || getClass() != other.getClass()) {
+        return false;
+      }
+      ValueMetadataOptions options = (ValueMetadataOptions) other;
+      return getMetadataLevel() == options.getMetadataLevel() &&
+        isValidate() == options.isValidate();
+    }
+
+    @Override
+    public int hashCode() {
+      int result = getMetadataLevel() == null ? 0 :
+        getMetadataLevel().hashCode();
+      return 31 * result + (isValidate() ? 1 : 0);
+    }
+  }
 
   private static class FailingInstallMemoizer extends Memoizer {
 
@@ -84,6 +138,18 @@ public class MemoizerTest {
 
   private static File createTempDir() throws Exception {
     return Files.createTempDirectory(TMP_PREFIX).toFile();
+  }
+
+  private static byte[] utf8(String value) {
+    return value.getBytes(StandardCharsets.UTF_8);
+  }
+
+  private static void setDifferentModificationTime(File file,
+    long previousTime) throws Exception
+  {
+    Files.setLastModifiedTime(file.toPath(),
+      FileTime.fromMillis(previousTime + 2000));
+    assertFalse(file.lastModified() == previousTime);
   }
 
   private static void recursiveDeleteOnExit(File rootDir) {
@@ -345,12 +411,47 @@ public class MemoizerTest {
   }
 
   @Test
+  public void testValueMetadataOptionsLoadMemo() throws Exception {
+    reader.setMetadataOptions(new ValueMetadataOptions());
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    FakeReader secondReader = new FakeReader();
+    secondReader.setMetadataOptions(new ValueMetadataOptions());
+    Memoizer second = new Memoizer(secondReader, 0);
+    second.setId(id);
+    assertTrue(second.isLoadedFromMemo());
+    second.close();
+  }
+
+  @Test
+  public void testIdentityMetadataOptionsSafelyMissMemo() throws Exception {
+    reader.setMetadataOptions(new IdentityMetadataOptions());
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    FakeReader secondReader = new FakeReader();
+    secondReader.setMetadataOptions(new IdentityMetadataOptions());
+    Memoizer second = new Memoizer(secondReader, 0);
+    second.setId(id);
+    assertFalse(second.isLoadedFromMemo());
+    assertTrue(second.isSavedToMemo());
+    second.close();
+  }
+
+  @Test
   public void testOptionsFileParticipatesInMemoCompatibility()
     throws Exception
   {
     File optionsFile = new File(id + ".bfoptions");
-    Files.write(optionsFile.toPath(),
-      "[options]\nmetadata.level=MINIMUM\n".getBytes(StandardCharsets.UTF_8));
+    byte[] firstContents = utf8("[options]\nreader.option=first\n");
+    byte[] changedContents = utf8("[options]\nreader.option=other\n");
+    assertEquals(firstContents.length, changedContents.length);
+    Files.write(optionsFile.toPath(), firstContents);
 
     Memoizer first = new Memoizer(reader, 0);
     first.setId(id);
@@ -362,19 +463,29 @@ public class MemoizerTest {
     assertTrue(unchanged.isLoadedFromMemo());
     unchanged.close();
 
-    Files.write(optionsFile.toPath(),
-      "[options]\nmetadata.level=ALL\n".getBytes(StandardCharsets.UTF_8));
+    long previousTime = optionsFile.lastModified();
+    Files.write(optionsFile.toPath(), changedContents);
+    Files.setLastModifiedTime(optionsFile.toPath(),
+      FileTime.fromMillis(previousTime));
+    assertEquals(optionsFile.length(), (long) firstContents.length);
+    assertEquals(optionsFile.lastModified(), previousTime);
+
     Memoizer changed = new Memoizer(new FakeReader(), 0);
     changed.setId(id);
     assertFalse(changed.isLoadedFromMemo());
+    assertTrue(changed.isSavedToMemo());
     changed.close();
+
+    Memoizer replacement = new Memoizer(new FakeReader(), 0);
+    replacement.setId(id);
+    assertTrue(replacement.isLoadedFromMemo());
+    replacement.close();
   }
 
   @Test
   public void testChangedCompanionFileInvalidatesMemo() throws Exception {
     File companion = new File(id + ".ini");
-    Files.write(companion.toPath(),
-      "sizeX=20\n".getBytes(StandardCharsets.UTF_8));
+    Files.write(companion.toPath(), utf8("sizeX=20\n"));
 
     Memoizer first = new Memoizer(reader, 0);
     first.setId(id);
@@ -386,13 +497,70 @@ public class MemoizerTest {
     assertTrue(unchanged.isLoadedFromMemo());
     unchanged.close();
 
-    Files.write(companion.toPath(),
-      "sizeX=200\n".getBytes(StandardCharsets.UTF_8));
+    long previousTime = companion.lastModified();
+    Files.write(companion.toPath(), utf8("sizeX=30\n"));
+    setDifferentModificationTime(companion, previousTime);
     Memoizer changed = new Memoizer(new FakeReader(), 0);
     changed.setId(id);
     assertFalse(changed.isLoadedFromMemo());
-    assertEquals(changed.getSizeX(), 200);
+    assertTrue(changed.isSavedToMemo());
+    assertEquals(changed.getSizeX(), 30);
     changed.close();
+
+    Memoizer replacement = new Memoizer(new FakeReader(), 0);
+    replacement.setId(id);
+    assertTrue(replacement.isLoadedFromMemo());
+    assertEquals(replacement.getSizeX(), 30);
+    replacement.close();
+  }
+
+  @Test
+  public void testAddedCompanionFileInvalidatesMemo() throws Exception {
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+
+    File companion = new File(id + ".ini");
+    Files.write(companion.toPath(), utf8("sizeX=30\n"));
+
+    Memoizer changed = new Memoizer(new FakeReader(), 0);
+    changed.setId(id);
+    assertFalse(changed.isLoadedFromMemo());
+    assertTrue(changed.isSavedToMemo());
+    assertEquals(changed.getSizeX(), 30);
+    changed.close();
+
+    Memoizer replacement = new Memoizer(new FakeReader(), 0);
+    replacement.setId(id);
+    assertTrue(replacement.isLoadedFromMemo());
+    assertEquals(replacement.getSizeX(), 30);
+    replacement.close();
+  }
+
+  @Test
+  public void testDeletedCompanionFileInvalidatesMemo() throws Exception {
+    File companion = new File(id + ".ini");
+    Files.write(companion.toPath(), utf8("sizeX=30\n"));
+
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    assertTrue(first.isSavedToMemo());
+    first.close();
+    assertTrue(companion.delete());
+
+    Memoizer changed = new Memoizer(new FakeReader(), 0);
+    changed.setId(id);
+    assertFalse(changed.isLoadedFromMemo());
+    assertTrue(changed.isSavedToMemo());
+    assertEquals(changed.getSizeX(), 20);
+    changed.close();
+
+    Memoizer replacement = new Memoizer(new FakeReader(), 0);
+    replacement.setId(id);
+    assertTrue(replacement.isLoadedFromMemo());
+    assertEquals(replacement.getSizeX(), 20);
+    replacement.close();
   }
 
   @Test
@@ -403,6 +571,44 @@ public class MemoizerTest {
     assertFalse(memoizer.isSavedToMemo());
     assertFalse(memoFile.exists());
     memoizer.close();
+
+    File[] files = idDir.listFiles();
+    assertTrue(files != null);
+    for (File file : files) {
+      assertFalse(file.getName().contains(".bfmemo."));
+    }
+  }
+
+  @Test
+  public void testFailedReplacementIsNotReportedAsSaved() throws Exception {
+    File companion = new File(id + ".ini");
+    Files.write(companion.toPath(), utf8("sizeX=20\n"));
+
+    Memoizer first = new Memoizer(reader, 0);
+    first.setId(id);
+    File memoFile = first.getMemoFile();
+    assertTrue(first.isSavedToMemo());
+    first.close();
+    assertTrue(memoFile.exists());
+
+    long previousTime = companion.lastModified();
+    Files.write(companion.toPath(), utf8("sizeX=30\n"));
+    setDifferentModificationTime(companion, previousTime);
+
+    Memoizer failed = new FailingInstallMemoizer(new FakeReader());
+    failed.setId(id);
+    assertFalse(failed.isLoadedFromMemo());
+    assertFalse(failed.isSavedToMemo());
+    assertEquals(failed.getSizeX(), 30);
+    assertTrue(memoFile.exists());
+    failed.close();
+
+    Memoizer replacement = new Memoizer(new FakeReader(), 0);
+    replacement.setId(id);
+    assertFalse(replacement.isLoadedFromMemo());
+    assertTrue(replacement.isSavedToMemo());
+    assertEquals(replacement.getSizeX(), 30);
+    replacement.close();
   }
 
   @Test
@@ -427,6 +633,29 @@ public class MemoizerTest {
     assertTrue(first.startsWith("UNC" + File.separator));
     assertTrue(second.startsWith("UNC" + File.separator));
     assertFalse(first.equals(second));
+  }
+
+  @Test
+  public void testWindowsMemoFilePreservesVolumeIdentity() throws Exception {
+    if (File.separatorChar != '\\') {
+      return;
+    }
+    File directory = createTempDir();
+    Memoizer memoizer = new Memoizer(0, directory);
+    File driveC = memoizer.getMemoFile("C:\\somedir\\foo.nd2");
+    File driveD = memoizer.getMemoFile("D:\\somedir\\foo.nd2");
+    File firstShare = memoizer.getMemoFile(
+      "\\\\server\\first\\foo.nd2");
+    File secondShare = memoizer.getMemoFile(
+      "\\\\server\\second\\foo.nd2");
+
+    assertFalse(driveC.equals(driveD));
+    assertFalse(firstShare.equals(secondShare));
+    assertTrue(driveC.toPath().startsWith(directory.toPath()));
+    assertTrue(driveD.toPath().startsWith(directory.toPath()));
+    assertTrue(firstShare.toPath().startsWith(directory.toPath()));
+    assertTrue(secondShare.toPath().startsWith(directory.toPath()));
+    recursiveDeleteOnExit(directory);
   }
 
 }
