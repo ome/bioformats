@@ -178,7 +178,7 @@ public class QTReader extends FormatReader {
     preparePreviousFrame(no, code);
 
     int offset = offsets.get(no).intValue();
-    int nextOffset = (int) pixelBytes;
+    int nextOffset = (int) (pixelOffset + pixelBytes);
 
     scale = offsets.get(0).intValue();
     offset -= scale;
@@ -472,11 +472,12 @@ public class QTReader extends FormatReader {
         if (atomType.equals("mdat")) {
           // we've found the pixel data
           pixelOffset = in.getFilePointer();
-          pixelBytes = offset + atomSize;
+          long pixelEnd = offset + atomSize;
 
-          if (pixelBytes > in.length()) {
-            pixelBytes = in.length();
+          if (pixelEnd > in.length()) {
+            pixelEnd = in.length();
           }
+          pixelBytes = pixelEnd - pixelOffset;
         }
         else if (atomType.equals("tkhd")) {
           // we've found the dimensions
@@ -537,9 +538,9 @@ public class QTReader extends FormatReader {
           if (numPlanes != getImageCount()) {
             int off = in.readInt();
             offsets.add(off);
-            for (int i=1; i<getImageCount(); i++) {
-              if (i - 1 < chunkSizes.size()) {
-                rawSize = chunkSizes.get(i - 1).intValue();
+            for (int i=0; i<getImageCount() - 1; i++) {
+              if (chunkSizes.size() > 0 && i < chunkSizes.size()) {
+                rawSize = chunkSizes.get(i).intValue();
               }
               else i = getImageCount();
               off += rawSize;

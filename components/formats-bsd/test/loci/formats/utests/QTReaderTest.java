@@ -108,17 +108,19 @@ public class QTReaderTest {
       }
     }
 
-    Memoizer seed = new Memoizer(new QTReader(), 0, memoDirectory);
-    seed.setId(movie.getAbsolutePath());
-    assertTrue(seed.isSavedToMemo());
-    seed.close();
+    try (Memoizer seed = new Memoizer(new QTReader(), 0, memoDirectory)) {
+      seed.setId(movie.getAbsolutePath());
+      assertTrue(seed.isSavedToMemo());
+    }
 
     for (int plane = 0; plane < expected.length; plane++) {
-      Memoizer memoized = new Memoizer(new QTReader(), 0, memoDirectory);
-      memoized.setId(movie.getAbsolutePath());
-      assertTrue(memoized.isLoadedFromMemo());
-      assertEquals(memoized.openBytes(plane), expected[plane]);
-      memoized.close();
+      try (Memoizer memoized =
+        new Memoizer(new QTReader(), 0, memoDirectory))
+      {
+        memoized.setId(movie.getAbsolutePath());
+        assertTrue(memoized.isLoadedFromMemo());
+        assertEquals(memoized.openBytes(plane), expected[plane]);
+      }
     }
   }
 
