@@ -240,154 +240,169 @@ public class MemoizerTest {
 
   @Test
   public void testDefaultConstructor() throws Exception {
-    Memoizer memoizer = new Memoizer();
-    checkMemoFile(memoizer.getMemoFile(id));
+    try (Memoizer memoizer = new Memoizer()) {
+      checkMemoFile(memoizer.getMemoFile(id));
+    }
   }
 
   @Test
   public void testNullReader() throws Exception {
-    Memoizer memoizer = new Memoizer(null);
-    checkMemoFile(memoizer.getMemoFile(id));
+    try (Memoizer memoizer = new Memoizer(null)) {
+      checkMemoFile(memoizer.getMemoFile(id));
+    }
   }
 
   @Test
   public void testConstructorTimeElapsed() throws Exception {
-    Memoizer memoizer = new Memoizer(0);
-    checkMemoFile(memoizer.getMemoFile(id));
-    checkMemo(memoizer, id);
+    try (Memoizer memoizer = new Memoizer(0)) {
+      checkMemoFile(memoizer.getMemoFile(id));
+      checkMemo(memoizer, id);
+    }
   }
 
   @Test
   public void testConstructorReader() throws Exception {
-    Memoizer memoizer = new Memoizer(reader);
-    checkMemoFile(memoizer.getMemoFile(id));
+    try (Memoizer memoizer = new Memoizer(reader)) {
+      checkMemoFile(memoizer.getMemoFile(id));
+    }
   }
 
   @Test
   public void testConstructorReaderTimeElapsed() throws Exception {
-    Memoizer memoizer = new Memoizer(reader, 0);
-    checkMemoFile(memoizer.getMemoFile(id));
-    checkMemo(memoizer, id);
+    try (Memoizer memoizer = new Memoizer(reader, 0)) {
+      checkMemoFile(memoizer.getMemoFile(id));
+      checkMemo(memoizer, id);
+    }
   }
 
   @Test
   public void testConstructorTimeElapsedDirectory() throws Exception {
     File directory = createTempDir();
     directory.delete();
-    Memoizer memoizer = new Memoizer(0, directory);
-    // Check non-existing memo directory returns null
-    assertNull(memoizer.getMemoFile(id));
-    directory.mkdirs();
-    checkMemoFile(memoizer.getMemoFile(id),
-      getExpectedCacheDirectory(directory));
-    checkMemo(memoizer, id);
+    try (Memoizer memoizer = new Memoizer(0, directory)) {
+      // Check non-existing memo directory returns null
+      assertNull(memoizer.getMemoFile(id));
+      directory.mkdirs();
+      checkMemoFile(memoizer.getMemoFile(id),
+        getExpectedCacheDirectory(directory));
+      checkMemo(memoizer, id);
+    }
     recursiveDeleteOnExit(directory);
   }
 
   @Test
   public void testConstructorTimeElapsedNull() throws Exception {
-    Memoizer memoizer = new Memoizer(0, null);
-    // Check null memo directory returns null
-    assertNull(memoizer.getMemoFile(id));
-    checkNoMemo(memoizer, id);
+    try (Memoizer memoizer = new Memoizer(0, null)) {
+      // Check null memo directory returns null
+      assertNull(memoizer.getMemoFile(id));
+      checkNoMemo(memoizer, id);
+    }
   }
 
   @Test
   public void testConstructorReaderTimeElapsedDirectory() throws Exception {
     File directory = createTempDir();
     directory.delete();
-    Memoizer memoizer = new Memoizer(reader, 0, directory);
-    // Check non-existing memo directory returns null
-    assertNull(memoizer.getMemoFile(id));
-    directory.mkdirs();
-    checkMemoFile(memoizer.getMemoFile(id),
-      getExpectedCacheDirectory(directory));
-    checkMemo(memoizer, id);
+    try (Memoizer memoizer = new Memoizer(reader, 0, directory)) {
+      // Check non-existing memo directory returns null
+      assertNull(memoizer.getMemoFile(id));
+      directory.mkdirs();
+      checkMemoFile(memoizer.getMemoFile(id),
+        getExpectedCacheDirectory(directory));
+      checkMemo(memoizer, id);
+    }
     recursiveDeleteOnExit(directory);
   }
 
   @Test
   public void testConstructorReaderTimeElapsedNull() throws Exception {
-    Memoizer memoizer = new Memoizer(reader, 0, null);
-    // Check null memo directory returns null
-    assertNull(memoizer.getMemoFile(id));
-    checkNoMemo(memoizer, id);
+    try (Memoizer memoizer = new Memoizer(reader, 0, null)) {
+      // Check null memo directory returns null
+      assertNull(memoizer.getMemoFile(id));
+      checkNoMemo(memoizer, id);
+    }
   }
 
   @Test
   public void testGetMemoFilePermissionsDirectory() throws Exception {
     File directory = createTempDir();
-    Memoizer memoizer = new Memoizer(reader, 0, directory);
-    if (directory.setWritable(false)) {
-      assertNull(memoizer.getMemoFile(id));
+    try (Memoizer memoizer = new Memoizer(reader, 0, directory)) {
+      if (directory.setWritable(false)) {
+        assertNull(memoizer.getMemoFile(id));
+      }
     }
   }
 
   @Test
   public void testGetMemoFilePermissionsInPlaceDirectory() throws Exception {
-    Memoizer memoizer = new Memoizer(reader, 0, idDir);
-    if (idDir.setWritable(false)) {
-      assertNull(memoizer.getMemoFile(id));
+    try (Memoizer memoizer = new Memoizer(reader, 0, idDir)) {
+      if (idDir.setWritable(false)) {
+        assertNull(memoizer.getMemoFile(id));
+      }
     }
   }
 
   @Test
   public void testGetMemoFilePermissionsInPlace() throws Exception {
-    Memoizer memoizer = new Memoizer(reader);
-    if (idDir.setWritable(false)) {
-      assertNull(memoizer.getMemoFile(id));
+    try (Memoizer memoizer = new Memoizer(reader)) {
+      if (idDir.setWritable(false)) {
+        assertNull(memoizer.getMemoFile(id));
+      }
     }
   }
 
   @Test
   public void testRelocate() throws Exception {
     // Create an in-place memo file
-    Memoizer memoizer = new Memoizer(reader, 0);
-    memoizer.setId(id);
-    memoizer.close();
-    assertFalse(memoizer.isLoadedFromMemo());
-    assertTrue(memoizer.isSavedToMemo());
+    try (Memoizer memoizer = new Memoizer(reader, 0)) {
+      memoizer.setId(id);
+      memoizer.close();
+      assertFalse(memoizer.isLoadedFromMemo());
+      assertTrue(memoizer.isSavedToMemo());
 
-    // Rename the directory (including the file and the memo file)
-    File newidDir = new File(idDir.getAbsolutePath() + ".new");
-    idDir.renameTo(newidDir);
-    File newtempFile = new File(newidDir, TEST_FILE);
-    String newid = newtempFile.getAbsolutePath();
+      // Rename the directory (including the file and the memo file)
+      File newidDir = new File(idDir.getAbsolutePath() + ".new");
+      idDir.renameTo(newidDir);
+      File newtempFile = new File(newidDir, TEST_FILE);
+      String newid = newtempFile.getAbsolutePath();
 
-    // Try to reopen the file with the Memoizer
-    memoizer.setId(newid);
-    memoizer.close();
-    assertTrue(memoizer.isLoadedFromMemo());
-    assertFalse(memoizer.isSavedToMemo());
-    recursiveDeleteOnExit(newidDir);
+      // Try to reopen the file with the Memoizer
+      memoizer.setId(newid);
+      memoizer.close();
+      assertTrue(memoizer.isLoadedFromMemo());
+      assertFalse(memoizer.isSavedToMemo());
+      recursiveDeleteOnExit(newidDir);
+    }
   }
 
   @Test
   public void testDeleteMemo() throws Exception {
     // Create an in-place memo file
-    Memoizer memoizer = new Memoizer(reader, 0);
-    memoizer.setId(id);
-    memoizer.close();
-    assertFalse(memoizer.isLoadedFromMemo());
-    assertTrue(memoizer.isSavedToMemo());
+    try (Memoizer memoizer = new Memoizer(reader, 0)) {
+      memoizer.setId(id);
+      memoizer.close();
+      assertFalse(memoizer.isLoadedFromMemo());
+      assertTrue(memoizer.isSavedToMemo());
 
-    // attempt to delete the memo file, and make sure it's really gone
-    File currentMemoFile = memoizer.getMemoFile();
-    assertTrue(currentMemoFile.exists());
-    boolean success = memoizer.deleteMemo();
-    assertTrue(success);
-    assertFalse(currentMemoFile.exists());
+      // attempt to delete the memo file, and make sure it's really gone
+      File currentMemoFile = memoizer.getMemoFile();
+      assertTrue(currentMemoFile.exists());
+      boolean success = memoizer.deleteMemo();
+      assertTrue(success);
+      assertFalse(currentMemoFile.exists());
+    }
   }
 
   @Test
   public void testWrappedReader() throws Exception {
-    Memoizer memoizer = new Memoizer(reader, 0);
-    File memoFile = memoizer.getMemoFile(id);
-    assertFalse(memoFile.exists());
-    reader.setId(id);
-    assertFalse(memoFile.exists());
-    reader.close();
-    checkMemo(memoizer, id);
+    try (Memoizer memoizer = new Memoizer(reader, 0)) {
+      File memoFile = memoizer.getMemoFile(id);
+      assertFalse(memoFile.exists());
+      reader.setId(id);
+      assertFalse(memoFile.exists());
+      reader.close();
+      checkMemo(memoizer, id);
+    }
   }
 
   @Test
@@ -395,52 +410,52 @@ public class MemoizerTest {
     DynamicMetadataOptions firstOptions = new DynamicMetadataOptions();
     firstOptions.set("reader.option", "first");
     reader.setMetadataOptions(firstOptions);
-    Memoizer first = new Memoizer(reader, 0);
-    first.setId(id);
-    assertTrue(first.isSavedToMemo());
-    first.close();
+    try (Memoizer first = new Memoizer(reader, 0)) {
+      first.setId(id);
+      assertTrue(first.isSavedToMemo());
+    }
 
     FakeReader secondReader = new FakeReader();
     DynamicMetadataOptions secondOptions = new DynamicMetadataOptions();
     secondOptions.set("reader.option", "second");
     secondReader.setMetadataOptions(secondOptions);
-    Memoizer second = new Memoizer(secondReader, 0);
-    second.setId(id);
-    assertFalse(second.isLoadedFromMemo());
-    second.close();
+    try (Memoizer second = new Memoizer(secondReader, 0)) {
+      second.setId(id);
+      assertFalse(second.isLoadedFromMemo());
+    }
   }
 
   @Test
   public void testValueMetadataOptionsLoadMemo() throws Exception {
     reader.setMetadataOptions(new ValueMetadataOptions());
-    Memoizer first = new Memoizer(reader, 0);
-    first.setId(id);
-    assertTrue(first.isSavedToMemo());
-    first.close();
+    try (Memoizer first = new Memoizer(reader, 0)) {
+      first.setId(id);
+      assertTrue(first.isSavedToMemo());
+    }
 
     FakeReader secondReader = new FakeReader();
     secondReader.setMetadataOptions(new ValueMetadataOptions());
-    Memoizer second = new Memoizer(secondReader, 0);
-    second.setId(id);
-    assertTrue(second.isLoadedFromMemo());
-    second.close();
+    try (Memoizer second = new Memoizer(secondReader, 0)) {
+      second.setId(id);
+      assertTrue(second.isLoadedFromMemo());
+    }
   }
 
   @Test
   public void testIdentityMetadataOptionsSafelyMissMemo() throws Exception {
     reader.setMetadataOptions(new IdentityMetadataOptions());
-    Memoizer first = new Memoizer(reader, 0);
-    first.setId(id);
-    assertTrue(first.isSavedToMemo());
-    first.close();
+    try (Memoizer first = new Memoizer(reader, 0)) {
+      first.setId(id);
+      assertTrue(first.isSavedToMemo());
+    }
 
     FakeReader secondReader = new FakeReader();
     secondReader.setMetadataOptions(new IdentityMetadataOptions());
-    Memoizer second = new Memoizer(secondReader, 0);
-    second.setId(id);
-    assertFalse(second.isLoadedFromMemo());
-    assertTrue(second.isSavedToMemo());
-    second.close();
+    try (Memoizer second = new Memoizer(secondReader, 0)) {
+      second.setId(id);
+      assertFalse(second.isLoadedFromMemo());
+      assertTrue(second.isSavedToMemo());
+    }
   }
 
   @Test
@@ -453,15 +468,15 @@ public class MemoizerTest {
     assertEquals(firstContents.length, changedContents.length);
     Files.write(optionsFile.toPath(), firstContents);
 
-    Memoizer first = new Memoizer(reader, 0);
-    first.setId(id);
-    assertTrue(first.isSavedToMemo());
-    first.close();
+    try (Memoizer first = new Memoizer(reader, 0)) {
+      first.setId(id);
+      assertTrue(first.isSavedToMemo());
+    }
 
-    Memoizer unchanged = new Memoizer(new FakeReader(), 0);
-    unchanged.setId(id);
-    assertTrue(unchanged.isLoadedFromMemo());
-    unchanged.close();
+    try (Memoizer unchanged = new Memoizer(new FakeReader(), 0)) {
+      unchanged.setId(id);
+      assertTrue(unchanged.isLoadedFromMemo());
+    }
 
     long previousTime = optionsFile.lastModified();
     Files.write(optionsFile.toPath(), changedContents);
@@ -470,16 +485,16 @@ public class MemoizerTest {
     assertEquals(optionsFile.length(), (long) firstContents.length);
     assertEquals(optionsFile.lastModified(), previousTime);
 
-    Memoizer changed = new Memoizer(new FakeReader(), 0);
-    changed.setId(id);
-    assertFalse(changed.isLoadedFromMemo());
-    assertTrue(changed.isSavedToMemo());
-    changed.close();
+    try (Memoizer changed = new Memoizer(new FakeReader(), 0)) {
+      changed.setId(id);
+      assertFalse(changed.isLoadedFromMemo());
+      assertTrue(changed.isSavedToMemo());
+    }
 
-    Memoizer replacement = new Memoizer(new FakeReader(), 0);
-    replacement.setId(id);
-    assertTrue(replacement.isLoadedFromMemo());
-    replacement.close();
+    try (Memoizer replacement = new Memoizer(new FakeReader(), 0)) {
+      replacement.setId(id);
+      assertTrue(replacement.isLoadedFromMemo());
+    }
   }
 
   @Test
@@ -487,55 +502,55 @@ public class MemoizerTest {
     File companion = new File(id + ".ini");
     Files.write(companion.toPath(), utf8("sizeX=20\n"));
 
-    Memoizer first = new Memoizer(reader, 0);
-    first.setId(id);
-    assertTrue(first.isSavedToMemo());
-    first.close();
+    try (Memoizer first = new Memoizer(reader, 0)) {
+      first.setId(id);
+      assertTrue(first.isSavedToMemo());
+    }
 
-    Memoizer unchanged = new Memoizer(new FakeReader(), 0);
-    unchanged.setId(id);
-    assertTrue(unchanged.isLoadedFromMemo());
-    unchanged.close();
+    try (Memoizer unchanged = new Memoizer(new FakeReader(), 0)) {
+      unchanged.setId(id);
+      assertTrue(unchanged.isLoadedFromMemo());
+    }
 
     long previousTime = companion.lastModified();
     Files.write(companion.toPath(), utf8("sizeX=30\n"));
     setDifferentModificationTime(companion, previousTime);
-    Memoizer changed = new Memoizer(new FakeReader(), 0);
-    changed.setId(id);
-    assertFalse(changed.isLoadedFromMemo());
-    assertTrue(changed.isSavedToMemo());
-    assertEquals(changed.getSizeX(), 30);
-    changed.close();
+    try (Memoizer changed = new Memoizer(new FakeReader(), 0)) {
+      changed.setId(id);
+      assertFalse(changed.isLoadedFromMemo());
+      assertTrue(changed.isSavedToMemo());
+      assertEquals(changed.getSizeX(), 30);
+    }
 
-    Memoizer replacement = new Memoizer(new FakeReader(), 0);
-    replacement.setId(id);
-    assertTrue(replacement.isLoadedFromMemo());
-    assertEquals(replacement.getSizeX(), 30);
-    replacement.close();
+    try (Memoizer replacement = new Memoizer(new FakeReader(), 0)) {
+      replacement.setId(id);
+      assertTrue(replacement.isLoadedFromMemo());
+      assertEquals(replacement.getSizeX(), 30);
+    }
   }
 
   @Test
   public void testAddedCompanionFileInvalidatesMemo() throws Exception {
-    Memoizer first = new Memoizer(reader, 0);
-    first.setId(id);
-    assertTrue(first.isSavedToMemo());
-    first.close();
+    try (Memoizer first = new Memoizer(reader, 0)) {
+      first.setId(id);
+      assertTrue(first.isSavedToMemo());
+    }
 
     File companion = new File(id + ".ini");
     Files.write(companion.toPath(), utf8("sizeX=30\n"));
 
-    Memoizer changed = new Memoizer(new FakeReader(), 0);
-    changed.setId(id);
-    assertFalse(changed.isLoadedFromMemo());
-    assertTrue(changed.isSavedToMemo());
-    assertEquals(changed.getSizeX(), 30);
-    changed.close();
+    try (Memoizer changed = new Memoizer(new FakeReader(), 0)) {
+      changed.setId(id);
+      assertFalse(changed.isLoadedFromMemo());
+      assertTrue(changed.isSavedToMemo());
+      assertEquals(changed.getSizeX(), 30);
+    }
 
-    Memoizer replacement = new Memoizer(new FakeReader(), 0);
-    replacement.setId(id);
-    assertTrue(replacement.isLoadedFromMemo());
-    assertEquals(replacement.getSizeX(), 30);
-    replacement.close();
+    try (Memoizer replacement = new Memoizer(new FakeReader(), 0)) {
+      replacement.setId(id);
+      assertTrue(replacement.isLoadedFromMemo());
+      assertEquals(replacement.getSizeX(), 30);
+    }
   }
 
   @Test
@@ -543,34 +558,34 @@ public class MemoizerTest {
     File companion = new File(id + ".ini");
     Files.write(companion.toPath(), utf8("sizeX=30\n"));
 
-    Memoizer first = new Memoizer(reader, 0);
-    first.setId(id);
-    assertTrue(first.isSavedToMemo());
-    first.close();
+    try (Memoizer first = new Memoizer(reader, 0)) {
+      first.setId(id);
+      assertTrue(first.isSavedToMemo());
+    }
     assertTrue(companion.delete());
 
-    Memoizer changed = new Memoizer(new FakeReader(), 0);
-    changed.setId(id);
-    assertFalse(changed.isLoadedFromMemo());
-    assertTrue(changed.isSavedToMemo());
-    assertEquals(changed.getSizeX(), 20);
-    changed.close();
+    try (Memoizer changed = new Memoizer(new FakeReader(), 0)) {
+      changed.setId(id);
+      assertFalse(changed.isLoadedFromMemo());
+      assertTrue(changed.isSavedToMemo());
+      assertEquals(changed.getSizeX(), 20);
+    }
 
-    Memoizer replacement = new Memoizer(new FakeReader(), 0);
-    replacement.setId(id);
-    assertTrue(replacement.isLoadedFromMemo());
-    assertEquals(replacement.getSizeX(), 20);
-    replacement.close();
+    try (Memoizer replacement = new Memoizer(new FakeReader(), 0)) {
+      replacement.setId(id);
+      assertTrue(replacement.isLoadedFromMemo());
+      assertEquals(replacement.getSizeX(), 20);
+    }
   }
 
   @Test
   public void testInstallFailureIsNotReportedAsSaved() throws Exception {
-    Memoizer memoizer = new FailingInstallMemoizer(reader);
-    File memoFile = memoizer.getMemoFile(id);
-    memoizer.setId(id);
-    assertFalse(memoizer.isSavedToMemo());
-    assertFalse(memoFile.exists());
-    memoizer.close();
+    try (Memoizer memoizer = new FailingInstallMemoizer(reader)) {
+      File memoFile = memoizer.getMemoFile(id);
+      memoizer.setId(id);
+      assertFalse(memoizer.isSavedToMemo());
+      assertFalse(memoFile.exists());
+    }
 
     File[] files = idDir.listFiles();
     assertTrue(files != null);
@@ -584,55 +599,60 @@ public class MemoizerTest {
     File companion = new File(id + ".ini");
     Files.write(companion.toPath(), utf8("sizeX=20\n"));
 
-    Memoizer first = new Memoizer(reader, 0);
-    first.setId(id);
-    File memoFile = first.getMemoFile();
-    assertTrue(first.isSavedToMemo());
-    first.close();
+    File memoFile;
+    try (Memoizer first = new Memoizer(reader, 0)) {
+      first.setId(id);
+      memoFile = first.getMemoFile();
+      assertTrue(first.isSavedToMemo());
+    }
     assertTrue(memoFile.exists());
 
     long previousTime = companion.lastModified();
     Files.write(companion.toPath(), utf8("sizeX=30\n"));
     setDifferentModificationTime(companion, previousTime);
 
-    Memoizer failed = new FailingInstallMemoizer(new FakeReader());
-    failed.setId(id);
-    assertFalse(failed.isLoadedFromMemo());
-    assertFalse(failed.isSavedToMemo());
-    assertEquals(failed.getSizeX(), 30);
-    assertTrue(memoFile.exists());
-    failed.close();
+    try (Memoizer failed =
+      new FailingInstallMemoizer(new FakeReader()))
+    {
+      failed.setId(id);
+      assertFalse(failed.isLoadedFromMemo());
+      assertFalse(failed.isSavedToMemo());
+      assertEquals(failed.getSizeX(), 30);
+      assertTrue(memoFile.exists());
+    }
 
-    Memoizer replacement = new Memoizer(new FakeReader(), 0);
-    replacement.setId(id);
-    assertFalse(replacement.isLoadedFromMemo());
-    assertTrue(replacement.isSavedToMemo());
-    assertEquals(replacement.getSizeX(), 30);
-    replacement.close();
+    try (Memoizer replacement = new Memoizer(new FakeReader(), 0)) {
+      replacement.setId(id);
+      assertFalse(replacement.isLoadedFromMemo());
+      assertTrue(replacement.isSavedToMemo());
+      assertEquals(replacement.getSizeX(), 30);
+    }
   }
 
   @Test
-  public void testWindowsDriveIsPartOfCachePath() {
-    CachePathMemoizer memoizer = new CachePathMemoizer();
-    String driveC = memoizer.cachePath("C:\\somedir\\foo.nd2");
-    String driveD = memoizer.cachePath("D:\\somedir\\foo.nd2");
+  public void testWindowsDriveIsPartOfCachePath() throws Exception {
+    try (CachePathMemoizer memoizer = new CachePathMemoizer()) {
+      String driveC = memoizer.cachePath("C:\\somedir\\foo.nd2");
+      String driveD = memoizer.cachePath("D:\\somedir\\foo.nd2");
 
-    assertEquals(driveC,
-      new File("C" + File.separator + "somedir", "foo.nd2").getPath());
-    assertEquals(driveD,
-      new File("D" + File.separator + "somedir", "foo.nd2").getPath());
-    assertFalse(driveC.equals(driveD));
+      assertEquals(driveC,
+        new File("C" + File.separator + "somedir", "foo.nd2").getPath());
+      assertEquals(driveD,
+        new File("D" + File.separator + "somedir", "foo.nd2").getPath());
+      assertFalse(driveC.equals(driveD));
+    }
   }
 
   @Test
-  public void testUncShareIsPartOfCachePath() {
-    CachePathMemoizer memoizer = new CachePathMemoizer();
-    String first = memoizer.cachePath("\\\\server\\first\\foo.nd2");
-    String second = memoizer.cachePath("\\\\server\\second\\foo.nd2");
+  public void testUncShareIsPartOfCachePath() throws Exception {
+    try (CachePathMemoizer memoizer = new CachePathMemoizer()) {
+      String first = memoizer.cachePath("\\\\server\\first\\foo.nd2");
+      String second = memoizer.cachePath("\\\\server\\second\\foo.nd2");
 
-    assertTrue(first.startsWith("UNC" + File.separator));
-    assertTrue(second.startsWith("UNC" + File.separator));
-    assertFalse(first.equals(second));
+      assertTrue(first.startsWith("UNC" + File.separator));
+      assertTrue(second.startsWith("UNC" + File.separator));
+      assertFalse(first.equals(second));
+    }
   }
 
   @Test
@@ -641,20 +661,21 @@ public class MemoizerTest {
       return;
     }
     File directory = createTempDir();
-    Memoizer memoizer = new Memoizer(0, directory);
-    File driveC = memoizer.getMemoFile("C:\\somedir\\foo.nd2");
-    File driveD = memoizer.getMemoFile("D:\\somedir\\foo.nd2");
-    File firstShare = memoizer.getMemoFile(
-      "\\\\server\\first\\foo.nd2");
-    File secondShare = memoizer.getMemoFile(
-      "\\\\server\\second\\foo.nd2");
+    try (Memoizer memoizer = new Memoizer(0, directory)) {
+      File driveC = memoizer.getMemoFile("C:\\somedir\\foo.nd2");
+      File driveD = memoizer.getMemoFile("D:\\somedir\\foo.nd2");
+      File firstShare = memoizer.getMemoFile(
+        "\\\\server\\first\\foo.nd2");
+      File secondShare = memoizer.getMemoFile(
+        "\\\\server\\second\\foo.nd2");
 
-    assertFalse(driveC.equals(driveD));
-    assertFalse(firstShare.equals(secondShare));
-    assertTrue(driveC.toPath().startsWith(directory.toPath()));
-    assertTrue(driveD.toPath().startsWith(directory.toPath()));
-    assertTrue(firstShare.toPath().startsWith(directory.toPath()));
-    assertTrue(secondShare.toPath().startsWith(directory.toPath()));
+      assertFalse(driveC.equals(driveD));
+      assertFalse(firstShare.equals(secondShare));
+      assertTrue(driveC.toPath().startsWith(directory.toPath()));
+      assertTrue(driveD.toPath().startsWith(directory.toPath()));
+      assertTrue(firstShare.toPath().startsWith(directory.toPath()));
+      assertTrue(secondShare.toPath().startsWith(directory.toPath()));
+    }
     recursiveDeleteOnExit(directory);
   }
 

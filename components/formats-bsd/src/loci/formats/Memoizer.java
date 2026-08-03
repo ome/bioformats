@@ -572,8 +572,8 @@ public class Memoizer extends ReaderWrapper {
 
   /**
    * Boolean specifying whether to invalidate the memo file based upon
-   * mismatched major/minor version numbers. By default, the Git commit hash
-   * is used to invalidate the memo file.
+   * mismatched major/minor version numbers. Release versions are not compared
+   * by default.
    */
   private boolean versionChecking = false;
 
@@ -763,9 +763,8 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   * Returns {@code true} if the version of the memo file as returned by
-   * {@link Deser#loadReleaseVersion()} and {@link Deser#loadRevision()}
-   * do not match the current version as specified by {@link FormatTools#VERSION}.
+   * Returns {@code true} if release-version checking is enabled and the
+   * memo's major/minor release does not match {@link FormatTools#VERSION}.
    */
   public boolean versionMismatch() throws IOException {
 
@@ -792,14 +791,6 @@ public class Memoizer extends ReaderWrapper {
         return true;
       }
 
-      // REVISION NUMBER
-      if (!versionChecking &&
-          FormatTools.VERSION.endsWith("-SNAPSHOT")) {
-        LOGGER.info("Development version: {}",
-          FormatTools.VERSION);
-        return true;
-      }
-
       return false;
   }
 
@@ -811,8 +802,8 @@ public class Memoizer extends ReaderWrapper {
    * calling code (e.g. 4.4) and the major/minor version saved in the memo
    * file (e.g. 5.0) will result in the memo file being invalidated.
    *
-   * If {@code false} (default), a mismatch in the Git commit hashes will
-   * invalidate the memo file.
+   * If {@code false} (default), the release version is not compared. Memo
+   * format compatibility is still checked using {@link #VERSION}.
    *
    * This method allows for less strict version checking.
    *
