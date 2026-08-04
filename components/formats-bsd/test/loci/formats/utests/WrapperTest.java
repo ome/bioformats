@@ -86,25 +86,30 @@ public class WrapperTest {
   }
 
   @Test(dataProvider = "wrappers")
-  public void testCoreMetadata(IFormatReader reader) {
-    assertNotNull(reader.getCurrentFile());
-    List<CoreMetadata> coreList = reader.getCoreMetadataList();
-    assertEquals(coreList.size(), reader.getSeriesCount());
-    for (int i=0; i<reader.getSeriesCount(); i++) {
-      CoreMetadata core = coreList.get(i);
-      reader.setSeries(i);
-      assertEquals(core.sizeX, reader.getSizeX());
-      assertEquals(core.sizeY, reader.getSizeY());
-      assertEquals(core.sizeZ, reader.getSizeZ());
-      assertEquals(core.sizeC, reader.getSizeC());
-      assertEquals(core.sizeT, reader.getSizeT());
-      assertEquals(core.pixelType, reader.getPixelType());
-      assertEquals(core.imageCount, reader.getImageCount());
-      assertEquals(core.dimensionOrder, reader.getDimensionOrder());
-      assertEquals(core.littleEndian, reader.isLittleEndian());
-      assertEquals(core.rgb, reader.isRGB());
-      assertEquals(core.interleaved, reader.isInterleaved());
-      assertEquals(core.indexed, reader.isIndexed());
+  public void testCoreMetadata(IFormatReader reader) throws IOException {
+    try {
+      assertNotNull(reader.getCurrentFile());
+      List<CoreMetadata> coreList = reader.getCoreMetadataList();
+      assertEquals(coreList.size(), reader.getSeriesCount());
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        CoreMetadata core = coreList.get(i);
+        reader.setSeries(i);
+        assertEquals(core.sizeX, reader.getSizeX());
+        assertEquals(core.sizeY, reader.getSizeY());
+        assertEquals(core.sizeZ, reader.getSizeZ());
+        assertEquals(core.sizeC, reader.getSizeC());
+        assertEquals(core.sizeT, reader.getSizeT());
+        assertEquals(core.pixelType, reader.getPixelType());
+        assertEquals(core.imageCount, reader.getImageCount());
+        assertEquals(core.dimensionOrder, reader.getDimensionOrder());
+        assertEquals(core.littleEndian, reader.isLittleEndian());
+        assertEquals(core.rgb, reader.isRGB());
+        assertEquals(core.interleaved, reader.isInterleaved());
+        assertEquals(core.indexed, reader.isIndexed());
+      }
+    }
+    finally {
+      reader.close();
     }
   }
 }

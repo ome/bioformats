@@ -31,6 +31,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -3068,25 +3073,25 @@ public class FormatReaderTest {
     try {
       // this should prevent conflicts when running multiple tests
       // on the same system and/or in multiple threads
-      String tmpdir = System.getProperty("java.io.tmpdir");
-      memoDir = new File(tmpdir, UUID.randomUUID().toString() + ".memo");
-      memoDir.mkdir();
-      Memoizer memo = new Memoizer(0, memoDir);
-      memo.setId(reader.getCurrentFile());
-      memo.close();
-      memoFile = memo.getMemoFile(reader.getCurrentFile());
-      if (!memo.isSavedToMemo()) {
-        result(testName, false, "Memo file not saved");
-      }
+      memoDir = Files.createTempDirectory(
+        UUID.randomUUID().toString() + ".memo").toFile();
+      try (Memoizer memo = new Memoizer(0, memoDir)) {
+        memo.setId(reader.getCurrentFile());
+        memo.close();
+        memoFile = memo.getMemoFile(reader.getCurrentFile());
+        if (!memo.isSavedToMemo()) {
+          result(testName, false, "Memo file not saved");
+        }
 
-      // first test memo file generated with current build
+        // first test memo file generated with current build
 
-      memo.setId(reader.getCurrentFile());
-      if (!memo.isLoadedFromMemo()) {
-        result(testName, false, "Memo file could not be loaded");
+        memo.setId(reader.getCurrentFile());
+        if (!memo.isLoadedFromMemo()) {
+          result(testName, false, "Memo file could not be loaded");
+        }
+        memo.openBytes(0, 0, 0, 1, 1);
+        memo.close();
       }
-      memo.openBytes(0, 0, 0, 1, 1);
-      memo.close();
 
       // now test pre-generated memo file in the cache directory
 
@@ -3105,15 +3110,16 @@ public class FormatReaderTest {
         expectedMemo = new File(expectedMemo, relativeName);
 
         if (expectedMemo.exists()) {
-          memo = new Memoizer(0, dir);
-          // do not allow an existing memo file to be overwritten
-          memo.skipSave(true);
-          memo.setId(reader.getCurrentFile());
-          if (!memo.isLoadedFromMemo()) {
-            result(testName, false, "Existing memo file could not be loaded");
+          try (Memoizer memo = new Memoizer(0, dir)) {
+            // do not allow an existing memo file to be overwritten
+            memo.skipSave(true);
+            memo.setId(reader.getCurrentFile());
+            if (!memo.isLoadedFromMemo()) {
+              result(testName, false, "Existing memo file could not be loaded");
+            }
+            memo.openBytes(0, 0, 0, 1, 1);
+            memo.close();
           }
-          memo.openBytes(0, 0, 0, 1, 1);
-          memo.close();
         }
         else {
           LOGGER.warn("Missing memo file {}; passing test anyway", expectedMemo);
@@ -3142,18 +3148,43 @@ public class FormatReaderTest {
           LOGGER.warn("memo file size not available");
         }
 
-        memoFile.delete();
-        // recursively delete, as the original file's path is replicated
-        // within the memo directory
-        while (!memoFile.getParentFile().equals(memoDir)) {
-          memoFile = memoFile.getParentFile();
-          memoFile.delete();
-        }
       }
       if (memoDir != null) {
-        memoDir.delete();
+        try {
+          deleteMemoDirectory(memoDir);
+        }
+        catch (IOException e) {
+          Assert.fail("Could not delete memo directory " + memoDir, e);
+        }
       }
     }
+  }
+
+  private static void deleteMemoDirectory(File root) throws IOException {
+    if (!root.exists()) {
+      return;
+    }
+    Files.walkFileTree(root.toPath(), new SimpleFileVisitor<Path>() {
+
+      @Override
+      public FileVisitResult visitFile(Path file,
+        BasicFileAttributes attributes) throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) {
+          throw failure;
+        }
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 
   @Test(groups = {"config"})
@@ -3195,10 +3226,11 @@ public class FormatReaderTest {
       return;
     }
     try {
-      Memoizer memo = new Memoizer(0, new File(cacheDir));
-      assert memo.generateMemo(reader.getCurrentFile());
-      File memoFile = memo.getMemoFile(reader.getCurrentFile());
-      LOGGER.info("Saved memo file to {}", memoFile);
+      try (Memoizer memo = new Memoizer(0, new File(cacheDir))) {
+        assert memo.generateMemo(reader.getCurrentFile());
+        File memoFile = memo.getMemoFile(reader.getCurrentFile());
+        LOGGER.info("Saved memo file to {}", memoFile);
+      }
     }
     catch (Throwable t) {
       LOGGER.info("", t);

@@ -40,8 +40,14 @@ import static org.testng.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.formats.Memoizer;
 import loci.formats.in.DynamicMetadataOptions;
@@ -135,9 +141,12 @@ public class MemoizerTest {
   private File idDir;
   private String id;
   private FakeReader reader;
+  private final List<Path> temporaryDirectories = new ArrayList<Path>();
 
-  private static File createTempDir() throws Exception {
-    return Files.createTempDirectory(TMP_PREFIX).toFile();
+  private File createTempDir() throws Exception {
+    Path directory = Files.createTempDirectory(TMP_PREFIX);
+    temporaryDirectories.add(directory);
+    return directory.toFile();
   }
 
   private static byte[] utf8(String value) {
@@ -152,18 +161,39 @@ public class MemoizerTest {
     assertFalse(file.lastModified() == previousTime);
   }
 
-  private static void recursiveDeleteOnExit(File rootDir) {
-    rootDir.deleteOnExit();
-    File[] children = rootDir.listFiles();
-    if (null != children) {
-      for (File child: children) {
-        if (child.isDirectory()) {
-          recursiveDeleteOnExit(child);
-        } else {
-          child.deleteOnExit();
-        }
-      }
+  private static void deleteRecursively(Path root) throws IOException {
+    if (!Files.exists(root)) {
+      return;
     }
+    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+
+      @Override
+      public FileVisitResult preVisitDirectory(Path directory,
+        BasicFileAttributes attributes) throws IOException
+      {
+        directory.toFile().setWritable(true);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFile(Path file,
+        BasicFileAttributes attributes) throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) {
+          throw failure;
+        }
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 
   private static void checkMemo(Memoizer memoizer, String id)
@@ -223,7 +253,7 @@ public class MemoizerTest {
     return new File(directory, cachePath);
   }
 
-  @BeforeMethod
+  @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     idDir = createTempDir();
     File tempFile = new File(idDir, TEST_FILE);
@@ -232,10 +262,34 @@ public class MemoizerTest {
     reader = new FakeReader(); // No setId !
   }
 
-  @AfterMethod
+  @AfterMethod(alwaysRun = true)
   public void tearDown() throws Exception {
-    reader.close();
-    recursiveDeleteOnExit(idDir);
+    Exception failure = null;
+    if (reader != null) {
+      try {
+        reader.close();
+      }
+      catch (Exception e) {
+        failure = e;
+      }
+    }
+    for (int i = temporaryDirectories.size() - 1; i >= 0; i--) {
+      try {
+        deleteRecursively(temporaryDirectories.get(i));
+      }
+      catch (Exception e) {
+        if (failure == null) {
+          failure = e;
+        }
+        else {
+          failure.addSuppressed(e);
+        }
+      }
+    }
+    temporaryDirectories.clear();
+    if (failure != null) {
+      throw failure;
+    }
   }
 
   @Test
@@ -287,7 +341,6 @@ public class MemoizerTest {
         getExpectedCacheDirectory(directory));
       checkMemo(memoizer, id);
     }
-    recursiveDeleteOnExit(directory);
   }
 
   @Test
@@ -311,7 +364,6 @@ public class MemoizerTest {
         getExpectedCacheDirectory(directory));
       checkMemo(memoizer, id);
     }
-    recursiveDeleteOnExit(directory);
   }
 
   @Test
@@ -362,7 +414,8 @@ public class MemoizerTest {
 
       // Rename the directory (including the file and the memo file)
       File newidDir = new File(idDir.getAbsolutePath() + ".new");
-      idDir.renameTo(newidDir);
+      temporaryDirectories.add(newidDir.toPath());
+      Files.move(idDir.toPath(), newidDir.toPath());
       File newtempFile = new File(newidDir, TEST_FILE);
       String newid = newtempFile.getAbsolutePath();
 
@@ -371,7 +424,6 @@ public class MemoizerTest {
       memoizer.close();
       assertTrue(memoizer.isLoadedFromMemo());
       assertFalse(memoizer.isSavedToMemo());
-      recursiveDeleteOnExit(newidDir);
     }
   }
 
@@ -588,7 +640,9 @@ public class MemoizerTest {
     }
 
     File[] files = idDir.listFiles();
-    assertTrue(files != null);
+    if (files == null) {
+      throw new AssertionError("Could not list temporary test directory");
+    }
     for (File file : files) {
       assertFalse(file.getName().contains(".bfmemo."));
     }
@@ -676,7 +730,6 @@ public class MemoizerTest {
       assertTrue(firstShare.toPath().startsWith(directory.toPath()));
       assertTrue(secondShare.toPath().startsWith(directory.toPath()));
     }
-    recursiveDeleteOnExit(directory);
   }
 
 }
