@@ -38,6 +38,7 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -79,7 +80,7 @@ public class SPWModelReaderTest {
 
   private IMetadata metadataWithNoLightSources;
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setUp() throws Exception {
     mock = new SPWModelMock(true);
     mockWithNoLightSources = new SPWModelMock(false);
@@ -105,14 +106,54 @@ public class SPWModelReaderTest {
     Element root = mock.getRoot().asXMLElement(document);
     SPWModelMock.postProcess(root, document, withBinData);
     // Write the OME DOM to the requested file
-    OutputStream stream = new FileOutputStream(file);
-    stream.write(SPWModelMock.asString(document).getBytes());
+    try (OutputStream stream = new FileOutputStream(file)) {
+      stream.write(SPWModelMock.asString(document).getBytes());
+    }
   }
 
-  @AfterClass
+  @AfterClass(alwaysRun = true)
   public void tearDown() throws Exception {
-    temporaryFile.delete();
-    temporaryFileWithNoLightSources.delete();
+    Exception failure = null;
+    if (reader != null) {
+      try {
+        reader.close();
+      }
+      catch (Exception e) {
+        failure = e;
+      }
+    }
+    if (readerWithNoLightSources != null) {
+      try {
+        readerWithNoLightSources.close();
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    if (temporaryFile != null) {
+      try {
+        Files.deleteIfExists(temporaryFile.toPath());
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    if (temporaryFileWithNoLightSources != null) {
+      try {
+        Files.deleteIfExists(temporaryFileWithNoLightSources.toPath());
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    reader = null;
+    readerWithNoLightSources = null;
+    temporaryFile = null;
+    temporaryFileWithNoLightSources = null;
+    if (failure != null) throw failure;
   }
 
   @Test

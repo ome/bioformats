@@ -35,6 +35,7 @@ package loci.formats.utests.tiff;
 import static org.testng.AssertJUnit.*;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import loci.common.services.ServiceFactory;
 import loci.formats.in.TiffReader;
@@ -75,8 +76,9 @@ public class OMETiffWriterBigTiffLargeImageWidthTest {
 
   private OMEXMLMetadata ms;
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setUp() throws Exception {
+    // Retain the fixture before metadata setup can fail.
     target = File.createTempFile("OMETiffWriterTest", ".ome.tiff");
 
     ServiceFactory sf = new ServiceFactory();
@@ -96,22 +98,23 @@ public class OMETiffWriterBigTiffLargeImageWidthTest {
     ms.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
   }
 
-  @AfterClass
+  @AfterClass(alwaysRun = true)
   public void tearDown() throws Exception {
-    target.delete();
+    if (target != null) Files.deleteIfExists(target.toPath());
   }
 
   @Test
   public void testImageWidthWrittenCorrectly() throws Exception {
-    OMETiffWriter writer = new OMETiffWriter();
-    writer.setBigTiff(true);
-    writer.setMetadataRetrieve(ms);
-    writer.setId(target.getAbsolutePath());
-    writer.saveBytes(0, buf, 0, 0, buf.length, 1);
-    writer.close();
-    TiffReader reader = new TiffReader();
-    reader.setId(target.getAbsolutePath());
-    assertEquals(SIZE_X, reader.getSizeX());
-    assertEquals(SIZE_Y, reader.getSizeY());
+    try (OMETiffWriter writer = new OMETiffWriter()) {
+      writer.setBigTiff(true);
+      writer.setMetadataRetrieve(ms);
+      writer.setId(target.getAbsolutePath());
+      writer.saveBytes(0, buf, 0, 0, buf.length, 1);
+    }
+    try (TiffReader reader = new TiffReader()) {
+      reader.setId(target.getAbsolutePath());
+      assertEquals(SIZE_X, reader.getSizeX());
+      assertEquals(SIZE_Y, reader.getSizeY());
+    }
   }
 }

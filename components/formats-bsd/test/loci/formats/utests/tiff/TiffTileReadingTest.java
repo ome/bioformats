@@ -36,9 +36,9 @@ import static org.testng.AssertJUnit.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import loci.formats.FormatException;
-import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -62,18 +62,38 @@ public class TiffTileReadingTest {
   private File file;
   private ImageReader reader;
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setUp() throws Exception {
+    // Retain the fixture before writing or reader setup can fail.
     file = File.createTempFile("tileTest", ".tiff");
     writeFile(TILE_SIZE * 2, TILE_SIZE * 2);
     reader = new ImageReader();
     reader.setId(file.getAbsolutePath());
   }
 
-  @AfterClass
+  @AfterClass(alwaysRun = true)
   public void tearDown() throws Exception {
-    reader.close();
-    file.delete();
+    Exception failure = null;
+    if (reader != null) {
+      try {
+        reader.close();
+      }
+      catch (Exception e) {
+        failure = e;
+      }
+    }
+    if (file != null) {
+      try {
+        Files.deleteIfExists(file.toPath());
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    reader = null;
+    file = null;
+    if (failure != null) throw failure;
   }
 
   @Test
@@ -119,24 +139,28 @@ public class TiffTileReadingTest {
     populateImage(meta, 0, width, height, 1, false);
 
     TiffWriter writer = new TiffWriter();
-    writer.setWriteSequentially(true);
-    writer.setMetadataRetrieve(meta);
-    writer.setId(file.getAbsolutePath());
+    try {
+      writer.setWriteSequentially(true);
+      writer.setMetadataRetrieve(meta);
+      writer.setId(file.getAbsolutePath());
 
-    IFD ifd = new IFD();
-    ifd.put(IFD.TILE_WIDTH, TILE_SIZE);
-    ifd.put(IFD.TILE_LENGTH, TILE_SIZE);
+      IFD ifd = new IFD();
+      ifd.put(IFD.TILE_WIDTH, TILE_SIZE);
+      ifd.put(IFD.TILE_LENGTH, TILE_SIZE);
 
-    byte[] tile = new byte[TILE_SIZE * TILE_SIZE];
-    for (int yy=0; yy<height; yy+=TILE_SIZE) {
-      for (int xx=0; xx<width; xx+=TILE_SIZE) {
-        for (int q=0; q<tile.length; q++) {
-          tile[q] = getValue(xx, q);
+      byte[] tile = new byte[TILE_SIZE * TILE_SIZE];
+      for (int yy=0; yy<height; yy+=TILE_SIZE) {
+        for (int xx=0; xx<width; xx+=TILE_SIZE) {
+          for (int q=0; q<tile.length; q++) {
+            tile[q] = getValue(xx, q);
+          }
+          writer.saveBytes(0, tile, ifd, xx, yy, TILE_SIZE, TILE_SIZE);
         }
-        writer.saveBytes(0, tile, ifd, xx, yy, TILE_SIZE, TILE_SIZE);
       }
     }
-    writer.close();
+    finally {
+      writer.close();
+    }
   }
 
   private byte getValue(int x, int tilePos) {
