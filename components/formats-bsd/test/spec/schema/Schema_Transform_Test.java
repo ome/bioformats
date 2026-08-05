@@ -37,6 +37,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -144,6 +147,7 @@ public class Schema_Transform_Test extends AbstractTest {
     private ServiceFactory factory;
     private OMEXMLService service;
     private IFormatReader reader;
+    private final List<Path> temporaryFiles = new ArrayList<Path>();
 
     /**
      * Validates the specified input.
@@ -186,7 +190,8 @@ public class Schema_Transform_Test extends AbstractTest {
                 resolver = new Resolver();
                 factory.setURIResolver(resolver);
                 output = File.createTempFile("tempFileName","."+ OME_XML);
-                output.deleteOnExit();
+                // Track the output before any later transform operation can fail.
+                temporaryFiles.add(output.toPath());
                 Source src = new StreamSource(stream);
                 Templates template = factory.newTemplates(src);
                 transformer = template.newTransformer();
@@ -214,7 +219,7 @@ public class Schema_Transform_Test extends AbstractTest {
      * @see AbstractServerTest#setUp()
      */
     @Override
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     protected void setUp() throws Exception {
         super.setUp();
         upgrades = new HashMap<String, List<String>>();
@@ -234,11 +239,31 @@ public class Schema_Transform_Test extends AbstractTest {
      * @see AbstractServerTest#tearDown()
      */
     @Override
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void tearDown() throws Exception {
-        downgrades.clear();
-        upgrades.clear();
-        reader.close();
+        Exception failure = null;
+        if (downgrades != null) downgrades.clear();
+        if (upgrades != null) upgrades.clear();
+        if (reader != null) {
+            try {
+                reader.close();
+            }
+            catch (Exception e) {
+                failure = e;
+            }
+        }
+        for (int i = temporaryFiles.size() - 1; i >= 0; i--) {
+            try {
+                Files.deleteIfExists(temporaryFiles.get(i));
+            }
+            catch (IOException e) {
+                if (failure == null) failure = e;
+                else failure.addSuppressed(e);
+            }
+        }
+        temporaryFiles.clear();
+        reader = null;
+        if (failure != null) throw failure;
     }
 
     /**
@@ -254,6 +279,8 @@ public class Schema_Transform_Test extends AbstractTest {
     {
         // First create an image
         File f = File.createTempFile("tempFileName","." + OME_XML);
+        // Retain every fixture immediately so failed tests cannot orphan it.
+        temporaryFiles.add(f.toPath());
         XMLMockObjects xml = new XMLMockObjects();
         XMLWriter writer = new XMLWriter();
         if (index == IMAGE_ROI) {

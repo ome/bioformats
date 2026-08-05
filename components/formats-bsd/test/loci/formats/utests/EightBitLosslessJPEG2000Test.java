@@ -35,9 +35,12 @@ package loci.formats.utests;
 import static org.testng.AssertJUnit.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
-import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -54,6 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -68,16 +72,19 @@ public class EightBitLosslessJPEG2000Test {
 
   private ArrayList<String> files = new ArrayList<String>();
   private byte[][] pixels = new byte[256][1];
+  private final List<Path> temporaryFiles = new ArrayList<Path>();
 
-  @BeforeMethod
+  @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     for (byte v=Byte.MIN_VALUE; v<Byte.MAX_VALUE; v++) {
       int index = v + Byte.MAX_VALUE + 1;
       pixels[index][0] = v;
 
       String file = index + ".jp2";
-      File tempFile = File.createTempFile("test", ".jp2");
-      tempFile.deleteOnExit();
+      Path tempPath = Files.createTempFile("test", ".jp2");
+      // Retain each fixture before metadata or writer setup can fail.
+      temporaryFiles.add(tempPath);
+      File tempFile = tempPath.toFile();
       Location.mapId(file, tempFile.getAbsolutePath());
       files.add(file);
 
@@ -97,11 +104,11 @@ public class EightBitLosslessJPEG2000Test {
 
       MetadataTools.populateMetadata(metadata, 0, "foo", false, "XYCZT",
         "uint8", 1, 1, 1, 1, 1, 1);
-      IFormatWriter writer = new JPEG2000Writer();
-      writer.setMetadataRetrieve(metadata);
-      writer.setId(file);
-      writer.saveBytes(0, pixels[index]);
-      writer.close();
+      try (IFormatWriter writer = new JPEG2000Writer()) {
+        writer.setMetadataRetrieve(metadata);
+        writer.setId(file);
+        writer.saveBytes(0, pixels[index]);
+      }
     }
   }
 
@@ -109,16 +116,36 @@ public class EightBitLosslessJPEG2000Test {
   public void testLosslessPixels() throws Exception {
     int failureCount = 0;
     for (int i=0; i<files.size(); i++) {
-      ImageReader reader = new ImageReader();
+      try (ImageReader reader = new ImageReader()) {
       reader.setId(files.get(i));
       byte[] plane = reader.openBytes(0);
       if (plane[0] != pixels[i][0]) {
         LOGGER.debug("FAILED on {}", pixels[i][0]);
         failureCount++;
       }
-      reader.close();
+      }
     }
     assertEquals(failureCount, 0);
+  }
+
+  @AfterMethod(alwaysRun = true)
+  public void tearDown() throws IOException {
+    IOException failure = null;
+    for (String file : files) {
+      Location.mapId(file, null);
+    }
+    for (Path path : temporaryFiles) {
+      try {
+        Files.deleteIfExists(path);
+      }
+      catch (IOException e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    files.clear();
+    temporaryFiles.clear();
+    if (failure != null) throw failure;
   }
 
 }
