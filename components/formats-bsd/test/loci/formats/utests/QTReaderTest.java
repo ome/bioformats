@@ -36,7 +36,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Base64;
 
 import loci.formats.Memoizer;
@@ -67,22 +72,29 @@ public class QTReaderTest {
     "AAAAFHN0Y28AAAAAAAAAAQAAACQAAAAhdWR0YQAAABmpc3dyAA1VxExhdmY2MC4xNi4xMDA=";
 
   private File testDirectory;
+  private Path testDirectoryPath;
   private File movie;
   private File memoDirectory;
 
-  @BeforeMethod
+  @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    testDirectory = Files.createTempDirectory(
-      QTReaderTest.class.getName()).toFile();
+    testDirectoryPath = Files.createTempDirectory(QTReaderTest.class.getName());
+    testDirectory = testDirectoryPath.toFile();
     movie = new File(testDirectory, "delta.mov");
     Files.write(movie.toPath(), Base64.getDecoder().decode(QTRLE_MOVIE));
     memoDirectory = new File(testDirectory, "memo");
     assertTrue(memoDirectory.mkdir());
   }
 
-  @AfterMethod
-  public void tearDown() {
-    deleteOnExit(testDirectory);
+  @AfterMethod(alwaysRun = true)
+  public void tearDown() throws Exception {
+    if (testDirectoryPath != null) {
+      deleteRecursively(testDirectoryPath);
+      testDirectoryPath = null;
+      testDirectory = null;
+      movie = null;
+      memoDirectory = null;
+    }
   }
 
   @Test
@@ -124,13 +136,30 @@ public class QTReaderTest {
     }
   }
 
-  private static void deleteOnExit(File file) {
-    File[] children = file.listFiles();
-    if (children != null) {
-      for (File child : children) {
-        deleteOnExit(child);
-      }
+  private static void deleteRecursively(Path root) throws IOException {
+    if (!Files.exists(root)) {
+      return;
     }
-    file.deleteOnExit();
+    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+
+      @Override
+      public FileVisitResult visitFile(Path file,
+        BasicFileAttributes attributes) throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) {
+          throw failure;
+        }
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 }
