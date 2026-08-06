@@ -138,8 +138,7 @@ public class TiffTileReadingTest {
     IMetadata meta = MetadataTools.createOMEXMLMetadata();
     populateImage(meta, 0, width, height, 1, false);
 
-    TiffWriter writer = new TiffWriter();
-    try {
+    try (TiffWriter writer = new TiffWriter()) {
       writer.setWriteSequentially(true);
       writer.setMetadataRetrieve(meta);
       writer.setId(file.getAbsolutePath());
@@ -157,9 +156,6 @@ public class TiffTileReadingTest {
           writer.saveBytes(0, tile, ifd, xx, yy, TILE_SIZE, TILE_SIZE);
         }
       }
-    }
-    finally {
-      writer.close();
     }
   }
 

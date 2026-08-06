@@ -331,8 +331,7 @@ public class PyramidTest {
       populateImage(meta, p, EXTRA_WIDTH, EXTRA_HEIGHT, planes, bigEndian);
     }
   
-    PyramidOMETiffWriter writer = new PyramidOMETiffWriter();
-    try {
+    try (PyramidOMETiffWriter writer = new PyramidOMETiffWriter()) {
       writer.setBigTiff(bigTiff);
       writer.setWriteSequentially(true);
       writer.setMetadataRetrieve(meta);
@@ -370,9 +369,6 @@ public class PyramidTest {
           writer.saveBytes(plane, extraPlane);
         }
       }
-    }
-    finally {
-      writer.close();
     }
   }
 

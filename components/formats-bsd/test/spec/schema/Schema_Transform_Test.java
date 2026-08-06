@@ -173,41 +173,28 @@ public class Schema_Transform_Test extends AbstractTest {
      * @throws Exception
      *             Thrown if an error occurred during the transformations.
      */
-    private File applyTransforms(File inputXML, List<InputStream> transforms)
+    private File applyTransforms(File inputXML, List<String> transforms)
             throws Exception {
-        TransformerFactory factory;
-        Transformer transformer;
-        InputStream stream;
-        Iterator<InputStream> i = transforms.iterator();
-        File output;
-        InputStream in = null;
-        OutputStream out = null;
-        Resolver resolver = null;
-        while (i.hasNext()) {
-            stream = i.next();
-            try {
-                factory = TransformerFactory.newInstance();
-                resolver = new Resolver();
+        for (String transform : transforms) {
+            File output = File.createTempFile("tempFileName","."+ OME_XML);
+            // Track the output before any later transform operation can fail.
+            temporaryFiles.add(output.toPath());
+            try (InputStream stream = getRequiredStream(transform);
+                 Resolver resolver = new Resolver()) {
+                TransformerFactory factory = TransformerFactory.newInstance();
                 factory.setURIResolver(resolver);
-                output = File.createTempFile("tempFileName","."+ OME_XML);
-                // Track the output before any later transform operation can fail.
-                temporaryFiles.add(output.toPath());
                 Source src = new StreamSource(stream);
                 Templates template = factory.newTemplates(src);
-                transformer = template.newTransformer();
+                Transformer transformer = template.newTransformer();
                 transformer.setParameter(OutputKeys.ENCODING, Constants.ENCODING);
-                out = new FileOutputStream(output);
-                in = new FileInputStream(inputXML);
-                transformer.transform(new StreamSource(in),
-                        new StreamResult(out));
+                try (InputStream in = new FileInputStream(inputXML);
+                     OutputStream out = new FileOutputStream(output)) {
+                    transformer.transform(new StreamSource(in),
+                            new StreamResult(out));
+                }
                 inputXML = output;
             } catch (Exception e) {
                 throw new Exception("Cannot apply transform", e);
-            } finally {
-                if (stream != null) stream.close();
-                if (out != null) out.close();
-                if (in != null) in.close();
-                if (resolver != null) resolver.close();
             }
         }
         return inputXML;
@@ -392,8 +379,7 @@ public class Schema_Transform_Test extends AbstractTest {
      */
     private Map<String, List<String>> currentSchema() throws Exception
     {
-        InputStream stream = getStream(CATALOG);
-        try {
+        try (InputStream stream = getRequiredStream(CATALOG)) {
             Document doc = XMLTools.parseDOM(stream);
             currentSchema = doc.getDocumentElement().getAttribute(CURRENT);
             if (currentSchema.trim().isEmpty())
@@ -401,8 +387,6 @@ public class Schema_Transform_Test extends AbstractTest {
             return extractCurrentSchema(currentSchema, doc);
         } catch (Exception e) {
             throw new Exception("Unable to parse the catalog.", e);
-        } finally {
-            if (stream != null) stream.close();
         }
     }
 
@@ -419,18 +403,12 @@ public class Schema_Transform_Test extends AbstractTest {
         List<Target> targets = new ArrayList<Target>();
         Object[][] data = null;
         List<String> l;
-        Iterator<String> j;
         Entry<String, List<String>> e;
         Iterator<Entry<String, List<String>>> i = values.entrySet().iterator();
         while (i.hasNext()) {
             e = i.next();
             l = e.getValue();
-            List<InputStream> streams = new ArrayList<InputStream>();
-            j = l.iterator();
-            while (j.hasNext()) {
-                streams.add(getStream(j.next()));
-            }
-            targets.add(new Target(streams, e.getKey()));
+            targets.add(new Target(new ArrayList<String>(l), e.getKey()));
         }
         int index = 0;
         Iterator<Target> k = targets.iterator();
@@ -475,21 +453,32 @@ public class Schema_Transform_Test extends AbstractTest {
     }
 
     /**
+     * Opens a required transform resource.
+     *
+     * @param name The transform resource name.
+     * @return The opened resource stream.
+     * @throws IOException If the resource cannot be found.
+     */
+    private InputStream getRequiredStream(String name) throws IOException
+    {
+        InputStream stream = getStream(name);
+        if (stream == null) {
+            throw new IOException("Cannot find transform resource: " + name);
+        }
+        return stream;
+    }
+
+    /**
      * Returns the list of transformations to generate the file to upgrade.
      *
      * @param target The schema to start from for the upgrade.
      * @return See above.
      */
-    private List<InputStream> retrieveDowngrade(String target)
+    private List<String> retrieveDowngrade(String target)
     {
         List<String> list = downgrades.get(target);
         if (list == null || list.isEmpty()) return null;
-        List<InputStream> streams = new ArrayList<InputStream>();
-        Iterator<String> j = list.iterator();
-        while (j.hasNext()) {
-            streams.add(getStream(j.next()));
-        }
-        return streams;
+        return new ArrayList<String>(list);
     }
 
     /**
@@ -629,7 +618,7 @@ public class Schema_Transform_Test extends AbstractTest {
         File upgraded = null;
         try {
             f = createImageFile(IMAGE); //2015 image
-            List<InputStream> transforms = retrieveDowngrade(target.getSource());
+            List<String> transforms = retrieveDowngrade(target.getSource());
             //Create file to upgrade
             transformed = applyTransforms(f, transforms);
             //now upgrade the file.
@@ -658,7 +647,7 @@ public class Schema_Transform_Test extends AbstractTest {
         File upgraded = null;
         try {
             f = createImageFile(IMAGE_ROI); //2015 image
-            List<InputStream> transforms = retrieveDowngrade(target.getSource());
+            List<String> transforms = retrieveDowngrade(target.getSource());
             //Create file to upgrade
             transformed = applyTransforms(f, transforms);
             //now upgrade the file.
@@ -687,7 +676,7 @@ public class Schema_Transform_Test extends AbstractTest {
         File upgraded = null;
         try {
             f = createImageFile(IMAGE_ANNOTATED_DATA); //2015 image
-            List<InputStream> transforms = retrieveDowngrade(target.getSource());
+            List<String> transforms = retrieveDowngrade(target.getSource());
             //Create file to upgrade
             transformed = applyTransforms(f, transforms);
             //now upgrade the file.
@@ -717,12 +706,12 @@ public class Schema_Transform_Test extends AbstractTest {
         File upgraded = null;
         try {
             f = createImageFile(IMAGE); //2015 image
-            List<InputStream> transforms = retrieveDowngrade("2003-FC");
+            List<String> transforms = retrieveDowngrade("2003-FC");
             //Create file to upgrade
             transformed = applyTransforms(f, transforms);
             //now upgrade the file to 2008-09
-            List<InputStream> upgrades = new ArrayList<InputStream>();
-            upgrades.add(getStream("2003-FC-to-2008-09.xsl"));
+            List<String> upgrades = new ArrayList<String>();
+            upgrades.add("2003-FC-to-2008-09.xsl");
             upgraded = applyTransforms(transformed, upgrades);
             //validate the file
             validate(upgraded);
@@ -747,12 +736,12 @@ public class Schema_Transform_Test extends AbstractTest {
         File upgraded = null;
         try {
             f = createImageFile(IMAGE); //2015 image
-            List<InputStream> transforms = retrieveDowngrade("2007-06");
+            List<String> transforms = retrieveDowngrade("2007-06");
             //Create file to upgrade
             transformed = applyTransforms(f, transforms);
             //now upgrade the file to 2008-02
-            List<InputStream> upgrades = new ArrayList<InputStream>();
-            upgrades.add(getStream("2007-06-to-2008-02.xsl"));
+            List<String> upgrades = new ArrayList<String>();
+            upgrades.add("2007-06-to-2008-02.xsl");
             upgraded = applyTransforms(transformed, upgrades);
             //validate the file
             validate(upgraded);
@@ -777,12 +766,12 @@ public class Schema_Transform_Test extends AbstractTest {
         File upgraded = null;
         try {
             f = createImageFile(IMAGE); //2015 image
-            List<InputStream> transforms = retrieveDowngrade("2007-06");
+            List<String> transforms = retrieveDowngrade("2007-06");
             //Create file to upgrade
             transformed = applyTransforms(f, transforms);
             //now upgrade the file to 2008-09
-            List<InputStream> upgrades = new ArrayList<InputStream>();
-            upgrades.add(getStream("2007-06-to-2008-09.xsl"));
+            List<String> upgrades = new ArrayList<String>();
+            upgrades.add("2007-06-to-2008-09.xsl");
             upgraded = applyTransforms(transformed, upgrades);
             //validate the file
             validate(upgraded);
@@ -799,10 +788,10 @@ public class Schema_Transform_Test extends AbstractTest {
     class Target {
 
         /** The transforms to apply.*/
-        private List<InputStream> transforms;
+        private final List<String> transforms;
 
         /** The source schema.*/
-        private String source;
+        private final String source;
 
         /**
          * Creates a new instance.
@@ -810,7 +799,7 @@ public class Schema_Transform_Test extends AbstractTest {
          * @param transforms The transforms to apply.
          * @param source The source schema.
          */
-        Target(List<InputStream> transforms, String source)
+        Target(List<String> transforms, String source)
         {
             this.transforms = transforms;
             this.source = source;
@@ -821,7 +810,7 @@ public class Schema_Transform_Test extends AbstractTest {
          *
          * @return See above.
          */
-        List<InputStream> getTransforms() { return transforms; }
+        List<String> getTransforms() { return transforms; }
 
         /**
          * Returns the source schema.
@@ -832,22 +821,41 @@ public class Schema_Transform_Test extends AbstractTest {
 
     }
 
-    class Resolver implements URIResolver {
+    class Resolver implements AutoCloseable, URIResolver {
 
-        /** The stream.*/
-        private InputStream stream;
+        /** The streams opened while resolving transform dependencies.*/
+        private final List<InputStream> streams = new ArrayList<InputStream>();
 
-        /** Close the input stream if not <code>null</code>.*/
+        /** Close every stream opened by this resolver.*/
+        @Override
         public void close()
-            throws Exception
+            throws IOException
         {
-            if (stream != null) stream.close();
+            IOException failure = null;
+            for (InputStream stream : streams) {
+                try {
+                    stream.close();
+                }
+                catch (IOException e) {
+                    if (failure == null) failure = e;
+                    else failure.addSuppressed(e);
+                }
+            }
+            streams.clear();
+            if (failure != null) throw failure;
         }
 
         @Override
         public Source resolve(String href, String base)
                 throws TransformerException {
-            stream = getStream(UNITS_CONVERSION);
+            InputStream stream;
+            try {
+                stream = getRequiredStream(UNITS_CONVERSION);
+            }
+            catch (IOException e) {
+                throw new TransformerException(e);
+            }
+            streams.add(stream);
             return new StreamSource(stream);
         }
     }
