@@ -1223,7 +1223,11 @@ public class NDPIWriter extends FormatWriter {
 
   private Double objectiveMagnification() {
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    String objectiveID = retrieve.getObjectiveSettingsID(0);
+    String objectiveID = null;
+    try {
+      objectiveID = retrieve.getObjectiveSettingsID(0);
+    }
+    catch (NullPointerException | IndexOutOfBoundsException e) { }
     for (int instrument = 0;
       instrument < retrieve.getInstrumentCount(); instrument++)
     {

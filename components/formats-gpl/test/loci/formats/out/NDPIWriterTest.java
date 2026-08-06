@@ -758,6 +758,31 @@ public class NDPIWriterTest {
   }
 
   @Test
+  public void testRejectsMissingObjectiveSettings() throws Exception {
+    Path file = Files.createTempFile("bioformats-", ".ndpi");
+    try {
+      IMetadata metadata = metadata(WIDTH, HEIGHT);
+      metadata.setObjectiveSettingsID(null, 0);
+      metadata.setObjectiveNominalMagnification(null, 0, 0);
+      NDPIWriter writer = new NDPIWriter();
+      writer.setMetadataRetrieve(metadata);
+      writer.setInterleaved(true);
+      writer.setWriteSequentially(true);
+      try {
+        writer.setId(file.toString());
+        fail("Missing objective settings must be rejected");
+      }
+      catch (loci.formats.FormatException e) {
+        assertEquals(e.getMessage(),
+          "NDPI requires a positive objective nominal magnification");
+      }
+    }
+    finally {
+      Files.deleteIfExists(file);
+    }
+  }
+
+  @Test
   public void testRejectsUnsupportedWriterContracts() throws Exception {
     assertSetIdRejected(metadata(64, 64), false, true,
       "NDPI requires sequential writing");
