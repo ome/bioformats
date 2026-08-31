@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -227,7 +228,7 @@ public class UpgradeChecker {
     try {
       // connect to the registry
 
-      URLConnection conn = new URL(query.toString()).openConnection();
+      HttpURLConnection conn = (HttpURLConnection) new URL(query.toString()).openConnection();
       conn.setConnectTimeout(5000);
       conn.setUseCaches(false);
       conn.addRequestProperty("User-Agent", registryID);
@@ -248,12 +249,19 @@ public class UpgradeChecker {
       // check if the string is not empty (upgrade available)
 
       String result = sb.toString();
+      if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+        LOGGER.debug("Upgrade check failed: {}", result);
+        return false;
+      }
       if (sb.length() == 0) {
         LOGGER.debug("No update needed");
         return false;
-      } else {
-        LOGGER.debug("UPGRADE AVAILABLE:" + result);
+      } else if (result.toLowerCase().indexOf("please upgrade") >= 0) {
+        LOGGER.debug("UPGRADE AVAILABLE: {}", result);
         return true;
+      } else {
+        LOGGER.debug("Upgrade check not successful: {}", result);
+        return false;
       }
     }
     catch (UnknownHostException e) {
