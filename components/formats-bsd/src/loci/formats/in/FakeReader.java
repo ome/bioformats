@@ -230,6 +230,7 @@ public class FakeReader extends FormatReader {
   private int sleepOpenBytes = 0;
   private int sleepInitFile = 0;
   private boolean labelPlanes = false;
+  private boolean omitIniFromUsedFiles = false;
 
   static void sleep(String msg, int ms) {
     if (ms <= 0) return; // EARLY EXIT
@@ -524,8 +525,12 @@ public class FakeReader extends FormatReader {
       FormatTools.assertId(currentId, true, 1);
       List<String> files = new ArrayList<String>();
       fakeSeries.clear();
-      if (!noPixels) files.addAll(listFakeSeries(currentId));
-      if (iniFile != null) files.add(iniFile);
+      if (!noPixels) {
+        files.addAll(listFakeSeries(currentId));
+      }
+      if (iniFile != null && !omitIniFromUsedFiles) {
+        files.add(iniFile);
+      }
       return files.toArray(new String[files.size()]);
   }
 
@@ -857,6 +862,8 @@ public class FakeReader extends FormatReader {
         sleepInitFile = intValue;
       } else if (key.equals("labelPlanes")) {
         labelPlanes = boolValue;
+      } else if (key.equals("omitIniFromUsedFiles")) {
+        omitIniFromUsedFiles = boolValue;
       }
     }
 
