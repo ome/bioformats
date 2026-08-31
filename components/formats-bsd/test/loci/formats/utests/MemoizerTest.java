@@ -160,9 +160,8 @@ public class MemoizerTest {
     // Check non-existing memo directory returns null
     assertNull(memoizer.getMemoFile(id));
     directory.mkdirs();
-    String memoDir = idDir.getAbsolutePath();
-    memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
-    checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
+    checkMemoFile(memoizer.getMemoFile(id),
+      getExpectedCacheDirectory(directory));
     checkMemo(memoizer, id);
     recursiveDeleteOnExit(directory);
   }
@@ -183,9 +182,8 @@ public class MemoizerTest {
     // Check non-existing memo directory returns null
     assertNull(memoizer.getMemoFile(id));
     directory.mkdirs();
-    String memoDir = idDir.getAbsolutePath();
-    memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
-    checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
+    checkMemoFile(memoizer.getMemoFile(id),
+      getExpectedCacheDirectory(directory));
     checkMemo(memoizer, id);
     recursiveDeleteOnExit(directory);
   }
@@ -272,6 +270,34 @@ public class MemoizerTest {
     assertFalse(memoFile.exists());
     reader.close();
     checkMemo(memoizer, id);
+  }
+
+  private File getExpectedCacheDirectory(File directory) {
+    String sourcePath = idDir.getAbsolutePath();
+    String cachePath;
+
+    if (sourcePath.length() >= 3 &&
+      Character.isLetter(sourcePath.charAt(0)) &&
+      sourcePath.charAt(1) == ':' &&
+      sourcePath.charAt(2) == File.separatorChar)
+    {
+      cachePath = Character.toUpperCase(sourcePath.charAt(0)) +
+        sourcePath.substring(2);
+    } else if (sourcePath.length() >= 2 &&
+      sourcePath.charAt(0) == File.separatorChar &&
+      sourcePath.charAt(1) == File.separatorChar)
+    {
+      cachePath = "UNC" + sourcePath.substring(1);
+    } else {
+      int first = 0;
+      while (first < sourcePath.length() &&
+        sourcePath.charAt(first) == File.separatorChar)
+      {
+        first++;
+      }
+      cachePath = sourcePath.substring(first);
+    }
+    return new File(directory, cachePath);
   }
 
 }
