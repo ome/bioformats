@@ -73,6 +73,7 @@ public class TiffParserTest {
   @Test
   public void testHeader() throws IOException {
     assertTrue(tiffParser.isValidHeader());
+    // isValidHeader above makes sure that checkHeader is non-null
     assertTrue(tiffParser.checkHeader());
     assertFalse(tiffParser.isBigTiff());
   }
@@ -178,6 +179,8 @@ public class TiffParserTest {
   public void testNonUniformRowsPerStrip() throws IOException, FormatException {
     mock = new NonUniformRowsPerStripMock();
     tiffParser = mock.getTiffParser();
+    assertTrue(tiffParser.isValidHeader());
+    // isValidHeader above makes sure that checkHeader is non-null
     assertTrue(tiffParser.checkHeader());
     tiffParser.getFirstIFD().getRowsPerStrip();
     mock.close();
@@ -187,6 +190,8 @@ public class TiffParserTest {
   public void testBitsPerSampleMismatch() throws IOException, FormatException {
     mock = new BitsPerSampleSamplesPerPixelMismatchMock();
     tiffParser = mock.getTiffParser();
+    assertTrue(tiffParser.isValidHeader());
+    // isValidHeader above makes sure that checkHeader is non-null
     assertTrue(tiffParser.checkHeader());
     IFD ifd = tiffParser.getFirstIFD();
     int[] bitsPerSample = ifd.getBitsPerSample();

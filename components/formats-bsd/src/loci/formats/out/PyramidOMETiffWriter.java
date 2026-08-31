@@ -126,7 +126,12 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
       long[] allOffsets = null;
       try (RandomAccessInputStream in = new RandomAccessInputStream(id)) {
         TiffParser parser = new TiffParser(in);
-        littleEndian = parser.checkHeader();
+        Boolean writtenLittleEndian = parser.checkHeader();
+        if (writtenLittleEndian == null) {
+          // this would be extremely unexpected
+          throw new IOException("Endian check failed on written data");
+        }
+        littleEndian = writtenLittleEndian;
         allOffsets = parser.getIFDOffsets();
       }
 
