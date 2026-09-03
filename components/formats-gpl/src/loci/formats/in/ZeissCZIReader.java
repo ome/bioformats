@@ -2938,7 +2938,9 @@ public class ZeissCZIReader extends FormatReader {
             int baseX = getSizeX();
             for (int series=0; series<getSeriesCount(); series++) {
               setSeries(series);
-              if (series == getBaseResolution()) {
+              if (getSeriesCount() - series <= extraImages.size() ||
+                series == getBaseResolution())
+              {
                 baseX = getSizeX();
               }
               Length scaledX = FormatTools.getScaledPhysicalSize(sizeX, baseX, getSizeX());
@@ -2951,7 +2953,9 @@ public class ZeissCZIReader extends FormatReader {
             int baseY = getSizeY();
             for (int series=0; series<getSeriesCount(); series++) {
               setSeries(series);
-              if (series == getBaseResolution()) {
+              if (getSeriesCount() - series <= extraImages.size() ||
+                series == getBaseResolution())
+              {
                 baseY = getSizeY();
               }
               Length scaledY = FormatTools.getScaledPhysicalSize(sizeY, baseY, getSizeY());
