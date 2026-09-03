@@ -392,10 +392,7 @@ public class ZeissCZIReader extends FormatReader {
     int compression = -1;
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
-      int baseResolution = currentIndex;
-      while (baseResolution > 0 && core.get(baseResolution - 1).sizeX > core.get(baseResolution).sizeX) {
-        baseResolution--;
-      }
+      int baseResolution = getBaseResolution();
       for (SubBlock plane : planes) {
         if ((plane.planeIndex == no && ((maxResolution == 0 && plane.coreIndex == currentIndex) ||
           (maxResolution > 0 && plane.coreIndex == baseResolution))) ||
@@ -2055,6 +2052,17 @@ public class ZeissCZIReader extends FormatReader {
     setCoreIndex(previousCoreIndex);
   }
 
+  /**
+   * Get the base resolution index for a pyramid containing the current core index.
+   */
+  private int getBaseResolution() {
+    int baseResolution = getCoreIndex();
+    while (baseResolution > 0 && core.get(baseResolution - 1).sizeX > core.get(baseResolution).sizeX) {
+      baseResolution--;
+    }
+    return baseResolution;
+  }
+
   private void assignPlaneIndices() {
     LOGGER.trace("assignPlaneIndices:");
     // assign plane and series indices to each SubBlock
@@ -2926,14 +2934,30 @@ public class ZeissCZIReader extends FormatReader {
           PositiveFloat size = new PositiveFloat(value);
 
           if (id.equals("X")) {
+            Length sizeX = FormatTools.createLength(size, UNITS.MICROMETER);
+            int baseX = getSizeX();
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeX(FormatTools.createLength(size, UNITS.MICROMETER), series);
+              setSeries(series);
+              if (series == getBaseResolution()) {
+                baseX = getSizeX();
+              }
+              Length scaledX = FormatTools.getScaledPhysicalSize(sizeX, baseX, getSizeX());
+              store.setPixelsPhysicalSizeX(scaledX, series);
             }
+            setSeries(0);
           }
           else if (id.equals("Y")) {
+            Length sizeY = FormatTools.createLength(size, UNITS.MICROMETER);
+            int baseY = getSizeY();
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeY(FormatTools.createLength(size, UNITS.MICROMETER), series);
+              setSeries(series);
+              if (series == getBaseResolution()) {
+                baseY = getSizeY();
+              }
+              Length scaledY = FormatTools.getScaledPhysicalSize(sizeY, baseY, getSizeY());
+              store.setPixelsPhysicalSizeY(scaledY, series);
             }
+            setSeries(0);
           }
           else if (id.equals("Z")) {
             zStep = FormatTools.createLength(size, UNITS.MICROMETER);
