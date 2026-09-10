@@ -32,11 +32,15 @@ import java.util.List;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.AnatomicalOrientation;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IAxisOrientationReader;
 import loci.formats.MetadataTools;
+import loci.formats.Orientation;
+import loci.formats.OrientationType;
 import loci.formats.meta.MetadataStore;
 
 import ome.units.UNITS;
@@ -45,7 +49,7 @@ import ome.units.quantity.Length;
 /**
  * VarianFDFReader is the file format reader for Varian FDF files.
  */
-public class VarianFDFReader extends FormatReader {
+public class VarianFDFReader extends FormatReader implements IAxisOrientationReader {
 
   // -- Fields --
 
@@ -59,12 +63,28 @@ public class VarianFDFReader extends FormatReader {
   private Length originZ;
   private String[] units;
 
+  private Orientation xAxis;
+  private Orientation yAxis;
+  private Orientation zAxis;
+
   // -- Constructor --
 
   /** Constructs a new Varian FDF reader. */
   public VarianFDFReader() {
     super("Varian FDF", "fdf");
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
+  }
+
+  // -- IAxisOrientationReader API methods --
+
+  @Override
+  public Orientation[] getAxisOrientations() {
+    FormatTools.assertId(currentId, true, 1);
+    Orientation[] axes = new Orientation[5];
+    axes[getDimensionOrder().indexOf("X")] = xAxis;
+    axes[getDimensionOrder().indexOf("Y")] = yAxis;
+    axes[getDimensionOrder().indexOf("Z")] = zAxis;
+    return axes;
   }
 
   // -- IFormatReader API methods --
@@ -138,6 +158,9 @@ public class VarianFDFReader extends FormatReader {
       originY = null;
       originZ = null;
       units = null;
+      xAxis = null;
+      yAxis = null;
+      zAxis = null;
     }
   }
 
@@ -215,6 +238,8 @@ public class VarianFDFReader extends FormatReader {
 
     String data = in.readString(Character.toString((char) 0x0c));
     String[] lines = data.split("\n");
+    String subjectEntry = null;
+    String subjectPose = null;
 
     for (String line : lines) {
       line = line.trim();
@@ -299,8 +324,35 @@ public class VarianFDFReader extends FormatReader {
         m.littleEndian = value.equals("0");
         in.order(isLittleEndian());
       }
+      else if (var.equals("*position1")) {
+        subjectEntry = value.replaceAll("\"", "");
+      }
+      else if (var.equals("*position2")) {
+        subjectPose = value.replaceAll("\"", "");
+      }
 
       addGlobalMeta(var, value);
+    }
+
+    if (subjectEntry != null && subjectPose != null) {
+      boolean headFirst = subjectEntry.toLowerCase().startsWith("head");
+      boolean supine = subjectPose.equalsIgnoreCase("supine");
+      boolean prone = subjectPose.equalsIgnoreCase("prone");
+
+      // only supports position values for which we have data
+      if (headFirst && supine) {
+        xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+        yAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR);
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
+      }
+      else if (!headFirst && prone) {
+        xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+        yAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.ANTERIOR_TO_POSTERIOR);
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.SUPERIOR_TO_INFERIOR);
+      }
+      else {
+        LOGGER.warn("Unsupported subject position: '{}', '{}'", subjectEntry, subjectPose);
+      }
     }
 
     if (multifile && files.isEmpty()) {

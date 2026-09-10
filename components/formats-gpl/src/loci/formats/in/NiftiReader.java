@@ -31,11 +31,15 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.AnatomicalOrientation;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IAxisOrientationReader;
 import loci.formats.MetadataTools;
+import loci.formats.Orientation;
+import loci.formats.OrientationType;
 import loci.formats.meta.MetadataStore;
 
 import ome.units.quantity.Length;
@@ -48,7 +52,7 @@ import ome.units.UNITS;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class NiftiReader extends FormatReader {
+public class NiftiReader extends FormatReader implements IAxisOrientationReader {
 
   // -- Constants --
 
@@ -90,6 +94,22 @@ public class NiftiReader extends FormatReader {
     hasCompanionFiles = true;
     datasetDescription = "A single .nii file or a single .nii.gz file or one" +
       " .img file and a similarly-named .hdr file";
+  }
+
+  // -- IAxisOrientationReader API methods --
+
+  @Override
+  public Orientation[] getAxisOrientations() {
+    FormatTools.assertId(currentId, true, 1);
+    // see https://nifti.nimh.nih.gov/nifti-1/documentation/faq.html#Q14
+    // and https://ngff.openmicroscopy.org/rfc/4/#background
+    return new Orientation[] {
+      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.LEFT_TO_RIGHT),
+      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR),
+      null,
+      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR),
+      null
+    };
   }
 
   // -- IFormatReader API methods --
