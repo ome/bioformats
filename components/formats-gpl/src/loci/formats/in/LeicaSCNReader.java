@@ -74,7 +74,9 @@ public class LeicaSCNReader extends BaseTiffReader {
   private static final String SCHEMA_2010_10 =
     "http://www.leica-microsystems.com/scn/2010/10/01";
 
-  private static final String[] MODELS_WITHOUT_CORRECTION = {"versa", "leica scn400"};
+  private static final String[] MODELS_WITHOUT_CORRECTION = {
+    "versa", "leica scn400", "aperio leica biosystems fl"
+  };
 
   // -- Fields --
   LeicaSCNHandler handler;

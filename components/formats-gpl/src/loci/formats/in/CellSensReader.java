@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -529,6 +530,7 @@ public class CellSensReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    Arrays.fill(buf, getFillColor());
 
     if (getCoreIndex() < core.size() - 1 && getCoreIndex() < rows.size()) {
       int tileRows = rows.get(getCoreIndex());
@@ -543,7 +545,17 @@ public class CellSensReader extends FormatReader {
       int pixel = getRGBChannelCount() * bpp;
       int outputRowLen = w * pixel;
 
+      int pyramidIndex = getCurrentPyramidIndex();
       Pyramid pyramid = getCurrentPyramid();
+      byte[] background = backgroundColor.get(pyramidIndex);
+      LOGGER.trace("pyramid fill color = {}", pyramid.fillColor);
+      if (background != null && background.length > 0 && background[0] != (byte) 0xff) {
+        LOGGER.trace("background color = {}", background[0]);
+        Arrays.fill(buf, background[0]);
+      }
+      else if (pyramid.fillColor != null) {
+        Arrays.fill(buf, pyramid.fillColor);
+      }
 
       for (int row=0; row<tileRows; row++) {
         for (int col=0; col<tileCols; col++) {
@@ -1862,6 +1874,37 @@ public class CellSensReader extends FormatReader {
                     pyramid.originY = doubleValues[1];
                   }
                 }
+                else if (tag == VALUE
+                  && "Calibration Function ".equals(tagPrefix)
+                  && realType == DOUBLE_2
+                  && nDoubleValues >= 4
+                  && (nDoubleValues % 2) == 0)
+                {
+                  // Tag 20051 (CALIBRATION) sub-volumes carry a piecewise-
+                  // linear lookup table mapping a raw axis (e.g. uint16
+                  // pixel value) to a calibrated axis (e.g. Z position in
+                  // micrometres for DSX EFI height maps, or intensity in
+                  // counts for deconvolved fluorescence images). The LUT
+                  // is stored as (raw, calibrated) DOUBLE_2 pairs and is
+                  // linear, so a single (slope, origin) suffices to
+                  // reconstruct the mapping. Surface those summary values
+                  // as named metadata so downstream tools can convert
+                  // pixel values to calibrated units without reparsing
+                  // the full table from a long string.
+                  int nPairs = nDoubleValues / 2;
+                  double rawFirst = doubleValues[0];
+                  double calFirst = doubleValues[1];
+                  double rawLast  = doubleValues[2 * (nPairs - 1)];
+                  double calLast  = doubleValues[2 * (nPairs - 1) + 1];
+                  double dRaw = rawLast - rawFirst;
+                  if (Math.abs(dRaw) > Constants.EPSILON) {
+                    double slope = (calLast - calFirst) / dRaw;
+                    addGlobalMeta("Calibration Function Slope", slope);
+                    addGlobalMeta("Calibration Function Origin", calFirst);
+                    addGlobalMeta("Calibration Function Final", calLast);
+                    addGlobalMeta("Calibration Function NPoints", nPairs);
+                  }
+                }
                 break;
               case RGB:
                 int red = vsi.read();
@@ -1956,6 +1999,9 @@ public class CellSensReader extends FormatReader {
               }
               else if (tag == BLUE_OFFSET) {
                 pyramid.blueOffset = DataTools.parseDouble(value);
+              }
+              else if (tag == DEFAULT_BACKGROUND_COLOR) {
+                pyramid.fillColor = Byte.parseByte(value);
               }
               else if (tag == VALUE) {
                 if (tagPrefix.equals("Channel Wavelength ")) {
@@ -2664,6 +2710,7 @@ public class CellSensReader extends FormatReader {
     public Double redOffset;
     public Double greenOffset;
     public Double blueOffset;
+    public Byte fillColor;
 
     public ArrayList<String> channelNames = new ArrayList<String>();
     public ArrayList<Double> channelWavelengths = new ArrayList<Double>();

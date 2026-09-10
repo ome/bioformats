@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2021 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,27 +30,31 @@
  * #L%
  */
 
-package loci.formats.dicom;
+package loci.formats.utests.tiff;
 
-import loci.common.Region;
+import java.io.IOException;
 
-/**
- * Represents a tile stored in a DICOM file.
- * This may be a tile in a larger image, or a full plane.
- */
-public class DicomTile {
-  public Region region;
-  public String file;
-  public int fileIndex;
-  public long fileOffset;
-  public long endOffset;
-  public Double zOffset;
-  public int channel;
-  public boolean last = false;
-  public int planeIndex = -1;
+import loci.formats.FormatException;
 
-  public boolean isJP2K = false;
-  public boolean isJPEG = false;
-  public boolean isRLE = false;
-  public boolean isDeflate = false;
+public class RGB48TiffMock extends RGBTiffMock {
+
+  public RGB48TiffMock() throws FormatException, IOException {
+    super();
+  }
+
+  @Override
+  public int[] getBitsPerSample() {
+    return new int[] { 16, 16, 16};
+  }
+
+  @Override
+  public int[] getRowsPerStrip() {
+    return new int[] {1};
+  }
+
+  @Override
+  public int[] getStripOffsets() {
+    return new int[] {0, 36, 72, 108};
+  }
+
 }

@@ -193,7 +193,6 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
-    // TODO: this will result in a lot of redundant lookups, and should be optimized
     int tileWidth = getOptimalTileWidth();
     int tileHeight = getOptimalTileHeight();
     Region boundingBox = new Region(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
@@ -885,7 +884,7 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
 
         for (int p=0; p<imagesPerFile; p++) {
           DicomTile tile = new DicomTile();
-          tile.fileIndex = tilePositions.get(0).size();
+          tile.fileIndex = getTiles(0).size();
           if (m.sizeZ == 1 && fileZOffset != null) {
             tile.zOffset = fileZOffset;
           }
@@ -1062,9 +1061,7 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
 
           if (zOffsets.containsKey(lastCoreIndex)) {
             for (Double z : info.zOffsets) {
-              if (!zOffsets.get(lastCoreIndex).contains(z)) {
-                zOffsets.get(lastCoreIndex).add(z);
-              }
+              addZOffset(lastCoreIndex, z);
             }
           }
           else {
@@ -1095,6 +1092,13 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
     determineAnatomicalOrientation();
 
     watch.start();
+
+    int currentCoreIndex = getCoreIndex();
+    for (Integer key : tilePositions.keySet()) {
+      setCoreIndex(key);
+      calculateTilePlaneIndexes();
+    }
+    setCoreIndex(currentCoreIndex);
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
@@ -1736,10 +1740,7 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
    * If the "firstTileOnly" flag is set, then this will return as soon
    * as one matching tile is found.
    */
-  private List<DicomTile> getTileList(int no, Region boundingBox, boolean firstTileOnly) {
-    int z = getZCTCoords(no)[0];
-    int c = getZCTCoords(no)[1];
-
+  public List<DicomTile> getTileList(int no, Region boundingBox, boolean firstTileOnly) {
     List<DicomTile> tileList = new ArrayList<DicomTile>();
     if (!tilePositions.containsKey(getCoreIndex())) {
       LOGGER.warn("No tiles for core index = {}", getCoreIndex());
@@ -1747,14 +1748,10 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
     }
 
     // look for any tiles that match the requested tile and plane
-    List<Double> zs = zOffsets.get(getCoreIndex());
-    List<DicomTile> tiles = tilePositions.get(getCoreIndex());
-    for (int t=0; t<tiles.size(); t++) {
-      DicomTile tile = tiles.get(t);
-      if ((getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(z))) || (getSizeZ() == tiles.size() && t == z)) &&
-        (tile.channel == c || getEffectiveSizeC() == 1) &&
-        (boundingBox == null || tile.region.intersects(boundingBox)))
-      {
+    for (DicomTile tile : getTiles(getCoreIndex())) {
+      boolean inBoundingBox = boundingBox == null || tile.region.intersects(boundingBox);
+      boolean validPlane = tile.planeIndex == no;
+      if (validPlane && inBoundingBox) {
         tileList.add(tile);
         if (firstTileOnly) {
           break;
@@ -1768,6 +1765,23 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
       }
     }
     return tileList;
+  }
+
+  private void calculateTilePlaneIndexes() {
+    List<Double> zs = getZOffsets(getCoreIndex());
+    List<DicomTile> tiles = getTiles(getCoreIndex());
+    for (int t=0; t<tiles.size(); t++) {
+      DicomTile tile = tiles.get(t);
+      for (int p=0; p<getImageCount(); p++) {
+        int[] zct = getZCTCoords(p);
+        boolean validZ = getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(zct[0]))) || (getSizeZ() == tiles.size() && t == zct[0]);
+        boolean validC = tile.channel == zct[1] || getEffectiveSizeC() == 1;
+        if (validZ && validC) {
+          tile.planeIndex = p;
+          break;
+        }
+      }
+    }
   }
 
   /**
@@ -2079,9 +2093,7 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
         zOffsets.put(getCoreIndex(), new ArrayList<Double>());
       }
       Double z = currentTile.zOffset;
-      if (!zOffsets.get(getCoreIndex()).contains(z)) {
-        zOffsets.get(getCoreIndex()).add(z);
-      }
+      addZOffset(getCoreIndex(), z);
     }
   }
 
@@ -2164,11 +2176,28 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
   }
 
   public List<DicomTile> getTiles() {
-    return tilePositions.get(0);
+    return getTiles(0);
+  }
+
+  public List<DicomTile> getTiles(int coreIndex) {
+    if (tilePositions.containsKey(coreIndex)) {
+      return tilePositions.get(coreIndex);
+    }
+    return new ArrayList<DicomTile>();
+  }
+
+  private void addZOffset(int coreIndex, Double z) {
+    if (!zOffsets.get(coreIndex).contains(z)) {
+      zOffsets.get(coreIndex).add(z);
+    }
   }
 
   public List<Double> getZOffsets() {
-    return zOffsets.get(0);
+    return getZOffsets(0);
+  }
+
+  public List<Double> getZOffsets(int coreIndex) {
+    return zOffsets.get(coreIndex);
   }
 
   public int getConcatenationIndex() {

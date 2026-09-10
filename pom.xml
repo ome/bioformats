@@ -40,7 +40,7 @@
     <project.rootdir>${basedir}</project.rootdir>
     <imagej1.version>1.54c</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
-    <logback.version>1.5.34</logback.version>
+    <logback.version>1.5.37</logback.version>
     <ome-stubs.version>6.1.0</ome-stubs.version>
     <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
     <ome-metakit.version>5.4.0</ome-metakit.version>

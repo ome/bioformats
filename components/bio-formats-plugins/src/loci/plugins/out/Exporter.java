@@ -557,7 +557,14 @@ public class Exporter {
                             originalMetadata.put(key, value);
 
                             if (key.endsWith("BitsPerPixel")) {
-                                w.setValidBitsPerPixel(Integer.parseInt(value));
+                                try {
+                                  int bits = Integer.parseInt(value);
+                                  if (bits > 0 && bits <= FormatTools.getBytesPerPixel(ptype) * 8) {
+                                    w.setValidBitsPerPixel(bits);
+                                  }
+                                }
+                                catch (NumberFormatException e) {
+                                }
                             }
                         }
                     }

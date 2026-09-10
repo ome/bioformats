@@ -103,17 +103,24 @@ public class OMETiffReader extends SubResolutionFormatReader {
   private int lastPlane = 0;
   private boolean hasSPW;
 
-  private OMEXMLService service;
-  private transient OMEXMLMetadata meta;
-  private String metaFile;
+  /** OMEXMLService that can be used to manipulate OME-XML. */
+  protected OMEXMLService service;
 
+  /** Represents OME-XML stored in the current OME-TIFF file(s). */
+  protected transient OMEXMLMetadata meta;
+
+  private String metaFile;
   private String metadataFile;
 
   // -- Constructor --
 
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", OME_TIFF_SUFFIXES);
+    this("OME-TIFF", OME_TIFF_SUFFIXES);
+  }
+
+  public OMETiffReader(String name, String[] suffixes) {
+    super(name, suffixes);
     suffixNecessary = false;
     suffixSufficient = false;
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
@@ -774,7 +781,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
       meta.setRoot(root);
 
-      service.convertMetadata(meta, metadataStore);
+      convertMetadata(meta, metadataStore);
       MetadataTools.populatePixels(metadataStore, this);
 
       addSubResolutions();
@@ -782,7 +789,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       return;
     }
 
-    service.convertMetadata(meta, metadataStore);
+    convertMetadata(meta, metadataStore);
 
     // determine series count from Image and Pixels elements
     int seriesCount = meta.getImageCount();
@@ -810,7 +817,11 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
         else {
           filename = meta.getUUIDFileName(i, td);
-          if (!new Location(dir, filename).exists()) filename = null;
+          if (!new Location(dir, filename).exists()) {
+            LOGGER.error("Missing file {} for UUID {} (planes will be black)",
+              filename, uuid);
+            filename = null;
+          }
           if (filename == null) {
             if (uuid.equals(currentUUID) || currentUUID == null) {
               // UUID references this file
@@ -1344,9 +1355,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
           metadataStore.setPlaneTheT(t, i, p);
         }
       }
-    }
-    for (int i=0; i<acquiredDates.length; i++) {
-      if (acquiredDates[i] != null) {
+      if (acquiredDates.length == meta.getImageCount() &&
+        acquiredDates[i] != null)
+      {
         metadataStore.setImageAcquisitionDate(
             new Timestamp(acquiredDates[i]), i);
       }
@@ -1397,6 +1408,25 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
   // -- Helper methods --
 
+  /**
+   * Convert metadata contained within an OMEXMLMetadata object to a separate
+   * MetadataStore. The OMEXMLMetadata object is expected to represent the original
+   * OME-XML stored in this OME-TIFF. The MetadataStore is expected to represent
+   * the output metadata; if the MetadataStore is of type OMEXMLMetadata, the output
+   * is expected to be valid OME-XML.
+   *
+   * By default, this simply copies everything from the source OMEXMLMetadata
+   * to the destination MetadataStore without modification. Classes that extend
+   * OMETiffReader may wish to override this method if the OME-XML stored in
+   * the OME-TIFF is expected to be invalid or incorrect.
+   *
+   * @param meta source representing stored OME-XML
+   * @param store destination representing valid OME metadata
+   */
+  protected void convertMetadata(OMEXMLMetadata meta, MetadataStore store) {
+    service.convertMetadata(meta, store);
+  }
+
   private String normalizeFilename(String dir, String name) {
      Location file = new Location(dir, name);
      if (file.exists()) return file.getAbsolutePath();
@@ -1420,7 +1450,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       int i = info[s][0].ifd;
       MinimalTiffReader r = (MinimalTiffReader) info[s][0].reader;
       if (r.getCurrentFile() == null) {
-        r.setId(info[s][0].id);
+        initializeReader(r, info[s][0].id);
       }
       r.lastPlane = i;
       IFDList ifdList = r.getIFDs();
