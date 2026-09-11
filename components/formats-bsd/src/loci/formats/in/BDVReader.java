@@ -154,7 +154,7 @@ public class BDVReader extends FormatReader {
     store.setXMLAnnotationValue(bdvxml, 0);
     String xml_id = MetadataTools.createLSID("XMLAnnotation", 0); 
     store.setXMLAnnotationID(xml_id, 0);
-    initializeJHDFService(h5Id);
+    initializeJHDFService(fetchH5Path());
     parseStructure();
 
     // The ImageJ RoiManager can not distinguish ROIs from different
@@ -181,6 +181,15 @@ public class BDVReader extends FormatReader {
     return xmlId;
   }
 
+  private String fetchH5Path() {
+    Location location = new Location(currentId).getAbsoluteFile();
+    Location parent = location.getParentFile();
+    if (h5Id != null) {
+      return new Location(parent, h5Id).getAbsolutePath();
+    }
+    return null;
+  }
+
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
@@ -193,7 +202,7 @@ public class BDVReader extends FormatReader {
         LOGGER.error("Unable to locate associated BDV XML for file: " + currentId);
       }
     }
-    return new String[] {xmlId, h5Id};
+    return new String[] {xmlId, fetchH5Path()};
   }
   
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
@@ -362,7 +371,7 @@ public class BDVReader extends FormatReader {
   @Override
   public void reopenFile() throws IOException {
     try {
-      initializeJHDFService(h5Id);
+      initializeJHDFService(fetchH5Path());
     }
     catch (MissingLibraryException e) {
       throw new IOException(e);
@@ -795,8 +804,7 @@ public class BDVReader extends FormatReader {
         if (currentQName.toLowerCase().equals("hdf5")) {
           String hdf5Contents = new String(ch, start, length);
           if (checkSuffix(hdf5Contents, "h5")) {
-            String parent = new Location(currentId).getAbsoluteFile().getParent();
-            h5Id = parent + File.separator + hdf5Contents;
+            h5Id = hdf5Contents;
           }
         }
         if (parsingTimepoints && currentQName.toLowerCase().equals("first")) {
