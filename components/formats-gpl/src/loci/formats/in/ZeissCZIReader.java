@@ -195,6 +195,7 @@ public class ZeissCZIReader extends FormatReader {
 
   private transient Length zStep;
 
+  private transient boolean isPALM = false;
   private transient int plateRows;
   private transient int plateColumns;
   private transient ArrayList<String> platePositions = new ArrayList<String>();
@@ -591,6 +592,7 @@ public class ZeissCZIReader extends FormatReader {
       tileHeight = null;
       scaleFactor = 0;
       zStep = null;
+      isPALM = false;
       plateRows = 0;
       plateColumns = 0;
       platePositions.clear();
@@ -1122,7 +1124,6 @@ public class ZeissCZIReader extends FormatReader {
     String firstXML = null;
     boolean canSkipXML = true;
     String currentPath = new Location(currentId).getAbsolutePath();
-    boolean isPALM = false;
     if (planes.size() <= 2 && getImageCount() <= 2) {
       for (Segment segment : segments) {
         String path = new Location(segment.filename).getAbsolutePath();
@@ -2057,7 +2058,11 @@ public class ZeissCZIReader extends FormatReader {
    */
   private int getBaseResolution() {
     int baseResolution = getCoreIndex();
-    while (baseResolution > 0 && core.get(baseResolution - 1).sizeX > core.get(baseResolution).sizeX) {
+    // the check on the ratio between two CoreMetadata's sizeX is to ensure that
+    // slight variations in size between two base resolutions are handled correctly
+    while (baseResolution > 0 && core.get(baseResolution - 1).sizeX > core.get(baseResolution).sizeX &&
+      Math.round((double) core.get(baseResolution - 1).sizeX / core.get(baseResolution).sizeX) > 1)
+    {
       baseResolution--;
     }
     return baseResolution;
@@ -2943,7 +2948,10 @@ public class ZeissCZIReader extends FormatReader {
               {
                 baseX = getSizeX();
               }
-              Length scaledX = FormatTools.getScaledPhysicalSize(sizeX, baseX, getSizeX());
+              Length scaledX = sizeX;
+              if (!isPALM) {
+                scaledX = FormatTools.getScaledPhysicalSize(sizeX, baseX, getSizeX());
+              }
               store.setPixelsPhysicalSizeX(scaledX, series);
             }
             setSeries(0);
@@ -2958,7 +2966,10 @@ public class ZeissCZIReader extends FormatReader {
               {
                 baseY = getSizeY();
               }
-              Length scaledY = FormatTools.getScaledPhysicalSize(sizeY, baseY, getSizeY());
+              Length scaledY = sizeY;
+              if (!isPALM) {
+                scaledY = FormatTools.getScaledPhysicalSize(sizeY, baseY, getSizeY());
+              }
               store.setPixelsPhysicalSizeY(scaledY, series);
             }
             setSeries(0);
