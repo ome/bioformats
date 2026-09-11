@@ -195,6 +195,7 @@ public class ZeissCZIReader extends FormatReader {
 
   private transient Length zStep;
 
+  private transient boolean isPALM = false;
   private transient int plateRows;
   private transient int plateColumns;
   private transient ArrayList<String> platePositions = new ArrayList<String>();
@@ -392,10 +393,7 @@ public class ZeissCZIReader extends FormatReader {
     int compression = -1;
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
-      int baseResolution = currentIndex;
-      while (baseResolution > 0 && core.get(baseResolution - 1).sizeX > core.get(baseResolution).sizeX) {
-        baseResolution--;
-      }
+      int baseResolution = getBaseResolution();
       for (SubBlock plane : planes) {
         if ((plane.planeIndex == no && ((maxResolution == 0 && plane.coreIndex == currentIndex) ||
           (maxResolution > 0 && plane.coreIndex == baseResolution))) ||
@@ -594,6 +592,7 @@ public class ZeissCZIReader extends FormatReader {
       tileHeight = null;
       scaleFactor = 0;
       zStep = null;
+      isPALM = false;
       plateRows = 0;
       plateColumns = 0;
       platePositions.clear();
@@ -1125,7 +1124,6 @@ public class ZeissCZIReader extends FormatReader {
     String firstXML = null;
     boolean canSkipXML = true;
     String currentPath = new Location(currentId).getAbsolutePath();
-    boolean isPALM = false;
     if (planes.size() <= 2 && getImageCount() <= 2) {
       for (Segment segment : segments) {
         String path = new Location(segment.filename).getAbsolutePath();
@@ -2055,6 +2053,21 @@ public class ZeissCZIReader extends FormatReader {
     setCoreIndex(previousCoreIndex);
   }
 
+  /**
+   * Get the base resolution index for a pyramid containing the current core index.
+   */
+  private int getBaseResolution() {
+    int baseResolution = getCoreIndex();
+    // the check on the ratio between two CoreMetadata's sizeX is to ensure that
+    // slight variations in size between two base resolutions are handled correctly
+    while (baseResolution > 0 && core.get(baseResolution - 1).sizeX > core.get(baseResolution).sizeX &&
+      Math.round((double) core.get(baseResolution - 1).sizeX / core.get(baseResolution).sizeX) > 1)
+    {
+      baseResolution--;
+    }
+    return baseResolution;
+  }
+
   private void assignPlaneIndices() {
     LOGGER.trace("assignPlaneIndices:");
     // assign plane and series indices to each SubBlock
@@ -2926,14 +2939,40 @@ public class ZeissCZIReader extends FormatReader {
           PositiveFloat size = new PositiveFloat(value);
 
           if (id.equals("X")) {
+            Length sizeX = FormatTools.createLength(size, UNITS.MICROMETER);
+            int baseX = getSizeX();
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeX(FormatTools.createLength(size, UNITS.MICROMETER), series);
+              setSeries(series);
+              if (getSeriesCount() - series <= extraImages.size() ||
+                series == getBaseResolution())
+              {
+                baseX = getSizeX();
+              }
+              Length scaledX = sizeX;
+              if (!isPALM) {
+                scaledX = FormatTools.getScaledPhysicalSize(sizeX, baseX, getSizeX());
+              }
+              store.setPixelsPhysicalSizeX(scaledX, series);
             }
+            setSeries(0);
           }
           else if (id.equals("Y")) {
+            Length sizeY = FormatTools.createLength(size, UNITS.MICROMETER);
+            int baseY = getSizeY();
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeY(FormatTools.createLength(size, UNITS.MICROMETER), series);
+              setSeries(series);
+              if (getSeriesCount() - series <= extraImages.size() ||
+                series == getBaseResolution())
+              {
+                baseY = getSizeY();
+              }
+              Length scaledY = sizeY;
+              if (!isPALM) {
+                scaledY = FormatTools.getScaledPhysicalSize(sizeY, baseY, getSizeY());
+              }
+              store.setPixelsPhysicalSizeY(scaledY, series);
             }
+            setSeries(0);
           }
           else if (id.equals("Z")) {
             zStep = FormatTools.createLength(size, UNITS.MICROMETER);

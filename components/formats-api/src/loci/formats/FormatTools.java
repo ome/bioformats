@@ -1677,6 +1677,33 @@ public final class FormatTools {
   }
 
   /**
+   * Calculate a physical size representing a scaled dimension (e.g. subresolution of a pyramid)
+   * using the original physical size and the scale factor between two lengths in pixels.
+   *
+   * @param original physical size of the source dimension
+   * @param originalPixels size in pixels of the source dimension
+   * @param scaledPixels size in pixels of the scaled dimension
+   */
+  public static Length getScaledPhysicalSize(Length original, int originalPixels, int scaledPixels) {
+    if (scaledPixels == 0) {
+      return null;
+    }
+    double scale = (double) originalPixels / scaledPixels;
+    return getScaledPhysicalSize(original, scale);
+  }
+
+  /**
+   * Calculate a physical size representing a scaled dimension (e.g. subresolution of a pyramid)
+   * using the original physical size and the given scale factor.
+   *
+   * @param original physical size of the source dimension
+   * @param scale value by which to multiply the original size
+   */
+  public static Length getScaledPhysicalSize(Length original, double scale) {
+    return new Length(original.value().doubleValue() * scale, original.unit());
+  }
+
+  /**
    * Formats the input value for the physical size in X into a length in
    * microns
    *
