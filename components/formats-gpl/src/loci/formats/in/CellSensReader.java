@@ -1030,14 +1030,19 @@ public class CellSensReader extends FormatReader {
           store.setObjectiveSettingsID(MetadataTools.createLSID("Objective", 0, nextPyramid - 1), imageIndex);
           store.setObjectiveSettingsRefractiveIndex(pyramid.refractiveIndex, imageIndex);
 
+          boolean pyramidBasePresent = expectETS && files.size() > 1;
           if (pyramid.physicalSizeX > 0) {
             Length sizeX = FormatTools.getPhysicalSizeX(pyramid.physicalSizeX);
-            sizeX = FormatTools.getScaledPhysicalSize(sizeX, pyramid.width, core.get(i + res).sizeX);
+            if (pyramidBasePresent) {
+              sizeX = FormatTools.getScaledPhysicalSize(sizeX, pyramid.width, core.get(i + res).sizeX);
+            }
             store.setPixelsPhysicalSizeX(sizeX, imageIndex);
           }
           if (pyramid.physicalSizeY > 0) {
             Length sizeY = FormatTools.getPhysicalSizeY(pyramid.physicalSizeY);
-            sizeY = FormatTools.getScaledPhysicalSize(sizeY, pyramid.height, core.get(i + res).sizeY);
+            if (pyramidBasePresent) {
+              sizeY = FormatTools.getScaledPhysicalSize(sizeY, pyramid.height, core.get(i + res).sizeY);
+            }
             store.setPixelsPhysicalSizeY(sizeY, imageIndex);
           }
 
