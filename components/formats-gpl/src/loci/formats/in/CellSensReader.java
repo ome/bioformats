@@ -410,9 +410,11 @@ public class CellSensReader extends FormatReader {
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
   private boolean[] bgr;
 
+  private transient ArrayList<String> layerNames = new ArrayList<String>();
   private transient boolean expectETS = false;
   private transient int channelCount = 0;
   private transient int zCount = 0;
+  private transient int imageCount = 0;
 
   // -- Constructor --
 
@@ -656,8 +658,10 @@ public class CellSensReader extends FormatReader {
       previousTag = 0;
       expectETS = false;
       pyramids.clear();
+      layerNames.clear();
       channelCount = 0;
       zCount = 0;
+      imageCount = 0;
       bgr = null;
     }
   }
@@ -761,6 +765,12 @@ public class CellSensReader extends FormatReader {
       seriesCount = ifds.size();
 
       if (ifds.size() > 1) {
+        IFD lastIFD = ifds.get(ifds.size() - 1);
+        if (lastIFD.getImageWidth() == 1 && lastIFD.getImageLength() == 1) {
+          ifds.remove(ifds.size() - 1);
+          seriesCount--;
+        }
+
         if (ifds.get(1).getSamplesPerPixel() == 1) {
           if (channelCount == 0 && zCount == 0) {
             // there may be either 1 or 2 single planes before the channels/Z stack
@@ -1070,6 +1080,9 @@ public class CellSensReader extends FormatReader {
           store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
             pyramid.acquisitionTime * 1000, DateTools.UNIX)), ii);
         }
+      }
+      else if (files.size() == 1 && ii > 0 && ii <= layerNames.size()) {
+        store.setImageName(layerNames.get(ii - 1), ii);
       }
       else {
         store.setImageName("macro image", ii);
@@ -1820,6 +1833,10 @@ public class CellSensReader extends FormatReader {
                   if (pyramid != null && pyramid.name == null) {
                     pyramid.name = value;
                   }
+                  else if (imageCount > 0) {
+                    layerNames.add(value);
+                  }
+                  imageCount = 0;
                 }
                 break;
               case INT_2:
@@ -1858,6 +1875,7 @@ public class CellSensReader extends FormatReader {
                     pyramid.width = intValues[2];
                     pyramid.height = intValues[3];
                   }
+                  imageCount++;
                 }
                 else if (tag == TILE_ORIGIN) {
                   if (pyramid != null) {
