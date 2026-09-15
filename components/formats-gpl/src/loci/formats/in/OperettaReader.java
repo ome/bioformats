@@ -25,6 +25,7 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1006,6 +1007,9 @@ public class OperettaReader extends FormatReader {
               activePlane.filename = value;
             }
             else {
+              value = value.replaceAll("\\\\", File.separator);
+              value = value.replaceAll("/", File.separator);
+
               Location parent =
                 new Location(currentId).getAbsoluteFile().getParentFile();
               Location planeFile = new Location(parent, value);
