@@ -105,11 +105,14 @@ public class UpgradeChecker {
   /** Name of the OME tools JAR. */
   public static final String OME_TOOLS = "ome_tools.jar";
 
-  /** Names of the individual JARs. */
+  /**
+   * Names of the individual JARs.
+   *
+   * @deprecated since 9.0.0
+   */
   public static final String[] INDIVIDUAL_JARS = new String[] {
     "formats-api.jar", "formats-bsd.jar", "formats-gpl.jar",
-    "jai_imageio.jar", "common.jar", "mdbtools-java.jar", "metakit.jar",
-    "ome-xml.jar", "ome-poi.jar"
+    "bio-formats-tools.jar", "bio-formats_plugins.jar", "turbojpeg.jar"
   };
 
   /** Location of the OME registry. */
@@ -276,6 +279,7 @@ public class UpgradeChecker {
    * @return true if installation was successfull
    *
    * @see #install(String, String)
+   * @deprecated since 9.0.0
    */
   public boolean installIndividualJars(String urlDir, String downloadDir) {
     boolean overallSuccess = true;
@@ -296,6 +300,7 @@ public class UpgradeChecker {
    * @param downloadPath the location in which to write the JAR;
    *                     if this location already exists, it will be overwritten
    * @return true if installation was successful
+   * @deprecated since 9.0.0
    */
   public boolean install(String urlPath, String downloadPath) {
     // if an old version exists, then remove it
