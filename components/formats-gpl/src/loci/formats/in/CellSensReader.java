@@ -410,9 +410,11 @@ public class CellSensReader extends FormatReader {
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
   private boolean[] bgr;
 
+  private transient ArrayList<String> layerNames = new ArrayList<String>();
   private transient boolean expectETS = false;
   private transient int channelCount = 0;
   private transient int zCount = 0;
+  private transient int imageCount = 0;
 
   // -- Constructor --
 
@@ -610,7 +612,13 @@ public class CellSensReader extends FormatReader {
       return buf;
     }
     else {
-      return parser.getSamples(ifds.get(getIFDIndex() + no), buf, x, y, w, h);
+      IFD ifd = ifds.get(getIFDIndex() + no);
+      if (ifd.getImageWidth() == getSizeX() && ifd.getImageLength() == getSizeY()) {
+        return parser.getSamples(ifd, buf, x, y, w, h);
+      }
+      LOGGER.warn("Using blank plane for unreadable image (found dimensions {}x{})",
+        ifd.getImageWidth(), ifd.getImageLength());
+      return buf;
     }
   }
 
@@ -650,8 +658,10 @@ public class CellSensReader extends FormatReader {
       previousTag = 0;
       expectETS = false;
       pyramids.clear();
+      layerNames.clear();
       channelCount = 0;
       zCount = 0;
+      imageCount = 0;
       bgr = null;
     }
   }
@@ -744,6 +754,7 @@ public class CellSensReader extends FormatReader {
     int seriesCount = files.size();
     core.clear();
     int ignoredPyramids = 0;
+    int extraImages = 0;
     if (files.size() == 1) {
       for (Pyramid pyramid : pyramids) {
         if (!pyramid.name.equalsIgnoreCase("Overview")) {
@@ -754,14 +765,46 @@ public class CellSensReader extends FormatReader {
       seriesCount = ifds.size();
 
       if (ifds.size() > 1) {
+        IFD lastIFD = ifds.get(ifds.size() - 1);
+        if (lastIFD.getImageWidth() == 1 && lastIFD.getImageLength() == 1) {
+          ifds.remove(ifds.size() - 1);
+          seriesCount--;
+        }
+
         if (ifds.get(1).getSamplesPerPixel() == 1) {
-          seriesCount = 2;
           if (channelCount == 0 && zCount == 0) {
-            channelCount = ifds.size() - 1;
+            // there may be either 1 or 2 single planes before the channels/Z stack
+            int uniqueDims = 1;
+            for (int s=1; s<seriesCount; s++) {
+              if (ifds.get(s).getImageWidth() != ifds.get(s - 1).getImageWidth() ||
+                ifds.get(s).getImageLength() != ifds.get(s - 1).getImageLength() ||
+                ifds.get(s).getSamplesPerPixel() != ifds.get(s - 1).getSamplesPerPixel() ||
+                ifds.get(s).getBitsPerSample()[0] != ifds.get(s - 1).getBitsPerSample()[0])
+              {
+                if (channelCount > 0) {
+                  channelCount--;
+                  break;
+                }
+                uniqueDims++;
+                extraImages++;
+              }
+              else {
+                channelCount++;
+              }
+            }
+            channelCount++;
+            seriesCount = uniqueDims;
           }
           else if (zCount > 0) {
-            zCount /= 2;
-            channelCount = (ifds.size() - 1) / zCount;
+            seriesCount = 2;
+            extraImages = 1;
+            zCount /= seriesCount;
+            channelCount = (ifds.size() - extraImages) / zCount;
+          }
+          else if (channelCount > 0) {
+            seriesCount = 2;
+            extraImages = 1;
+            zCount = (ifds.size() - extraImages) / channelCount;
           }
         }
         else {
@@ -844,11 +887,11 @@ public class CellSensReader extends FormatReader {
         ms.sizeT = 1;
         ms.sizeC = ms.rgb ? samples : 1;
         if (files.size() == 1 && channelCount > 0 &&
-          channelCount < ifds.size() && s > 0)
+          channelCount < ifds.size() && s > (extraImages - 1))
         {
           ms.sizeC *= channelCount;
-          ms.sizeZ = (ifds.size() - 1) / channelCount;
-          ms.imageCount = ifds.size() - 1;
+          ms.sizeZ = (ifds.size() - extraImages) / channelCount;
+          ms.imageCount = ifds.size() - extraImages;
           ms.dimensionOrder = "XYZCT";
         }
         else {
@@ -1037,6 +1080,9 @@ public class CellSensReader extends FormatReader {
           store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
             pyramid.acquisitionTime * 1000, DateTools.UNIX)), ii);
         }
+      }
+      else if (files.size() == 1 && ii > 0 && ii <= layerNames.size()) {
+        store.setImageName(layerNames.get(ii - 1), ii);
       }
       else {
         store.setImageName("macro image", ii);
@@ -1787,6 +1833,10 @@ public class CellSensReader extends FormatReader {
                   if (pyramid != null && pyramid.name == null) {
                     pyramid.name = value;
                   }
+                  else if (imageCount > 0) {
+                    layerNames.add(value);
+                  }
+                  imageCount = 0;
                 }
                 break;
               case INT_2:
@@ -1825,6 +1875,7 @@ public class CellSensReader extends FormatReader {
                     pyramid.width = intValues[2];
                     pyramid.height = intValues[3];
                   }
+                  imageCount++;
                 }
                 else if (tag == TILE_ORIGIN) {
                   if (pyramid != null) {
