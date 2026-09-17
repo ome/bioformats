@@ -43,13 +43,6 @@ import loci.formats.UpgradeChecker;
  */
 public class Updater implements PlugIn {
 
-  // -- Constants --
-
-  private static final String TRUNK = "Trunk build";
-  private static final String DAILY = "Daily build";
-  private static final String STABLE =
-    "Stable build (" + UpgradeChecker.STABLE_VERSION + ")";
-
   // -- Fields --
 
   /** Flag indicating whether last operation was canceled. */
@@ -67,27 +60,7 @@ public class Updater implements PlugIn {
       return;
     }
 
-    GenericDialog upgradeDialog = new GenericDialog("Update Bio-Formats Plugins");
-    String[] options = new String[] {TRUNK, DAILY, STABLE};
-    upgradeDialog.addChoice("Release", options, options[0]);
-    upgradeDialog.showDialog();
-
-    if (upgradeDialog.wasCanceled()) {
-      canceled = true;
-      return;
-    }
-
-    String release = upgradeDialog.getNextChoice();
-
-    if (release.equals(TRUNK)) {
-      urlPath = UpgradeChecker.TRUNK_BUILD;
-    }
-    else if (release.equals(DAILY)) {
-      urlPath = UpgradeChecker.DAILY_BUILD;
-    }
-    else if (release.equals(STABLE)) {
-      urlPath = UpgradeChecker.STABLE_BUILD;
-    }
+    urlPath = UpgradeChecker.STABLE_BUILD;
     urlPath += UpgradeChecker.TOOLS;
     install(urlPath);
   }
@@ -133,31 +106,6 @@ public class Updater implements PlugIn {
       IJ.showMessage("The Bio-Formats plugins have been downloaded.\n" +
         "Please restart ImageJ to complete the upgrade process.");
     }
-  }
-
-  // -- Helper methods --
-
-  private static String find(String dir, String filename) {
-    File dirFile = new File(dir);
-    String[] list = dirFile.list();
-    for (String f : list) {
-      File nextFile = new File(dirFile, f);
-      if (nextFile.isDirectory()) {
-        String result = find(nextFile.getAbsolutePath(), filename);
-        if (result != null) {
-          return result;
-        }
-      }
-      else {
-        int dot = filename.indexOf('.');
-        if (f.startsWith(filename.substring(0, dot)) &&
-          f.endsWith(filename.substring(dot)))
-        {
-          return nextFile.getAbsolutePath();
-        }
-      }
-    }
-    return null;
   }
 
 }
