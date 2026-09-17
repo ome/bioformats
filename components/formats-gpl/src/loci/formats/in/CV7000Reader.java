@@ -351,6 +351,12 @@ public class CV7000Reader extends FormatReader {
     HashSet<Integer> uniqueWells = new HashSet<Integer>();
     HashSet<Integer> uniqueChannels = new HashSet<Integer>();
 
+    // in some datasets, the "bts:Target" is equal in all channels
+    // in that case we do not want to use it to set the channel name
+    // in other datasets, "bts:Target" is unique for each channel
+    // so it makes a more informative channel name than the channel/camera index
+    HashSet<String> uniqueTargets = new HashSet<String>();
+
     for (Plane p : planeData) {
       if (p != null) {
         if (!isWellAcquired(p.field.row, p.field.column)) {
@@ -395,6 +401,7 @@ public class CV7000Reader extends FormatReader {
           m.minC = p.channelIndex;
         }
         uniqueChannels.add(p.channelIndex);
+        uniqueTargets.add(channels.get(p.channelIndex).target);
 
         if (p.field.field >= fields) {
           fields = p.field.field + 1;
@@ -403,6 +410,7 @@ public class CV7000Reader extends FormatReader {
         uniqueWells.add(wellIndex);
       }
     }
+    boolean useTargetChannelNames = uniqueTargets.size() == uniqueChannels.size();
 
     reader = new MinimalTiffReader();
     reader.setId(firstFile);
@@ -621,10 +629,15 @@ public class CV7000Reader extends FormatReader {
               store.setObjectiveSettingsID(objectiveID, i);
             }
 
-            // the index here is the original bts:Ch index in
-            // the *.mes and *.mrf files
-            store.setChannelName("Action #" + (p.actionIndex + 1) +
-              ", Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
+            if (useTargetChannelNames && channel.target != null) {
+              store.setChannelName(channel.target, i, c);
+            }
+            else {
+              // the index here is the original bts:Ch index in
+              // the *.mes and *.mrf files
+              store.setChannelName("Action #" + (p.actionIndex + 1) +
+                ", Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
+            }
 
             if (channel.color != null) {
               store.setChannelColor(channel.color, i, c);
@@ -986,6 +999,7 @@ public class CV7000Reader extends FormatReader {
             }
 
             currentChannel.fluor = attributes.getValue("bts:Fluorophore");
+            currentChannel.target = attributes.getValue("bts:Target");
           }
         }
       }
@@ -1064,6 +1078,7 @@ public class CV7000Reader extends FormatReader {
     public Color color;
 
     public String fluor;
+    public String target;
 
     public Channel() {
     }
@@ -1083,6 +1098,7 @@ public class CV7000Reader extends FormatReader {
       binning = ch.binning;
       color = ch.color;
       fluor = ch.fluor;
+      target = ch.target;
     }
 
     @Override

@@ -198,5 +198,19 @@ public class TiffParserTest {
     mock.close();
   }
 
+  @Test
+  public void testReadPixels() throws IOException, FormatException {
+    int size = mock.getImageLength();
+    int bytesPerPixel = 0;
+    for (int bps : mock.getBitsPerSample()) {
+      bytesPerPixel += (bps / 8);
+    }
+    int minBuf = size * size * bytesPerPixel;
+    for (int i=minBuf; i<minBuf*10; i++) {
+      byte[] buf = new byte[i];
+      tiffParser.getSamples(tiffParser.getFirstIFD(), buf, 0, 0, size, size);
+    }
+  }
+
   // TODO: Test wrong type exceptions
 }

@@ -65,6 +65,13 @@
             <class name="loci.formats.utests.tiff.TiffParserTest"/>
         </classes>
     </test>
+    <test name="RGB48TIFFParserTest">
+        <parameter name="mockClassName"
+                   value="loci.formats.utests.tiff.RGB48TiffMock"/>
+        <classes>
+            <class name="loci.formats.utests.tiff.TiffParserTest"/>
+        </classes>
+    </test>
     <test name="TiffWriterTest">
       <groups/>
       <classes>
