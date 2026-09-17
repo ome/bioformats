@@ -63,17 +63,25 @@ public class UpgradeChecker {
 
   // -- Constants --
 
-  /** Location of the OME continuous integration server. */
+  /**
+   * Location of the OME continuous integration server.
+   *
+   * @deprecated since 9.0.0
+   */
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
 
   /**
    * Location of the JAR artifacts for Bio-Formats' trunk build.
+   *
+   * @deprecated since 9.0.0
    */
   public static final String TRUNK_BUILD =
     CI_SERVER + "/job/BIOFORMATS-5.1-latest/lastSuccessfulBuild/artifact/artifacts/";
 
   /**
    * Location of the JAR artifacts for Bio-Formats' daily build.
+   *
+   * @deprecated since 9.0.0
    */
   public static final String DAILY_BUILD =
     CI_SERVER + "/job/BIOFORMATS-5.1-daily/lastSuccessfulBuild/artifact/artifacts/";
