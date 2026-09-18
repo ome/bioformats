@@ -1170,7 +1170,10 @@ public class MetamorphReader extends BaseTiffReader {
               }
               stream = new RandomAccessInputStream(file, 16);
               tp = new TiffParser(stream);
-              tp.checkHeader();
+              Boolean tiffLittleEndian = tp.checkHeader();
+              if (tiffLittleEndian == null) {
+                LOGGER.warn("Found invalid TIFF file: {}", file);
+              }
               IFDList f = tp.getMainIFDs();
               if (f.size() > 0) {
                 lastFile = fileIndex;

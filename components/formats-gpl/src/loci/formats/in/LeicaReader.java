@@ -772,7 +772,11 @@ public class LeicaReader extends FormatReader {
 
       in = new RandomAccessInputStream(baseFile, 16);
       TiffParser tp = new TiffParser(in);
-      in.order(tp.checkHeader().booleanValue());
+      Boolean littleEndian = tp.checkHeader();
+      if (littleEndian == null) {
+        throw new FormatException("Invalid TIFF file");
+      }
+      in.order(littleEndian.booleanValue());
 
       in.seek(0);
 
