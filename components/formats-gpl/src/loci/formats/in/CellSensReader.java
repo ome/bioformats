@@ -1069,6 +1069,9 @@ public class CellSensReader extends FormatReader {
           if (imageName.equals("Overview") || imageName.equals("Label")) {
             imageName = imageName.toLowerCase();
           }
+          if (res > 0) {
+            imageName += " resolution " + res;
+          }
           store.setImageName(imageName, imageIndex);
           store.setObjectiveSettingsID(MetadataTools.createLSID("Objective", 0, nextPyramid - 1), imageIndex);
           store.setObjectiveSettingsRefractiveIndex(pyramid.refractiveIndex, imageIndex);
