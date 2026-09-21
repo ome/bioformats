@@ -477,7 +477,11 @@ public class TissueFAXSReader extends FormatReader {
 
       for (int res=0; res<resolutions; res++) {
         int resIndex = imageIndex + res;
-        store.setImageName(region.regionMetadata.getString("Name"), resIndex);
+        String imageName = region.regionMetadata.getString("Name");
+        if (res > 0) {
+          imageName += " resolution " + res;
+        }
+        store.setImageName(imageName, resIndex);
         store.setObjectiveSettingsID(objectiveID, resIndex);
 
         Double physicalX = region.regionMetadata.getDouble("PhysicalSizeX");
