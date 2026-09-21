@@ -68,6 +68,7 @@ public class UpgradeChecker {
    *
    * @deprecated since 9.0.0
    */
+  @Deprecated
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
 
   /**
@@ -75,6 +76,7 @@ public class UpgradeChecker {
    *
    * @deprecated since 9.0.0
    */
+  @Deprecated
   public static final String TRUNK_BUILD =
     CI_SERVER + "/job/BIOFORMATS-5.1-latest/lastSuccessfulBuild/artifact/artifacts/";
 
@@ -83,6 +85,7 @@ public class UpgradeChecker {
    *
    * @deprecated since 9.0.0
    */
+  @Deprecated
   public static final String DAILY_BUILD =
     CI_SERVER + "/job/BIOFORMATS-5.1-daily/lastSuccessfulBuild/artifact/artifacts/";
 
@@ -103,6 +106,7 @@ public class UpgradeChecker {
    *
    * @deprecated since 9.0.0
    */
+  @Deprecated
   public static final String[] INDIVIDUAL_JARS = new String[] {
     "formats-api.jar", "formats-bsd.jar", "formats-gpl.jar",
     "bio-formats-tools.jar", "bio-formats_plugins.jar", "turbojpeg.jar"
@@ -274,6 +278,7 @@ public class UpgradeChecker {
    * @see #install(String, String)
    * @deprecated since 9.0.0
    */
+  @Deprecated
   public boolean installIndividualJars(String urlDir, String downloadDir) {
     boolean overallSuccess = true;
     for (String jar : INDIVIDUAL_JARS) {
@@ -295,6 +300,7 @@ public class UpgradeChecker {
    * @return true if installation was successful
    * @deprecated since 9.0.0
    */
+  @Deprecated
   public boolean install(String urlPath, String downloadPath) {
     // if an old version exists, then remove it
 
