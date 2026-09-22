@@ -458,6 +458,7 @@ public class TissueFAXSReader extends FormatReader {
       populatedCoreIndexes.add(region.fullResolutionCoreIndex);
       int imageIndex = hasFlattenedResolutions() ? region.fullResolutionCoreIndex : nextImage;
       nextImage++;
+      int resolutions = hasFlattenedResolutions() ? region.resolutions.size() : 1;
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, index);
       store.setObjectiveID(objectiveID, 0, index);
@@ -474,36 +475,52 @@ public class TissueFAXSReader extends FormatReader {
       String objectiveName = region.regionMetadata.getString("ObjectiveName");
       store.setObjectiveModel(objectiveName, 0, index);
 
-      store.setImageName(region.regionMetadata.getString("Name"), imageIndex);
-      store.setObjectiveSettingsID(objectiveID, imageIndex);
-
-      Double physicalX = region.regionMetadata.getDouble("PhysicalSizeX");
-      Double physicalY = region.regionMetadata.getDouble("PhysicalSizeY");
-
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(physicalX), imageIndex);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(physicalY), imageIndex);
-
-      String acquisitionMode = region.regionMetadata.getString("AcquisitionMode");
-      AcquisitionMode mode = getAcquisitionMode(acquisitionMode);
-
-      for (int c=0; c<region.channels.size(); c++) {
-        Channel ch = region.channels.get(c);
-        store.setChannelName(ch.name, imageIndex, c);
-
-        if (mode != null) {
-          store.setChannelAcquisitionMode(mode, imageIndex, c);
+      for (int res=0; res<resolutions; res++) {
+        int resIndex = imageIndex + res;
+        String imageName = region.regionMetadata.getString("Name");
+        if (res > 0) {
+          imageName += " resolution " + res;
         }
+        store.setImageName(imageName, resIndex);
+        store.setObjectiveSettingsID(objectiveID, resIndex);
 
-        if (ch.emWave >= WAVE_MIN && ch.emWave <= WAVE_MAX) {
-          store.setChannelEmissionWavelength(FormatTools.getWavelength((double) ch.emWave), imageIndex, c);
+        Double physicalX = region.regionMetadata.getDouble("PhysicalSizeX");
+        Double physicalY = region.regionMetadata.getDouble("PhysicalSizeY");
+
+        double scale = Math.pow(region.scaleFactor, res);
+        Length physicalSizeX = FormatTools.getPhysicalSizeX(physicalX);
+        if (res > 0) {
+          physicalSizeX = FormatTools.getScaledPhysicalSize(physicalSizeX, scale);
         }
-        if (ch.exWave >= WAVE_MIN && ch.exWave <= WAVE_MAX) {
-          store.setChannelExcitationWavelength(FormatTools.getWavelength((double) ch.exWave), imageIndex, c);
+        Length physicalSizeY = FormatTools.getPhysicalSizeY(physicalY);
+        if (res > 0) {
+          physicalSizeY = FormatTools.getScaledPhysicalSize(physicalSizeY, scale);
         }
-        // don't set a channel color for brightfield data
-        // the channel color is expected to be white in that case
-        if (!core.get(region.fullResolutionCoreIndex).rgb) {
-          store.setChannelColor(ch.getColor(), imageIndex, c);
+        store.setPixelsPhysicalSizeX(physicalSizeX, resIndex);
+        store.setPixelsPhysicalSizeY(physicalSizeY, resIndex);
+
+        String acquisitionMode = region.regionMetadata.getString("AcquisitionMode");
+        AcquisitionMode mode = getAcquisitionMode(acquisitionMode);
+
+        for (int c=0; c<region.channels.size(); c++) {
+          Channel ch = region.channels.get(c);
+          store.setChannelName(ch.name, resIndex, c);
+
+          if (mode != null) {
+            store.setChannelAcquisitionMode(mode, resIndex, c);
+          }
+
+          if (ch.emWave >= WAVE_MIN && ch.emWave <= WAVE_MAX) {
+            store.setChannelEmissionWavelength(FormatTools.getWavelength((double) ch.emWave), resIndex, c);
+          }
+          if (ch.exWave >= WAVE_MIN && ch.exWave <= WAVE_MAX) {
+            store.setChannelExcitationWavelength(FormatTools.getWavelength((double) ch.exWave), resIndex, c);
+          }
+          // don't set a channel color for brightfield data
+          // the channel color is expected to be white in that case
+          if (!core.get(region.fullResolutionCoreIndex).rgb) {
+            store.setChannelColor(ch.getColor(), resIndex, c);
+          }
         }
       }
 

@@ -603,6 +603,10 @@ public class SVSReader extends BaseTiffReader {
             }
           }
         }
+        if (ms.pixelSize == null && pos[1] > 0) {
+          SVSCoreMetadata parentResolution = (SVSCoreMetadata) core.get(pos[0], 0);
+          ms.pixelSize = FormatTools.getScaledPhysicalSize(parentResolution.pixelSize, parentResolution.sizeX, ms.sizeX);
+        }
       }
     }
     setSeries(0);

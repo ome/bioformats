@@ -173,6 +173,17 @@ public class PyramidTiffReader extends BaseTiffReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + (i + 1), i);
+
+      if (i > 0) {
+        if (physicalSizeX != null) {
+          store.setPixelsPhysicalSizeX(FormatTools.getScaledPhysicalSize(
+            physicalSizeX, core.get(0, 0).sizeX, core.get(0, i).sizeX), i);
+        }
+        if (physicalSizeY != null) {
+          store.setPixelsPhysicalSizeY(FormatTools.getScaledPhysicalSize(
+            physicalSizeY, core.get(0, 0).sizeY, core.get(0, i).sizeY), i);
+        }
+      }
     }
   }
 

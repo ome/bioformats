@@ -226,6 +226,9 @@ public class FakeReader extends FormatReader {
   private transient int fields = 0;
   private transient int plateAcqs = 0;
 
+  private transient int resolutionCount = 1;
+  private transient int resolutionScale = DEFAULT_RESOLUTION_SCALE;
+
   // Misc. debugging
   private int sleepOpenBytes = 0;
   private int sleepInitFile = 0;
@@ -586,6 +589,8 @@ public class FakeReader extends FormatReader {
     plateCols = 0;
     fields = 0;
     plateAcqs = 0;
+    resolutionCount = 1;
+    resolutionScale = DEFAULT_RESOLUTION_SCALE;
     labelPlanes = false;
     excitationWavelengths.clear();
     emissionWavelengths.clear();
@@ -690,8 +695,6 @@ public class FakeReader extends FormatReader {
     boolean withInstrument = false;
 
     int seriesCount = 1;
-    int resolutionCount = 1;
-    int resolutionScale = DEFAULT_RESOLUTION_SCALE;
     int lutLength = 3;
 
     String acquisitionDate = null;
@@ -1046,9 +1049,19 @@ public class FakeReader extends FormatReader {
   private void fillPhysicalSizes(MetadataStore store) {
     if (physicalSizeX == null && physicalSizeY == null && physicalSizeZ == null) return;
     for (int s=0; s<getSeriesCount(); s++) {
-      store.setPixelsPhysicalSizeX(physicalSizeX, s);
-      store.setPixelsPhysicalSizeY(physicalSizeY, s);
-      store.setPixelsPhysicalSizeZ(physicalSizeZ, s);
+      Length scaledX = physicalSizeX;
+      Length scaledY = physicalSizeY;
+      Length scaledZ = physicalSizeZ;
+      if (hasFlattenedResolutions()) {
+        int res = s % resolutionCount;
+        double resScale = Math.pow(resolutionScale, res);
+        scaledX = FormatTools.getScaledPhysicalSize(scaledX, resScale);
+        scaledY = FormatTools.getScaledPhysicalSize(scaledY, resScale);
+        scaledZ = FormatTools.getScaledPhysicalSize(scaledZ, resScale);
+      }
+      store.setPixelsPhysicalSizeX(scaledX, s);
+      store.setPixelsPhysicalSizeY(scaledY, s);
+      store.setPixelsPhysicalSizeZ(scaledZ, s);
     }
   }
 

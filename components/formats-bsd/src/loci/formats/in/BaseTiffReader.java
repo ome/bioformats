@@ -81,6 +81,9 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     "yyyy-MM-dd'T'HH:mm:ssZ"
   };
 
+  protected Length physicalSizeX;
+  protected Length physicalSizeY;
+
   // -- Constructors --
 
   /** Constructs a new BaseTiffReader. */
@@ -89,6 +92,18 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   /** Constructs a new BaseTiffReader. */
   public BaseTiffReader(String name, String[] suffixes) {
     super(name, suffixes);
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      physicalSizeX = null;
+      physicalSizeY = null;
+    }
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -474,14 +489,14 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         unit = getResolutionUnitFromComment(firstIFD);
       }
 
-      Length sizeX = FormatTools.getPhysicalSizeX(pixX, unit);
-      Length sizeY = FormatTools.getPhysicalSizeY(pixY, unit);
+      physicalSizeX = FormatTools.getPhysicalSizeX(pixX, unit);
+      physicalSizeY = FormatTools.getPhysicalSizeY(pixY, unit);
 
-      if (sizeX != null) {
-        store.setPixelsPhysicalSizeX(sizeX, 0);
+      if (physicalSizeX != null) {
+        store.setPixelsPhysicalSizeX(physicalSizeX, 0);
       }
-      if (sizeY != null) {
-        store.setPixelsPhysicalSizeY(sizeY, 0);
+      if (physicalSizeY != null) {
+        store.setPixelsPhysicalSizeY(physicalSizeY, 0);
       }
       store.setPixelsPhysicalSizeZ(null, 0);
 
