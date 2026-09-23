@@ -208,6 +208,17 @@ public class Memoizer extends ReaderWrapper {
 
     @Override
     public void saveReader(IFormatReader reader) {
+      // clean up reader list in any instances of ImageReader
+      IFormatReader r = reader;
+      while (r instanceof ReaderWrapper || r instanceof ImageReader) {
+        if (r instanceof ImageReader) {
+          ImageReader ir = (ImageReader) r;
+          ir.cleanupReaderList();
+          r = ir.getReader();
+        }
+        else r = ((ReaderWrapper) r).getReader();
+      }
+
       kryo.writeObject(output, reader.getClass());
       kryo.writeObject(output, reader);
     }
