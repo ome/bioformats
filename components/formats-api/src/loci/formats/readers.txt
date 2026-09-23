@@ -8,6 +8,7 @@ loci.formats.in.URLReader[type=external] # urlreader
 
 # readers for compressed/archive files
 loci.formats.in.ZipReader             # zip
+loci.formats.in.VmicReader            # vmic  
 
 # javax.imageio readers
 loci.formats.in.APNGReader            # png [javax.imageio]
