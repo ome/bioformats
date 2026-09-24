@@ -36,11 +36,15 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.AnatomicalOrientation;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IAxisOrientationReader;
 import loci.formats.MetadataTools;
+import loci.formats.Orientation;
+import loci.formats.OrientationType;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -48,7 +52,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class BrukerReader extends FormatReader {
+public class BrukerReader extends FormatReader implements IAxisOrientationReader {
 
   // -- Constants --
 
@@ -74,6 +78,10 @@ public class BrukerReader extends FormatReader {
   private String[] users = null;
   private String[] timestamps = null;
 
+  private Orientation xAxis = null;
+  private Orientation yAxis = null;
+  private Orientation zAxis = null;
+
   // -- Constructor --
 
   /** Constructs a new Bruker reader. */
@@ -84,6 +92,18 @@ public class BrukerReader extends FormatReader {
     hasCompanionFiles = true;
     datasetDescription = "One 'fid' and one 'acqp' plus several other " +
       "metadata files and a 'pdata' directory";
+  }
+
+  // -- IAxisOrientationReader API methods --
+
+  @Override
+  public Orientation[] getAxisOrientations() {
+    FormatTools.assertId(currentId, true, 1);
+    Orientation[] axes = new Orientation[5];
+    axes[getDimensionOrder().indexOf("X")] = xAxis;
+    axes[getDimensionOrder().indexOf("Y")] = yAxis;
+    axes[getDimensionOrder().indexOf("Z")] = zAxis;
+    return axes;
   }
 
   // -- IFormatReader API methods --
@@ -154,7 +174,9 @@ public class BrukerReader extends FormatReader {
     files.add(new Location(getCurrentFile()).getAbsolutePath());
 
     for (String f : allFiles) {
-      if (f.startsWith(dir) && (!f.endsWith("2dseq") || !noPixels)) {
+      if ((f.startsWith(dir) && (!f.endsWith("2dseq") || !noPixels)) ||
+        f.endsWith("subject"))
+      {
         if (!files.contains(f)) {
           files.add(f);
         }
@@ -234,6 +256,7 @@ public class BrukerReader extends FormatReader {
     ArrayList<String> acqpFiles = new ArrayList<String>();
     ArrayList<String> recoFiles = new ArrayList<String>();
     ArrayList<String> procFiles = new ArrayList<String>();
+    String subjectFile = null;
 
     for (String f : acquisitionDirs) {
       Location dir = new Location(parent, f);
@@ -280,15 +303,24 @@ public class BrukerReader extends FormatReader {
           procFiles.remove(procFiles.size() - 1);
         }
       }
+      else if (f.equals("subject")) {
+        subjectFile = dir.getAbsolutePath();
+        allFiles.add(subjectFile);
+      }
     }
+    core.clear();
 
+    if (subjectFile != null) {
+      String subjectData = DataTools.readFile(subjectFile);
+      String[] lines = subjectData.split("\n");
+      parseLines(lines);
+    }
 
     imageNames = new String[pixelsFiles.size()];
     timestamps = new String[pixelsFiles.size()];
     institutions = new String[pixelsFiles.size()];
     users = new String[pixelsFiles.size()];
 
-    core.clear();
     for (int series=0; series<pixelsFiles.size(); series++) {
       sizes = null;
       ordering = null;
@@ -395,7 +427,10 @@ public class BrukerReader extends FormatReader {
   }
 
   private void parseLines(String[] lines) {
-    CoreMetadata ms = core.get(getCoreIndex());
+    CoreMetadata ms = core.size() == 0 ? null : core.get(getCoreIndex());
+    String subjectEntry = null;
+    String subjectPose = null;
+    String subjectType = null;
     for (int i=0; i<lines.length; i++) {
       String line = lines[i];
       int index = line.indexOf("=");
@@ -413,48 +448,64 @@ public class BrukerReader extends FormatReader {
           continue;
         }
 
-        addSeriesMeta(key.substring(3), value);
+        if (core.size() == 0) {
+          addGlobalMeta(key.substring(3), value);
+        }
+        else {
+          addSeriesMeta(key.substring(3), value);
+        }
 
-          if (key.equals("##$NI")) {
-            ni = Integer.parseInt(value);
-          }
-          else if (key.equals("##$NR")) {
-            nr = Integer.parseInt(value);
-          }
-          else if (key.equals("##$ACQ_word_size")) {
-            bits = Integer.parseInt(value.substring(1, value.lastIndexOf("_")));
-          }
-          else if (key.equals("##$BYTORDA")) {
+        if (key.equals("##$NI")) {
+          ni = Integer.parseInt(value);
+        }
+        else if (key.equals("##$NR")) {
+          nr = Integer.parseInt(value);
+        }
+        else if (key.equals("##$ACQ_word_size")) {
+          bits = Integer.parseInt(value.substring(1, value.lastIndexOf("_")));
+        }
+        else if (key.equals("##$ACQ_size")) {
+          sizes = value.split(" ");
+        }
+        else if (key.equals("##$ACQ_obj_order")) {
+          ordering = value.split(" ");
+        }
+        else if (key.equals("##$ACQ_time")) {
+          timestamps[series] = value;
+        }
+        else if (key.equals("##$ACQ_institution")) {
+          institutions[series] = value;
+        }
+        else if (key.equals("##$ACQ_operator")) {
+          users[series] = value;
+        }
+        else if (key.equals("##$ACQ_scan_name")) {
+          imageNames[series] = value;
+        }
+        else if (key.equals("##$ACQ_ns_list_size")) {
+          ns = Integer.parseInt(value);
+        }
+        else if (key.equals("##$RECO_size")) {
+          sizes = value.split(" ");
+        }
+        else if (key.equals("##$RECO_wordtype")) {
+          bits = Integer.parseInt(value.substring(1, value.indexOf("BIT")));
+          signed = value.indexOf("_SGN_") >= 0;
+          isFloat = !value.endsWith("_INT");
+        }
+        else if (key.equals("##$SUBJECT_type")) {
+          subjectType = value;
+        }
+        else if (key.equals("##$SUBJECT_entry")) {
+          subjectEntry = value.substring(value.lastIndexOf("_") + 1);
+        }
+        else if (key.equals("##$SUBJECT_position")) {
+          subjectPose = value.substring(value.lastIndexOf("_") + 1);
+        }
+
+        if (ms != null) {
+          if (key.equals("##$BYTORDA")) {
             ms.littleEndian = value.toLowerCase().equals("little");
-          }
-          else if (key.equals("##$ACQ_size")) {
-            sizes = value.split(" ");
-          }
-          else if (key.equals("##$ACQ_obj_order")) {
-            ordering = value.split(" ");
-          }
-          else if (key.equals("##$ACQ_time")) {
-            timestamps[series] = value;
-          }
-          else if (key.equals("##$ACQ_institution")) {
-            institutions[series] = value;
-          }
-          else if (key.equals("##$ACQ_operator")) {
-            users[series] = value;
-          }
-          else if (key.equals("##$ACQ_scan_name")) {
-            imageNames[series] = value;
-          }
-          else if (key.equals("##$ACQ_ns_list_size")) {
-            ns = Integer.parseInt(value);
-          }
-          else if (key.equals("##$RECO_size")) {
-            sizes = value.split(" ");
-          }
-          else if (key.equals("##$RECO_wordtype")) {
-            bits = Integer.parseInt(value.substring(1, value.indexOf("BIT")));
-            signed = value.indexOf("_SGN_") >= 0;
-            isFloat = !value.endsWith("_INT");
           }
           else if (key.equals("##$IM_SIX")) {
             ms.sizeX = Integer.parseInt(value);
@@ -468,6 +519,31 @@ public class BrukerReader extends FormatReader {
           else if (key.equals("##$IM_SIT")) {
             ms.sizeT = Integer.parseInt(value);
           }
+        }
+      }
+    }
+
+    // see https://github.com/BrkRaw/brkraw/blob/0.5.7/src/brkraw/resolver/affine.py#L241
+    // only supports subject type/entry/pose for which we have data right now
+    if (subjectType != null && subjectEntry != null && subjectPose != null) {
+      boolean headFirst = subjectEntry.toLowerCase().startsWith("head");
+      boolean supine = subjectPose.equalsIgnoreCase("supine");
+      boolean prone = subjectPose.equalsIgnoreCase("prone");
+      boolean left = subjectPose.equalsIgnoreCase("left");
+      boolean right = subjectPose.equalsIgnoreCase("right");
+
+      if (subjectType.equalsIgnoreCase("human")) {
+        if (headFirst && supine) {
+          xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+          yAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR);
+          zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
+        }
+        else {
+          LOGGER.warn("Unsupported subject orientation: {}, {}", subjectEntry, subjectPose);
+        }
+      }
+      else {
+        LOGGER.warn("Unsupported subject type: {}", subjectType);
       }
     }
   }

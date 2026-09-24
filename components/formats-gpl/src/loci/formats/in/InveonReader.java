@@ -34,11 +34,15 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.AnatomicalOrientation;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IAxisOrientationReader;
 import loci.formats.MetadataTools;
+import loci.formats.Orientation;
+import loci.formats.OrientationType;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
@@ -46,7 +50,7 @@ import ome.units.quantity.Length;
 /**
  * InveonReader is the file format reader for Inveon files.
  */
-public class InveonReader extends FormatReader {
+public class InveonReader extends FormatReader implements IAxisOrientationReader {
 
   // -- Constants --
 
@@ -56,6 +60,7 @@ public class InveonReader extends FormatReader {
 
   private String datFile;
   private ArrayList<Long> dataPointers = new ArrayList<Long>();
+  private Orientation zAxis = null;
 
   // -- Constructor --
 
@@ -66,6 +71,17 @@ public class InveonReader extends FormatReader {
     suffixSufficient = false;
     hasCompanionFiles = true;
     datasetDescription = "One .hdr file plus one similarly-named file";
+  }
+
+  // -- IAxisOrientationReader API methods --
+
+  /* @see loci.formats.IAxisOrientationReader#getAxisOrientations() */
+  @Override
+  public Orientation[] getAxisOrientations() {
+    FormatTools.assertId(currentId, true, 1);
+    Orientation[] axes = new Orientation[5];
+    axes[getDimensionOrder().indexOf("Z") - 2] = zAxis;
+    return axes;
   }
 
   // -- IFormatReader API methods --
@@ -133,6 +149,7 @@ public class InveonReader extends FormatReader {
     if (!fileOnly) {
       datFile = null;
       dataPointers.clear();
+      zAxis = null;
     }
   }
 
@@ -681,20 +698,28 @@ public class InveonReader extends FormatReader {
     int orientation = Integer.parseInt(value);
     switch (orientation) {
       case 1:
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
         return "Feet first, prone";
       case 2:
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.SUPERIOR_TO_INFERIOR);
         return "Head first, prone";
       case 3:
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
         return "Feet first, supine";
       case 4:
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.SUPERIOR_TO_INFERIOR);
         return "Head first, supine";
       case 5:
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
         return "Feet first, right";
       case 6:
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.SUPERIOR_TO_INFERIOR);
         return "Head first, right";
       case 7:
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
         return "Feet first, left";
       case 8:
+        zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.SUPERIOR_TO_INFERIOR);
         return "Head first, left";
     }
     return "Unknown";

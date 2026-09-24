@@ -34,12 +34,16 @@ import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.AnatomicalOrientation;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IAxisOrientationReader;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
+import loci.formats.Orientation;
+import loci.formats.OrientationType;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 
@@ -48,7 +52,7 @@ import ome.units.quantity.Length;
 /**
  * MINCReader is the file format reader for MINC MRI files.
  */
-public class MINCReader extends FormatReader {
+public class MINCReader extends FormatReader implements IAxisOrientationReader {
 
   // -- Fields --
 
@@ -62,6 +66,20 @@ public class MINCReader extends FormatReader {
   public MINCReader() {
     super("MINC MRI", "mnc");
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
+  }
+
+  // -- IAxisOrientationReader API methods --
+
+  @Override
+  public Orientation[] getAxisOrientations() {
+    FormatTools.assertId(currentId, true, 1);
+    // see https://en.wikibooks.org/wiki/MINC/SoftwareDevelopment/MINC2.0_File_Format_Reference#MINC_2.0_coordinate_system
+    return new Orientation[] {
+      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.LEFT_TO_RIGHT),
+      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR),
+      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR),
+      null, null
+    };
   }
 
   // -- IFormatReader API methods --
