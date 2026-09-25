@@ -344,8 +344,16 @@ public class OIRReader extends FormatReader {
     m.sizeT = 1;
     m.falseColor = true;
 
+    // if the current ID is mapped to a virtual location, e.g. an entry
+    // in a zip file opened via ZipReader, then the absolute path will not
+    // exist; keep the mapped ID so that pixel blocks can be reopened
+    // through the same mapping later
+    String pixelsFile = current.getAbsolutePath();
+    if (Location.getMappedFile(currentId) != null) {
+      pixelsFile = currentId;
+    }
     try (RandomAccessInputStream s = new RandomAccessInputStream(currentId, BUFFER_SIZE)) {
-      readPixelsFile(current.getAbsolutePath(), s);
+      readPixelsFile(pixelsFile, s);
     }
 
     for (String file : extraFiles) {
