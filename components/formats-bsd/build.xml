@@ -16,7 +16,7 @@ Type "ant -p" for a list of targets.
   <property name="testng.runWriterTilingTests" value="2"/>
 
   <target name="test" depends="jar,compile-tests,test-long-running,
-      test-no-ome-xml,test-no-exif, test-no-jhdf,
+      test-no-ome-xml,test-no-exif,
       test-spec"
     description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
