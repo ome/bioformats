@@ -40,12 +40,16 @@ import java.nio.file.FileSystems;
 import java.io.IOException;
 import java.io.File;
 import java.math.BigInteger;
+import java.nio.file.FileVisitResult;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertEqualsNoOrder;
 import static org.testng.Assert.assertNotNull;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -55,6 +59,8 @@ import loci.common.Location;
 
 
 public class FilePatternTest {
+
+  private final List<Path> temporaryDirectories = new ArrayList<Path>();
 
   private static final String SEPARATOR =
     FileSystems.getDefault().getSeparator();
@@ -108,9 +114,54 @@ public class FilePatternTest {
     Path[] paths = new Path[basenames.length];
     for (int i = 0; i < basenames.length; i++) {
       paths[i] = Files.createFile(dir.resolve(basenames[i]));
-      paths[i].toFile().deleteOnExit();
     }
     return paths;
+  }
+
+  /** Create and retain a temporary root for cleanup after this test method. */
+  private Path createTempDirectory() throws IOException {
+    Path directory = Files.createTempDirectory("");
+    temporaryDirectories.add(directory);
+    return directory;
+  }
+
+  /** Delete a temporary directory tree immediately, from its leaves upward. */
+  private static void deleteRecursively(Path root) throws IOException {
+    if (!Files.exists(root)) return;
+    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
+        throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) throw failure;
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
+  }
+
+  @AfterMethod(alwaysRun = true)
+  public void tearDown() throws IOException {
+    IOException failure = null;
+    for (int i = temporaryDirectories.size() - 1; i >= 0; i--) {
+      try {
+        deleteRecursively(temporaryDirectories.get(i));
+      }
+      catch (IOException e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    temporaryDirectories.clear();
+    if (failure != null) throw failure;
   }
 
   private static String[] resolveAll(Path dir, String[] basenames) {
@@ -170,8 +221,7 @@ public class FilePatternTest {
   @Test(dataProvider = "booleanStates")
   public void testRegex(Boolean createFiles) throws IOException {
     String[] names = {"z0.tif", "z1.tif"};
-    Path wd = Files.createTempDirectory("");
-    wd.toFile().deleteOnExit();
+    Path wd = createTempDirectory();
     String pattern = resolveToString(wd, "z.*.tif");
     FilePattern fp = new FilePattern(pattern);
     assertTrue(fp.isValid());
@@ -236,8 +286,7 @@ public class FilePatternTest {
                    mkPattern(prefixes, minCBlocks, suffix));
       return;
     }
-    Path wd = Files.createTempDirectory("");
-    wd.toFile().deleteOnExit();
+    Path wd = createTempDirectory();
     String absPattern = resolveToString(wd, pattern);
     String[] fullNames = mkFiles(wd, namesA);
     assertEquals(FilePattern.findPattern(fullNames[1]), absPattern);
@@ -279,8 +328,7 @@ public class FilePatternTest {
       );
       return;
     }
-    Path wd = Files.createTempDirectory("");
-    wd.toFile().deleteOnExit();
+    Path wd = createTempDirectory();
     String[] fullNames = mkFiles(wd, names);
     assertEqualsNoOrder(
         FilePattern.findSeriesPatterns(fullNames[0]),

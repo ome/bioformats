@@ -109,32 +109,33 @@ public final class WriterUtilities {
 
   public static Plane writeImage(String file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels,
       int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
-    TiffWriter writer = new TiffWriter();
-    String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
-    writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian, sizeT));
-    writer.setCompression(compression);
-    writer.setInterleaved(interleaved);
-    writer.setBigTiff(bigTiff);
-    if (tileSize != 0) {
-      writer.setTileSizeX(tileSize);
-      writer.setTileSizeY(tileSize);
-    }
-    writer.setId(file);
-
-    int bytes = FormatTools.getBytesPerPixel(pixelType);
-    byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);
-    Plane originalPlane = new Plane(plane, littleEndian,
-      !writer.isInterleaved(), rgbChannels, FormatTools.getPixelTypeString(pixelType));
-
-    for (int s=0; s<seriesCount; s++) {
-      writer.setSeries(s);
-      for (int t=0; t<sizeT; t++) {
-        writer.saveBytes(t, plane);
+    try (TiffWriter writer = new TiffWriter()) {
+      String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
+      writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels,
+        seriesCount, littleEndian, sizeT));
+      writer.setCompression(compression);
+      writer.setInterleaved(interleaved);
+      writer.setBigTiff(bigTiff);
+      if (tileSize != 0) {
+        writer.setTileSizeX(tileSize);
+        writer.setTileSizeY(tileSize);
       }
-    }
+      writer.setId(file);
 
-    writer.close();
-    return originalPlane;
+      int bytes = FormatTools.getBytesPerPixel(pixelType);
+      byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);
+      Plane originalPlane = new Plane(plane, littleEndian,
+        !writer.isInterleaved(), rgbChannels,
+        FormatTools.getPixelTypeString(pixelType));
+
+      for (int s=0; s<seriesCount; s++) {
+        writer.setSeries(s);
+        for (int t=0; t<sizeT; t++) {
+          writer.saveBytes(t, plane);
+        }
+      }
+      return originalPlane;
+    }
   }
 
   public static void checkImage(TiffReader reader, Plane originalPlane, boolean interleaved, int rgbChannels, 
