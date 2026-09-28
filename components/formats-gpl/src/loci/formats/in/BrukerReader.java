@@ -535,8 +535,8 @@ public class BrukerReader extends FormatReader implements IAxisOrientationReader
       if (subjectType.equalsIgnoreCase("human")) {
         if (headFirst && supine) {
           xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
-          yAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR);
-          zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
+          yAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.SUPERIOR_TO_INFERIOR);
+          zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR);
         }
         else {
           LOGGER.warn("Unsupported subject orientation: {}, {}", subjectEntry, subjectPose);
