@@ -59,6 +59,9 @@ public class MINCReader extends FormatReader implements IAxisOrientationReader {
   private NetCDFService netcdf;
   private byte[][][] pixelData;
   private boolean isMINC2 = false;
+  private boolean xFlipped = false;
+  private boolean yFlipped = false;
+  private boolean zFlipped = false;
 
   // -- Constructor --
 
@@ -75,9 +78,12 @@ public class MINCReader extends FormatReader implements IAxisOrientationReader {
     FormatTools.assertId(currentId, true, 1);
     // see https://en.wikibooks.org/wiki/MINC/SoftwareDevelopment/MINC2.0_File_Format_Reference#MINC_2.0_coordinate_system
     return new Orientation[] {
-      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.LEFT_TO_RIGHT),
-      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR),
-      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR),
+      new Orientation(OrientationType.ANATOMICAL,
+        xFlipped ? AnatomicalOrientation.RIGHT_TO_LEFT : AnatomicalOrientation.LEFT_TO_RIGHT),
+      new Orientation(OrientationType.ANATOMICAL,
+        yFlipped ? AnatomicalOrientation.ANTERIOR_TO_POSTERIOR : AnatomicalOrientation.POSTERIOR_TO_ANTERIOR),
+      new Orientation(OrientationType.ANATOMICAL,
+        zFlipped ? AnatomicalOrientation.SUPERIOR_TO_INFERIOR : AnatomicalOrientation.INFERIOR_TO_SUPERIOR),
       null, null
     };
   }
@@ -275,16 +281,19 @@ public class MINCReader extends FormatReader implements IAxisOrientationReader {
       m.sizeX = Integer.parseInt(attrs.get("length").toString());
       physicalX = getStepSize(attrs);
       xPosition = getStart(attrs);
+      xFlipped = getStepValue(attrs) < 0;
 
       attrs = netcdf.getVariableAttributes("/minc-2.0/dimensions/yspace");
       m.sizeY = Integer.parseInt(attrs.get("length").toString());
       physicalY = getStepSize(attrs);
       yPosition = getStart(attrs);
+      yFlipped = getStepValue(attrs) < 0;
 
       attrs = netcdf.getVariableAttributes("/minc-2.0/dimensions/zspace");
       m.sizeZ = Integer.parseInt(attrs.get("length").toString());
       physicalZ = getStepSize(attrs);
       zPosition = getStart(attrs);
+      zFlipped = getStepValue(attrs) < 0;
     }
     else {
       m.sizeX = netcdf.getDimension("/xspace");
@@ -362,11 +371,15 @@ public class MINCReader extends FormatReader implements IAxisOrientationReader {
     }
   }
 
-  private Length getStepSize(Hashtable<String, Object> attrs) {
+  private Double getStepValue(Hashtable<String, Object> attrs) {
     if (!attrs.containsKey("step")) {
       return null;
     }
-    Double stepSize = Double.parseDouble(attrs.get("step").toString());
+    return Double.parseDouble(attrs.get("step").toString());
+  }
+
+  private Length getStepSize(Hashtable<String, Object> attrs) {
+    Double stepSize = getStepValue(attrs);
     String units = attrs.containsKey("units") ? attrs.get("units").toString() : null;
     return FormatTools.getPhysicalSize(stepSize, units);
   }
