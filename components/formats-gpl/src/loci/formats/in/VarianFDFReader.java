@@ -235,6 +235,8 @@ public class VarianFDFReader extends FormatReader implements IAxisOrientationRea
     CoreMetadata m = core.get(0);
     boolean storedFloats = false;
     boolean multifile = false;
+    boolean slices = false;
+    boolean echoes = false;
 
     String data = in.readString(Character.toString((char) 0x0c));
     String[] lines = data.split("\n");
@@ -280,10 +282,12 @@ public class VarianFDFReader extends FormatReader implements IAxisOrientationRea
         }
       }
       else if (var.equals("slices")) {
+        slices = true;
         m.sizeZ = Integer.parseInt(value);
         multifile = true;
       }
       else if (var.equals("echoes")) {
+        echoes = true;
         m.sizeT = Integer.parseInt(value);
         multifile = true;
       }
@@ -365,6 +369,17 @@ public class VarianFDFReader extends FormatReader implements IAxisOrientationRea
         {
           files.add(new Location(parent, f).getAbsolutePath());
         }
+      }
+    }
+    // metadata may reflect a multi-file dataset with each slice (Z)
+    // or echo (T) stored in a separate file, but the dataset may have
+    // been split up
+    if (multifile && files.size() == 1) {
+      if (slices) {
+        m.sizeZ = 1;
+      }
+      if (echoes) {
+        m.sizeT = 1;
       }
     }
   }
