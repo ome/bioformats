@@ -116,7 +116,7 @@ public class TiffParser implements Closeable {
       long fp = in.getFilePointer();
       Boolean littleEndian = checkHeader();
       if (littleEndian == null) {
-        LOGGER.error("Endian check failed, this may be an invalid file");
+        LOGGER.debug("Endian check failed, this may be an invalid file");
       }
       in.seek(fp);
     }
