@@ -363,14 +363,20 @@ public class MINCReader extends FormatReader implements IAxisOrientationReader {
   }
 
   private Length getStepSize(Hashtable<String, Object> attrs) {
+    if (!attrs.containsKey("step")) {
+      return null;
+    }
     Double stepSize = Double.parseDouble(attrs.get("step").toString());
-    String units = attrs.get("units").toString();
+    String units = attrs.containsKey("units") ? attrs.get("units").toString() : null;
     return FormatTools.getPhysicalSize(stepSize, units);
   }
 
   private Length getStart(Hashtable<String, Object> attrs) {
+    if (!attrs.containsKey("start")) {
+      return null;
+    }
     Double start = Double.parseDouble(attrs.get("start").toString());
-    String units = attrs.get("units").toString();
+    String units = attrs.containsKey("units") ? attrs.get("units").toString() : null;
     return FormatTools.getStagePosition(start, units);
   }
 
