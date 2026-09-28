@@ -345,12 +345,12 @@ public class VarianFDFReader extends FormatReader implements IAxisOrientationRea
 
       // only supports position values for which we have data
       if (headFirst && supine) {
-        xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+        xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.LEFT_TO_RIGHT);
         yAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR);
         zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
       }
       else if (!headFirst && prone) {
-        xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+        xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.LEFT_TO_RIGHT);
         yAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.ANTERIOR_TO_POSTERIOR);
         zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.SUPERIOR_TO_INFERIOR);
       }
