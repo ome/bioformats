@@ -39,4 +39,7 @@ public interface OrientationTerm {
 
   /** @return the defined vocabulary term for the orientation */
   String getDefinedTerm();
+
+  /** @return the orientation that matches multiplying this orientation's axis by -1 */
+  OrientationTerm flip();
 }

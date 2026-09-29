@@ -72,4 +72,60 @@ public enum AnatomicalOrientation implements OrientationTerm {
   public String getDefinedTerm() {
     return definedTerm;
   }
+
+  @Override
+  public AnatomicalOrientation flip() {
+    switch (this) {
+      case LEFT_TO_RIGHT:
+        return RIGHT_TO_LEFT;
+      case RIGHT_TO_LEFT:
+        return LEFT_TO_RIGHT;
+      case ANTERIOR_TO_POSTERIOR:
+        return POSTERIOR_TO_ANTERIOR;
+      case POSTERIOR_TO_ANTERIOR:
+        return ANTERIOR_TO_POSTERIOR;
+      case INFERIOR_TO_SUPERIOR:
+        return SUPERIOR_TO_INFERIOR;
+      case SUPERIOR_TO_INFERIOR:
+        return INFERIOR_TO_SUPERIOR;
+      case DORSAL_TO_VENTRAL:
+        return VENTRAL_TO_DORSAL;
+      case VENTRAL_TO_DORSAL:
+        return DORSAL_TO_VENTRAL;
+      case DORSAL_TO_PALMAR:
+        return PALMAR_TO_DORSAL;
+      case PALMAR_TO_DORSAL:
+        return DORSAL_TO_PALMAR;
+      case DORSAL_TO_PLANTAR:
+        return PLANTAR_TO_DORSAL;
+      case PLANTAR_TO_DORSAL:
+        return DORSAL_TO_PLANTAR;
+      case ROSTRAL_TO_CAUDAL:
+        return CAUDAL_TO_ROSTRAL;
+      case CAUDAL_TO_ROSTRAL:
+        return ROSTRAL_TO_CAUDAL;
+      case CRANIAL_TO_CAUDAL:
+        return CAUDAL_TO_CRANIAL;
+      case CAUDAL_TO_CRANIAL:
+        return CRANIAL_TO_CAUDAL;
+      case PROXIMAL_TO_DISTAL:
+        return DISTAL_TO_PROXIMAL;
+      case DISTAL_TO_PROXIMAL:
+        return PROXIMAL_TO_DISTAL;
+      case SUPERFICIAL_TO_DEEP:
+        return DEEP_TO_SUPERFICIAL;
+      case DEEP_TO_SUPERFICIAL:
+        return SUPERFICIAL_TO_DEEP;
+      case APICAL_TO_BASAL:
+        return BASAL_TO_APICAL;
+      case BASAL_TO_APICAL:
+        return APICAL_TO_BASAL;
+      case APEX_TO_BASE:
+        return BASE_TO_APEX;
+      case BASE_TO_APEX:
+        return APEX_TO_BASE;
+      default:
+        throw new IllegalArgumentException(getDefinedTerm());
+    }
+  }
 }

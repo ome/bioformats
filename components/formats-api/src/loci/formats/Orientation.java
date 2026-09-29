@@ -62,4 +62,8 @@ public class Orientation {
     return value;
   }
 
+  public Orientation flip() {
+    return new Orientation(type, value.flip());
+  }
+
 }
