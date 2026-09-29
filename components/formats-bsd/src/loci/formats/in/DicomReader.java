@@ -2181,38 +2181,45 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
     // apply patient orientation matrix
     // see equation C.7.6.2.1-1 in https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html#sect_C.7.6.2.1.1
 
-    double[] xOrientation = patientOrientation[0];
-    if (useAxis(0, 0)) {
-      xAxis = xOrientation[0] > 0 ? baseAxes[0] : baseAxes[0].flip();
-      baseAxes[0] = null;
-    }
-    if (useAxis(0, 1)) {
-      xAxis = xOrientation[1] > 0 ? baseAxes[1] : baseAxes[1].flip();
-      baseAxes[1] = null;
-    }
-    if (useAxis(0, 2)) {
-      xAxis = xOrientation[2] > 0 ? baseAxes[2] : baseAxes[2].flip();
-      baseAxes[2] = null;
-    }
-
-    double[] yOrientation = patientOrientation[1];
-    if (useAxis(1, 0)) {
-      yAxis = yOrientation[0] > 0 ? baseAxes[0] : baseAxes[0].flip();
-      baseAxes[0] = null;
-    }
-    else if (useAxis(1, 1)) {
-      yAxis = yOrientation[1] > 0 ? baseAxes[1] : baseAxes[1].flip();
-      baseAxes[1] = null;
-    }
-    else if (useAxis(1, 2)) {
-      yAxis = yOrientation[2] > 0 ? baseAxes[2] : baseAxes[2].flip();
-      baseAxes[2] = null;
-    }
-    for (int i=0; i<baseAxes.length; i++) {
-      if (baseAxes[i] != null) {
-        zAxis = baseAxes[i];
-        break;
+    if (patientOrientation != null) {
+      double[] xOrientation = patientOrientation[0];
+      if (useAxis(0, 0)) {
+        xAxis = xOrientation[0] > 0 ? baseAxes[0] : baseAxes[0].flip();
+        baseAxes[0] = null;
       }
+      if (useAxis(0, 1)) {
+        xAxis = xOrientation[1] > 0 ? baseAxes[1] : baseAxes[1].flip();
+        baseAxes[1] = null;
+      }
+      if (useAxis(0, 2)) {
+        xAxis = xOrientation[2] > 0 ? baseAxes[2] : baseAxes[2].flip();
+        baseAxes[2] = null;
+      }
+
+      double[] yOrientation = patientOrientation[1];
+      if (useAxis(1, 0)) {
+        yAxis = yOrientation[0] > 0 ? baseAxes[0] : baseAxes[0].flip();
+        baseAxes[0] = null;
+      }
+      else if (useAxis(1, 1)) {
+        yAxis = yOrientation[1] > 0 ? baseAxes[1] : baseAxes[1].flip();
+        baseAxes[1] = null;
+      }
+      else if (useAxis(1, 2)) {
+        yAxis = yOrientation[2] > 0 ? baseAxes[2] : baseAxes[2].flip();
+        baseAxes[2] = null;
+      }
+      for (int i=0; i<baseAxes.length; i++) {
+        if (baseAxes[i] != null) {
+          zAxis = baseAxes[i];
+          break;
+        }
+      }
+    }
+    else {
+      xAxis = baseAxes[0];
+      yAxis = baseAxes[1];
+      zAxis = baseAxes[2];
     }
   }
 
