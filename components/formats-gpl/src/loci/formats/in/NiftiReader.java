@@ -83,6 +83,10 @@ public class NiftiReader extends FormatReader implements IAxisOrientationReader 
   private Unit<Length> spatialUnit = UNITS.MICROMETER;
   private Unit<Time> timeUnit = UNITS.SECOND;
 
+  private Orientation xAxis = null;
+  private Orientation yAxis = null;
+  private Orientation zAxis = null;
+
   // -- Constructor --
 
   /** Constructs a new NIfTI reader. */
@@ -101,15 +105,7 @@ public class NiftiReader extends FormatReader implements IAxisOrientationReader 
   @Override
   public Orientation[] getAxisOrientations() {
     FormatTools.assertId(currentId, true, 1);
-    // see https://nifti.nimh.nih.gov/nifti-1/documentation/faq.html#Q14
-    // and https://ngff.openmicroscopy.org/rfc/4/#background
-    return new Orientation[] {
-      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.LEFT_TO_RIGHT),
-      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR),
-      null,
-      new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR),
-      null
-    };
+    return new Orientation[] {xAxis, yAxis, null, zAxis, null};
   }
 
   // -- IFormatReader API methods --
@@ -211,6 +207,9 @@ public class NiftiReader extends FormatReader implements IAxisOrientationReader 
       voxelWidth = voxelHeight = sliceThickness = deltaT = 0d;
       spatialUnit = UNITS.MICROMETER;
       timeUnit = UNITS.SECOND;
+      xAxis = null;
+      yAxis = null;
+      zAxis = null;
     }
   }
 
@@ -460,10 +459,28 @@ public class NiftiReader extends FormatReader implements IAxisOrientationReader 
     float quaternionY = in.readFloat();
     float quaternionZ = in.readFloat();
 
+    // see https://nifti.nimh.nih.gov/nifti-1/documentation/faq.html#Q14
+    // and https://ngff.openmicroscopy.org/rfc/4/#background
+    xAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.LEFT_TO_RIGHT);
+    yAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.POSTERIOR_TO_ANTERIOR);
+    zAxis = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
+
     float[][] transform = new float[3][4];
     for (int i=0; i<transform.length; i++) {
       for (int j=0; j<transform[i].length; j++) {
         transform[i][j] = in.readFloat();
+
+        if (i == j && transform[i][j] < 0) {
+          if (i == 0) {
+            xAxis = xAxis.flip();
+          }
+          else if (i == 1) {
+            yAxis = yAxis.flip();
+          }
+          else if (i == 2) {
+            zAxis = zAxis.flip();
+          }
+        }
       }
     }
 
