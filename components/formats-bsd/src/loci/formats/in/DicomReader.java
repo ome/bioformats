@@ -2176,6 +2176,9 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
     }
     else {
       LOGGER.warn("Unsupported anatomical orientation: {}", orientation);
+      // every element of baseAxes will be null, so applying the
+      // patient orientation matrix doesn't make sense
+      return;
     }
 
     // apply patient orientation matrix
@@ -2224,7 +2227,16 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
   }
 
   private boolean useAxis(int axis, int component) {
-    return Math.abs(patientOrientation[axis][component]) > Constants.EPSILON;
+    double abs = Math.abs(patientOrientation[axis][component]);
+    // value needs to be non-zero and the largest magnitude in the vector
+    boolean valid = abs > Constants.EPSILON;
+    for (int i=0; i<patientOrientation[axis].length; i++) {
+      if (Math.abs(patientOrientation[axis][i]) > abs) {
+        valid = false;
+        break;
+      }
+    }
+    return valid;
   }
 
   public String getImageType() {
