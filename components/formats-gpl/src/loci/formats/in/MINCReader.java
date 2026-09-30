@@ -379,7 +379,10 @@ public class MINCReader extends FormatReader implements IAxisOrientationReader {
   }
 
   private Length getStepSize(Hashtable<String, Object> attrs) {
-    Double stepSize = getStepValue(attrs);
+    // the step may be negative (indicating flipped dimensions)
+    // so the absolute value is taken in order to ensure
+    // a valid physical length
+    Double stepSize = Math.abs(getStepValue(attrs));
     String units = attrs.containsKey("units") ? attrs.get("units").toString() : null;
     return FormatTools.getPhysicalSize(stepSize, units);
   }
