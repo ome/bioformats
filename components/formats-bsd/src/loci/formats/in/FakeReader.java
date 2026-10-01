@@ -1378,31 +1378,29 @@ public class FakeReader extends FormatReader implements IAxisOrientationReader {
     int s = getSeries();
     setSeries(newSeries);
 
-    // axis count should have been set to 5 or more (for modulo dims)
-    // order should match dimension order
-    String axisCount = table.get("AxisCount");
-    if (axisCount != null) {
-      int axes = Integer.parseInt(axisCount);
-      for (int a=0; a<axes; a++) {
-        String type = table.get("AxisOrientationType_" + a);
-        String term = table.get("AxisOrientationTerm_" + a);
-        Orientation orientation = null;
-        if (type != null && term != null) {
-          OrientationType orientType = OrientationType.fromString(type);
-          if (orientType != null) {
-            OrientationTerm[] enumValues = orientType.getOrientationTermClass().getEnumConstants();
-            if (enumValues != null) {
-              for (OrientationTerm t : enumValues) {
-                if (t.getDefinedTerm().equals(term)) {
-                  orientation = new Orientation(orientType, t);
-                  break;
-                }
+    // axis count is inferred from dimensionality
+    // this could be updated when modulo dimensions are supported
+    int axes = 5;
+
+    for (int a=0; a<axes; a++) {
+      String type = table.get("AxisOrientationType_" + a);
+      String term = table.get("AxisOrientationTerm_" + a);
+      Orientation orientation = null;
+      if (type != null && term != null) {
+        OrientationType orientType = OrientationType.fromString(type);
+        if (orientType != null) {
+          OrientationTerm[] enumValues = orientType.getOrientationTermClass().getEnumConstants();
+          if (enumValues != null) {
+            for (OrientationTerm t : enumValues) {
+              if (t.getDefinedTerm().equals(term)) {
+                orientation = new Orientation(orientType, t);
+                break;
               }
             }
           }
         }
-        orientations.add(orientation);
       }
+      orientations.add(orientation);
     }
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
