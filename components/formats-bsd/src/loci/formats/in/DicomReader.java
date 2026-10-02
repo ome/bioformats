@@ -43,19 +43,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.formats.AnatomicalOrientation;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.IAxisOrientationReader;
 import loci.formats.MetadataTools;
+import loci.formats.Orientation;
+import loci.formats.OrientationType;
 import loci.formats.SubResolutionFormatReader;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.Codec;
@@ -81,7 +83,7 @@ import static loci.formats.dicom.DicomVR.*;
 /**
  * DicomReader is the file format reader for DICOM files.
  */
-public class DicomReader extends SubResolutionFormatReader {
+public class DicomReader extends SubResolutionFormatReader implements IAxisOrientationReader {
 
   // -- Constants --
 
@@ -138,6 +140,12 @@ public class DicomReader extends SubResolutionFormatReader {
   private transient RandomAccessInputStream currentTileStream = null;
   private Set<Integer> privateContentHighWords = new HashSet<Integer>();
 
+  private transient String orientation = null;
+  private transient double[][] patientOrientation = null;
+  private Orientation xAxis;
+  private Orientation yAxis;
+  private Orientation zAxis;
+
   // -- Constructor --
 
   /** Constructs a new DICOM reader. */
@@ -150,6 +158,18 @@ public class DicomReader extends SubResolutionFormatReader {
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
     datasetDescription = "One or more .dcm or .dicom files";
     hasCompanionFiles = true;
+  }
+
+  // -- IAxisOrientationReader API methods --
+
+  @Override
+  public Orientation[] getAxisOrientations() {
+    FormatTools.assertId(currentId, true, 1);
+    Orientation[] axes = new Orientation[5];
+    axes[getDimensionOrder().indexOf("X")] = xAxis;
+    axes[getDimensionOrder().indexOf("Y")] = yAxis;
+    axes[getDimensionOrder().indexOf("Z")] = zAxis;
+    return axes;
   }
 
   // -- ICompressedTileReader API methods --
@@ -469,6 +489,11 @@ public class DicomReader extends SubResolutionFormatReader {
       concatenationNumber = null;
       edf = false;
       tags = null;
+      orientation = null;
+      patientOrientation = null;
+      xAxis = null;
+      yAxis = null;
+      zAxis = null;
       currentTileFile = null;
       if (currentTileStream != null) {
         currentTileStream.close();
@@ -1064,6 +1089,7 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       singleSeriesWatch.stop("updated metadata from file infos");
     }
+    determineAnatomicalOrientation();
 
     watch.start();
 
@@ -1245,6 +1271,16 @@ public class DicomReader extends SubResolutionFormatReader {
           case SLICE_SPACING:
             if (infoNumber != null) {
               pixelSizeZ = infoNumber.doubleValue();
+            }
+            break;
+          case ANATOMICAL_ORIENTATION_TYPE:
+            orientation = infoString;
+            break;
+          case IMAGE_ORIENTATION_PATIENT:
+            String[] matrix = infoString.replace('\\', '_').split("_");
+            patientOrientation = new double[2][3];
+            for (int i=0; i<matrix.length; i++) {
+              patientOrientation[i / 3][i % 3] = Double.valueOf(matrix[i]);
             }
             break;
           case IMAGE_POSITION_PATIENT:
@@ -2113,6 +2149,94 @@ public class DicomReader extends SubResolutionFormatReader {
     if (!ms.rgb) {
       ms.imageCount *= ms.sizeC;
     }
+  }
+
+  /**
+   * See https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html#sect_C.7.6.2.1.1
+   */
+  private void determineAnatomicalOrientation() {
+    if (orientation == null) {
+      orientation = "BIPED";
+    }
+    Orientation[] baseAxes = new Orientation[3];
+    if (orientation.equals("BIPED")) {
+      baseAxes[0] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+      baseAxes[1] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.ANTERIOR_TO_POSTERIOR);
+      baseAxes[2] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
+    }
+    else if (orientation.equals("QUADRUPED")) {
+      baseAxes[0] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+      // note this doesn't take into account the body part, so may be slightly incorrect for head/limbs
+      // presumably this requires mapping the "Body Part Examined" value from the tables defined in
+      // https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_L.html#table_L-2
+      // https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_L.html#table_L-3
+      // to the categories in https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html#sect_C.7.6.2.1.1
+      baseAxes[1] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.VENTRAL_TO_DORSAL);
+      baseAxes[2] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.CAUDAL_TO_CRANIAL);
+    }
+    else {
+      LOGGER.warn("Unsupported anatomical orientation: {}", orientation);
+      // every element of baseAxes will be null, so applying the
+      // patient orientation matrix doesn't make sense
+      return;
+    }
+
+    // apply patient orientation matrix
+    // see equation C.7.6.2.1-1 in https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html#sect_C.7.6.2.1.1
+
+    if (patientOrientation != null) {
+      double[] xOrientation = patientOrientation[0];
+      if (useAxis(0, 0)) {
+        xAxis = xOrientation[0] > 0 ? baseAxes[0] : baseAxes[0].flip();
+        baseAxes[0] = null;
+      }
+      if (useAxis(0, 1)) {
+        xAxis = xOrientation[1] > 0 ? baseAxes[1] : baseAxes[1].flip();
+        baseAxes[1] = null;
+      }
+      if (useAxis(0, 2)) {
+        xAxis = xOrientation[2] > 0 ? baseAxes[2] : baseAxes[2].flip();
+        baseAxes[2] = null;
+      }
+
+      double[] yOrientation = patientOrientation[1];
+      if (useAxis(1, 0)) {
+        yAxis = yOrientation[0] > 0 ? baseAxes[0] : baseAxes[0].flip();
+        baseAxes[0] = null;
+      }
+      else if (useAxis(1, 1)) {
+        yAxis = yOrientation[1] > 0 ? baseAxes[1] : baseAxes[1].flip();
+        baseAxes[1] = null;
+      }
+      else if (useAxis(1, 2)) {
+        yAxis = yOrientation[2] > 0 ? baseAxes[2] : baseAxes[2].flip();
+        baseAxes[2] = null;
+      }
+      for (int i=0; i<baseAxes.length; i++) {
+        if (baseAxes[i] != null) {
+          zAxis = baseAxes[i];
+          break;
+        }
+      }
+    }
+    else {
+      xAxis = baseAxes[0];
+      yAxis = baseAxes[1];
+      zAxis = baseAxes[2];
+    }
+  }
+
+  private boolean useAxis(int axis, int component) {
+    double abs = Math.abs(patientOrientation[axis][component]);
+    // value needs to be non-zero and the largest magnitude in the vector
+    boolean valid = abs > Constants.EPSILON;
+    for (int i=0; i<patientOrientation[axis].length; i++) {
+      if (Math.abs(patientOrientation[axis][i]) > abs) {
+        valid = false;
+        break;
+      }
+    }
+    return valid;
   }
 
   public String getImageType() {

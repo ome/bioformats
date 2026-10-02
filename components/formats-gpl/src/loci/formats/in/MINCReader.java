@@ -34,12 +34,16 @@ import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.AnatomicalOrientation;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IAxisOrientationReader;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
+import loci.formats.Orientation;
+import loci.formats.OrientationType;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 
@@ -48,13 +52,16 @@ import ome.units.quantity.Length;
 /**
  * MINCReader is the file format reader for MINC MRI files.
  */
-public class MINCReader extends FormatReader {
+public class MINCReader extends FormatReader implements IAxisOrientationReader {
 
   // -- Fields --
 
   private NetCDFService netcdf;
   private byte[][][] pixelData;
   private boolean isMINC2 = false;
+  private boolean xFlipped = false;
+  private boolean yFlipped = false;
+  private boolean zFlipped = false;
 
   // -- Constructor --
 
@@ -62,6 +69,23 @@ public class MINCReader extends FormatReader {
   public MINCReader() {
     super("MINC MRI", "mnc");
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
+  }
+
+  // -- IAxisOrientationReader API methods --
+
+  @Override
+  public Orientation[] getAxisOrientations() {
+    FormatTools.assertId(currentId, true, 1);
+    // see https://en.wikibooks.org/wiki/MINC/SoftwareDevelopment/MINC2.0_File_Format_Reference#MINC_2.0_coordinate_system
+    return new Orientation[] {
+      new Orientation(OrientationType.ANATOMICAL,
+        xFlipped ? AnatomicalOrientation.RIGHT_TO_LEFT : AnatomicalOrientation.LEFT_TO_RIGHT),
+      new Orientation(OrientationType.ANATOMICAL,
+        yFlipped ? AnatomicalOrientation.ANTERIOR_TO_POSTERIOR : AnatomicalOrientation.POSTERIOR_TO_ANTERIOR),
+      new Orientation(OrientationType.ANATOMICAL,
+        zFlipped ? AnatomicalOrientation.SUPERIOR_TO_INFERIOR : AnatomicalOrientation.INFERIOR_TO_SUPERIOR),
+      null, null
+    };
   }
 
   // -- IFormatReader API methods --
@@ -257,16 +281,19 @@ public class MINCReader extends FormatReader {
       m.sizeX = Integer.parseInt(attrs.get("length").toString());
       physicalX = getStepSize(attrs);
       xPosition = getStart(attrs);
+      xFlipped = getStepValue(attrs) < 0;
 
       attrs = netcdf.getVariableAttributes("/minc-2.0/dimensions/yspace");
       m.sizeY = Integer.parseInt(attrs.get("length").toString());
       physicalY = getStepSize(attrs);
       yPosition = getStart(attrs);
+      yFlipped = getStepValue(attrs) < 0;
 
       attrs = netcdf.getVariableAttributes("/minc-2.0/dimensions/zspace");
       m.sizeZ = Integer.parseInt(attrs.get("length").toString());
       physicalZ = getStepSize(attrs);
       zPosition = getStart(attrs);
+      zFlipped = getStepValue(attrs) < 0;
     }
     else {
       m.sizeX = netcdf.getDimension("/xspace");
@@ -344,15 +371,28 @@ public class MINCReader extends FormatReader {
     }
   }
 
+  private Double getStepValue(Hashtable<String, Object> attrs) {
+    if (!attrs.containsKey("step")) {
+      return null;
+    }
+    return Double.parseDouble(attrs.get("step").toString());
+  }
+
   private Length getStepSize(Hashtable<String, Object> attrs) {
-    Double stepSize = Double.parseDouble(attrs.get("step").toString());
-    String units = attrs.get("units").toString();
+    // the step may be negative (indicating flipped dimensions)
+    // so the absolute value is taken in order to ensure
+    // a valid physical length
+    Double stepSize = Math.abs(getStepValue(attrs));
+    String units = attrs.containsKey("units") ? attrs.get("units").toString() : null;
     return FormatTools.getPhysicalSize(stepSize, units);
   }
 
   private Length getStart(Hashtable<String, Object> attrs) {
+    if (!attrs.containsKey("start")) {
+      return null;
+    }
     Double start = Double.parseDouble(attrs.get("start").toString());
-    String units = attrs.get("units").toString();
+    String units = attrs.containsKey("units") ? attrs.get("units").toString() : null;
     return FormatTools.getStagePosition(start, units);
   }
 
