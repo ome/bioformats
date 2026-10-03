@@ -94,7 +94,7 @@ public class QTReader extends FormatReader {
   private byte[] prevPixels;
 
   /** Previous plane number. */
-  private int prevPlane;
+  private int prevPlane = -1;
 
   /** Flag indicating whether we can safely use prevPixels. */
   private boolean canUsePrevious;
@@ -175,15 +175,18 @@ public class QTReader extends FormatReader {
     String code = codec;
     if (no >= getImageCount() - altPlanes) code = altCodec;
 
+    preparePreviousFrame(no, code);
+
     int offset = offsets.get(no).intValue();
-    int nextOffset = (int) pixelBytes;
+    int nextOffset = (int) (pixelOffset + pixelBytes);
 
     scale = offsets.get(0).intValue();
     offset -= scale;
 
     if (no < offsets.size() - 1) {
-      nextOffset = offsets.get(no + 1).intValue() - scale;
+      nextOffset = offsets.get(no + 1).intValue();
     }
+    nextOffset -= scale;
 
     if ((nextOffset - offset) < 0) {
       int temp = offset;
@@ -284,7 +287,8 @@ public class QTReader extends FormatReader {
       prevPixels = null;
       codec = altCodec = null;
       pixelOffset = pixelBytes = bitsPerPixel = rawSize = 0;
-      prevPlane = altPlanes = 0;
+      prevPlane = -1;
+      altPlanes = 0;
       canUsePrevious = false;
       scale = 0;
       chunkSizes = null;
@@ -408,6 +412,26 @@ public class QTReader extends FormatReader {
 
   // -- Helper methods --
 
+  /**
+   * Rebuild the frame needed to decode a randomly accessed QTRLE delta frame.
+   */
+  private void preparePreviousFrame(int no, String code)
+    throws FormatException, IOException
+  {
+    if (no == 0 || !"rle ".equals(code) || code.equals(altCodec) ||
+      prevPlane == no || (prevPixels != null && prevPlane == no - 1))
+    {
+      return;
+    }
+
+    prevPixels = null;
+    prevPlane = -1;
+    canUsePrevious = false;
+    for (int plane = 0; plane < no; plane++) {
+      openBytes(plane);
+    }
+  }
+
   /** Parse all of the atoms in the file. */
   private void parse(int depth, long offset, long length)
     throws FormatException, IOException
@@ -448,11 +472,12 @@ public class QTReader extends FormatReader {
         if (atomType.equals("mdat")) {
           // we've found the pixel data
           pixelOffset = in.getFilePointer();
-          pixelBytes = atomSize;
+          long pixelEnd = offset + atomSize;
 
-          if (pixelBytes > (in.length() - pixelOffset)) {
-            pixelBytes = in.length() - pixelOffset;
+          if (pixelEnd > in.length()) {
+            pixelEnd = in.length();
           }
+          pixelBytes = pixelEnd - pixelOffset;
         }
         else if (atomType.equals("tkhd")) {
           // we've found the dimensions
@@ -511,11 +536,10 @@ public class QTReader extends FormatReader {
           in.skipBytes(4);
           int numPlanes = in.readInt();
           if (numPlanes != getImageCount()) {
-            in.seek(in.getFilePointer() - 4);
             int off = in.readInt();
             offsets.add(off);
-            for (int i=1; i<getImageCount(); i++) {
-              if ((chunkSizes.size() > 0) && (i < chunkSizes.size())) {
+            for (int i=0; i<getImageCount() - 1; i++) {
+              if (chunkSizes.size() > 0 && i < chunkSizes.size()) {
                 rawSize = chunkSizes.get(i).intValue();
               }
               else i = getImageCount();
@@ -574,7 +598,6 @@ public class QTReader extends FormatReader {
           core.get(0).imageCount = in.readInt();
 
           if (rawSize == 0) {
-            in.seek(in.getFilePointer() - 4);
             for (int b=0; b<getImageCount(); b++) {
               chunkSizes.add(in.readInt());
             }
