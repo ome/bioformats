@@ -219,20 +219,6 @@
               </systemPropertyVariables>
             </configuration>
           </execution>
-          <execution>
-            <id>test-no-hdf</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <suiteXmlFiles>
-                <suiteXmlFile>test/loci/formats/utests/testng-no-jhdf.xml</suiteXmlFile>
-              </suiteXmlFiles>
-              <classpathDependencyExcludes>
-                <classpathDependencyExclude>cisd:jhdf5</classpathDependencyExclude>
-              </classpathDependencyExcludes>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -295,6 +281,33 @@
   </developers>
 
   <profiles>
+    <profile>
+      <id>no-jhdf</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>test-no-hdf</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <suiteXmlFiles>
+                    <suiteXmlFile>test/loci/formats/utests/testng-no-jhdf.xml</suiteXmlFile>
+                  </suiteXmlFiles>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExclude>cisd:jhdf5</classpathDependencyExclude>
+                  </classpathDependencyExcludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>only-eclipse</id>
       <activation>
