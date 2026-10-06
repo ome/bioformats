@@ -139,6 +139,12 @@
         <class name="loci.formats.utests.MemoizerTest"/>
       </classes>
     </test>
+    <test name="QTReaderTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.QTReaderTest"/>
+      </classes>
+    </test>
     <test name="AxisGuesserTest">
       <groups/>
       <classes>
