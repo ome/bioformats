@@ -836,11 +836,7 @@ public class Memoizer extends ReaderWrapper {
         f = new File(id);
         writeDirectory = new File(f.getParent());
       } else {
-        // this serves to strip off the drive letter on Windows
-        // since we're using the absolute path, 'id' will either start with
-        // File.separator (as on UNIX), or a drive letter (as on Windows)
-        id = id.substring(id.indexOf(File.separator) + 1);
-        f = new File(directory, id);
+        f = new File(directory, getCachePath(id));
         writeDirectory = directory;
       }
 
@@ -857,6 +853,50 @@ public class Memoizer extends ReaderWrapper {
     String p = f.getParent();
     String n = f.getName();
     return new File(p, "." + n + ".bfmemo");
+  }
+
+  /**
+   * Convert an absolute identifier into a relative cache path while retaining
+   * the identity of Windows drives and UNC shares.
+   *
+   * @param absolutePath absolute identifier path
+   * @return path relative to the configured cache directory
+   */
+  protected String getCachePath(String absolutePath) {
+    if (absolutePath.length() >= 3 &&
+      Character.isLetter(absolutePath.charAt(0)) &&
+      absolutePath.charAt(1) == ':' &&
+      isPathSeparator(absolutePath.charAt(2)))
+    {
+      String remainder = normalizeSeparators(absolutePath.substring(3));
+      return Character.toUpperCase(absolutePath.charAt(0)) +
+        File.separator + remainder;
+    }
+
+    if (absolutePath.length() >= 2 &&
+      isPathSeparator(absolutePath.charAt(0)) &&
+      isPathSeparator(absolutePath.charAt(1)))
+    {
+      return "UNC" + File.separator +
+        normalizeSeparators(absolutePath.substring(2));
+    }
+
+    int first = 0;
+    while (first < absolutePath.length() &&
+      absolutePath.charAt(first) == File.separatorChar)
+    {
+      first++;
+    }
+    return absolutePath.substring(first);
+  }
+
+  private boolean isPathSeparator(char character) {
+    return character == '/' || character == '\\';
+  }
+
+  private String normalizeSeparators(String path) {
+    return path.replace('\\', File.separatorChar)
+      .replace('/', File.separatorChar);
   }
 
   /**
