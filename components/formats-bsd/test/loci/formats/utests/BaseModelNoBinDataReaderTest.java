@@ -33,9 +33,9 @@
 package loci.formats.utests;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
@@ -63,16 +63,37 @@ public class BaseModelNoBinDataReaderTest {
 
   private IMetadata metadata;
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setUp() throws Exception {
     mock = new BaseModelMock();
+    // Retain the fixture before model serialization can fail.
     temporaryFile = File.createTempFile(this.getClass().getName(), ".ome");
     SPWModelReaderTest.writeMockToFile(mock, temporaryFile, false);
   }
 
-  @AfterClass
+  @AfterClass(alwaysRun = true)
   public void tearDown() throws Exception {
-    temporaryFile.delete();
+    Exception failure = null;
+    if (reader != null) {
+      try {
+        reader.close();
+      }
+      catch (Exception e) {
+        failure = e;
+      }
+    }
+    if (temporaryFile != null) {
+      try {
+        Files.deleteIfExists(temporaryFile.toPath());
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    reader = null;
+    temporaryFile = null;
+    if (failure != null) throw failure;
   }
 
   @Test

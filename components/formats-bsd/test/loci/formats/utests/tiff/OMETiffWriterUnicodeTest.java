@@ -35,6 +35,7 @@ package loci.formats.utests.tiff;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
@@ -82,8 +83,9 @@ public class OMETiffWriterUnicodeTest {
 
     private OMEXMLMetadata ms;
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     public void setUp() throws Exception {
+      // Retain the fixture before metadata setup can fail.
       target = File.createTempFile("OMETiffWriterUnicodeTest", ".ome.tiff");
 
       ServiceFactory sf = new ServiceFactory();
@@ -106,21 +108,21 @@ public class OMETiffWriterUnicodeTest {
       ms.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void tearDown() throws Exception {
-      target.delete();
+      if (target != null) Files.deleteIfExists(target.toPath());
     }
 
     @Test
     public void testImageWidthWrittenCorrectly() throws Exception {
-      OMETiffWriter writer = new OMETiffWriter();
-      writer.setMetadataRetrieve(ms);
-      writer.setId(target.getAbsolutePath());
-      writer.saveBytes(0, buf, 0, 0, buf.length, 1);
-      writer.close();
-      ImageReader reader = new ImageReader();
-      reader.setId(target.getAbsolutePath());
-      assertEquals(reader.getFormat(), "OME-TIFF");
-      reader.close();
+      try (OMETiffWriter writer = new OMETiffWriter()) {
+        writer.setMetadataRetrieve(ms);
+        writer.setId(target.getAbsolutePath());
+        writer.saveBytes(0, buf, 0, 0, buf.length, 1);
+      }
+      try (ImageReader reader = new ImageReader()) {
+        reader.setId(target.getAbsolutePath());
+        assertEquals(reader.getFormat(), "OME-TIFF");
+      }
     }
 }

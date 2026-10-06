@@ -34,11 +34,18 @@ package loci.formats.utests;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.services.DependencyException;
@@ -54,12 +61,15 @@ import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
 import org.testng.annotations.Test;
+import org.testng.annotations.AfterMethod;
 
 /**
  *
  * @author Melissa Linkert <melissa at glencoesoftware.com>
  */
 public class ConversionTest {
+
+  private final List<Path> temporaryFiles = new ArrayList<Path>();
 
   private static final int WIDTH = 64;
   private static final int HEIGHT = 64;
@@ -118,49 +128,93 @@ public class ConversionTest {
     boolean littleEndian)
     throws Exception
   {
-    File tmp = File.createTempFile("conversionTest", ext);
-    tmp.deleteOnExit();
-    ImageWriter writer = new ImageWriter();
-    writer.setMetadataRetrieve(createMetadata(
-      pixelType, rgbChannels, seriesCount, littleEndian));
-    writer.setId(tmp.getAbsolutePath());
+    File tmp = createTempFile(ext);
+    Plane originalPlane;
+    try (ImageWriter writer = new ImageWriter()) {
+      writer.setMetadataRetrieve(createMetadata(
+        pixelType, rgbChannels, seriesCount, littleEndian));
+      writer.setId(tmp.getAbsolutePath());
 
-    int bytes = FormatTools.getBytesPerPixel(pixelType);
-    byte[] plane = getPlane(WIDTH, HEIGHT, bytes * rgbChannels);
-    Plane originalPlane = new Plane(plane, littleEndian,
-      !writer.isInterleaved(), rgbChannels, pixelType);
+      int bytes = FormatTools.getBytesPerPixel(pixelType);
+      byte[] plane = getPlane(WIDTH, HEIGHT, bytes * rgbChannels);
+      originalPlane = new Plane(plane, littleEndian,
+        !writer.isInterleaved(), rgbChannels, pixelType);
 
-    for (int s=0; s<seriesCount; s++) {
-      writer.setSeries(s);
-      writer.saveBytes(0, plane);
-    }
-
-    writer.close();
-
-    ImageReader reader = new ImageReader();
-    reader.setFlattenedResolutions(false);
-    reader.setId(tmp.getAbsolutePath());
-
-    assertEquals(reader.getSeriesCount(), seriesCount);
-
-    for (int s=0; s<seriesCount; s++) {
-      reader.setSeries(s);
-
-      assertEquals(reader.getSizeC(), rgbChannels);
-      assertTrue(reader.getImageCount() == rgbChannels || reader.isRGB());
-
-      byte[] readPlane = reader.openBytes(0);
-
-      if (!lossy) {
-        Plane newPlane = new Plane(readPlane, reader.isLittleEndian(),
-          !reader.isInterleaved(), reader.getRGBChannelCount(),
-          FormatTools.getPixelTypeString(reader.getPixelType()));
-
-        assertTrue(originalPlane.equals(newPlane), tmp.getAbsolutePath());
+      for (int s=0; s<seriesCount; s++) {
+        writer.setSeries(s);
+        writer.saveBytes(0, plane);
       }
     }
 
-    reader.close();
+    try (ImageReader reader = new ImageReader()) {
+      reader.setFlattenedResolutions(false);
+      reader.setId(tmp.getAbsolutePath());
+
+      assertEquals(reader.getSeriesCount(), seriesCount);
+
+      for (int s=0; s<seriesCount; s++) {
+        reader.setSeries(s);
+
+        assertEquals(reader.getSizeC(), rgbChannels);
+        assertTrue(reader.getImageCount() == rgbChannels || reader.isRGB());
+
+        byte[] readPlane = reader.openBytes(0);
+
+        if (!lossy) {
+          Plane newPlane = new Plane(readPlane, reader.isLittleEndian(),
+            !reader.isInterleaved(), reader.getRGBChannelCount(),
+            FormatTools.getPixelTypeString(reader.getPixelType()));
+
+          assertTrue(originalPlane.equals(newPlane), tmp.getAbsolutePath());
+        }
+      }
+    }
+  }
+
+  private File createTempFile(String extension) throws IOException {
+    // Retain the path before writing so teardown also covers write failures.
+    Path path = Files.createTempFile("conversionTest", extension);
+    temporaryFiles.add(path);
+    return path.toFile();
+  }
+
+  @AfterMethod(alwaysRun = true)
+  public void tearDown() throws IOException {
+    IOException failure = null;
+    for (Path path : temporaryFiles) {
+      try {
+        deleteRecursively(path);
+      }
+      catch (IOException e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    temporaryFiles.clear();
+    if (failure != null) throw failure;
+  }
+
+  private static void deleteRecursively(Path root) throws IOException {
+    // Files are removed during the walk and directories after their children.
+    if (!Files.exists(root)) return;
+    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
+        throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) throw failure;
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 
   @Test
