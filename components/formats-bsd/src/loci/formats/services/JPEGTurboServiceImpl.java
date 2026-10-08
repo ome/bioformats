@@ -95,6 +95,9 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   private int xTiles;
   private int yTiles;
 
+  private int workingTileWidth;
+  private int workingTileHeight;
+
   private ArrayList<Long> restartMarkers = new ArrayList<Long>();
 
   private byte[] header;
@@ -211,8 +214,32 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       }
     }
 
+    LOGGER.debug("restartInterval = {}", restartInterval);
+    LOGGER.debug("mcuWidth = {}", mcuWidth);
+    LOGGER.debug("mcuHeight = {}", mcuHeight);
+
     tileWidth = restartInterval * mcuWidth;
-    tileHeight = (int) Math.min(tileWidth, 512);
+    if (tileWidth > Short.MAX_VALUE) {
+      tileHeight = mcuHeight;
+      LOGGER.warn("tile width larger than Short.MAX_VALUE");
+    }
+    else {
+      tileHeight = (int) Math.min(tileWidth, 512);
+    }
+
+    // working tile size is only for encoding and decoding the intermediate JPEG stream
+    // these values need to be less than the max value of a short, since 2 bytes are used
+    // to encode the width and height in the JPEG stream
+    workingTileWidth = tileWidth;
+    workingTileHeight = tileHeight;
+    while (workingTileWidth > Short.MAX_VALUE) {
+      workingTileWidth /= 2;
+      workingTileHeight *= 2;
+    }
+    if (workingTileWidth > Short.MAX_VALUE || workingTileHeight > Short.MAX_VALUE) {
+      throw new IOException("Could not calculate suitable tile size (tileWidth = " +
+        tileWidth + ", tileHeight = " + tileHeight + ")");
+    }
 
     xTiles = imageWidth / tileWidth;
     yTiles = imageHeight / tileHeight;
@@ -316,10 +343,27 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       int pixelSize = TJ.getPixelSize(pixelType);
 
       TJDecompressor decoder = new TJDecompressor(compressedData);
-      byte[] decompressed = decoder.decompress(tileWidth, tileWidth * pixelSize,
-        tileHeight, pixelType, pixelType);
+      byte[] decompressed = decoder.decompress(workingTileWidth, workingTileWidth * pixelSize,
+        workingTileHeight, pixelType, pixelType);
       compressedData = null;
       decoder.close();
+
+      if (workingTileWidth != tileWidth) {
+        // need to reshape
+        byte[] reshaped = new byte[decompressed.length];
+        int mcusPerWidth = tileWidth / workingTileWidth;
+        for (int mcu=0; mcu<workingTileHeight/mcuHeight; mcu++) {
+          for (int line=0; line<mcuHeight; line++) {
+            int outputLine = (mcu / mcusPerWidth) * mcuHeight + line;
+            int column = (mcu % mcusPerWidth) * workingTileWidth;
+            int outputOffset = pixelSize * (outputLine * tileWidth + column);
+
+            int inputOffset = workingTileWidth * pixelSize * (mcu * mcuHeight + line);
+            System.arraycopy(decompressed, inputOffset, reshaped, outputOffset, workingTileWidth * pixelSize);
+          }
+        }
+        return reshaped;
+      }
       return decompressed;
     }
     catch (Exception e) {
@@ -420,6 +464,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     xTiles = 0;
     yTiles = 0;
     header = null;
+    workingTileWidth = 0;
+    workingTileHeight = 0;
   }
 
   @Override
@@ -436,8 +482,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     in.read(header);
 
     int index = (int) (imageDimensions - offset);
-    DataTools.unpackBytes(tileHeight, header, index, 2, false);
-    DataTools.unpackBytes(tileWidth, header, index + 2, 2, false);
+    DataTools.unpackBytes(workingTileHeight, header, index, 2, false);
+    DataTools.unpackBytes(workingTileWidth, header, index + 2, 2, false);
 
     return header;
   }
