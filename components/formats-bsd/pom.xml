@@ -95,9 +95,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>cisd</groupId>
-      <artifactId>jhdf5</artifactId>
-      <version>19.04.1</version>
+      <groupId>org.scijava</groupId>
+      <artifactId>janelia-jhdf5</artifactId>
+      <version>22.03.01-SNAPSHOT</version><!-- TEMPORARY: use the first janelia-jhdf5 release once available -->
     </dependency>
     <dependency>
 	    <groupId>com.drewnoakes</groupId>
@@ -229,7 +229,7 @@
                 <suiteXmlFile>test/loci/formats/utests/testng-no-jhdf.xml</suiteXmlFile>
               </suiteXmlFiles>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>cisd:jhdf5</classpathDependencyExclude>
+                <classpathDependencyExclude>org.scijava:janelia-jhdf5</classpathDependencyExclude>
               </classpathDependencyExcludes>
             </configuration>
           </execution>

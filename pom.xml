@@ -444,6 +444,14 @@
       <name>SciJava</name>
       <url>https://maven.scijava.org/content/groups/public/</url>
     </repository>
+    <!-- TEMPORARY: org.bytedeco snapshots (javacpp, hdf5) needed by janelia-jhdf5 22.03.01-SNAPSHOT.
+         Remove once janelia-jhdf5 is released against released bytedeco artifacts. -->
+    <repository>
+      <id>central-portal-snapshots</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
     <repository>
       <id>ome</id>
       <name>OME Artifactory</name>

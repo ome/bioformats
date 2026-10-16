@@ -29,6 +29,18 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'zulu'
           cache: 'maven'
+      # TEMPORARY: janelia-jhdf5 22.03.01-SNAPSHOT is not published anywhere, so build and
+      # install it into ~/.m2 first. Remove these two steps once janelia-jhdf5 is released.
+      - name: Check out janelia-jhdf5
+        uses: actions/checkout@v6
+        with:
+          repository: JaneliaSciComp/janelia-jhdf5
+          ref: main
+          path: janelia-jhdf5
+      - name: Install janelia-jhdf5 snapshot
+        working-directory: janelia-jhdf5
+        run: mvn -B -U install -DskipTests -Djacoco.skip=true
+        shell: bash
       - name: Build
         run: mvn ${{ env.maven_commands }}
   deploy_snapshots:
