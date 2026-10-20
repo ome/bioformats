@@ -38,7 +38,7 @@ import loci.common.RandomAccessInputStream;
 
 /**
  *
- * @author Melissa Linkert <melissa at glencoesoftware.com>
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class OnDemandLongArray {
 

@@ -96,7 +96,6 @@ public class LeicaHandler extends BaseHandler {
 
   private int nextChannel = 0;
   private Double zoom, pinhole;
-  private List<Integer> detectorIndices;
   private int nextFilter = 0;
   private int nextROI = 0;
   private ROI roi;
@@ -120,6 +119,10 @@ public class LeicaHandler extends BaseHandler {
   private MetadataLevel level;
   private int laserCount = 0;
 
+  private boolean setPlaneMetadataInStore = true;
+  private Map<String, Time> exposureTimes = new HashMap<String, Time>();
+  private Map<String, Time> deltaT = new HashMap<String, Time>();
+
   // -- Constructor --
 
   public LeicaHandler(MetadataStore store, MetadataLevel level) {
@@ -128,12 +131,16 @@ public class LeicaHandler extends BaseHandler {
     lutNames = new Vector<String>();
     this.store = store;
     core = new ArrayList<CoreMetadata>();
-    detectorIndices = new ArrayList<Integer>();
     xPos = new ArrayList<Length>();
     yPos = new ArrayList<Length>();
     zPos = new ArrayList<Length>();
     bytesPerAxis = new HashMap<Integer, String>();
     this.level = level;
+  }
+
+  public LeicaHandler(MetadataStore store, MetadataLevel level, boolean planesInStore) {
+    this(store, level);
+    setPlaneMetadataInStore = planesInStore;
   }
 
   // -- LeicaHandler API methods --
@@ -143,6 +150,10 @@ public class LeicaHandler extends BaseHandler {
   public Hashtable getGlobalMetadata() { return globalMetadata; }
 
   public Vector<String> getLutNames() { return lutNames; }
+
+  public Map<String, Time> getExposureTimes() { return exposureTimes; }
+
+  public Map<String, Time> getDeltaT() { return deltaT; }
 
   // -- DefaultHandler API methods --
 
@@ -202,8 +213,10 @@ public class LeicaHandler extends BaseHandler {
       if (level != MetadataLevel.MINIMUM) {
         int nChannels = coreMeta.rgb ? 0 : numChannels;
 
-        for (int c=0; c<nChannels; c++) {
-          store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROMETER), numDatasets, c);
+        if (pinhole != null) {
+          for (int c=0; c<nChannels; c++) {
+            store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROMETER), numDatasets, c);
+          }
         }
 
         for (int i=0; i<xPos.size(); i++) {
@@ -216,14 +229,6 @@ public class LeicaHandler extends BaseHandler {
             store.setPlanePositionY(yPos.get(i), numDatasets, image);
             store.setPlanePositionZ(zPos.get(i), numDatasets, image);
           }
-        }
-
-        for (int c=0; c<nChannels; c++) {
-          int index = c < detectorIndices.size() ?
-            detectorIndices.get(c).intValue() : detectorIndices.size() - 1;
-          if (index < 0 || index >= nChannels || index >= 0) break;
-          String id = MetadataTools.createLSID("Detector", numDatasets, index);
-          store.setDetectorSettingsID(id, numDatasets, c);
         }
 
         String[] keys = channels.keySet().toArray(new String[0]);
@@ -241,7 +246,6 @@ public class LeicaHandler extends BaseHandler {
       xPos.clear();
       yPos.clear();
       zPos.clear();
-      detectorIndices.clear();
     }
     else if (qName.equals("Element") && level != MetadataLevel.MINIMUM) {
       multiBands.clear();
@@ -250,14 +254,10 @@ public class LeicaHandler extends BaseHandler {
       if (numDatasets >= 0) {
         int nChannels = core.get(numDatasets).rgb ? 1 : numChannels;
 
-        for (int c=0; c<detectorIndices.size(); c++) {
-          int index = detectorIndices.get(c).intValue();
-          if (c >= nChannels || index >= nChannels || index >= 0) break;
-          String id = MetadataTools.createLSID("Detector", numDatasets, index);
-          store.setDetectorSettingsID(id, numDatasets, index);
-        }
-        for (int c=0; c<nChannels; c++) {
-          store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROMETER), numDatasets, c);
+        if (pinhole != null) {
+          for (int c=0; c<nChannels; c++) {
+            store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROMETER), numDatasets, c);
+          }
         }
       }
     }
@@ -545,7 +545,13 @@ public class LeicaHandler extends BaseHandler {
           try {
             Double exposureTime = DataTools.parseDouble(value);
             if (exposureTime != null) {
-              store.setPlaneExposureTime(new Time(exposureTime, UNITS.SECOND), numDatasets, c);
+              Time expTime = new Time(exposureTime, UNITS.SECOND);
+              if (setPlaneMetadataInStore) {
+                store.setPlaneExposureTime(expTime, numDatasets, c);
+              }
+              else {
+                exposureTimes.put(numDatasets + "-" + c, expTime);
+              }
             }
           }
           catch (IndexOutOfBoundsException e) { }
@@ -874,14 +880,28 @@ public class LeicaHandler extends BaseHandler {
           store.setImageAcquisitionDate(new Timestamp(date), numDatasets);
         }
         firstStamp = ms;
-        store.setPlaneDeltaT(new Time(0.0, UNITS.SECOND), numDatasets, count);
+
+        Time stamp = new Time(0.0, UNITS.SECOND);
+        if (setPlaneMetadataInStore) {
+          store.setPlaneDeltaT(stamp, numDatasets, count);
+        }
+        else {
+          deltaT.put(numDatasets + "-" + count, stamp);
+        }
       }
       else if (level != MetadataLevel.MINIMUM) {
         CoreMetadata coreMeta = core.get(numDatasets);
         int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
         if (count < nImages) {
           ms -= firstStamp;
-          store.setPlaneDeltaT(new Time(ms / 1000.0, UNITS.SECOND), numDatasets, count);
+
+          Time stamp = new Time(ms / 1000.00, UNITS.SECOND);
+          if (setPlaneMetadataInStore) {
+            store.setPlaneDeltaT(stamp, numDatasets, count);
+          }
+          else {
+            deltaT.put(numDatasets + "-" + count, stamp);
+          }
         }
       }
 
@@ -893,7 +913,15 @@ public class LeicaHandler extends BaseHandler {
       if (count < nImages) {
         Double time = DataTools.parseDouble(attributes.getValue("Time"));
         if (time != null) {
-          store.setPlaneDeltaT(new Time(time, UNITS.SECOND), numDatasets, count++);
+          Time stamp = new Time(time, UNITS.SECOND);
+          if (setPlaneMetadataInStore) {
+            store.setPlaneDeltaT(stamp, numDatasets, count);
+          }
+          else {
+            deltaT.put(numDatasets + "-" + count, stamp);
+          }
+
+          count++;
         }
       }
     }

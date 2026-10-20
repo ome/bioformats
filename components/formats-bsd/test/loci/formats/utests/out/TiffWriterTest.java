@@ -135,16 +135,15 @@ public class TiffWriterTest {
 
   @Test
   public void testSetBigTiffFileTooLarge() throws IOException, FormatException {
-    // Test that no exception is thrown while below the big tiff limit (2147483648L)
-    // Exception is thrown when size is out.length() + 2 * (width * height * c * bytesPerPixel)
+    // Test that no exception is thrown while below the big tiff limit (4294967296L)
     writer.setMetadataRetrieve(metadata);
     ((TiffWriterMock)writer).createOutputBuffer(true);
-    long length = 4294967296L - (buf.length * 4);
+    long length = 4294967296L - (buf.length * 2);
     ((TiffWriterMock)writer).setBufferLength(length);
     writer.setId("test.tiff");
     writer.saveBytes(0, buf, ifd);
 
-    //Test format exception is thrown after the big tiff limit (2147483648L)
+    //Test format exception is thrown after the big tiff limit (4294967296L)
     boolean thrown = false;
     try {
       writer.saveBytes(1, buf, ifd);
@@ -167,6 +166,7 @@ public class TiffWriterTest {
     writer.setBigTiff(true);
     writer.setId("test.tiff");
     writer.saveBytes(0, buf, ifd);
+    writer.saveBytes(1, buf, ifd);
   }
 
   @Test

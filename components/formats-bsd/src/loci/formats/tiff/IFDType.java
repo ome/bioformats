@@ -39,6 +39,8 @@ import java.util.Map;
 import loci.common.enumeration.CodedEnum;
 import loci.common.enumeration.EnumException;
 
+import loci.formats.FormatException;
+
 /**
  * An enumeration of IFD types.
  */
@@ -116,6 +118,45 @@ public enum IFDType implements CodedEnum {
    */
   public int getBytesPerElement() {
     return bytesPerElement;
+  }
+
+  /**
+   * Get the type corresponding to the given value.
+   *
+   * @param value IFD value
+   * @param bigTiff true if BigTIFF will be written (impacts long values)
+   * @return appropriate IFDType for the given value
+   * @throws FormatException if an appropriate IFDType cannot be determined
+   */
+  public static IFDType getType(Object value, boolean bigTiff)
+    throws FormatException
+  {
+    if (value instanceof Short || value instanceof short[]) {
+      return BYTE;
+    }
+    else if (value instanceof String) {
+      return ASCII;
+    }
+    else if (value instanceof Integer || value instanceof int[]) {
+      return SHORT;
+    }
+    else if (value instanceof Long || value instanceof long[]) {
+      return bigTiff ? LONG8 : LONG;
+    }
+    else if (value instanceof TiffRational || value instanceof TiffRational[]) {
+      return RATIONAL;
+    }
+    else if (value instanceof Float || value instanceof float[]) {
+      return FLOAT;
+    }
+    else if (value instanceof Double || value instanceof double[]) {
+      return DOUBLE;
+    }
+    else if (value instanceof Boolean) {
+      return UNDEFINED;
+    }
+    throw new FormatException("Unknown IFD value type (" +
+      value.getClass().getName() + "): " + value);
   }
 
 }

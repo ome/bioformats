@@ -44,8 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -58,6 +56,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import loci.common.Constants;
 import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.MetadataStore;
@@ -367,10 +366,8 @@ public class Schema_Transform_Test extends AbstractTest {
     private Map<String, List<String>> currentSchema() throws Exception
     {
         InputStream stream = getStream(CATALOG);
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilder builder = dbf.newDocumentBuilder();
-            Document doc = builder.parse(stream);
+            Document doc = XMLTools.parseDOM(stream);
             currentSchema = doc.getDocumentElement().getAttribute(CURRENT);
             if (currentSchema.trim().isEmpty())
                 throw new Exception("No schema specified.");

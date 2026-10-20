@@ -722,4 +722,153 @@ public class FakeReaderTest {
     reader.setId("test&dimOrder=CXYZT.fake");
   }
 
+  @Test
+  public void testExcitationWavelengths() throws Exception {
+    File fakeIni = mkIni("excitationWavelengths.fake.ini",
+      "sizeC=5",
+      "excitation_0 = 502nm",
+      "excitation_1 = 502.0nm",
+      "excitation_2 = 502",
+      "excitation_4 = 5020Å");
+    reader.setId(wd.resolve("excitationWavelengths.fake").toString());
+    assertEquals(reader.getSizeC(), 5);
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getChannelExcitationWavelength(0, 0), new Length(502.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(0, 1), new Length(502.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(0, 2), new Length(502.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(0, 3), null);
+    assertEquals(m.getChannelExcitationWavelength(0, 4), new Length(5020.0, UNITS.ANGSTROM));
+    reader.close();
+  }
+
+  @Test
+  public void testEmissionWavelengths() throws Exception {
+    File fakeIni = mkIni("emissionWavelengths.fake.ini",
+      "sizeC=5",
+      "emission_0 = 502nm",
+      "emission_1 = 502.0nm",
+      "emission_2 = 502",
+      "emission_4 = 5020Å");
+    reader.setId(wd.resolve("emissionWavelengths.fake").toString());
+    assertEquals(reader.getSizeC(), 5);
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getChannelEmissionWavelength(0, 0), new Length(502.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(0, 1), new Length(502.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(0, 2), new Length(502.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(0, 3), null);
+    assertEquals(m.getChannelEmissionWavelength(0, 4), new Length(5020.0, UNITS.ANGSTROM));
+    reader.close();
+  }
+
+  @Test
+  public void testWavelengthSeries() throws Exception {
+    File fakeIni = mkIni("multiseries_wavelengths.fake.ini",
+      "series=2",
+      "sizeC=2",
+      "[series_0]",
+      "ChannelExcitationWavelength_0=340.0nm",
+      "ChannelEmissionWavelength_0=450.0nm",
+      "ChannelExcitationWavelength_1=470.0nm",
+      "ChannelEmissionWavelength_1=512.0nm",
+      "[series_1]",
+      "ChannelExcitationWavelength_0=350.0nm",
+      "ChannelEmissionWavelength_0=425.0nm",
+      "ChannelExcitationWavelength_1=500.0nm",
+      "ChannelEmissionWavelength_1=580.0nm");
+    reader.setId(fakeIni.getAbsolutePath());
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getChannelExcitationWavelength(0, 0), new Length(340.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(0, 0), new Length(450.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(0, 1), new Length(470.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(0, 1), new Length(512.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(1, 0), new Length(350.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(1, 0), new Length(425.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(1, 1), new Length(500.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(1, 1), new Length(580.0, UNITS.NANOMETER));
+  }
+
+  @Test
+  public void testWavelengthSeriesOverride() throws Exception {
+    File fakeIni = mkIni("multiseries_wavelengths.fake.ini",
+      "series=2",
+      "sizeC=2",
+      "excitation_0=340nm",
+      "emission_0=450nm",
+      "excitation_1=470nm",
+      "emission_1=512nm",
+      "[series_0]",
+      "[series_1]",
+      "ChannelExcitationWavelength_0=350.0nm",
+      "ChannelEmissionWavelength_0=425.0nm",
+      "ChannelExcitationWavelength_1=500.0nm",
+      "ChannelEmissionWavelength_1=580.0nm");
+    reader.setId(fakeIni.getAbsolutePath());
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getChannelExcitationWavelength(0, 0), new Length(340.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(0, 0), new Length(450.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(0, 1), new Length(470.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(0, 1), new Length(512.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(1, 0), new Length(350.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(1, 0), new Length(425.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelExcitationWavelength(1, 1), new Length(500.0, UNITS.NANOMETER));
+    assertEquals(m.getChannelEmissionWavelength(1, 1), new Length(580.0, UNITS.NANOMETER));
+  }
+
+  @DataProvider(name = "instruments")
+  public Object[][] intruments() {
+    return new Object[][] {
+      {"test&withInstrument=true.fake", 1, 1},
+      {"test&withInstrument=true&series=3.fake", 3, 1},
+      {"test&sizeC=5&withInstrument=true.fake", 1, 5},
+      {"test&plates=1&plateRows=2&plateCols=2.fake", 4, 1},
+      {"test&plates=1&plateRows=2&plateCols=2&sizeC=4.fake", 4, 4}
+    };
+  }
+
+  @Test(dataProvider = "intruments")
+  public void testInstrument(String id, int imageCount, int channelCount) throws Exception {
+    reader.setId(id);
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getDetectorCount(0), 1);
+    assertEquals(m.getDichroicCount(0), 1);
+    assertEquals(m.getFilterCount(0), 2);
+    assertEquals(m.getFilterSetCount(0), 1);
+    assertEquals(m.getImageCount(), imageCount);
+    assertEquals(m.getInstrumentCount(), 1);
+    assertEquals(m.getLightSourceCount​(0), 5);
+    assertEquals(m.getObjectiveCount(0), 1);
+    for (int i=0; i<imageCount; i++) {
+      assertEquals(m.getImageInstrumentRef(i), m.getInstrumentID(0));
+      assertEquals(m.getObjectiveSettingsID​(i), m.getObjectiveID(0, 0));
+      for (int c=0; c<channelCount; c++) {
+        assertEquals(m.getChannelCount(i), channelCount);
+        assertEquals(m.getChannelFilterSetRef​(i, c), m.getFilterSetID(0, 0));
+        switch (c % 5) {
+          case 0:
+            assertEquals(m.getChannelLightSourceSettingsID​(i, c), m.getLaserID(0, 0));
+            break;
+          case 1:
+            assertEquals(m.getChannelLightSourceSettingsID​(i, c), m.getArcID(0, 1));
+            break;
+          case 2:
+            assertEquals(m.getChannelLightSourceSettingsID​(i, c), m.getFilamentID(0, 2));
+            break;
+          case 3:
+            assertEquals(m.getChannelLightSourceSettingsID​(i, c), m.getLightEmittingDiodeID(0, 3));
+            break;
+          case 4:
+            assertEquals(m.getChannelLightSourceSettingsID​(i, c), m.getLaserID(0, 4));
+            break;
+        }
+        assertEquals(m.getLightPathDichroicRef​(i, c), m.getDichroicID(0, 0));
+        assertEquals(m.getLightPathEmissionFilterRefCount​​​(i, c), 1);
+        assertEquals(m.getLightPathEmissionFilterRef​​(i, c, 0), m.getFilterID(0, 0));
+        assertEquals(m.getLightPathExcitationFilterRefCount​​​(i, c), 1);
+        assertEquals(m.getLightPathExcitationFilterRef​​​(i, c, 0), m.getFilterID(0, 1));
+      }
+    }
+  }
 }

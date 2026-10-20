@@ -41,8 +41,7 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import loci.common.xml.XMLTools;
 
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
@@ -101,9 +100,7 @@ public class SPWModelReaderTest {
    */
   public static void writeMockToFile(ModelMock mock, File file,
   boolean withBinData) throws Exception {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder parser = factory.newDocumentBuilder();
-    Document document = parser.newDocument();
+    Document document = XMLTools.createDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = mock.getRoot().asXMLElement(document);
     SPWModelMock.postProcess(root, document, withBinData);

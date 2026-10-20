@@ -40,7 +40,7 @@ import loci.common.services.ServiceException;
 
 /**
  *
- * @author Melissa Linkert <melissa at glencoesoftware.com>
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public interface JPEGTurboService extends Service {
 

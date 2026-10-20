@@ -40,8 +40,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import loci.common.xml.XMLTools;
 
 import ome.xml.model.Image;
 import ome.xml.model.MapAnnotation;
@@ -97,9 +96,7 @@ public class MapAnnotationTest {
 
   @Test
   public void testMapAnnotationValid() throws Exception {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder parser = factory.newDocumentBuilder();
-    Document document = parser.newDocument();
+    Document document = XMLTools.createDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
     SPWModelMock.postProcess(root, document, false);
@@ -110,9 +107,7 @@ public class MapAnnotationTest {
 
   @Test
   public void testMapAnnotationValueContent() throws Exception {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder parser = factory.newDocumentBuilder();
-    Document document = parser.newDocument();
+    Document document = XMLTools.createDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
     SPWModelMock.postProcess(root, document, false);

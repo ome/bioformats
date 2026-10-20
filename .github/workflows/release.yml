@@ -9,11 +9,11 @@ jobs:
     name: Release artifacts
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          java-version: 8
+          java-version: 21
           distribution: 'zulu'
       - name: Build artifacts
         run: |
@@ -27,6 +27,6 @@ jobs:
           sha256sum ./*.xz >> SHASUMS
           sha256sum ./*.gz >> SHASUMS
           tag_name="${GITHUB_REF##*/}"
-          gh release create "$tag_name" ./*.zip ./*.jar ./*.xz ./*.gz SHASUMS
+          gh release create --generate-notes "$tag_name" ./*.zip ./*.jar ./*.xz ./*.gz SHASUMS
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -44,7 +44,7 @@ public interface MDBService extends Service {
   public void initialize(String filename) throws IOException;
 
   /**
-   * Read all tables from a pre-initialized .mdb files.  Each Vector<String[]>
+   * Read all tables from a pre-initialized .mdb files.  Each {@literal Vector<String[]>}
    * in the outer Vector represents a table; each String[] in a table represents
    * a row, and each element of the String[] represents the value of a
    * particular column within the row.

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -49,6 +50,7 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
@@ -246,12 +248,15 @@ public class TCSReader extends FormatReader {
     String[] list = parent.list();
     Arrays.sort(list);
 
+    String currentXMLFile = null;
+
     boolean isXML = checkSuffix(id, XML_SUFFIX);
+    if (isXML) currentXMLFile = l.getAbsolutePath();
 
     if (list != null) {
       for (String file : list) {
         if (checkSuffix(file, XML_SUFFIX) && !isXML && isGroupFiles()) {
-          xmlFile = new Location(parent, file).getAbsolutePath();
+          currentXMLFile = new Location(parent, file).getAbsolutePath();
           break;
         }
         else if (checkSuffix(file, TiffReader.TIFF_SUFFIXES) && isXML) {
@@ -261,9 +266,11 @@ public class TCSReader extends FormatReader {
       }
     }
 
-    if (isXML) xmlFile = l.getAbsolutePath();
-
+    // super.initFile(...) calls close, which resets xmlFile
+    // so xmlFile must be set after super.initFile(...) returns,
+    // otherwise the XML file will not appear on the used files list
     super.initFile(id);
+    xmlFile = currentXMLFile;
 
     MetadataStore store = makeFilterMetadata();
 
@@ -460,6 +467,8 @@ public class TCSReader extends FormatReader {
       else ms0.sizeZ *= ifds.size();
     }
 
+    Map<String, Time> exposureTime = null;
+    Map<String, Time> deltaT = null;
     if (xmlFile != null) {
       // parse XML metadata
 
@@ -467,8 +476,10 @@ public class TCSReader extends FormatReader {
       xml = XMLTools.sanitizeXML(PREFIX + xml + SUFFIX);
 
       LeicaHandler handler =
-        new LeicaHandler(store, getMetadataOptions().getMetadataLevel());
+        new LeicaHandler(store, getMetadataOptions().getMetadataLevel(), false);
       XMLTools.parseXML(xml, handler);
+      exposureTime = handler.getExposureTimes();
+      deltaT = handler.getDeltaT();
 
       metadata = handler.getGlobalMetadata();
       MetadataTools.merge(handler.getGlobalMetadata(), metadata, "");
@@ -504,6 +515,20 @@ public class TCSReader extends FormatReader {
     if (sizeZ != null) {
       store.setPixelsPhysicalSizeZ(sizeZ, 0);
     }
+
+    for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
+      for (int i=0; i<getImageCount(); i++) {
+        String key = s + "-" + i;
+        if (exposureTime != null && exposureTime.containsKey(key)) {
+          store.setPlaneExposureTime(exposureTime.get(key), s, i);
+        }
+        if (deltaT != null && deltaT.containsKey(key)) {
+          store.setPlaneDeltaT(deltaT.get(key), s, i);
+        }
+      }
+    }
+    setSeries(0);
   }
 
   // -- Helper methods --

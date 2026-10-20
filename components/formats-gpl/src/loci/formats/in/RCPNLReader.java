@@ -109,6 +109,28 @@ public class RCPNLReader extends DeltavisionReader {
           MetadataTools.getCorrection("PlanApo"), 0, 0);
         store.setObjectiveManufacturer("Nikon", 0, 0);
         break;
+      case 18113:
+        store.setObjectiveNominalMagnification(10.0, 0, 0);
+        store.setObjectiveLensNA(0.45, 0, 0);
+        store.setObjectiveCorrection(
+          MetadataTools.getCorrection("PlanApo"), 0, 0);
+        store.setObjectiveWorkingDistance(
+          new Length(4.0, UNITS.MILLIMETER), 0, 0);
+        store.setObjectiveImmersion(MetadataTools.getImmersion("Air"), 0, 0);
+        store.setObjectiveModel("MRD70170", 0, 0);
+        store.setObjectiveManufacturer("Nikon", 0, 0);
+        break;
+      case 18114:
+        store.setObjectiveNominalMagnification(4.0, 0, 0);
+        store.setObjectiveLensNA(0.13, 0, 0);
+        store.setObjectiveCorrection(
+          MetadataTools.getCorrection("PlanFluor"), 0, 0);
+        store.setObjectiveWorkingDistance(
+          new Length(17.2, UNITS.MILLIMETER), 0, 0);
+        store.setObjectiveImmersion(MetadataTools.getImmersion("Air"), 0, 0);
+        store.setObjectiveModel("MRH00045", 0, 0);
+        store.setObjectiveManufacturer("Nikon", 0, 0);
+        break;
     }
   }
 

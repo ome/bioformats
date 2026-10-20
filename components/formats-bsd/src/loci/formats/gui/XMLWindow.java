@@ -35,7 +35,6 @@ package loci.formats.gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,11 +42,10 @@ import java.io.InputStreamReader;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.Constants;
+import loci.common.xml.XMLTools;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -82,14 +80,7 @@ public class XMLWindow extends JFrame {
     setDocument(null);
 
     // parse XML from string into DOM structure
-    DocumentBuilderFactory docFact = DocumentBuilderFactory.newInstance();
-    DocumentBuilder db = docFact.newDocumentBuilder();
-    ByteArrayInputStream is =
-      new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
-    Document doc = db.parse(is);
-    is.close();
-
-    setDocument(doc);
+    setDocument(XMLTools.parseDOM(xml));
   }
 
   /** Displays XML from the given file. */
@@ -99,11 +90,7 @@ public class XMLWindow extends JFrame {
     setDocument(null);
 
     // parse XML from file into DOM structure
-    DocumentBuilderFactory docFact = DocumentBuilderFactory.newInstance();
-    DocumentBuilder db = docFact.newDocumentBuilder();
-    Document doc = db.parse(file);
-
-    setDocument(doc);
+    setDocument(XMLTools.parseDOM(file));
   }
 
   /** Displays XML from the given document. */

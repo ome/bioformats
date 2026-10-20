@@ -39,8 +39,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -49,6 +47,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import loci.common.xml.XMLTools;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -471,9 +471,7 @@ public class SPWModelMock implements ModelMock {
 
   public static void main(String[] args) throws Exception {
     SPWModelMock mock = new SPWModelMock(false);
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder parser = factory.newDocumentBuilder();
-    Document document = parser.newDocument();
+    Document document = XMLTools.createDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = mock.ome.asXMLElement(document);
     SPWModelMock.postProcess(root, document, true);

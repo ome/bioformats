@@ -109,17 +109,18 @@ end
 writer.setId(ip.Results.outputPath);
 
 % Load conversion tools for saving planes
+isLittleEndian = ~metadata.getPixelsBigEndian(0).booleanValue;
 switch class(ip.Results.I)
     case {'int8', 'uint8'}
         getBytes = @(x) x(:);
     case {'uint16','int16'}
-        getBytes = @(x) javaMethod('shortsToBytes', 'loci.common.DataTools', x(:), 0);
+        getBytes = @(x) javaMethod('shortsToBytes', 'loci.common.DataTools', x(:), isLittleEndian);
     case {'uint32','int32'}
-        getBytes = @(x) javaMethod('intsToBytes', 'loci.common.DataTools', x(:), 0);
+        getBytes = @(x) javaMethod('intsToBytes', 'loci.common.DataTools', x(:), isLittleEndian);
     case {'single'}
-        getBytes = @(x) javaMethod('floatsToBytes', 'loci.common.DataTools', x(:), 0);
+        getBytes = @(x) javaMethod('floatsToBytes', 'loci.common.DataTools', x(:), isLittleEndian);
     case 'double'
-        getBytes = @(x) javaMethod('doublesToBytes', 'loci.common.DataTools', x(:), 0);
+        getBytes = @(x) javaMethod('doublesToBytes', 'loci.common.DataTools', x(:), isLittleEndian);
 end
 
 % Save planes to the writer

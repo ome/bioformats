@@ -90,6 +90,7 @@ public class NDPISReader extends FormatReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
+    readers[0].setCoreIndex(getCoreIndex());
     return readers[0].getOptimalTileWidth();
   }
 
@@ -97,6 +98,7 @@ public class NDPISReader extends FormatReader {
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
+    readers[0].setCoreIndex(getCoreIndex());
     return readers[0].getOptimalTileHeight();
   }
 
@@ -109,13 +111,21 @@ public class NDPISReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int[] zct = getZCTCoords(no);
-    int channel = zct[1];
-    readers[channel].setId(ndpiFiles[channel]);
-    readers[channel].setCoreIndex(getCoreIndex());
-    int cIndex = (bandUsed[channel] < readers[channel].getSizeC()) ? bandUsed[channel] : 0;
-    int plane = readers[channel].getIndex(zct[0], cIndex, zct[2]);
-    readers[channel].openBytes(plane, buf, x, y, w, h);
+    // if in the pyramid, read a single channel from the appropriate .ndpi file
+    // otherwise, read the extra images from the first file only
+    if (isPyramidResolution(0, getCoreIndex())) {
+      int[] zct = getZCTCoords(no);
+      int channel = zct[1];
+      readers[channel].setId(ndpiFiles[channel]);
+      readers[channel].setCoreIndex(getCoreIndex());
+      int cIndex = (bandUsed[channel] < readers[channel].getSizeC()) ? bandUsed[channel] : 0;
+      int plane = readers[channel].getIndex(zct[0], cIndex, zct[2]);
+      readers[channel].openBytes(plane, buf, x, y, w, h);
+    }
+    else {
+      readers[0].setCoreIndex(getCoreIndex());
+      readers[0].openBytes(no, buf, x, y, w, h);
+    }
 
     return buf;
   }
@@ -193,12 +203,16 @@ public class NDPISReader extends FormatReader {
     core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadataList());
     for (int i=0; i<core.size(); i++) {
       CoreMetadata ms = core.get(i);
-      ms.sizeC = readers.length;
-      ms.rgb = false;
-      ms.imageCount = ms.sizeC * ms.sizeZ * ms.sizeT;
+      // only adjust the channel and image counts for the pyramid resolutions
+      // use the macro/mask images from the first file only
+      if (isPyramidResolution(0, i)) {
+        ms.sizeC = readers.length;
+        ms.rgb = false;
+        ms.imageCount = ms.sizeC * ms.sizeZ * ms.sizeT;
+      }
     }
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, false, false);
 
     bandUsed = new int[ndpiFiles.length];
     IFD ifd;
@@ -210,12 +224,14 @@ public class NDPISReader extends FormatReader {
       }
 
       String channelName = ifd.getIFDStringValue(TAG_CHANNEL);
-      Float wavelength = (Float) ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
+      Object waveTag = ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
+      Double wavelength = null;
 
       store.setChannelName(channelName, 0, c);
-      if (wavelength != null) {
-        store.setChannelEmissionWavelength(FormatTools.getEmissionWavelength(
-          (Double) wavelength.doubleValue()), 0, c);
+      if (waveTag != null && waveTag instanceof Number) {
+        wavelength = ((Number) waveTag).doubleValue();
+        store.setChannelEmissionWavelength(
+          FormatTools.getEmissionWavelength(wavelength), 0, c);
       }
 
       bandUsed[c] = 0;
@@ -261,6 +277,11 @@ public class NDPISReader extends FormatReader {
         }
       }
     }
+  }
+
+  private boolean isPyramidResolution(int readerIndex, int coreIndex) {
+    int pyramidHeight = ((NDPIReader) readers[readerIndex].getReader()).getPyramidHeight();
+    return coreIndex < pyramidHeight;
   }
 
 }

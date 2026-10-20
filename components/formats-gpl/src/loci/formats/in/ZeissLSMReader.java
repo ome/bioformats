@@ -491,6 +491,9 @@ public class ZeissLSMReader extends FormatReader {
         int count = seriesCounts.get(lsmFilenames[i]);
         TiffParser tp = new TiffParser(stream);
         Boolean littleEndian = tp.checkHeader();
+        if (littleEndian == null) {
+          throw new FormatException("Invalid TIFF file: " + lsmFilenames[i]);
+        }
         long[] ifdOffsets = tp.getIFDOffsets();
         int ifdsPerSeries = (ifdOffsets.length / 2) / count;
 

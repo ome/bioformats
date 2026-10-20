@@ -34,6 +34,9 @@ import loci.common.xml.BaseHandler;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -44,6 +47,9 @@ import org.xml.sax.Attributes;
  * @author Thomas Caswell tcaswell at uchicago.edu
  */
 public class MetamorphHandler extends BaseHandler {
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(MetamorphHandler.class);
 
   // -- Fields --
 
@@ -256,7 +262,15 @@ public class MetamorphHandler extends BaseHandler {
       }
     }
     if (key.equals("wavelength")) {
-      wavelengths.add(Integer.parseInt(value));
+      // usually this key represents an integer wavelength in nm
+      // sometimes it can be a more descriptive string with no
+      // usable value in nm
+      try {
+        wavelengths.add(Integer.parseInt(value));
+      }
+      catch (NumberFormatException e) {
+        LOGGER.debug("Could not parse wavelength value from {}", value);
+      }
     }
     else if (key.equals("acquisition-time-local")) {
       date = value;

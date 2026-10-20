@@ -209,6 +209,42 @@ public class IFD extends HashMap<Integer, Object> {
 
   // -- Tag retrieval methods --
 
+  /** Get the maximum number of bytes needed to represent this IFD. */
+  public long getByteCount(boolean bigTiff) throws FormatException {
+    long count = 0;
+    for (Integer key : keySet()) {
+      count += bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY : TiffConstants.BYTES_PER_ENTRY;
+
+      Object value = get(key);
+      if (value != null) {
+        if (value instanceof OnDemandLongArray) {
+          OnDemandLongArray dvalue = (OnDemandLongArray) value;
+          long nElements = dvalue.size();
+          count += nElements * 8;
+        }
+        else {
+          IFDType type = IFDType.getType(value, bigTiff);
+          int len = 1;
+          try {
+            len = Array.getLength(value);
+          }
+          catch (IllegalArgumentException e) {
+          }
+          int bytesPerElement = type.getBytesPerElement();
+          int bytes = len * bytesPerElement;
+
+          // only count if the value is large enough that it
+          // wouldn't be written inline
+          // the bytes per entry constants already allow for inline values
+          if (bytes > (bigTiff ? 8 : 4)) {
+            count += bytes;
+          }
+        }
+      }
+    }
+    return count;
+  }
+
   /** Gets whether this is a BigTIFF IFD. */
   public boolean isBigTiff() throws FormatException {
     return ((Boolean) getIFDValue(BIG_TIFF, Boolean.class)).booleanValue();

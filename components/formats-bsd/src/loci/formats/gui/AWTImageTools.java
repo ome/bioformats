@@ -1632,7 +1632,7 @@ public final class AWTImageTools {
 
       for (int i=0; i<out.length; i++) {
         for (int j=0; j<out[i].length; j++) {
-          if (shorts[i][j] < 0) shorts[i][j] += 32767;
+          if (shorts[i][j] < 0) shorts[i][j] += Short.MAX_VALUE;
 
           int diff = max - min;
           float dist = (float) (shorts[i][j] - min) / diff;

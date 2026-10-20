@@ -44,6 +44,7 @@ import loci.formats.cache.Cache;
 import loci.formats.cache.CacheException;
 import loci.formats.cache.CacheStrategy;
 import loci.formats.cache.CrosshairStrategy;
+import loci.plugins.in.ImagePlusReader;
 import loci.plugins.util.RecordedImageProcessor.MethodEntry;
 
 /**
@@ -109,13 +110,8 @@ public class BFVirtualStack extends VirtualStack {
     this.series = r.getSeries();
 
     // set up cache
-    int[] subC;
     Modulo moduloC = r.getModuloC();
-    if (moduloC.length() > 1) {
-      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
-    } else {
-      subC = new int[] {r.getSizeC()};
-    }
+    int[] subC = ImagePlusReader.getSubC(moduloC, r.getSizeC());
     if (merge) subC = new int[] {new ChannelMerger(r).getEffectiveSizeC()};
     len = new int[subC.length + 2];
     System.arraycopy(subC, 0, len, 0, subC.length);
@@ -278,9 +274,31 @@ public class BFVirtualStack extends VirtualStack {
   @Override
   public int getSize() {
     if (reader.getCurrentFile() == null) return 0;
+    if (planeIndexes != null) {
+      return planeIndexes.length;
+    }
     reader.setSeries(series);
     if (merge) return new ChannelMerger(reader).getImageCount();
     return planeIndexes == null ? reader.getImageCount() : planeIndexes.length;
+  }
+
+  @Override
+  public void deleteSlice(int n) {
+    if (planeIndexes == null) {
+      planeIndexes = new int[getSize() - 1];
+      for (int i=0; i<planeIndexes.length; i++) {
+        planeIndexes[i] = i;
+        if (i >= n - 1) {
+          planeIndexes[i]++;
+        }
+      }
+    }
+    else {
+      int[] newPlaneIndexes = new int[planeIndexes.length - 1];
+      System.arraycopy(planeIndexes, 0, newPlaneIndexes, 0, n - 1);
+      System.arraycopy(planeIndexes, n, newPlaneIndexes, n - 1, planeIndexes.length - n);
+      planeIndexes = newPlaneIndexes;
+    }
   }
 
 }

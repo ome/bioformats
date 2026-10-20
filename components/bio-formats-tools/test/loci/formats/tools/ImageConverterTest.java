@@ -58,7 +58,7 @@ import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.TiffParser;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -381,17 +381,141 @@ public class ImageConverterTest {
     };
     assertConversion(args);
 
-    try (TiffParser parser = new TiffParser(outFile.getAbsolutePath())) {
-      String comment = parser.getComment();
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getChannelCount(0), 1);
+  }
 
-      final OMEXMLService service =
-        new ServiceFactory().getInstance(OMEXMLService.class);
-      IMetadata meta = service.createOMEXMLMetadata(comment);
-      assertEquals(meta.getChannelCount(0), 1);
-    }
-    catch (Exception e) {
-      throw new FormatException(e);
-    }
+  @Test
+  public void testConvertResolutionsSingleChannel() throws FormatException, IOException {
+    outFile = getOutFile("multires-single-plane.ome.tiff");
+    String[] args = {
+      "pyramid&sizeC=2&resolutions=2&resolutionScale=2.fake",
+      "-noflat", "-channel", "0", outFile.getAbsolutePath()
+    };
+    resolutionCount = 2;
+    assertConversion(args);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
+    assertEquals(meta.getChannelCount(0), 1);
+    assertEquals(meta.getPixelsSizeC(0).getValue().intValue(), 1);
+    assertEquals(meta.getPixelsSizeZ(0).getValue().intValue(), 1);
+    assertEquals(meta.getPixelsSizeT(0).getValue().intValue(), 1);
+  }
+
+  @Test
+  public void testConvertResolutionsSingleZ() throws FormatException, IOException {
+    outFile = getOutFile("multires-single-z.ome.tiff");
+    String[] args = {
+      "pyramid&sizeC=3&sizeZ=4&resolutions=2&resolutionScale=2.fake",
+      "-noflat", "-z", "1", outFile.getAbsolutePath()
+    };
+    resolutionCount = 2;
+    assertConversion(args);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
+    assertEquals(meta.getChannelCount(0), 3);
+    assertEquals(meta.getPixelsSizeC(0).getValue().intValue(), 3);
+    assertEquals(meta.getPixelsSizeZ(0).getValue().intValue(), 1);
+    assertEquals(meta.getPixelsSizeT(0).getValue().intValue(), 1);
+  }
+
+  /**
+   * Generate a pyramid with the defined number of resolutions.
+   */
+  @Test
+  public void testGenerateDefinedResolutions() throws FormatException, IOException {
+    outFile = getOutFile("defined-pyramid.ome.tiff");
+    String[] args = {
+      "defined-pyramid&sizeX=8100&sizeY=7500.fake",
+      "-pyramid-resolutions", "4",
+      "-pyramid-scale", "2",
+      outFile.getAbsolutePath()
+    };
+    resolutionCount = 4;
+    assertConversion(args, outFile.getAbsolutePath(), 8100);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
+  }
+
+  /**
+   * Generate a pyramid with downsample factor of 3.
+   */
+  @Test
+  public void testPyramidFactor3() throws FormatException, IOException {
+    outFile = getOutFile("factor-3.ome.tiff");
+    String[] args = {
+      "factor-3&sizeX=8100&sizeY=7500.fake",
+      "-pyramid-resolutions", "4",
+      "-pyramid-scale", "3",
+      outFile.getAbsolutePath()
+    };
+    resolutionCount = 4;
+    assertConversion(args, outFile.getAbsolutePath(), 8100);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
+  }
+
+  /**
+   * Generate a pyramid, where the defined number of resolutions is unreasonably large.
+   */
+  @Test
+  public void testGenerateTooManyResolutions() throws FormatException, IOException {
+    outFile = getOutFile("big-pyramid.ome.tiff");
+    String[] args = {
+      "big-pyramid&sizeX=6073&sizeY=9247.fake",
+      "-pyramid-resolutions", "20",
+      "-pyramid-scale", "2",
+      outFile.getAbsolutePath()
+    };
+    // 20 is too many, so the count should be reset
+    resolutionCount = 13;
+    assertConversion(args, outFile.getAbsolutePath(), 6073);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
+  }
+
+  /**
+   * Generate a pyramid, but calculate internally how many resolutions are needed.
+   */
+  @Test
+  public void testGenerateCalculatedResolutions() throws FormatException, IOException {
+    outFile = getOutFile("calculated-pyramid.ome.tiff");
+    String[] args = {
+      "calculated-pyramid&sizeX=7673&sizeY=1541.fake",
+      "-pyramid-scale", "2",
+      outFile.getAbsolutePath()
+    };
+    resolutionCount = 10;
+    assertConversion(args, outFile.getAbsolutePath(), 7673);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
+  }
+
+  /**
+   * Generate a pyramid, but calculate internally how many resolutions are needed
+   * based on specified tile size.
+   */
+  @Test
+  public void testGenerateCalculatedResolutionsByTileSize() throws FormatException, IOException {
+    outFile = getOutFile("tile-size-calculated-pyramid.ome.tiff");
+    String[] args = {
+      "calculated-pyramid&sizeX=7673&sizeY=1541.fake",
+      "-pyramid-scale", "2",
+      "-tilex", "512",
+      "-tiley", "512",
+      outFile.getAbsolutePath()
+    };
+    resolutionCount = 2;
+    assertConversion(args, outFile.getAbsolutePath(), 7673);
+
+    IMetadata meta = getOMEXMLMetadata(outFile);
+    assertEquals(meta.getImageCount(), 1);
   }
 
   private Path getTempSubdir() throws IOException {
@@ -402,5 +526,20 @@ public class ImageConverterTest {
 
   private File getOutFile(String name) throws IOException {
     return getTempSubdir().resolve(name).toFile();
+  }
+
+  private IMetadata getOMEXMLMetadata(File out) throws FormatException {
+    IMetadata meta = null;
+    try (TiffParser parser = new TiffParser(outFile.getAbsolutePath())) {
+      String comment = parser.getComment();
+
+      final OMEXMLService service =
+        new ServiceFactory().getInstance(OMEXMLService.class);
+      meta = service.createOMEXMLMetadata(comment);
+    }
+    catch (Exception e) {
+      throw new FormatException(e);
+    }
+    return meta;
   }
 }

@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -44,6 +42,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import loci.common.xml.XMLTools;
 import loci.formats.ome.OMEXMLMetadataImpl;
 
 import static org.testng.AssertJUnit.*;
@@ -310,9 +309,7 @@ public class InOutCurrentTest {
     Class mockClass = Class.forName(mockClassName);
     Constructor constructor = mockClass.getDeclaredConstructor();
     mock = (OMEModelMock) constructor.newInstance();
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder parser = factory.newDocumentBuilder();
-    document = parser.newDocument();
+    document = XMLTools.createDocument();
     ome = (OMEXMLMetadataRoot) mock.getRoot();
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);

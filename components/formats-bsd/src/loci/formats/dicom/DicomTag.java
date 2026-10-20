@@ -350,7 +350,6 @@ public class DicomTag implements Comparable<DicomTag> {
         if (in.getFilePointer() + skipCount <= in.length()) {
           in.skipBytes(skipCount);
         }
-        location += elementLength;
         value = "";
       }
     }
@@ -494,12 +493,10 @@ public class DicomTag implements Comparable<DicomTag> {
         if (attribute == LUT_DATA) {
           return DataTools.bytesToInt(b, 2, 2, in.isLittleEndian());
         }
-        int n1 = DataTools.bytesToShort(b, 2, 2, in.isLittleEndian());
-        int n2 = DataTools.bytesToShort(b, 2, 2, !in.isLittleEndian());
-        n1 &= 0xffff;
-        n2 &= 0xffff;
-        if (n1 < 0 || n1 + in.getFilePointer() > in.length()) return n2;
-        if (n2 < 0 || n2 + in.getFilePointer() > in.length()) return n1;
+        int n1 = DataTools.bytesToInt(b, 2, 2, in.isLittleEndian());
+        int n2 = DataTools.bytesToInt(b, 2, 2, !in.isLittleEndian());
+        if (n1 + in.getFilePointer() > in.length()) return n2;
+        if (n2 + in.getFilePointer() > in.length()) return n1;
         return n1;
       case RESERVED:
         int len = DataTools.bytesToInt(b, 0, 4, in.isLittleEndian());

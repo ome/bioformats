@@ -74,7 +74,9 @@ public class LeicaSCNReader extends BaseTiffReader {
   private static final String SCHEMA_2010_10 =
     "http://www.leica-microsystems.com/scn/2010/10/01";
 
-  private static final String[] MODELS_WITHOUT_CORRECTION = {"versa", "leica scn400"};
+  private static final String[] MODELS_WITHOUT_CORRECTION = {
+    "versa", "leica scn400", "aperio leica biosystems fl"
+  };
 
   // -- Fields --
   LeicaSCNHandler handler;
@@ -501,7 +503,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   /**
    * SAX handler for parsing XML in Leica SCN files.
    *
-   * @author Roger Leigh <r.leigh at dundee.ac.uk>
+   * @author Roger Leigh r.leigh at dundee.ac.uk
    */
   class LeicaSCNHandler extends DefaultHandler {
 

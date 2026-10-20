@@ -159,20 +159,14 @@ public class LociFunctions extends MacroFunctions {
 
   public void getChannelDimLength(Double i, Double[] channelDimLength) {
     Modulo moduloC = r.getModuloC();
-    if (i.intValue() == 0) { // index 0
-      channelDimLength[0] = Double.valueOf(moduloC.length() > 1 ? r.getSizeC() / moduloC.length() : r.getSizeC());
-    } else { // index 1
-      channelDimLength[0] = Double.valueOf(moduloC.length());
-    }
+    int[] subC = ImagePlusReader.getSubC(moduloC, r.getSizeC());
+    channelDimLength[0] = Double.valueOf(subC[i.intValue()]);
   }
 
-  public void getChannelDimType(Double i, Double[] channelDimType) {
+  public void getChannelDimType(Double i, String[] channelDimType) {
     Modulo moduloC = r.getModuloC();
-    if (i.intValue() == 0) { // index 0
-      channelDimType[0] = Double.valueOf(moduloC.length() > 1 ? moduloC.parentType : FormatTools.CHANNEL);
-    } else { // index 1
-      channelDimType[0] = Double.valueOf(moduloC.type);
-    }
+    String[] subCTypes = ImagePlusReader.getSubCTypes(moduloC);
+    channelDimType[0] = subCTypes[i.intValue()];
   }
 
 //  public void getThumbSizeX(Double[] thumbSizeX) {

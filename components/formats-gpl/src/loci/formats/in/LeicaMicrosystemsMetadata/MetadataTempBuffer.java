@@ -244,8 +244,6 @@ public class MetadataTempBuffer {
   /**
    * Adds channel dimension
    * @param coreIndex
-   * @param sizeC total number of channels
-   * @param bytesInc 
    */
   public void addChannelDimension(int coreIndex){
     boolean rgb = (getDimension(coreIndex, DimensionKey.X).bytesInc % 3) == 0;

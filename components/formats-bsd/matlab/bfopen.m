@@ -133,7 +133,7 @@ if planeSize/(1024)^3 >= 2,
 end
 
 numSeries = r.getSeriesCount();
-result = cell(numSeries, 2);
+result = cell(numSeries, 4);
 
 globalMetadata = r.getGlobalMetadata();
 
@@ -146,7 +146,7 @@ for s = 1:numSeries
     bppMax = power(2, bpp * 8);
     numImages = r.getImageCount();
     imageList = cell(numImages, 2);
-    colorMaps = cell(numImages);
+    colorMaps = cell(numImages, 1);
     for i = 1:numImages
         if mod(i, 72) == 1
             fprintf('\n    ');
@@ -155,17 +155,18 @@ for s = 1:numSeries
         arr = bfGetPlane(r, i, varargin{:});
 
         % retrieve color map data
+        % transpose tables for compatibility with things like imshow
         if bpp == 1
-            colorMaps{s, i} = r.get8BitLookupTable()';
+            colorMaps{i} = r.get8BitLookupTable()';
         else
-            colorMaps{s, i} = r.get16BitLookupTable()';
+            colorMaps{i} = r.get16BitLookupTable()';
         end
 
         warning_state = warning ('off');
-        if ~isempty(colorMaps{s, i})
-            newMap = single(colorMaps{s, i});
+        if ~isempty(colorMaps{i})
+            newMap = single(colorMaps{i});
             newMap(newMap < 0) = newMap(newMap < 0) + bppMax;
-            colorMaps{s, i} = newMap / (bppMax - 1);
+            colorMaps{i} = newMap / (bppMax - 1);
         end
         warning (warning_state);
 

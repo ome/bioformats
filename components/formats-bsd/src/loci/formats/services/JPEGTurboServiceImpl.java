@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  *
  * http://matthias-baldauf.at/software/ndpi_converter/
  *
- * @author Melissa Linkert <melissa at glencoesoftware.com>
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class JPEGTurboServiceImpl implements JPEGTurboService {
 

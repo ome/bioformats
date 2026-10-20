@@ -65,8 +65,8 @@ import loci.formats.FormatException;
  *      M=(number of bytes in compressed last incomplete portion).
  *      We have inequalities:
  * <ul>
- * <li> N <= 1.41 * n
- * <li> M <= 1.41 * m
+ * <li> {@literal N <= 1.41 * n}
+ * <li> {@literal M <= 1.41 * m}
  * <li> The last incomplete portion should also include CLEAR and
  *      END_OF_INFORMATION codes; they occupy less than 3 bytes.
  * </ul>

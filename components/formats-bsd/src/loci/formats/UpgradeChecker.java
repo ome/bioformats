@@ -63,24 +63,29 @@ public class UpgradeChecker {
 
   // -- Constants --
 
-  /** Version number of the latest stable release. */
   /**
-   * @deprecated  As of release 6.6.0
+   * Location of the OME continuous integration server.
+   *
+   * @deprecated since 9.0.0
    */
-  public static final String STABLE_VERSION = "6.6.0";
-
-  /** Location of the OME continuous integration server. */
+  @Deprecated
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
 
   /**
    * Location of the JAR artifacts for Bio-Formats' trunk build.
+   *
+   * @deprecated since 9.0.0
    */
+  @Deprecated
   public static final String TRUNK_BUILD =
     CI_SERVER + "/job/BIOFORMATS-5.1-latest/lastSuccessfulBuild/artifact/artifacts/";
 
   /**
    * Location of the JAR artifacts for Bio-Formats' daily build.
+   *
+   * @deprecated since 9.0.0
    */
+  @Deprecated
   public static final String DAILY_BUILD =
     CI_SERVER + "/job/BIOFORMATS-5.1-daily/lastSuccessfulBuild/artifact/artifacts/";
 
@@ -93,21 +98,18 @@ public class UpgradeChecker {
   /** Name of the ueber tools JAR. */
   public static final String TOOLS = "bioformats_package.jar";
 
-  /**
-   * Name of the previous versions' tools JAR.
-   *
-   * @deprecated Removed in Bio-Formats 6.9.0
-   */
-  public static final String OLD_TOOLS = "loci_tools.jar";
-
   /** Name of the OME tools JAR. */
   public static final String OME_TOOLS = "ome_tools.jar";
 
-  /** Names of the individual JARs. */
+  /**
+   * Names of the individual JARs.
+   *
+   * @deprecated since 9.0.0
+   */
+  @Deprecated
   public static final String[] INDIVIDUAL_JARS = new String[] {
     "formats-api.jar", "formats-bsd.jar", "formats-gpl.jar",
-    "jai_imageio.jar", "common.jar", "mdbtools-java.jar", "metakit.jar",
-    "ome-xml.jar", "ome-poi.jar"
+    "bio-formats-tools.jar", "bio-formats_plugins.jar", "turbojpeg.jar"
   };
 
   /** Location of the OME registry. */
@@ -274,7 +276,9 @@ public class UpgradeChecker {
    * @return true if installation was successfull
    *
    * @see #install(String, String)
+   * @deprecated since 9.0.0
    */
+  @Deprecated
   public boolean installIndividualJars(String urlDir, String downloadDir) {
     boolean overallSuccess = true;
     for (String jar : INDIVIDUAL_JARS) {
@@ -294,7 +298,9 @@ public class UpgradeChecker {
    * @param downloadPath the location in which to write the JAR;
    *                     if this location already exists, it will be overwritten
    * @return true if installation was successful
+   * @deprecated since 9.0.0
    */
+  @Deprecated
   public boolean install(String urlPath, String downloadPath) {
     // if an old version exists, then remove it
 
@@ -342,14 +348,7 @@ public class UpgradeChecker {
       out.write(buf);
       out.close();
 
-      // remove the old bundle jar if the new bundle jar was downloaded
-
       File downloadFile = new File(downloadPath);
-      File oldFile = new File(downloadFile.getParent(), OLD_TOOLS);
-      if (oldFile.exists() && downloadFile.getName().equals(TOOLS)) {
-        LOGGER.debug("Deleting {}", oldFile.getAbsolutePath());
-        oldFile.delete();
-      }
 
       LOGGER.debug("Renaming {} to {}", jar.getAbsolutePath(), downloadPath);
       boolean success = jar.renameTo(downloadFile);

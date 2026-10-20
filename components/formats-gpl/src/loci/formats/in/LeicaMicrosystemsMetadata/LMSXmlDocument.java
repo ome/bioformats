@@ -43,11 +43,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import loci.common.Location;
+import loci.common.xml.XMLTools;
 
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -103,10 +102,8 @@ public abstract class LMSXmlDocument {
 
   // -- Methods --
   private void initFromXmlString(String xml) {
-    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     try {
-      DocumentBuilder db = dbf.newDocumentBuilder();
-      Document doc = db.parse(new InputSource(new StringReader(xml)));
+      Document doc = XMLTools.parseDOM(xml);
       doc.getDocumentElement().normalize();
       this.doc = doc;
       this.xPath = XPathFactory.newInstance().newXPath();
@@ -118,16 +115,12 @@ public abstract class LMSXmlDocument {
   }
 
   private void initFromFilepath(String filepath) {
-    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    try {
-      DocumentBuilder db = dbf.newDocumentBuilder();
-      FileInputStream fi = new FileInputStream(Location.getMappedId(filepath));
-      Document doc = db.parse(fi);
-      fi.close();
-      doc.getDocumentElement().normalize();
-      this.doc = doc;
-      this.xPath = XPathFactory.newInstance().newXPath();
-      LMSFileReader.log.trace(this.toString());
+    try (FileInputStream fi = new FileInputStream(Location.getMappedId(filepath))) {
+        Document doc = XMLTools.parseDOM(fi);
+        doc.getDocumentElement().normalize();
+        this.doc = doc;
+        this.xPath = XPathFactory.newInstance().newXPath();
+        LMSFileReader.log.trace(this.toString());
     } catch (ParserConfigurationException | SAXException | IOException e) {
       LMSFileReader.log.error(e.getMessage());
       e.printStackTrace();

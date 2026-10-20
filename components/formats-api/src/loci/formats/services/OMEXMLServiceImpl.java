@@ -42,7 +42,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
@@ -165,7 +164,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   /**
    * Finds OME-XML schema definitions in specifications.jar.
    */
-  private static final XMLTools.SchemaReader SCHEMA_CLASSPATH_READER =
+  public static final XMLTools.SchemaReader SCHEMA_CLASSPATH_READER =
       new XMLTools.SchemaReader() {
         @Override
         public InputStream getSchemaAsStream(String url) {
@@ -1003,13 +1002,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     OMEXMLMetadataRoot omeRoot1 = (OMEXMLMetadataRoot) src1.getRoot();
     OMEXMLMetadataRoot omeRoot2 = (OMEXMLMetadataRoot) src2.getRoot();
 
-    DocumentBuilder builder = null;
-    try {
-      builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-    }
-    catch (ParserConfigurationException e) {
-      return false;
-    }
+    DocumentBuilder builder = XMLTools.createBuilder();
 
     Document doc1 = builder.newDocument();
     Document doc2 = builder.newDocument();

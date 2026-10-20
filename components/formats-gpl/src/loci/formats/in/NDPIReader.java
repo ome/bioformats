@@ -786,6 +786,13 @@ public class NDPIReader extends BaseTiffReader {
           if (zct[0] == 0 && zct[2] == 0) {
             String channelName = ifd.getIFDTextValue(FILTER_SET_NAME);
             store.setChannelName(channelName, i, zct[1]);
+
+            Object wave = ifd.getIFDValue(WAVELENGTH);
+            if (wave != null && wave instanceof Number) {
+              store.setChannelEmissionWavelength(
+                FormatTools.getEmissionWavelength(((Number) wave).doubleValue()),
+                i, zct[1]);
+            }
           }
         }
       }
@@ -793,6 +800,10 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   // -- Helper methods --
+
+  protected int getPyramidHeight() {
+    return pyramidHeight;
+  }
 
   private int getIFDIndex(int seriesIndex, int zIndex) {
     if (seriesIndex < pyramidHeight) {

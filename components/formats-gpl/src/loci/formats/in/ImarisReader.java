@@ -41,8 +41,6 @@ import ome.units.UNITS;
 
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
- * Specifications available at
- * http://flash.bitplane.com/wda/interfaces/public/faqs/faqsview.cfm?inCat=0&inQuestionID=104
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

@@ -53,6 +53,7 @@ public class LEOReader extends BaseTiffReader {
   public static final int LEO_TAG = 34118;
   private static final String[] DATE_FORMATS = new String[] {
       "HH:mm dd-MMM-yyyy", "HH:mm:ss dd MMM yyyy"};
+  private static final String TAG_ENCODING = "iso-8859-1";
 
   // -- Fields --
 
@@ -83,6 +84,13 @@ public class LEOReader extends BaseTiffReader {
   }
 
   // -- Internal BaseTiffReader API methods --
+
+  /* @see BaseTiffReader#initTiffParser() */
+  @Override
+  protected void initTiffParser() {
+    super.initTiffParser();
+    tiffParser.setEncoding(TAG_ENCODING);
+  }
 
   /* @see BaseTiffReader#initStandardMetadata() */
   @Override

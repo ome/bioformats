@@ -291,7 +291,7 @@ public class FilePattern {
   }
 
   /**
-   * Gets the specified file pattern block (e.g., <0-9>).
+   * Gets the specified file pattern block (e.g., {@literal <0-9>}).
    *
    * @param i block index
    * @return the ith pattern block.
@@ -314,7 +314,7 @@ public class FilePattern {
 
   /**
    * Gets the pattern's substring that comes before any block sections.
-   * For instance, the prefix of "img_z<0-2>t<1-3>_gs.ext" is "img_z".
+   * For instance, the prefix of {@literal "img_z<0-2>t<1-3>_gs.ext"} is "img_z".
    *
    * @return the prefix string as described above.
    */
@@ -324,7 +324,7 @@ public class FilePattern {
 
   /**
    * Gets the pattern's substring that comes after all block sections.
-   * For instance, the suffix of "img_z<0-2>t<1-3>_gs.ext" is "_gs.ext".
+   * For instance, the suffix of {@literal "img_z<0-2>t<1-3>_gs.ext"} is "_gs.ext".
    *
    * @return the suffix string as described above.
    */
@@ -336,7 +336,7 @@ public class FilePattern {
   /**
    * Gets the pattern's substring between block i-1 (or the beginning
    * of the pattern, if i is 0) and block i. For instance, the second
-   * (i = 1) prefix of "img_z<0-2>t<1-3>_gs.ext" is "t".
+   * (i = 1) prefix of {@literal "img_z<0-2>t<1-3>_gs.ext"} is "t".
    *
    * @param i block index.
    * @return the ith prefix as defined above.
@@ -350,7 +350,7 @@ public class FilePattern {
 
   /**
    * Gets all block prefixes. For instance, the prefixes of
-   * "img_z<0-2>t<1-3>_gs.ext" are "img_z" and "t".
+   * {@literal "img_z<0-2>t<1-3>_gs.ext"} are "img_z" and "t".
    *
    * @return an array containing all block prefixes.
    */
@@ -629,8 +629,8 @@ public class FilePattern {
    *   "foo_s1_z1.ext", "foo_s1_z2.ext", "foo_s2_z1.ext", "foo_s2_z2.ext"
    *
    * Then {@link #findPattern(String, String, String[]) findPattern}
-   * will find a single "foo_s<1-2>_z<1-2>.ext" pattern, whereas this
-   * method will find "foo_s1_z<1-2>.ext" and "foo_s2_z<1-2>.ext".
+   * will find a single {@literal "foo_s<1-2>_z<1-2>.ext"} pattern, whereas this
+   * method will find {@literal "foo_s1_z<1-2>.ext"} and {@literal "foo_s2_z<1-2>.ext"}.
 
    * @param base The file basename to use as a template for the match.
    * @param dir The directory prefix to use for matching files.

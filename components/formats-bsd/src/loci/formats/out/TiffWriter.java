@@ -455,24 +455,6 @@ public class TiffWriter extends FormatWriter {
     ifd.put(IFD.Y_RESOLUTION,
       new TiffRational((long) (physicalSizeY * 1000 * 10000), 1000));
 
-    if (!isBigTiff) {
-      isBigTiff = (out.length() + 2
-          * (width * height * c * bytesPerPixel)) >= 4294967296L;
-      if (isBigTiff) {
-        throw new FormatException("File is too large; call setBigTiff(true)");
-      }
-    }
-
-    // write the image
-    ifd.put(IFD.LITTLE_ENDIAN, Boolean.valueOf(littleEndian));
-    if (!ifd.containsKey(IFD.REUSE)) {
-      ifd.put(IFD.REUSE, out.length());
-      out.seek(out.length());
-    }
-    else {
-      out.seek((Long) ifd.get(IFD.REUSE));
-    }
-
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION,
       interleaved || getSamplesPerPixel() == 1 ? 1 : 2);
 
@@ -487,6 +469,43 @@ public class TiffWriter extends FormatWriter {
     ifd.putIFDValue(IFD.IMAGE_DESCRIPTION,
       "ImageJ=\nhyperstack=true\nimages=" + (channels * z * t) + "\nchannels=" +
       channels + "\nslices=" + z + "\nframes=" + t);
+
+    if (!isBigTiff) {
+      long calculatedTileWidth = ifd.getTileWidth();
+      long calculatedTileLength = ifd.getTileLength();
+      if (calculatedTileLength == 0) {
+        // worst case, one row per strip
+        calculatedTileLength = 1;
+      }
+      long tileRows = (long) Math.ceil((double) ifd.getImageLength() / calculatedTileLength);
+      long tileCols = (long) Math.ceil((double) ifd.getImageWidth() / calculatedTileWidth);
+      // 4 bytes per tile offset plus 4 bytes per tile length
+      long tilePositionBytes = tileRows * tileCols * 4 * 2;
+
+      // check current file size,
+      // current IFD size,
+      // expected number of bytes to store tile byte counts and offsets,
+      // maximum number of bytes to store pixel data,
+      // and add a margin to allow for additional IFD entries that will be
+      // added when the tiles are actually written
+      isBigTiff = (out.length() + tilePositionBytes +
+        ifd.getByteCount(false) +
+        (calculatedTileWidth * calculatedTileLength * c * bytesPerPixel) +
+        10 * TiffConstants.BYTES_PER_ENTRY + FormatTools.CREATOR.length()) >= 4294967296L;
+      if (isBigTiff) {
+        throw new FormatException("File is too large; call setBigTiff(true)");
+      }
+    }
+
+    // write the image
+    ifd.put(IFD.LITTLE_ENDIAN, Boolean.valueOf(littleEndian));
+    if (!ifd.containsKey(IFD.REUSE)) {
+      ifd.put(IFD.REUSE, out.length());
+      out.seek(out.length());
+    }
+    else {
+      out.seek((Long) ifd.get(IFD.REUSE));
+    }
 
     int index = (no * getResolutionCount()) + getResolution();
     int currentSeries = getSeries();

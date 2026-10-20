@@ -44,6 +44,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.AmiraParameters;
 
+import ome.units.UNITS;
 import ome.units.quantity.Length;
 
 /**
@@ -138,6 +139,7 @@ public class AmiraReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    in.setEncoding("windows-1252");
 
     AmiraParameters parameters = new AmiraParameters(in);
     offsetOfFirstStream = in.getFilePointer();
@@ -196,6 +198,15 @@ public class AmiraReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
+    Map params = (Map) parameters.getMap().get("Parameters");
+    if (params != null) {
+      Map materials = (Map) params.get("Materials");
+      if (materials != null) {
+        lut = getLookupTable(materials);
+        m.indexed = true;
+      }
+    }
+
     // Note that Amira specifies a bounding box, not pixel sizes.
     // The bounding box is the range of the centre of the voxels
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -207,24 +218,31 @@ public class AmiraReader extends FormatReader {
       double pixelDepth = (double) (parameters.z1 - parameters.z0) /
         (parameters.depth - 1);
 
-      // Amira does not have a standard form for encoding units, so we just
-      // have to assume microns for microscopy data
-      addGlobalMeta("Pixels per meter (X)", 1e6 / pixelWidth);
-      addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
-      addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
+      // if units are stored in a predictable location, use them
+      // otherwise default to microns
+      String unit = null;
+      if (params != null) {
+        Map units = (Map) params.get("Units");
+        if (units != null) {
+          unit = units.get("Coordinates").toString();
+        }
+      }
 
-      Length sizeX = FormatTools.getPhysicalSizeX(pixelWidth);
-      Length sizeY = FormatTools.getPhysicalSizeY(pixelHeight);
-      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelDepth);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelWidth, unit);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelHeight, unit);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelDepth, unit);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
+        addGlobalMeta("Pixels per meter (X)", 1 / sizeX.value(UNITS.METER).doubleValue());
       }
       if (sizeY != null) {
         store.setPixelsPhysicalSizeY(sizeY, 0);
+        addGlobalMeta("Pixels per meter (Y)", 1 / sizeY.value(UNITS.METER).doubleValue());
       }
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
+        addGlobalMeta("Pixels per meter (Z)", 1 / sizeZ.value(UNITS.METER).doubleValue());
       }
     }
 
@@ -237,15 +255,6 @@ public class AmiraReader extends FormatReader {
     hasPlaneReader = planeReader != null;
 
     addGlobalMeta("Compression", compression);
-
-    Map params = (Map) parameters.getMap().get("Parameters");
-    if (params != null) {
-      Map materials = (Map) params.get("Materials");
-      if (materials != null) {
-        lut = getLookupTable(materials);
-        m.indexed = true;
-      }
-    }
   }
 
   private void initPlaneReader() {

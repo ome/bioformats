@@ -336,6 +336,16 @@ public class SVSReader extends BaseTiffReader {
     return options;
   }
 
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#getAvailableOptions() */
+  @Override
+  protected ArrayList<String> getAvailableOptions() {
+    ArrayList<String> optionsList = super.getAvailableOptions();
+    optionsList.add(REMOVE_THUMBNAIL_KEY);
+    return optionsList;
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
@@ -593,6 +603,10 @@ public class SVSReader extends BaseTiffReader {
             }
           }
         }
+        if (ms.pixelSize == null && pos[1] > 0) {
+          SVSCoreMetadata parentResolution = (SVSCoreMetadata) core.get(pos[0], 0);
+          ms.pixelSize = FormatTools.getScaledPhysicalSize(parentResolution.pixelSize, parentResolution.sizeX, ms.sizeX);
+        }
       }
     }
     setSeries(0);
@@ -819,7 +833,7 @@ public class SVSReader extends BaseTiffReader {
    * Get the IFD corresponding to the given plane in the current series.
    * Initializes the underlying TiffParser if necessary.
    *
-   * @param plane index
+   * @param no index
    * @return corresponding IFD
    */
   protected IFD getIFD(int no) {

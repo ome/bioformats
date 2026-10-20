@@ -32,10 +32,12 @@ Type "ant -p" for a list of targets.
   <resolver:pom file="pom.xml" id="pom"/>
 
   <resolver:remoterepo id="ome" url="https://artifacts.openmicroscopy.org/artifactory/maven/" type="default" releases="true" snapshots="false"/>
-  <resolver:remoterepo id="unidata" url="https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases" type="default" releases="true"/>
+  <resolver:remoterepo id="unidata" url="https://artifacts.unidata.ucar.edu/repository/unidata-releases/" type="default" releases="true"/>
+  <resolver:remoterepo id="scijava" url="https://maven.scijava.org/content/groups/public/" type="default" releases="true"/>
   <resolver:remoterepo id="jenkins" url="https://repo.jenkins-ci.org/releases/" type="default" releases="true"/>
   <resolver:remoterepos id="resolver.repositories">
     <resolver:remoterepo refid="central"/>
+    <resolver:remoterepo refid="scijava"/>
     <resolver:remoterepo refid="ome"/>
     <resolver:remoterepo refid="unidata"/>
     <resolver:remoterepo refid="jenkins"/>
@@ -220,6 +222,30 @@ your FindBugs installation's lib directory. E.g.:
       <path refid="runtime.classpath"/>
     </unzip>
 
+    <!-- Merge ucar.nc2.filter.FilterProvider files -->
+    <pathconvert property="runtimePaths.string" refid="runtime.classpath" pathsep="${line.separator}"/>
+    <echo file="${build.dir}/unzip/runtimePaths.txt">${runtimePaths.string}</echo>
+    <loadfile property="cdmcorePath" srcFile="${build.dir}/unzip/runtimePaths.txt">
+      <filterchain>
+        <linecontains>
+          <contains value="cdm-core"/>
+        </linecontains>
+        <striplinebreaks/>
+      </filterchain>
+    </loadfile>
+    <loadfile property="formatsgplPath" srcFile="${build.dir}/unzip/runtimePaths.txt">
+      <filterchain>
+        <linecontains>
+          <contains value="formats-gpl"/>
+        </linecontains>
+        <striplinebreaks/>
+      </filterchain>
+    </loadfile>
+    <concat destfile="${build.dir}/unzip/META-INF/services/ucar.nc2.filter.FilterProvider" fixlastline="yes">
+      <zipentry zipfile="${cdmcorePath}" name="META-INF/services/ucar.nc2.filter.FilterProvider"/>
+      <zipentry zipfile="${formatsgplPath}" name="META-INF/services/ucar.nc2.filter.FilterProvider"/>
+    </concat>
+
     <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
       <zipfileset dir="${build.dir}/unzip"/>
       <manifest>
@@ -246,7 +272,7 @@ your FindBugs installation's lib directory. E.g.:
       <fileset dir="${utils.dir}" includes="**/*.class"/>
     </delete>
     <javac debug="true" includeantruntime="false" fork="true"
-      deprecation="true" source="1.8" target="1.8"
+      deprecation="true" source="11" target="11"
       encoding="UTF-8"
       srcdir="${utils.dir}" includes="**/*.java"
       classpath="${artifact.dir}/${component.jar}">
@@ -267,7 +293,7 @@ your FindBugs installation's lib directory. E.g.:
       <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://docs.oracle.com/javase/8/docs/api/"/>
+      <link href="https://docs.oracle.com/en/java/javase/11/docs/api/"/>
       <link href="https://imagej.net/developer/api/"
             offline="true" packagelistLoc="${root.dir}/ant/package-list"/>
     </javadoc>

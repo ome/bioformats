@@ -374,7 +374,7 @@ public class MakeTestOmeTiff {
       g.setFont(text.font);
       final Rectangle2D r =
         g.getFont().getStringBounds(text.line, g.getFontRenderContext());
-      yoff += r.getHeight() + text.ypad;
+      yoff += (int) r.getHeight() + text.ypad;
       g.drawString(text.line, text.xoff, yoff);
     }
     g.dispose();

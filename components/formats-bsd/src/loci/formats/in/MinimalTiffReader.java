@@ -341,14 +341,16 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
             }
             exponent++;
             mantissa &= (int) (Math.pow(2, mantissaBits) - 1);
-            exponent += 127 - (Math.pow(2, exponentBits - 1) - 1);
+            int max = (int) Math.pow(2, exponentBits - 1);
+            exponent += 127 - (max - 1);
           }
         }
         else if (exponent == maxExponent) {
           exponent = 255;
         }
         else {
-          exponent += 127 - (Math.pow(2, exponentBits - 1) - 1);
+          int max = (int) Math.pow(2, exponentBits - 1);
+          exponent += 127 - (max - 1);
         }
 
         mantissa <<= (23 - mantissaBits);
@@ -674,7 +676,7 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
    * Sets the resolution level when we have JPEG 2000 compressed data.
    * @param ifd The active IFD that is being used in our current
    * <code>openBytes()</code> calling context. It will be the sub-resolution
-   * IFD if <code>currentSeries > 0</code>.
+   * IFD if {@literal currentSeries > 0}.
    */
   protected void setResolutionLevel(IFD ifd) {
     if (tiffParser == null) {

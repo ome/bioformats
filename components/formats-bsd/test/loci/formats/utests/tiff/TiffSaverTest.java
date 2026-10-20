@@ -117,6 +117,7 @@ public class TiffSaverTest {
   public void testWriteHeaderBigEndianRegularTiff() throws IOException {
     tiffSaver.writeHeader();
     assertTrue(tiffParser.isValidHeader());
+    // isValidHeader above makes sure that checkHeader is non-null
     assertFalse(tiffParser.checkHeader());
     assertFalse(tiffParser.isBigTiff());
   }
@@ -126,6 +127,7 @@ public class TiffSaverTest {
     tiffSaver.setLittleEndian(true);
     tiffSaver.writeHeader();
     assertTrue(tiffParser.isValidHeader());
+    // isValidHeader above makes sure that checkHeader is non-null
     assertTrue(tiffParser.checkHeader());
     assertFalse(tiffParser.isBigTiff());
   }
@@ -136,6 +138,7 @@ public class TiffSaverTest {
     tiffSaver.setBigTiff(true);
     tiffSaver.writeHeader();
     assertTrue(tiffParser.isValidHeader());
+    // isValidHeader above makes sure that checkHeader is non-null
     assertFalse(tiffParser.checkHeader());
     assertTrue(tiffParser.isBigTiff());
   }
@@ -146,6 +149,7 @@ public class TiffSaverTest {
     tiffSaver.setBigTiff(true);
     tiffSaver.writeHeader();
     assertTrue(tiffParser.isValidHeader());
+    // isValidHeader above makes sure that checkHeader is non-null
     assertTrue(tiffParser.checkHeader());
     assertTrue(tiffParser.isBigTiff());
   }

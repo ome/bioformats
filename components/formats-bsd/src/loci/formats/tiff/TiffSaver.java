@@ -618,9 +618,10 @@ public class TiffSaver implements Closeable {
 
     // write directory entry to output buffers
     out.writeShort(tag); // tag
+    IFDType ifdType = IFDType.getType(value, bigTiff);
+    out.writeShort(ifdType.getCode());
     if (value instanceof short[]) {
       short[] q = (short[]) value;
-      out.writeShort(IFDType.BYTE.getCode());
       writeIntValue(out, q.length);
       if (q.length <= dataLength) {
         for (int i=0; i<q.length; i++) out.writeByte(q[i]);
@@ -633,7 +634,6 @@ public class TiffSaver implements Closeable {
     }
     else if (value instanceof String) { // ASCII
       byte[] q = ((String) value).getBytes(Charset.forName(Constants.ENCODING));
-      out.writeShort(IFDType.ASCII.getCode()); // type
       writeIntValue(out, q.length + 1);
       if (q.length < dataLength) {
         for (int i=0; i<q.length; i++) out.writeByte(q[i]); // value(s)
@@ -647,7 +647,6 @@ public class TiffSaver implements Closeable {
     }
     else if (value instanceof int[]) { // SHORT
       int[] q = (int[]) value;
-      out.writeShort(IFDType.SHORT.getCode()); // type
       writeIntValue(out, q.length);
       if (q.length <= dataLength / 2) {
         for (int i=0; i<q.length; i++) {
@@ -667,8 +666,6 @@ public class TiffSaver implements Closeable {
     else if (value instanceof long[]) { // LONG
       long[] q = (long[]) value;
 
-      int type = bigTiff ? IFDType.LONG8.getCode() : IFDType.LONG.getCode();
-      out.writeShort(type);
       writeIntValue(out, q.length);
 
       int div = bigTiff ? 8 : 4;
@@ -690,7 +687,6 @@ public class TiffSaver implements Closeable {
     }
     else if (value instanceof TiffRational[]) { // RATIONAL
       TiffRational[] q = (TiffRational[]) value;
-      out.writeShort(IFDType.RATIONAL.getCode()); // type
       writeIntValue(out, q.length);
       if (bigTiff && q.length == 1) {
         out.writeInt((int) q[0].getNumerator());
@@ -706,7 +702,6 @@ public class TiffSaver implements Closeable {
     }
     else if (value instanceof float[]) { // FLOAT
       float[] q = (float[]) value;
-      out.writeShort(IFDType.FLOAT.getCode()); // type
       writeIntValue(out, q.length);
       if (q.length <= dataLength / 4) {
         for (int i=0; i<q.length; i++) {
@@ -725,7 +720,6 @@ public class TiffSaver implements Closeable {
     }
     else if (value instanceof double[]) { // DOUBLE
       double[] q = (double[]) value;
-      out.writeShort(IFDType.DOUBLE.getCode()); // type
       writeIntValue(out, q.length);
       writeIntValue(out, offset + extraOut.length());
       for (int i=0; i<q.length; i++) {
@@ -775,7 +769,7 @@ public class TiffSaver implements Closeable {
    * data in place.
    *
    * @param raf the input stream representing the file to be edited
-   * @param ifd the index into the list of IFDs {@see TiffParser#getIFDOffsets()}
+   * @param ifd the index into the list of IFDs, see {@link TiffParser#getIFDOffsets()}
    * @param tag the tag code
    * @param value the new value for the tag
    */
@@ -1176,15 +1170,13 @@ public class TiffSaver implements Closeable {
     // return to original position
     out.seek(stripStartPos);
 
+    ByteArrayOutputStream stripBuffer = new ByteArrayOutputStream();
     long stripOffset = 0;
     for (int i=0; i<strips.length; i++) {
-      out.seek(stripStartPos + stripOffset);
-      stripOffset += strips[i].length;
       int index = interleaved ? i : (i / nChannels) * nChannels;
       int c = interleaved ? 0 : i % nChannels;
       int thisOffset = firstOffset + index + (c * tileCount);
-      offsets[thisOffset] = out.getFilePointer();
-//      byteCounts.set(thisOffset, new Long(strips[i].length));
+      offsets[thisOffset] = stripStartPos + stripOffset;
       byteCounts[thisOffset] = strips[i].length;
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(String.format(
@@ -1193,8 +1185,12 @@ public class TiffSaver implements Closeable {
             thisOffset + 1, totalTiles, byteCounts[thisOffset],
             offsets[thisOffset]));
       }
-      out.write(strips[i]);
+      stripBuffer.write(strips[i]);
+      stripOffset += strips[i].length;
     }
+    stripBuffer.writeTo(out);
+    stripBuffer.close();
+    stripBuffer = null;
     if (isTiled) {
       ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, byteCounts);
       ifd.putIFDValue(IFD.TILE_OFFSETS, offsets);

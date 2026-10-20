@@ -47,10 +47,8 @@ public class UpgradeCheck {
       System.out.println();
       System.out.println("    If no options are specified, an upgrade check");
       System.out.println("    will be performed but no new version will be");
-      System.out.println("    downloaded.");
-      System.out.println("    With the '-install' option, a version must be");
-      System.out.println("    specified; valid values are 'STABLE', 'TRUNK',");
-      System.out.println("    and 'DAILY'.  The corresponding build will be");
+      System.out.println("    downloaded. With the '-install` option, the latest");
+      System.out.println("    released version will be");
       System.out.println("    downloaded to the working directory.");
       System.exit(0);
     }
@@ -66,17 +64,8 @@ public class UpgradeCheck {
       System.out.println("A newer stable version is not available.");
     }
 
-    if (doInstall && args.length > 1) {
-      String url = "";
-      if (args[1].equals("TRUNK")) {
-        url = UpgradeChecker.TRUNK_BUILD;
-      }
-      else if (args[1].equals("DAILY")) {
-        url = UpgradeChecker.DAILY_BUILD;
-      }
-      else if (args[1].equals("STABLE")) {
-        url = UpgradeChecker.STABLE_BUILD;
-      }
+    if (doInstall) {
+      String url = UpgradeChecker.STABLE_BUILD;
       url += UpgradeChecker.TOOLS;
       checker.install(url, UpgradeChecker.TOOLS);
     }

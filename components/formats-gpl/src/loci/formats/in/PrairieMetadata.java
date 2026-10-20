@@ -46,6 +46,7 @@ import org.w3c.dom.NodeList;
  * Metadata structure for Prairie Technologies' TIFF-based format.
  * 
  * @author Curtis Rueden
+ * @author Michael Fox
  */
 public class PrairieMetadata {
 
@@ -932,6 +933,9 @@ public class PrairieMetadata {
 
     /** {@code filename} attribute of this {@code <File>}. */
     private String filename;
+    
+    /** {@code page} attribute of this {@code <File>}. */
+    private Integer page;
 
     /** {@code wavelengthMin} attribute of this {@code <File>}. */
     private Double waveMin;
@@ -964,6 +968,14 @@ public class PrairieMetadata {
 
       channelName = attr(fileElement, "channelName");
       filename = attr(fileElement, "filename");
+      page = i(attr(fileElement, "page"));
+      if (page == null) {
+    	  page = 0;
+      } else {
+    	  page -= 1;
+      }
+    	  
+    	  
 
       waveMin = d(attr(fileElement, "wavelengthMin"));
       waveMax = d(attr(fileElement, "wavelengthMax"));
@@ -982,6 +994,11 @@ public class PrairieMetadata {
     /** Gets the {@code filename} associated with this {@code File}. */
     public String getFilename() {
       return filename;
+    }
+    
+    /** Gets the {@code page} associated with this {@code File}. */
+    public Integer getPage() {
+      return page;
     }
 
     /** Gets the {@code wavelengthMin} associated with this {@code File}. */

@@ -28,8 +28,7 @@ package loci.formats.utests;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import loci.common.xml.XMLTools;
 
 import ome.xml.model.Annotation;
 import ome.xml.model.Channel;
@@ -56,9 +55,7 @@ public class XMLAnnotationTest {
 
   @BeforeClass
   public void setUp() throws Exception {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder parser = factory.newDocumentBuilder();
-    Document document = parser.parse(
+    Document document = XMLTools.parseDOM(
         this.getClass().getResourceAsStream("XMLAnnotationTest.ome"));
     OMEModel model = new OMEModelImpl();
     // Read string XML in as a DOM tree and parse into the object hierarchy

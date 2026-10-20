@@ -37,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,6 +46,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.in.TiffReader;
 import loci.formats.tiff.TiffParser;
+import loci.formats.services.OMEXMLServiceImpl;
 
 /**
  * Attempts to validate the given XML files.
@@ -64,7 +66,13 @@ public class XMLValidate {
     } finally {
       in.close();
     }
-    return XMLTools.validateXML(sb.toString(), label);
+    return validate(sb.toString(), label);
+  }
+
+  public static boolean validate(String xml, String label)
+    throws IOException
+  {
+    return XMLTools.validateXML(xml, label, OMEXMLServiceImpl.SCHEMA_CLASSPATH_READER);
   }
 
   @Deprecated
@@ -101,7 +109,7 @@ public class XMLValidate {
             try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
               comment = new TiffParser(stream).getComment();
             }
-            results[i] = validate(new BufferedReader(new StringReader(comment)), file);
+            results[i] = validate(comment, file);
           } else {
             results[i] = validate(new BufferedReader(new InputStreamReader(
                       new FileInputStream(file), Constants.ENCODING)), file);
@@ -114,28 +122,34 @@ public class XMLValidate {
   public static void main(String[] args) throws Exception {
     CommandLineTools.runUpgradeCheck(args);
 
-    boolean result = true;
-    if (args.length == 0) {
+    boolean success = true;
+    if (args.length == 0 ||
+      (args.length == 1 && args[0].equals(CommandLineTools.NO_UPGRADE_CHECK)))
+    {
       // read from stdin
-      result = validate(new BufferedReader(
+      success = validate(new BufferedReader(
                 new InputStreamReader(System.in, Constants.ENCODING)), "<stdin>");
     }
     else {
-      // read from file(s)
-      boolean[] results = validate(args);
-      int count = 0;
-      for (int i = 0; i < results.length; i++) {
-        if (results[i]) {
-          count++;
+      ArrayList<String> filesToValidate = new ArrayList<String>();
+      for (String arg : args) {
+        if (!arg.equals(CommandLineTools.NO_UPGRADE_CHECK)) {
+          filesToValidate.add(arg);
         }
       }
-      //Check if all files are valid
-      result = (count == results.length);
+      // read from file(s)
+      boolean[] results = validate(filesToValidate.toArray(new String[0]));
+      for (boolean result : results) {
+        if (!result) {
+          success = false;
+          break;
+        }
+      }
     }
-    if (result) {
+    if (success) {
       System.exit(0);
     } else {
-      System.exit(1); 
+      System.exit(1);
     }
   }
 

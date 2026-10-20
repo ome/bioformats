@@ -106,9 +106,9 @@ public final class LibraryChecker {
 
   /** Checks for a new enough version of the Java Runtime Environment. */
   public static boolean checkJava() {
-    if (!IJ.isJava18()) {
+    if (IJ.javaVersion() < 11) {
       IJ.error("Bio-Formats Plugins",
-        "Sorry, the Bio-Formats plugins require Java 1.8 or later.");
+        "Sorry, the Bio-Formats plugins require Java 11 or later.");
       return false;
     }
     return true;

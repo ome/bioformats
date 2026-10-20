@@ -322,7 +322,6 @@ public class ImspectorReader extends FormatReader {
             break;
           case 2:
           case 3:
-          case 9:
           case 13:
           case 14:
           case 17:
@@ -335,6 +334,7 @@ public class ImspectorReader extends FormatReader {
           case 5:
           case 6:
           case 8:
+          case 9:
             key = value;
             value = String.valueOf(in.readInt());
             break;

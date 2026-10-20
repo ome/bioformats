@@ -43,19 +43,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.formats.AnatomicalOrientation;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.IAxisOrientationReader;
 import loci.formats.MetadataTools;
+import loci.formats.Orientation;
+import loci.formats.OrientationType;
 import loci.formats.SubResolutionFormatReader;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.Codec;
@@ -81,7 +83,7 @@ import static loci.formats.dicom.DicomVR.*;
 /**
  * DicomReader is the file format reader for DICOM files.
  */
-public class DicomReader extends SubResolutionFormatReader {
+public class DicomReader extends SubResolutionFormatReader implements IAxisOrientationReader {
 
   // -- Constants --
 
@@ -122,6 +124,8 @@ public class DicomReader extends SubResolutionFormatReader {
   private int originalSeries;
   private int originalX, originalY;
   private String originalSpecimen;
+  private String originalStudyTime;
+  private boolean wsi = false;
 
   private List<String> companionFiles = new ArrayList<String>();
 
@@ -136,6 +140,12 @@ public class DicomReader extends SubResolutionFormatReader {
   private transient RandomAccessInputStream currentTileStream = null;
   private Set<Integer> privateContentHighWords = new HashSet<Integer>();
 
+  private transient String orientation = null;
+  private transient double[][] patientOrientation = null;
+  private Orientation xAxis;
+  private Orientation yAxis;
+  private Orientation zAxis;
+
   // -- Constructor --
 
   /** Constructs a new DICOM reader. */
@@ -148,6 +158,18 @@ public class DicomReader extends SubResolutionFormatReader {
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
     datasetDescription = "One or more .dcm or .dicom files";
     hasCompanionFiles = true;
+  }
+
+  // -- IAxisOrientationReader API methods --
+
+  @Override
+  public Orientation[] getAxisOrientations() {
+    FormatTools.assertId(currentId, true, 1);
+    Orientation[] axes = new Orientation[5];
+    axes[getDimensionOrder().indexOf("X")] = xAxis;
+    axes[getDimensionOrder().indexOf("Y")] = yAxis;
+    axes[getDimensionOrder().indexOf("Z")] = zAxis;
+    return axes;
   }
 
   // -- ICompressedTileReader API methods --
@@ -170,7 +192,6 @@ public class DicomReader extends SubResolutionFormatReader {
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
-    // TODO: this will result in a lot of redundant lookups, and should be optimized
     int tileWidth = getOptimalTileWidth();
     int tileHeight = getOptimalTileHeight();
     Region boundingBox = new Region(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
@@ -453,6 +474,8 @@ public class DicomReader extends SubResolutionFormatReader {
       date = time = imageType = null;
       originalDate = originalTime = originalInstance = null;
       originalSpecimen = null;
+      originalStudyTime = null;
+      wsi = false;
       instanceUID = null;
       originalSeries = 0;
       originalX = 0;
@@ -466,6 +489,11 @@ public class DicomReader extends SubResolutionFormatReader {
       concatenationNumber = null;
       edf = false;
       tags = null;
+      orientation = null;
+      patientOrientation = null;
+      xAxis = null;
+      yAxis = null;
+      zAxis = null;
       currentTileFile = null;
       if (currentTileStream != null) {
         currentTileStream.close();
@@ -623,6 +651,7 @@ public class DicomReader extends SubResolutionFormatReader {
               m.sizeZ = 1;
             }
           }
+          wsi = true;
           break;
         case TOTAL_PIXEL_MATRIX_ROWS:
           int my = tag.getNumberValue().intValue();
@@ -855,7 +884,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
         for (int p=0; p<imagesPerFile; p++) {
           DicomTile tile = new DicomTile();
-          tile.fileIndex = tilePositions.get(0).size();
+          tile.fileIndex = getTiles(0).size();
           if (m.sizeZ == 1 && fileZOffset != null) {
             tile.zOffset = fileZOffset;
           }
@@ -1032,9 +1061,7 @@ public class DicomReader extends SubResolutionFormatReader {
 
           if (zOffsets.containsKey(lastCoreIndex)) {
             for (Double z : info.zOffsets) {
-              if (!zOffsets.get(lastCoreIndex).contains(z)) {
-                zOffsets.get(lastCoreIndex).add(z);
-              }
+              addZOffset(lastCoreIndex, z);
             }
           }
           else {
@@ -1062,8 +1089,16 @@ public class DicomReader extends SubResolutionFormatReader {
       }
       singleSeriesWatch.stop("updated metadata from file infos");
     }
+    determineAnatomicalOrientation();
 
     watch.start();
+
+    int currentCoreIndex = getCoreIndex();
+    for (Integer key : tilePositions.keySet()) {
+      setCoreIndex(key);
+      calculateTilePlaneIndexes();
+    }
+    setCoreIndex(currentCoreIndex);
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
@@ -1189,6 +1224,9 @@ public class DicomReader extends SubResolutionFormatReader {
           case ACQUISITION_TIME:
             originalTime = infoString;
             break;
+          case STUDY_TIME:
+            originalStudyTime = infoString;
+            break;
           case SOP_INSTANCE_UID:
             instanceUID = infoString;
             break;
@@ -1233,6 +1271,16 @@ public class DicomReader extends SubResolutionFormatReader {
           case SLICE_SPACING:
             if (infoNumber != null) {
               pixelSizeZ = infoNumber.doubleValue();
+            }
+            break;
+          case ANATOMICAL_ORIENTATION_TYPE:
+            orientation = infoString;
+            break;
+          case IMAGE_ORIENTATION_PATIENT:
+            String[] matrix = infoString.replace('\\', '_').split("_");
+            patientOrientation = new double[2][3];
+            for (int i=0; i<matrix.length; i++) {
+              patientOrientation[i / 3][i % 3] = Double.valueOf(matrix[i]);
             }
             break;
           case IMAGE_POSITION_PATIENT:
@@ -1413,6 +1461,7 @@ public class DicomReader extends SubResolutionFormatReader {
     String thisSpecimen = null;
 
     String date = null, time = null, instance = null;
+    String studyTime = null;
     String thisInstanceUID = null;
     try (RandomAccessInputStream stream = new RandomAccessInputStream(file)) {
       if (!isThisType(stream)) {
@@ -1469,6 +1518,9 @@ public class DicomReader extends SubResolutionFormatReader {
           case ACQUISITION_DATE:
             date = tag.getStringValue();
             break;
+          case STUDY_TIME:
+            studyTime = tag.getStringValue();
+            break;
           case SERIES_NUMBER:
             fileSeries = parseIntValue(tag.getNumberValue(), 0);
             break;
@@ -1501,6 +1553,7 @@ public class DicomReader extends SubResolutionFormatReader {
     LOGGER.debug("  currentX = {}, originalX = {}", currentX, originalX);
     LOGGER.debug("  currentY = {}, originalY = {}", currentY, originalY);
     LOGGER.debug("  thisSpecimen = {}, originalSpecimen = {}", thisSpecimen, originalSpecimen);
+    LOGGER.debug("  studyTime = {}, originalStudyTime = {}", studyTime, originalStudyTime);
 
     boolean noSpecimens = originalSpecimen == null && thisSpecimen == null;
     boolean oneNullSpecimen = originalSpecimen == null || thisSpecimen == null;
@@ -1543,7 +1596,17 @@ public class DicomReader extends SubResolutionFormatReader {
     LOGGER.trace("  stamp = {}", stamp);
     LOGGER.trace("  timestamp = {}", timestamp);
 
-    if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 150000000)) {
+    double timeDifference = Math.abs(stamp - timestamp);
+    LOGGER.trace("  time difference (microsecs) = {}", timeDifference);
+    LOGGER.trace("  time difference (minutes) = {}", timeDifference / (1000 * 1000 * 60));
+
+    // time difference may legitimately be longer than 150 seconds,
+    // especially when comparing resolutions of a whole slide image
+    // in that case compare the study times as well, which are expected to be
+    // consistent across files
+    if (date.equals(originalDate) &&
+      ((wsi && studyTime.equals(originalStudyTime)) || (timeDifference < 150000000)))
+    {
       int position = Integer.parseInt(instance) - 1;
       if (position < 0) position = 0;
       if (fileList.get(fileSeries) == null) {
@@ -1684,10 +1747,7 @@ public class DicomReader extends SubResolutionFormatReader {
    * If the "firstTileOnly" flag is set, then this will return as soon
    * as one matching tile is found.
    */
-  private List<DicomTile> getTileList(int no, Region boundingBox, boolean firstTileOnly) {
-    int z = getZCTCoords(no)[0];
-    int c = getZCTCoords(no)[1];
-
+  public List<DicomTile> getTileList(int no, Region boundingBox, boolean firstTileOnly) {
     List<DicomTile> tileList = new ArrayList<DicomTile>();
     if (!tilePositions.containsKey(getCoreIndex())) {
       LOGGER.warn("No tiles for core index = {}", getCoreIndex());
@@ -1695,14 +1755,10 @@ public class DicomReader extends SubResolutionFormatReader {
     }
 
     // look for any tiles that match the requested tile and plane
-    List<Double> zs = zOffsets.get(getCoreIndex());
-    List<DicomTile> tiles = tilePositions.get(getCoreIndex());
-    for (int t=0; t<tiles.size(); t++) {
-      DicomTile tile = tiles.get(t);
-      if ((getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(z))) || (getSizeZ() == tiles.size() && t == z)) &&
-        (tile.channel == c || getEffectiveSizeC() == 1) &&
-        (boundingBox == null || tile.region.intersects(boundingBox)))
-      {
+    for (DicomTile tile : getTiles(getCoreIndex())) {
+      boolean inBoundingBox = boundingBox == null || tile.region.intersects(boundingBox);
+      boolean validPlane = tile.planeIndex == no;
+      if (validPlane && inBoundingBox) {
         tileList.add(tile);
         if (firstTileOnly) {
           break;
@@ -1716,6 +1772,23 @@ public class DicomReader extends SubResolutionFormatReader {
       }
     }
     return tileList;
+  }
+
+  private void calculateTilePlaneIndexes() {
+    List<Double> zs = getZOffsets(getCoreIndex());
+    List<DicomTile> tiles = getTiles(getCoreIndex());
+    for (int t=0; t<tiles.size(); t++) {
+      DicomTile tile = tiles.get(t);
+      for (int p=0; p<getImageCount(); p++) {
+        int[] zct = getZCTCoords(p);
+        boolean validZ = getSizeZ() == 1 || (getSizeZ() <= zs.size() && tile.zOffset.equals(zs.get(zct[0]))) || (getSizeZ() == tiles.size() && t == zct[0]);
+        boolean validC = tile.channel == zct[1] || getEffectiveSizeC() == 1;
+        if (validZ && validC) {
+          tile.planeIndex = p;
+          break;
+        }
+      }
+    }
   }
 
   /**
@@ -2027,9 +2100,7 @@ public class DicomReader extends SubResolutionFormatReader {
         zOffsets.put(getCoreIndex(), new ArrayList<Double>());
       }
       Double z = currentTile.zOffset;
-      if (!zOffsets.get(getCoreIndex()).contains(z)) {
-        zOffsets.get(getCoreIndex()).add(z);
-      }
+      addZOffset(getCoreIndex(), z);
     }
   }
 
@@ -2080,16 +2151,121 @@ public class DicomReader extends SubResolutionFormatReader {
     }
   }
 
+  /**
+   * See https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html#sect_C.7.6.2.1.1
+   */
+  private void determineAnatomicalOrientation() {
+    if (orientation == null) {
+      orientation = "BIPED";
+    }
+    Orientation[] baseAxes = new Orientation[3];
+    if (orientation.equals("BIPED")) {
+      baseAxes[0] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+      baseAxes[1] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.ANTERIOR_TO_POSTERIOR);
+      baseAxes[2] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.INFERIOR_TO_SUPERIOR);
+    }
+    else if (orientation.equals("QUADRUPED")) {
+      baseAxes[0] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.RIGHT_TO_LEFT);
+      // note this doesn't take into account the body part, so may be slightly incorrect for head/limbs
+      // presumably this requires mapping the "Body Part Examined" value from the tables defined in
+      // https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_L.html#table_L-2
+      // https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_L.html#table_L-3
+      // to the categories in https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html#sect_C.7.6.2.1.1
+      baseAxes[1] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.VENTRAL_TO_DORSAL);
+      baseAxes[2] = new Orientation(OrientationType.ANATOMICAL, AnatomicalOrientation.CAUDAL_TO_CRANIAL);
+    }
+    else {
+      LOGGER.warn("Unsupported anatomical orientation: {}", orientation);
+      // every element of baseAxes will be null, so applying the
+      // patient orientation matrix doesn't make sense
+      return;
+    }
+
+    // apply patient orientation matrix
+    // see equation C.7.6.2.1-1 in https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html#sect_C.7.6.2.1.1
+
+    if (patientOrientation != null) {
+      double[] xOrientation = patientOrientation[0];
+      if (useAxis(0, 0)) {
+        xAxis = xOrientation[0] > 0 ? baseAxes[0] : baseAxes[0].flip();
+        baseAxes[0] = null;
+      }
+      if (useAxis(0, 1)) {
+        xAxis = xOrientation[1] > 0 ? baseAxes[1] : baseAxes[1].flip();
+        baseAxes[1] = null;
+      }
+      if (useAxis(0, 2)) {
+        xAxis = xOrientation[2] > 0 ? baseAxes[2] : baseAxes[2].flip();
+        baseAxes[2] = null;
+      }
+
+      double[] yOrientation = patientOrientation[1];
+      if (useAxis(1, 0)) {
+        yAxis = yOrientation[0] > 0 ? baseAxes[0] : baseAxes[0].flip();
+        baseAxes[0] = null;
+      }
+      else if (useAxis(1, 1)) {
+        yAxis = yOrientation[1] > 0 ? baseAxes[1] : baseAxes[1].flip();
+        baseAxes[1] = null;
+      }
+      else if (useAxis(1, 2)) {
+        yAxis = yOrientation[2] > 0 ? baseAxes[2] : baseAxes[2].flip();
+        baseAxes[2] = null;
+      }
+      for (int i=0; i<baseAxes.length; i++) {
+        if (baseAxes[i] != null) {
+          zAxis = baseAxes[i];
+          break;
+        }
+      }
+    }
+    else {
+      xAxis = baseAxes[0];
+      yAxis = baseAxes[1];
+      zAxis = baseAxes[2];
+    }
+  }
+
+  private boolean useAxis(int axis, int component) {
+    double abs = Math.abs(patientOrientation[axis][component]);
+    // value needs to be non-zero and the largest magnitude in the vector
+    boolean valid = abs > Constants.EPSILON;
+    for (int i=0; i<patientOrientation[axis].length; i++) {
+      if (Math.abs(patientOrientation[axis][i]) > abs) {
+        valid = false;
+        break;
+      }
+    }
+    return valid;
+  }
+
   public String getImageType() {
     return imageType;
   }
 
   public List<DicomTile> getTiles() {
-    return tilePositions.get(0);
+    return getTiles(0);
+  }
+
+  public List<DicomTile> getTiles(int coreIndex) {
+    if (tilePositions.containsKey(coreIndex)) {
+      return tilePositions.get(coreIndex);
+    }
+    return new ArrayList<DicomTile>();
+  }
+
+  private void addZOffset(int coreIndex, Double z) {
+    if (!zOffsets.get(coreIndex).contains(z)) {
+      zOffsets.get(coreIndex).add(z);
+    }
   }
 
   public List<Double> getZOffsets() {
-    return zOffsets.get(0);
+    return getZOffsets(0);
+  }
+
+  public List<Double> getZOffsets(int coreIndex) {
+    return zOffsets.get(coreIndex);
   }
 
   public int getConcatenationIndex() {

@@ -485,7 +485,7 @@ public final class ImageConverter {
     // TODO: there may be other options not compatible with -precompressed
     if (precompressed &&
       (width_crop > 0 || height_crop > 0 ||
-      pyramidResolutions > 1 ||
+      pyramidScale > 1 || pyramidResolutions > 1 ||
       fillColor != null ||
       autoscale
       ))
@@ -589,6 +589,23 @@ public final class ImageConverter {
     } else {
       width = Math.min(reader.getSizeX(), width_crop);
       height = Math.min(reader.getSizeY(), height_crop);
+    }
+
+    // want to generate a pyramid but no resolution count specified
+    // calculate based upon the scale and image size
+    // the tile size has not been yet been set on the writer,
+    // and the writer needs a MetadataRetrieve with resolutions populated first
+    if (pyramidScale > 1 && pyramidResolutions == 1) {
+      pyramidResolutions = 0;
+      int checkWidth = width;
+      int checkHeight = height;
+      while (checkWidth >= (int) Math.max(saveTileWidth, pyramidScale) &&
+        checkHeight >= (int) Math.max(saveTileHeight, pyramidScale))
+      {
+        pyramidResolutions++;
+        checkWidth /= pyramidScale;
+        checkHeight /= pyramidScale;
+      }
     }
 
     if (channel >= reader.getEffectiveSizeC()) {
@@ -801,14 +818,17 @@ public final class ImageConverter {
         int count = 0;
         for (int i=startPlane; i<endPlane; i++) {
           int[] coords = reader.getZCTCoords(i);
+          String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
 
           if ((zSection >= 0 && coords[0] != zSection) || (channel >= 0 &&
             coords[1] != channel) || (timepoint >= 0 && coords[2] != timepoint))
           {
+            if (i == endPlane - 1) {
+              nextOutputIndex.remove(outputName);
+            }
             continue;
           }
 
-          String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
           String tileName = FormatTools.getTileFilename(0, 0, 0, outputName);
 
           if (outputName.equals(tileName)) {
@@ -1227,6 +1247,12 @@ public final class ImageConverter {
       int height = meta.getPixelsSizeY(series).getValue();
       for (int i=1; i<pyramidResolutions; i++) {
         int scale = (int) Math.pow(pyramidScale, i);
+        if (width < scale || height < scale) {
+          LOGGER.warn("Specified pyramid resolutions {} too large; adjusted to {}",
+            pyramidResolutions, i);
+          pyramidResolutions = i;
+          break;
+        }
         ((OMEPyramidStore) meta).setResolutionSizeX(
           new PositiveInteger(width / scale), series, i);
         ((OMEPyramidStore) meta).setResolutionSizeY(

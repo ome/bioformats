@@ -122,8 +122,7 @@ public class TecanReader extends FormatReader {
     if (!open) {
       return super.isThisType(name, open);
     }
-    try {
-      Connection conn = openConnection(name);
+    try (Connection conn = openConnection(name)) {
       findPlateDimensions(conn);
       return true;
     }
@@ -261,10 +260,9 @@ public class TecanReader extends FormatReader {
       findAllFiles(export, extraFiles);
     }
 
-    Connection conn = openConnection();
     HashMap<Integer, String> wellLabels = null;
 
-    try {
+    try (Connection conn = openConnection()) {
       findPlateDimensions(conn);
 
       wellLabels = getWellLabels(conn);
@@ -272,16 +270,6 @@ public class TecanReader extends FormatReader {
     }
     catch (SQLException e) {
       throw new IOException("Could not assemble plate", e);
-    }
-    finally {
-      if (conn != null) {
-        try {
-          conn.close();
-        }
-        catch (SQLException e) {
-          LOGGER.warn("Could not close database connection", e);
-        }
-      }
     }
 
     // update series and plane index for each Image to account for fields/timepoints
@@ -410,9 +398,7 @@ public class TecanReader extends FormatReader {
   }
 
   private void findExtraMetadata() {
-    Connection conn = null;
-    try {
-      conn = openConnection();
+    try (Connection conn = openConnection()) {
 
       PreparedStatement instrument = conn.prepareStatement(
         "SELECT InstrumentSerial FROM InstrumentConfig ORDER BY Id");
@@ -565,16 +551,6 @@ public class TecanReader extends FormatReader {
     }
     catch (IOException|SQLException e) {
       LOGGER.warn("Could not read all extra metadata", e);
-    }
-    finally {
-      if (conn != null) {
-        try {
-          conn.close();
-        }
-        catch (SQLException ex) {
-          LOGGER.warn("Could not close database connection", ex);
-        }
-      }
     }
 
     for (int c=0; c<channels.size(); c++) {

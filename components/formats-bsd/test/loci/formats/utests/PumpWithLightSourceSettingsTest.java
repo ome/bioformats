@@ -34,8 +34,7 @@ package loci.formats.utests;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import loci.common.xml.XMLTools;
 
 import ome.xml.model.Arc;
 import ome.xml.model.Channel;
@@ -93,9 +92,7 @@ public class PumpWithLightSourceSettingsTest {
 
   @Test
   public void testLightSourceType() throws Exception {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder parser = factory.newDocumentBuilder();
-    Document document = parser.newDocument();
+    Document document = XMLTools.createDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
     SPWModelMock.postProcess(root, document, false);

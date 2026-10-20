@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -402,10 +402,12 @@ public class MIASReader extends FormatReader {
       }
 
       String[] list = plate.list(true);
+      Arrays.sort(list);
       for (String f : list) {
         if (f.startsWith("Well")) {
           Location well = new Location(plate, f);
           String[] wellList = well.list(true);
+          Arrays.sort(wellList);
           for (String file : wellList) {
             String path = new Location(well, file).getAbsolutePath();
             if (isThisType(path) &&
@@ -500,6 +502,7 @@ public class MIASReader extends FormatReader {
       Location f = new Location(experiment, dir);
       if (dir.equals("Batchresults")) {
         String[] results = f.list(true);
+        Arrays.sort(results);
         for (String result : results) {
           Location file = new Location(f, result);
           if (result.startsWith("NEO_Results")) {
@@ -531,6 +534,7 @@ public class MIASReader extends FormatReader {
         // directory contains a TIFF or a subdirectory
         String[] wellList = f.list(true);
         if (wellList != null) {
+          Arrays.sort(wellList);
           boolean validWell = false;
           for (String potentialTIFF : wellList) {
             if (potentialTIFF.toLowerCase().endsWith(".tif") ||
@@ -544,6 +548,7 @@ public class MIASReader extends FormatReader {
       }
       else if (f.getName().equals("results")) {
         String[] resultsList = f.list(true);
+        Arrays.sort(resultsList);
         for (String result : resultsList) {
           // exclude proprietary program state files
           if (!result.endsWith(".sav") && !result.endsWith(".dsv") &&
@@ -586,6 +591,7 @@ public class MIASReader extends FormatReader {
       wellNumber[j] = Integer.parseInt(wellName) - 1;
 
       String[] tiffFiles = well.list(true);
+      Arrays.sort(tiffFiles);
       final List<String> tmpFiles = new ArrayList<String>();
       for (String tiff : tiffFiles) {
         String name = tiff.toLowerCase();
@@ -604,6 +610,7 @@ public class MIASReader extends FormatReader {
             cCount[j]++;
 
             String[] tiffs = file.list(true);
+            Arrays.sort(tiffs);
             for (String tiff : tiffs) {
               String name = tiff.toLowerCase();
               if (name.endsWith(".tif") || name.endsWith(".tiff")) {
@@ -622,8 +629,11 @@ public class MIASReader extends FormatReader {
       Location firstTiff = new Location(tiffFiles[0]);
 
       List<String> names = new ArrayList<String>();
-      for (Location f: firstTiff.getParentFile().listFiles()) {
-        names.add(f.getName());
+      Location parentFile = firstTiff.getParentFile();
+      String[] allFiles = parentFile.list();
+      Arrays.sort(allFiles);
+      for (String f : allFiles) {
+        names.add(new Location(parentFile, f).getName());
       }
 
       FilePattern fp = new FilePattern(FilePattern.findPattern(
@@ -959,7 +969,9 @@ public class MIASReader extends FormatReader {
     try (RandomAccessInputStream s = new RandomAccessInputStream(file, 16)) {
       TiffParser tp = new TiffParser(s);
       ifd = tp.getFirstIFD();
-      colorMap = tp.getColorMap(ifd);
+      if (ifd != null) {
+        colorMap = tp.getColorMap(ifd);
+      }
     }
 
     if (ifd == null) return null;

@@ -756,9 +756,13 @@ public class OBFReader extends FormatReader {
           long bytesWrittenAfter = inflater.getBytesWritten();
 
           long decompressedBytes = bytesWrittenAfter - bytesWrittenBefore;
+          if (decompressedBytes + bufferOffset > Integer.MAX_VALUE) {
+            throw new FormatException(
+              "Unexpectedly large number of bytes decompressed: " + decompressedBytes);
+          }
 
-          bufferOffset += decompressedBytes;
-          remainingBytes -= decompressedBytes;
+          bufferOffset += (int) decompressedBytes;
+          remainingBytes -= (int) decompressedBytes;
 
           if(remainingBytes != 0) {
             throw new FormatException(

@@ -196,7 +196,6 @@ public class MultipleImagesReader extends LMSFileReader {
 
   /**
    * Rearranges frame order from ZSTC order (used in XLIFs) to desired CoreMetadata.dimensionOrder
-   * @param cmd corresponding CoreMetadata (expecting that all tiles have the same dimension sizes)
    */
   public void swapDimensions() throws FormatException{
     CoreMetadata cmd = core.get(0);

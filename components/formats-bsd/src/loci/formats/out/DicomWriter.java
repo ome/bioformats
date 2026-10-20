@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.rmi.dgc.VMID;
 import java.rmi.server.UID;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -1072,7 +1073,8 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         DicomTag sliceSpace = new DicomTag(SLICE_SPACING, DS);
         Length physicalZ = fixUnits(r.getPixelsPhysicalSizeZ(pyramid));
         if (physicalZ != null) {
-          sliceThickness.value = padString(String.valueOf(physicalZ.value(UNITS.MM)));
+          double pz = physicalZ.value(UNITS.MM).doubleValue();
+          sliceThickness.value = padString(formatFixedWidth(pz, 16));
         }
         else {
           // a value of 0 is not allowed, but we don't know the actual thickness or slice spacing
@@ -1085,9 +1087,11 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
         DicomTag pixelSpacing = new DicomTag(PIXEL_SPACING, DS);
         Length physicalX = fixUnits(r.getPixelsPhysicalSizeX(pyramid));
         Length physicalY = fixUnits(r.getPixelsPhysicalSizeY(pyramid));
-        String px = physicalX == null ? "1" : String.valueOf(physicalX.value(UNITS.MM));
-        String py = physicalY == null ? "1" : String.valueOf(physicalY.value(UNITS.MM));
-        pixelSpacing.value = padString(px + "\\" + py);
+        double px = physicalX == null ? 1.0 : physicalX.value(UNITS.MM).doubleValue();
+        double py = physicalY == null ? 1.0 : physicalY.value(UNITS.MM).doubleValue();
+
+        pixelSpacing.value =
+          padString(formatFixedWidth(px, 15) + "\\" + formatFixedWidth(py, 15));
         pixelMeasuresSequence.children.add(pixelSpacing);
 
         pixelMeasuresSequence.children.add(makeItemDelimitation());
@@ -1163,11 +1167,13 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
             plane.children.add(makeItem());
 
             DicomTag offsetX = new DicomTag(X_OFFSET_IN_SLIDE, DS);
-            offsetX.value = padString(physicalX == null ? "0" : padString(String.valueOf(physicalX.value(UNITS.MM).floatValue() * width)));
+            double ox = physicalX.value(UNITS.MM).floatValue() * width;
+            offsetX.value = padString(physicalX == null ? "0" : padString(formatFixedWidth(ox, 16)));
             plane.children.add(offsetX);
 
             DicomTag offsetY = new DicomTag(Y_OFFSET_IN_SLIDE, DS);
-            offsetY.value = padString(physicalY == null ? "0" : padString(String.valueOf(physicalY.value(UNITS.MM).floatValue() * height)));
+            double oy = physicalY.value(UNITS.MM).floatValue() * height;
+            offsetY.value = padString(physicalY == null ? "0" : padString(formatFixedWidth(oy, 16)));
             plane.children.add(offsetY);
 
             DicomTag positionZ = new DicomTag(Z_OFFSET_IN_SLIDE, DS);
@@ -2221,6 +2227,77 @@ public class DicomWriter extends FormatWriter implements IExtraMetadataWriter {
     if (validPixelCount == null) {
       validPixelCount = true;
     }
+  }
+
+  private static String getScientificNotationPattern(int intDigits, int signBytes, int width) {
+    int exponentDigits = String.valueOf(Math.abs(intDigits)).length();
+    int mantissaDigits = width - exponentDigits - signBytes - 2;
+    StringBuffer pattern = new StringBuffer(".");
+    for (int i=0; i<mantissaDigits; i++) {
+      pattern.append("#");
+    }
+    pattern.append("E");
+    for (int i=0; i<exponentDigits; i++) {
+      pattern.append("0");
+    }
+    return pattern.toString();
+  }
+
+  /**
+   * Format the given double as a string with no more than
+   * <code>width</code> characters.
+   */
+  public static String formatFixedWidth(double v, int width) {
+    // use a smaller value than usual to test double equivalency
+    double epsilon = Double.MIN_VALUE;
+    if (Double.isNaN(v)) {
+      return "NaN";
+    }
+    else if (Double.isInfinite(v)) {
+      if (width >= 9) {
+        return v < 0 ? "-Infinity" : "+Infinity";
+      }
+      return "";
+    }
+    else if (Math.abs(v - 0) < epsilon) {
+      return "0";
+    }
+    // get a decimal formatter for the current default locale
+    DecimalFormat formatter = new DecimalFormat();
+    formatter.setGroupingUsed(false);
+
+    int integerDigitsNeeded = (int) Math.log10(Math.abs(v)) + 1;
+    int signBytes = v < 0 ? 1 : 0;
+
+    if (integerDigitsNeeded + signBytes > width) {
+      String pattern = getScientificNotationPattern(integerDigitsNeeded, signBytes, width);
+      LOGGER.debug("float formatting pattern = {}", pattern);
+      formatter.applyPattern(pattern);
+    }
+    else {
+      if (Math.round(v) == 0) {
+        integerDigitsNeeded--;
+      }
+      int fractionDigits = width - signBytes - integerDigitsNeeded;
+      if (fractionDigits == 0 || fractionDigits == 1) {
+        formatter.setMaximumFractionDigits(0);
+      }
+      else if (fractionDigits > 1 && integerDigitsNeeded >= -4) {
+        formatter.setMaximumIntegerDigits(Math.max(0, integerDigitsNeeded));
+        if (integerDigitsNeeded >= 0) {
+          formatter.setMaximumFractionDigits(fractionDigits - 1);
+        }
+        else {
+          formatter.setMaximumFractionDigits(width - signBytes - 1);
+        }
+      }
+      else {
+        String pattern = getScientificNotationPattern(integerDigitsNeeded, signBytes, width - 1);
+        LOGGER.debug("float formatting pattern = {}", pattern);
+        formatter.applyPattern(pattern);
+      }
+    }
+    return formatter.format(v);
   }
 
   protected Slf4JStopWatch stopWatch() {

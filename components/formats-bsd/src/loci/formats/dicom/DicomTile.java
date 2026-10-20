@@ -47,6 +47,7 @@ public class DicomTile {
   public Double zOffset;
   public int channel;
   public boolean last = false;
+  public int planeIndex = -1;
 
   public boolean isJP2K = false;
   public boolean isJPEG = false;

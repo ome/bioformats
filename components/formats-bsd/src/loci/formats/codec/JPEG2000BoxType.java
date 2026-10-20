@@ -97,7 +97,7 @@ public enum JPEG2000BoxType implements CodedEnum {
   /**
    * Default constructor.
    * @param code Integer "code" for the box type.
-   * @param compression The name of the box type.
+   * @param name The name of the box type.
    */
   private JPEG2000BoxType(int code, String name) {
     this.code = code;

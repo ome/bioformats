@@ -126,12 +126,16 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
       long[] allOffsets = null;
       try (RandomAccessInputStream in = new RandomAccessInputStream(id)) {
         TiffParser parser = new TiffParser(in);
-        littleEndian = parser.checkHeader();
+        Boolean writtenLittleEndian = parser.checkHeader();
+        if (writtenLittleEndian == null) {
+          // this would be extremely unexpected
+          throw new IOException("Endian check failed on written data");
+        }
+        littleEndian = writtenLittleEndian;
         allOffsets = parser.getIFDOffsets();
       }
 
       int mainIFDIndex = 0;
-      int currentFullResolution = 0;
       for (int i=0; i<r.getImageCount(); i++) {
         setSeries(i);
         int resCount = resCounts[i];
@@ -155,11 +159,10 @@ public class PyramidOMETiffWriter extends OMETiffWriter {
             long nextPointer = index < allOffsets.length ? allOffsets[index] : 0;
 
             saver.overwriteIFDOffset(in, allOffsets[mainIFDIndex], nextPointer);
-            saver.overwriteIFDValue(in, currentFullResolution, IFD.SUB_IFD, subIFDOffsets);
+            saver.overwriteIFDValue(in, allOffsets[mainIFDIndex], IFD.SUB_IFD, subIFDOffsets, true);
           }
 
           mainIFDIndex++;
-          currentFullResolution++;
         }
         mainIFDIndex += (planeCounts[i] * (resCount - 1));
       }

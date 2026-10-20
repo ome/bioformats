@@ -249,12 +249,16 @@ public class AmiraParameters {
   }
 
   protected String readKey() throws IOException {
-    StringBuilder result = new StringBuilder();
+    long start = in.getFilePointer();
     while (c >= '0' || c == '-' || c == '&') {
-      result.append(c);
       readByte();
     }
-    return result.toString();
+    long end = in.getFilePointer();
+    int bytes = (int) (end - start);
+    in.seek(start - 1);
+    String key = in.readString(bytes);
+    in.skipBytes(1);
+    return key;
   }
 
   protected Number readNumber() throws FormatException, IOException {
@@ -353,18 +357,24 @@ public class AmiraParameters {
     else if (quote != '"' && quote != '\'') {
       syntaxError("Invalid quote: " + c);
     }
-    StringBuilder result = new StringBuilder();
+    long start = in.getFilePointer();
+    long end = start;
     for (;;) {
       readByte();
       if (c == quote) {
         readByte();
-        return result.toString();
+        end = in.getFilePointer();
+        break;
       }
       if (quote == '"' && c == '\\') {
         readByte();
       }
-      result.append(c);
     }
+    int bytes = (int) (end - start - 2);
+    in.seek(start);
+    String s = in.readString(bytes);
+    in.seek(end);
+    return s;
   }
 
   protected Map readMap() throws FormatException, IOException {

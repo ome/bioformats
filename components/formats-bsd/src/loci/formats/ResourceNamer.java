@@ -139,8 +139,14 @@ public class ResourceNamer {
   public static int alphabeticIndexCount(String index) {
     int count = 0;
     char[] letters = index.toCharArray();
+    if (letters.length > 6) {
+      // this will cause an integer overflow
+      throw new IllegalArgumentException("Cannot count more than 6 characters");
+    }
     for (int i = 0; i < letters.length; i++) {
-      count += (letters[i] - 64) * Math.pow(ALPHABET_LENGTH, i);
+      int letterIndex = (int) Math.pow(ALPHABET_LENGTH, i);
+      int letterValue = letterIndex * (letters[i] - 64);
+      count += letterValue;
     }
     return count;
   }

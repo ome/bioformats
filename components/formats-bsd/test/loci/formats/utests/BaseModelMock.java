@@ -36,8 +36,7 @@ package loci.formats.utests;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import loci.common.xml.XMLTools;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -165,9 +164,7 @@ public class BaseModelMock implements ModelMock {
 
   public static void main(String[] args) throws Exception {
     BaseModelMock mock = new BaseModelMock();
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder parser = factory.newDocumentBuilder();
-    Document document = parser.newDocument();
+    Document document = XMLTools.createDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = mock.ome.asXMLElement(document);
     SPWModelMock.postProcess(root, document, true);

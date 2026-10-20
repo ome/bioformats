@@ -52,6 +52,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -60,6 +61,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import loci.common.DataTools;
+import loci.common.DebugTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -300,6 +302,9 @@ public class Exporter {
             outfile = new File(dir, name).getAbsolutePath();
             if (outfile == null) return;
         }
+        else {
+          f = new File(outfile);
+        }
 
         if (windowless) {
             if (splitZ == null) splitZ = Boolean.FALSE;
@@ -538,6 +543,7 @@ public class Exporter {
             }
 
             Object info = imp.getProperty("Info");
+            Hashtable<String, Object> originalMetadata = new Hashtable<String, Object>();
             if (info != null) {
                 String imageInfo = info.toString();
                 if (imageInfo != null) {
@@ -548,13 +554,28 @@ public class Exporter {
                             String key = line.substring(0, eq).trim();
                             String value = line.substring(eq + 1).trim();
 
+                            originalMetadata.put(key, value);
+
                             if (key.endsWith("BitsPerPixel")) {
-                                w.setValidBitsPerPixel(Integer.parseInt(value));
-                                break;
+                                try {
+                                  int bits = Integer.parseInt(value);
+                                  if (bits > 0 && bits <= FormatTools.getBytesPerPixel(ptype) * 8) {
+                                    w.setValidBitsPerPixel(bits);
+                                  }
+                                }
+                                catch (NumberFormatException e) {
+                                }
                             }
                         }
                     }
                 }
+            }
+            try {
+              service.populateOriginalMetadata(service.getOMEMetadata(store), originalMetadata);
+            }
+            catch (ServiceException e) {
+              IJ.log("Could not populate original metadata");
+              IJ.log(DebugTools.getStackTrace(e));
             }
 
             // NB: Animation rate code copied from ij.plugin.Animator#doOptions().
@@ -672,6 +693,7 @@ public class Exporter {
             if (outputFiles.length > 1) {
                 for (int i = 0; i < outputFiles.length; i++) {
                     if (new File(outputFiles[i]).exists()) {
+                        IJ.error(outputFiles[i] + " already exists");
                         in = true;
                         break;
                     }
@@ -689,6 +711,10 @@ public class Exporter {
                 for (int i = 0; i < outputFiles.length; i++) {
                     new File(outputFiles[i]).delete();
                 }
+            }
+            else if (in) {
+              IJ.error("Some files already exist; delete them and try again.");
+              return;
             }
             //We are now ready to write the image
             if (f != null) f.delete(); //delete the file.
