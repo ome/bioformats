@@ -957,6 +957,25 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     omexmlMeta.setRoot(root);
   }
 
+  /** @see OMEXMLService#removeChannels(OMEXMLMetadata) */
+  @Override
+  public void removeChannels(OMEXMLMetadata omexmlMeta) {
+    omexmlMeta.resolveReferences();
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
+    for (int image=0; image<root.sizeOfImageList(); image++) {
+      Pixels img = root.getImage(image).getPixels();
+      int sizeC = img.getSizeC().getNumberValue().intValue();
+      List<Channel> channels = img.copyChannelList();
+      for (int c=0; c<channels.size(); c++) {
+        Channel channel = channels.get(c);
+        if (channel.getID() == null || c >= sizeC) {
+          img.removeChannel(channel);
+        }
+      }
+    }
+    omexmlMeta.setRoot(root);
+  }
+
   /** @see OMEXMLService#removeChannels(OMEXMLMetadata, int, int) */
   @Override
   public void removeChannels(OMEXMLMetadata omexmlMeta, int image, int sizeC) {

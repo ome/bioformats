@@ -576,11 +576,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     }
 
     hasSPW = meta.getPlateCount() > 0;
-
-    for (int i=0; i<meta.getImageCount(); i++) {
-      int sizeC = meta.getPixelsSizeC(i).getValue();
-      service.removeChannels(meta, i, sizeC);
-    }
+    service.removeChannels(meta);
 
     // if flattened resolutions are requested, remove resolution annotations
     // otherwise, MetadataStore and reader metadata will be inconsistent

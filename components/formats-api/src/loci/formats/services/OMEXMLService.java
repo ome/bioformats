@@ -268,6 +268,16 @@ public interface OMEXMLService extends Service {
   public void removeTiffData(OMEXMLMetadata omexmlMeta);
 
   /**
+   * Remove all but the first SizeC valid Channel elements from all
+   * Image elements in the OME-XML metadata object. The "SizeC" attribute
+   * on each Image's Pixels must be set to the number of Channel elements
+   * to preserve for that Image.
+   * This is a bulk removal method which minimizes the number of calls
+   * to OMEXMLMetadata.setRoot(...).
+   */
+  public void removeChannels(OMEXMLMetadata omexmlMeta);
+
+  /**
    * Remove all but the first sizeC valid Channel elements from the given
    * OME-XML metadata object.
    */
