@@ -36,13 +36,13 @@ import static org.testng.AssertJUnit.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
-import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.IPyramidStore;
 import loci.formats.out.PyramidOMETiffWriter;
@@ -70,18 +70,28 @@ public class PyramidTest {
 
   private File[] files = new File[9];
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setUp() throws Exception {
     for (int i=0; i<files.length; i++) {
+      // Retain each fixture before a later allocation can fail.
       files[i] = File.createTempFile("PyramidTest", ".ome.tiff");
     }
   }
 
-  @AfterClass
+  @AfterClass(alwaysRun = true)
   public void tearDown() throws Exception {
+    Exception failure = null;
     for (File f : files) {
-      f.delete();
+      if (f == null) continue;
+      try {
+        Files.deleteIfExists(f.toPath());
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
     }
+    if (failure != null) throw failure;
   }
 
   @Test
@@ -256,9 +266,20 @@ public class PyramidTest {
 
   private IFormatReader getReader(int index) throws FormatException, IOException {
     ImageReader reader = new ImageReader();
-    reader.setFlattenedResolutions(false);
-    reader.setId(files[index].getAbsolutePath());
-    return reader;
+    try {
+      reader.setFlattenedResolutions(false);
+      reader.setId(files[index].getAbsolutePath());
+      return reader;
+    }
+    catch (FormatException | IOException e) {
+      try {
+        reader.close();
+      }
+      catch (IOException closeFailure) {
+        e.addSuppressed(closeFailure);
+      }
+      throw e;
+    }
   }
 
   private boolean checkPixels(IFormatReader reader) throws FormatException, IOException {
@@ -310,44 +331,45 @@ public class PyramidTest {
       populateImage(meta, p, EXTRA_WIDTH, EXTRA_HEIGHT, planes, bigEndian);
     }
   
-    PyramidOMETiffWriter writer = new PyramidOMETiffWriter();
-    writer.setBigTiff(bigTiff);
-    writer.setWriteSequentially(true);
-    writer.setMetadataRetrieve(meta);
-    writer.setId(file);
+    try (PyramidOMETiffWriter writer = new PyramidOMETiffWriter()) {
+      writer.setBigTiff(bigTiff);
+      writer.setWriteSequentially(true);
+      writer.setMetadataRetrieve(meta);
+      writer.setId(file);
 
-    int index = 1;
-    for (int p=0; p<widths.length; p++) {
-      writer.setSeries(p);
-      for (int r=0; r<RESOLUTION_COUNT; r++) {
-        writer.setResolution(r);
+      int index = 1;
+      for (int p=0; p<widths.length; p++) {
+        writer.setSeries(p);
+        for (int r=0; r<RESOLUTION_COUNT; r++) {
+          writer.setResolution(r);
 
-        int scale = (int) Math.pow(SCALE, r);
-        int width = widths[p] / scale;
-        int height = heights[p] / scale;
-        for (int plane=0; plane<planes; plane++) {
-          byte[] tile = new byte[] {(byte) index++};
-          IFD ifd = new IFD();
-          ifd.put(IFD.TILE_WIDTH, TILE_SIZE);
-          ifd.put(IFD.TILE_LENGTH, TILE_SIZE);
+          int scale = (int) Math.pow(SCALE, r);
+          int width = widths[p] / scale;
+          int height = heights[p] / scale;
+          for (int plane=0; plane<planes; plane++) {
+            byte[] tile = new byte[] {(byte) index++};
+            IFD ifd = new IFD();
+            ifd.put(IFD.TILE_WIDTH, TILE_SIZE);
+            ifd.put(IFD.TILE_LENGTH, TILE_SIZE);
 
-          for (int yy=0; yy<height; yy++) {
-            for (int xx=0; xx<width; xx++) {
-              writer.saveBytes(plane, tile, ifd, xx, yy, TILE_SIZE, TILE_SIZE);
+            for (int yy=0; yy<height; yy++) {
+              for (int xx=0; xx<width; xx++) {
+                writer.saveBytes(plane, tile, ifd, xx, yy,
+                  TILE_SIZE, TILE_SIZE);
+              }
             }
           }
         }
       }
-    }
-    for (int e=0; e<extra; e++) {
-      writer.setSeries(widths.length + e);
-      for (int plane=0; plane<planes; plane++) {
-        byte[] extraPlane = new byte[EXTRA_WIDTH * EXTRA_HEIGHT];
-        Arrays.fill(extraPlane, (byte) index++);
-        writer.saveBytes(plane, extraPlane);
+      for (int e=0; e<extra; e++) {
+        writer.setSeries(widths.length + e);
+        for (int plane=0; plane<planes; plane++) {
+          byte[] extraPlane = new byte[EXTRA_WIDTH * EXTRA_HEIGHT];
+          Arrays.fill(extraPlane, (byte) index++);
+          writer.saveBytes(plane, extraPlane);
+        }
       }
     }
-    writer.close();
   }
 
   /**
