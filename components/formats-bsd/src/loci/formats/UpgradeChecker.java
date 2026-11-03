@@ -109,7 +109,7 @@ public class UpgradeChecker {
   @Deprecated
   public static final String[] INDIVIDUAL_JARS = new String[] {
     "formats-api.jar", "formats-bsd.jar", "formats-gpl.jar",
-    "bio-formats-tools.jar", "bio-formats_plugins.jar", "turbojpeg.jar"
+    "bio-formats-tools.jar", "bio-formats_plugins.jar"
   };
 
   /** Location of the OME registry. */

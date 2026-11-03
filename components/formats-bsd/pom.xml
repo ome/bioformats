@@ -54,9 +54,9 @@
       <version>${ome-codecs.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>turbojpeg</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.glencoesoftware</groupId>
+      <artifactId>libjpeg-turbo</artifactId>
+      <version>${turbojpeg.version}</version>
     </dependency>
     <dependency>
       <groupId>org.scijava</groupId>
