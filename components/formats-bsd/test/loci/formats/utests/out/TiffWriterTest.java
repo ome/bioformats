@@ -36,18 +36,22 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import loci.common.ByteArrayHandle;
 import loci.common.Location;
-import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
-import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.utests.tiff.TiffWriterMock;
-import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import org.testng.annotations.AfterMethod;
@@ -64,6 +68,8 @@ public class TiffWriterTest {
   private IFD ifd;
   private TiffWriter writer;
   private IMetadata metadata;
+  private final List<Path> temporaryPaths = new ArrayList<Path>();
+  private final List<String> mappedIds = new ArrayList<String>();
 
   final long BIG_TIFF_CUTOFF = (long) 1024 * 1024 * 3990;
   private static final byte[] buf = new byte[1024*1024];
@@ -118,7 +124,7 @@ public class TiffWriterTest {
     percentageOfSaveBytesTests = WriterUtilities.getPropValue("testng.runWriterSaveBytesTests");
   }
 
-  @BeforeMethod
+  @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     ifd = new IFD();
     writer = new TiffWriterMock();
@@ -128,9 +134,61 @@ public class TiffWriterTest {
     }
   }
 
-  @AfterMethod
+  @AfterMethod(alwaysRun = true)
   public void tearDown() throws Exception {
-    writer.close();
+    Exception failure = null;
+    if (writer != null) {
+      try {
+        writer.close();
+      }
+      catch (Exception e) {
+        failure = e;
+      }
+    }
+    for (String id : mappedIds) Location.mapFile(id, null);
+    for (int i = temporaryPaths.size() - 1; i >= 0; i--) {
+      try {
+        deleteRecursively(temporaryPaths.get(i));
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    temporaryPaths.clear();
+    mappedIds.clear();
+    writer = null;
+    if (failure != null) throw failure;
+  }
+
+  /** Create and retain a temporary file for always-run teardown. */
+  private File createTempFile(String suffix) throws IOException {
+    Path path = Files.createTempFile("tiffWriterTest", suffix);
+    temporaryPaths.add(path);
+    return path.toFile();
+  }
+
+  /** Delete a temporary path immediately, removing files before directories. */
+  private static void deleteRecursively(Path root) throws IOException {
+    if (!Files.exists(root)) return;
+    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
+        throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) throw failure;
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 
   @Test
@@ -399,12 +457,11 @@ public class TiffWriterTest {
       int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     if (percentageOfTilingTests == 0) return;
 
-    File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
-    tmp.deleteOnExit();
+    File tmp = createTempFile("_Tiling.tiff");
     Plane originalPlane = WriterUtilities.writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType, bigTiff);
 
-    TiffReader reader = new TiffReader();
-    reader.setId(tmp.getAbsolutePath());
+    try (TiffReader reader = new TiffReader()) {
+      reader.setId(tmp.getAbsolutePath());
 
     int expectedTileSize = tileSize;
     if (tileSize < TILE_GRANULARITY) {
@@ -420,8 +477,7 @@ public class TiffWriterTest {
 
     WriterUtilities.checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
 
-    tmp.delete();
-    reader.close();
+    }
   }
 
   @Test(dataProvider = "nonTiling")
@@ -429,17 +485,15 @@ public class TiffWriterTest {
       int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     if (percentageOfSaveBytesTests == 0) return;
 
-    File tmp = File.createTempFile("tiffWriterTest", ".tiff");
-    tmp.deleteOnExit();
+    File tmp = createTempFile(".tiff");
     Plane originalPlane = WriterUtilities.writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType, bigTiff);
 
-    TiffReader reader = new TiffReader();
-    reader.setId(tmp.getAbsolutePath());
+    try (TiffReader reader = new TiffReader()) {
+      reader.setId(tmp.getAbsolutePath());
 
     WriterUtilities.checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
 
-    tmp.delete();
-    reader.close();
+    }
   }
 
   @Test(dataProvider = "nonTiling")
@@ -450,6 +504,8 @@ public class TiffWriterTest {
 
     ByteArrayHandle handle = new ByteArrayHandle();
     String id = Math.random() + "-" + System.currentTimeMillis() + ".tif";
+    // Keep the mapping registered until teardown can remove it on any path.
+    mappedIds.add(id);
     Location.mapFile(id, handle);
     Plane originalPlane = WriterUtilities.writeImage(id, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType, bigTiff);
 
@@ -460,13 +516,11 @@ public class TiffWriterTest {
     handle = new ByteArrayHandle(file);
     Location.mapFile(id, handle);
 
-    TiffReader reader = new TiffReader();
-    reader.setId(id);
-
-    WriterUtilities.checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
-
-    reader.close();
-    Location.mapFile(id, null);
+    try (TiffReader reader = new TiffReader()) {
+      reader.setId(id);
+      WriterUtilities.checkImage(reader, originalPlane, interleaved,
+        rgbChannels, seriesCount, sizeT, compression);
+    }
   }
 
 }
