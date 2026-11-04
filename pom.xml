@@ -16,7 +16,6 @@
   <inceptionYear>2005</inceptionYear>
 
   <modules>
-    <module>components/forks/turbojpeg</module>
     <module>components/formats-api</module>
     <module>components/formats-bsd</module>
     <module>components/formats-gpl</module>
@@ -58,6 +57,7 @@
     <jxrlib.version>0.2.4</jxrlib.version>
     <xalan.version>2.7.3</xalan.version>
     <sqlite.version>3.49.1.0</sqlite.version>
+    <turbojpeg.version>0.1.0</turbojpeg.version>
 
     <!-- Maven plugin versions -->
     <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
