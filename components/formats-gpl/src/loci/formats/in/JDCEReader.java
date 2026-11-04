@@ -144,6 +144,15 @@ public class JDCEReader extends FormatReader {
     return imageFiles.toArray(new String[imageFiles.size()]);
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (helper != null && helper.getCurrentFile() != null) {
+      helper.reopenFile();
+    }
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {

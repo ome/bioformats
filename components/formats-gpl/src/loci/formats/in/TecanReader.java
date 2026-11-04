@@ -189,6 +189,15 @@ public class TecanReader extends FormatReader {
     return rtn;
   }
 
+ /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (helperReader != null && helperReader.getCurrentFile() != null) {
+      helperReader.reopenFile();
+    }
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {

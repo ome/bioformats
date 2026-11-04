@@ -115,6 +115,15 @@ public class SimplePCITiffReader extends BaseTiffReader {
     return buf;
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (delegate != null && delegate.getCurrentFile() != null) {
+      delegate.reopenFile();
+    }
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {

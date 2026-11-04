@@ -868,9 +868,7 @@ public class VentanaReader extends BaseTiffReader {
         Object tagValue = ifd.get(tag);
         if (tagValue instanceof OnDemandLongArray) {
           OnDemandLongArray fileArray = (OnDemandLongArray) tagValue;
-          if (fileArray.getStream() == null) {
-            fileArray.setStream(in);
-          }
+          fileArray.setStream(in);
           array = fileArray.toArray();
         }
         else {

@@ -267,10 +267,12 @@ public class FlowSightReader extends FormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    tiffParser = null;
-    ifdOffsets = null;
-    channelNames = null;
-    channelDescs = null;
+    if (!fileOnly) {
+      tiffParser = null;
+      ifdOffsets = null;
+      channelNames = null;
+      channelDescs = null;
+    }
   }
 
   @Override

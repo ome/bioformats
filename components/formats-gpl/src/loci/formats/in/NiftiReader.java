@@ -217,7 +217,7 @@ public class NiftiReader extends FormatReader implements IAxisOrientationReader 
   @Override
   public void reopenFile() throws IOException {
     super.reopenFile();
-    if (pixelFile == null) {
+    if (pixelsFilename != null) {
       pixelFile = new RandomAccessInputStream(pixelsFilename);
     }
   }

@@ -3086,6 +3086,11 @@ public class FormatReaderTest {
         result(testName, false, "Memo file could not be loaded");
       }
       memo.openBytes(0, 0, 0, 1, 1);
+
+      // check that close(true) and reopen behaves as expected
+      memo.close(true);
+      memo.reopenFile();
+      memo.openBytes(0, 0, 0, 1, 1);
       memo.close();
 
       // now test pre-generated memo file in the cache directory

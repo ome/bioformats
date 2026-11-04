@@ -245,6 +245,13 @@ public class ZeissLSMReader extends FormatReader {
     return isGroupFiles() ? getMDBFile(id) != null : true;
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    tiffParser = new TiffParser(in);
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {

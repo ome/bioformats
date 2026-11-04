@@ -296,6 +296,15 @@ public class PrairieReader extends FormatReader {
     return tiff.openBytes(file.getPage(), buf, x, y, w, h);
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (tiff != null && tiff.getCurrentFile() != null) {
+      tiff.reopenFile();
+    }
+  }
+
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);

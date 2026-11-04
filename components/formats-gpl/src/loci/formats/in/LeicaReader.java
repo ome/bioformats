@@ -305,6 +305,15 @@ public class LeicaReader extends FormatReader {
     return v.toArray(new String[v.size()]);
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (tiff != null && tiff.getCurrentFile() != null) {
+      tiff.reopenFile();
+    }
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {

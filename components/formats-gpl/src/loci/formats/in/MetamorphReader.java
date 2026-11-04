@@ -338,6 +338,23 @@ public class MetamorphReader extends BaseTiffReader {
     return buf;
   }
 
+ /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (stkReaders != null) {
+      for (MetamorphReader[] s : stkReaders) {
+        if (s != null) {
+          for (MetamorphReader reader : s) {
+            if (reader != null && reader.getCurrentFile() != null) {
+              reader.reopenFile();
+            }
+          }
+        }
+      }
+    }
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {

@@ -607,16 +607,18 @@ public class KLBReader extends FormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    filelist.clear();
-    Arrays.fill(dims_blockSize, 0);
-    Arrays.fill(dims_xyzct, 0);
-    blockOffsets = null;
-    compressionType = 0;
-    numBlocks = 1;
-    headerSize = 0;
-    blocksPerPlane = 0;
-    offsetFilePointer = 0;
-    headerVersion = 0;    
+    if (!fileOnly) {
+      filelist.clear();
+      Arrays.fill(dims_blockSize, 0);
+      Arrays.fill(dims_xyzct, 0);
+      blockOffsets = null;
+      compressionType = 0;
+      numBlocks = 1;
+      headerSize = 0;
+      blocksPerPlane = 0;
+      offsetFilePointer = 0;
+      headerVersion = 0;
+    }
   }
 
 }

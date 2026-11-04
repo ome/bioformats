@@ -173,10 +173,12 @@ public class AnalyzeReader extends FormatReader implements IAxisOrientationReade
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (pixelFile != null) pixelFile.close();
+    if (pixelFile != null) {
+      pixelFile.close();
+      pixelFile = null;
+    }
     if (!fileOnly) {
       pixelOffset = 0;
-      pixelFile = null;
       pixelsFilename = null;
       xAxis = null;
       yAxis = null;

@@ -196,8 +196,8 @@ public class LeicaSCNReader extends BaseTiffReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    handler = null;
     if (!fileOnly) {
+      handler = null;
     }
   }
 

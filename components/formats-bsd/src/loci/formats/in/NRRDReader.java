@@ -209,6 +209,15 @@ public class NRRDReader extends FormatReader {
     return helper.openBytes(no, buf, x, y, w, h);
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (helper != null && helper.getCurrentFile() != null) {
+      helper.reopenFile();
+    }
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {
