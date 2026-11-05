@@ -1258,6 +1258,7 @@ public class LIFReader extends FormatReader {
       translateROIs(image, index);
       translateSingleROIs(image, index);
       translateDetectors(image, index);
+      translateChannelProperties(image, index);
 
       final Deque<String> nameStack = new ArrayDeque<String>();
       populateOriginalMetadata(image, nameStack, null, -1);
@@ -2422,6 +2423,43 @@ public class LIFReader extends FormatReader {
     Element channels =
       (Element) imageDescription.getElementsByTagName("Channels").item(0);
     return channels.getElementsByTagName("ChannelDescription");
+  }
+
+  private void translateChannelProperties(Element imageNode, int image) {
+    NodeList channels = getChannelDescriptionNodes(imageNode);
+    if (channels.getLength() != getEffectiveSizeC()) return;
+
+    // Parse channel names from channel properties. In case channel properties are
+    // found, we want to overwrite any previously found names from other sources.
+    // This is why we call this function near the end of the translation. Channel
+    // properties are the most reliable source for channel-specific metadata, so
+    // they should take precedence over everything else.
+    for (int c=0; c<channels.getLength(); c++) {
+      String name = getChannelName((Element) channels.item(c));
+      if (name == null) continue;
+      if (channelNames[image] == null) {
+        channelNames[image] = new String[getEffectiveSizeC()];
+      }
+      channelNames[image][c] = name;
+    }
+  }
+
+  private String getChannelName(Element channelDescNode) {
+    NodeList properties = channelDescNode.getElementsByTagName("ChannelProperty");
+    for (String key : new String[] {"DyeName", "Target", "DetectorName"}) {
+      for (int i=0; i<properties.getLength(); i++) {
+        Element property = (Element) properties.item(i);
+        NodeList keys = property.getElementsByTagName("Key");
+        NodeList values = property.getElementsByTagName("Value");
+        if (keys.getLength() > 0 && values.getLength() > 0 &&
+          key.equals(keys.item(0).getTextContent().trim()))
+        {
+          String value = values.item(0).getTextContent().trim();
+          if (!value.isEmpty()) return value;
+        }
+      }
+    }
+    return null;
   }
 
   private NodeList getDimensionDescriptionNodes(Element root) {
