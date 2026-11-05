@@ -33,10 +33,11 @@
 package loci.formats.tools;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.TreeMultimap;
+import java.util.TreeMap;
 
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
@@ -52,13 +53,15 @@ public class PrintDomains {
     // get a list of all available readers
     IFormatReader[] readers = new ImageReader().getReaders();
 
-    final TreeMultimap<String, String> domains = TreeMultimap.create();
+    final Map<String, List<String>> domains = new TreeMap<String, List<String>>();
 
     for (IFormatReader reader : readers) {
       try {
         String[] readerDomains = reader.getPossibleDomains("");
         for (String domain : readerDomains) {
-          domains.put(domain, reader.getFormat());
+          List<String> formats = domains.containsKey(domain) ? domains.get(domain) : new ArrayList<String>();
+          formats.add(reader.getFormat());
+          domains.put(domain, formats);
         }
       }
       catch (FormatException e) {
@@ -69,10 +72,12 @@ public class PrintDomains {
       }
     }
 
-    for (final Map.Entry<String, Collection<String>> domain :
-             domains.asMap().entrySet()) {
+    for (final Map.Entry<String, List<String>> domain :
+             domains.entrySet()) {
       System.out.println(domain.getKey() + ":");
-      for (final String readerFormat : domain.getValue()) {
+      List<String> formats = domain.getValue();
+      formats.sort(null);
+      for (final String readerFormat : formats) {
         System.out.println("  " + readerFormat);
       }
     }

@@ -33,9 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
@@ -396,8 +393,7 @@ public class SlidebookReader extends FormatReader {
     }
 
     final List<Long> orderedSeries = new ArrayList<Long>();
-    final ListMultimap<Long, Integer> uniqueSeries =
-        ArrayListMultimap.create();
+    final Map<Long, List<Integer>> uniqueSeries = new HashMap<Long, List<Integer>>();
 
     for (int i=0; i<pixelOffsets.size(); i++) {
       long length = pixelLengths.get(i).longValue();
@@ -411,11 +407,15 @@ public class SlidebookReader extends FormatReader {
         i--;
       }
       else {
-        final List<Integer> v = uniqueSeries.get(length);
+        List<Integer> v = uniqueSeries.get(length);
+        if (v == null) {
+          v = new ArrayList<Integer>();
+        }
         if (v.isEmpty()) {
           orderedSeries.add(length);
         }
-        uniqueSeries.put(length, i);
+        v.add(i);
+        uniqueSeries.put(length, v);
       }
     }
 
@@ -795,7 +795,9 @@ public class SlidebookReader extends FormatReader {
       for (int i=0; i<core.size(); i++) {
         long thisSeries = (long) i;
         orderedSeries.add(thisSeries);
-        uniqueSeries.put(thisSeries, nextIndex);
+        List<Integer> singleSeries = new ArrayList<Integer>();
+        singleSeries.add(nextIndex);
+        uniqueSeries.put(thisSeries, singleSeries);
 
         long length = pixelLengths.get(nextIndex);
         length *= core.get(i).sizeT;

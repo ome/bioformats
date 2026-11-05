@@ -81,8 +81,6 @@ import loci.formats.services.OMEXMLServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
  * ImageInfo is a utility class for reading a file
  * and reporting information about it.
@@ -94,8 +92,8 @@ public class ImageInfo {
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfo.class);
   private static final String NEWLINE = System.getProperty("line.separator");
 
-  private static final ImmutableSet<String> HELP_ARGUMENTS =
-      ImmutableSet.of("-h", "-help", "--help");
+  private static final List<String> HELP_ARGUMENTS =
+      Arrays.asList("-h", "-help", "--help");
 
   // -- Fields --
 

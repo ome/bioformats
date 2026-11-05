@@ -120,6 +120,26 @@ public class AbstractTest
     }
 
     /**
+     * Calculates a MD5 digest.
+     * @param data Data to calcluate a MD5 digest for.
+     * @return Hex string of the MD5 digest.
+     */
+    protected String md5(byte[] data)
+    {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(
+                    "Required MD5 message digest algorithm unavailable.");
+        }
+        md.update(data);
+        return byteArrayToHexString(md.digest());
+    }
+
+
+
+    /**
      * Converts a byte array to a hex string.
      * @param in Byte array to convert.
      * @return Hex string representing the byte array.
