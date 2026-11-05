@@ -32,8 +32,6 @@
 
 package loci.formats.tools;
 
-import com.google.common.base.Joiner;
-
 import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
 import java.io.File;
@@ -316,7 +314,7 @@ public final class ImageConverter {
     SortedMap<String, String> extensions = new TreeMap<String, String>();
     for (int i=0; i<writers.length; i++) {
       extensions.put(writers[i].getFormat(),
-        '.' + Joiner.on(", .").join(writers[i].getSuffixes()));
+        '.' + String.join(", .", writers[i].getSuffixes()));
     }
     return extensions;
   }
@@ -329,7 +327,7 @@ public final class ImageConverter {
       String[] compressionTypes = writers[i].getCompressionTypes();
       if (compressionTypes != null) {
         compressions.put(writers[i].getFormat(),
-          Joiner.on(", ").join(compressionTypes));
+          String.join(", ", compressionTypes));
       }
     }
     return compressions;

@@ -32,10 +32,10 @@
 
 package loci.formats.utests;
 
-import com.google.common.hash.Hashing;
-
 import static org.testng.AssertJUnit.fail;
 import org.testng.annotations.Test;
+
+import spec.AbstractTest;
 
 import loci.formats.codec.CodecOptions;
 import loci.formats.tiff.IFD;
@@ -49,7 +49,7 @@ import loci.formats.tiff.TiffCompression;
  *
  * @author Jean-Marie Burel <j dot burel at dundee dot ac dot uk>
  */
-public class CompressDecompressTest {
+public class CompressDecompressTest extends AbstractTest {
 
   /**
    * Tests the writing of the tiles.

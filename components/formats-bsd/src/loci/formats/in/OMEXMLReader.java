@@ -51,6 +51,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
+import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
@@ -63,8 +64,6 @@ import loci.formats.services.OMEXMLServiceImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.helpers.DefaultHandler;
-import com.google.common.io.BaseEncoding;
-
 
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
@@ -163,7 +162,10 @@ public class OMEXMLReader extends FormatReader {
       return buf;
     }
     encoded = encoded.substring(0, encoded.length() - 1);
-    byte[] pixels =  BaseEncoding.base64().decode(encoded);
+
+    // charset encoding omitted as this is only base64 data
+    byte[] pixels = new Base64Codec().decompress(encoded.getBytes());
+
     // return a blank plane if no pixel data was stored
     if (pixels.length == 0) {
       LOGGER.debug("No pixel data for plane #{}", no);

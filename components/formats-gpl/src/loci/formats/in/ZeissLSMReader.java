@@ -34,9 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -157,7 +154,7 @@ public class ZeissLSMReader extends FormatReader {
 
   // -- Static fields --
 
-  private static final ImmutableMap<Integer, String> METADATA_KEYS =
+  private static final Map<Integer, String> METADATA_KEYS =
     createKeys();
 
   // -- Fields --
@@ -2049,8 +2046,8 @@ public class ZeissLSMReader extends FormatReader {
     return referencedLSMs.toArray(new String[0]);
   }
 
-  private static ImmutableMap<Integer, String> createKeys() {
-    final Builder<Integer, String> h = ImmutableMap.builder();
+  private static Map<Integer, String> createKeys() {
+    final HashMap<Integer, String> h = new HashMap<Integer, String>();
     h.put(0x10000001, "Name");
     h.put(0x4000000c, "Name");
     h.put(0x50000001, "Name");
@@ -2212,7 +2209,7 @@ public class ZeissLSMReader extends FormatReader {
     h.put(0xd0000013, "Ratio First Images 2");
     h.put(0xd0000016, "Spectrum");
     h.put(0x12000003, "Interval");
-    return h.build();
+    return h;
   }
 
   private Integer readEntry() throws IOException {
