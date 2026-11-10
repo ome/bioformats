@@ -15,9 +15,6 @@ jobs:
       matrix:
         java: [11, 17, 21, 25]
         os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - java: '21'
-            os: 'macos-15'
     runs-on: ${{ matrix.os }}
     env:
       maven_commands: install # default is install
