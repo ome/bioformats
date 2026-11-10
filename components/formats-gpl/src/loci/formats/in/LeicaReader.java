@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -63,8 +64,6 @@ import ome.units.UNITS;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * LeicaReader is the file format reader for Leica files.
@@ -103,7 +102,7 @@ public class LeicaReader extends FormatReader {
   private static final int SEQ_SCANNERSET_END = 300;
   private static final int SEQ_FILTERSET_END = 800;
 
-  private static final ImmutableMap<Integer, String> DIMENSION_NAMES =
+  private static final Map<Integer, String> DIMENSION_NAMES =
     makeDimensionTable();
 
   // -- Fields --
@@ -1669,8 +1668,8 @@ public class LeicaReader extends FormatReader {
     return getString(len);
   }
 
-  private static ImmutableMap<Integer, String> makeDimensionTable() {
-    ImmutableMap.Builder<Integer, String> table = ImmutableMap.builder();
+  private static Map<Integer, String> makeDimensionTable() {
+    final HashMap<Integer, String> table = new HashMap<Integer, String>();
     table.put(0, "undefined");
     table.put(120, "x");
     table.put(121, "y");
@@ -1698,7 +1697,7 @@ public class LeicaReader extends FormatReader {
     table.put(5767246, "logical x-wide");
     table.put(5832782, "logical y-wide");
     table.put(5898318, "logical z-wide");
-    return table.build();
+    return table;
   }
 
   // -- Helper class --

@@ -32,9 +32,10 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -75,9 +76,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-
 /**
  * LIFReader is the file format reader for Leica LIF files.
  *
@@ -100,11 +98,11 @@ public class LIFReader extends FormatReader {
   private static final String LOGO_FILE = "LeicaLogo.jpg";
   private static final String STYLESHEET_FILE = "LASAF_CIP.xsl";
 
-  private static final ImmutableMap<String, Integer> CHANNEL_PRIORITIES =
+  private static final Map<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
 
-  private static ImmutableMap<String, Integer> createChannelPriorities() {
-    final Builder<String, Integer> h = ImmutableMap.builder();
+  private static Map<String, Integer> createChannelPriorities() {
+    final HashMap<String, Integer> h = new HashMap<String, Integer>();
 
     h.put("red", 0);
     h.put("green", 1);
@@ -116,7 +114,7 @@ public class LIFReader extends FormatReader {
     h.put("gray", 7);
     h.put("", 8);
 
-    return h.build();
+    return h;
   }
 
   private static final long METER_MULTIPLY = 1000000;
