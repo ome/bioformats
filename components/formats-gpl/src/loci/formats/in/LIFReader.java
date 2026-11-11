@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -158,6 +158,7 @@ public class LIFReader extends FormatReader {
 
   private int[] tileCount;
   private long[] tileBytesInc;
+  private long[] rowBytesInc;
   private long endPointer;
 
   // -- Constructor --
@@ -328,11 +329,29 @@ public class LIFReader extends FormatReader {
     int bpp = bytes * getRGBChannelCount();
 
     long planeSize = (long) getSizeX() * getSizeY() * bpp;
-    long nextOffset = index + 1 < memoryBlocks.size() ?
-      memoryBlocks.get(index + 1).fileOffset : endPointer;
-    long bytesToSkip = nextOffset - offset - planeSize * getImageCount();
-    bytesToSkip /= getSizeY();
-    if ((getSizeX() % 4) == 0) bytesToSkip = 0;
+    long bytesToSkip = 0;
+
+    // Prefer explicit row stride from Y dimension's BytesInc attribute over
+    // an inferred gap between memory blocks, which is unreliable when extra
+    // non-image memory blocks (e.g. timestamps) sit between image blocks.
+    if (rowBytesInc != null && index < rowBytesInc.length && rowBytesInc[index] > 0)
+    {
+      long packedRowBytes = (long) getSizeX() * bpp;
+      if (rowBytesInc[index] > packedRowBytes) {
+        bytesToSkip = rowBytesInc[index] - packedRowBytes;
+      }
+    }
+    else if ((((long) getSizeX()) * bpp) % 4 != 0) {
+      // Legacy fallback for files where Y BytesInc was not available.
+      // Only infer row padding for rows that are not naturally 4-byte aligned.
+      long nextOffset = index + 1 < memoryBlocks.size() ?
+        memoryBlocks.get(index + 1).fileOffset : endPointer;
+      long inferredSkip = nextOffset - offset - planeSize * getImageCount();
+      inferredSkip /= getSizeY();
+      if (inferredSkip > 0) {
+        bytesToSkip = inferredSkip;
+      }
+    }
 
     if (offset + (planeSize + bytesToSkip * getSizeY()) * no >= in.length()) {
       // truncated file; imitate LAS AF and return blank planes
@@ -362,7 +381,7 @@ public class LIFReader extends FormatReader {
 
     return buf;
   }
-  
+
   private void seekStartOfPlane(int no, long dataOffset, long planeSize)
     throws IOException
   {
@@ -469,6 +488,7 @@ public class LIFReader extends FormatReader {
       detectorIndexes = null;
       tileCount = null;
       tileBytesInc = null;
+      rowBytesInc = null;
       fieldPosX.clear();
       fieldPosY.clear();
       endPointer = 0;
@@ -1196,6 +1216,7 @@ public class LIFReader extends FormatReader {
     tileCount = new int[imageNodes.size()];
     Arrays.fill(tileCount, 1);
     tileBytesInc = new long[imageNodes.size()];
+    rowBytesInc = new long[imageNodes.size()];
     core = new ArrayList<CoreMetadata>(imageNodes.size());
     acquiredDate = new double[imageNodes.size()];
     descriptions = new String[imageNodes.size()];
@@ -1446,7 +1467,7 @@ public class LIFReader extends FormatReader {
             channels.add("");
           }
 
-          
+
           if (!isMaster) {
             if (channel < nextChannel) {
               nextChannel = 0;
@@ -1678,7 +1699,7 @@ public class LIFReader extends FormatReader {
       laserFrap[image].add(gpName.endsWith("FRAP_Master"));
       for (int laser=0; laser<laserLines.getLength(); laser++) {
         Element laserLine = (Element) laserLines.item(laser);
-        
+
         if (isMaster) {
           continue;
         }
@@ -1747,7 +1768,7 @@ public class LIFReader extends FormatReader {
 
     Element timeStampList = (Element)timeStampLists.item(0);
     timestamps[image] = new Double[getImageCount()];
-    
+
     // probe if timestamps are saved in the format of LAS AF 3.1 or newer
     String numberOfTimeStamps = timeStampList.getAttribute("NumberOfTimeStamps");
     if (numberOfTimeStamps != null && !numberOfTimeStamps.isEmpty()) {
@@ -1777,7 +1798,7 @@ public class LIFReader extends FormatReader {
         return;
       }
     }
-    
+
     acquiredDate[image] = timestamps[image][0];
   }
 
@@ -1797,7 +1818,7 @@ public class LIFReader extends FormatReader {
     double seconds = (double)milliseconds / 1000;
     return seconds;
   }
-  
+
   private double translateSingleTimestamp(Element timestamp) {
     String stampHigh = timestamp.getAttribute("HighInteger");
     String stampLow = timestamp.getAttribute("LowInteger");
@@ -2264,7 +2285,7 @@ public class LIFReader extends FormatReader {
       else {
         physicalLen = 0d;
       }
-      
+
       if (unit.equals("Ks")) {
         physicalLen /= 1000;
         offByOnePhysicalLen /= 1000;
@@ -2298,6 +2319,7 @@ public class LIFReader extends FormatReader {
           }
           else {
             ms.sizeY = len;
+            rowBytesInc[i] = nBytes;
             physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
           break;
@@ -2306,6 +2328,7 @@ public class LIFReader extends FormatReader {
             // XZ scan - swap Y and Z
             ms.sizeY = len;
             ms.sizeZ = 1;
+            rowBytesInc[i] = nBytes;
             bytesPerAxis.put(nBytes, "Y");
             physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
@@ -2320,6 +2343,7 @@ public class LIFReader extends FormatReader {
             // XT scan - swap Y and T
             ms.sizeY = len;
             ms.sizeT = 1;
+            rowBytesInc[i] = nBytes;
             bytesPerAxis.put(nBytes, "Y");
             physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
