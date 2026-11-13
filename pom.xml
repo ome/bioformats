@@ -40,9 +40,9 @@
     <imagej1.version>1.54c</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <logback.version>1.5.37</logback.version>
-    <ome-stubs.version>6.1.0</ome-stubs.version>
+    <ome-stubs.version>6.1.3</ome-stubs.version>
     <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
-    <ome-metakit.version>5.4.0</ome-metakit.version>
+    <ome-metakit.version>5.5.0</ome-metakit.version>
     <metakit.version>${ome-metakit.version}</metakit.version>
     <slf4j.version>2.0.18</slf4j.version>
     <kryo.version>5.4.0</kryo.version>
@@ -50,10 +50,10 @@
     <ome-common.version>7.0.0</ome-common.version>
     <ome-model.group>org.openmicroscopy</ome-model.group>
     <ome-model.version>6.7.0</ome-model.version>
-    <ome-poi.version>5.4.0</ome-poi.version>
-    <ome-mdbtools.version>5.4.0</ome-mdbtools.version>
-    <ome-jai.version>0.2.0</ome-jai.version>
-    <ome-codecs.version>1.2.0</ome-codecs.version>
+    <ome-poi.version>5.5.0</ome-poi.version>
+    <ome-mdbtools.version>5.4.1</ome-mdbtools.version>
+    <ome-jai.version>0.2.1</ome-jai.version>
+    <ome-codecs.version>1.3.0</ome-codecs.version>
     <jxrlib.version>0.2.4</jxrlib.version>
     <xalan.version>2.7.3</xalan.version>
     <sqlite.version>3.49.1.0</sqlite.version>
