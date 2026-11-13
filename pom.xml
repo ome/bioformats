@@ -40,20 +40,20 @@
     <imagej1.version>1.54c</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <logback.version>1.5.37</logback.version>
-    <ome-stubs.version>6.1.0</ome-stubs.version>
+    <ome-stubs.version>6.1.3</ome-stubs.version>
     <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
-    <ome-metakit.version>5.4.0</ome-metakit.version>
+    <ome-metakit.version>5.5.0</ome-metakit.version>
     <metakit.version>${ome-metakit.version}</metakit.version>
     <slf4j.version>2.0.18</slf4j.version>
     <kryo.version>5.4.0</kryo.version>
     <testng.version>6.8</testng.version>
-    <ome-common.version>6.3.0</ome-common.version>
+    <ome-common.version>7.0.0</ome-common.version>
     <ome-model.group>org.openmicroscopy</ome-model.group>
-    <ome-model.version>6.6.0</ome-model.version>
-    <ome-poi.version>5.4.0</ome-poi.version>
-    <ome-mdbtools.version>5.4.0</ome-mdbtools.version>
-    <ome-jai.version>0.2.0</ome-jai.version>
-    <ome-codecs.version>1.2.0</ome-codecs.version>
+    <ome-model.version>6.7.0</ome-model.version>
+    <ome-poi.version>5.5.0</ome-poi.version>
+    <ome-mdbtools.version>5.4.1</ome-mdbtools.version>
+    <ome-jai.version>0.2.1</ome-jai.version>
+    <ome-codecs.version>1.3.0</ome-codecs.version>
     <jxrlib.version>0.2.4</jxrlib.version>
     <xalan.version>2.7.3</xalan.version>
     <sqlite.version>3.49.1.0</sqlite.version>
@@ -466,11 +466,6 @@
       <name>OME Snapshots Repository</name>
       <url>https://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </snapshotRepository>
-    <repository>
-      <id>ome.releases</id>
-      <name>OME Releases Repository</name>
-      <url>https://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
-    </repository>
   </distributionManagement>
 
   <profiles>
@@ -605,6 +600,48 @@
             </plugin>
           </plugins>
         </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+
+          <!-- gpg release signing -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.7</version>
+            <configuration>
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.12.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+              <waitUntil>published</waitUntil>
+              <waitMaxTime>3600</waitMaxTime>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>
