@@ -466,11 +466,6 @@
       <name>OME Snapshots Repository</name>
       <url>https://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </snapshotRepository>
-    <repository>
-      <id>ome.releases</id>
-      <name>OME Releases Repository</name>
-      <url>https://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
-    </repository>
   </distributionManagement>
 
   <profiles>
@@ -605,6 +600,48 @@
             </plugin>
           </plugins>
         </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+
+          <!-- gpg release signing -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.7</version>
+            <configuration>
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.12.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+              <waitUntil>published</waitUntil>
+              <waitMaxTime>3600</waitMaxTime>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>
