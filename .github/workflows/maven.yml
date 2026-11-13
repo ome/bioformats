@@ -11,6 +11,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
     strategy:
       matrix:
         java: [11, 17, 21, 25]
@@ -44,8 +46,6 @@ jobs:
         run: |
           if [[ ${{ steps.get_version.outputs.version }} =~ 'SNAPSHOT' ]]; then
               echo server='ome.snapshots' >> $GITHUB_OUTPUT
-            else
-              echo server='ome.releases' >> $GITHUB_OUTPUT
           fi
       - name: Set up Repository
         uses: actions/setup-java@v5
@@ -61,37 +61,3 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.CI_DEPLOY_USER }}
           MAVEN_PASSWORD: ${{ secrets.CI_DEPLOY_PASS }}
-  deploy_tags:
-    if: startsWith(github.ref, 'refs/tags') && github.repository_owner == 'ome'
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Retrieve version
-        id: get_version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-      - name: Set server
-        id: set_server
-        run: |
-          if [[ ${{ steps.get_version.outputs.version }} =~ 'SNAPSHOT' ]]; then
-            echo server='ome.snapshots' >> $GITHUB_OUTPUT
-          else
-            echo server='ome.releases' >> $GITHUB_OUTPUT
-          fi
-      - name: Set up Repository
-        uses: actions/setup-java@v5
-        with:
-          java-version: 21
-          distribution: 'zulu'
-          server-id: ${{ steps.set_server.outputs.server }}
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-      - name: Deploy Tags
-        if: ${{ steps.set_server.outputs.server == 'ome.releases' }}
-        run: mvn deploy
-        env:
-          MAVEN_USERNAME: ${{ secrets.CI_DEPLOY_USER }}
-          MAVEN_PASSWORD: ${{ secrets.CI_DEPLOY_PASS }}
-
