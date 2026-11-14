@@ -37,7 +37,9 @@ import ij.gui.GenericDialog;
 import java.awt.Button;
 import java.awt.Checkbox;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -131,11 +133,14 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
         gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
       }
 
-      // extract checkboxes, for "Select All" and "Deselect All" functions
-      boxes = WindowTools.getCheckboxes(gd).toArray(new Checkbox[0]);
+      // NB: In headless mode, GenericDialog has no AWT components to rearrange.
+      if (!GraphicsEnvironment.isHeadless()) {
+        // extract checkboxes, for "Select All" and "Deselect All" functions
+        boxes = WindowTools.getCheckboxes(gd).toArray(new Checkbox[0]);
 
-      // rebuild dialog so that the thumbnails and checkboxes line up correctly
-      rebuildDialog(gd, nGroups);
+        // rebuild dialog so that the thumbnails and checkboxes line up correctly
+        rebuildDialog(gd, nGroups);
+      }
     }
     else {
       // too many series; display a simple text field for specifying series
@@ -157,7 +162,8 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     ThumbLoader loader = null;
     if (thumbReader != null && !options.isForceThumbnails() && Macro.getOptions() == null) {
       // spawn background thumbnail loader
-      loader = new ThumbLoader(thumbReader, p, gd);
+      // NB: Cast through Object, see WindowTools.addScrollBars(GenericDialog).
+      loader = new ThumbLoader(thumbReader, p, (Dialog) (Object) gd);
     }
     gd.showDialog();
     if (loader != null) loader.stop();
