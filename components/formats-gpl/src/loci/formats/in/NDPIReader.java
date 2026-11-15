@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -139,6 +140,15 @@ public class NDPIReader extends BaseTiffReader {
     int ifdIndex = getIFDIndex(getCoreIndex(), no);
     //service.initialize();
     return service.getTileColumns();
+  }
+
+  @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    FormatTools.assertId(currentId, true, 1);
+
+    int width = getOptimalTileWidth();
+    int height = getOptimalTileHeight();
+    return new Region(x * width, y * height, width, height);
   }
 
   @Override

@@ -46,6 +46,7 @@ import java.util.List;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -160,6 +161,23 @@ public class OMETiffReader extends SubResolutionFormatReader {
       LOGGER.debug("Could not get tile column count", e);
     }
     return super.getTileColumns(no);
+  }
+
+  @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      IFD ifd = getIFD(no);
+      if (ifd != null) {
+        int width = (int) ifd.getTileWidth();
+        int height = (int) ifd.getTileLength();
+        return new Region(x * width, y * height, width, height);
+      }
+    }
+    catch (FormatException|IOException e) {
+      LOGGER.debug("Could not get tile bounding box", e);
+    }
+    return super.getTileBoundingBox(no, x, y);
   }
 
   @Override

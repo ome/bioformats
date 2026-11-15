@@ -60,6 +60,7 @@ import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.Location;
+import loci.common.Region;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -351,6 +352,13 @@ public class FakeReader extends FormatReader implements IAxisOrientationReader {
   }
 
   @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    FormatTools.assertId(currentId, true, 1);
+    return new Region(x * getOptimalTileWidth(), y * getOptimalTileHeight(),
+      getOptimalTileWidth(), getOptimalTileHeight());
+  }
+
+  @Override
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     CodecOptions options = getTileCodecOptions(no, x, y);
@@ -384,8 +392,8 @@ public class FakeReader extends FormatReader implements IAxisOrientationReader {
     FormatTools.assertId(currentId, true, 1);
 
     CodecOptions options = new CodecOptions();
-    options.width = getSizeX() / getTileColumns(no);
-    options.height = getSizeY() / getTileRows(no);
+    options.width = getOptimalTileWidth();
+    options.height = getOptimalTileHeight();
     return options;
   }
 
@@ -410,6 +418,18 @@ public class FakeReader extends FormatReader implements IAxisOrientationReader {
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     return ac < 0 || lut16 == null ? null : lut16[ac];
+  }
+
+  @Override
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return getSizeX() / tileColumns;
+  }
+
+  @Override
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return getSizeY() / tileRows;
   }
 
   @Override

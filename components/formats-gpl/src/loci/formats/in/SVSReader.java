@@ -37,6 +37,7 @@ import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -302,6 +303,22 @@ public class SVSReader extends BaseTiffReader {
       LOGGER.debug("Could not get tile column count", e);
     }
     return super.getTileColumns(no);
+  }
+
+  @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    FormatTools.assertId(currentId, true, 1);
+
+    try {
+      IFD ifd = getIFD(no);
+      int width = (int) ifd.getTileWidth();
+      int height = (int) ifd.getTileLength();
+      return new Region(x * width, y * height, width, height);
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not get tile bounding box", e);
+    }
+    return super.getTileBoundingBox(no, x, y);
   }
 
   @Override

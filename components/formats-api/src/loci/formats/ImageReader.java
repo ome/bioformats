@@ -44,6 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataLevel;
@@ -884,6 +885,11 @@ public class ImageReader implements IFormatReader {
   @Override
   public int getTileColumns(int no) {
     return getReader().getTileColumns(no);
+  }
+
+  @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    return getReader().getTileBoundingBox(no, x, y);
   }
 
   @Override

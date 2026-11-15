@@ -189,12 +189,19 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
   }
 
   @Override
-  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+  public Region getTileBoundingBox(int no, int x, int y) {
     FormatTools.assertId(currentId, true, 1);
 
     int tileWidth = getOptimalTileWidth();
     int tileHeight = getOptimalTileHeight();
-    Region boundingBox = new Region(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+    return new Region(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    Region boundingBox = getTileBoundingBox(no, x, y);
 
     List<DicomTile> tiles = getTileList(no, boundingBox, true);
     if (tiles == null || tiles.size() == 0) {

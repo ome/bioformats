@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataLevel;
@@ -370,6 +371,11 @@ public abstract class ReaderWrapper implements IFormatReader {
   @Override
   public int getTileColumns(int no) {
     return reader.getTileColumns(no);
+  }
+
+  @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    return reader.getTileBoundingBox(no, x, y);
   }
 
   @Override

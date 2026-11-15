@@ -33,6 +33,7 @@
 package loci.formats;
 
 import java.io.IOException;
+import loci.common.Region;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 
@@ -62,7 +63,22 @@ public interface ICompressedTileReader {
   }
 
   /**
+   * Get a bounding box describing the tile's size and position.
+   * This allows for tiles which are mostly on a grid, but where some shift or overlap
+   * is possible between tiles.
+   *
+   * @param no plane index
+   * @param x tile X index (indexed from 0, @see getTileColumns(int))
+   * @param y tile Y index (indexed from 0, @see getTileRows(int))
+   * @return bounding box for the specified tile
+   */
+  default Region getTileBoundingBox(int no, int x, int y) {
+    throw new UnsupportedOperationException("Reader does not support pre-compressed tile access");
+  }
+
+  /**
    * Retrieve the specified tile without performing any decompression.
+   * If the tile is undefined in the original file(s), then null may be returned.
    *
    * @param no plane index
    * @param x tile X index (indexed from 0, @see getTileColumns(int))
@@ -75,6 +91,8 @@ public interface ICompressedTileReader {
 
   /**
    * Retrieve the specified tile without performing any decompression.
+   * If the tile is undefined in the original file(s), then the provided buffer will
+   * be returned unmodified.
    *
    * @param no plane index
    * @param buf pre-allocated buffer in which to store compressed bytes
