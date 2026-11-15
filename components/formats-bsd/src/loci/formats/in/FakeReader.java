@@ -394,6 +394,11 @@ public class FakeReader extends FormatReader implements IAxisOrientationReader {
     CodecOptions options = new CodecOptions();
     options.width = getOptimalTileWidth();
     options.height = getOptimalTileHeight();
+    options.channels = getRGBChannelCount();
+    options.bitsPerSample = FormatTools.getBytesPerPixel(getPixelType()) * 8;
+    options.littleEndian = isLittleEndian();
+    options.interleaved = isInterleaved();
+    options.signed = FormatTools.isSigned(getPixelType());
     return options;
   }
 
@@ -965,6 +970,15 @@ public class FakeReader extends FormatReader implements IAxisOrientationReader {
         sleepInitFile = intValue;
       } else if (key.equals("labelPlanes")) {
         labelPlanes = boolValue;
+      }
+      else if (key.equals("tileRows")) {
+        tileRows = intValue;
+      }
+      else if (key.equals("tileColumns")) {
+        tileColumns = intValue;
+      }
+      else if (key.equals("codec")) {
+        codec = value;
       }
     }
 
