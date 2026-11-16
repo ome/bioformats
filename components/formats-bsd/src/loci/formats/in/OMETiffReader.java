@@ -137,7 +137,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   public int getTileRows(int no) {
     FormatTools.assertId(currentId, true, 1);
     try {
-      IFD ifd = getIFD(no);
+      IFD ifd = getSubresolutionIFD(no);
       if (ifd != null) {
         return (int) ifd.getTilesPerColumn();
       }
@@ -152,7 +152,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   public int getTileColumns(int no) {
     FormatTools.assertId(currentId, true, 1);
     try {
-      IFD ifd = getIFD(no);
+      IFD ifd = getSubresolutionIFD(no);
       if (ifd != null) {
         return (int) ifd.getTilesPerRow();
       }
@@ -167,7 +167,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   public Region getTileBoundingBox(int no, int x, int y) {
     FormatTools.assertId(currentId, true, 1);
     try {
-      IFD ifd = getIFD(no);
+      IFD ifd = getSubresolutionIFD(no);
       if (ifd != null) {
         int width = (int) ifd.getTileWidth();
         int height = (int) ifd.getTileLength();
@@ -183,7 +183,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   @Override
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    IFD ifd = getIFD(no);
+    IFD ifd = getSubresolutionIFD(no);
     if (ifd != null) {
       MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
       byte[] buf = new byte[(int) r.getCompressedByteCount(ifd, x, y)];
@@ -195,7 +195,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   @Override
   public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    IFD ifd = getIFD(no);
+    IFD ifd = getSubresolutionIFD(no);
     if (ifd != null) {
       MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
       return r.copyTile(ifd, buf, x, y);
@@ -206,7 +206,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
   @Override
   public Codec getTileCodec(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    IFD ifd = getIFD(no);
+    IFD ifd = getSubresolutionIFD(no);
     if (ifd != null) {
       return ifd.getCompression().getCodec();
     }
@@ -216,11 +216,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
   @Override
   public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    IFD ifd = getIFD(no);
+    IFD ifd = getSubresolutionIFD(no);
     if (ifd != null) {
       CodecOptions options = ifd.getCompression().getCompressionCodecOptions(ifd);
       options.width = (int) ifd.getTileWidth();
       options.height = (int) ifd.getTileLength();
+      options.maxBytes =
+        options.width * options.height *
+        FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount();
       return options;
     }
     return super.getTileCodecOptions(no, x, y);
@@ -472,17 +475,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
     try (RandomAccessInputStream s = new RandomAccessInputStream(info[series][no].id, 16)) {
       TiffParser p = new TiffParser(s);
-      if (resolution > 0) {
-        // read the required SubIFD, but don't attempt to read the ImageDescription
-        // the ImageDescription will be completely ignored anyway
-        // it may be quite large (> 10 MB) in which case this has a significant
-        // impact on read time and memory usage
-        p.setDoCaching(false);
-        long offset = ifd.getIFDLongArray(IFD.SUB_IFD)[((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset];
-        ifd = p.getIFD(offset);
-        ifd.remove(IFD.IMAGE_DESCRIPTION);
-        p.fillInIFD(ifd);
-      }
+      ifd = getSubresolutionIFD(no);
       p.getSamples(ifd, buf, x, y, w, h);
     }
 
@@ -1632,6 +1625,28 @@ public class OMETiffReader extends SubResolutionFormatReader {
   {
     r.setId(file);
     removeIFDComments(r);
+  }
+
+  private IFD getSubresolutionIFD(int no) throws FormatException, IOException {
+    IFD ifd = getIFD(no);
+    if (ifd == null) {
+      return null;
+    }
+    try (RandomAccessInputStream s = new RandomAccessInputStream(info[series][no].id, 16)) {
+      TiffParser p = new TiffParser(s);
+      if (resolution > 0) {
+        // read the required SubIFD, but don't attempt to read the ImageDescription
+        // the ImageDescription will be completely ignored anyway
+        // it may be quite large (> 10 MB) in which case this has a significant
+        // impact on read time and memory usage
+        p.setDoCaching(false);
+        long offset = ifd.getIFDLongArray(IFD.SUB_IFD)[((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset];
+        ifd = p.getIFD(offset);
+        ifd.remove(IFD.IMAGE_DESCRIPTION);
+        p.fillInIFD(ifd);
+      }
+    }
+    return ifd;
   }
 
   private IFD getIFD(int no) throws FormatException, IOException {

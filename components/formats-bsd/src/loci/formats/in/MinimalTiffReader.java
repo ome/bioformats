@@ -731,6 +731,8 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
   }
 
   protected long getCompressedByteCount(IFD ifd, int x, int y) throws FormatException, IOException {
+    tiffParser.fillInIFD(ifd);
+
     long[] byteCounts = ifd.getStripByteCounts();
     int tileIndex = getTileIndex(ifd, x, y);
     byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);

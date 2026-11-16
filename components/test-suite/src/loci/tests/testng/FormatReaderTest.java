@@ -3202,6 +3202,12 @@ public class FormatReaderTest {
               int tileY = (int) Math.floor(rows / 2.0);
               CodecOptions options = reader.getTileCodecOptions(p, tileX, tileY);
               byte[] tile = reader.openCompressedBytes(p, tileX, tileY);
+              if (tile == null) {
+                // this can happen if the tile was not defined in the original file(s)
+                // this would be unusual for TIFF-based formats, but not unusual
+                // for things like .vsi
+                continue;
+              }
               byte[] uncompressed = codec.decompress(tile, options);
               Assert.assertNotNull(uncompressed);
               Assert.assertEquals(uncompressed.length,

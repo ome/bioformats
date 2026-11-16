@@ -185,7 +185,7 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
   public int getTileColumns(int no) {
     FormatTools.assertId(currentId, true, 1);
 
-    return (int) Math.ceil((double) getSizeX() / originalY);
+    return (int) Math.ceil((double) getSizeX() / originalX);
   }
 
   @Override
@@ -208,6 +208,13 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
       throw new FormatException("Could not find valid tile; no=" + no + ", boundingBox=" + boundingBox);
     }
     DicomTile tile = tiles.get(0);
+    if (tile != null && tile.isRLE &&
+      (FormatTools.getBytesPerPixel(getPixelType()) > 1 || getRGBChannelCount() > 1))
+    {
+      // this is because there will be multiple compressed streams, matching the number
+      // of bytes per pixel
+      throw new UnsupportedOperationException("RLE-compressed tiles only supported int8/uint8 pixel type");
+    }
     byte[] buf = new byte[(int) (tile.endOffset - tile.fileOffset)];
     try (RandomAccessInputStream stream = new RandomAccessInputStream(tile.file)) {
       if (tile.fileOffset >= stream.length()) {

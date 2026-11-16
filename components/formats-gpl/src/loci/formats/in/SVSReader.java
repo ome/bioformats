@@ -350,6 +350,9 @@ public class SVSReader extends BaseTiffReader {
     CodecOptions options = ifd.getCompression().getCompressionCodecOptions(ifd);
     options.width = (int) ifd.getTileWidth();
     options.height = (int) ifd.getTileLength();
+    options.maxBytes =
+      options.width * options.height *
+      FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount();
     return options;
   }
 
