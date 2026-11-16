@@ -129,8 +129,23 @@ public class NDPIReader extends BaseTiffReader {
     FormatTools.assertId(currentId, true, 1);
 
     int ifdIndex = getIFDIndex(getCoreIndex(), no);
-    //service.initialize();
-    return service.getTileRows();
+    IFD ifd = ifds.get(ifdIndex);
+
+    try {
+      if (useTiffParser(ifd)) {
+        return super.getTileRows(no);
+      }
+
+      if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+        resetStream(ifd);
+        initializedSeries = getCoreIndex();
+        initializedPlane = no;
+      }
+      return service.getTileRows();
+    }
+    catch (FormatException|IOException e) {
+      return getSizeY() / getOptimalTileHeight();
+    }
   }
 
   @Override
@@ -138,8 +153,22 @@ public class NDPIReader extends BaseTiffReader {
     FormatTools.assertId(currentId, true, 1);
 
     int ifdIndex = getIFDIndex(getCoreIndex(), no);
-    //service.initialize();
-    return service.getTileColumns();
+    IFD ifd = ifds.get(ifdIndex);
+    try {
+      if (useTiffParser(ifd)) {
+        return super.getTileRows(no);
+      }
+
+      if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+        resetStream(ifd);
+        initializedSeries = getCoreIndex();
+        initializedPlane = no;
+      }
+      return service.getTileColumns();
+    }
+    catch (FormatException|IOException e) {
+      return getSizeX() / getOptimalTileWidth();
+    }
   }
 
   @Override
