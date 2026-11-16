@@ -874,14 +874,18 @@ public class OIRReader extends FormatReader {
       }
       if (depth != null) {
         int bytes = Integer.parseInt(depth.getTextContent());
-        if (rgb) {
+        // 'depth' is normally the total byte count across all components, but
+        // some RGB frames record the per-component count instead. A total
+        // across three components is always a multiple of three, so only
+        // divide when it divides evenly.
+        if (rgb && bytes % 3 == 0) {
           bytes /= 3;
         }
         m.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, false);
       }
       if (bitCount != null) {
         m.bitsPerPixel = Integer.parseInt(bitCount.getTextContent());
-        if (rgb) {
+        if (rgb && m.bitsPerPixel % 3 == 0) {
           m.bitsPerPixel /= 3;
         }
       }
@@ -951,7 +955,13 @@ public class OIRReader extends FormatReader {
         Element channelNode = (Element) channelNodes.item(i);
 
         c.id = channelNode.getAttribute("id");
-        int index = Integer.parseInt(channelNode.getAttribute("order")) - 1;
+        // LEXT (OLS) variants omit the 'order' attribute on the channel
+        // elements under commonimage:imageInfo; fall back to document order.
+        String order = channelNode.getAttribute("order");
+        int index = i;
+        if (order != null && !order.trim().isEmpty()) {
+          index = Integer.parseInt(order.trim()) - 1;
+        }
 
         Element name = getFirstChild(channelNode, "commonphase:name");
         if (name != null) {
@@ -994,14 +1004,15 @@ public class OIRReader extends FormatReader {
 
           if (depth != null) {
             int bytes = Integer.parseInt(depth.getTextContent());
-            if (rgb) {
+            // see the equivalent block in parseFrameProperties
+            if (rgb && bytes % 3 == 0) {
               bytes /= 3;
             }
             m.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, false);
           }
           if (bitCount != null) {
             m.bitsPerPixel = Integer.parseInt(bitCount.getTextContent());
-            if (rgb) {
+            if (rgb && m.bitsPerPixel % 3 == 0) {
               m.bitsPerPixel /= 3;
             }
           }
