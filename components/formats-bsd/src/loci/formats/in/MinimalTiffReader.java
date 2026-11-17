@@ -748,6 +748,8 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
   }
 
   protected byte[] copyTile(IFD ifd, byte[] buf, int x, int y) throws FormatException, IOException {
+    tiffParser.fillInIFD(ifd);
+
     long[] offsets = ifd.getStripOffsets();
     long[] byteCounts = ifd.getStripByteCounts();
 

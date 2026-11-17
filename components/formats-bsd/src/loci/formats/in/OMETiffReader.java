@@ -198,6 +198,12 @@ public class OMETiffReader extends SubResolutionFormatReader {
     IFD ifd = getSubresolutionIFD(no);
     if (ifd != null) {
       MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
+      if (r.getCurrentFile() == null) {
+        initializeReader(r, info[series][lastPlane].id);
+      }
+      else {
+        r.reopenFile();
+      }
       return r.copyTile(ifd, buf, x, y);
     }
     return super.openCompressedBytes(no, buf, x, y);
