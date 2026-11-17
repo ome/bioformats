@@ -5,6 +5,8 @@ on: [push, pull_request]
 
 jobs:
   build:
+    permissions:
+      contents: read
     strategy:
       matrix:
         java: [11, 17, 21, 25]
