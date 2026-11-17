@@ -460,14 +460,6 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ome.snapshots</id>
-      <name>OME Snapshots Repository</name>
-      <url>https://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <profiles>
     <!-- Run integration tests when "-P run-its" is passed.
          This works using the maven-invoker-plugin. -->
