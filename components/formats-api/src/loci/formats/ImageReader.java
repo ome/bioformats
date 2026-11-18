@@ -151,6 +151,24 @@ public class ImageReader implements IFormatReader {
   // -- ImageReader API methods --
 
   /**
+   * Intended for use prior to caching an initialized reader.
+   * This removes everything except the current reader from the
+   * list of possible readers to use. Be very careful, and do
+   * not call this method on an ImageReader that may be reused
+   * for multiple different files.
+   *
+   * If the current reader index is less than 0 (i.e. not initialized),
+   * this does nothing.
+   */
+  protected void cleanupReaderList() {
+    if (current >= 0) {
+      IFormatReader currentReader = readers[current];
+      current = 0;
+      readers = new IFormatReader[] {currentReader};
+    }
+  }
+
+  /**
    * Toggles whether or not file system access is allowed when doing type
    * detection.  By default, file system access is allowed.
    */
