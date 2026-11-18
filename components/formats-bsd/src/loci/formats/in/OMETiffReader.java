@@ -197,6 +197,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
     FormatTools.assertId(currentId, true, 1);
     IFD ifd = getSubresolutionIFD(no);
     if (ifd != null) {
+      if (ifd.getPlanarConfiguration() == 2 && getRGBChannelCount() > 1) {
+        throw new UnsupportedOperationException("Planar RGB data not supported when reading compressed tiles");
+      }
+
       MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
       if (r.getCurrentFile() == null) {
         initializeReader(r, info[series][lastPlane].id);
