@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -537,7 +538,7 @@ public class MIASReader extends FormatReader {
           Arrays.sort(wellList);
           boolean validWell = false;
           for (String potentialTIFF : wellList) {
-            if (potentialTIFF.toLowerCase().endsWith(".tif") ||
+            if (potentialTIFF.toLowerCase(Locale.ROOT).endsWith(".tif") ||
               new Location(f, potentialTIFF).isDirectory()) {
               validWell = true;
               break;
@@ -558,7 +559,7 @@ public class MIASReader extends FormatReader {
             AnalysisFile af = new AnalysisFile();
             af.filename = r.getAbsolutePath();
             af.plate = 0;
-            if (result.toLowerCase().startsWith("well")) {
+            if (result.toLowerCase(Locale.ROOT).startsWith("well")) {
               af.well = Integer.parseInt(result.substring(4, 8)) - 1;
             }
             analysisFiles.add(af);
@@ -594,7 +595,7 @@ public class MIASReader extends FormatReader {
       Arrays.sort(tiffFiles);
       final List<String> tmpFiles = new ArrayList<String>();
       for (String tiff : tiffFiles) {
-        String name = tiff.toLowerCase();
+        String name = tiff.toLowerCase(Locale.ROOT);
         if (name.endsWith(".tif") || name.endsWith(".tiff")) {
           tmpFiles.add(new Location(well, tiff).getAbsolutePath());
         }
@@ -612,7 +613,7 @@ public class MIASReader extends FormatReader {
             String[] tiffs = file.list(true);
             Arrays.sort(tiffs);
             for (String tiff : tiffs) {
-              String name = tiff.toLowerCase();
+              String name = tiff.toLowerCase(Locale.ROOT);
               if (name.endsWith(".tif") || name.endsWith(".tiff")) {
                 tmpFiles.add(new Location(file, tiff).getAbsolutePath());
               }
@@ -645,7 +646,7 @@ public class MIASReader extends FormatReader {
       int[] count = fp.getCount();
 
       for (int block=blocks.length - 1; block>=0; block--) {
-        blocks[block] = blocks[block].toLowerCase();
+        blocks[block] = blocks[block].toLowerCase(Locale.ROOT);
         blocks[block] =
           blocks[block].substring(blocks[block].lastIndexOf("_") + 1);
 

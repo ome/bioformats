@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -388,7 +389,7 @@ public class OpenlabReader extends FormatReader {
 
         planes[imagesFound] = new PlaneInfo();
 
-        planes[imagesFound].pict = fmt.toLowerCase().equals("pict");
+        planes[imagesFound].pict = fmt.equalsIgnoreCase("pict");
         planes[imagesFound].compressed = subTag == 0;
 
         in.skipBytes(24);
@@ -763,7 +764,7 @@ public class OpenlabReader extends FormatReader {
       }
       catch (NumberFormatException e) { }
 
-      if (tokens.length == 4 && !tokens[0].toLowerCase().endsWith("xy") &&
+      if (tokens.length == 4 && !tokens[0].toLowerCase(Locale.ROOT).endsWith("xy") &&
         validField)
       {
         specialPlateNames = true;
