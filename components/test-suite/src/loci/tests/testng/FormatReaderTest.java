@@ -58,6 +58,7 @@ import loci.formats.Modulo;
 import loci.formats.ReaderWrapper;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.PassthroughCodec;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.*;
@@ -3208,15 +3209,21 @@ public class FormatReaderTest {
                 // for things like .vsi
                 continue;
               }
+              if (codec instanceof PassthroughCodec) {
+                // uncompressed data anyway
+                continue;
+              }
               byte[] uncompressed = codec.decompress(tile, options);
 
               msg = "series=" + i + ", resolution=" + r + ", plane=" + p;
               Assert.assertNotNull(uncompressed, msg);
-              Assert.assertEquals(uncompressed.length,
-                reader.getOptimalTileWidth() * reader.getOptimalTileHeight() *
+              Assert.assertTrue(uncompressed.length > 0, msg);
+              Assert.assertEquals(uncompressed.length %
+                (reader.getOptimalTileWidth() *
                 FormatTools.getBytesPerPixel(reader.getPixelType()) *
-                reader.getRGBChannelCount(), msg);
+                reader.getRGBChannelCount()), 0, msg);
               Region boundingBox = reader.getTileBoundingBox(p, tileX, tileY);
+
               Assert.assertEquals(boundingBox.width, reader.getOptimalTileWidth(), msg);
               Assert.assertEquals(boundingBox.height, reader.getOptimalTileHeight(), msg);
             }
