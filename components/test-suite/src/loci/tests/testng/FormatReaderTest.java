@@ -3209,14 +3209,16 @@ public class FormatReaderTest {
                 continue;
               }
               byte[] uncompressed = codec.decompress(tile, options);
-              Assert.assertNotNull(uncompressed);
+
+              msg = "series=" + i + ", resolution=" + r + ", plane=" + p;
+              Assert.assertNotNull(uncompressed, msg);
               Assert.assertEquals(uncompressed.length,
                 reader.getOptimalTileWidth() * reader.getOptimalTileHeight() *
                 FormatTools.getBytesPerPixel(reader.getPixelType()) *
-                reader.getRGBChannelCount());
+                reader.getRGBChannelCount(), msg);
               Region boundingBox = reader.getTileBoundingBox(p, tileX, tileY);
-              Assert.assertEquals(boundingBox.width, reader.getOptimalTileWidth());
-              Assert.assertEquals(boundingBox.height, reader.getOptimalTileHeight());
+              Assert.assertEquals(boundingBox.width, reader.getOptimalTileWidth(), msg);
+              Assert.assertEquals(boundingBox.height, reader.getOptimalTileHeight(), msg);
             }
             catch (UnsupportedOperationException e) {
               result(testName, success, e.getMessage());
