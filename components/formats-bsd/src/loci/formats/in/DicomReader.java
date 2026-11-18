@@ -178,14 +178,14 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
   public int getTileRows(int no) {
     FormatTools.assertId(currentId, true, 1);
 
-    return (int) Math.ceil((double) getSizeY() / originalY);
+    return (int) Math.ceil((double) getSizeY() / getOptimalTileHeight());
   }
 
   @Override
   public int getTileColumns(int no) {
     FormatTools.assertId(currentId, true, 1);
 
-    return (int) Math.ceil((double) getSizeX() / originalX);
+    return (int) Math.ceil((double) getSizeX() / getOptimalTileWidth());
   }
 
   @Override
