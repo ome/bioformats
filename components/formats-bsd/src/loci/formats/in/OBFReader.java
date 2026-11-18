@@ -374,12 +374,19 @@ public class OBFReader extends FormatReader {
       final int type = in.readInt();
       meta_data.pixelType = getPixelType(type);
       meta_data.bitsPerPixel = getBitsPerPixel(type);
+      meta_data.interleaved = false;
+
+
+      if((type & 0x40000000) != 0)
+      {
+        meta_data.interleaved = true;
+        meta_data.sizeC *= 2;
+      }
 
       stack.bytesPerSample = meta_data.bitsPerPixel / 8;
 
       meta_data.indexed = false;
-      meta_data.rgb = false;
-      meta_data.interleaved = false;
+      meta_data.rgb = meta_data.interleaved;
 
       final int compression = in.readInt();
       stack.compression = getCompression(compression);
@@ -610,7 +617,7 @@ public class OBFReader extends FormatReader {
   }
 
   private int getPixelType(int type) throws FormatException {
-    switch (type) {
+    switch (type & 0xFFFFFFF) {
       case 0x01: return FormatTools.UINT8;
       case 0x02: return FormatTools.INT8;
       case 0x04: return FormatTools.UINT16;
@@ -633,6 +640,8 @@ public class OBFReader extends FormatReader {
       case 0x20: return 32;
       case 0x40: return 32;
       case 0x80: return 64;
+      case 0x40000040: return 64;
+      case 0x40000080: return 128;
       default: throw new FormatException("Unsupported data type " + type);
     }
   }
