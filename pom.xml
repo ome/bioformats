@@ -15,6 +15,19 @@
   <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
+  <licenses>
+    <license>
+      <name>Simplified BSD License</name>
+      <url>https://opensource.org/licenses/BSD-2-Clause</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
+      <name>GNU General Public License v2+</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <modules>
     <module>components/formats-api</module>
     <module>components/formats-bsd</module>
