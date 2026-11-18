@@ -416,6 +416,33 @@
     <url>https://www.openmicroscopy.org/</url>
   </organization>
 
+  <developers>
+    <developer>
+      <id>sbesson</id>
+      <name>Sébastien Besson</name>
+      <email>sbesson@glencoesoftware.com</email>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>melissa</id>
+      <name>Melissa Linkert</name>
+      <email>melissa@glencoesoftware.com</email>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </developer>
+  </developers>
+
   <scm>
     <connection>scm:git:https://github.com/ome/bioformats</connection>
     <developerConnection>scm:git:git@github.com:ome/bioformats</developerConnection>
