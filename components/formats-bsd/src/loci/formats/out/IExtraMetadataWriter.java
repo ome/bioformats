@@ -48,6 +48,6 @@ public interface IExtraMetadataWriter {
    *
    * All calls to this method must occur before setId is called.
    */
-  void setExtraMetadata(String metadataSource);
+  void setExtraMetadata(Object metadataSource);
 
 }
