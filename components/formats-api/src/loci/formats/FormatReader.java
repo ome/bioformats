@@ -68,7 +68,6 @@ import ome.xml.model.enums.ContrastMethod;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.DimensionOrder;
-import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.ExperimentType;
 import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.FillRule;
@@ -1568,8 +1567,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.AcquisitionMode} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getAcquisitionMode(String)}.
    */
   @Deprecated
@@ -1582,8 +1580,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.ArcType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getArcType(String)}.
    */
   @Deprecated
@@ -1595,8 +1592,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.Binning} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getBinning(String)}.
    */
   @Deprecated
@@ -1607,8 +1603,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.Compression} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getCompression(String)}.
    */
   @Deprecated
@@ -1619,8 +1614,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.ContrastMethod} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getContrastMethod(String)}.
    */
   @Deprecated
@@ -1632,8 +1626,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.Correction} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getCorrection(String)}.
    */
   @Deprecated
@@ -1644,8 +1637,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.DetectorType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getDetectorType(String)}.
    */
   @Deprecated
@@ -1656,8 +1648,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.DimensionOrder} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getDimensionOrder(String)}.
    */
   @Deprecated
@@ -1669,8 +1660,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.ExperimentType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getExperimentType(String)}.
    */
   @Deprecated
@@ -1682,8 +1672,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.FilamentType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getFilamentType(String)}.
    */
   @Deprecated
@@ -1694,8 +1683,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.FillRule} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getFillRule(String)}.
    */
   @Deprecated
@@ -1706,8 +1694,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.FilterType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getFilterType(String)}.
    */
   @Deprecated
@@ -1718,8 +1705,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.FontFamily} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getFontFamily(String)}.
    */
   @Deprecated
@@ -1730,8 +1716,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.FontStyle} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getFontStyle(String)}.
    */
   @Deprecated
@@ -1742,8 +1727,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.IlluminationType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getIlluminationType(String)}.
    */
   @Deprecated
@@ -1755,8 +1739,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.Immersion} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getImmersion(String)}.
    */
   @Deprecated
@@ -1767,8 +1750,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.LaserMedium} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getLaserMedium(String)}.
    */
   @Deprecated
@@ -1779,8 +1761,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.LaserType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getLaserType(String)}.
    */
   @Deprecated
@@ -1791,8 +1772,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.Marker} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getMarker(String)}.
    */
   @Deprecated
@@ -1803,8 +1783,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.Medium} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getMedium(String)}.
    */
   @Deprecated
@@ -1815,8 +1794,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.MicrobeamManipulationType}
    * enumeration value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getMicrobeamManipulationType(String)}.
    */
   @Deprecated
@@ -1828,8 +1806,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.MicroscopeType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getMicroscopeType(String)}.
    */
   @Deprecated
@@ -1841,8 +1818,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.NamingConvention} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getNamingConvention(String)}.
    */
   @Deprecated
@@ -1854,8 +1830,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.PixelType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getPixelType(String)}.
    */
   @Deprecated
@@ -1866,8 +1841,7 @@ public abstract class FormatReader extends FormatHandler
    * Retrieves an {@link ome.xml.model.enums.Pulse} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    * @deprecated Use {@link MetadataTools#getPulse(String)}.
    */
   @Deprecated

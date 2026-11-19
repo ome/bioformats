@@ -243,6 +243,9 @@
           <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+       </plugin>
     </plugins>
   </build>
 

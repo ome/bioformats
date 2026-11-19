@@ -258,6 +258,9 @@
           <projectName>OME Bio-Formats package for reading and converting biological file formats.</projectName>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+       </plugin>
     </plugins>
   </build>
 

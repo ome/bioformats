@@ -701,7 +701,8 @@ public final class FormatTools {
   /**
    * Converts index from the given dimension order to the reader's native one.
    * This method is useful for shuffling the planar order around
-   * (rather than eassigning ZCT sizes as {@link DimensionSwapper} does).
+   * (rather than reassigning ZCT sizes as {@code loci.formats.DimensionSwapper}
+   * in the formats-bsd component does).
    *
    * @throws FormatException Never actually thrown.
    */
@@ -720,7 +721,8 @@ public final class FormatTools {
   /**
    * Converts index from one dimension order to another.
    * This method is useful for shuffling the planar order around
-   * (rather than eassigning ZCT sizes as {@link DimensionSwapper} does).
+   * (rather than reassigning ZCT sizes as {@code loci.formats.DimensionSwapper}
+   * in the formats-bsd component does).
    *
    * @param origOrder Original dimension order.
    * @param newOrder New dimension order.
@@ -1407,7 +1409,7 @@ public final class FormatTools {
    * specified output file.  The ImageReader and ImageWriter classes are used
    * for input and output, respectively.  To use other IFormatReader or
    * IFormatWriter implementation,
-   * @see #convert(IFormatReader, IFormatWriter, String).
+   * @see #convert(IFormatReader, IFormatWriter, String)
    *
    * @param input the full path name of the existing input file
    * @param output the full path name of the output file to be created
@@ -1499,7 +1501,7 @@ public final class FormatTools {
    * @param pixelType the pixel type.
    * @return an array containing the min and max as elements 0 and 1,
    * respectively.
-   * @throws IOException if the pixel type is floating point or invalid.
+   * @throws IllegalArgumentException if the pixel type is floating point or invalid.
    */
   public static long[] defaultMinMax(int pixelType) {
     long min = 0 , max = 0;

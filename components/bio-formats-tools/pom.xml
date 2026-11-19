@@ -124,6 +124,9 @@
           <licenseName>bsd_2</licenseName>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+       </plugin>
     </plugins>
   </build>
 

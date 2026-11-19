@@ -132,6 +132,9 @@
           <projectName>Top-level reader and writer APIs</projectName>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+       </plugin>
     </plugins>
   </build>
 

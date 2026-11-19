@@ -471,7 +471,7 @@ public class TestTools {
 
   /**
    * A single iteration of a tile for each loop.
-   * @author Chris Allan <callan at blackcat dot ca>
+   * @author Chris Allan
    * @since OMERO Beta-4.3.0
    */
   public interface TileLoopIteration {

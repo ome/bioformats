@@ -126,6 +126,9 @@
           <projectName>OME Bio-Formats manual and automated test suite.</projectName>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+       </plugin>
     </plugins>
   </build>
 

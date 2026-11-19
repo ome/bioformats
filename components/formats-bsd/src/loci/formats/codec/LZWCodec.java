@@ -56,14 +56,17 @@ import loci.formats.FormatException;
  *      END_OF_IFORMATION, 1 code is lost due to original bug in TIFF library
  *      that now is a feature).
  * <li> Each full portion of 3837 byte will produce in output:
+ * </ul>
  * <ul>
  * <li> 9 bits for CLEAR code;
  * <li> 9*253 + 10*512 + 11*1024 + 12*2048 = 43237 bits for character codes.
  * </ul>
+ * <ul>
  * <li> Let n=3837, m=(number of bytes in the last incomplete portion),
  *      N=(number of bytes in compressed complete portion with CLEAR code),
  *      M=(number of bytes in compressed last incomplete portion).
  *      We have inequalities:
+ * </ul>
  * <ul>
  * <li> {@literal N <= 1.41 * n}
  * <li> {@literal M <= 1.41 * m}
@@ -72,7 +75,6 @@ import loci.formats.FormatException;
  * </ul>
  * Thus, we can claim than the number of bytes in compressed output never
  * exceeds 1.41*(number of input bytes)+3.
- * <p>
  *
  * @author Mikhail Kovtun mikhail.kovtun at duke.edu
  */
