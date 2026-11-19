@@ -15,6 +15,19 @@
   <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
+  <licenses>
+    <license>
+      <name>Simplified BSD License</name>
+      <url>https://opensource.org/licenses/BSD-2-Clause</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
+      <name>GNU General Public License v2+</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <modules>
     <module>components/formats-api</module>
     <module>components/formats-bsd</module>
@@ -285,6 +298,14 @@
               <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>
             </links>
           </configuration>
+          <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
         </plugin>
 
         <plugin>
@@ -415,6 +436,33 @@
     <name>Open Microscopy Environment</name>
     <url>https://www.openmicroscopy.org/</url>
   </organization>
+
+  <developers>
+    <developer>
+      <id>sbesson</id>
+      <name>Sébastien Besson</name>
+      <email>sbesson@glencoesoftware.com</email>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>melissa</id>
+      <name>Melissa Linkert</name>
+      <email>melissa@glencoesoftware.com</email>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </developer>
+  </developers>
 
   <scm>
     <connection>scm:git:https://github.com/ome/bioformats</connection>
