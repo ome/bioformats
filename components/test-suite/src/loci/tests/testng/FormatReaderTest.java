@@ -3197,13 +3197,23 @@ public class FormatReaderTest {
             try {
               int rows = reader.getTileRows(p);
               int columns = reader.getTileColumns(p);
-              Codec codec = reader.getTileCodec(p);
-              LOGGER.debug("Found codec {} for series={}, resolution={}, plane={}",
-                codec.getClass(), i, r, p);
               int tileX = (int) Math.floor(columns / 2.0);
               int tileY = (int) Math.floor(rows / 2.0);
 
-              CodecOptions options = reader.getTileCodecOptions(p, tileX, tileY);
+              Codec codec = null;
+              CodecOptions options = null;
+
+              try {
+                codec = reader.getTileCodec(p);
+                LOGGER.debug("Found codec {} for series={}, resolution={}, plane={}",
+                  codec.getClass(), i, r, p);
+                options = reader.getTileCodecOptions(p, tileX, tileY);
+              }
+              catch (FormatException e) {
+                // this can happen if a plane is fully missing
+                LOGGER.warn("Could not read codec or options for tileX={}, tileY={}", tileX, tileY);
+                continue;
+              }
               byte[] tile = reader.openCompressedBytes(p, tileX, tileY);
               if (tile == null) {
                 // this can happen if the tile was not defined in the original file(s)
