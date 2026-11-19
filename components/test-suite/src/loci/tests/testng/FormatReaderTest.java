@@ -3193,6 +3193,7 @@ public class FormatReaderTest {
           }
 
           for (int p=0; p<reader.getImageCount(); p++) {
+            msg = "series=" + i + ", resolution=" + r + ", plane=" + p;
             try {
               int rows = reader.getTileRows(p);
               int columns = reader.getTileColumns(p);
@@ -3201,6 +3202,7 @@ public class FormatReaderTest {
                 codec.getClass(), i, r, p);
               int tileX = (int) Math.floor(columns / 2.0);
               int tileY = (int) Math.floor(rows / 2.0);
+
               CodecOptions options = reader.getTileCodecOptions(p, tileX, tileY);
               byte[] tile = reader.openCompressedBytes(p, tileX, tileY);
               if (tile == null) {
@@ -3215,7 +3217,6 @@ public class FormatReaderTest {
               }
               byte[] uncompressed = codec.decompress(tile, options);
 
-              msg = "series=" + i + ", resolution=" + r + ", plane=" + p;
               Assert.assertNotNull(uncompressed, msg);
               Assert.assertTrue(uncompressed.length > 0, msg);
               Assert.assertEquals(uncompressed.length %
