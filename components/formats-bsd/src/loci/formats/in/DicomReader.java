@@ -205,7 +205,8 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
 
     List<DicomTile> tiles = getTileList(no, boundingBox, true);
     if (tiles == null || tiles.size() == 0) {
-      throw new FormatException("Could not find valid tile; no=" + no + ", boundingBox=" + boundingBox);
+      LOGGER.warn("Could not find valid tile; no={}, boundingBox={}", no, boundingBox);
+      return null;
     }
     DicomTile tile = tiles.get(0);
     if (tile != null && tile.isRLE &&
