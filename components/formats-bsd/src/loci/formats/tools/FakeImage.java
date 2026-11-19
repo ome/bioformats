@@ -74,7 +74,7 @@ public class FakeImage {
    * Creates a fake SPW file/directory structure. Maximum supported size is a
    * 384-well plate with multiple runs and fields. All arguments indicating
    * plate or well element count must be at least <code>1</code> and cannot be
-   * <code>null</code>. The structure appears on the file system as: <br/>
+   * <code>null</code>. The structure appears on the file system as: <br>
    *
    * <pre>
    * foo.fake/
