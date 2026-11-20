@@ -2139,12 +2139,15 @@ public class ND2Reader extends SubResolutionFormatReader {
               continue;
             }
             value = "ByteArray";
+            // A byte array may hold nested metadata, or raw bytes that
+            // must not be parsed as attributes. Bound the nested parsing by
+            // the array and resume after it either way, so that a raw array
+            // cannot desynchronize the parsing of the attributes that follow.
+            long arrayEnd = in.getFilePointer() + length;
             if (length > 2) {
-              iterateIn(in, stop);
+              iterateIn(in, arrayEnd);
             }
-            else {
-              in.skipBytes(length);
-            }
+            in.seek(arrayEnd);
             break;
           case (10): // deprecated
             // Its like LEVEL but offset is pointing absolutely not relatively
