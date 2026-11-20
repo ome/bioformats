@@ -539,6 +539,8 @@ public class TiffParser implements Closeable {
         ifd.put(Integer.valueOf(entry.getTag()), getIFDValue(entry));
       }
     }
+
+    updateOnDemandStreams(ifd);
   }
 
   /** Retrieve the value corresponding to the given TiffIFDEntry. */
@@ -754,18 +756,7 @@ public class TiffParser implements Closeable {
     int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
 
-    if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
-      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
-      if (counts != null) {
-        counts.setStream(in);
-      }
-    }
-    if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
-      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
-      if (counts != null) {
-        counts.setStream(in);
-      }
-    }
+    updateOnDemandStreams(ifd);
 
     long[] stripByteCounts = ifd.getStripByteCounts();
     long[] rowsPerStrip = ifd.getRowsPerStrip();
@@ -963,18 +954,7 @@ public class TiffParser implements Closeable {
       stripOffsets = ifd.getStripOffsets();
     }
 
-    if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
-      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
-      if (counts != null) {
-        counts.setStream(in);
-      }
-    }
-    if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
-      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
-      if (counts != null) {
-        counts.setStream(in);
-      }
-    }
+    updateOnDemandStreams(ifd);
 
     long[] stripByteCounts = ifd.getStripByteCounts();
 
@@ -1471,5 +1451,16 @@ public class TiffParser implements Closeable {
       getNextOffset(0) : in.getFilePointer();
 
     return new TiffIFDEntry(entryTag, entryType, valueCount, offset);
+  }
+
+  private void updateOnDemandStreams(IFD ifd) {
+    for (int tag : ifd.keySet()) {
+      if (ifd.get(tag) instanceof OnDemandLongArray) {
+        OnDemandLongArray array = (OnDemandLongArray) ifd.get(tag);
+        if (array != null) {
+          array.setStream(in);
+        }
+      }
+    }
   }
 }

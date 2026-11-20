@@ -178,29 +178,44 @@ public class DicomReader extends SubResolutionFormatReader implements IAxisOrien
   public int getTileRows(int no) {
     FormatTools.assertId(currentId, true, 1);
 
-    return (int) Math.ceil((double) getSizeY() / originalY);
+    return (int) Math.ceil((double) getSizeY() / getOptimalTileHeight());
   }
 
   @Override
   public int getTileColumns(int no) {
     FormatTools.assertId(currentId, true, 1);
 
-    return (int) Math.ceil((double) getSizeX() / originalY);
+    return (int) Math.ceil((double) getSizeX() / getOptimalTileWidth());
+  }
+
+  @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    FormatTools.assertId(currentId, true, 1);
+
+    int tileWidth = getOptimalTileWidth();
+    int tileHeight = getOptimalTileHeight();
+    return new Region(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
   }
 
   @Override
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
-    int tileWidth = getOptimalTileWidth();
-    int tileHeight = getOptimalTileHeight();
-    Region boundingBox = new Region(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+    Region boundingBox = getTileBoundingBox(no, x, y);
 
     List<DicomTile> tiles = getTileList(no, boundingBox, true);
     if (tiles == null || tiles.size() == 0) {
-      throw new FormatException("Could not find valid tile; no=" + no + ", boundingBox=" + boundingBox);
+      LOGGER.warn("Could not find valid tile; no={}, boundingBox={}", no, boundingBox);
+      return null;
     }
     DicomTile tile = tiles.get(0);
+    if (tile != null && tile.isRLE &&
+      (FormatTools.getBytesPerPixel(getPixelType()) > 1 || getRGBChannelCount() > 1))
+    {
+      // this is because there will be multiple compressed streams, matching the number
+      // of bytes per pixel
+      throw new UnsupportedOperationException("RLE-compressed tiles only supported int8/uint8 pixel type");
+    }
     byte[] buf = new byte[(int) (tile.endOffset - tile.fileOffset)];
     try (RandomAccessInputStream stream = new RandomAccessInputStream(tile.file)) {
       if (tile.fileOffset >= stream.length()) {

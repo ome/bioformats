@@ -321,6 +321,11 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    throw new UnsupportedOperationException("TileStitcher does not support pre-compressed tile access");
+  }
+
+  @Override
   public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
     throw new UnsupportedOperationException("TileStitcher does not support pre-compressed tile access");
   }

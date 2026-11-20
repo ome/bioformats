@@ -45,6 +45,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -55,6 +56,9 @@ import loci.formats.ImageReader;
 import loci.formats.Memoizer;
 import loci.formats.Modulo;
 import loci.formats.ReaderWrapper;
+import loci.formats.codec.Codec;
+import loci.formats.codec.CodecOptions;
+import loci.formats.codec.PassthroughCodec;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.*;
@@ -3159,6 +3163,93 @@ public class FormatReaderTest {
         memoDir.delete();
       }
     }
+  }
+
+  @Test(groups = {"all", "pixels", "automated"})
+  public void testCompressedTile() throws IOException {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testCompressedTile";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      // check the middle tile of each plane in each resolution
+      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+        reader.setSeries(i);
+
+        Assert.assertEquals(reader.getSeries(), i);
+
+        for (int r=0; r<reader.getResolutionCount() && success; r++) {
+          reader.setResolution(r);
+
+          Assert.assertEquals(reader.getResolution(), r);
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(reader.getCoreIndex());
+          }
+
+          for (int p=0; p<reader.getImageCount(); p++) {
+            msg = "series=" + i + ", resolution=" + r + ", plane=" + p;
+            try {
+              int rows = reader.getTileRows(p);
+              int columns = reader.getTileColumns(p);
+              int tileX = (int) Math.floor(columns / 2.0);
+              int tileY = (int) Math.floor(rows / 2.0);
+
+              Codec codec = null;
+              CodecOptions options = null;
+
+              try {
+                codec = reader.getTileCodec(p);
+                LOGGER.debug("Found codec {} for series={}, resolution={}, plane={}",
+                  codec.getClass(), i, r, p);
+                options = reader.getTileCodecOptions(p, tileX, tileY);
+              }
+              catch (FormatException e) {
+                // this can happen if a plane is fully missing
+                LOGGER.warn("Could not read codec or options for tileX={}, tileY={}", tileX, tileY);
+                continue;
+              }
+              byte[] tile = reader.openCompressedBytes(p, tileX, tileY);
+              if (tile == null) {
+                // this can happen if the tile was not defined in the original file(s)
+                // this would be unusual for TIFF-based formats, but not unusual
+                // for things like .vsi
+                continue;
+              }
+              if (codec instanceof PassthroughCodec) {
+                // uncompressed data anyway
+                continue;
+              }
+              byte[] uncompressed = codec.decompress(tile, options);
+
+              Assert.assertNotNull(uncompressed, msg);
+              Assert.assertTrue(uncompressed.length > 0, msg);
+              Assert.assertEquals(uncompressed.length %
+                (reader.getOptimalTileWidth() *
+                FormatTools.getBytesPerPixel(reader.getPixelType()) *
+                reader.getRGBChannelCount()), 0, msg);
+              Region boundingBox = reader.getTileBoundingBox(p, tileX, tileY);
+
+              Assert.assertEquals(boundingBox.width, reader.getOptimalTileWidth(), msg);
+              Assert.assertEquals(boundingBox.height, reader.getOptimalTileHeight(), msg);
+            }
+            catch (UnsupportedOperationException e) {
+              result(testName, success, e.getMessage());
+            }
+          }
+        }
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
   }
 
   @Test(groups = {"config"})

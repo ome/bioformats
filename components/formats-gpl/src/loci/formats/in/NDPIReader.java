@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -128,8 +129,23 @@ public class NDPIReader extends BaseTiffReader {
     FormatTools.assertId(currentId, true, 1);
 
     int ifdIndex = getIFDIndex(getCoreIndex(), no);
-    //service.initialize();
-    return service.getTileRows();
+    IFD ifd = ifds.get(ifdIndex);
+
+    try {
+      if (useTiffParser(ifd)) {
+        return super.getTileRows(no);
+      }
+
+      if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+        resetStream(ifd);
+        initializedSeries = getCoreIndex();
+        initializedPlane = no;
+      }
+      return service.getTileRows();
+    }
+    catch (FormatException|IOException e) {
+      return getSizeY() / getOptimalTileHeight();
+    }
   }
 
   @Override
@@ -137,8 +153,31 @@ public class NDPIReader extends BaseTiffReader {
     FormatTools.assertId(currentId, true, 1);
 
     int ifdIndex = getIFDIndex(getCoreIndex(), no);
-    //service.initialize();
-    return service.getTileColumns();
+    IFD ifd = ifds.get(ifdIndex);
+    try {
+      if (useTiffParser(ifd)) {
+        return super.getTileRows(no);
+      }
+
+      if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+        resetStream(ifd);
+        initializedSeries = getCoreIndex();
+        initializedPlane = no;
+      }
+      return service.getTileColumns();
+    }
+    catch (FormatException|IOException e) {
+      return getSizeX() / getOptimalTileWidth();
+    }
+  }
+
+  @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    FormatTools.assertId(currentId, true, 1);
+
+    int width = getOptimalTileWidth();
+    int height = getOptimalTileHeight();
+    return new Region(x * width, y * height, width, height);
   }
 
   @Override

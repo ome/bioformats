@@ -50,6 +50,7 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.LosslessJPEGCodec;
 import loci.formats.codec.JPEG2000Codec;
+import loci.formats.codec.PassthroughCodec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -440,6 +441,160 @@ public class CellSensReader extends FormatReader {
     return FAIL_ON_MISSING_DEFAULT;
   }
 
+  // -- ICompressedTileReader API methods --
+
+  @Override
+  public int getTileRows(int no) {
+    FormatTools.assertId(currentId, true, 1);
+
+    if (getCoreIndex() < core.size() - 1 && getCoreIndex() < rows.size()) {
+      return rows.get(getCoreIndex());
+    }
+    throw new UnsupportedOperationException("Compressed tiles not supported for core index " + getCoreIndex());
+  }
+
+  @Override
+  public int getTileColumns(int no) {
+    FormatTools.assertId(currentId, true, 1);
+
+    if (getCoreIndex() < core.size() - 1 && getCoreIndex() < cols.size()) {
+      return cols.get(getCoreIndex());
+    }
+    throw new UnsupportedOperationException("Compressed tiles not supported for core index " + getCoreIndex());
+  }
+
+  @Override
+  public Region getTileBoundingBox(int no, int x, int y) {
+    FormatTools.assertId(currentId, true, 1);
+
+    if (getCoreIndex() >= core.size() - 1 || getCoreIndex() >= tileX.size()) {
+      throw new UnsupportedOperationException("Compressed tiles not supported for core index " + getCoreIndex());
+    }
+
+    int width = tileX.get(getCoreIndex());
+    int height = tileY.get(getCoreIndex());
+    Region box = new Region(x * width, y * height, width, height);
+
+    Pyramid pyramid = getCurrentPyramid();
+    if (pyramid.tileOriginX != null && pyramid.tileOriginY != null) {
+      int resScale = (int) Math.pow(2, getResolutionIndex());
+      box.x += (pyramid.tileOriginX / resScale);
+      box.y += (pyramid.tileOriginY / resScale);
+    }
+    return box;
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    return openCompressedBytes(no, null, x, y);
+  }
+
+  @Override
+  public byte[] openCompressedBytes(int no, byte[] buf, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    if (getCoreIndex() >= core.size() - 1 || getCoreIndex() >= tileMap.size()) {
+      throw new UnsupportedOperationException("Compressed tiles not supported for core index " + getCoreIndex());
+    }
+
+    if (tileMap.get(getCoreIndex()) == null) {
+      return buf;
+    }
+
+    int[] zct = getZCTCoords(no);
+    TileCoordinate t = new TileCoordinate(nDimensions.get(getCoreIndex()));
+    t.coordinate[0] = x;
+    t.coordinate[1] = y;
+
+    int resIndex = getResolutionIndex();
+    Pyramid pyramid = getCurrentPyramid();
+
+    for (String dim : pyramid.dimensionOrdering.keySet()) {
+      int index = pyramid.dimensionOrdering.get(dim) + 2;
+
+      if (dim.equals("Z")) {
+        t.coordinate[index] = zct[0];
+      }
+      else if (dim.equals("C")) {
+        t.coordinate[index] = zct[1];
+      }
+      else if (dim.equals("T")) {
+        t.coordinate[index] = zct[2];
+      }
+    }
+
+    if (resIndex > 0) {
+      t.coordinate[t.coordinate.length - 1] = resIndex;
+    }
+
+    ArrayList<TileCoordinate> map = tileMap.get(getCoreIndex());
+    Integer index = map.indexOf(t);
+    if (index == null || index < 0) {
+      return buf;
+    }
+
+    Long offset = tileOffsets.get(getCoreIndex())[index];
+    IFormatReader reader = null;
+    try (RandomAccessInputStream ets =
+      new RandomAccessInputStream(fileMap.get(getCoreIndex()))) {
+      ets.seek(offset);
+      int tileSize = getTileSize();
+      if (tileSize == 0) {
+        tileSize = tileX.get(getCoreIndex()) * tileY.get(getCoreIndex()) * 10;
+      }
+
+      long end = index < tileOffsets.get(getCoreIndex()).length - 1 ?
+        tileOffsets.get(getCoreIndex())[index + 1] : ets.length();
+
+      int compression = compressionType.get(getCoreIndex());
+      int compressedBufSize = compression == PNG || compression == BMP ?
+        (int) (end - offset) : tileSize;
+
+      byte[] compressedBuf = buf == null ? new byte[compressedBufSize] : buf;
+      ets.read(compressedBuf);
+      return compressedBuf;
+    }
+  }
+
+  @Override
+  public Codec getTileCodec(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    if (getCoreIndex() >= core.size() - 1 || getCoreIndex() >= compressionType.size()) {
+      throw new UnsupportedOperationException("Compressed tiles not supported for core index " + getCoreIndex());
+    }
+
+    int compression = compressionType.get(getCoreIndex());
+
+    switch (compression) {
+      case RAW:
+        return new PassthroughCodec();
+      case JPEG:
+        return new JPEGCodec();
+      case JPEG_2000:
+        return new JPEG2000Codec();
+      case JPEG_LOSSLESS:
+        return new LosslessJPEGCodec();
+      default:
+        throw new UnsupportedOperationException(
+          "Precompressed not supported for compression " + compression);
+    }
+  }
+
+  @Override
+  public CodecOptions getTileCodecOptions(int no, int x, int y) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    CodecOptions options = new CodecOptions();
+    options.interleaved = isInterleaved();
+    options.littleEndian = isLittleEndian();
+    options.width = getOptimalTileWidth();
+    options.height = getOptimalTileHeight();
+    return options;
+  }
+
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -563,16 +718,8 @@ public class CellSensReader extends FormatReader {
       for (int row=0; row<tileRows; row++) {
         for (int col=0; col<tileCols; col++) {
           int width = tileX.get(getCoreIndex());
-          int height = tileY.get(getCoreIndex());
-          Region tile = new Region(col * width, row * height, width, height);
 
-          // the pixel data in the stored tiles may be larger than the defined image size
-          // the "tile origin" information indicates how to crop the pixel data
-          if (pyramid.tileOriginX != null && pyramid.tileOriginY != null) {
-            int resScale = (int) Math.pow(2, getResolutionIndex());
-            tile.x += (pyramid.tileOriginX / resScale);
-            tile.y += (pyramid.tileOriginY / resScale);
-          }
+          Region tile = getTileBoundingBox(no, col, row);
 
           if (!tile.intersects(image)) {
             continue;
@@ -1180,118 +1327,57 @@ public class CellSensReader extends FormatReader {
     return resIndex;
   }
 
+  /**
+   * Fill in the tile with the stored background color
+   * usually this is either black or white.
+   */
+  private byte[] getFilledTile(byte[] tile) {
+    byte[] color = backgroundColor.get(getCoreIndex());
+    if (color != null) {
+      for (int q=0; q<getTileSize(); q+=color.length) {
+        for (int i=0; i<color.length; i++) {
+          tile[q + i] = color[i];
+        }
+      }
+    }
+    return tile;
+  }
+
   private byte[] decodeTile(int no, int row, int col)
     throws FormatException, IOException
   {
-    if (tileMap.get(getCoreIndex()) == null) {
-      return new byte[getTileSize()];
+    byte[] compressedBuf = openCompressedBytes(no, col, row);
+    if (compressedBuf == null) {
+      return getFilledTile(new byte[getTileSize()]);
     }
+    int compression = compressionType.get(getCoreIndex());
 
-    int[] zct = getZCTCoords(no);
-    TileCoordinate t = new TileCoordinate(nDimensions.get(getCoreIndex()));
-    t.coordinate[0] = col;
-    t.coordinate[1] = row;
-
-    int resIndex = getResolutionIndex();
-    Pyramid pyramid = getCurrentPyramid();
-
-    for (String dim : pyramid.dimensionOrdering.keySet()) {
-      int index = pyramid.dimensionOrdering.get(dim) + 2;
-
-      if (dim.equals("Z")) {
-        t.coordinate[index] = zct[0];
-      }
-      else if (dim.equals("C")) {
-        t.coordinate[index] = zct[1];
-      }
-      else if (dim.equals("T")) {
-        t.coordinate[index] = zct[2];
-      }
-    }
-
-    if (resIndex > 0) {
-      t.coordinate[t.coordinate.length - 1] = resIndex;
-    }
-
-    ArrayList<TileCoordinate> map = tileMap.get(getCoreIndex());
-    Integer index = map.indexOf(t);
-    if (index == null || index < 0) {
-      // fill in the tile with the stored background color
-      // usually this is either black or white
-      byte[] tile = new byte[getTileSize()];
-      byte[] color = backgroundColor.get(getCoreIndex());
-      if (color != null) {
-        for (int q=0; q<getTileSize(); q+=color.length) {
-          for (int i=0; i<color.length; i++) {
-            tile[q + i] = color[i];
-          }
-        }
-      }
-      return tile;
-    }
-
-    Long offset = tileOffsets.get(getCoreIndex())[index];
-    byte[] buf = null;
+    String file = null;
     IFormatReader reader = null;
-    try (RandomAccessInputStream ets =
-      new RandomAccessInputStream(fileMap.get(getCoreIndex()))) {
-      ets.seek(offset);
-      CodecOptions options = new CodecOptions();
-      options.interleaved = isInterleaved();
-      options.littleEndian = isLittleEndian();
-      int tileSize = getTileSize();
-      if (tileSize == 0) {
-        tileSize = tileX.get(getCoreIndex()) * tileY.get(getCoreIndex()) * 10;
+    if (compression == BMP) {
+      file = "tile.bmp";
+      reader = new BMPReader();
+    }
+    else if (compression == PNG) {
+      file = "tile.png";
+      reader = new APNGReader();
+    }
+    if (file != null && reader != null) {
+      try {
+        Location.mapFile(file, new ByteArrayHandle(compressedBuf));
+        reader.setId(file);
+        byte[] tile = reader.openBytes(0);
+        Location.mapFile(file, null);
+        return tile;
       }
-
-      long end = index < tileOffsets.get(getCoreIndex()).length - 1 ?
-        tileOffsets.get(getCoreIndex())[index + 1] : ets.length();
-
-      int compression = compressionType.get(getCoreIndex());
-      int compressedBufSize = compression == PNG || compression == BMP ?
-        (int) (end - offset) : tileSize;
-      byte[] compressedBuf = new byte[compressedBufSize];
-      ets.read(compressedBuf);
-
-      String file = null;
-
-      switch (compression) {
-        case RAW:
-          buf = compressedBuf;
-          break;
-        case JPEG:
-          Codec codec = new JPEGCodec();
-          buf = codec.decompress(compressedBuf, options);
-          break;
-        case JPEG_2000:
-          codec = new JPEG2000Codec();
-          buf = codec.decompress(compressedBuf, options);
-          break;
-        case JPEG_LOSSLESS:
-          codec = new LosslessJPEGCodec();
-          buf = codec.decompress(compressedBuf, options);
-          break;
-        case PNG:
-          file = "tile.png";
-          reader = new APNGReader();
-        case BMP:
-          if (reader == null) {
-            file = "tile.bmp";
-            reader = new BMPReader();
-          }
-
-          Location.mapFile(file, new ByteArrayHandle(compressedBuf));
-          reader.setId(file);
-          buf = reader.openBytes(0);
-          Location.mapFile(file, null);
-          break;
-      }
-    } finally {
-      if (reader != null) {
+      finally {
         reader.close();
       }
     }
-    return buf;
+
+    Codec codec = getTileCodec(no);
+    CodecOptions options = getTileCodecOptions(no, col, row);
+    return codec.decompress(compressedBuf, options);
   }
 
   private boolean parseETSFile(RandomAccessInputStream etsFile, String file, int s,
