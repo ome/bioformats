@@ -1702,6 +1702,9 @@ public final class FormatTools {
    * @param scale value by which to multiply the original size
    */
   public static Length getScaledPhysicalSize(Length original, double scale) {
+    if (original == null) {
+      return null;
+    }
     return new Length(original.value().doubleValue() * scale, original.unit());
   }
 
