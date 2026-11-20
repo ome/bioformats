@@ -31,6 +31,7 @@ import ij.gui.GenericDialog;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Panel;
@@ -97,8 +98,11 @@ public class ColorDialog extends ImporterDialog {
     }
 
     // change swatch colors when sliders move
-    List<TextField> colorFields = getNumericFields(gd);
-    attachListeners(colorFields, swatches);
+    // NB: In headless mode, GenericDialog has no AWT text fields.
+    if (!GraphicsEnvironment.isHeadless()) {
+      List<TextField> colorFields = getNumericFields(gd);
+      attachListeners(colorFields, swatches);
+    }
 
     WindowTools.addScrollBars(gd);
 

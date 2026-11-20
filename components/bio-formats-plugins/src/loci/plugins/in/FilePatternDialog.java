@@ -34,6 +34,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Label;
@@ -175,7 +176,8 @@ public class FilePatternDialog extends ImporterDialog {
     gd.addCheckbox("Pattern", false);
     gd.addStringField("name", id, len);
 
-    rebuild(gd);
+    // NB: In headless mode, GenericDialog has no AWT components to rearrange.
+    if (!GraphicsEnvironment.isHeadless()) rebuild(gd);
 
     return gd;
   }

@@ -38,6 +38,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Panel;
@@ -63,6 +64,17 @@ public final class WindowTools {
   private WindowTools() { }
 
   // -- Utility methods --
+
+  /**
+   * Adds AWT scroll bars to the given dialog. Does nothing in headless mode,
+   * where ImageJ's patched GenericDialog is not an AWT container.
+   */
+  public static void addScrollBars(GenericDialog gd) {
+    if (GraphicsEnvironment.isHeadless()) return;
+    // NB: The cast through Object keeps this class verifiable when
+    // GenericDialog does not extend java.awt.Dialog.
+    addScrollBars((Container) (Object) gd);
+  }
 
   /** Adds AWT scroll bars to the given container. */
   public static void addScrollBars(Container pane) {

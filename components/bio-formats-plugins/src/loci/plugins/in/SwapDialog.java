@@ -30,6 +30,7 @@ package loci.plugins.in;
 import ij.gui.GenericDialog;
 
 import java.awt.Choice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
@@ -83,13 +84,16 @@ public class SwapDialog extends ImporterDialog implements ItemListener {
       }
     }
 
-    List<Choice> choices = WindowTools.getChoices(gd);
-    zChoice = choices.get(0);
-    cChoice = choices.get(1);
-    tChoice = choices.get(2);
-    zChoice.addItemListener(this);
-    cChoice.addItemListener(this);
-    tChoice.addItemListener(this);
+    // NB: In headless mode, GenericDialog has no AWT choices.
+    if (!GraphicsEnvironment.isHeadless()) {
+      List<Choice> choices = WindowTools.getChoices(gd);
+      zChoice = choices.get(0);
+      cChoice = choices.get(1);
+      tChoice = choices.get(2);
+      zChoice.addItemListener(this);
+      cChoice.addItemListener(this);
+      tChoice.addItemListener(this);
+    }
 
     WindowTools.addScrollBars(gd);
 

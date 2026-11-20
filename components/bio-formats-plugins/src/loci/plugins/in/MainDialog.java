@@ -37,6 +37,7 @@ import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.KeyboardFocusManager;
 import java.awt.Label;
 import java.awt.event.FocusEvent;
@@ -135,7 +136,8 @@ public class MainDialog extends ImporterDialog
     addCheckbox(gd, ImporterOptions.KEY_SWAP_DIMS);
     addCheckbox(gd, ImporterOptions.KEY_VIRTUAL);
     addCheckbox(gd, ImporterOptions.KEY_STITCH_TILES);
-    rebuildDialog(gd);
+    // NB: In headless mode, GenericDialog has no AWT components to rearrange.
+    if (!GraphicsEnvironment.isHeadless()) rebuildDialog(gd);
     return gd;
   }
 
