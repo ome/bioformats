@@ -625,7 +625,7 @@ public class IFD extends HashMap<Integer, Object> {
 
   /**
    * Retrieves the image's pixel type based on the BitsPerSample tag.
-   * @return the pixel type.  This is one of:
+   * @return the pixel type.  This is one of: <ul>
    *  <li>FormatTools.INT8</li>
    *  <li>FormatTools.UINT8</li>
    *  <li>FormatTools.INT16</li>
@@ -634,6 +634,7 @@ public class IFD extends HashMap<Integer, Object> {
    *  <li>FormatTools.UINT32</li>
    *  <li>FormatTools.FLOAT</li>
    *  <li>FormatTools.DOUBLE</li>
+   * </ul>
    * @throws FormatException if there is a problem parsing the IFD metadata.
    * @see #getBitsPerSample()
    */

@@ -295,7 +295,7 @@
               <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
 
               <!-- ImageJ1 -->
-              <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>
+              <link>https://javadoc.scijava.org/net.imagej/ij/${imagej1.version}/</link>
             </links>
           </configuration>
           <executions>

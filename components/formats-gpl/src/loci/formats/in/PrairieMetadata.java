@@ -1020,6 +1020,7 @@ public class PrairieMetadata {
    * </p>
    * 
    * <pre>
+   * {@literal
    * <Key key="linesPerFrame" permissions="Read, Write, Save" value="186" />
    * <Key key="pmtGain_0" permissions="Write, Save" value="605" />
    * <Key key="pmtGain_1" permissions="Write, Save" value="604" />
@@ -1027,12 +1028,14 @@ public class PrairieMetadata {
    * <Key key="positionCurrent_XAxis" permissions="Write, Save" value="0.95" />
    * <Key key="positionCurrent_YAxis" permissions="Write, Save" value="-4.45" />
    * <Key key="positionCurrent_ZAxis" permissions="Write, Save" value="-9,62.45" />
+   * }
    * </pre>
    * <p>
-   * From 5.2 onwards, they are @{code <PVStateValue>} elements:
+   * From 5.2 onwards, they are {@code <PVStateValue>} elements:
    * </p>
    * 
    * <pre>
+   * {@literal
    * <PVStateValue key="linesPerFrame" value="186" />
    * <PVStateValue key="pmtGain">
    *   <IndexedValue index="0" value="605" description="Ch1 High Voltage" />
@@ -1051,6 +1054,7 @@ public class PrairieMetadata {
    *     <SubindexedValue subindex="1" value="62.45" description="Piezo" />
    *   </SubindexedValues>
    * </PVStateValue>
+   * }
    * </pre>
    */
   public static interface Value {

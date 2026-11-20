@@ -33,7 +33,7 @@ import ch.qos.logback.core.FileAppender;
  * A class for appending a timestamp to the log file name produced by the
  * logging framework.
  *
- * @author Blazej Pindelski <bpindelski at dundee dot ac dot uk>
+ * @author Blazej Pindelski
  */
 public class TimestampedLogFileAppender extends FileAppender<ILoggingEvent> {
 

@@ -73,6 +73,7 @@ public interface ICacheStrategy extends CacheReporter {
    *   <li>CENTERED_ORDER</li>
    *   <li>FORWARD_ORDER</li>
    *   <li>BACKWARD_ORDER</li>
+   * </ul>
    */
   int[] getOrder();
 
@@ -82,6 +83,7 @@ public interface ICacheStrategy extends CacheReporter {
    *   <li>CENTERED_ORDER</li>
    *   <li>FORWARD_ORDER</li>
    *   <li>BACKWARD_ORDER</li>
+   * </ul>
    * @param axis The axis for which to set the order.
    */
   void setOrder(int order, int axis);

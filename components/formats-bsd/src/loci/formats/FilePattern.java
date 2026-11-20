@@ -86,7 +86,7 @@ import loci.common.Location;
  * Location} or from a basename and directory. In these cases, the
  * pattern string is inferred from the names of other files in the
  * same directory.
- * <p>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FilePattern {

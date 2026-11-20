@@ -511,8 +511,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.AcquisitionMode} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static AcquisitionMode getAcquisitionMode(String value)
     throws FormatException
@@ -530,8 +529,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.ArcType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static ArcType getArcType(String value) throws FormatException {
     ArcTypeEnumHandler handler = new ArcTypeEnumHandler();
@@ -547,8 +545,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.Binning} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static Binning getBinning(String value) throws FormatException {
     BinningEnumHandler handler = new BinningEnumHandler();
@@ -563,8 +560,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.Compression} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static Compression getCompression(String value) throws FormatException {
     CompressionEnumHandler handler = new CompressionEnumHandler();
@@ -579,8 +575,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.ContrastMethod} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static ContrastMethod getContrastMethod(String value)
     throws FormatException
@@ -597,8 +592,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.Correction} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static Correction getCorrection(String value) throws FormatException {
     CorrectionEnumHandler handler = new CorrectionEnumHandler();
@@ -613,8 +607,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.DetectorType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static DetectorType getDetectorType(String value) throws FormatException {
     DetectorTypeEnumHandler handler = new DetectorTypeEnumHandler();
@@ -629,8 +622,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.DimensionOrder} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static DimensionOrder getDimensionOrder(String value)
     throws FormatException
@@ -647,8 +639,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.ExperimentType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static ExperimentType getExperimentType(String value)
     throws FormatException
@@ -665,8 +656,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.FilamentType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static FilamentType getFilamentType(String value) throws FormatException {
     FilamentTypeEnumHandler handler = new FilamentTypeEnumHandler();
@@ -681,8 +671,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.FillRule} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static FillRule getFillRule(String value) throws FormatException {
     FillRuleEnumHandler handler = new FillRuleEnumHandler();
@@ -697,8 +686,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.FilterType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static FilterType getFilterType(String value) throws FormatException {
     FilterTypeEnumHandler handler = new FilterTypeEnumHandler();
@@ -713,8 +701,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.FontFamily} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static FontFamily getFontFamily(String value) throws FormatException {
     FontFamilyEnumHandler handler = new FontFamilyEnumHandler();
@@ -729,8 +716,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.FontStyle} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static FontStyle getFontStyle(String value) throws FormatException {
     FontStyleEnumHandler handler = new FontStyleEnumHandler();
@@ -745,8 +731,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.IlluminationType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static IlluminationType getIlluminationType(String value)
     throws FormatException
@@ -763,8 +748,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.Immersion} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static Immersion getImmersion(String value) throws FormatException {
     ImmersionEnumHandler handler = new ImmersionEnumHandler();
@@ -779,8 +763,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.LaserMedium} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static LaserMedium getLaserMedium(String value) throws FormatException {
     LaserMediumEnumHandler handler = new LaserMediumEnumHandler();
@@ -795,8 +778,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.LaserType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static LaserType getLaserType(String value) throws FormatException {
     LaserTypeEnumHandler handler = new LaserTypeEnumHandler();
@@ -811,8 +793,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.Marker} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static Marker getMarker(String value) throws FormatException {
     MarkerEnumHandler handler = new MarkerEnumHandler();
@@ -827,8 +808,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.Medium} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static Medium getMedium(String value) throws FormatException {
     MediumEnumHandler handler = new MediumEnumHandler();
@@ -843,8 +823,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.MicrobeamManipulationType}
    * enumeration value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static MicrobeamManipulationType getMicrobeamManipulationType(String value)
     throws FormatException
@@ -862,8 +841,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.MicroscopeType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static MicroscopeType getMicroscopeType(String value)
     throws FormatException
@@ -880,8 +858,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.NamingConvention} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static NamingConvention getNamingConvention(String value)
     throws FormatException
@@ -898,8 +875,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.PixelType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static PixelType getPixelType(String value) throws FormatException {
     PixelTypeEnumHandler handler = new PixelTypeEnumHandler();
@@ -914,8 +890,7 @@ public final class MetadataTools {
    * Retrieves an {@link ome.xml.model.enums.Pulse} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
+   * @throws FormatException if an appropriate enumeration value is not found.
    */
   public static Pulse getPulse(String value) throws FormatException {
     PulseEnumHandler handler = new PulseEnumHandler();

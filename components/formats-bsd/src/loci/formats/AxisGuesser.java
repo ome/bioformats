@@ -123,7 +123,7 @@ public class AxisGuesser {
    * If <code>isCertain</code> is <code>false</code>, the algorithm
    * checks for cases where the reader might have mixed up the Z and T
    * dimensions. For instance, if the pattern string is
-   * <code>z&lt;*&gt;_&lt;*&gt;</code> and <code>size&lcub;Z,T,C&rcub;
+   * <code>z&lt;*&gt;_&lt;*&gt;</code> and <code>size{Z,T,C}
    * = 2,1,1</code>, then the reader is assumed to be wrong about the
    * relative positions of Z and T in the given <code>dimOrder</code>.
    * The new suggested order (see {@link #getAdjustedOrder}) will have

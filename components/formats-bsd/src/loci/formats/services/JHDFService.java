@@ -83,15 +83,15 @@ public interface JHDFService extends Service {
      * Retrieves the all members of a group.
      *
      * @param path HDF path to the group.
-     * @return List<String> of members.
+     * @return list of group members.
      */
     public List<String> getMember(String path);
-    
+
     /**
      * Retrieves the Element Size of a dataset in Byte.
      *
      * @param path HDF path to the group.
-     * @return List<String> of members.
+     * @return size of the given element in bytes.
      */
     public int getElementSize(String path);
 

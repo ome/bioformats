@@ -101,7 +101,6 @@ public class MetadataStoreInitializer {
   /**
    * Adds filter details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
    * @param series index of image series / metadata store
-   * @throws FormatException
    */
   public void initFilterModels(int series){
     int index = getTileIndex(series);
@@ -133,7 +132,6 @@ public class MetadataStoreInitializer {
   /**
    * Adds laser and light source details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
    * @param series index of image series / metadata store
-   * @throws FormatException
    */
   public void initLasers(int series) {
     int index = getTileIndex(series);
@@ -290,7 +288,6 @@ public class MetadataStoreInitializer {
   /**
    * Adds detector and channel color details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
    * @param series index of image series / metadata store
-   * @throws FormatException
    */
   public void initDetectorModels(int series){
     int index = getTileIndex(series);
@@ -430,7 +427,6 @@ public class MetadataStoreInitializer {
   /**
    * Adds image and ROI details from the reader's {@link MetadataTempBuffer} to its {@link MetadataStore}
    * @param series index of image series / metadata store
-   * @throws FormatException
    */
   public void initImageDetails(int series){
     int index = getTileIndex(series);

@@ -51,7 +51,7 @@ import ome.xml.meta.MetadataConverter;
 /**
  * Tests writing of tiles in a tiff.
  *
- * @author Jean-Marie Burel <j dot burel at dundee dot ac dot uk>
+ * @author Jean-Marie Burel
  */
 public class TiffWriterTest {
 

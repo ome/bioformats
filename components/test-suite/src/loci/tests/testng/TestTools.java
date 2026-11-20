@@ -428,9 +428,9 @@ public class TestTools {
    * @param sizeT Number of timepoints the image contains.
    * @param tileWidth <b>Maximum</b> width of the tile requested. The tile
    * request itself will be smaller than the original tile width requested if
-   * <code>x + tileWidth > sizeX</code>.
+   * <code>x + tileWidth &gt; sizeX</code>.
    * @param tileHeight <b>Maximum</b> height of the tile requested. The tile
-   * request itself will be smaller if <code>y + tileHeight > sizeY</code>.
+   * request itself will be smaller if <code>y + tileHeight &gt; sizeY</code>.
    * @return The total number of tiles iterated over.
    */
   public static int forEachTile(TileLoopIteration iteration,
@@ -471,7 +471,7 @@ public class TestTools {
 
   /**
    * A single iteration of a tile for each loop.
-   * @author Chris Allan <callan at blackcat dot ca>
+   * @author Chris Allan
    * @since OMERO Beta-4.3.0
    */
   public interface TileLoopIteration {
@@ -486,9 +486,9 @@ public class TestTools {
      * timepoint counters.
      * @param tileWidth Width of the tile requested. The tile request
      * itself may be smaller than the original tile width requested if
-     * <code>x + tileWidth > sizeX</code>.
+     * <code>x + tileWidth &gt; sizeX</code>.
      * @param tileHeight Height of the tile requested. The tile request
-     * itself may be smaller if <code>y + tileHeight > sizeY</code>.
+     * itself may be smaller if <code>y + tileHeight &gt; sizeY</code>.
      * @param tileCount Counter of the tile since the beginning of the loop.
      */
     void run(int z, int c, int t, int x, int y, int tileWidth,

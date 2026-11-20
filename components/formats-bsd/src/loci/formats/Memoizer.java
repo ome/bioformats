@@ -1067,7 +1067,7 @@ public class Memoizer extends ReaderWrapper {
    *  will then be serialized, before any values are copied into
    *  {@link #userMetadataStore}.
    *  </li>
-   *  <li><em>Deserialization<em>: If an unknown {@link MetadataStore}
+   *  <li><em>Deserialization</em>: If an unknown {@link MetadataStore}
    *  implementation is set before calling {@link #setId(String)} then ...
    *  </li>
    * </ul>

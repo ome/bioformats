@@ -233,8 +233,8 @@ public interface IFormatReader extends IFormatHandler, IPyramidHandler, ICompres
    * Gets whether or not the given sub-channel is interleaved. This method
    * exists because some data with multiple rasterized sub-dimensions within
    * C have one sub-dimension interleaved, and the other not&mdash;e.g.,
-   * {@link loci.formats.in.SDTReader} handles spectral-lifetime data with
-   * interleaved lifetime bins and non-interleaved spectral channels.
+   * there may be spectral-lifetime data with interleaved lifetime bins
+   * and non-interleaved spectral channels.
    */
   boolean isInterleaved(int subC);
 
@@ -292,8 +292,9 @@ public interface IFormatReader extends IFormatHandler, IPyramidHandler, ICompres
    * maintain generality and efficiency while avoiding pollution of the API
    * with AWT-specific logic.
    *
+   * See also {@code loci.formats.gui.BufferedImageReader} (in formats-bsd).
+   *
    * @see loci.formats.FormatReader
-   * @see loci.formats.gui.BufferedImageReader
    */
   Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException;

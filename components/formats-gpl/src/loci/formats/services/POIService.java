@@ -96,7 +96,6 @@ public interface POIService extends Service {
    * Either of the 'initialize' methods must be called before this method.
    *
    * @param file The name of the embedded file.
-   * @throws IOException if an error occurred when reading the file
    */
   public int getFileSize(String file);
 
@@ -105,7 +104,11 @@ public interface POIService extends Service {
    */
   public Vector<String> getDocumentList();
 
-  /** Close the current POI file system. */
+  /**
+   * Close the current POI file system.
+   *
+   * @throws IOException if closing failed
+   */
   public void close() throws IOException;
 
 }
