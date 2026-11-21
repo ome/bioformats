@@ -37,7 +37,12 @@ import static org.testng.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 import loci.formats.FormatException;
 import loci.formats.in.TiffReader;
 import loci.formats.in.OMETiffReader;
@@ -59,6 +64,7 @@ import org.testng.annotations.Test;
 public class OMETiffWriterTest {
   private OMETiffWriter writer;
   private IMetadata metadata;
+  private final List<Path> temporaryPaths = new ArrayList<Path>();
 
   final long BIG_TIFF_CUTOFF = (long) 1024 * 1024 * 3990;
   private static final byte[] buf = new byte[1024*1024];
@@ -113,7 +119,7 @@ public class OMETiffWriterTest {
     percentageOfSaveBytesTests = WriterUtilities.getPropValue("testng.runWriterSaveBytesTests");
   }
 
-  @BeforeMethod
+  @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     writer = new OMETiffWriter();
     metadata = WriterUtilities.createMetadata();
@@ -123,9 +129,66 @@ public class OMETiffWriterTest {
     }
   }
 
-  @AfterMethod
+  @AfterMethod(alwaysRun = true)
   public void tearDown() throws Exception {
-    writer.close();
+    Exception failure = null;
+    if (writer != null) {
+      try {
+        writer.close();
+      }
+      catch (Exception e) {
+        failure = e;
+      }
+    }
+    for (int i = temporaryPaths.size() - 1; i >= 0; i--) {
+      try {
+        deleteRecursively(temporaryPaths.get(i));
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    temporaryPaths.clear();
+    writer = null;
+    if (failure != null) throw failure;
+  }
+
+  /** Create and retain a temporary file for always-run teardown. */
+  private File createTempFile(String suffix) throws IOException {
+    Path path = Files.createTempFile("OMETiffWriterTest", suffix);
+    temporaryPaths.add(path);
+    return path.toFile();
+  }
+
+  /** Create and retain a temporary directory for always-run teardown. */
+  private Path createTempDirectory() throws IOException {
+    Path path = Files.createTempDirectory(this.getClass().getName());
+    temporaryPaths.add(path);
+    return path;
+  }
+
+  /** Delete a temporary path immediately, removing files before directories. */
+  private static void deleteRecursively(Path root) throws IOException {
+    if (!Files.exists(root)) return;
+    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
+        throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) throw failure;
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 
   @Test
@@ -144,12 +207,11 @@ public class OMETiffWriterTest {
       int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     if (percentageOfTilingTests == 0) return;
 
-    File tmp = File.createTempFile("OMETiffWriterTest_Tiling", ".ome.tiff");
-    tmp.deleteOnExit();
+    File tmp = createTempFile("_Tiling.ome.tiff");
     Plane originalPlane = WriterUtilities.writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType, bigTiff);
 
-    TiffReader reader = new TiffReader();
-    reader.setId(tmp.getAbsolutePath());
+    try (TiffReader reader = new TiffReader()) {
+      reader.setId(tmp.getAbsolutePath());
 
     int expectedTileSize = tileSize;
     if (tileSize < TILE_GRANULARITY) {
@@ -165,8 +227,7 @@ public class OMETiffWriterTest {
 
     WriterUtilities.checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
 
-    tmp.delete();
-    reader.close();
+    }
   }
 
   @Test(dataProvider = "nonTiling")
@@ -174,22 +235,20 @@ public class OMETiffWriterTest {
       int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     if (percentageOfSaveBytesTests == 0) return;
 
-    File tmp = File.createTempFile("OMETiffWriterTest", ".ome.tiff");
-    tmp.deleteOnExit();
+    File tmp = createTempFile(".ome.tiff");
     Plane originalPlane = WriterUtilities.writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType, bigTiff);
 
-    TiffReader reader = new TiffReader();
-    reader.setId(tmp.getAbsolutePath());
+    try (TiffReader reader = new TiffReader()) {
+      reader.setId(tmp.getAbsolutePath());
 
     WriterUtilities.checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
 
-    tmp.delete();
-    reader.close();
+    }
   }
 
   @Test
   public void testCompanion() throws Exception {
-    Path wd = Files.createTempDirectory(this.getClass().getName());
+    Path wd = createTempDirectory();
     File outFile = wd.resolve("test.ome.tif").toFile();
     File cFile = wd.resolve("test.companion.ome").toFile();
     String companion = cFile.getAbsolutePath();
@@ -198,28 +257,25 @@ public class OMETiffWriterTest {
     int planeCount =
       WriterUtilities.SIZE_Z * WriterUtilities.SIZE_C * WriterUtilities.SIZE_T;
 
-    OMETiffWriter cwriter = new OMETiffWriter();
-    cwriter.setMetadataOptions(options);
-    cwriter.setMetadataRetrieve(metadata);
-    cwriter.setId(outFile.getAbsolutePath());
-    cwriter.setSeries(0);
-    byte[] img = new byte[WriterUtilities.SIZE_X * WriterUtilities.SIZE_Y];
-    for (int i = 0; i < planeCount; i++) {
-      cwriter.saveBytes(i, img);
+    try (OMETiffWriter cwriter = new OMETiffWriter()) {
+      cwriter.setMetadataOptions(options);
+      cwriter.setMetadataRetrieve(metadata);
+      cwriter.setId(outFile.getAbsolutePath());
+      cwriter.setSeries(0);
+      byte[] img = new byte[WriterUtilities.SIZE_X * WriterUtilities.SIZE_Y];
+      for (int i = 0; i < planeCount; i++) {
+        cwriter.saveBytes(i, img);
+      }
     }
-    cwriter.close();
 
     assertTrue(cFile.exists());
-    OMETiffReader reader = new OMETiffReader();
-    reader.setId(companion);
-    assertEquals(reader.getSizeX(), WriterUtilities.SIZE_X);
-    assertEquals(reader.getSizeY(), WriterUtilities.SIZE_Y);
-    assertEquals(reader.getSizeZ(), WriterUtilities.SIZE_Z);
-    assertEquals(reader.getSizeC(), WriterUtilities.SIZE_C);
-    assertEquals(reader.getSizeT(), WriterUtilities.SIZE_T);
-    reader.close();
-    outFile.deleteOnExit();
-    cFile.deleteOnExit();
-    wd.toFile().deleteOnExit();
+    try (OMETiffReader reader = new OMETiffReader()) {
+      reader.setId(companion);
+      assertEquals(reader.getSizeX(), WriterUtilities.SIZE_X);
+      assertEquals(reader.getSizeY(), WriterUtilities.SIZE_Y);
+      assertEquals(reader.getSizeZ(), WriterUtilities.SIZE_Z);
+      assertEquals(reader.getSizeC(), WriterUtilities.SIZE_C);
+      assertEquals(reader.getSizeT(), WriterUtilities.SIZE_T);
+    }
   }
 }

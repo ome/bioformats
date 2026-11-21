@@ -38,11 +38,15 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -174,23 +178,32 @@ public class FakeReaderTest {
     return fakeIni;
   }
 
-  /** Recursively set delete-on-exit for a directory tree. */
-  private void deleteTemporaryDirectoryOnExit(Location directoryRoot) {
-    directoryRoot.deleteOnExit();
-    Location[] children = directoryRoot.listFiles();
-    if (children != null) {
-      for (Location child : children) {
-        if (child.isDirectory()) {
-          deleteTemporaryDirectoryOnExit(child);
-        } else {
-          child.deleteOnExit();
-        }
+  /** Delete a temporary directory tree immediately, from its leaves upward. */
+  private static void deleteRecursively(Path root) throws IOException {
+    if (!Files.exists(root)) return;
+    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
+        throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
       }
-    }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) throw failure;
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 
-  @BeforeMethod
+  @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
+    // Record the root as soon as it exists so setup failures are recoverable.
     wd = Files.createTempDirectory(this.getClass().getName());
     reader = new FakeReader();
     ServiceFactory sf = new ServiceFactory();
@@ -199,10 +212,29 @@ public class FakeReaderTest {
     reader.setFlattenedResolutions(false);
   }
 
-  @AfterMethod
+  @AfterMethod(alwaysRun = true)
   public void tearDown() throws Exception {
-    reader.close();
-    deleteTemporaryDirectoryOnExit(new Location(wd.toFile()));
+    Exception failure = null;
+    if (reader != null) {
+      try {
+        reader.close();
+      }
+      catch (Exception e) {
+        failure = e;
+      }
+    }
+    if (wd != null) {
+      try {
+        deleteRecursively(wd);
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    reader = null;
+    wd = null;
+    if (failure != null) throw failure;
   }
 
   @Test

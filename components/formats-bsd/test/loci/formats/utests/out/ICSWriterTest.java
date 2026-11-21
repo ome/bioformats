@@ -36,6 +36,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import loci.common.ByteArrayHandle;
 import loci.common.Location;
@@ -61,6 +68,8 @@ import org.testng.annotations.Test;
 public class ICSWriterTest {
 
   private ICSWriter writer;
+  private final List<Path> temporaryPaths = new ArrayList<Path>();
+  private final List<String> mappedIds = new ArrayList<String>();
   private static int percentageOfSaveBytesTests = 0;
   
   @DataProvider(name = "writeParams")
@@ -81,14 +90,66 @@ public class ICSWriterTest {
     percentageOfSaveBytesTests = WriterUtilities.getPropValue("testng.runWriterSaveBytesTests");
   }
 
-  @BeforeMethod
+  @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     writer = new ICSWriter();
   }
 
-  @AfterMethod
+  @AfterMethod(alwaysRun = true)
   public void tearDown() throws Exception {
-    writer.close();
+    Exception failure = null;
+    if (writer != null) {
+      try {
+        writer.close();
+      }
+      catch (Exception e) {
+        failure = e;
+      }
+    }
+    for (String id : mappedIds) Location.mapFile(id, null);
+    for (int i = temporaryPaths.size() - 1; i >= 0; i--) {
+      try {
+        deleteRecursively(temporaryPaths.get(i));
+      }
+      catch (Exception e) {
+        if (failure == null) failure = e;
+        else failure.addSuppressed(e);
+      }
+    }
+    mappedIds.clear();
+    temporaryPaths.clear();
+    writer = null;
+    if (failure != null) throw failure;
+  }
+
+  /** Create and retain a temporary file for always-run teardown. */
+  private File createTempFile(String suffix) throws IOException {
+    Path path = Files.createTempFile("icsWriterTest", suffix);
+    temporaryPaths.add(path);
+    return path.toFile();
+  }
+
+  /** Delete a temporary path immediately, removing files before directories. */
+  private static void deleteRecursively(Path root) throws IOException {
+    if (!Files.exists(root)) return;
+    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
+        throws IOException
+      {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path directory,
+        IOException failure) throws IOException
+      {
+        if (failure != null) throw failure;
+        Files.delete(directory);
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 
   @Test
@@ -107,8 +168,7 @@ public class ICSWriterTest {
     metadata.setPixelsPhysicalSizeZ(physicalSizeZ, 0);
     writer.setMetadataRetrieve(metadata);
 
-    File tmp = File.createTempFile("icsWriterTest", ".ics");
-    tmp.deleteOnExit();
+    File tmp = createTempFile(".ics");
 
     writer.setId(tmp.getAbsolutePath());
   }
@@ -119,8 +179,7 @@ public class ICSWriterTest {
       int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     if (percentageOfSaveBytesTests == 0) return;
 
-    File tmp = File.createTempFile("icsWriterTest", ".ics");
-    tmp.deleteOnExit();
+    File tmp = createTempFile(".ics");
 
     String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
     writer.setMetadataRetrieve(WriterUtilities.createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian, sizeT));
@@ -144,10 +203,10 @@ public class ICSWriterTest {
       }
     }
 
-    ICSReader reader = new ICSReader();
-    reader.setId(tmp.getAbsolutePath());
+    try (ICSReader reader = new ICSReader()) {
+      reader.setId(tmp.getAbsolutePath());
 
-    for (int s=0; s<reader.getSeriesCount(); s++) {
+      for (int s=0; s<reader.getSeriesCount(); s++) {
       reader.setSeries(s);
       assertEquals(reader.getSizeC(), rgbChannels);
       int imageCount = reader.isRGB() ? seriesCount * sizeT : rgbChannels * sizeT * seriesCount;
@@ -159,9 +218,8 @@ public class ICSWriterTest {
           FormatTools.getPixelTypeString(reader.getPixelType()));
         assert(originalPlane.equals(newPlane));
       }
+      }
     }
-    tmp.delete();
-    reader.close();
   }
 
   // TODO: fix saveBytes parameters
@@ -173,6 +231,7 @@ public class ICSWriterTest {
 
     ByteArrayHandle handle = new ByteArrayHandle();
     String id = Math.random() + "-" + System.currentTimeMillis() + ".ics";
+    mappedIds.add(id);
     Location.mapFile(id, handle);
 
     String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
@@ -204,10 +263,10 @@ public class ICSWriterTest {
     handle = new ByteArrayHandle(file);
     Location.mapFile(id, handle);
 
-    ICSReader reader = new ICSReader();
-    reader.setId(id);
+    try (ICSReader reader = new ICSReader()) {
+      reader.setId(id);
 
-    for (int s=0; s<reader.getSeriesCount(); s++) {
+      for (int s=0; s<reader.getSeriesCount(); s++) {
       reader.setSeries(s);
       assertEquals(reader.getSizeC(), rgbChannels);
       int imageCount = reader.isRGB() ? seriesCount * sizeT : rgbChannels * sizeT * seriesCount;
@@ -219,9 +278,8 @@ public class ICSWriterTest {
           FormatTools.getPixelTypeString(reader.getPixelType()));
         assert(originalPlane.equals(newPlane));
       }
+      }
     }
-    reader.close();
-    Location.mapFile(id, null);
   }
 
 }
